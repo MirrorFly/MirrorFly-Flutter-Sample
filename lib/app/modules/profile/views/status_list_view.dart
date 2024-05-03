@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
@@ -16,7 +17,7 @@ class StatusListView extends GetView<StatusListController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Status'),
+        title: Text(getTranslated("status", context)),
       ),
       body: PopScope(
         canPop: false,
@@ -33,9 +34,9 @@ class StatusListView extends GetView<StatusListController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Your current status',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              Text(
+                getTranslated("yourCurrentStatus", context),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(
                 () => ListTile(
@@ -65,9 +66,9 @@ class StatusListView extends GetView<StatusListController> {
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                'Select Your new status',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              Text(
+                getTranslated("selectNewStatus", context),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(() => controller.statusList.isNotEmpty
                   ? Expanded(

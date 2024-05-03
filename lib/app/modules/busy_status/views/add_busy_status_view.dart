@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -14,7 +15,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Add Busy Status'),
+        title: Text(getTranslated("addBusyStatus", context)),
       ),
       body: PopScope(
         canPop: false,
@@ -109,9 +110,9 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
-                    child: const Text(
-                      "CANCEL",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    child: Text(
+                      getTranslated("cancel", context).toUpperCase(),
+                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),
@@ -132,9 +133,9 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
-                    child: const Text(
-                      "OK",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    child: Text(
+                      getTranslated("ok", context).toUpperCase(),
+                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),

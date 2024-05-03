@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -40,7 +41,7 @@ class ContactusView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Contact us'),
+          title: Text(getTranslated("contactUs", context)),
           automaticallyImplyLeading: true,
         ),
         body: SafeArea(
@@ -49,9 +50,9 @@ class ContactusView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Title',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                Text(
+                  getTranslated("title", context),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
                 TextField(
                   controller: title,
@@ -70,9 +71,9 @@ class ContactusView extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text(
-                  'Description',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                Text(
+                  getTranslated("description", context),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
                 TextField(
                   controller: description,
@@ -108,18 +109,18 @@ class ContactusView extends StatelessWidget {
                         Mirrorfly.sendContactUsInfo(title: title.text.trim(),description: description.text.trim(),flyCallBack: (response){
                           Helper.hideLoading();
                           if(response.isSuccess){
-                            toToast("Thank you for contacting us!");
+                            toToast(getTranslated("thankYou", context));
                             title.clear();
                             description.clear();
                           }
                         });
                       }else{
-                        toToast("Title and Description is Required");
+                        toToast(getTranslated("titleAndDescRequired", context));
                       }
                     },
-                    child: const Text(
-                      'Send',
-                      style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                    child: Text(
+                      getTranslated("send", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),
                 ),

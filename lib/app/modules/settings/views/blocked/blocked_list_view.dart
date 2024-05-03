@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
@@ -13,14 +14,14 @@ class BlockedListView extends GetView<BlockedListController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Blocked Contact List'),
+        title: Text(getTranslated("blockedContactList", context)),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
         return Center(
-          child: controller.blockedUsers.isEmpty ? const Text(
-            "No Blocked Contacts found",
-            style: TextStyle(fontSize: 17, color: Colors.grey),) :
+          child: controller.blockedUsers.isEmpty ? Text(
+            getTranslated("noBlockedContactsFound", context),
+            style: const TextStyle(fontSize: 17, color: Colors.grey),) :
           ListView.builder(
             itemCount: controller.blockedUsers.length,
               itemBuilder: (context, index) {

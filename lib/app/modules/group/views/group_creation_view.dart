@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_controller.dart';
 
@@ -17,15 +18,15 @@ class GroupCreationView extends GetView<GroupCreationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'New Group',
+        title: Text(
+          getTranslated("newGroup", context),
         ),
         actions: [
           TextButton(
               onPressed: () => controller.goToAddParticipantsPage(),
-              child: const Text(
-                "NEXT",
-                style: TextStyle(color: Colors.black),
+              child: Text(
+                getTranslated("next", context).toUpperCase(),
+                style: const TextStyle(color: Colors.black),
               )),
         ],
       ),
@@ -170,9 +171,8 @@ class GroupCreationView extends GetView<GroupCreationController> {
                         ],
                       ),
                       const AppDivider(),
-                      const Text(
-                        "Provide a Group Name and Icon",
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                      Text(getTranslated("provideGroupNameIcon", context),
+                        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                       ),
                     ],
                   ),

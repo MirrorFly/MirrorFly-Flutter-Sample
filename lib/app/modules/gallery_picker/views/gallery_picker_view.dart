@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../routes/app_pages.dart';
 import '../controllers/gallery_picker_controller.dart';
@@ -13,7 +14,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Send to ${controller.userName}'),
+        title: Text(getTranslated("sendToUser", context).replaceAll("%d", "${controller.userName}")),
         centerTitle: true,
       ),
       body: Column(
@@ -87,7 +88,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                                   border: Border.all(
                                       color: Colors.blue, width: 1.5),
                                 ),
-                                child: const Center(child: Text("Done"))
+                                child: Center(child: Text(getTranslated("done", context)))
                             ),
                           )
                         ],

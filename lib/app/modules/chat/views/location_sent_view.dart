@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import '../controllers/location_controller.dart';
@@ -12,7 +13,7 @@ class LocationSentView extends GetView<LocationController>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: const Text('User Location'),
+        title: Text(getTranslated("userLocation", context)),
     automaticallyImplyLeading: true,
         ),
       body:SafeArea(
@@ -48,7 +49,7 @@ class LocationSentView extends GetView<LocationController>{
                         ()=>controller.address1.value.isNotEmpty ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Send this Location',style: TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.normal),),
+                            Text(getTranslated("sendThisLocation", context),style: const TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.normal),),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(controller.address1.value,style: const TextStyle(color: textHintColor,fontSize: 16,fontWeight: FontWeight.w700),),

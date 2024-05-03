@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
 import '../settings_widgets.dart';
@@ -12,40 +13,39 @@ class AppLockSettingsView extends GetView<AppLockController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('App Lock'),
+        title: Text(getTranslated("appLock", context)),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            lockItem(title: "Pin Lock",
-                subtitle: "Add more security with 4 digit secret PIN",
+            lockItem(title: getTranslated("pinLock", context),
+                subtitle: getTranslated("pinLockDesc", context),
                 on: controller.pinEnabled,
                 onToggle: (value) => controller.enablePin()),
             Visibility(visible: controller.pinEnabled,
-                child: lockItem(title: "Change PIN",
-                    subtitle: "Change 4 digit PIN",
+                child: lockItem(title: getTranslated("changePin", context),
+                    subtitle: getTranslated("changePinDesc", context),
                     trailing: const SizedBox(),
                     on: false,
                     onToggle: (value) {},
                     onTap: () => controller.changePin())),
-            lockItem(title: "Fingerprint ID",
-                subtitle: "Enable Fingerprint to unlock the app",
+            lockItem(title: getTranslated("fingerPrintID", context),
+                subtitle: getTranslated("fingerPrintIDDesc", context),
                 on: controller.bioEnabled,
                 onToggle: (value) => controller.enableBio()),
             const SizedBox(height: 8,),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "If App Lock enabled, the app will be locked automatically after 32 sec when it is not in use.",
-                    style: TextStyle(color: textColor),),
-                  Text(
-                    "Note: Once a PIN is set, it will be expired in 31 days and has to be renewed.",
-                    style: TextStyle(color: textColor),)
+                    getTranslated("appLockDesc", context),
+                    style: const TextStyle(color: textColor),),
+                  Text(getTranslated("appLockNote", context),
+                    style: const TextStyle(color: textColor),)
                 ],
               ),
             ),

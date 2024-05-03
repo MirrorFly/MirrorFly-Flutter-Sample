@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
@@ -16,7 +17,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Message Info'),
+          title: Text(getTranslated("messageInfo", context)),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -88,8 +89,8 @@ class MessageInfoView extends GetView<MessageInfoController> {
             title: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
-              child: Text("Delivered to ${controller.messageDeliveredList
-                  .length} of ${controller.statusCount.value}",
+              child: Text(getTranslated("deliveredTo", context).replaceAll("%d","${controller.messageDeliveredList
+                  .length}").replaceAll("%s", "${controller.statusCount.value}"),
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.w600),
                 textAlign: TextAlign.left,),
@@ -113,7 +114,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                       blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
                       unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(
-                  context, 'Message sent, not delivered yet')),
+                  context, getTranslated("sentNotDelivered", context))),
           const AppDivider(),
           ListItem(
             leading: !controller.visibleReadList.value ? SvgPicture.asset(
@@ -122,8 +123,8 @@ class MessageInfoView extends GetView<MessageInfoController> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
               child: Text(
-                "Read by ${controller.messageReadList.length} of ${controller
-                    .statusCount.value}",
+      getTranslated("readBy", context).replaceAll("%d","${controller.messageReadList.length}").replaceAll("%s", "${controller
+                    .statusCount.value}"),
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.w600),
                 textAlign: TextAlign.left,),
@@ -146,7 +147,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         onTap: () {},
                       blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
                       unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
-                  }) : emptyDeliveredSeen(context, "Your message is not read")),
+                  }) : emptyDeliveredSeen(context, getTranslated("notRead", context))),
           const AppDivider(),
         ],
       );
@@ -156,16 +157,16 @@ class MessageInfoView extends GetView<MessageInfoController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Divider(),
-        const Text(
-          "Delivered",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        Text(
+          getTranslated("delivered", context),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(
           height: 10,
         ),
         Obx(() {
           return Text(controller.deliveredTime.value == ""
-              ? "Message sent, not delivered yet"
+              ? getTranslated("sentNotDelivered", context)
               : controller.getChatTime(
               context, int.parse(controller.deliveredTime.value)));
         }),
@@ -173,16 +174,16 @@ class MessageInfoView extends GetView<MessageInfoController> {
           height: 10,
         ),
         const Divider(),
-        const Text(
-          "Read",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        Text(
+          getTranslated("read", context),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(
           height: 10,
         ),
         Obx(() {
           return Text(controller.readTime.value == ""
-              ? "Your message is not read"
+              ? getTranslated("notRead", context)
               : controller.getChatTime(
               context, int.parse(controller.readTime.value)));
         }),

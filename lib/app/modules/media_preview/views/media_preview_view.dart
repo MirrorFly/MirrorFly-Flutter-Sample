@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:photo_view/photo_view.dart';
@@ -120,9 +121,9 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                     ),
                                   ),
                                   const SizedBox(height: 50),
-                                  const Text(
-                                    'No Media selected',
-                                    style: TextStyle(
+                                  Text(
+                                    getTranslated("No Media selected", context),
+                                    style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white70),
@@ -157,13 +158,13 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return const Text('Error loading image');
+                                              return Text(getTranslated("errorLoadingImage", context));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return Center(
                                                 child: imagePreview(snapshot.data!),
                                               );
                                             } else {
-                                              return const Text('No data');
+                                              return Text(getTranslated("noData", context));
                                             }
                                           },
                                         );
@@ -176,14 +177,14 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return const Text('Error loading image');
+                                              return Text(getTranslated("errorLoadingImage", context));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return VideoPlayerWidget(
                                                 videoPath: snapshot.data?.path ?? "",
                                                 videoTitle: data.title ?? "Video",
                                               );
                                             } else {
-                                              return const Text('No data');
+                                              return Text(getTranslated("noData", context));
                                             }
                                           },
                                         );
@@ -193,7 +194,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   else
                                   ...[
                                         () {
-                                      return const Center(child: Text("No data available"));
+                                      return Center(child: Text(getTranslated("noDataAvailable", context)));
                                     }()
                                   ],
                                 ],
@@ -271,10 +272,10 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                           ),
                                           maxLines: 6,
                                           minLines: 1,
-                                          decoration: const InputDecoration(
+                                          decoration: InputDecoration(
                                             border: InputBorder.none,
-                                            hintText: "Add Caption...",
-                                            hintStyle: TextStyle(
+                                            hintText: getTranslated("addCaption", context),
+                                            hintStyle: const TextStyle(
                                               color: previewTextColor,
                                               fontSize: 15,
                                             ),

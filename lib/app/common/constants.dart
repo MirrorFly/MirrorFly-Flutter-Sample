@@ -293,18 +293,14 @@ const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
 
 
 //About us
-const String titleContactMsg =
-    "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
+const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
 const String titleContactUs = "Contact Us";
-const String titleContactMsgTime =
-    "To have a detailed interaction with our experts";
+const String titleContactMsgTime = "To have a detailed interaction with our experts";
 const String titleFaq = "FAQ";
-const String titleFaqMsg =
-    "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
+const String titleFaqMsg = "Kindly checkout FAQ section for doubts regarding Mirror fly. We might have already answered your question.";
 const String mirrorFly = "Mirror Fly";
 const String websiteMirrorFly = "https://www.mirrorfly.com/";
-const String notificationNotWorkingURL =
-    "https://app.mirrorfly.com/notifications/";
+const String notificationNotWorkingURL = "https://app.mirrorfly.com/notifications/";
 
 toToast(String text) {
   if(Platform.isIOS) {
@@ -529,10 +525,8 @@ class Constants {
   static const String typeGroupChat = "groupchat";
   static const String typeBroadcastChat = "broadcast";
 
-  static const String termsConditions =
-      "https://www.mirrorfly.com/terms-and-conditions.php";
-  static const String privacyPolicy =
-      "https://www.mirrorfly.com/privacy-policy.php";
+  static const String termsConditions = "https://www.mirrorfly.com/terms-and-conditions.php";
+  static const String privacyPolicy = "https://www.mirrorfly.com/privacy-policy.php";
 
   static const maxAudioFileSize = 2 * 1024;//30;
   static const maxVideoFileSize = 2 * 1024;//30;
@@ -736,12 +730,9 @@ class Constants {
   static const String httpStatusCode = "http_status_code";
 
   static const String googleTranslationLabel = "Translate Message";
-  static const String googleTranslationMessage =
-      "Enable Translate Message to choose Translation Language";
-  static const String googleTranslationLanguageLable =
-      "Choose Translation Language";
-  static const String googleTranslationLanguageDoubleTap =
-      "Double Tap the received messages to translate";
+  static const String googleTranslationMessage = "Enable Translate Message to choose Translation Language";
+  static const String googleTranslationLanguageLable = "Choose Translation Language";
+  static const String googleTranslationLanguageDoubleTap = "Double Tap the received messages to translate";
 
   static const String editBusyStatus = "Edit Busy Status Message";
   static const String yourBusyStatus = "Your Busy Status";

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/widgets.dart';
 import '../controllers/preview_contact_controller.dart';
@@ -13,8 +14,8 @@ class PreviewContactView extends GetView<PreviewContactController> {
     return Scaffold(
         appBar: AppBar(
           title: controller.from == "contact_pick"
-              ? const Text('Send Contacts')
-              : const Text('Contact Details'),
+              ? Text(getTranslated("sendContacts", context))
+              : Text(getTranslated("contactDetails", context)),
         ),
         body: SafeArea(
           child: Stack(

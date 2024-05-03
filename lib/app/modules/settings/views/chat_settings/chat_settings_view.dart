@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/chat_settings_controller.dart';
 
 import '../../../../common/constants.dart';
@@ -14,7 +15,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chats'),
+        title: Text(getTranslated("chats", context)),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
@@ -22,18 +23,18 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              lockItem(title: "Archive Settings",
-                  subtitle: "Archived chats will remain archived when you receive a new message",
+              lockItem(title: getTranslated("archiveSetting", context),
+                  subtitle: getTranslated("archiveSettingDec", context),
                   on: controller.archiveEnabled,
                   onToggle: (value) => controller.enableArchive()),
               notificationItem(
-                  title: "Last Seen",
-                  subtitle: "Hiding the last seen activity to other users",
+                  title: getTranslated("lastSeen", context),
+                  subtitle: getTranslated("lastSeenDec", context),
                   on: controller.lastSeenPreference.value,
                   onTap: () => controller.lastSeenEnableDisable()),
               notificationItem(
-                  title: "User Busy Status",
-                  subtitle: "Set busy status as the Auto response to the message received from the individuals",
+                  title: getTranslated("userBusyStatus", context),
+                  subtitle: getTranslated("userBusyStatusDescription", context),
                   on: controller.busyStatusPreference.value,
                   onTap: () => controller.busyStatusEnable()),
               Visibility(
@@ -42,8 +43,8 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                    Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Edit Busy Status Message',
-                          style: TextStyle(
+                      Text(getTranslated("editBusyStatus", context),
+                          style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400)),
                       Padding(
@@ -59,21 +60,20 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                   ),
                   rightArrowIcon, () => {Get.toNamed(Routes.busyStatus)},
                   )),
-              notificationItem(title: Constants.autoDownload, subtitle: Constants.autoDownloadLable,on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
+              notificationItem(title: getTranslated("autoDownload", context), subtitle: getTranslated("autoDownloadLabel", context),on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
               Visibility(
                 visible: controller.autoDownloadEnabled,
-                  child: chatListItem(
-                const Column(
+                  child: chatListItem(Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(Constants.dataUsageSettings,
-                        style: TextStyle(
+                    Text(getTranslated("dataUsageSettings", context),
+                        style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400)),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text(Constants.dataUsageSettingsLable,
-                          style: TextStyle(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Text(getTranslated("dataUsageSettingsLabel", context),
+                          style: const TextStyle(
                               color: textColor,
                               fontSize: 14,
                               fontWeight: FontWeight.w400)),
@@ -82,14 +82,14 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                 ),
                 rightArrowIcon, () => {Get.toNamed(Routes.dataUsageSetting)},
               )),
-              notificationItem(title: Constants.googleTranslationLabel, subtitle: Constants.googleTranslationMessage,on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
+              notificationItem(title: getTranslated("googleTranslationLabel", context), subtitle: getTranslated("googleTranslationMessage", context),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
               Visibility(
                   visible: controller.translationEnabled,
                   child: chatListItem(Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(Constants.googleTranslationLanguageLable,
-                          style: TextStyle(
+                      Text(getTranslated("googleTranslationLanguageLable", context),
+                          style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
                               fontWeight: FontWeight.w400)),
@@ -101,8 +101,8 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400)),
                       ),
-                      const Text(Constants.googleTranslationLanguageDoubleTap,
-                          style: TextStyle(
+                      Text(getTranslated("googleTranslationLanguageDoubleTap", context),
+                          style: const TextStyle(
                               color: textColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w400))
@@ -110,8 +110,8 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                   ), rightArrowIcon, () => controller.chooseLanguage())),
 
               ListItem(
-                  title: const Text('Cleat All Conversation',
-                      style: TextStyle(
+                  title: Text(getTranslated("clearAllConversation", context),
+                      style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14,
                           fontWeight: FontWeight.w400)),

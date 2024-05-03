@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/image_preview_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -19,38 +20,6 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
         iconTheme: const IconThemeData(
             color: Colors.white
         ),
-        /*actions: [
-          IconButton(
-              icon: const Icon(
-                Icons.delete_outline_outlined,
-                size: 27,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: const Icon(
-                Icons.crop_rotate,
-                size: 27,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: const Icon(
-                Icons.emoji_emotions_outlined,
-                size: 27,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: const Icon(
-                Icons.title,
-                size: 27,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: const Icon(
-                Icons.edit,
-                size: 27,
-              ),
-              onPressed: () {}),
-        ],*/
       ),
       body: SafeArea(
         child: SizedBox(
@@ -130,10 +99,10 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                                 ),
                                 maxLines: 6,
                                 minLines: 1,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Add Caption....",
-                                  hintStyle: TextStyle(
+                                  hintText: getTranslated("addCaption", context),
+                                  hintStyle: const TextStyle(
                                     color: Colors.white,
                                   ),),
                               ),
@@ -147,13 +116,6 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                                     'assets/logos/img_send.svg')),
                           ],
                         ),
-                        // SvgPicture.asset(
-                        //   rightArrow,
-                        //   width: 18,
-                        //   height: 18,
-                        //   fit: BoxFit.contain,
-                        //   color: Colors.white,
-                        // ),
                         Row(
                           children: [
                             const Icon(

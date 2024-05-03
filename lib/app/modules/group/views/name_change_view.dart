@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 
@@ -15,7 +16,7 @@ class NameChangeView extends GetView<GroupInfoController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Enter New Name'),
+        title: Text(getTranslated("enterNewName", context)),
       ),
       body: PopScope(
         canPop: false,
@@ -82,9 +83,9 @@ class NameChangeView extends GetView<GroupInfoController> {
                   Expanded(
                     child: TextButton(
                       onPressed: () => Get.back(),
-                      child: const Text(
-                        "CANCEL",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      child: Text(
+                        getTranslated("cancel", context).toUpperCase(),
+                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -99,12 +100,12 @@ class NameChangeView extends GetView<GroupInfoController> {
                           Get.back(result: controller.nameController.text
                               .trim().toString());
                         }else{
-                          toToast("Name cannot be empty");
+                          toToast(getTranslated("nameCantEmpty", context));
                         }
                       },
-                      child: const Text(
-                        "OK",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      child: Text(
+                        getTranslated("ok", context).toUpperCase(),
+                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),
                   ),

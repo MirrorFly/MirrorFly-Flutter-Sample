@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -38,13 +39,13 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
           Get.back();
         },
         child: Scaffold(
-          appBar: getAppBar(),
+          appBar: getAppBar(context),
           body: Obx(() {
             return controller.starredChatList.isNotEmpty ?
             SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
             controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-              child: Text(controller.isSearch.value ? "No result found" : "No Starred Messages Found"),
+              child: Text(controller.isSearch.value ? getTranslated("noResultFound", context) : getTranslated("noStarredMessages", context)),
             ));
           })
         ),
@@ -149,13 +150,13 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  getAppBar() {
+  getAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
       child: Obx(() {
         return Container(
-          child: controller.isSelected.value ? selectedAppBar() : controller.isSearch.value ? searchBar() : AppBar(
-            title: const Text('Starred Messages'),
+          child: controller.isSelected.value ? selectedAppBar(context) : controller.isSearch.value ? searchBar(context) : AppBar(
+            title: Text(getTranslated("starredMessages", context)),
             actions: [
               IconButton(
                 icon: SvgPicture.asset(
@@ -175,7 +176,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  searchBar(){
+  searchBar(BuildContext context){
     return AppBar(
       automaticallyImplyLeading: true,
       title: TextField(
@@ -183,8 +184,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
         controller: controller.searchedText,
         focusNode: controller.searchFocus,
         autofocus: true,
-        decoration: const InputDecoration(
-            hintText: "Search...", border: InputBorder.none),
+        decoration: InputDecoration(
+            hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
       actions: [
@@ -201,7 +202,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  selectedAppBar() {
+  selectedAppBar(BuildContext context) {
     return AppBar(
       // leadingWidth: 25,
       backgroundColor: Colors.white,
@@ -223,7 +224,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.checkBusyStatusForForward();
                     },
                     icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
-                overflowWidget: const Text("Forward"),
+                overflowWidget: Text(getTranslated("forward", context)),
                 showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
@@ -236,7 +237,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.favouriteMessage();
                     },
                     icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
-                overflowWidget: const Text("unFavourite"),
+                overflowWidget: Text(getTranslated("unFavourite", context)),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'unfavoured',
                 onItemClick: () {
@@ -249,7 +250,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.share();
                     },
                     icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
-                overflowWidget: const Text("Share"),
+                overflowWidget: Text(getTranslated("share", context)),
                 showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Share',
                 onItemClick: () {},
@@ -269,7 +270,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   ),
                   tooltip: 'Copy',
                 ),
-                overflowWidget: const Text("Copy"),
+                overflowWidget: Text(getTranslated("copy", context)),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Copy',
                 onItemClick: () {
@@ -282,7 +283,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.deleteMessages();
                     },
                     icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
-                overflowWidget: const Text("Delete"),
+                overflowWidget: Text(getTranslated("delete", context)),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
                 onItemClick: () {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
@@ -36,18 +37,18 @@ class LoginView extends GetView<LoginController> {
                     padding: const EdgeInsets.symmetric(vertical: 30),
                     child: SvgPicture.asset(registerIcon),
                   ),
-                  const Text(
-                    'Register Your Number',
+                  Text(
+                    getTranslated("registerYourNumber", context),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w600),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10.0, right: 8, left: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, right: 8, left: 8),
                     child: Text(
-                      'Please choose your country code and enter your mobile number to get the verification code.',
+                      getTranslated("registerMessage",context),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w300,
                           color: textColor),
@@ -91,9 +92,9 @@ class LoginView extends GetView<LoginController> {
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(13)
                               ],
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: 'Enter Mobile Number',
+                                hintText: getTranslated("enterMobileNumber", context),
                                 //hintStyle: TextStyle(color: Colors.black26)
                               ),
                             ),
@@ -117,15 +118,15 @@ class LoginView extends GetView<LoginController> {
                     onPressed: () {
                       controller.registerUser();
                     },
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                    child: Text(
+                      getTranslated("continue", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  const Text('By clicking continue you agree to MirrorFly',style: TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
+                  Text(getTranslated("agree", context),style: const TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -133,9 +134,9 @@ class LoginView extends GetView<LoginController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        child: const Text(
-                          'Terms and Condition,',
-                          style: TextStyle(
+                        child: Text(
+                          '${getTranslated("termsAndCondition", context)},',
+                          style: const TextStyle(
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),
@@ -145,9 +146,9 @@ class LoginView extends GetView<LoginController> {
                         width: 5,
                       ),
                       InkWell(
-                        child: const Text(
-                          'Privacy Policy.',
-                          style: TextStyle(
+                        child: Text(
+                          '${getTranslated("privacyPolicy", context)}.',
+                          style: const TextStyle(
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),

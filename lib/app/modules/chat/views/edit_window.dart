@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
@@ -53,7 +54,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
         child: Column(
           children: [
             AppBar(
-              title: const Text(Constants.editMessage),
+              title: Text(getTranslated("editMessage", context)),
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -161,7 +162,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                         maxLines: 5,
                                         controller: widget.chatController.editMessageController,
                                         // focusNode: controller.focusNode,
-                                        decoration: const InputDecoration(hintText: "Start Typing...", border: InputBorder.none),
+                                        decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder", context), border: InputBorder.none),
                                       ),
                                     ),
                                   ],

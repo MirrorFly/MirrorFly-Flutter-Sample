@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../controllers/camera_pick_controller.dart';
 
@@ -124,9 +125,9 @@ class CameraPickView extends GetView<CameraPickController> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text(
-                        "Hold for Video, tap for photo",
-                        style: TextStyle(color: Colors.white),
+                      Text(
+                        getTranslated("holdToRecord", context),
+                        style: const TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(

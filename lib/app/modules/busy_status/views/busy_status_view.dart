@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import '../../../common/constants.dart';
 import '../controllers/busy_status_controller.dart';
@@ -14,7 +15,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(Constants.editBusyStatus),
+          title: Text(getTranslated("editBusyStatus", context)),
         ),
         body: SafeArea(
           child: Padding(
@@ -22,9 +23,9 @@ class BusyStatusView extends GetView<BusyStatusController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  Constants.yourBusyStatus,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                Text(
+                  getTranslated("yourBusyStatus", context),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
                   height: 5,
@@ -61,16 +62,16 @@ class BusyStatusView extends GetView<BusyStatusController> {
                   height: 5,
                 ),
 
-                const Text(
-                  Constants.busyStatusDescription,
-                  style: TextStyle(fontSize: 15),
+                Text(
+                  getTranslated("busyStatusDescription", context),
+                  style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(
                   height: 40,
                 ),
-                const Text(
-                  Constants.newBusyStatus,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                Text(
+                  getTranslated("selectYourBusyStatus", context),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
                   height: 5,

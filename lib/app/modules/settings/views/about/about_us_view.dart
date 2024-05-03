@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
 
@@ -16,7 +17,7 @@ class AboutUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Us'),
+        title: Text(getTranslated("aboutUs", context)),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -24,21 +25,21 @@ class AboutUsView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(titleContactMsg,style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg", context),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(titleContactUs,style: textStyle,),
+            Text(getTranslated("contactUs", context),style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(titleContactMsg,style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg", context),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(titleFaq,style: textStyle,),
+            Text(getTranslated("titleFaq", context),style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(titleFaqMsg,style: textMsgStyle,),
+            Text(getTranslated("titleFaqMsg", context),style: textMsgStyle,),
             const SizedBox(height: 16,),
             InkWell(child: const Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,color: Color(
                   0xffa2a1a1)))),
-            ),onTap: ()=>launchWeb(websiteMirrorFly),)
+            ),onTap: ()=>launchWeb(getTranslated("aboutUsLink", context)),)
           ],
         ),
       ),
