@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 
 import '../../common/constants.dart';
 import '../../routes/route_settings.dart';
 
-class AdminBlockedView extends GetView {
+class AdminBlockedView extends StatelessWidget {
   const AdminBlockedView({Key? key}) : super(key: key);
 
   @override
@@ -16,7 +15,7 @@ class AdminBlockedView extends GetView {
         if (didPop) {
           return;
         }
-        onFinish();
+        onFinish(context);
         return;
       },
       child: SafeArea(child: Container(
@@ -57,7 +56,7 @@ class AdminBlockedView extends GetView {
                           fontWeight: FontWeight.w500),
                       shape: const StadiumBorder()),
                   onPressed: () {
-                    onFinish();
+                    onFinish(context);
                   },
                   child: const Text(
                     'Ok',
@@ -72,14 +71,8 @@ class AdminBlockedView extends GetView {
     );
   }
 
-  onFinish(){
-    /*Helper.showLoading();
-    var token = SessionManagement.getToken().checkNull();
-    SessionManagement.clear().then((value){
-      SessionManagement.setToken(token);
-      Helper.hideLoading();
-      Get.offAllNamed(Routes.login);
-    });*/
-    Get.offAllNamed(Routes.login);
+  onFinish(BuildContext context){
+    // Get.offAllNamed(Routes.login);
+    Navigator.pushNamedAndRemoveUntil(context, Routes.login, (Route<dynamic> route) => false);
   }
 }
