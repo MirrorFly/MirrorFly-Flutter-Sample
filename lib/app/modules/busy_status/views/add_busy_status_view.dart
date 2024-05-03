@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../controllers/busy_status_controller.dart';
 
-class AddBusyStatusView extends GetView<BusyStatusController> {
-  const AddBusyStatusView({Key? key}) : super(key: key);
+class AddBusyStatusView extends StatelessWidget {
+  AddBusyStatusView(
+      {super.key, required String status, this.enableAppBar = true});
+  final bool enableAppBar;
 
+  final BusyStatusController controller = BusyStatusController().get();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
