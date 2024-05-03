@@ -128,7 +128,7 @@ Route<dynamic> mirrorFlyRoute(RouteSettings settings) {
     case Routes.adminBlocked:
       return MaterialPageRoute(builder: (_) => const AdminBlockedView());
     case Routes.archivedChats:
-      return MaterialPageRoute(builder: (_) => const ArchivedChatListView());
+      return MaterialPageRoute(builder: (_) => ArchivedChatListView());
     case Routes.chatSettings:
       return MaterialPageRoute(builder: (_) => const ChatSettingsView());
     case Routes.galleryPicker:
