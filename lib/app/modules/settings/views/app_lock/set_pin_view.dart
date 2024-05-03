@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../../common/constants.dart';
@@ -14,7 +15,7 @@ class SetPinView extends GetView<AppLockController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.modifyPin.value ? 'Change PIN' : 'PIN Lock',
+        title: Text(controller.modifyPin.value ? getTranslated("changePin", context) : getTranslated("pinLock", context),
           style: const TextStyle(fontWeight: FontWeight.bold,
               color: appbarTextColor,
               fontSize: 20.0),),
@@ -26,7 +27,7 @@ class SetPinView extends GetView<AppLockController> {
           return Column(
             children: [
               Visibility(visible: controller.modifyPin.value,
-                  child: passwordField(title: 'Enter old PIN',
+                  child: passwordField(title: getTranslated("enterOldPIN", context),
                       controller: controller.oldPin,
                       secure: controller.oldPinSecure.value,
                       focusNode: controller.oldPinFocus,
@@ -42,7 +43,7 @@ class SetPinView extends GetView<AppLockController> {
                   height: 10,
                 ),
               ),
-              passwordField(title: 'Enter new PIN',
+              passwordField(title: getTranslated("enterNewPIN", context),
                   controller: controller.newPin,
                   secure: controller.newPinSecure.value,
                   focusNode: controller.newPinFocus,
@@ -55,7 +56,7 @@ class SetPinView extends GetView<AppLockController> {
               const SizedBox(
                 height: 10,
               ),
-              passwordField(title: 'Confirm new PIN',
+              passwordField(title: getTranslated("confirmNewPIN", context),
                   controller: controller.confirmPin,
                   secure: controller.confirmPinSecure.value,
                   focusNode: controller.confirmPinFocus,
@@ -80,8 +81,8 @@ class SetPinView extends GetView<AppLockController> {
                   onPressed: () {
                     controller.savePin();
                   },
-                  child: const Text(
-                    'Save',style: TextStyle(color: Colors.white),
+                  child: Text(
+                    getTranslated("save", context),style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),

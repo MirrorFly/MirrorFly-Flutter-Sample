@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../common/constants.dart';
@@ -15,7 +16,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Delete My Account'),
+        title: Text(getTranslated("deleteMyAccount", context)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -31,45 +32,44 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   fit: BoxFit.contain,
                 ),
                     const SizedBox(width: 15),
-                    const Text(
-                      'Deleting your account will:',
-                      style: TextStyle(color: Colors.red, fontSize: 17),
+                    Text(
+                      getTranslated("deletingYourAccount", context),
+                      style: const TextStyle(color: Colors.red, fontSize: 17),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
-                    SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text("Delete your account from MirrorFly",style: TextStyle(color: textColor),),
+                    const SizedBox(width: 30,),
+                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text(getTranslated("deletingYourAccountDescription1", context),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
-                    SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text("Erase your message history",style: TextStyle(color: textColor),),
+                    const SizedBox(width: 30,),
+                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text(getTranslated("deletingYourAccountDescription2", context),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
-                const Row(
+                Row(
                   children: [
-                    SizedBox(width: 30,),
-                    Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text("Delete you from all of your MirrorFly groups",style: TextStyle(color: textColor),),
+                    const SizedBox(width: 30,),
+                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
+                    Text(getTranslated("deletingYourAccountDescription3", context),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 15,),
-                const Text(
-                  'To delete your account, confirm your country and enter your phone number.',
-                  style: TextStyle(color: textHintColor, fontSize: 15),
+          Text(getTranslated("deleteConfirmation", context),
+                  style: const TextStyle(color: textHintColor, fontSize: 15),
                 ),
                 const SizedBox(height: 10,),
-                const Text(
-                  'Country',
-                  style: TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
+                Text(
+                  getTranslated("country", context),
+                  style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Obx(() => countryItem(
                   // contentPadding: EdgeInsets.zero,
@@ -81,9 +81,9 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   },
                 )),
                 const SizedBox(height: 10,),
-                const Text(
-                  'Mobile number',
-                  style: TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
+                Text(
+                  getTranslated("mobileNumber", context),
+                  style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 10,),
                 Padding(
@@ -113,15 +113,15 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                               FilteringTextInputFormatter.digitsOnly
                             ],
                             style: const TextStyle(color: textHintColor,fontWeight: FontWeight.normal),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               counterText: '',
-                              enabledBorder: UnderlineInputBorder(
+                              enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.grey),
                               ),
-                              focusedBorder: UnderlineInputBorder(
+                              focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: buttonBgColor),
                               ),
-                              hintText: "Mobile Number"
+                              hintText: getTranslated("mobileNumber", context)
                             ),
                           ),
                         ),
@@ -144,9 +144,9 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                     onPressed: () {
                       controller.deleteAccount();
                     },
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                    child: Text(
+                      getTranslated("continue", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),
                 ),

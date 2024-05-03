@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
@@ -15,53 +16,53 @@ class SettingsView extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(getTranslated("settings", context)),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            settingListItem("Profile", profileIcon, rightArrowIcon,
+            settingListItem(getTranslated("profile", context), profileIcon, rightArrowIcon,
                     () =>
                     Get.toNamed(
                         Routes.profile, arguments: {"from": Routes.settings})),
-            settingListItem("Chats", chatIcon, rightArrowIcon, () {
+            settingListItem(getTranslated("chats", context), chatIcon, rightArrowIcon, () {
               Get.toNamed(Routes.chatSettings);
             }),
             settingListItem(
-                "Starred Messages", staredMsgIcon, rightArrowIcon, () {
+                getTranslated("starredMessages", context), staredMsgIcon, rightArrowIcon, () {
               Get.toNamed(Routes.starredMessages);
             }),
             settingListItem(
-                "Notifications", notificationIcon, rightArrowIcon, () =>
+                getTranslated("notifications", context), notificationIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.notification)),
             settingListItem(
-                "Blocked Contacts", blockedIcon, rightArrowIcon, () =>
+                getTranslated("blockedContacts", context), blockedIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.blockedList)),
-            settingListItem("App Lock", lockIcon, rightArrowIcon, () =>
+            settingListItem(getTranslated("appLock", context), lockIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.appLock)),
-            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>
+            settingListItem(getTranslated("aboutAndHelp", context), aboutIcon, rightArrowIcon, () =>
                 Get.to(const AboutAndHelpView())),
             settingListItem(
-                "Connection Label", connectionIcon, toggleOffIcon, () {}),
-            settingListItem("Delete My Account", delete, rightArrowIcon, () {
+                getTranslated("connectionLabel", context), connectionIcon, toggleOffIcon, () {}),
+            settingListItem(getTranslated("deleteMyAccount", context), delete, rightArrowIcon, () {
               Get.toNamed(Routes.deleteAccount);
             }),
-            settingListItem("Logout", logoutIcon, rightArrowIcon, () {
+            settingListItem(getTranslated("logout", context), logoutIcon, rightArrowIcon, () {
               Helper.showAlert(
                   message:
-                  "Are you sure want to logout from the app?",
+                  getTranslated("logoutMessage", context),
                   actions: [
                     TextButton(
                         onPressed: () {
                           Get.back();
                         },
-                        child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+                        child: Text(getTranslated("no", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                     TextButton(
                         onPressed: () {
                           controller.logout();
                         },
-                        child: const Text("YES",style: TextStyle(color: buttonBgColor)))
+                        child: Text(getTranslated("yes", context).toUpperCase(),style: const TextStyle(color: buttonBgColor)))
                   ]);
             }),
             Padding(

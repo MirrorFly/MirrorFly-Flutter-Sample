@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 // import 'package:grouped_list/grouped_list.dart';
 import 'package:marquee/marquee.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -26,7 +27,7 @@ class ChatView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     LogMessage.d("chatview build", "${Get.height}");
     return Scaffold(
-        appBar: getAppBar(),
+        appBar: getAppBar(context),
         body: SafeArea(
           child: Container(
             width: Get.width,
@@ -91,7 +92,7 @@ class ChatView extends GetView<ChatController> {
                           return Container(
                             color: Colors.white,
                             child: controller.isBlocked.value
-                                ? userBlocked()
+                                ? userBlocked(context)
                                 : controller.isMemberOfGroup
                                     ? Column(
                                         mainAxisAlignment: MainAxisAlignment.end,
@@ -179,8 +180,8 @@ class ChatView extends GetView<ChatController> {
                                         ],
                                       )
                                     : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
-                                        ? featureNotAvailable()
-                                        : userNoLonger(),
+                                        ? featureNotAvailable(context)
+                                        : userNoLonger(context),
                           );
                         }),
                       ),
@@ -230,7 +231,7 @@ class ChatView extends GetView<ChatController> {
                                   width: 8,
                                 ),
                                 buttonNotSavedContact(
-                                    text: 'Add',
+                                    text: getTranslated("add", context),
                                     onClick: () {
                                       controller.saveContact();
                                     }),
@@ -238,7 +239,7 @@ class ChatView extends GetView<ChatController> {
                                   width: 8,
                                 ),
                                 buttonNotSavedContact(
-                                    text: controller.profile.isBlocked.checkNull() ? 'UnBlock' : 'Block',
+                                    text: controller.profile.isBlocked.checkNull() ? getTranslated("unblock", context) : getTranslated("block", context),
                                     onClick: () {
                                       if (controller.profile.isBlocked.checkNull()) {
                                         controller.unBlockUser();
@@ -329,10 +330,10 @@ class ChatView extends GetView<ChatController> {
                     }
                   },
                   direction: DismissDirection.endToStart,
-                  child: const Padding(
-                    padding: EdgeInsets.only(right: 15.0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
                     child: SizedBox(
-                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text('< Slide to Cancel', textAlign: TextAlign.end))),
+                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel", context), textAlign: TextAlign.end))),
                   ),
                 ),
               )
@@ -343,12 +344,12 @@ class ChatView extends GetView<ChatController> {
                   onTap: () {
                     controller.deleteRecording();
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(17.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(17.0),
                     child: Text(
-                      'Cancel',
+                      getTranslated("cancel", context),
                       textAlign: TextAlign.end,
-                      style: TextStyle(color: Colors.red),
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
                 ),
@@ -367,7 +368,7 @@ class ChatView extends GetView<ChatController> {
                   enabled: controller.isAudioRecording.value == Constants.audioRecordInitial ? true : false,
                   controller: controller.messageController,
                   focusNode: controller.focusNode,
-                  decoration: const InputDecoration(hintText: "Start Typing...", border: InputBorder.none),
+                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder", context), border: InputBorder.none),
                 ),
               )
             : const SizedBox.shrink(),
@@ -395,7 +396,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget userBlocked() {
+  Widget userBlocked(BuildContext context) {
     return Column(
       children: [
         const Divider(
@@ -408,11 +409,11 @@ class ChatView extends GetView<ChatController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                "You have blocked ",
+              Text(
+                getTranslated("youHaveBlocked", context),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
               const SizedBox(
                 width: 5,
@@ -430,9 +431,9 @@ class ChatView extends GetView<ChatController> {
                 width: 10,
               ),
               InkWell(
-                child: const Text(
-                  'UNBLOCK',
-                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                child: Text(
+                  getTranslated("unblock", context),
+                  style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                 ),
                 onTap: () => controller.unBlockUser(),
               ),
@@ -443,19 +444,19 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget userNoLonger() {
-    return const Column(
+  Widget userNoLonger(BuildContext context) {
+    return Column(
       children: [
-        Divider(
+        const Divider(
           height: 1,
           thickness: 0.29,
           color: textBlackColor,
         ),
         Padding(
-          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
-            "You can't send messages to this group because you're no longer a participant.",
-            style: TextStyle(
+            getTranslated("youCantSentMessageNoLonger", context),
+            style: const TextStyle(
               fontSize: 15,
             ),
             textAlign: TextAlign.center,
@@ -465,19 +466,19 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  Widget featureNotAvailable() {
-    return const Column(
+  Widget featureNotAvailable(BuildContext context) {
+    return Column(
       children: [
-        Divider(
+        const Divider(
           height: 1,
           thickness: 0.29,
           color: textBlackColor,
         ),
         Padding(
-          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
-            "You can't send messages to this group because Feature unavailable for your plan.",
-            style: TextStyle(
+            getTranslated("featureNotAvailable", context),
+            style: const TextStyle(
               fontSize: 15,
             ),
             textAlign: TextAlign.center,
@@ -487,7 +488,7 @@ class ChatView extends GetView<ChatController> {
     );
   }
 
-  selectedAppBar() {
+  selectedAppBar(BuildContext context) {
     return AppBar(
       // leadingWidth: 25,
       backgroundColor: Colors.white,
@@ -502,201 +503,12 @@ class ChatView extends GetView<ChatController> {
         CustomActionBarIcons(
             availableWidth: Get.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
-            actions: [
-              // controller.getOptionStatus('Reply')
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.handleReplyChatMessage(controller.selectedChatList[0]);
-                    controller.clearChatSelection(controller.selectedChatList[0]);
-                  },
-                  icon: SvgPicture.asset(replyIcon),
-                  tooltip: 'Reply',
-                ),
-                overflowWidget: const Text("Reply"),
-                showAsAction: (controller.canBeReplied.value && controller.availableFeatures.value.isClearChatAvailable.checkNull())
-                    ? ShowAsAction.always
-                    : ShowAsAction.gone,
-                keyValue: 'Reply',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.handleReplyChatMessage(controller.selectedChatList[0]);
-                  controller.clearChatSelection(controller.selectedChatList[0]);
-                },
-              ),
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.checkBusyStatusForForward();
-                  },
-                  icon: SvgPicture.asset(forwardIcon),
-                  tooltip: 'Forward',
-                ),
-                overflowWidget: const Text("Forward"),
-                showAsAction: controller.canBeForwarded.value ? ShowAsAction.always : ShowAsAction.gone,
-                keyValue: 'Forward',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.checkBusyStatusForForward();
-                },
-              ),
-              /*controller.getOptionStatus('Favourite')
-                  ?
-                  : customEmptyAction(),*/
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.favouriteMessage();
-                  },
-                  // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                  // icon: controller.selectedChatList[0].isMessageStarred
-                  icon: SvgPicture.asset(favouriteIcon),
-                  tooltip: 'Favourite',
-                ),
-                overflowWidget: const Text("Favourite"),
-                showAsAction: controller.canBeStarred.value ? ShowAsAction.always : ShowAsAction.gone,
-                keyValue: 'favourite',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.favouriteMessage();
-                },
-              ),
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.favouriteMessage();
-                  },
-                  // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
-                  // icon: controller.selectedChatList[0].isMessageStarred
-                  icon: SvgPicture.asset(unFavouriteIcon),
-                  tooltip: 'unFavourite',
-                ),
-                overflowWidget: const Text("unFavourite"),
-                showAsAction: controller.canBeUnStarred.value ? ShowAsAction.always : ShowAsAction.gone,
-                keyValue: 'favourite',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.favouriteMessage();
-                },
-              ),
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.deleteMessages();
-                  },
-                  icon: SvgPicture.asset(deleteIcon),
-                  tooltip: 'Delete',
-                ),
-                overflowWidget: const Text("Delete"),
-                showAsAction: controller.availableFeatures.value.isDeleteMessageAvailable.checkNull() ? ShowAsAction.always : ShowAsAction.gone,
-                keyValue: 'Delete',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.deleteMessages();
-                },
-              ),
-              /*controller.getOptionStatus('Report')
-                  ?
-                  : customEmptyAction(),*/
-              CustomAction(
-                visibleWidget: IconButton(
-                    onPressed: () {
-                      controller.reportChatOrUser();
-                    },
-                    icon: const Icon(Icons.report_problem_rounded)),
-                overflowWidget: const Text("Report"),
-                showAsAction: controller.canShowReport.value ? ShowAsAction.never : ShowAsAction.gone,
-                keyValue: 'Report',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.reportChatOrUser();
-                },
-              ),
-              /*controller.selectedChatList.length > 1 ||
-                      controller.selectedChatList[0].messageType !=
-                          Constants.mText
-                  ? customEmptyAction()
-                  : ,*/
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.closeKeyBoard();
-                    controller.copyTextMessages();
-                  },
-                  icon: SvgPicture.asset(
-                    copyIcon,
-                    fit: BoxFit.contain,
-                  ),
-                  tooltip: 'Copy',
-                ),
-                overflowWidget: const Text("Copy"),
-                showAsAction: controller.canBeCopied.value ? ShowAsAction.never : ShowAsAction.gone,
-                keyValue: 'Copy',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.copyTextMessages();
-                },
-              ),
-              /*controller.getOptionStatus('Message Info')
-                  ?
-                  : customEmptyAction(),*/
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    // Get.back();
-                    controller.messageInfo();
-                  },
-                  icon: SvgPicture.asset(
-                    infoIcon,
-                    fit: BoxFit.contain,
-                  ),
-                  tooltip: 'Message Info',
-                ),
-                overflowWidget: const Text("Message Info"),
-                showAsAction: controller.canShowInfo.value ? ShowAsAction.never : ShowAsAction.gone,
-                keyValue: 'MessageInfo',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.messageInfo();
-                },
-              ),
-              /*controller.getOptionStatus('Share')
-                  ?
-                  : customEmptyAction(),*/
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(shareIcon),
-                  tooltip: 'Share',
-                ),
-                overflowWidget: const Text("Share"),
-                showAsAction: controller.canBeShared.value ? ShowAsAction.never : ShowAsAction.gone,
-                keyValue: 'Share',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.share();
-                },
-              ),
-              CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(shareIcon),
-                  tooltip: 'Edit Message',
-                ),
-                overflowWidget: const Text("Edit Message"),
-                showAsAction: controller.canEditMessage.value ? ShowAsAction.never : ShowAsAction.gone,
-                keyValue: 'Edit Message',
-                onItemClick: () {
-                  controller.closeKeyBoard();
-                  controller.editMessage();
-                },
-              ),
-            ]),
+            actions: actionBarItems(context,isSelected: true)),
       ],
     );
   }
 
-  chatAppBar() {
+  chatAppBar(BuildContext context) {
     return Obx(() {
       return AppBar(
         automaticallyImplyLeading: false,
@@ -788,13 +600,214 @@ class ChatView extends GetView<ChatController> {
             },
           ),
         ),
-        actions: [
+        actions: actionBarItems(context,isSelected: false),
+      );
+    });
+  }
+
+  actionBarItems(BuildContext context, {bool isSelected = false}){
+      if(isSelected){
+        return [
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.handleReplyChatMessage(controller.selectedChatList[0]);
+              controller.clearChatSelection(controller.selectedChatList[0]);
+            },
+            icon: SvgPicture.asset(replyIcon),
+            tooltip: 'Reply',
+          ),
+          overflowWidget: Text(getTranslated("reply", context)),
+          showAsAction: (controller.canBeReplied.value &&
+              controller.availableFeatures.value.isClearChatAvailable
+                  .checkNull())
+              ? ShowAsAction.always
+              : ShowAsAction.gone,
+          keyValue: 'Reply',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.handleReplyChatMessage(controller.selectedChatList[0]);
+            controller.clearChatSelection(controller.selectedChatList[0]);
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.checkBusyStatusForForward();
+            },
+            icon: SvgPicture.asset(forwardIcon),
+            tooltip: 'Forward',
+          ),
+          overflowWidget: Text(getTranslated("forward", context)),
+          showAsAction: controller.canBeForwarded.value
+              ? ShowAsAction.always
+              : ShowAsAction.gone,
+          keyValue: 'Forward',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.checkBusyStatusForForward();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.favouriteMessage();
+            },
+            // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+            // icon: controller.selectedChatList[0].isMessageStarred
+            icon: SvgPicture.asset(favouriteIcon),
+            tooltip: 'Favourite',
+          ),
+          overflowWidget: Text(getTranslated("favourite", context)),
+          showAsAction: controller.canBeStarred.value
+              ? ShowAsAction.always
+              : ShowAsAction.gone,
+          keyValue: 'favourite',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.favouriteMessage();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.favouriteMessage();
+            },
+            // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
+            // icon: controller.selectedChatList[0].isMessageStarred
+            icon: SvgPicture.asset(unFavouriteIcon),
+            tooltip: 'unFavourite',
+          ),
+          overflowWidget: Text(getTranslated("unFavourite", context)),
+          showAsAction: controller.canBeUnStarred.value
+              ? ShowAsAction.always
+              : ShowAsAction.gone,
+          keyValue: 'favourite',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.favouriteMessage();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.deleteMessages();
+            },
+            icon: SvgPicture.asset(deleteIcon),
+            tooltip: 'Delete',
+          ),
+          overflowWidget: Text(getTranslated("delete", context)),
+          showAsAction: controller.availableFeatures.value
+              .isDeleteMessageAvailable.checkNull()
+              ? ShowAsAction.always
+              : ShowAsAction.gone,
+          keyValue: 'Delete',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.deleteMessages();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+              onPressed: () {
+                controller.reportChatOrUser();
+              },
+              icon: const Icon(Icons.report_problem_rounded)),
+          overflowWidget: Text(getTranslated("report", context)),
+          showAsAction: controller.canShowReport.value
+              ? ShowAsAction.never
+              : ShowAsAction.gone,
+          keyValue: 'Report',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.reportChatOrUser();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              controller.closeKeyBoard();
+              controller.copyTextMessages();
+            },
+            icon: SvgPicture.asset(
+              copyIcon,
+              fit: BoxFit.contain,
+            ),
+            tooltip: 'Copy',
+          ),
+          overflowWidget: Text(getTranslated("copy", context)),
+          showAsAction: controller.canBeCopied.value
+              ? ShowAsAction.never
+              : ShowAsAction.gone,
+          keyValue: 'Copy',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.copyTextMessages();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {
+              // Get.back();
+              controller.messageInfo();
+            },
+            icon: SvgPicture.asset(
+              infoIcon,
+              fit: BoxFit.contain,
+            ),
+            tooltip: 'Message Info',
+          ),
+          overflowWidget: Text(getTranslated("messageInfo", context)),
+          showAsAction: controller.canShowInfo.value
+              ? ShowAsAction.never
+              : ShowAsAction.gone,
+          keyValue: 'MessageInfo',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.messageInfo();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset(shareIcon),
+            tooltip: 'Share',
+          ),
+          overflowWidget: Text(getTranslated("share", context)),
+          showAsAction: controller.canBeShared.value
+              ? ShowAsAction.never
+              : ShowAsAction.gone,
+          keyValue: 'Share',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.share();
+          },
+        ),
+        CustomAction(
+          visibleWidget: IconButton(
+            onPressed: () {},
+            icon: SvgPicture.asset(shareIcon),
+            tooltip: 'Edit Message',
+          ),
+          overflowWidget: Text(getTranslated("editMessage", context)),
+          showAsAction: controller.canEditMessage.value
+              ? ShowAsAction.never
+              : ShowAsAction.gone,
+          keyValue: 'Edit Message',
+          onItemClick: () {
+            controller.closeKeyBoard();
+            controller.editMessage();
+          },
+        ),
+    ];
+      }else{
+        return [
           CustomActionBarIcons(
             availableWidth: Get.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(
-                overflowWidget: const Text("Clear Chat"),
+                overflowWidget: Text(getTranslated("clearChat", context)),
                 showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull() ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
@@ -810,7 +823,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
-                overflowWidget: const Text("Report"),
+                overflowWidget: Text(getTranslated("report", context)),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Report',
                 onItemClick: () {
@@ -820,43 +833,43 @@ class ChatView extends GetView<ChatController> {
               ),
               controller.isBlocked.value
                   ? CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          // Get.back();
-                          controller.unBlockUser();
-                        },
-                        icon: const Icon(Icons.block),
-                      ),
-                      overflowWidget: const Text("Unblock"),
-                      showAsAction: ShowAsAction.never,
-                      keyValue: 'Unblock',
-                      onItemClick: () {
-                        debugPrint('onItemClick unblock');
-                        controller.unBlockUser();
-                      },
-                    )
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    // Get.back();
+                    controller.unBlockUser();
+                  },
+                  icon: const Icon(Icons.block),
+                ),
+                overflowWidget: Text(getTranslated("unBlock", context)),
+                showAsAction: ShowAsAction.never,
+                keyValue: 'Unblock',
+                onItemClick: () {
+                  debugPrint('onItemClick unblock');
+                  controller.unBlockUser();
+                },
+              )
                   : CustomAction(
-                      visibleWidget: IconButton(
-                        onPressed: () {
-                          // Get.back();
-                          controller.blockUser();
-                        },
-                        icon: const Icon(Icons.block),
-                      ),
-                      overflowWidget: const Text("Block"),
-                      showAsAction: controller.profile.isGroupProfile ?? false ? ShowAsAction.gone : ShowAsAction.never,
-                      keyValue: 'Block',
-                      onItemClick: () {
-                        controller.closeKeyBoard();
-                        controller.blockUser();
-                      },
-                    ),
+                visibleWidget: IconButton(
+                  onPressed: () {
+                    // Get.back();
+                    controller.blockUser();
+                  },
+                  icon: const Icon(Icons.block),
+                ),
+                overflowWidget: Text(getTranslated("block", context)),
+                showAsAction: controller.profile.isGroupProfile ?? false ? ShowAsAction.gone : ShowAsAction.never,
+                keyValue: 'Block',
+                onItemClick: () {
+                  controller.closeKeyBoard();
+                  controller.blockUser();
+                },
+              ),
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {},
                   icon: const Icon(Icons.search),
                 ),
-                overflowWidget: const Text("Search"),
+                overflowWidget: Text(getTranslated("search", context)),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Search',
                 onItemClick: () {
@@ -874,7 +887,7 @@ class ChatView extends GetView<ChatController> {
                     controller.closeKeyBoard();
                     controller.exportChat();
                   },
-                  child: const Text("Email Chat"),
+                  child: Text(getTranslated("emailChat", context)),
                 ),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'EmailChat',
@@ -888,7 +901,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: () {},
                   icon: const Icon(Icons.shortcut),
                 ),
-                overflowWidget: const Text("Add Chat Shortcut"),
+                overflowWidget: Text(getTranslated("addChatShortcut", context)),
                 showAsAction: ShowAsAction.gone,
                 keyValue: 'Shortcut',
                 onItemClick: () {
@@ -902,7 +915,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
-                overflowWidget: const Text("Video Call"),
+                overflowWidget: Text(getTranslated("videoCall", context)),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
@@ -916,7 +929,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
-                overflowWidget: const Text("Call"),
+                overflowWidget: Text(getTranslated("audioCall", context)),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {
@@ -925,28 +938,18 @@ class ChatView extends GetView<ChatController> {
               ),
             ],
           ),
-        ],
-      );
-    });
+        ];
+      }
   }
 
-  getAppBar() {
+  getAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
       child: Obx(() {
         return Container(
-          child: controller.isSelected.value ? selectedAppBar() : chatAppBar(),
+          child: controller.isSelected.value ? selectedAppBar(context) : chatAppBar(context),
         );
       }),
     );
-  }
-
-  customEmptyAction() {
-    return CustomAction(
-        visibleWidget: const SizedBox.shrink(),
-        overflowWidget: const SizedBox.shrink(),
-        showAsAction: ShowAsAction.always,
-        keyValue: 'Empty',
-        onItemClick: () {});
   }
 }

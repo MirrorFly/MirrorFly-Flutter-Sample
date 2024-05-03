@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -147,8 +148,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
             }),
             Obx(() {
               return listItem(
-                title: const Text("Mute Notification",
-                    style: TextStyle(
+                title: Text(getTranslated("muteNotification", context),
+                    style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
@@ -178,9 +179,9 @@ class ChatInfoView extends GetView<ChatInfoController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text("Email", style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(getTranslated("email", context), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -206,9 +207,9 @@ class ChatInfoView extends GetView<ChatInfoController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text("Mobile Number", style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(getTranslated("mobileNumber", context), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -234,9 +235,9 @@ class ChatInfoView extends GetView<ChatInfoController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text("Status", style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(getTranslated("status", context), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -261,8 +262,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
             ),
             listItem(
                 leading: SvgPicture.asset(imageOutline),
-                title: const Text("View All Media",
-                    style: TextStyle(
+                title: Text(getTranslated("viewAllMedia", context),
+                    style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
@@ -274,8 +275,8 @@ class ChatInfoView extends GetView<ChatInfoController> {
             ),
             listItem(
                 leading: SvgPicture.asset(reportUser),
-                title: const Text("Report",
-                    style: TextStyle(
+                title: Text(getTranslated("report", context),
+                    style: const TextStyle(
                         color: Colors.red,
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),

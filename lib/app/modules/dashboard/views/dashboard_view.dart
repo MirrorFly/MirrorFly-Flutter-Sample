@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
 import '../../../routes/route_settings.dart';
@@ -92,7 +93,7 @@ class DashboardView extends GetView<DashboardController> {
                                               onChanged: (text) => controller.onChange(text, controller.currentTab.value),
                                               controller: controller.search,
                                               autofocus: true,
-                                              decoration: const InputDecoration(hintText: "Search...", border: InputBorder.none),
+                                              decoration: InputDecoration(hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
                                             )
                                           : null,
                                   bottom: controller.isSearching.value
@@ -104,9 +105,9 @@ class DashboardView extends GetView<DashboardController> {
                                           unselectedLabelColor: appbarTextColor,
                                           tabs: [
                                               Obx(() {
-                                                return tabItem(title: "CHATS", count: controller.unreadCountString);
+                                                return tabItem(title: getTranslated('chats',context).toUpperCase(), count: controller.unreadCountString);
                                               }),
-                                              tabItem(title: "CALLS", count: controller.unreadCallCountString)
+                                              tabItem(title: getTranslated('calls',context).toUpperCase(), count: controller.unreadCallCountString)
                                             ]),
                                   actions: [
                                     CustomActionBarIcons(
@@ -123,7 +124,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(infoIcon),
                                               tooltip: 'Info',
                                             ),
-                                            overflowWidget: const Text("Info"),
+                                            overflowWidget: Text(getTranslated("info", context)),
                                             showAsAction: controller.info.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'Info',
                                             onItemClick: () {
@@ -138,7 +139,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(delete),
                                               tooltip: 'Delete',
                                             ),
-                                            overflowWidget: const Text("Delete"),
+                                            overflowWidget: Text(getTranslated("delete", context)),
                                             showAsAction: controller.availableFeatures.value.isDeleteChatAvailable.checkNull()
                                                 ? controller.delete.value
                                                     ? ShowAsAction.always
@@ -157,7 +158,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(pin),
                                               tooltip: 'Pin',
                                             ),
-                                            overflowWidget: const Text("Pin"),
+                                            overflowWidget: Text(getTranslated("pin", context)),
                                             showAsAction: controller.pin.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'Pin',
                                             onItemClick: () {
@@ -172,7 +173,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(unpin),
                                               tooltip: 'UnPin',
                                             ),
-                                            overflowWidget: const Text("UnPin"),
+                                            overflowWidget: Text(getTranslated("unPin", context)),
                                             showAsAction: controller.unpin.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'UnPin',
                                             onItemClick: () {
@@ -187,7 +188,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(mute),
                                               tooltip: 'Mute',
                                             ),
-                                            overflowWidget: const Text("Mute"),
+                                            overflowWidget: Text(getTranslated("mute", context)),
                                             showAsAction: controller.mute.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'Mute',
                                             onItemClick: () {
@@ -202,7 +203,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(unMute),
                                               tooltip: 'UnMute',
                                             ),
-                                            overflowWidget: const Text("UnMute"),
+                                            overflowWidget: Text(getTranslated("unMute", context)),
                                             showAsAction: controller.unmute.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'UnMute',
                                             onItemClick: () {
@@ -217,7 +218,7 @@ class DashboardView extends GetView<DashboardController> {
                                               icon: SvgPicture.asset(archive),
                                               tooltip: 'Archive',
                                             ),
-                                            overflowWidget: const Text("Archived"),
+                                            overflowWidget: Text(getTranslated("archived", context)),
                                             showAsAction: controller.archive.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'Archived',
                                             onItemClick: () {
@@ -226,7 +227,7 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.mark_chat_read),
-                                            overflowWidget: const Text("Mark as read"),
+                                            overflowWidget: Text(getTranslated("markAsRead", context)),
                                             showAsAction: controller.read.value ? ShowAsAction.never : ShowAsAction.gone,
                                             keyValue: 'Mark as Read',
                                             onItemClick: () {
@@ -235,7 +236,7 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.mark_chat_unread),
-                                            overflowWidget: const Text("Mark as unread"),
+                                            overflowWidget: Text(getTranslated("markAsUnread", context)),
                                             showAsAction: controller.unread.value ? ShowAsAction.never : ShowAsAction.gone,
                                             keyValue: 'Mark as unread',
                                             onItemClick: () {
@@ -255,7 +256,7 @@ class DashboardView extends GetView<DashboardController> {
                                               ),
                                               tooltip: 'Search',
                                             ),
-                                            overflowWidget: const Text("Search"),
+                                            overflowWidget: Text(getTranslated("search", context)),
                                             showAsAction: controller.availableFeatures.value.isRecentChatSearchAvailable.checkNull()
                                                 ? controller.selected.value || controller.isSearching.value
                                                     ? ShowAsAction.gone
@@ -268,7 +269,7 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: IconButton(onPressed: () => controller.onClearPressed(), icon: const Icon(Icons.close)),
-                                            overflowWidget: const Text("Clear"),
+                                            overflowWidget: Text(getTranslated("clear", context)),
                                             showAsAction: controller.clearVisible.value ? ShowAsAction.always : ShowAsAction.gone,
                                             keyValue: 'Clear',
                                             onItemClick: () {
@@ -277,7 +278,7 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.group_add),
-                                            overflowWidget: const Text("New Group     "),
+                                            overflowWidget: Text(getTranslated("newGroup", context)),
                                             showAsAction: controller.availableFeatures.value.isGroupChatAvailable.checkNull()
                                                 ? controller.selected.value || controller.isSearching.value
                                                     ? ShowAsAction.gone
@@ -290,18 +291,18 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.web),
-                                            overflowWidget: const Text("Clear call log"),
+                                            overflowWidget: Text(getTranslated("clearCallLog", context)),
                                             showAsAction:
                                                 controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
                                                     ? ShowAsAction.gone
                                                     : ShowAsAction.never,
                                             keyValue: 'Clear call log',
                                             onItemClick: () =>
-                                                controller.callLogList.isNotEmpty ? controller.clearCallLog() : toToast(Constants.noCallLog),
+                                                controller.callLogList.isNotEmpty ? controller.clearCallLog() : toToast(getTranslated("noCallLog", context)),
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.settings),
-                                            overflowWidget: const Text("Settings"),
+                                            overflowWidget: Text(getTranslated("settings", context)),
                                             showAsAction:
                                                 controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                             keyValue: 'Settings',
@@ -311,7 +312,7 @@ class DashboardView extends GetView<DashboardController> {
                                           ),
                                           CustomAction(
                                             visibleWidget: const Icon(Icons.web),
-                                            overflowWidget: const Text("Web"),
+                                            overflowWidget: Text(getTranslated("web", context)),
                                             showAsAction:
                                                 controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                             keyValue: 'Web',
@@ -394,21 +395,6 @@ class DashboardView extends GetView<DashboardController> {
           controller.gotoContacts(forCalls: true, callType: CallType.video);
         },
       );
-      /*return FloatingActionButton(
-        tooltip: "New Call",
-        heroTag: "New Call",
-        onPressed: () {
-          controller.gotoContacts();
-        },
-        backgroundColor: buttonBgColor,
-        child: SvgPicture.asset(
-          plusIcon,
-          width: 24,
-          height: 24,
-          color: Colors.white,
-          fit: BoxFit.contain,
-        ),
-      );*/
     }
     return const SizedBox.shrink();
   }
@@ -517,9 +503,9 @@ class DashboardView extends GetView<DashboardController> {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: SvgPicture.asset(archive),
                         ),
-                        title: const Text(
-                          "Archived",
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                        title: Text(
+                          getTranslated("archived", context),
+                          style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         trailing: controller.archivedCount != "0"
                             ? Text(
@@ -591,9 +577,9 @@ class DashboardView extends GetView<DashboardController> {
                                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                         child: SvgPicture.asset(archive),
                                       ),
-                                      title: const Text(
-                                        "Archived",
-                                        style: TextStyle(fontWeight: FontWeight.w500),
+                                      title: Text(
+                                        getTranslated("archived", context),
+                                        style: const TextStyle(fontWeight: FontWeight.w500),
                                       ),
                                       trailing: controller.archivedChats.isNotEmpty
                                           ? Text(
@@ -629,17 +615,17 @@ class DashboardView extends GetView<DashboardController> {
             children: [
               Visibility(
                 visible: controller.filteredRecentChatList.isNotEmpty,
-                child: searchHeader(Constants.typeSearchRecent, controller.filteredRecentChatList.length.toString(), context),
+                child: searchHeader(getTranslated("chats", context), controller.filteredRecentChatList.length.toString(), context),
               ),
               recentChatSearchListView(),
               Visibility(
                 visible: controller.chatMessages.isNotEmpty,
-                child: searchHeader(Constants.typeSearchMessage, controller.chatMessages.length.toString(), context),
+                child: searchHeader(getTranslated("message", context), controller.chatMessages.length.toString(), context),
               ),
               filteredMessageListView(),
               Visibility(
                 visible: controller.userList.isNotEmpty && !controller.searchLoading.value,
-                child: searchHeader(Constants.typeSearchContact, controller.userList.length.toString(), context),
+                child: searchHeader(getTranslated("contact", context), controller.userList.length.toString(), context),
               ),
               Visibility(
                   visible: controller.searchLoading.value,
@@ -655,10 +641,10 @@ class DashboardView extends GetView<DashboardController> {
                       controller.filteredRecentChatList.isEmpty &&
                       controller.chatMessages.isEmpty &&
                       controller.userList.isEmpty,
-                  child: const Center(
+                  child: Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(Constants.noDataFound),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(getTranslated("noDataFound", context)),
                     ),
                   ))
             ],
@@ -723,11 +709,7 @@ class DashboardView extends GetView<DashboardController> {
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
                                       text: getName(
-                                          profile) /*profile.name
-                                        .checkNull()
-                                        .isEmpty
-                                        ? profile.nickName.checkNull()
-                                        : profile.name.checkNull(),*/
+                                          profile)
                                       ),
                                   isGroup: profile.isGroupProfile.checkNull(),
                                   blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
@@ -878,7 +860,7 @@ class DashboardView extends GetView<DashboardController> {
             width: 200,
           ),
           Text(
-            Constants.noChats,
+            getTranslated("noNewMessages", context),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleMedium,
           ),
@@ -886,7 +868,7 @@ class DashboardView extends GetView<DashboardController> {
             height: 8,
           ),
           Text(
-            Constants.noChatsMessage,
+            getTranslated("noMessagesContent", context),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall,
           ),
@@ -1123,17 +1105,17 @@ class DashboardView extends GetView<DashboardController> {
                   width: 200,
                 ),
                 Text(
-                  Constants.noCallLogs,
+                  getTranslated("noCallLogsFound", context),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                const Text(
-                  Constants.noCallLogsMessage,
+                Text(
+                  getTranslated("noCallLogsContent", context),
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: callsSubText),
+                  style: const TextStyle(color: callsSubText),
                 ),
               ],
             ),

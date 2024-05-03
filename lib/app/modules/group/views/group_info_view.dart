@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -63,7 +64,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                                         fontSize: 12.0,
                                       ) //TextStyle
                                       ),
-                                  Text("${controller.groupMembers.length} members",
+                                  Text(getTranslated("membersCount", context).replaceAll("%d", "${controller.groupMembers.length}"),
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 8.0,
@@ -138,7 +139,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         if (controller.isMemberOfGroup) {
                           bottomSheetView(context);
                         } else {
-                          toToast("You're no longer a participant in this group");
+                          toToast(getTranslated("youAreNoLonger", context));
                         }
                       },
                     ),
@@ -153,7 +154,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
             children: <Widget>[
               Obx(() {
                 return ListItem(
-                    title: const Text("Mute Notification", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                    title: Text(getTranslated("muteNotification", context), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
                     trailing: FlutterSwitch(
                       width: 40.0,
                       height: 20.0,
@@ -177,7 +178,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     visible: controller.isAdmin,
                     child: ListItem(
                         leading: SvgPicture.asset(addUser),
-                        title: const Text("Add Participants", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                        title: Text(getTranslated("addParticipants", context), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
                         onTap: () => controller.gotoAddParticipants()),
                   )),
               Obx(() {
@@ -194,7 +195,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         status: item.status.checkNull(),
                         onTap: () {
                           if (item.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
-                            showOptions(item);
+                            showOptions(item,context);
                           }
                         },
                         isGroup: item.isGroupProfile.checkNull(),
@@ -205,13 +206,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
               }),
               ListItem(
                 leading: SvgPicture.asset(imageOutline),
-                title: const Text("View All Media", style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                title: Text(getTranslated("viewAllMedia", context), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
                 trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () => controller.gotoViewAllMedia(),
               ),
               ListItem(
                 leading: SvgPicture.asset(reportGroup),
-                title: const Text("Report Group", style: TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
+                title: Text(getTranslated("reportGroup", context), style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
                 onTap: () => controller.reportGroup(),
               ),
               Obx(() {
@@ -226,7 +227,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       leaveGroup,
                       width: 18,
                     ),
-                    title: Text(!controller.isMemberOfGroup ? "Delete Group" : "Leave Group",
+                    title: Text(!controller.isMemberOfGroup ? getTranslated("deleteGroup", context) : getTranslated("leaveGroup", context),
                         style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
                     onTap: () => controller.exitOrDeleteGroup(),
                   ),
@@ -239,13 +240,13 @@ class GroupInfoView extends GetView<GroupInfoController> {
     );
   }
 
-  showOptions(ProfileDetails item) {
+  showOptions(ProfileDetails item,BuildContext context) {
     Helper.showButtonAlert(
       actions: [
         ListTile(
-            title: const Text(
-              "Start Chat",
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+            title: Text(
+              getTranslated("startChat", context),
+              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
               // Get.toNamed(Routes.CHAT, arguments: item);
@@ -256,9 +257,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
             },
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         ListTile(
-            title: const Text(
-              "View Info",
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+            title: Text(
+              getTranslated("viewInfo", context),
+              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
               Get.back();
@@ -269,9 +270,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
           return Visibility(
               visible: controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull(),
               child: ListTile(
-                  title: const Text(
-                    "Remove from Group",
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                  title: Text(
+                    getTranslated("removeFromGroup", context),
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
                     Get.back();
@@ -279,18 +280,18 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       Helper.showFeatureUnavailable();
                       return;
                     }
-                    Helper.showAlert(message: "Are you sure you want to remove ${getName(item)}?", actions: [
+                    Helper.showAlert(message: getTranslated("areYouSureToRemove", context).replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
                             Get.back();
                           },
-                          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("no", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.removeUser(item.jid.checkNull());
                           },
-                          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("yes", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));
@@ -299,9 +300,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
           return Visibility(
               visible: (controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull() && !item.isGroupAdmin!),
               child: ListTile(
-                  title: const Text(
-                    "Make Admin",
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                  title: Text(
+                   getTranslated("makeAdmin", context),
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
                     Get.back();
@@ -309,18 +310,18 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       Helper.showFeatureUnavailable();
                       return;
                     }
-                    Helper.showAlert(message: "Are you sure you want to make ${getName(item)} the admin?", actions: [
+                    Helper.showAlert(message:getTranslated("areYouSureMakeAdmin", context).replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
                             Get.back();
                           },
-                          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("no", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
                             Get.back();
                             controller.makeAdmin(item.jid.checkNull());
                           },
-                          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("yes", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));
@@ -348,7 +349,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text("Options"),
+                      Text(getTranslated("options", context)),
                       const SizedBox(
                         height: 10,
                       ),
@@ -359,9 +360,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           Get.back();
                           controller.camera();
                         },
-                        title: const Text(
-                          "Take Photo",
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                        title: Text(
+                          getTranslated("takePhoto", context),
+                          style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                       ListTile(
@@ -371,9 +372,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                           Get.back();
                           controller.imagePicker(context);
                         },
-                        title: const Text(
-                          "Choose from Gallery",
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                        title: Text(
+                          getTranslated("chooseFromGallery", context),
+                          style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                       controller.profile.image.checkNull().isNotEmpty
@@ -384,9 +385,9 @@ class GroupInfoView extends GetView<GroupInfoController> {
                                 Get.back();
                                 controller.removeProfileImage();
                               },
-                              title: const Text(
-                                "Remove Photo",
-                                style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                              title: Text(
+                                getTranslated("removePhoto", context),
+                                style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             )
                           : const SizedBox(),

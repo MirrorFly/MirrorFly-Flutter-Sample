@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
@@ -98,6 +101,9 @@ class MyApp extends StatefulWidget{
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    ReplyHashMap.init();
+    NotificationBuilder.cancelNotifications();
+    Get.put<MainController>(MainController());
     super.initState();
     Future.delayed(const Duration(seconds: 1)).then((value) {
       PushNotifications.setupInteractedMessage();
@@ -110,11 +116,14 @@ class _MyAppState extends State<MyApp> {
       title: "MirrorFly",
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
-      // onInit: () {
-      //   ReplyHashMap.init();
-      //   NotificationBuilder.cancelNotifications();
-      //   Get.put<MainController>(MainController());
-      // },
+      locale: AppLocalizations.defaultLocale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       onGenerateRoute: mirrorFlyRoute,
       // getPages: AppPages.routes,

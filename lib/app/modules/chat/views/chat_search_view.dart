@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
@@ -30,13 +31,13 @@ class ChatSearchView extends GetView<ChatController> {
             controller: controller.searchedText,
             focusNode: controller.searchfocusNode,
             autofocus: true,
-            decoration: const InputDecoration(
-                hintText: "Search...", border: InputBorder.none),
+            decoration: InputDecoration(
+                hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
             onSubmitted: (str) {
               if (controller.filteredPosition.isNotEmpty) {
                 controller.scrollUp();
               } else {
-                toToast("No Results Found");
+                toToast(getTranslated("noResultsFound", context));
               }
             },
           ),

@@ -638,7 +638,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           showLoadingNext(false);
           showLoadingPrevious(false);
           if (response.isSuccess && response.hasData) {
-            LogMessage.d("loadMessages", response.data);
+            // LogMessage.d("loadMessages", response.data);
             List<ChatMessageModel> chatMessageModel = chatMessageModelFromJson(response.data);
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();

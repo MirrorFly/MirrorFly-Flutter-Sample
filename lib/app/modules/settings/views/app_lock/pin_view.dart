@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
 import 'app_lock_controller.dart';
@@ -33,7 +34,7 @@ class PinView extends GetView<AppLockController> {
                     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
                     child: Image.asset(icLogo),
                   ),
-                  const Text("Enter Your PIN",style: TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
+                  Text(getTranslated("enterYourPIN", context),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
                   Obx(() {
                     return Row(
                       mainAxisSize: MainAxisSize.min,
@@ -67,11 +68,11 @@ class PinView extends GetView<AppLockController> {
                     onTap: (){
                       controller.forgetPin();
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "Forgot PIN ?",
-                        style: TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
+                        getTranslated("forgotPIN", context),
+                        style: const TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
                       ),
                     ),
                   )

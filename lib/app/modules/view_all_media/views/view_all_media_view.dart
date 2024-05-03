@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -34,58 +35,64 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                 Center(
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: const Text(
-                        "Media",
-                        style: TextStyle(
+                      child: Text(
+                        getTranslated("media", context),
+                        style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 16),
                       )),
                 ),
                 Center(
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: const Text("Docs",
-                          style: TextStyle(
+                      child: Text(getTranslated("docs", context),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16))),
                 ),
                 Center(
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: const Text("Links",
-                          style: TextStyle(
+                      child: Text(getTranslated("links", context),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16))),
                 ),
               ]),
         ),
-        body: TabBarView(children: [mediaView(), docsView(), linksView()]),
+        body: TabBarView(children: [mediaView(context), docsView(context), linksView(context)]),
       ),
     );
   }
 
-  Widget mediaView() {
+  Widget mediaView(BuildContext context) {
     return SafeArea(
       child: Obx(() {
         return controller.medialistdata.isNotEmpty
             ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.medialistdata.length,
-                      itemBuilder: (context, index) {
-                        var header = controller.medialistdata.keys.toList()[index];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [headerItem(header), gridView(header)],
-                        );
-                      }),
-                  const SizedBox(height: 10,),
-                  Text("${controller.imageCount} Photos, ${controller.videoCount} Videos, ${controller.audioCount} Audios"),
-                ],
-              ),
-            )
-            : const Center(child: Text("No Media Found...!!!"));
+                child: Column(
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.medialistdata.length,
+                        itemBuilder: (context, index) {
+                          var header =
+                              controller.medialistdata.keys.toList()[index];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [headerItem(header), gridView(header)],
+                          );
+                        }),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(getTranslated("mediaCount", context)
+                        .replaceFirst("%p", "${controller.imageCount}")
+                        .replaceFirst("%v", "${controller.videoCount}")
+                        .replaceFirst("%a", "${controller.audioCount}")),
+                  ],
+                ),
+              )
+            : Center(child: Text(getTranslated("noMediaFound", context)));
       }),
     );
   }
@@ -131,7 +138,8 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                   ? videoItem(item)
                   : item.isImageMessage()
                       ? Image.file(
-                          File(item.mediaChatMessage!.mediaLocalStoragePath.value),
+                          File(item
+                              .mediaChatMessage!.mediaLocalStoragePath.value),
                           fit: BoxFit.cover,
                         )
                       : const SizedBox()),
@@ -139,7 +147,8 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
         if (item.isImageMessage() || item.isVideoMessage()) {
           controller.openImage(gridIndex);
         } else if (item.isAudioMessage()) {
-          controller.openFile(item.mediaChatMessage!.mediaLocalStoragePath.value);
+          controller
+              .openFile(item.mediaChatMessage!.mediaLocalStoragePath.value);
         }
       },
     );
@@ -164,23 +173,22 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     );
   }
 
-  Widget docsView() {
+  Widget docsView(BuildContext context) {
     return SafeArea(
       child: Obx(() {
         return controller.docslistdata.isNotEmpty
-            ? listView(controller.docslistdata, true)
-            : const Center(child: Text("No Docs Found...!!!"));
+            ? listView(controller.docslistdata, true,context)
+            : Center(child: Text(getTranslated("noDocsFound", context)));
       }),
     );
   }
 
-
-  Widget listView(Map<String, List<MessageItem>> list, bool doc) {
+  Widget listView(Map<String, List<MessageItem>> list, bool doc,BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
           ListView.builder(
-            shrinkWrap: true,
+              shrinkWrap: true,
               itemCount: list.length,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
@@ -207,14 +215,19 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                                   //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
                                   date: getDateFromTimestamp(
                                       item.messageSentTime.toInt(), "d/MM/yy"),
-                                  path: item.mediaChatMessage!.mediaLocalStoragePath.value)
+                                  path: item.mediaChatMessage!
+                                      .mediaLocalStoragePath.value)
                               : linkTile(list[header]![listIndex]);
                         }),
                   ],
                 );
               }),
-          const SizedBox(height: 10,),
-          doc ? Text("${controller.documentCount} Documents") : Text("${controller.linkCount} Links")
+          const SizedBox(
+            height: 10,
+          ),
+          doc
+              ? Text(getTranslated("docCount", context).replaceFirst("%d", "${controller.documentCount}"))
+              : Text(getTranslated("linkCount", context).replaceFirst("%d", "${controller.linkCount}"))
         ],
       ),
     );
@@ -283,8 +296,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     return Column(
       children: [
         Container(
-          margin:
-              const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
           decoration: const BoxDecoration(
               color: Color(0xffE2E8F7),
               borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -292,7 +304,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                onTap: (){
+                onTap: () {
                   launchWeb(item.linkMap!["url"]);
                 },
                 child: Container(
@@ -348,7 +360,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                 ),
               ),
               InkWell(
-                onTap: (){
+                onTap: () {
                   controller.navigateMessage(item.chatMessage);
                 },
                 child: Padding(
@@ -387,12 +399,12 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
     );
   }
 
-  Widget linksView() {
+  Widget linksView(BuildContext context) {
     return SafeArea(
       child: Obx(() {
         return controller.linklistdata.isNotEmpty
-            ? listView(controller.linklistdata, false)
-            : const Center(child: Text("No Links Found...!!!"));
+            ? listView(controller.linklistdata, false,context)
+            : Center(child: Text(getTranslated("noLinksFound", context)));
       }),
     );
   }

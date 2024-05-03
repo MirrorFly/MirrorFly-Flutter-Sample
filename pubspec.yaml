@@ -11,12 +11,14 @@ dependencies:
   get: 4.6.6
   flutter: 
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   shared_preferences: ^2.2.2
   flutter_svg: ^2.0.10+1
   cached_network_image: ^3.3.1
   file_picker: ^5.2.0+1 #file picker
   fluttertoast: ^8.0.7 #toast
-  intl: ^0.17.0 #datetime
+  intl: ^0.18.1 #datetime
   package_info_plus: ^4.0.2 #package info
   image_picker: ^0.8.6
   permission_handler: ^11.0.1
@@ -89,6 +91,7 @@ flutter:
     - assets/logos/
     - assets/calls/
     - assets/animation/
+    - assets/locales/
     - pubspec.yaml
 
   fonts:

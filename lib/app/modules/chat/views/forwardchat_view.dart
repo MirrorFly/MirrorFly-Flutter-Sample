@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -32,10 +33,10 @@ class ForwardChatView extends GetView<ForwardChatController> {
                   style: const TextStyle(fontSize: 16),
                   controller: controller.searchQuery,
                   autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: "Search...", border: InputBorder.none),
+                  decoration: InputDecoration(
+                      hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
                 )
-              : const Text("Forward to..."),
+              : Text(getTranslated("forwardTo", context)),
           actions: [
             Visibility(
               visible: controller.isSearchVisible,
@@ -57,14 +58,14 @@ class ForwardChatView extends GetView<ForwardChatController> {
                       children: [
                         Visibility(
                           visible: !controller.searchLoading.value && controller.recentChats.isEmpty && controller.groupList.isEmpty && controller.userList.isEmpty,
-                          child: const Center(child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0),
-                            child: Text('No Results found'),
+                          child: Center(child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: Text(getTranslated("noResultsFound", context)),
                           ),),
                         ),
                         Visibility(
                           visible: controller.recentChats.isNotEmpty,
-                          child: searchHeader("Recent Chat",
+                          child: searchHeader(getTranslated("recentChat", context),
                               "", context),
                         ),
                         ListView.builder(
@@ -93,7 +94,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
-                          child: searchHeader("Groups","", context),
+                          child: searchHeader(getTranslated("groups", context),"", context),
                         ),
                         ListView.builder(
                             itemCount: controller.groupList.length,
@@ -139,7 +140,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: searchHeader("Contacts", "", context),
+                          child: searchHeader(getTranslated("contacts", context), "", context),
                         ),
                         Visibility(
                           visible: controller.searchLoading.value || controller.contactLoading.value,
@@ -201,35 +202,22 @@ class ForwardChatView extends GetView<ForwardChatController> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Expanded(child: controller.selectedNames.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
+                    Expanded(child: controller.selectedNames.isEmpty ? Text(getTranslated("noUsersSelected", context),style: const TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
                     Visibility(
                       visible: controller.selectedNames.isNotEmpty,
                       child: InkWell(
                         onTap: () {
                           controller.forwardMessages();
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("next", context).toUpperCase(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
                         ),
                       ),
                     )
                   ],
                 ),
               ),
-              /*ListTile(
-                leading:
-                    Flexible(child: Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: Text(controller.selectedNames.value.join(",")),
-                    )),
-                trailing: InkWell(
-                  onTap: () {
-                    controller.forwardMessages();
-                  },
-                  child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
-                ),
-              )*/
             ],
           ),
         ),

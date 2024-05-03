@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -36,9 +37,9 @@ class ProfileView extends GetView<ProfileController> {
       },
       child: Scaffold(
           appBar: AppBar(
-              title: const Text(
-                'Profile',
-                style: TextStyle(color: appbarTextColor),
+              title: Text(
+                getTranslated("profile", context),
+                style: const TextStyle(color: appbarTextColor),
               ),
               centerTitle: true,
               automaticallyImplyLeading: Get.previousRoute != Routes.login //controller.from.value == Routes.login
@@ -150,9 +151,9 @@ class ProfileView extends GetView<ProfileController> {
                             textAlign: controller.profileName.text.isNotEmpty ? TextAlign.center : TextAlign.start,
                             maxLength: 30,
                             controller: controller.profileName,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Username',
+                              hintText: getTranslated("userName", context),
                               counterText: '',
                             ),
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -163,9 +164,8 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      'Email',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    Text(getTranslated("email", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     TextField(
                       cursorColor: buttonBgColor,
@@ -176,7 +176,7 @@ class ProfileView extends GetView<ProfileController> {
                       enabled: controller.emailEditAccess,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Enter Email Id',
+                        hintText: getTranslated("enterEmailID", context),
                         icon: SvgPicture.asset('assets/logos/email.svg'),
                       ),
                       style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
@@ -185,9 +185,8 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      'Mobile Number',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                Text(getTranslated("mobileNumber", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     Obx(() {
                       return TextField(
@@ -197,7 +196,7 @@ class ProfileView extends GetView<ProfileController> {
                         enabled: controller.mobileEditAccess.value,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Enter Mobile Number',
+                          hintText: getTranslated("enterMobileNumber", context),
                           icon: SvgPicture.asset('assets/logos/phone.svg'),
                         ),
                         style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
@@ -207,9 +206,9 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                    Text(
+                      getTranslated("status", context),
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     Obx(() => ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -251,10 +250,10 @@ class ProfileView extends GetView<ProfileController> {
                                   : null,
                           child: Text(
                             controller.from == Routes.login
-                                ? 'Save'
+                                ? getTranslated("save", context)
                                 : controller.changed.value
-                                    ? 'Update & Continue'
-                                    : 'Save',
+                                    ? getTranslated("updateAndContinue", context)
+                                    : getTranslated("save", context),
                             style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
@@ -288,7 +287,7 @@ class ProfileView extends GetView<ProfileController> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text("Options"),
+                      Text(getTranslated("options", context)),
                       const SizedBox(
                         height: 10,
                       ),
@@ -299,9 +298,9 @@ class ProfileView extends GetView<ProfileController> {
                           Get.back();
                           controller.camera();
                         },
-                        title: const Text(
-                          "Take Photo",
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                        title: Text(
+                          getTranslated("takePhoto", context),
+                          style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                       ListTile(
@@ -311,9 +310,9 @@ class ProfileView extends GetView<ProfileController> {
                           Get.back();
                           controller.imagePicker(context);
                         },
-                        title: const Text(
-                          "Choose from Gallery",
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                        title: Text(
+                          getTranslated("chooseFromGallery", context),
+                          style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
                       controller.userImgUrl.value.isNotEmpty || controller.imagePath.value.isNotEmpty
@@ -322,23 +321,23 @@ class ProfileView extends GetView<ProfileController> {
                               contentPadding: EdgeInsets.zero,
                               onTap: () {
                                 Get.back();
-                                Helper.showAlert(message: "Are you sure you want to remove the photo?", actions: [
+                                Helper.showAlert(message: getTranslated("areYouSureToRemovePhoto", context), actions: [
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                       },
-                                      child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+                                      child: Text(getTranslated("cancel", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                         controller.removeProfileImage();
                                       },
-                                      child: const Text("REMOVE",style: TextStyle(color: buttonBgColor)))
+                                      child: Text(getTranslated("remove", context).toUpperCase(),style: const TextStyle(color: buttonBgColor)))
                                 ]);
                               },
-                              title: const Text(
-                                "Remove Photo",
-                                style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+                              title: Text(
+                                getTranslated("removePhoto", context),
+                                style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             )
                           : const SizedBox(),

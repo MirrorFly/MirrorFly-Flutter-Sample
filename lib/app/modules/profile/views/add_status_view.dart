@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
@@ -14,7 +15,7 @@ class AddStatusView extends GetView<StatusListController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Add New Status'),
+        title: Text(getTranslated("addNewStatus", context)),
       ),
       body: PopScope(
         canPop: false,
@@ -104,9 +105,9 @@ class AddStatusView extends GetView<StatusListController> {
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "CANCEL",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  child: Text(
+                    getTranslated("cancel", context).toUpperCase(),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                 ),
               ),
@@ -124,9 +125,9 @@ class AddStatusView extends GetView<StatusListController> {
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  child: Text(
+                    getTranslated("ok", context).toUpperCase(),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                 ),
               ),

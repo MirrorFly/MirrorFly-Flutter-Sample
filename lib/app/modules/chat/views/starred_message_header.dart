@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -89,8 +90,8 @@ class StarredMessageHeader extends StatelessWidget {
                               color: Colors.black,
                               size: 14,
                             )),
-                        const Text("You",
-                            style: TextStyle(
+                        Text(getTranslated("you", context),
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(
                           width: 10,
@@ -146,8 +147,8 @@ class StarredMessageHeader extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )
-                            : const Text("You",
-                                style: TextStyle(
+                            : Text(getTranslated("you", context),
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(
                           width: 10,

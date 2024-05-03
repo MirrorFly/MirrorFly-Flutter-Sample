@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -50,17 +51,17 @@ class ContactListView extends GetView<ContactController> {
                   style: const TextStyle(fontSize: 16),
                   controller: controller.searchQuery,
                   autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: "Search...", border: InputBorder.none),
+                  decoration: InputDecoration(
+                      hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
                 )
                     : controller.isForward.value
-                    ? const Text("Forward to...")
+                    ? Text(getTranslated("forwardTo", context))
                     : controller.isCreateGroup.value
-                    ? const Text(
-                  "Add Participants",
+                    ? Text(
+                  getTranslated("addParticipants", context),
                   overflow: TextOverflow.fade,
                 )
-                    : const Text('Contacts'),
+                    : Text(getTranslated("contacts", context)),
                 actions: [
                   Visibility(
                     visible: controller.progressSpinner.value,
@@ -89,7 +90,7 @@ class ContactListView extends GetView<ContactController> {
                     child: TextButton(
                         onPressed: () => controller.backToCreateGroup(),
                         child: Text(
-                          controller.groupJid.value.isNotEmpty ? "NEXT" : "CREATE",
+                          (controller.groupJid.value.isNotEmpty ? getTranslated("next", context) : getTranslated("create", context)).toUpperCase(),
                           style: const TextStyle(color: Colors.black),
                         )),
                   ),
@@ -118,7 +119,7 @@ class ContactListView extends GetView<ContactController> {
                           visibleWidget: IconButton(
                               onPressed: () {}, icon: const Icon(Icons.refresh)),
                           overflowWidget: InkWell(
-                            child: const Text("Refresh"),
+                            child: Text(getTranslated("refresh", context)),
                             onTap: () {
                               Get.back();
                               controller.refreshContacts(true);
@@ -159,9 +160,9 @@ class ContactListView extends GetView<ContactController> {
                       children: [
                         Visibility(
                             visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
-                            child: const Center(child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20.0),
-                              child: Text("No Contacts found"),
+                            child: Center(child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20.0),
+                              child: Text(getTranslated("noContactsFound", context)),
                             ),)),
                         controller.isPageLoading.value
                             ? const Center(
@@ -225,7 +226,7 @@ class ContactListView extends GetView<ContactController> {
                                                 : videoCallSmallIcon,
                                           ),
                                           const SizedBox(width: 8,),
-                                          Text("CALL NOW ( ${(controller.groupCallMembersCount.value -1)} )",
+                                          Text(getTranslated("callNowWithCount", context).replaceAll("%d", (controller.groupCallMembersCount.value -1).toString()),
                                             style: const TextStyle(
                                                 color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
                                                 fontFamily: 'sf_ui'),)
