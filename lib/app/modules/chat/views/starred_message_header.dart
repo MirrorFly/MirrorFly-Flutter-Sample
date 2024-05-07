@@ -1,28 +1,13 @@
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';
 import '../../starred_messages/controllers/starred_messages_controller.dart';
-
-/*
-class StarredMessageHeader extends StatefulWidget {
-  const StarredMessageHeader(
-      {Key? key, required this.chatList, required this.isTapEnabled})
-      : super(key: key);
-
-  final ChatMessageModel chatList;
-  final bool isTapEnabled;
-
-  @override
-  State<StarredMessageHeader> createState() => _StarredMessageHeaderState();
-}
-*/
 
 class StarredMessageHeader extends StatelessWidget {
   StarredMessageHeader(
@@ -30,8 +15,7 @@ class StarredMessageHeader extends StatelessWidget {
       : super(key: key);
   final ChatMessageModel chatList;
   final bool isTapEnabled;
-  final controller = Get.find<StarredMessagesController>();
-
+  final StarredMessagesController controller = StarredMessagesController().get();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,7 +43,7 @@ class StarredMessageHeader extends StatelessWidget {
               return Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getChatTime(chatList.messageSentTime.toInt()),
+                  getChatTime(chatList.messageSentTime.toInt(), context),
                   const SizedBox(
                     width: 10,
                   ),
@@ -156,7 +140,7 @@ class StarredMessageHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  getChatTime(chatList.messageSentTime.toInt()),
+                  getChatTime(chatList.messageSentTime.toInt(), context),
                 ],
               );
             }
@@ -166,9 +150,9 @@ class StarredMessageHeader extends StatelessWidget {
         });
   }
 
-  getChatTime(int messageSentTime) {
+  getChatTime(int messageSentTime, BuildContext context) {
     return Text(
-      controller.getChatTime(Get.context, messageSentTime),
+      controller.getChatTime(context, messageSentTime),
       style: const TextStyle(fontSize: 12, color: Color(0xff959595)),
     );
   }

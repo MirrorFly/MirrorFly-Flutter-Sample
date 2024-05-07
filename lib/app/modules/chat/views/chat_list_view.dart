@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -152,10 +152,10 @@ class _ChatListViewState extends State<ChatListView> {
                                                   if (widget.chatController.isAudioRecording.value == Constants.audioRecording) {
                                                     widget.chatController.stopRecording();
                                                   }
-                                                  widget.chatController.playAudio(widget.chatList[index]);
+                                                  // widget.chatController.playAudio(widget.chatList[index]);
                                                 },
                                                 onSeekbarChange: (double value) {
-                                                  widget.chatController.onSeekbarChange(value, widget.chatList[index]);
+                                                  // widget.chatController.onSeekbarChange(value, widget.chatList[index]);
                                                 },
                                                 isSelected: widget.chatController.isSelected.value)
                                           ],

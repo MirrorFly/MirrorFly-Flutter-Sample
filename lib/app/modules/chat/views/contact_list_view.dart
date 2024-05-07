@@ -3,14 +3,49 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/widgets.dart';
 
-class ContactListView extends GetView<ContactController> {
-  const ContactListView({Key? key}) : super(key: key);
+class ContactListView extends StatefulWidget {
+  const ContactListView(
+      {super.key,
+        this.messageIds,
+        this.group = false,
+        this.groupJid = '',
+        this.enableAppBar = true,
+        this.showSettings = false});
+  final List<String>? messageIds;
+  final bool group;
+  final String groupJid;
+  final bool enableAppBar;
+  final bool showSettings;
+
+  @override
+  State<ContactListView> createState() => _ContactListViewState();
+}
+
+class _ContactListViewState extends State<ContactListView> {
+  final ContactController controller = ContactController().get();
+
+  @override
+  void initState() {
+    controller.init(context,
+        messageIds: widget.messageIds,
+        group: widget.group,
+        groupjid: widget.groupJid);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ContactController>();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +59,7 @@ class ContactListView extends GetView<ContactController> {
           controller.backFromSearch();
           return;
         }
-        Get.back();
+        Navigator.pop(context);
       },
       child: Obx(
             () =>
@@ -36,10 +71,10 @@ class ContactListView extends GetView<ContactController> {
                       : const Icon(Icons.arrow_back),
                   onPressed: () {
                     controller.isForward.value
-                        ? Get.back()
+                        ? Navigator.pop(context)
                         : controller.search
                         ? controller.backFromSearch()
-                        : Get.back();
+                        : Navigator.pop(context);
                   },
                 ),
                 title: controller.search
@@ -101,20 +136,6 @@ class ContactListView extends GetView<ContactController> {
                           2, // half the screen width
                       actionWidth: 48,
                       actions: [
-                        //mani said to comment this bcz this option seems not necessary for this screen
-                        // CustomAction(
-                        //   visibleWidget: IconButton(
-                        //       onPressed: () {}, icon: const Icon(Icons.settings)),
-                        //   overflowWidget: InkWell(
-                        //     child: const Text("Settings"),
-                        //     onTap: () => Get.toNamed(Routes.settings),
-                        //   ),
-                        //   showAsAction: ShowAsAction.never,
-                        //   keyValue: 'Settings',
-                        //   onItemClick: () {
-                        //     Get.toNamed(Routes.settings);
-                        //   },
-                        // ),
                         CustomAction(
                           visibleWidget: IconButton(
                               onPressed: () {}, icon: const Icon(Icons.refresh)),
@@ -169,7 +190,7 @@ class ContactListView extends GetView<ContactController> {
                             child: Padding(
                               padding: EdgeInsets.all(16.0),
                               child: CircularProgressIndicator(),
-                            )) : const SizedBox.shrink(),
+                            )) : const Offstage(),
                             Column(
                           children: [
                             controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
@@ -198,7 +219,7 @@ class ContactListView extends GetView<ContactController> {
                                           controller.onListItemPressed(item);
                                         },);
                                     } else {
-                                      return const SizedBox();
+                                      return const Offstage();
                                     }
                                   }),
                             ),
@@ -233,7 +254,7 @@ class ContactListView extends GetView<ContactController> {
                                         ],
                                       ),
                                     )),
-                              ) : const SizedBox.shrink();
+                              ) : const Offstage();
                             })
                           ],
                         )

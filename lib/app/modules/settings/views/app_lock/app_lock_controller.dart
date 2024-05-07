@@ -13,7 +13,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../../data/apputils.dart';
 import '../../../../routes/route_settings.dart';

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../controllers/camera_pick_controller.dart';
 
-class CameraPickView extends GetView<CameraPickController> {
-  const CameraPickView({Key? key}) : super(key: key);
+class CameraPickView extends StatelessWidget {
+  CameraPickView({Key? key}) : super(key: key);
+  final CameraPickController controller = CameraPickController().get();
 
   @override
   Widget build(BuildContext context) {

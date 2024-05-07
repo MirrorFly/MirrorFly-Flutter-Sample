@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 class ImageViewController extends GetxController {
   var imageName = ''.obs;

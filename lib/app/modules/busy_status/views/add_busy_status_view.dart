@@ -130,7 +130,7 @@ class AddBusyStatusView extends StatelessWidget {
                       if (controller.showEmoji.value) {
                         controller.showEmoji(false);
                       }
-                      controller.validateAndFinish();
+                      controller.validateAndFinish(context);
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MaterialStateColor.resolveWith(

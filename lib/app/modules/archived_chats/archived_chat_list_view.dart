@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/constants.dart';
 import '../../widgets/custom_action_bar_icons.dart';
 import '../dashboard/widgets.dart';
@@ -16,7 +16,8 @@ class ArchivedChatListView extends StatelessWidget {
         this.showChatDeliveryIndicator = true});
   final bool enableAppBar;
   final bool showChatDeliveryIndicator;
-  final controller = Get.put(ArchivedChatListController());
+
+  final ArchivedChatListController controller = ArchivedChatListController().get();
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';

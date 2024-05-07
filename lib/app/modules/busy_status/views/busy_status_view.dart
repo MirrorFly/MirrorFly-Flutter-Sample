@@ -73,7 +73,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                         onTap: () {
                           controller.addStatusController.text = controller.busyStatus.value;
                           controller.onChanged();
-                          Get.to(AddBusyStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                          Get.to(AddBusyStatusView(status: controller.selectedStatus.value,),arguments: {"status":controller.selectedStatus.value})?.then((value){
                             if(value!=null){
                               controller.insertBusyStatus(value);
                             }
@@ -130,7 +130,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                                   index, item.status.checkNull());
                             },
                             onLongPress: () {
-                              controller.deleteBusyStatus(item);
+                              controller.deleteBusyStatus(item, context);
                             },
                           );
                         }) : const SizedBox();

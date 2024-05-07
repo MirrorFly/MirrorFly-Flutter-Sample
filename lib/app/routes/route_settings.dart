@@ -14,7 +14,6 @@ import '../modules/chat/views/chat_search_view.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/chat/views/contact_list_view.dart';
 import '../modules/chat/views/forwardchat_view.dart';
-import '../modules/chat/views/image_preview_view.dart';
 import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/views/chat_info_view.dart';
 import '../modules/contact_sync/views/contact_sync_view.dart';
@@ -53,7 +52,7 @@ import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart
 
 part 'app_routes.dart';
 
-// final args = settings.arguments;
+
 Route<dynamic> mirrorFlyRoute(RouteSettings settings) {
   switch (settings.name) {
     case Routes.login:
@@ -80,17 +79,17 @@ Route<dynamic> mirrorFlyRoute(RouteSettings settings) {
     case Routes.statusList:
       return MaterialPageRoute(builder: (_) => const StatusListView());
     case Routes.chat:
-      return MaterialPageRoute(builder: (_) => const ChatView());
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => ChatView(jid: arguments['jid']));
     case Routes.forwardChat:
-      return MaterialPageRoute(builder: (_) => const ForwardChatView());
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['forwardMessageIds']));
     case Routes.chatSearch:
-      return MaterialPageRoute(builder: (_) => const ChatSearchView());
+      return MaterialPageRoute(builder: (_) => ChatSearchView());
     case Routes.locationSent:
       return MaterialPageRoute(builder: (_) => const LocationSentView());
     case Routes.contacts:
       return MaterialPageRoute(builder: (_) => const ContactListView());
-    case Routes.imagePreview:
-      return MaterialPageRoute(builder: (_) => const ImagePreviewView());
     case Routes.settings:
       return MaterialPageRoute(builder: (_) => const SettingsView());
     case Routes.blockedList:
@@ -124,7 +123,7 @@ Route<dynamic> mirrorFlyRoute(RouteSettings settings) {
     case Routes.starredMessages:
       return MaterialPageRoute(builder: (_) => const StarredMessagesView());
     case Routes.cameraPick:
-      return MaterialPageRoute(builder: (_) => const CameraPickView());
+      return MaterialPageRoute(builder: (_) => CameraPickView());
     case Routes.adminBlocked:
       return MaterialPageRoute(builder: (_) => const AdminBlockedView());
     case Routes.archivedChats:

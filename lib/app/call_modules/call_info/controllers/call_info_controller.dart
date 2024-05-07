@@ -7,7 +7,7 @@ import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 
 class CallInfoController extends GetxController{
