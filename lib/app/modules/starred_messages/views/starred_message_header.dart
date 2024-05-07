@@ -7,7 +7,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';
-import '../../starred_messages/controllers/starred_messages_controller.dart';
+import '../controllers/starred_messages_controller.dart';
 
 class StarredMessageHeader extends StatelessWidget {
   StarredMessageHeader(
