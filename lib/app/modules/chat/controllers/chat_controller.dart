@@ -19,6 +19,7 @@ import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/edit_window.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/main.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -44,7 +45,7 @@ import '../widgets/attachment_view.dart';
 
 class ChatController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
   // final translator = Translation(apiKey: Constants.googleTranslateKey);
-  late final BuildContext buildContext;
+  // late final BuildContext buildContext;
   late final bool showChatDeliveryIndicator;
   var chatList = List<ChatMessageModel>.empty(growable: true).obs;
   late AnimationController controller;
@@ -138,7 +139,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     String? topicId,
     required bool showChatDeliveryIndicator,
   }) async {
-    buildContext = context;
+    // buildContext = context;
     this.showChatDeliveryIndicator = showChatDeliveryIndicator;
 
     getAvailableFeatures();
@@ -339,27 +340,27 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   attachments: availableAttachments,
                   availableFeatures: availableFeatures,
                   onDocument: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     documentPickUpload();
                   },
                   onCamera: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     onCameraClick();
                   },
                   onGallery: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     onGalleryClick();
                   },
                   onAudio: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     onAudioClick();
                   },
                   onContact: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     onContactClick();
                   },
                   onLocation: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     onLocationClick();
                   }))),
       ignoreSafeArea: true,
@@ -431,12 +432,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     Helper.showAlert(message: getTranslated("disableBusy"), actions: [
       TextButton(
           onPressed: () {
-            Navigator.pop(buildContext);
+            navigateBack();
           },
           child: Text(getTranslated("no"), style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
-            Navigator.pop(buildContext);
+            navigateBack();
             await Mirrorfly.enableDisableBusyStatus(
                 enable: false,
                 flyCallBack: (FlyResponse response) {
@@ -455,12 +456,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     Helper.showAlert(message: getTranslated("unBlockToSendMsg"), actions: [
       TextButton(
           onPressed: () {
-            Navigator.pop(buildContext);
+            navigateBack();
           },
           child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
-            Navigator.pop(buildContext);
+            navigateBack();
             Mirrorfly.unblockUser(
                 userJid: profile.jid!,
                 flyCallBack: (FlyResponse response) {
@@ -1128,7 +1129,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           actions: [
             TextButton(
                 onPressed: () async {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   if (await AppUtils.isNetConnected()) {
                     Mirrorfly.reportUserOrMessages(
                         jid: profile.jid!,
@@ -1149,7 +1150,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 child: Text(getTranslated("report").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                 },
                 child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           ]);
@@ -1237,12 +1238,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         actions: [
           TextButton(
               onPressed: () {
-                Navigator.pop(buildContext);
+                navigateBack();
               },
               child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
-                Navigator.pop(buildContext);
+                navigateBack();
                 if (!availableFeatures.value.isDeleteMessageAvailable.checkNull()) {
                   Helper.showFeatureUnavailable();
                   return;
@@ -1266,7 +1267,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           isRecallAvailable
               ? TextButton(
                   onPressed: () {
-                    Navigator.pop(buildContext);
+                    navigateBack();
                     if (!availableFeatures.value.isDeleteMessageAvailable.checkNull()) {
                       Helper.showFeatureUnavailable();
                       return;
@@ -1343,14 +1344,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       Helper.showAlert(message: "${getTranslated("youWantToBlock")} ${getName(profile)}?", actions: [
         TextButton(
             onPressed: () {
-              Navigator.pop(buildContext);
+              navigateBack();
             },
             child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
         TextButton(
             onPressed: () async {
               await AppUtils.isNetConnected().then((isConnected) {
                 if (isConnected) {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   Helper.showLoading(message: getTranslated("blockingUser"));
                   Mirrorfly.blockUser(
                       userJid: profile.jid!,
@@ -1386,21 +1387,21 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             visible: !starred.isNegative,
             child: TextButton(
                 onPressed: () {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   clearChatHistory(false);
                 },
                 child: Text(getTranslated("cleatAll").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           ),
           TextButton(
               onPressed: () {
-                Navigator.pop(buildContext);
+                navigateBack();
               },
               child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           Visibility(
             visible: starred.isNegative,
             child: TextButton(
                 onPressed: () {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   clearChatHistory(false);
                 },
                 child: Text(getTranslated("clear").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
@@ -1409,7 +1410,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             visible: !starred.isNegative,
             child: TextButton(
                 onPressed: () {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   clearChatHistory(true);
                 },
                 child: Text(getTranslated("clearExceptStarred"), style: const TextStyle(color: buttonBgColor))),
@@ -1426,14 +1427,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
         TextButton(
             onPressed: () {
-              Navigator.pop(buildContext);
+              navigateBack();
             },
             child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
         TextButton(
             onPressed: () async {
               await AppUtils.isNetConnected().then((isConnected) {
                 if (isConnected) {
-                  Navigator.pop(buildContext);
+                  navigateBack();
                   // Helper.showLoading(message: "Unblocking User");
                   Mirrorfly.unblockUser(
                       userJid: profile.jid!,
@@ -2143,12 +2144,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (profile.isGroupProfile.checkNull()) {
       if (profile.isAdminBlocked.checkNull()) {
         toToast(getTranslated("groupNoLonger"));
-        Navigator.pop(buildContext);
+        navigateBack();
       }
     } else {
       if (profile.isAdminBlocked.checkNull()) {
         toToast(getTranslated("chatNoLonger"));
-        Navigator.pop(buildContext);
+        navigateBack();
       }
     }
   }
@@ -2986,12 +2987,22 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   showFullWindowDialog() {
     var chatItem = selectedChatList.first;
     clearAllChatSelection();
-    Get.bottomSheet(
-      EditMessageScreen(chatItem: chatItem, chatController: this),
-      ignoreSafeArea: false,
+    // Get.bottomSheet(
+    //   EditMessageScreen(chatItem: chatItem, chatController: this),
+    //   ignoreSafeArea: false,
+    //   enableDrag: false,
+    //   isScrollControlled: true, // Important for full screen
+    // );
+    showModalBottomSheet(
+      context: navigatorKey.currentContext!,
+      useSafeArea: false,
+      builder: (BuildContext context) {
+        return EditMessageScreen(chatItem: chatItem, chatController: this);
+      },
+      isScrollControlled: true,
       enableDrag: false,
-      isScrollControlled: true, // Important for full screen
     );
+
   }
 
   Widget emojiLayout({required TextEditingController textEditingController, required bool sendTypingStatus}) {
@@ -3016,7 +3027,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             flyCallback: (FlyResponse response) {
               debugPrint("Edit Message ==> $response");
               if (response.isSuccess) {
-                Navigator.pop(buildContext);
+                navigateBack();
                 ChatMessageModel editMessage = sendMessageModelFromJson(response.data);
                 final index = chatList.indexWhere((message) => message.messageId == editMessage.messageId);
                 debugPrint("Edit Message Status Update index of search $index");
@@ -3032,7 +3043,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             flyCallback: (FlyResponse response) {
               debugPrint("Edit Media Caption ==> $response");
               if (response.isSuccess) {
-                Navigator.pop(buildContext);
+                navigateBack();
                 ChatMessageModel editMessage = sendMessageModelFromJson(response.data);
                 final index = chatList.indexWhere((message) => message.messageId == editMessage.messageId);
                 debugPrint("Edit Message Status Update index of search $index");

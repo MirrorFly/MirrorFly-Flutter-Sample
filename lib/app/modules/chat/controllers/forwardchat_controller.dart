@@ -337,14 +337,14 @@ class ForwardChatController extends GetxController {
     Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
       TextButton(
           onPressed: () {
-            Navigator.pop(buildContext);
+            navigateBack();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
-                Navigator.pop(buildContext);
+                navigateBack();
                 Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
                   if (response.isSuccess && response.hasData) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", name));

@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirror_fly_demo/main.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -972,4 +973,12 @@ String getErrorDetails(FlyResponse response) {
   }else{
     return response.errorMessage;
   }
+}
+
+navigateBack(){
+  Navigator.pop(navigatorKey.currentContext!);
+}
+
+BuildContext currentContext(){
+  return navigatorKey.currentContext!;
 }
