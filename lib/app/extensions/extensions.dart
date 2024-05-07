@@ -12,6 +12,8 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../common/app_localizations.dart';
+
 part 'recent_chat_extension.dart';
 part 'profile_parsing_extension.dart';
 part 'chat_message_extension.dart';

@@ -4,10 +4,10 @@ part of "extensions.dart";
 extension RecentChatParsing on RecentChatData {
   String getChatType() {
     return (isGroup.checkNull())
-        ? Constants.typeGroupChat
+        ? ChatType.groupChat
         : (isBroadCast.checkNull())
-        ? Constants.typeBroadcastChat
-        : Constants.typeChat;
+        ? ChatType.broadcastChat
+        : ChatType.singleChat;
   }
 
   bool isDeletedContact() {
@@ -36,10 +36,10 @@ extension RecentChatParsing on RecentChatData {
           : profileName.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       } else if (isDeletedContact()) {
         LogMessage.d('isDeletedContact', isDeletedContact().toString());
-        return Constants.deletedUser;
+        return getTranslated("deletedUser");
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
         LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());

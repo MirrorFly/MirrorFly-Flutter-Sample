@@ -2,22 +2,22 @@ part of "extensions.dart";
 
 extension ChatmessageParsing on ChatMessageModel {
   bool isMediaDownloaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == Constants.mediaDownloaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloaded.value);
   }
 
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploaded.value);
   }
 
   bool isMediaDownloading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == Constants.mediaDownloading);
+    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloading.value);
   }
 
   bool isMediaUploading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploading);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploading.value);
   }
   bool isUploadFailed() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaNotUploaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaNotUploaded.value);
   }
 
   bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());

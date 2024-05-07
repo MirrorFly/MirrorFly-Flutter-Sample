@@ -10,6 +10,10 @@ import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
+import '../widgets/message_content.dart';
+import '../widgets/notification_message_view.dart';
+import '../widgets/reply_message_widgets.dart';
+import '../widgets/sender_header.dart';
 
 class ChatSearchView extends StatelessWidget {
   ChatSearchView({super.key});

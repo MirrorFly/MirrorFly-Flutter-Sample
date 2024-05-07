@@ -3,7 +3,7 @@ part of "extensions.dart";
 extension StringParsing on String? {
   //check null
   String checkNull() {
-    return this ?? "";
+    return this ?? Constants.emptyString;
   }
 
   bool toBool() {

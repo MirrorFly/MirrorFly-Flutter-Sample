@@ -10,6 +10,8 @@ import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/chat_widgets.dart';
+import '../../chat/widgets/message_content.dart';
+import '../../chat/widgets/reply_message_widgets.dart';
 import 'starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
 

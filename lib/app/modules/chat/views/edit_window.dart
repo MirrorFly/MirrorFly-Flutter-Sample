@@ -8,6 +8,9 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
+import '../widgets/message_content.dart';
+import '../widgets/reply_message_widgets.dart';
+import '../widgets/sender_header.dart';
 
 class EditMessageScreen extends StatefulWidget {
   final ChatController chatController;

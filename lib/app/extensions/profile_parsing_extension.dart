@@ -18,7 +18,7 @@ extension ProfileParsing on ProfileDetails {
   }
 
   String getChatType() {
-    return (isGroupProfile ?? false) ? Constants.typeGroupChat : Constants.typeChat;
+    return (isGroupProfile ?? false) ? ChatType.groupChat : ChatType.singleChat;
   }
 
   bool isItSavedContact() {
@@ -34,7 +34,7 @@ extension ProfileParsing on ProfileDetails {
   String getName() {
     if (!Constants.enableContactSync) {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       }
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
@@ -44,10 +44,10 @@ extension ProfileParsing on ProfileDetails {
           : name.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       } else if (isDeletedContact()) {
         LogMessage.d('isDeletedContact', isDeletedContact().toString());
-        return Constants.deletedUser;
+        return getTranslated("deletedUser");
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
         LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());
