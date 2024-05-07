@@ -15,7 +15,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text(getTranslated("addBusyStatus", context)),
+        title: Text(getTranslated("addBusyStatus")),
       ),
       body: PopScope(
         canPop: false,
@@ -111,7 +111,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: Text(
-                      getTranslated("cancel", context).toUpperCase(),
+                      getTranslated("cancel").toUpperCase(),
                       style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
@@ -134,7 +134,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: Text(
-                      getTranslated("ok", context).toUpperCase(),
+                      getTranslated("ok").toUpperCase(),
                       style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),

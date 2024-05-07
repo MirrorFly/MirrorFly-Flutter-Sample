@@ -23,7 +23,7 @@ class OtpView extends GetView<LoginController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("verify", context)),
+          title: Text(getTranslated("verify")),
           centerTitle: true,
           automaticallyImplyLeading: false,
         ),
@@ -50,7 +50,7 @@ class OtpView extends GetView<LoginController> {
                           child: SvgPicture.asset(registerIcon),
                         ),
                         Text(
-                          getTranslated("verifyOTP", context),
+                          getTranslated("verifyOTP"),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w600),
@@ -58,7 +58,7 @@ class OtpView extends GetView<LoginController> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
                           child: Text(
-                            getTranslated("otpMessage", context),
+                            getTranslated("otpMessage"),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 fontSize: 13,
@@ -110,7 +110,7 @@ class OtpView extends GetView<LoginController> {
                                   controller.verifyOTP();
                                 },
                                 child: Text(
-                                  getTranslated("verifyOTP", context),style: const TextStyle(color: Colors.white),
+                                  getTranslated("verifyOTP"),style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                             );
@@ -130,7 +130,7 @@ class OtpView extends GetView<LoginController> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      getTranslated("changeNumber", context),
+                                      getTranslated("changeNumber"),
                                       style: const TextStyle(
                                           color: Colors.red,
                                           fontSize: 14,
@@ -152,7 +152,7 @@ class OtpView extends GetView<LoginController> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      controller.timeout.value ? getTranslated("resendOTP", context) : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
+                                      controller.timeout.value ? getTranslated("resendOTP") : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
                                       style: const TextStyle(
                                           color: textHintColor,
                                           fontSize: 14,

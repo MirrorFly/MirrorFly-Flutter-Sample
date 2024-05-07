@@ -25,16 +25,16 @@ class LocalContactView extends GetView<LocalContactController> {
                   onChanged: (text) => controller.onSearchTextChanged(text),
                   autofocus: true,
                   decoration: InputDecoration(
-                      hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      getTranslated("contactToSend", context),
+                      getTranslated("contactToSend"),
                       style: const TextStyle(fontSize: 15),
                     ),
-                    Text(getTranslated("selectedCount", context).replaceAll("%d",
+                    Text(getTranslated("selectedCount").replaceAll("%d",
                       '${controller.contactsSelected.length}'),
                       style: const TextStyle(fontSize: 12),
                     ),
@@ -145,7 +145,7 @@ class LocalContactView extends GetView<LocalContactController> {
           selectedListView(controller.contactsSelected),
           controller.searchList.isEmpty &&
                   controller.searchTextController.text.isNotEmpty
-              ? Center(child: Text(getTranslated("noResultFound", context)))
+              ? Center(child: Text(getTranslated("noResultFound")))
               : Expanded(
                   child: ListView.builder(
                       itemCount: controller.searchList.length,

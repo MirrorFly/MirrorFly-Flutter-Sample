@@ -8,6 +8,8 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../../common/app_localizations.dart';
+
 class CameraPickController extends GetxController with WidgetsBindingObserver  {
   RxDouble scale = 1.0.obs;
   CameraController? cameraController;
@@ -189,7 +191,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       }catch(e){
         LogMessage.d("takePhoto", "$e");
         Helper.hideLoading();
-        toToast(Constants.insufficientMemoryError);//CameraException(IOError, Failed saving image)
+        toToast(getTranslated("insufficientMemoryError"));//CameraException(IOError, Failed saving image)
       }finally{
         debugPrint("file : ${file?.path}");
         Helper.hideLoading();
@@ -208,7 +210,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       }catch(e){
         LogMessage.d("stopRecord", "$e");
         Helper.hideLoading();
-        toToast(Constants.insufficientMemoryError);
+        toToast(getTranslated("insufficientMemoryError"));
       }finally{
         // debugPrint("file : ${file?.path}, ${file?.length()},");
         Helper.hideLoading();

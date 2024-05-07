@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../model/chat_message_model.dart';
@@ -11,7 +12,7 @@ class ViewAllMediaPreviewController extends GetxController {
   var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
   var index = 0.obs;
   late PageController pageViewController;
-  var title = "Sent Media".obs;
+  var title = getTranslated("sentMedia").obs;
 
   @override
   void onInit() {
@@ -33,9 +34,9 @@ class ViewAllMediaPreviewController extends GetxController {
 
   void setTitle(int index) {
     if(previewMediaList.elementAt(index).isMessageSentByMe){
-      title("Sent Media");
+      title(getTranslated("sentMedia"));
     }else{
-      title("Received Media");
+      title(getTranslated("receivedMedia"));
     }
   }
 }

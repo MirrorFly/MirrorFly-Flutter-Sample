@@ -15,7 +15,7 @@ class SetPinView extends GetView<AppLockController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.modifyPin.value ? getTranslated("changePin", context) : getTranslated("pinLock", context),
+        title: Text(controller.modifyPin.value ? getTranslated("changePin") : getTranslated("pinLock"),
           style: const TextStyle(fontWeight: FontWeight.bold,
               color: appbarTextColor,
               fontSize: 20.0),),
@@ -27,7 +27,7 @@ class SetPinView extends GetView<AppLockController> {
           return Column(
             children: [
               Visibility(visible: controller.modifyPin.value,
-                  child: passwordField(title: getTranslated("enterOldPIN", context),
+                  child: passwordField(title: getTranslated("enterOldPIN"),
                       controller: controller.oldPin,
                       secure: controller.oldPinSecure.value,
                       focusNode: controller.oldPinFocus,
@@ -43,7 +43,7 @@ class SetPinView extends GetView<AppLockController> {
                   height: 10,
                 ),
               ),
-              passwordField(title: getTranslated("enterNewPIN", context),
+              passwordField(title: getTranslated("enterNewPIN"),
                   controller: controller.newPin,
                   secure: controller.newPinSecure.value,
                   focusNode: controller.newPinFocus,
@@ -56,7 +56,7 @@ class SetPinView extends GetView<AppLockController> {
               const SizedBox(
                 height: 10,
               ),
-              passwordField(title: getTranslated("confirmNewPIN", context),
+              passwordField(title: getTranslated("confirmNewPIN"),
                   controller: controller.confirmPin,
                   secure: controller.confirmPinSecure.value,
                   focusNode: controller.confirmPinFocus,
@@ -82,7 +82,7 @@ class SetPinView extends GetView<AppLockController> {
                     controller.savePin();
                   },
                   child: Text(
-                    getTranslated("save", context),style: const TextStyle(color: Colors.white),
+                    getTranslated("save"),style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),

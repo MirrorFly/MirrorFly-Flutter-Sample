@@ -16,7 +16,7 @@ class NameChangeView extends GetView<GroupInfoController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text(getTranslated("enterNewName", context)),
+        title: Text(getTranslated("enterNewName")),
       ),
       body: PopScope(
         canPop: false,
@@ -84,7 +84,7 @@ class NameChangeView extends GetView<GroupInfoController> {
                     child: TextButton(
                       onPressed: () => Get.back(),
                       child: Text(
-                        getTranslated("cancel", context).toUpperCase(),
+                        getTranslated("cancel").toUpperCase(),
                         style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),
@@ -100,11 +100,11 @@ class NameChangeView extends GetView<GroupInfoController> {
                           Get.back(result: controller.nameController.text
                               .trim().toString());
                         }else{
-                          toToast(getTranslated("nameCantEmpty", context));
+                          toToast(getTranslated("nameCantEmpty"));
                         }
                       },
                       child: Text(
-                        getTranslated("ok", context).toUpperCase(),
+                        getTranslated("ok").toUpperCase(),
                         style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),

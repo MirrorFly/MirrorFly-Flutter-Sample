@@ -14,6 +14,7 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -52,7 +53,7 @@ class LoginController extends GetxController {
   // void registerUser(BuildContext context) {
 
   showLoading() {
-    Helper.showLoading(message: "Please Wait...");
+    Helper.showLoading(message: getTranslated("pleaseWait"));
   }
 
   hideLoading() {
@@ -93,13 +94,13 @@ class LoginController extends GetxController {
 
   Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
-      toToast("Please Enter Mobile Number");
+      toToast(getTranslated("plsEnterMobileNumber"));
     } else {
       if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
         // phoneAuth();
         registerAccount();
       }else{
-        toToast("Please Enter Valid Mobile Number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
       }
     }
   }
@@ -153,7 +154,7 @@ class LoginController extends GetxController {
             LogMessage.d("verificationFailed", e.toString());
             LogMessage.d("verificationFailed", e.message!);
             LogMessage.d("verificationFailed", e.code);
-            toToast("Please Enter Valid Mobile Number");
+            toToast(getTranslated("plsEnterValidMobileNumber"));
             hideLoading();
           },
           codeSent: (String verificationId, int? resendToken) {
@@ -184,7 +185,7 @@ class LoginController extends GetxController {
         );
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -202,10 +203,10 @@ class LoginController extends GetxController {
         debugPrint("smsCode $smsCode");
         signIn(credential);
       } else {
-        toToast("InValid OTP");
+        toToast(getTranslated("inValidOTP"));
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -237,12 +238,12 @@ class LoginController extends GetxController {
         LogMessage.d("sign in ", value.toString());
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
-        toToast("Invalid OTP");
+        toToast(getTranslated("inValidOTP"));
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
       LogMessage.d("sign in error", e.toString());
-      toToast("Enter Valid Otp");
+      toToast(getTranslated("enterValidOTP"));
       hideLoading();
     }
   }
@@ -278,7 +279,7 @@ class LoginController extends GetxController {
         hideLoading();
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -301,7 +302,7 @@ class LoginController extends GetxController {
         navigateToUserRegisterMethod(deviceToken, firebaseToken);
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // navigateToUserRegisterMethod(deviceToken, firebaseToken);
   }
@@ -318,11 +319,11 @@ class LoginController extends GetxController {
   registerAccount() async {
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
-        toToast("Mobile number too short");
+        toToast(getTranslated("mobileNumberTooShort"));
         return;
       }
       if (mobileNumber.text.length < 10) {
-        toToast("Please enter valid mobile number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
         return;
       }
       if (!(await AppPermission.askNotificationPermission())) {
@@ -365,7 +366,7 @@ class LoginController extends GetxController {
                   Get.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
                   debugPrint("issue 405 ===> ${response.errorMessage }");
-                  sessionExpiredDialogShow(Constants.maximumLoginReached);
+                  sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
                   debugPrint("issue else ===> ${response.errorMessage }");
@@ -374,10 +375,10 @@ class LoginController extends GetxController {
               }
             });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // } else {
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
   }
 
@@ -385,7 +386,7 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       Mirrorfly.enableDisableArchivedSettings(enable: true,flyCallBack: (_){});
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -397,19 +398,19 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?", actions: [
+    Helper.showAlert(message: getTranslated("deviceConfirmation"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
             gotoLogin();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             registerAccount();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -425,14 +426,14 @@ class LoginController extends GetxController {
             Get.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("continue"),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 

@@ -32,12 +32,12 @@ class ChatSearchView extends GetView<ChatController> {
             focusNode: controller.searchfocusNode,
             autofocus: true,
             decoration: InputDecoration(
-                hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
+                hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
             onSubmitted: (str) {
               if (controller.filteredPosition.isNotEmpty) {
                 controller.scrollUp();
               } else {
-                toToast(getTranslated("noResultsFound", context));
+                toToast(getTranslated("noResultsFound"));
               }
             },
           ),

@@ -13,7 +13,7 @@ class DataUsageListView extends GetView<DataUsageController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("dataUsageSettings", context)),
+          title: Text(getTranslated("dataUsageSettings")),
           automaticallyImplyLeading: true,
         ),
         body: SafeArea(
@@ -24,7 +24,7 @@ class DataUsageListView extends GetView<DataUsageController> {
                 children: [
                   ListTile(
                     title: Text(
-                      getTranslated("mediaAutoDownload", context),
+                      getTranslated("mediaAutoDownload"),
                       style: const TextStyle(
                           color: appbarTextColor,
                           fontSize: 14.0,
@@ -33,7 +33,7 @@ class DataUsageListView extends GetView<DataUsageController> {
                   ),
                   ListTile(
                     title: Text(
-                      getTranslated("whenUsingMobileData", context),
+                      getTranslated("whenUsingMobileData"),
                       style: const TextStyle(
                           color: textColor,
                           fontSize: 12.0,
@@ -49,17 +49,17 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openMobileData,
                     child: Column(
                       children: [
-                        mediaItem(getTranslated("autoDownloadPhoto", context), controller.autoDownloadMobilePhoto, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadVideo", context), controller.autoDownloadMobileVideo, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadAudio", context), controller.autoDownloadMobileAudio, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadDocument", context), controller.autoDownloadMobileDocument, controller.mobile),
+                        mediaItem(getTranslated("autoDownloadPhoto"), controller.autoDownloadMobilePhoto, controller.mobile),
+                        mediaItem(getTranslated("autoDownloadVideo"), controller.autoDownloadMobileVideo, controller.mobile),
+                        mediaItem(getTranslated("autoDownloadAudio"), controller.autoDownloadMobileAudio, controller.mobile),
+                        mediaItem(getTranslated("autoDownloadDocument"), controller.autoDownloadMobileDocument, controller.mobile),
                       ],
                     )//buildMediaTypeList(controller.mobile),
                   ),
                   ListTile(
-                    title: const Text(
-                      Constants.whenUsingWifiData,
-                      style: TextStyle(
+                    title: Text(
+                      getTranslated("whenUsingWifiData"),
+                      style: const TextStyle(
                           color: textColor,
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600),
@@ -74,10 +74,10 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openWifiData,
                       child: Column(
                         children: [
-                          mediaItem(getTranslated("autoDownloadPhoto", context), controller.autoDownloadWifiPhoto, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadVideo", context), controller.autoDownloadWifiVideo, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadAudio", context), controller.autoDownloadWifiAudio, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadDocument", context), controller.autoDownloadWifiDocument, controller.wifi),
+                          mediaItem(getTranslated("autoDownloadPhoto"), controller.autoDownloadWifiPhoto, controller.wifi),
+                          mediaItem(getTranslated("autoDownloadVideo"), controller.autoDownloadWifiVideo, controller.wifi),
+                          mediaItem(getTranslated("autoDownloadAudio"), controller.autoDownloadWifiAudio, controller.wifi),
+                          mediaItem(getTranslated("autoDownloadDocument"), controller.autoDownloadWifiDocument, controller.wifi),
                         ],
                       )//buildMediaTypeList(controller.wifi),
                   ),

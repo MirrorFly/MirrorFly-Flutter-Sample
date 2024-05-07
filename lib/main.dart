@@ -51,6 +51,7 @@ MirrorflyNotificationAppLaunchDetails? appLaunchDetails;
 
 //check is on going call
 bool isOnGoingCall = false;
+final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
@@ -115,6 +116,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "MirrorFly",
+      navigatorKey: navigatorKey,
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
       locale: AppLocalizations.defaultLocale,

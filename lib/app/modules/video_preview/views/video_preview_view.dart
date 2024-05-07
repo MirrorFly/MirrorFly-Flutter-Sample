@@ -90,7 +90,7 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                 minLines: 1,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: getTranslated("addCaption", context),
+                                  hintText: getTranslated("addCaption"),
                                   hintStyle: const TextStyle(
                                     color: Colors.white,
                                   ),),

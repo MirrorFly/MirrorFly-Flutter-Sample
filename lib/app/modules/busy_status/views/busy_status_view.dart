@@ -15,7 +15,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("editBusyStatus", context)),
+          title: Text(getTranslated("editBusyStatus")),
         ),
         body: SafeArea(
           child: Padding(
@@ -24,7 +24,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getTranslated("yourBusyStatus", context),
+                  getTranslated("yourBusyStatus"),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
@@ -63,14 +63,14 @@ class BusyStatusView extends GetView<BusyStatusController> {
                 ),
 
                 Text(
-                  getTranslated("busyStatusDescription", context),
+                  getTranslated("busyStatusDescription"),
                   style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(
                   height: 40,
                 ),
                 Text(
-                  getTranslated("selectYourBusyStatus", context),
+                  getTranslated("selectYourBusyStatus"),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -45,7 +46,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     }).catchError((e){
       LogMessage.d("initialize", "$e");
       //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
-      toToast(Constants.errorVideoInitialize);
+      toToast(getTranslated("errorVideoInitialize"));
       Navigator.pop(context);
     });
   }

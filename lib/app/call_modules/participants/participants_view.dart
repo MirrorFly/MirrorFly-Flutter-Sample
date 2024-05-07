@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
@@ -46,7 +47,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                             onChanged: (text) => controller.searchListener(text),
                             controller: controller.searchQuery,
                             autofocus: true,
-                            decoration: const InputDecoration(hintText: "Search...", border: InputBorder.none),
+                            decoration: InputDecoration(hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                           )
                               : null,
                           bottom: TabBar(
@@ -55,8 +56,8 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                               labelColor: buttonBgColor,
                               unselectedLabelColor: appbarTextColor,
                               tabs: [
-                                tabItem(title: "PARTICIPANTS", count: "0"),
-                                tabItem(title: "ADD PARTICIPANTS", count: "0")
+                                tabItem(title: getTranslated("participants").toUpperCase(), count: "0"),
+                                tabItem(title: getTranslated("addParticipants").toUpperCase(), count: "0")
                               ]),
                           actions: [
                             Visibility(
@@ -193,9 +194,9 @@ class ParticipantsView extends GetView<AddParticipantsController> {
         children: [
           Visibility(
               visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
-              child: const Center(child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
-                child: Text("No Contacts found"),
+              child: Center(child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(getTranslated("noContactsFound")),
               ),)),
           controller.isPageLoading.value
               ? const Center(
@@ -257,7 +258,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                               addParticipantsInCall,
                             ),
                             const SizedBox(width: 8,),
-                            Text("${Constants.addParticipantsToCall} ( ${(controller.groupCallMembersCount.value)} )",
+                            Text(getTranslated("selectedParticipantsToCall").replaceFirst("%d", "${(controller.groupCallMembersCount.value)}"),
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
                                   fontFamily: 'sf_ui'),)

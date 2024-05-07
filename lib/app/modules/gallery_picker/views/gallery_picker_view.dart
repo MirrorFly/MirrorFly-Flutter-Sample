@@ -14,7 +14,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("sendToUser", context).replaceAll("%d", "${controller.userName}")),
+        title: Text(getTranslated("sendToUser").replaceAll("%d", "${controller.userName}")),
         centerTitle: true,
       ),
       body: Column(
@@ -88,7 +88,7 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                                   border: Border.all(
                                       color: Colors.blue, width: 1.5),
                                 ),
-                                child: Center(child: Text(getTranslated("done", context)))
+                                child: Center(child: Text(getTranslated("done")))
                             ),
                           )
                         ],

@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 
+
 class AppLocalizations {
 
   Locale locale = defaultLocale;
-  Map<String, String> _localizedStrings = {};
+  static Map<String, String> _localizedStrings = {};
 
   AppLocalizations(this.locale);
 
@@ -16,18 +17,33 @@ class AppLocalizations {
   }
 
   Future<bool> load() async {
-    String jsonString = await rootBundle.loadString('assets/locales/${locale.languageCode}.json');
-    Map<String, dynamic> jsonMap = json.decode(jsonString);
+    try {
+      String jsonString = await rootBundle.loadString(
+          'assets/locales/${locale.languageCode}.json');
+      Map<String, dynamic> jsonMap = json.decode(jsonString);
 
-    _localizedStrings = jsonMap.map((key, value) {
-      return MapEntry(key, value.toString());
-    });
+      _localizedStrings = jsonMap.map((key, value) {
+        return MapEntry(key, value.toString());
+      });
+    }catch(e){
+      String jsonString = await rootBundle.loadString(
+          'assets/locales/en.json');
+      Map<String, dynamic> jsonMap = json.decode(jsonString);
+
+      _localizedStrings = jsonMap.map((key, value) {
+        return MapEntry(key, value.toString());
+      });
+    }
 
     return true;
   }
 
-  String translate(String key) {
-    return _localizedStrings[key] ?? "";
+  static String? translate(String key) {
+    return _localizedStrings.containsKey(key) ?  _localizedStrings[key] : null;
+  }
+
+  static dynamic translateList(String key) {
+    return _localizedStrings.containsKey(key) ?  _localizedStrings[key] : [];
   }
 
   // Default language
@@ -99,6 +115,10 @@ class _DemoLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations>
   bool shouldReload(LocalizationsDelegate<AppLocalizations> old) => false;
 }
 
-String getTranslated(String key, BuildContext context) {
-  return (AppLocalizations.of(context)?.translate(key)).checkNull();
+String getTranslated(String key) {
+  return (AppLocalizations.translate(key)).checkNull();
+}
+
+List<String> getTranslatedList(String key) {
+  return (AppLocalizations.translateList(key));
 }

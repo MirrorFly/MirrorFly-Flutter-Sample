@@ -13,7 +13,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("deleteMyAccount", context)),
+          title: Text(getTranslated("deleteMyAccount")),
         ),
         body: SafeArea(
           child: Padding(
@@ -23,7 +23,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    getTranslated("deleteAccountReason", context),
+                    getTranslated("deleteAccountReason"),
                     style: const TextStyle(color: textHintColor, fontSize: 15,fontWeight: FontWeight.normal),
                   ),
                   const SizedBox(
@@ -36,7 +36,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                           ? null
                           : controller.reasonValue.value,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      hint: Text(getTranslated("selectReason", context),style: const TextStyle(fontWeight: FontWeight.normal),),
+                      hint: Text(getTranslated("selectReason"),style: const TextStyle(fontWeight: FontWeight.normal),),
                       items: controller.deleteReasons.map((String items) {
                         return DropdownMenuItem(
                           value: items,
@@ -58,7 +58,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                     focusNode: controller.focusNode,
                     controller: controller.feedback,
                     decoration: InputDecoration(
-                      hintText: getTranslated("tellUsImprove", context),
+                      hintText: getTranslated("tellUsImprove"),
                       hintStyle: const TextStyle(fontWeight: FontWeight.normal),
                       counterText: '',
                       focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
@@ -69,7 +69,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                     height: 15,
                   ),
             Text(
-                    getTranslated("feedbackDesc", context),style: const TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
+                    getTranslated("feedbackDesc"),style: const TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(
                     height: 55,
@@ -91,7 +91,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                                 controller.deleteAccount();
                               },
                               child: Text(
-                                getTranslated("deleteMyAccount", context),
+                                getTranslated("deleteMyAccount"),
                                 style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                               ),
                             ),

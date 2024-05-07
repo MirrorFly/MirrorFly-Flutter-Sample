@@ -6,6 +6,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
@@ -113,7 +114,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           selectedStatus.value = statusText;
           addStatusController.text = statusText;
           var data = json.decode(response.data);
-          toToast('Status update successfully');
+          toToast(getTranslated("statusUpdated"));
           if(data['status']) {
             getStatusList();
           }
@@ -127,7 +128,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
         toToast(er);
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -139,7 +140,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
           // var data = json.decode(value.toString());
-          toToast('Status update successfully');
+          toToast(getTranslated("statusUpdated"));
           Helper.hideLoading();
           if (value.checkNull()) {
             getStatusList();
@@ -148,7 +149,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           toToast(er);
         });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -158,11 +159,11 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
         Get.back(result: addStatusController.text
             .trim().toString());
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
         Get.back();
       }
     }else{
-      toToast("Status cannot be empty");
+      toToast(getTranslated("statusCantEmpty"));
     }
   }
 
@@ -198,8 +199,8 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
       Helper.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
-          title: const Text("Delete",
-              style: TextStyle(
+          title: Text(getTranslated("delete"),
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal)),
 
@@ -213,30 +214,30 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void statusDeleteConfirmation(StatusData item) {
-    Helper.showAlert(message: "Do you want to delete the status?", actions: [
+    Helper.showAlert(message: getTranslated("deleteStatus"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.showLoading(message: "Deleting Status");
+              Helper.showLoading(message: getTranslated("deletingStatus"));
               Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
                 Helper.hideLoading();
               }).catchError((error) {
                 Helper.hideLoading();
-                toToast("Unable to delete the Busy Status");
+                toToast(getTranslated("unableDeleteBusyStatus"));
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 

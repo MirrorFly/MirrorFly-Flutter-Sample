@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
+import '../../../../common/app_localizations.dart';
 import '../../../../data/apputils.dart';
 import '../../../../data/helper.dart';
 import '../../../../data/permissions.dart';
@@ -60,7 +61,7 @@ class ChatSettingsController extends GetxController {
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -79,7 +80,7 @@ class ChatSettingsController extends GetxController {
       SessionManagement.setGoogleTranslationEnable(enable);
       _translationEnabled(enable);
     /*}else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }*/
   }
 
@@ -93,18 +94,18 @@ class ChatSettingsController extends GetxController {
   }
 
   void clearAllConversation(){
-    Helper.showAlert(message: 'Are you sure want to clear your conversation history?',actions: [
+    Helper.showAlert(message: getTranslated("areYouClearAllChat"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             clearAllConv();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -113,13 +114,13 @@ class ChatSettingsController extends GetxController {
      Mirrorfly.clearAllConversation(flyCallBack: (FlyResponse response) {
         if(response.isSuccess){
           clearAllConvRecentChatUI();
-          toToast('All your conversation are cleared');
+          toToast(getTranslated("allChatsCleared"));
         }else{
-          toToast('Server error, kindly try again later');
+          toToast(getTranslated("serverError"));
         }
      });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -132,7 +133,7 @@ class ChatSettingsController extends GetxController {
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

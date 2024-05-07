@@ -69,7 +69,7 @@ class VideoPreviewController extends GetxController {
          Get.back();
        }
     /* }else{
-       toToast(Constants.noInternetConnection);
+       toToast(getTranslated("noInternetConnection"));
      }*/
 
    }

@@ -36,7 +36,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        getTranslated("media", context),
+                        getTranslated("media"),
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 16),
                       )),
@@ -44,14 +44,14 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                 Center(
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text(getTranslated("docs", context),
+                      child: Text(getTranslated("docs"),
                           style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16))),
                 ),
                 Center(
                   child: Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text(getTranslated("links", context),
+                      child: Text(getTranslated("links"),
                           style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16))),
                 ),
@@ -85,14 +85,14 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(getTranslated("mediaCount", context)
+                    Text(getTranslated("mediaCount")
                         .replaceFirst("%p", "${controller.imageCount}")
                         .replaceFirst("%v", "${controller.videoCount}")
                         .replaceFirst("%a", "${controller.audioCount}")),
                   ],
                 ),
               )
-            : Center(child: Text(getTranslated("noMediaFound", context)));
+            : Center(child: Text(getTranslated("noMediaFound")));
       }),
     );
   }
@@ -178,7 +178,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
       child: Obx(() {
         return controller.docslistdata.isNotEmpty
             ? listView(controller.docslistdata, true,context)
-            : Center(child: Text(getTranslated("noDocsFound", context)));
+            : Center(child: Text(getTranslated("noDocsFound")));
       }),
     );
   }
@@ -226,8 +226,8 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             height: 10,
           ),
           doc
-              ? Text(getTranslated("docCount", context).replaceFirst("%d", "${controller.documentCount}"))
-              : Text(getTranslated("linkCount", context).replaceFirst("%d", "${controller.linkCount}"))
+              ? Text(getTranslated("docCount").replaceFirst("%d", "${controller.documentCount}"))
+              : Text(getTranslated("linkCount").replaceFirst("%d", "${controller.linkCount}"))
         ],
       ),
     );
@@ -404,7 +404,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
       child: Obx(() {
         return controller.linklistdata.isNotEmpty
             ? listView(controller.linklistdata, false,context)
-            : Center(child: Text(getTranslated("noLinksFound", context)));
+            : Center(child: Text(getTranslated("noLinksFound")));
       }),
     );
   }

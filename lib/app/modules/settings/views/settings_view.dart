@@ -16,53 +16,53 @@ class SettingsView extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("settings", context)),
+        title: Text(getTranslated("settings")),
         automaticallyImplyLeading: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            settingListItem(getTranslated("profile", context), profileIcon, rightArrowIcon,
+            settingListItem(getTranslated("profile"), profileIcon, rightArrowIcon,
                     () =>
                     Get.toNamed(
                         Routes.profile, arguments: {"from": Routes.settings})),
-            settingListItem(getTranslated("chats", context), chatIcon, rightArrowIcon, () {
+            settingListItem(getTranslated("chats"), chatIcon, rightArrowIcon, () {
               Get.toNamed(Routes.chatSettings);
             }),
             settingListItem(
-                getTranslated("starredMessages", context), staredMsgIcon, rightArrowIcon, () {
+                getTranslated("starredMessages"), staredMsgIcon, rightArrowIcon, () {
               Get.toNamed(Routes.starredMessages);
             }),
             settingListItem(
-                getTranslated("notifications", context), notificationIcon, rightArrowIcon, () =>
+                getTranslated("notifications"), notificationIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.notification)),
             settingListItem(
-                getTranslated("blockedContacts", context), blockedIcon, rightArrowIcon, () =>
+                getTranslated("blockedContacts"), blockedIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.blockedList)),
-            settingListItem(getTranslated("appLock", context), lockIcon, rightArrowIcon, () =>
+            settingListItem(getTranslated("appLock"), lockIcon, rightArrowIcon, () =>
                 Get.toNamed(Routes.appLock)),
-            settingListItem(getTranslated("aboutAndHelp", context), aboutIcon, rightArrowIcon, () =>
+            settingListItem(getTranslated("aboutAndHelp"), aboutIcon, rightArrowIcon, () =>
                 Get.to(const AboutAndHelpView())),
             settingListItem(
-                getTranslated("connectionLabel", context), connectionIcon, toggleOffIcon, () {}),
-            settingListItem(getTranslated("deleteMyAccount", context), delete, rightArrowIcon, () {
+                getTranslated("connectionLabel"), connectionIcon, toggleOffIcon, () {}),
+            settingListItem(getTranslated("deleteMyAccount"), delete, rightArrowIcon, () {
               Get.toNamed(Routes.deleteAccount);
             }),
-            settingListItem(getTranslated("logout", context), logoutIcon, rightArrowIcon, () {
+            settingListItem(getTranslated("logout"), logoutIcon, rightArrowIcon, () {
               Helper.showAlert(
                   message:
-                  getTranslated("logoutMessage", context),
+                  getTranslated("logoutMessage"),
                   actions: [
                     TextButton(
                         onPressed: () {
                           Get.back();
                         },
-                        child: Text(getTranslated("no", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                        child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                     TextButton(
                         onPressed: () {
                           controller.logout();
                         },
-                        child: Text(getTranslated("yes", context).toUpperCase(),style: const TextStyle(color: buttonBgColor)))
+                        child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
                   ]);
             }),
             Padding(

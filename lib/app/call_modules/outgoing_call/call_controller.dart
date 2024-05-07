@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
@@ -425,9 +426,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
       if (callList.length > 2) {
         var data = await getProfileDetails(userJid);
-        toToast("${data.getName()} is Busy");
+        toToast(getTranslated("usernameIsBusy").replaceFirst("%d", data.getName()));
       } else {
-        toToast("User is Busy");
+        toToast(getTranslated("userIsBusy"));
       }
 
     this.callMode(callMode);
@@ -643,14 +644,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Mirrorfly.getAllAvailableAudioInput().then((value) {
       final availableList = audioDevicesFromJson(value);
       availableAudioList(availableList);
-      debugPrint("${Constants.tag} flutter getAllAvailableAudioInput $availableList");
+      debugPrint("Mirrorfly flutter getAllAvailableAudioInput $availableList");
     });
   }
 
   Future<void> remoteEngaged(String userJid, String callMode, String callType) async {
 
     var data = await getProfileDetails(userJid);
-    toToast(data.getName() + Constants.remoteEngagedToast);
+    toToast(getTranslated("remoteEngagedToast").replaceFirst("%d", data.getName()));
 
     debugPrint("***call list length ${callList.length}");
 //The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
@@ -764,7 +765,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
       Helper.showAlert(
-          message: Constants.videoSwitchMessage,
+          message: getTranslated("videoSwitchMessage"),
           actions: [
             TextButton(
                 onPressed: () {
@@ -772,7 +773,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   showingVideoSwitchPopup = false;
                   closeDialog();
                 },
-                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   if(callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
@@ -788,11 +789,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     closeDialog();
                   }
                 },
-                child: const Text("SWITCH",style: TextStyle(color: buttonBgColor)))
+                child: Text(getTranslated("switchCall"),style: const TextStyle(color: buttonBgColor)))
           ],
           barrierDismissible: false);
     }else{
-      toToast("Camera Permission Needed to switch the call");
+      toToast(getTranslated("needCameraPermissionForSwitch"));
     }
   }
 
@@ -824,7 +825,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
     Helper.showAlert(
-        message: "${profile.getName()} ${Constants.videoSwitchRequestedMessage}",
+        message: getTranslated("videoSwitchRequestedMessage").replaceFirst("%d", profile.getName()),
         actions: [
           TextButton(
               onPressed: () {
@@ -833,7 +834,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest();
               },
-              child: const Text("DECLINE",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("declineRequest").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 closeDialog();
@@ -846,12 +847,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   });
                 }else{
                   Future.delayed(const Duration(milliseconds:500 ),(){
-                    toToast("Camera Permission Needed to switch the call");
+                    toToast(getTranslated("needCameraPermissionForSwitch"));
                   });
                   Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
-              child: const Text("ACCEPT",style: TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("acceptRequest"),style: const TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
   }
@@ -861,7 +862,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     waitingCompleter = Completer<void>();
 
     Helper.showAlert(
-        message: Constants.videoSwitchRequestMessage,
+        message: getTranslated("videoSwitchRequestMessage"),
         actions: [
           TextButton(
               onPressed: () {
@@ -870,7 +871,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("cancel").toUpperCase(),style: TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
 
@@ -884,7 +885,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         waitingCompleter.complete();
         // Get.back();
         var profile = await getProfileDetails(callList.first.userJid!.value.checkNull());
-        toToast("No response from ${profile.getName()}");
+        toToast(getTranslated("noResponseFrom").replaceFirst("%d", profile.getName()));
       }
     });
   }
@@ -906,7 +907,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void videoCallConversionRejected() {
-    toToast("Request Declined");
+    toToast(getTranslated("callSwitchRequestDeclined"));
     inComingRequest = false;
     outGoingRequest = false;
     if (!waitingCompleter.isCompleted) {
@@ -975,7 +976,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2 && !callList.indexWhere((element) => element.userJid.toString() == userJid.toString()).isNegative) { //#FLUTTER-1300
-      CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
+      CallUtils.getNameOfJid(userJid).then((value) => toToast(getTranslated("userLeftOnCall").replaceFirst("%d", value)));
     }
     removeUser(callMode, userJid, callType);
   }

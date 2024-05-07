@@ -11,13 +11,15 @@ import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'app_localizations.dart';
+
 extension RecentChatParsing on RecentChatData {
   String getChatType() {
     return (isGroup.checkNull())
-        ? Constants.typeGroupChat
+        ? ChatType.groupChat
         : (isBroadCast.checkNull())
-        ? Constants.typeBroadcastChat
-        : Constants.typeChat;
+        ? ChatType.broadcastChat
+        : ChatType.singleChat;
   }
 
   bool isDeletedContact() {
@@ -46,10 +48,10 @@ extension RecentChatParsing on RecentChatData {
           : profileName.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       } else if (isDeletedContact()) {
         LogMessage.d('isDeletedContact', isDeletedContact().toString());
-        return Constants.deletedUser;
+        return getTranslated("deletedUser");
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
         LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());
@@ -80,7 +82,7 @@ extension ProfileParesing on ProfileDetails {
   }
 
   String getChatType() {
-    return (isGroupProfile ?? false) ? Constants.typeGroupChat : Constants.typeChat;
+    return (isGroupProfile ?? false) ? ChatType.groupChat : ChatType.singleChat;
   }
 
   bool isItSavedContact() {
@@ -96,7 +98,7 @@ extension ProfileParesing on ProfileDetails {
   String getName() {
     if (!Constants.enableContactSync) {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       }
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
@@ -106,10 +108,10 @@ extension ProfileParesing on ProfileDetails {
           : name.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return Constants.you;
+        return getTranslated("you");
       } else if (isDeletedContact()) {
         LogMessage.d('isDeletedContact', isDeletedContact().toString());
-        return Constants.deletedUser;
+        return getTranslated("deletedUser");
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
         LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());
@@ -125,22 +127,22 @@ extension ProfileParesing on ProfileDetails {
 
 extension ChatmessageParsing on ChatMessageModel {
   bool isMediaDownloaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == Constants.mediaDownloaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloaded.value);
   }
 
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploaded.value);
   }
 
   bool isMediaDownloading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == Constants.mediaDownloading);
+    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloading.value);
   }
 
   bool isMediaUploading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaUploading);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploading.value);
   }
   bool isUploadFailed() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == Constants.mediaNotUploaded);
+    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaNotUploaded.value);
   }
 
   bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
@@ -172,7 +174,7 @@ extension FileFormatter on num {
 extension StringParsing on String? {
   //check null
   String checkNull() {
-    return this ?? "";
+    return this ?? Constants.emptyString;
   }
 
   bool toBool() {

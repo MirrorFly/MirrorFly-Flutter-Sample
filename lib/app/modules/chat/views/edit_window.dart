@@ -54,7 +54,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
         child: Column(
           children: [
             AppBar(
-              title: Text(getTranslated("editMessage", context)),
+              title: Text(getTranslated("editMessage")),
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -162,7 +162,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                         maxLines: 5,
                                         controller: widget.chatController.editMessageController,
                                         // focusNode: controller.focusNode,
-                                        decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder", context), border: InputBorder.none),
+                                        decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none),
                                       ),
                                     ),
                                   ],

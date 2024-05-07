@@ -45,7 +45,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
             SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
             controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-              child: Text(controller.isSearch.value ? getTranslated("noResultFound", context) : getTranslated("noStarredMessages", context)),
+              child: Text(controller.isSearch.value ? getTranslated("noResultFound") : getTranslated("noStarredMessages")),
             ));
           })
         ),
@@ -156,7 +156,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
       child: Obx(() {
         return Container(
           child: controller.isSelected.value ? selectedAppBar(context) : controller.isSearch.value ? searchBar(context) : AppBar(
-            title: Text(getTranslated("starredMessages", context)),
+            title: Text(getTranslated("starredMessages")),
             actions: [
               IconButton(
                 icon: SvgPicture.asset(
@@ -185,7 +185,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
         focusNode: controller.searchFocus,
         autofocus: true,
         decoration: InputDecoration(
-            hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
+            hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
       actions: [
@@ -224,7 +224,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.checkBusyStatusForForward();
                     },
                     icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
-                overflowWidget: Text(getTranslated("forward", context)),
+                overflowWidget: Text(getTranslated("forward")),
                 showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
@@ -237,7 +237,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.favouriteMessage();
                     },
                     icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
-                overflowWidget: Text(getTranslated("unFavourite", context)),
+                overflowWidget: Text(getTranslated("unFavourite")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'unfavoured',
                 onItemClick: () {
@@ -250,7 +250,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.share();
                     },
                     icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
-                overflowWidget: Text(getTranslated("share", context)),
+                overflowWidget: Text(getTranslated("share")),
                 showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Share',
                 onItemClick: () {},
@@ -270,7 +270,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                   ),
                   tooltip: 'Copy',
                 ),
-                overflowWidget: Text(getTranslated("copy", context)),
+                overflowWidget: Text(getTranslated("copy")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Copy',
                 onItemClick: () {
@@ -283,7 +283,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                       controller.deleteMessages();
                     },
                     icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
-                overflowWidget: Text(getTranslated("delete", context)),
+                overflowWidget: Text(getTranslated("delete")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
                 onItemClick: () {

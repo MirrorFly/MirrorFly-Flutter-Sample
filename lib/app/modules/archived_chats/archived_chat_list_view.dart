@@ -42,7 +42,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
               title: controller.selected.value
                   ? Text(
                   (controller.selectedChats.length).toString())
-                  : Text(getTranslated("archivedChats", context)),
+                  : Text(getTranslated("archivedChats")),
               actions: [
                 Visibility(
                   visible: controller.selected.value,
@@ -61,7 +61,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                                 controller.deleteChats();
                               },
                               icon: SvgPicture.asset(delete),tooltip: 'Delete',),
-                          overflowWidget: Text(getTranslated("delete", context)),
+                          overflowWidget: Text(getTranslated("delete")),
                           showAsAction: controller.delete.value ? ShowAsAction.always : ShowAsAction.gone,
                           keyValue: 'Delete',
                           onItemClick: () {
@@ -74,7 +74,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                               controller.muteChats();
                             },
                             icon: SvgPicture.asset(mute),tooltip: 'Mute',),
-                          overflowWidget: Text(getTranslated("mute", context)),
+                          overflowWidget: Text(getTranslated("mute")),
                           showAsAction: controller.mute.value
                               ? ShowAsAction.always
                               : ShowAsAction.gone,
@@ -89,7 +89,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                               controller.unMuteChats();
                             },
                             icon: SvgPicture.asset(unMute),tooltip: 'UnMute',),
-                          overflowWidget: Text(getTranslated("unMute", context)),
+                          overflowWidget: Text(getTranslated("unMute")),
                           showAsAction: controller.unMute.value
                               ? ShowAsAction.always
                               : ShowAsAction.gone,
@@ -104,7 +104,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                                 controller.unArchiveSelectedChats();
                               },
                               icon: SvgPicture.asset(unarchive),tooltip: 'UnArchive',),
-                          overflowWidget: Text(getTranslated("unArchive", context)),
+                          overflowWidget: Text(getTranslated("unArchive")),
                           showAsAction: ShowAsAction.always,
                           keyValue: 'UnArchive',
                           onItemClick: () {
@@ -148,7 +148,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
                           );
                         });
                       }) : Center(
-                    child: Text(getTranslated("noArchivedChats",context)),
+                    child: Text(getTranslated("noArchivedChats")),
                   )),
             ),
           );

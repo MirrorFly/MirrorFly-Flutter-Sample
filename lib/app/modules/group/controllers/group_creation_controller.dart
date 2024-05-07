@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
@@ -105,7 +106,7 @@ class GroupCreationController extends GetxController {
         }
       });
     }else{
-      toToast("Please provide group name");
+      toToast(getTranslated("pleaseProvideGroupName"));
     }
   }
 
@@ -178,7 +179,7 @@ class GroupCreationController extends GetxController {
       Helper.hideLoading();
       if(response.isSuccess) {
         Get.back();
-        toToast('Group created Successfully');
+        toToast(getTranslated("groupCreatedSuccessfully"));
       }
     });
   }
@@ -192,9 +193,9 @@ class GroupCreationController extends GetxController {
           Get.back();
           imagePick(Get.context!);
         },
-        title: const Text(
-          "Choose from Gallery",
-          style: TextStyle(color: textBlackColor, fontSize: 14),
+        title: Text(
+          getTranslated("chooseFromGallery"),
+          style: const TextStyle(color: textBlackColor, fontSize: 14),
         ),
       ),
       ListTile(
@@ -204,9 +205,9 @@ class GroupCreationController extends GetxController {
           Get.back();
           camera();
         },
-        title: const Text(
-          "Take Photo",
-          style: TextStyle(color: textBlackColor, fontSize: 14),
+        title: Text(
+          getTranslated("takePhoto"),
+          style: const TextStyle(color: textBlackColor, fontSize: 14),
         ),
       ),
     ]);

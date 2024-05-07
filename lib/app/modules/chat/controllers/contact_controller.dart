@@ -9,6 +9,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
@@ -61,7 +62,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       isPageLoading(true);
       fetchUsers(false);
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     //Mirrorfly.syncContacts(true);
     //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
@@ -389,7 +390,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         toToast(error.toString());
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -427,7 +428,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         Get.back(result: selectedUsersList[0]);
       });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -453,12 +454,12 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
+    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -467,15 +468,15 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
                 if (response.isSuccess) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -490,17 +491,17 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
           Get.back(result: selectedUsersJIDList);
         } else {
-          toToast("Add at least two contacts");
+          toToast(getTranslated("addAtLeastTwoContact"));
         }
       } else {
         if (selectedUsersJIDList.isNotEmpty) {
           Get.back(result: selectedUsersJIDList);
         } else {
-          toToast("Select any contacts");
+          toToast(getTranslated("selectAnyContact"));
         }
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     /*if(groupJid.value.isEmpty) {
       if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
@@ -526,7 +527,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       if (await AppUtils.isNetConnected()) {
         if (!await Mirrorfly.contactSyncStateValue()) {
           var contactPermissionHandle = await AppPermission.checkPermission(
-              Permission.contacts, contactPermission, Constants.contactSyncPermission);
+              Permission.contacts, contactPermission, getTranslated("contactSyncPermissionContent"));
           if (contactPermissionHandle) {
             progressSpinner(true);
             Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  }).then((value) {
@@ -552,7 +553,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         }
       } else {
         if (isNetworkToastNeeded) {
-          toToast(Constants.noInternetConnection);
+          toToast(getTranslated("noInternetConnection"));
         }
         // viewModel.onContactSyncFinished(false);
       }
@@ -648,7 +649,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           selectedUsersJIDList.add(item.jid!);
           groupCallMembersCount(groupCallMembersCount.value + 1);
         } else {
-          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+          toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
         //item.isSelected = true;
       }
@@ -669,11 +670,11 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callType.value == CallType.audio) {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -313,10 +314,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var time = (currentYear == calendar.year)
         ? DateFormat("dd-MMM").format(calendar)
         : DateFormat("yyyy/MM/dd").format(calendar);
-    return (equalsWithYesterday(calendar, Constants.today))
+    return (equalsWithYesterday(calendar, getTranslated("today")))
         ? hourTime
-        : (equalsWithYesterday(calendar, Constants.yesterday))
-            ? Constants.yesterday.toUpperCase()
+        : (equalsWithYesterday(calendar, getTranslated("yesterday")))
+            ? getTranslated("yesterday").toUpperCase()
             : time;
   }
 
@@ -340,7 +341,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   bool equalsWithYesterday(DateTime srcDate, String day) {
-    var yesterday = (day == Constants.yesterday) ? calendar.subtract(const Duration(days: 1)) : DateTime.now();
+    var yesterday = (day == getTranslated("yesterday")) ? calendar.subtract(const Duration(days: 1)) : DateTime.now();
     return yesterday.difference(calendar).inDays == 0;
   }
 
@@ -601,7 +602,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var selected = recentChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
       var isMember = await Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(), userJid: SessionManagement.getUserJID().checkNull());
-      if ((item.getChatType() == Constants.typeGroupChat) &&
+      if ((item.getChatType() == ChatType.groupChat) &&
           isMember! &&
           availableFeatures.value.isGroupChatAvailable.checkNull()) {
         delete(false);
@@ -660,7 +661,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       info(true);
       pin(!item.isChatPinned!);
       unpin(item.isChatPinned!);
-      if (Constants.typeBroadcastChat != item.getChatType()) {
+      if (ChatType.broadcastChat != item.getChatType()) {
         unmute(item.isMuted!);
         mute(!item.isMuted!);
         shortcut(true);
@@ -671,8 +672,8 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
       read(item.isConversationUnRead);
       unread(!item.isConversationUnRead!);
-      delete(Constants.typeGroupChat != item.getChatType());
-      if (item.getChatType() == Constants.typeGroupChat) {
+      delete(ChatType.groupChat != item.getChatType());
+      if (item.getChatType() == ChatType.groupChat) {
         LogMessage.d("isGroup", item.isGroup!.toString());
         Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(),userJid: SessionManagement.getUserJID().checkNull()).then((value) => delete(!value!));
       }
@@ -702,7 +703,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (selectedChats.length == 1) {
         _itemPin(0);
         clearAllChatSelection();
-        toToast("Chat pinned");
+        toToast(getTranslated("chatPinned"));
       } else {
         selected(false);
         for (var index = 0; index < selectedChats.length; index++) {
@@ -716,10 +717,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           }
         }
         clearAllChatSelection();
-        toToast("Chats pinned");
+        toToast(getTranslated("chatsPinned"));
       }
     } else {
-      toToast("You can only pin upto 3 chats");
+      toToast(getTranslated("chatPinLimit"));
     }
   }
 
@@ -754,14 +755,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (selectedChats.length == 1) {
       _itemUnPin(0);
       clearAllChatSelection();
-      toToast("Chat unpinned");
+      toToast(getTranslated("chatUnPinned"));
     } else {
       selected(false);
       selectedChats.asMap().forEach((key, value) {
         _itemUnPin(key);
       });
       clearAllChatSelection();
-      toToast("Chats unpinned");
+      toToast(getTranslated("chatsUnPinned"));
     }
   }
 
@@ -795,14 +796,14 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (selectedChats.length == 1) {
       _itemUnMute(0);
       clearAllChatSelection();
-      toToast("Chat marked as read");
+      toToast(getTranslated("chatMarkedAsRead"));
     } else {
       selected(false);
       selectedChats.asMap().forEach((key, value) {
         _itemUnMute(key);
       });
       clearAllChatSelection();
-      toToast("Chats marked as read");
+      toToast(getTranslated("chatsMarkedAsRead"));
     }
   }
 
@@ -811,7 +812,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (selectedChats.length == 1) {
         _itemArchive(0);
         clearAllChatSelection();
-        toToast('1 Chat archived');
+        toToast(getTranslated("chatArchived"));
       } else {
         var count = selectedChats.length;
         selected(false);
@@ -819,10 +820,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           _itemArchive(key);
         });
         clearAllChatSelection();
-        toToast('$count Chats archived');
+        toToast('$count ${getTranslated("chatsArchived")}');
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -893,9 +894,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
       clearAllChatSelection();
       updateUnReadChatCount();
-      toToast("Chat${count > 1 ? 's' : ''} marked as read");
+      toToast(count > 1 ? getTranslated("chatsMarkedAsRead") : getTranslated("chatMarkedAsRead"));
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -905,7 +906,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     for (var element in selectedChatsPosition) {
       recentChats[element].isConversationUnRead = true;
     }
-    toToast("Chat${selectedChats.length == 1 ? "" : "s"} marked as unread");
+    toToast(selectedChats.length == 1 ? getTranslated("chatMarkedAsUnRead") : getTranslated("chatsMarkedAsUnRead"));
     clearAllChatSelection();
     updateUnReadChatCount();
   }
@@ -931,12 +932,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
     var chatIndex =
         recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    Helper.showAlert(message: "Delete chat with \"${recentChats[chatIndex].getName()}\"?", actions: [
+    Helper.showAlert(message:getTranslated("deleteChatWith").replaceFirst("%d", recentChats[chatIndex].getName()), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
@@ -950,17 +951,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               updateUnReadChatCount();
             });
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
   itemsDelete() {
-    Helper.showAlert(message: "Delete ${selectedChatsPosition.length} selected chats?", actions: [
+    Helper.showAlert(message:getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChatsPosition.length}"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"),style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -975,7 +976,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"),style: TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -1291,7 +1292,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         searchLoading(false);
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -1419,7 +1420,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         searching = false;
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -1513,8 +1514,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         "topicId": topicId.value
       });
     } else {
-      var contactPermissionHandle =
-          await AppPermission.checkPermission(Permission.contacts, contactPermission, Constants.contactSyncPermission);
+      var contactPermissionHandle = await AppPermission.checkAndRequestPermissions(permissions: [Permission.contacts],
+          permissionIcon: contactPermission,
+          permissionContent:getTranslated("contactPermissionContent"),permissionPermanentlyDeniedContent:getTranslated("contactPermissionDeniedContent") );
       if (contactPermissionHandle) {
         Get.toNamed(Routes.contacts, arguments: {
           "is_make_call": forCalls,
@@ -1727,7 +1729,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       if (await AppPermission.askVideoCallPermissions()) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
           debugPrint("#Mirrorfly Call You are on another call");
-          toToast(Constants.msgOngoingCallAlert);
+          toToast(getTranslated("msgOngoingCallAlert"));
         } else {
           Mirrorfly.makeVideoCall(toUserJid: fromUser.checkNull(), flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
@@ -1743,7 +1745,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         LogMessage.d("askVideoCallPermissions", "false");
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -1759,11 +1761,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (await AppPermission.askAudioCallPermissions()) {
@@ -1788,11 +1790,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
@@ -1949,13 +1951,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var logIndex =
         callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
     Helper.showAlert(
-        message: Constants.deleteCallLog,
+        message: getTranslated("deleteCallLogConfirmation"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -1966,24 +1968,24 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                     selected(false);
                     selectedCallLogs.clear();
                   } else {
-                    toToast("Error in call log delete");
+                    toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
               },
-              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
 
   itemsDeleteCallLog() {
     Helper.showAlert(
-        message: Constants.deleteSelectedCallLog,
+        message: getTranslated("deleteSelectedCallLog"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -1998,24 +2000,24 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                     selected(false);
                     selectedCallLogs.clear();
                   } else {
-                    toToast("Error in call log delete");
+                    toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
               },
-              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
 
   clearCallLog() {
     Helper.showAlert(
-        message: Constants.deleteAllCallLog,
+        message: getTranslated("deleteAllCallLog"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -2023,11 +2025,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   if (response.isSuccess) {
                     callLogList.clear();
                   } else {
-                    toToast("Error in call log clear");
+                    toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
               },
-              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

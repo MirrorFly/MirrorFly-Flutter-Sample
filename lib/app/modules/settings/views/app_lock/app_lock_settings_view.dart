@@ -13,26 +13,26 @@ class AppLockSettingsView extends GetView<AppLockController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("appLock", context)),
+        title: Text(getTranslated("appLock")),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            lockItem(title: getTranslated("pinLock", context),
-                subtitle: getTranslated("pinLockDesc", context),
+            lockItem(title: getTranslated("pinLock"),
+                subtitle: getTranslated("pinLockDesc"),
                 on: controller.pinEnabled,
                 onToggle: (value) => controller.enablePin()),
             Visibility(visible: controller.pinEnabled,
-                child: lockItem(title: getTranslated("changePin", context),
-                    subtitle: getTranslated("changePinDesc", context),
+                child: lockItem(title: getTranslated("changePin"),
+                    subtitle: getTranslated("changePinDesc"),
                     trailing: const SizedBox(),
                     on: false,
                     onToggle: (value) {},
                     onTap: () => controller.changePin())),
-            lockItem(title: getTranslated("fingerPrintID", context),
-                subtitle: getTranslated("fingerPrintIDDesc", context),
+            lockItem(title: getTranslated("fingerPrintID"),
+                subtitle: getTranslated("fingerPrintIDDesc"),
                 on: controller.bioEnabled,
                 onToggle: (value) => controller.enableBio()),
             const SizedBox(height: 8,),
@@ -42,9 +42,9 @@ class AppLockSettingsView extends GetView<AppLockController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    getTranslated("appLockDesc", context),
+                    getTranslated("appLockDesc"),
                     style: const TextStyle(color: textColor),),
-                  Text(getTranslated("appLockNote", context),
+                  Text(getTranslated("appLockNote"),
                     style: const TextStyle(color: textColor),)
                 ],
               ),

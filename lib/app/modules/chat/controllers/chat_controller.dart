@@ -27,6 +27,7 @@ import 'package:record/record.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/apputils.dart';
@@ -385,7 +386,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       focusNode.unfocus();
       showBottomSheetAttachment();
       /*} else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }*/
     } else {
       //show busy status popup
@@ -494,12 +495,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   showBusyStatusAlert(Function? function) {
-    Helper.showAlert(message: "Disable busy status. Do you want to continue?", actions: [
+    Helper.showAlert(message: getTranslated("disableBusy"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("No", style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"), style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -513,16 +514,16 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   }
                 });
           },
-          child: const Text("Yes", style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), style: const TextStyle(color: buttonBgColor))),
     ]);
   }
   showBlockStatusAlert(Function? function) {
-    Helper.showAlert(message: "Unblock to send a message?", actions: [
+    Helper.showAlert(message: getTranslated("unBlockToSendMsg"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -535,14 +536,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     profile.isBlocked = false;
                     isBlocked(false);
                     Helper.hideLoading();
-                    toToast('${getName(profile)} has been unblocked');
+                    toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
                     if (function != null) {
                       function();
                     }
                   }
                 });
           },
-          child: const Text("UNBLOCK", style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("unblock").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -650,7 +651,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       } else {
         initializedMessageList = false;
         chatLoading(false);
-        toToast("Chat History Not Initialized");
+        toToast(getTranslated("chatHistoryNotInit"));
       }
     });
   }
@@ -706,7 +707,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           navigateToMessage(chatList[chat]);
           starredChatMessageId = null;
         } else {
-          toToast('Message not found');
+          toToast(getTranslated("messageNotFound"));
         }
       }
       getUnsentReplyMessage();
@@ -794,7 +795,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           sendDocumentMessage(filePath.value, "");
         });
       } else {
-          toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxDocFileSize}"));
+          toToast(getTranslated("mediaMaxLimitRestriction").replaceAll("%d", "${Constants.maxDocFileSize}"));
       }
       setOnGoingUserAvail();
     } else {
@@ -821,7 +822,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         replyMessageID = replyChatMessage.messageId;
       }
       isReplying(false);
-      Platform.isIOS ? Helper.showLoading(message: "Compressing Video") : null;
+      Platform.isIOS ? Helper.showLoading(message: getTranslated("compressingVideo")) : null;
       //old method is deprecated Instead of use below new method
       /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
@@ -1071,7 +1072,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             });
           });
         } else {
-          toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxAudioFileSize}"));
+          toToast(getTranslated("mediaMaxLimitRestriction").replaceAll("%d", "${Constants.maxAudioFileSize}"));
         }
         setOnGoingUserAvail();
       } else {
@@ -1095,7 +1096,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               });
             });
           } else {
-            toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${Constants.maxAudioFileSize}"));
+            toToast(getTranslated("mediaMaxLimitRestriction").replaceAll("%d", "${Constants.maxAudioFileSize}"));
           }
         } else {
           setOnGoingUserAvail();
@@ -1297,9 +1298,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     Future.delayed(const Duration(milliseconds: 100), () async {
       var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       Helper.showAlert(
-          title: "Report ${getName(profile)}?",
+          title: getTranslated("report").replaceFirst("%d", getName(profile)),
           message:
-              "${selectedChatList.isNotEmpty ? "This message will be forwarded to admin." : "The last 5 messages from this contact will be forwarded to admin."} This Contact will not be notified.",
+              "${selectedChatList.isNotEmpty ? getTranslated("thisMessageForwardToAdmin") : getTranslated("last5MessageForwardToAdmin")} ${getTranslated("contactWillBeNotified")}",
           actions: [
             TextButton(
                 onPressed: () async {
@@ -1312,21 +1313,21 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                         flyCallBack: (FlyResponse response) {
                           debugPrint(response.toString());
                           if (response.isSuccess) {
-                            toToast("Report sent");
+                            toToast(getTranslated("reportSentSuccess"));
                           } else {
-                            toToast("There are no messages available");
+                            toToast(getTranslated("thereNoMessagesAvailable"));
                           }
                         });
                   } else {
-                    toToast(Constants.noInternetConnection);
+                    toToast(getTranslated("noInternetConnection"));
                   }
                 },
-                child: const Text("REPORT", style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("report").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           ]);
     });
   }
@@ -1338,7 +1339,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // selectedChatList.clear();
     // isSelected(false);
     clearChatSelection(selectedChatList[0]);
-    toToast("1 Text Copied Successfully to the clipboard");
+    toToast(getTranslated("textCopiedSuccess"));
   }
 
   Map<bool, bool> isMessageCanbeRecalled() {
@@ -1378,7 +1379,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?",
+              selectedChatList.length > 1 ? getTranslated("deleteSelectedMessages") : getTranslated("deleteSelectedMessage"),
               style: const TextStyle(fontSize: 18, color: textColor),
             ),
             isCheckBoxShown
@@ -1400,8 +1401,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                                     LogMessage.d("isMediaDelete", value.toString());
                                   });
                             }),
-                            const Expanded(
-                              child: Text("Delete media from my phone"),
+                            Expanded(
+                              child: Text(getTranslated("deleteMediaFromPhone")),
                             ),
                           ],
                         ),
@@ -1417,7 +1418,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -1446,7 +1447,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 isSelected(false);
                 selectedChatList.clear();
               },
-              child: const Text("DELETE FOR ME", style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("deleteForMe").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           isRecallAvailable
               ? TextButton(
                   onPressed: () {
@@ -1475,7 +1476,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                               }
                             }
                           } else {
-                            toToast("Unable to delete the selected Messages");
+                            toToast(getTranslated("unableToDeleteMessages"));
                             /*for (var chatList in selectedChatList) {
                           chatList.isSelected(false);
                           // this.chatList.refresh();
@@ -1490,7 +1491,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                           selectedChatList.clear();
                         });
                   },
-                  child: const Text("DELETE FOR EVERYONE", style: TextStyle(color: buttonBgColor)))
+                  child: Text(getTranslated("deleteForEveryone").toUpperCase(), style: const TextStyle(color: buttonBgColor)))
               : const SizedBox.shrink(),
         ]);
   }
@@ -1549,17 +1550,17 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   blockUser() {
     Future.delayed(const Duration(milliseconds: 100), () async {
-      Helper.showAlert(message: "Are you sure you want to Block ${getName(profile)}?", actions: [
+      Helper.showAlert(message: "${getTranslated("youWantToBlock")} ${getName(profile)}?", actions: [
         TextButton(
             onPressed: () {
               Get.back();
             },
-            child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
         TextButton(
             onPressed: () async {
               if (await AppUtils.isNetConnected()) {
                 Get.back();
-                Helper.showLoading(message: "Blocking User");
+                Helper.showLoading(message: getTranslated("blockingUser"));
                 Mirrorfly.blockUser(
                     userJid: profile.jid!,
                     flyCallBack: (FlyResponse response) {
@@ -1569,13 +1570,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                       profile_.refresh();
                       saveUnsentMessage();
                       Helper.hideLoading();
-                      toToast('${getName(profile)} has been blocked');
+                      toToast(getTranslated("hasBlocked").replaceFirst("%d", getName(profile)));
                     });
               } else {
-                toToast(Constants.noInternetConnection);
+                toToast(getTranslated("noInternetConnection"));
               }
             },
-            child: const Text("BLOCK", style: TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("block").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
       ]);
     });
   }
@@ -1588,7 +1589,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
         var starred = chatList.indexWhere((element) => element.isMessageStarred.value);
-        Helper.showAlert(message: "Are you sure you want to clear the chat?", actions: [
+        Helper.showAlert(message: getTranslated("youWantToClearChat"), actions: [
           Visibility(
             visible: !starred.isNegative,
             child: TextButton(
@@ -1596,13 +1597,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   Get.back();
                   clearChatHistory(false);
                 },
-                child: const Text("CLEAR ALL", style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cleatAll").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           ),
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           Visibility(
             visible: starred.isNegative,
             child: TextButton(
@@ -1610,7 +1611,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   Get.back();
                   clearChatHistory(false);
                 },
-                child: const Text("CLEAR", style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("clear").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
           ),
           Visibility(
             visible: !starred.isNegative,
@@ -1619,23 +1620,23 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   Get.back();
                   clearChatHistory(true);
                 },
-                child: const Text("CLEAR EXCEPT STARRED", style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("clearExceptStarred"), style: const TextStyle(color: buttonBgColor))),
           ),
         ]);
       });
     } else {
-      toToast("There is no conversation.");
+      toToast(getTranslated("noConversation"));
     }
   }
 
   unBlockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Helper.showAlert(message: "Unblock ${getName(profile)}?", actions: [
+      Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
         TextButton(
             onPressed: () {
               Get.back();
             },
-            child: const Text("CANCEL", style: TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
         TextButton(
             onPressed: () async {
               if (await AppUtils.isNetConnected()) {
@@ -1649,13 +1650,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                       isBlocked(false);
                       getUnsentMessageOfAJid();
                       Helper.hideLoading();
-                      toToast('${getName(profile)} has been unblocked');
+                      toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
                     });
               } else {
-                toToast(Constants.noInternetConnection);
+                toToast(getTranslated("noInternetConnection"));
               }
             },
-            child: const Text("UNBLOCK", style: TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("unblock").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
       ]);
     });
   }
@@ -1722,10 +1723,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       if (j >= 0 && g != null) {
         _scrollToPosition(j);
       } else {
-        toToast("No Results Found");
+        toToast(getTranslated("noResultsFound"));
       }
     } else {
-      toToast("No Results Found");
+      toToast(getTranslated("noResultsFound"));
     }
   }
 
@@ -1739,10 +1740,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       if (j >= 0 && g != null) {
         _scrollToPosition(j);
       } else {
-        toToast("No Results Found");
+        toToast(getTranslated("noResultsFound"));
       }
     } else {
-      toToast("No Results Found");
+      toToast(getTranslated("noResultsFound"));
     }
   }
 
@@ -1762,7 +1763,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         chatList.refresh();
       });
     } else {
-      toToast("No Results Found");
+      toToast(getTranslated("noResultsFound"));
     }
   }
 
@@ -1848,11 +1849,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 }
               }
             });
-      } else {
-        toToast("permission denid");
       }
     } else {
-      toToast("There is no conversation.");
+      toToast(getTranslated("noConversation"));
     }
   }
 
@@ -1932,8 +1931,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       var microPhonePermissionStatus = await AppPermission.checkAndRequestPermissions(
           permissions: [Permission.microphone],
           permissionIcon: audioPermission,
-          permissionContent: Constants.audioPermission,
-          permissionPermanentlyDeniedContent: Constants.microPhonePermissionDenied);
+          permissionContent: getTranslated("audioPermissionContent"),
+          permissionPermanentlyDeniedContent: getTranslated("microPhonePermissionDeniedContent"));
       debugPrint("microPhone Permission Status---> $microPhonePermissionStatus");
       if (microPhonePermissionStatus) {
         record = Record();
@@ -2001,7 +2000,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       final recordDuration = dt.millisecondsSinceEpoch;
       sendAudioMessage(recordedAudioPath, true, recordDuration.toString());
     } else {
-      toToast("Recorded Audio Time is too Short");
+      toToast(getTranslated("recordedAudioTimeShort"));
     }
     isUserTyping(false);
     isAudioRecording(Constants.audioRecordInitial);
@@ -2257,8 +2256,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var cameraPermissionStatus = await AppPermission.checkAndRequestPermissions(
         permissions: [Permission.camera, Permission.microphone],
         permissionIcon: cameraPermission,
-        permissionContent: Constants.cameraPermission,
-        permissionPermanentlyDeniedContent: Constants.cameraCapturePermanentlyDeniedContent);
+        permissionContent: getTranslated("cameraPermissionContent"),
+        permissionPermanentlyDeniedContent: getTranslated("cameraCapturePermanentlyDeniedContent"));
     debugPrint("Camera Permission Status---> $cameraPermissionStatus");
     if (cameraPermissionStatus) {
       setOnGoingUserGone();
@@ -2303,8 +2302,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var permission = await AppPermission.checkAndRequestPermissions(
         permissions: permissions,
         permissionIcon: filePermission,
-        permissionContent: Constants.filePermission,
-        permissionPermanentlyDeniedContent: Constants.storagePermissionDenied);
+        permissionContent: getTranslated("filePermissionContent"),
+        permissionPermanentlyDeniedContent: getTranslated("storagePermissionDeniedContent"));
     if (permission) {
       try {
         setOnGoingUserGone();
@@ -2324,8 +2323,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var permission = await AppPermission.checkAndRequestPermissions(
         permissions: [Permission.contacts],
         permissionIcon: contactPermission,
-        permissionContent: Constants.contactPermission,
-        permissionPermanentlyDeniedContent: Constants.contactPermissionDenied);
+        permissionContent: getTranslated("contactPermissionContent"),
+        permissionPermanentlyDeniedContent: getTranslated("contactPermissionDeniedContent"));
     if (permission) {
       setOnGoingUserGone();
       Get.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
@@ -2341,8 +2340,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       var permission = await AppPermission.checkAndRequestPermissions(
           permissions: [Permission.location],
           permissionIcon: locationPinPermission,
-          permissionContent: Constants.locationPermission,
-          permissionPermanentlyDeniedContent: Constants.locationPermissionDenied);
+          permissionContent: getTranslated("locationPermissionContent"),
+          permissionPermanentlyDeniedContent: getTranslated("locationPermissionDeniedContent"));
       if (permission) {
         setOnGoingUserGone();
         Get.toNamed(Routes.locationSent)?.then((value) {
@@ -2354,19 +2353,19 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         });
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   checkAdminBlocked() {
     if (profile.isGroupProfile.checkNull()) {
       if (profile.isAdminBlocked.checkNull()) {
-        toToast("This group is no longer available");
+        toToast(getTranslated("groupNoLonger"));
         Get.back();
       }
     } else {
       if (profile.isAdminBlocked.checkNull()) {
-        toToast("This chat is no longer available");
+        toToast(getTranslated("chatNoLonger"));
         Get.back();
       }
     }
@@ -2400,8 +2399,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if ((chat.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloaded ||
-                chat.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) &&
+        if ((chat.mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloaded.value ||
+                chat.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploaded.value) &&
             (checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()))) {
           return true;
         }
@@ -2833,7 +2832,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint("parse-----> $parse");
       Mirrorfly.addContact(number: parse["international"], name: userName).then((value) {
         if (value ?? false) {
-          toToast("Contact Saved");
+          toToast(getTranslated("contactSavedSuccess"));
           if (Constants.enableContactSync) {
             syncContacts();
           }
@@ -2922,7 +2921,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         debugPrint("permission not given");
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -2949,7 +2948,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         LogMessage.d("askVideoCallPermissions", "false");
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -3283,7 +3282,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             });
       }
     }else{
-      toToast("Unable to Edit the message");
+      toToast(getTranslated("unableEditMessage"));
     }
   }
 

@@ -38,7 +38,7 @@ class LoginView extends GetView<LoginController> {
                     child: SvgPicture.asset(registerIcon),
                   ),
                   Text(
-                    getTranslated("registerYourNumber", context),
+                    getTranslated("registerYourNumber"),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w600),
@@ -46,7 +46,7 @@ class LoginView extends GetView<LoginController> {
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, right: 8, left: 8),
                     child: Text(
-                      getTranslated("registerMessage",context),
+                      getTranslated("registerMessage"),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 13,
@@ -94,7 +94,7 @@ class LoginView extends GetView<LoginController> {
                               ],
                               decoration: InputDecoration(
                                 border: InputBorder.none,
-                                hintText: getTranslated("enterMobileNumber", context),
+                                hintText: getTranslated("enterMobileNumber"),
                                 //hintStyle: TextStyle(color: Colors.black26)
                               ),
                             ),
@@ -119,14 +119,14 @@ class LoginView extends GetView<LoginController> {
                       controller.registerUser();
                     },
                     child: Text(
-                      getTranslated("continue", context),
+                      getTranslated("continue"),
                       style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(getTranslated("agree", context),style: const TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
+                  Text(getTranslated("agree"),style: const TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
                   const SizedBox(
                     height: 10,
                   ),
@@ -135,24 +135,24 @@ class LoginView extends GetView<LoginController> {
                     children: [
                       InkWell(
                         child: Text(
-                          '${getTranslated("termsAndCondition", context)},',
+                          '${getTranslated("termsAndCondition")},',
                           style: const TextStyle(
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),
-                        onTap:()=>launchWeb(Constants.termsConditions),
+                        onTap:()=>launchWeb(getTranslated("termsConditionsLink")),
                       ),
                       const SizedBox(
                         width: 5,
                       ),
                       InkWell(
                         child: Text(
-                          '${getTranslated("privacyPolicy", context)}.',
+                          '${getTranslated("privacyPolicy")}.',
                           style: const TextStyle(
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),
-                        onTap: ()=>launchWeb(Constants.privacyPolicy),
+                        onTap: ()=>launchWeb(getTranslated("privacyPolicyLink")),
                       ),
                     ],
                   )

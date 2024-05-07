@@ -14,13 +14,13 @@ class BlockedListView extends GetView<BlockedListController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("blockedContactList", context)),
+        title: Text(getTranslated("blockedContactList")),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
         return Center(
           child: controller.blockedUsers.isEmpty ? Text(
-            getTranslated("noBlockedContactsFound", context),
+            getTranslated("noBlockedContactsFound"),
             style: const TextStyle(fontSize: 17, color: Colors.grey),) :
           ListView.builder(
             itemCount: controller.blockedUsers.length,

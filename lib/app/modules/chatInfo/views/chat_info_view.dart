@@ -148,7 +148,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
             }),
             Obx(() {
               return listItem(
-                title: Text(getTranslated("muteNotification", context),
+                title: Text(getTranslated("muteNotification"),
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -181,7 +181,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("email", context), style: const TextStyle(
+                  child: Text(getTranslated("email"), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -209,7 +209,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("mobileNumber", context), style: const TextStyle(
+                  child: Text(getTranslated("mobileNumber"), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -237,7 +237,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("status", context), style: const TextStyle(
+                  child: Text(getTranslated("status"), style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w500)),
@@ -262,7 +262,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
             ),
             listItem(
                 leading: SvgPicture.asset(imageOutline),
-                title: Text(getTranslated("viewAllMedia", context),
+                title: Text(getTranslated("viewAllMedia"),
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -275,7 +275,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
             ),
             listItem(
                 leading: SvgPicture.asset(reportUser),
-                title: Text(getTranslated("report", context),
+                title: Text(getTranslated("report"),
                     style: const TextStyle(
                         color: Colors.red,
                         fontSize: 14,

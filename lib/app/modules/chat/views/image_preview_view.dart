@@ -101,7 +101,7 @@ class ImagePreviewView extends GetView<ImagePreviewController> {
                                 minLines: 1,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: getTranslated("addCaption", context),
+                                  hintText: getTranslated("addCaption"),
                                   hintStyle: const TextStyle(
                                     color: Colors.white,
                                   ),),

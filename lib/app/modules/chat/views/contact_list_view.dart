@@ -52,16 +52,16 @@ class ContactListView extends GetView<ContactController> {
                   controller: controller.searchQuery,
                   autofocus: true,
                   decoration: InputDecoration(
-                      hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
                     : controller.isForward.value
-                    ? Text(getTranslated("forwardTo", context))
+                    ? Text(getTranslated("forwardTo"))
                     : controller.isCreateGroup.value
                     ? Text(
-                  getTranslated("addParticipants", context),
+                  getTranslated("addParticipants"),
                   overflow: TextOverflow.fade,
                 )
-                    : Text(getTranslated("contacts", context)),
+                    : Text(getTranslated("contacts")),
                 actions: [
                   Visibility(
                     visible: controller.progressSpinner.value,
@@ -90,7 +90,7 @@ class ContactListView extends GetView<ContactController> {
                     child: TextButton(
                         onPressed: () => controller.backToCreateGroup(),
                         child: Text(
-                          (controller.groupJid.value.isNotEmpty ? getTranslated("next", context) : getTranslated("create", context)).toUpperCase(),
+                          (controller.groupJid.value.isNotEmpty ? getTranslated("next") : getTranslated("create")).toUpperCase(),
                           style: const TextStyle(color: Colors.black),
                         )),
                   ),
@@ -119,7 +119,7 @@ class ContactListView extends GetView<ContactController> {
                           visibleWidget: IconButton(
                               onPressed: () {}, icon: const Icon(Icons.refresh)),
                           overflowWidget: InkWell(
-                            child: Text(getTranslated("refresh", context)),
+                            child: Text(getTranslated("refresh")),
                             onTap: () {
                               Get.back();
                               controller.refreshContacts(true);
@@ -162,7 +162,7 @@ class ContactListView extends GetView<ContactController> {
                             visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
                             child: Center(child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 20.0),
-                              child: Text(getTranslated("noContactsFound", context)),
+                              child: Text(getTranslated("noContactsFound")),
                             ),)),
                         controller.isPageLoading.value
                             ? const Center(
@@ -226,7 +226,7 @@ class ContactListView extends GetView<ContactController> {
                                                 : videoCallSmallIcon,
                                           ),
                                           const SizedBox(width: 8,),
-                                          Text(getTranslated("callNowWithCount", context).replaceAll("%d", (controller.groupCallMembersCount.value -1).toString()),
+                                          Text(getTranslated("callNowWithCount").replaceAll("%d", (controller.groupCallMembersCount.value -1).toString()),
                                             style: const TextStyle(
                                                 color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
                                                 fontFamily: 'sf_ui'),)

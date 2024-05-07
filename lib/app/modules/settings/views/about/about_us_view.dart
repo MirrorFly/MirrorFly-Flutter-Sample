@@ -17,7 +17,7 @@ class AboutUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("aboutUs", context)),
+        title: Text(getTranslated("aboutUs")),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -25,21 +25,21 @@ class AboutUsView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(getTranslated("titleContactMsg", context),style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            Text(getTranslated("contactUs", context),style: textStyle,),
+            Text(getTranslated("contactUs"),style: textStyle,),
             const SizedBox(height: 16,),
-            Text(getTranslated("titleContactMsg", context),style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            Text(getTranslated("titleFaq", context),style: textStyle,),
+            Text(getTranslated("titleFaq"),style: textStyle,),
             const SizedBox(height: 16,),
-            Text(getTranslated("titleFaqMsg", context),style: textMsgStyle,),
+            Text(getTranslated("titleFaqMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
             InkWell(child: const Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,color: Color(
                   0xffa2a1a1)))),
-            ),onTap: ()=>launchWeb(getTranslated("aboutUsLink", context)),)
+            ),onTap: ()=>launchWeb(getTranslated("aboutUsLink")),)
           ],
         ),
       ),

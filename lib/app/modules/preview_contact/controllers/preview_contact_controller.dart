@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/local_contact_model.dart';
@@ -75,7 +76,7 @@ class PreviewContactController extends GetxController {
     //     toToast("Contact Number is Empty");
     //   }
     // }else{
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
 
     var contactServerSharing = <ShareContactDetails>[];
@@ -91,7 +92,7 @@ class PreviewContactController extends GetxController {
           }
         }
         if (contactSharing.isEmpty) {
-          toToast("Select at least one number");
+          toToast(getTranslated("selectLeastOne"));
           return;
         }
         debugPrint("adding contact list--> ${contactSharing.toString()}");
@@ -114,7 +115,7 @@ class PreviewContactController extends GetxController {
       Get.back();
       Get.back();
     // } else {
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
   }
 

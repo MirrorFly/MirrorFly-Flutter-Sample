@@ -16,6 +16,7 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../common/app_localizations.dart';
 import '../common/widgets.dart';
 import '../model/chat_message_model.dart';
 import 'apputils.dart';
@@ -142,12 +143,12 @@ class Helper {
   }
 
   static void showFeatureUnavailable() {
-    Helper.showAlert(message: "Feature unavailable for your plan", actions: [
+    Helper.showAlert(message: getTranslated("featureNotAvailableForYourPlan"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("Ok")),
+          child: Text(getTranslated("ok"))),
     ]);
   }
 
@@ -172,7 +173,7 @@ class Helper {
   }
 
   static int getColourCode(String name) {
-    if (name == Constants.you) return 0Xff000000;
+    if (name == getTranslated("you")) return 0Xff000000;
     var colorsArray = Constants.defaultColorList;
     var hashcode = name.hashCode;
     var rand = hashcode % colorsArray.length;
@@ -378,10 +379,10 @@ String getRecentChatTime(BuildContext context, int? epochTime) {
   var time = (currentYear == calendar.year)
       ? DateFormat("dd-MMM").format(calendar)
       : DateFormat("yyyy/MM/dd").format(calendar);
-  return (equalsWithYesterday(calendar, Constants.today))
+  return (equalsWithYesterday(calendar, getTranslated("today")))
       ? hourTime
-      : (equalsWithYesterday(calendar, Constants.yesterday))
-          ? Constants.yesterday.toUpperCase()
+      : (equalsWithYesterday(calendar, getTranslated("yesterday")))
+          ? getTranslated("yesterday").toUpperCase()
           : time;
 }
 
@@ -405,7 +406,7 @@ String setDateHourFormat(int format, int hours) {
 }
 
 bool equalsWithYesterday(DateTime srcDate, String day) {
-  if (day == Constants.yesterday) {
+  if (day == getTranslated("yesterday")) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
     var yesterdayDate = DateFormat('yyyy/MM/dd')
         .format(DateTime.now().subtract(const Duration(days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
@@ -446,9 +447,9 @@ openDocument(String mediaLocalStoragePath) async {
     final result = await OpenFile.open(mediaLocalStoragePath);
     debugPrint(result.message);
     if (result.message.contains("file does not exist")) {
-      toToast("The Selected file Doesn't Exist or Unable to Open");
+      toToast(getTranslated("unableToOpen"));
     } else if (result.message.contains('No APP found to open this file')) {
-      toToast('you may not have proper app to view this content');
+      toToast(getTranslated("youMayNotProperApp"));
     }
 
     /*Mirrorfly.openFile(mediaLocalStoragePath).catchError((onError) {
@@ -463,7 +464,7 @@ openDocument(String mediaLocalStoragePath) async {
       );
     });*/
   } else {
-    toToast(Constants.mediaDoesNotExist);
+    toToast(getTranslated("mediaDoesNotExist"));
     debugPrint("media does not exist");
   }
   // }
@@ -480,7 +481,7 @@ Future<void> launchInBrowser(String url) async {
       throw 'Could not launch $url';
     }
   } else {
-    toToast(Constants.noInternetConnection);
+    toToast(getTranslated("noInternetConnection"));
   }
 }
 
@@ -563,10 +564,10 @@ String getName(ProfileDetails item) {
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
-      return Constants.you;
+      return getTranslated("you");
     } else if (item.isDeletedContact()) {
       LogMessage.d("getName", 'isDeletedContact ${item.isDeletedContact()}');
-      return Constants.deletedUser;
+      return getTranslated("deletedUser");
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
       LogMessage.d("getName", 'isUnknownContact ${item.isUnknownContact()}');
       return item.mobileNumber.checkNull().isNotEmpty
@@ -578,20 +579,6 @@ String getName(ProfileDetails item) {
           ? (item.name.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.name.checkNull())
           : item.nickName.checkNull(); //#FLUTTER-1300
     }
-    /*var status = true;
-    if(status) {
-      return item.nickName
-          .checkNull()
-          .isEmpty
-          ? (item.name
-          .checkNull()
-          .isEmpty
-          ? item.mobileNumber.checkNull()
-          : item.name.checkNull())
-          : item.nickName.checkNull();
-    }else{
-      return item.mobileNumber.checkNull();
-    }*/
   }
 }
 
@@ -607,10 +594,10 @@ String getRecentName(RecentChatData item) {
         : item.profileName.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
-      return Constants.you;
+      return getTranslated("you");
     } else if (item.isDeletedContact()) {
       LogMessage.d('isDeletedContact', item.isDeletedContact().toString());
-      return Constants.deletedUser;
+      return getTranslated("deletedUser");
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
       LogMessage.d('isUnknownContact', item.jid.toString());
       return getMobileNumberFromJid(item.jid.checkNull());
@@ -631,10 +618,10 @@ String getMemberName(ProfileDetails item) {
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
-      return Constants.you;
+      return getTranslated("you");
     } else if (item.isDeletedContact()) {
       LogMessage.d('isDeletedContact', item.isDeletedContact().toString());
-      return Constants.deletedUser;
+      return getTranslated("deletedUser");
     } else if (item.isUnknownContact() || item.nickName.checkNull().isEmpty) {
       LogMessage.d('isUnknownContact', item.isUnknownContact().toString());
       return item.mobileNumber.checkNull().isNotEmpty
@@ -677,7 +664,7 @@ String getMobileNumberFromJid(String jid) {
 
 String convertSecondToLastSeen(String seconds) {
   if (seconds.isNotEmpty) {
-    if (seconds == "0") return "Online";
+    if (seconds == "0") return getTranslated("online");
     LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
     DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
@@ -685,16 +672,16 @@ String convertSecondToLastSeen(String seconds) {
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
     if (diff.inDays == 0) {
-      return 'last seen at ${DateFormat('hh:mm a').format(lastSeen)}';
+      return getTranslated("lastSeenAt").replaceFirst("%d", DateFormat('hh:mm a').format(lastSeen));
     } else if (diff.inDays == 1) {
-      return 'last seen on Yesterday';
+      return getTranslated("lastSeenYesterday");
     } else if (diff.inDays > 1 && diff.inDays < 365) {
       var last = DateFormat('dd MMM').format(lastSeen);
-      return 'last seen on $last';
+      return getTranslated("lastSeenOn").replaceFirst("%d", last);
     } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return 'last seen on ${DateFormat('dd/MM/yyyy').format(lastSeen)}';
+      return getTranslated("lastSeenOn").replaceFirst("%d",DateFormat('dd/MM/yyyy').format(lastSeen));
     } else {
-      return 'Online';
+      return getTranslated("online");
     }
   } else {
     return "";
@@ -864,11 +851,11 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
   }
   if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
     debugPrint("#Mirrorfly Call You are on another call");
-    toToast(Constants.msgOngoingCallAlert);
+    toToast(getTranslated("msgOngoingCallAlert"));
     return;
   }
   if (!(await AppUtils.isNetConnected())) {
-    toToast(Constants.noInternetConnection);
+    toToast(getTranslated("noInternetConnection"));
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
@@ -890,7 +877,7 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
     if (await AppPermission.askVideoCallPermissions()) {
       if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
         debugPrint("#Mirrorfly Call You are on another call");
-        toToast(Constants.msgOngoingCallAlert);
+        toToast(getTranslated("msgOngoingCallAlert"));
       } else {
         Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
@@ -905,7 +892,7 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
       LogMessage.d("askVideoCallPermissions", "false");
     }
   } else {
-    toToast(Constants.noInternetConnection);
+    toToast(getTranslated("noInternetConnection"));
   }
 }
 
@@ -947,9 +934,9 @@ String getDocAsset(String filename) {
 String getCallLogDateFromTimestamp(int convertedTime, String format) {
   var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   if (isToday(convertedTime)) {
-    return "Today";
+    return getTranslated("today");
   } else if (isYesterday(convertedTime)) {
-    return "Yesterday";
+    return getTranslated("yesterday");
   } else {
     return DateFormat(format).format(calendar);
   }

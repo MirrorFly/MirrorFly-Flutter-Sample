@@ -231,7 +231,7 @@ class ChatView extends GetView<ChatController> {
                                   width: 8,
                                 ),
                                 buttonNotSavedContact(
-                                    text: getTranslated("add", context),
+                                    text: getTranslated("add"),
                                     onClick: () {
                                       controller.saveContact();
                                     }),
@@ -239,7 +239,7 @@ class ChatView extends GetView<ChatController> {
                                   width: 8,
                                 ),
                                 buttonNotSavedContact(
-                                    text: controller.profile.isBlocked.checkNull() ? getTranslated("unblock", context) : getTranslated("block", context),
+                                    text: controller.profile.isBlocked.checkNull() ? getTranslated("unblock") : getTranslated("block"),
                                     onClick: () {
                                       if (controller.profile.isBlocked.checkNull()) {
                                         controller.unBlockUser();
@@ -333,7 +333,7 @@ class ChatView extends GetView<ChatController> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 15.0),
                     child: SizedBox(
-                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel", context), textAlign: TextAlign.end))),
+                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel"), textAlign: TextAlign.end))),
                   ),
                 ),
               )
@@ -347,7 +347,7 @@ class ChatView extends GetView<ChatController> {
                   child: Padding(
                     padding: const EdgeInsets.all(17.0),
                     child: Text(
-                      getTranslated("cancel", context),
+                      getTranslated("cancel"),
                       textAlign: TextAlign.end,
                       style: const TextStyle(color: Colors.red),
                     ),
@@ -368,7 +368,7 @@ class ChatView extends GetView<ChatController> {
                   enabled: controller.isAudioRecording.value == Constants.audioRecordInitial ? true : false,
                   controller: controller.messageController,
                   focusNode: controller.focusNode,
-                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder", context), border: InputBorder.none),
+                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none),
                 ),
               )
             : const SizedBox.shrink(),
@@ -410,7 +410,7 @@ class ChatView extends GetView<ChatController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                getTranslated("youHaveBlocked", context),
+                getTranslated("youHaveBlocked"),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 15),
@@ -432,7 +432,7 @@ class ChatView extends GetView<ChatController> {
               ),
               InkWell(
                 child: Text(
-                  getTranslated("unblock", context),
+                  getTranslated("unblock"),
                   style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                 ),
                 onTap: () => controller.unBlockUser(),
@@ -455,7 +455,7 @@ class ChatView extends GetView<ChatController> {
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
-            getTranslated("youCantSentMessageNoLonger", context),
+            getTranslated("youCantSentMessageNoLonger"),
             style: const TextStyle(
               fontSize: 15,
             ),
@@ -477,7 +477,7 @@ class ChatView extends GetView<ChatController> {
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
-            getTranslated("featureNotAvailable", context),
+            getTranslated("featureNotAvailable"),
             style: const TextStyle(
               fontSize: 15,
             ),
@@ -617,7 +617,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(replyIcon),
             tooltip: 'Reply',
           ),
-          overflowWidget: Text(getTranslated("reply", context)),
+          overflowWidget: Text(getTranslated("reply")),
           showAsAction: (controller.canBeReplied.value &&
               controller.availableFeatures.value.isClearChatAvailable
                   .checkNull())
@@ -638,7 +638,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(forwardIcon),
             tooltip: 'Forward',
           ),
-          overflowWidget: Text(getTranslated("forward", context)),
+          overflowWidget: Text(getTranslated("forward")),
           showAsAction: controller.canBeForwarded.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -658,7 +658,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(favouriteIcon),
             tooltip: 'Favourite',
           ),
-          overflowWidget: Text(getTranslated("favourite", context)),
+          overflowWidget: Text(getTranslated("favourite")),
           showAsAction: controller.canBeStarred.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -678,7 +678,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(unFavouriteIcon),
             tooltip: 'unFavourite',
           ),
-          overflowWidget: Text(getTranslated("unFavourite", context)),
+          overflowWidget: Text(getTranslated("unFavourite")),
           showAsAction: controller.canBeUnStarred.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -696,7 +696,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(deleteIcon),
             tooltip: 'Delete',
           ),
-          overflowWidget: Text(getTranslated("delete", context)),
+          overflowWidget: Text(getTranslated("delete")),
           showAsAction: controller.availableFeatures.value
               .isDeleteMessageAvailable.checkNull()
               ? ShowAsAction.always
@@ -713,7 +713,7 @@ class ChatView extends GetView<ChatController> {
                 controller.reportChatOrUser();
               },
               icon: const Icon(Icons.report_problem_rounded)),
-          overflowWidget: Text(getTranslated("report", context)),
+          overflowWidget: Text(getTranslated("report")),
           showAsAction: controller.canShowReport.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -735,7 +735,7 @@ class ChatView extends GetView<ChatController> {
             ),
             tooltip: 'Copy',
           ),
-          overflowWidget: Text(getTranslated("copy", context)),
+          overflowWidget: Text(getTranslated("copy")),
           showAsAction: controller.canBeCopied.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -757,7 +757,7 @@ class ChatView extends GetView<ChatController> {
             ),
             tooltip: 'Message Info',
           ),
-          overflowWidget: Text(getTranslated("messageInfo", context)),
+          overflowWidget: Text(getTranslated("messageInfo")),
           showAsAction: controller.canShowInfo.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -773,7 +773,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(shareIcon),
             tooltip: 'Share',
           ),
-          overflowWidget: Text(getTranslated("share", context)),
+          overflowWidget: Text(getTranslated("share")),
           showAsAction: controller.canBeShared.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -789,7 +789,7 @@ class ChatView extends GetView<ChatController> {
             icon: SvgPicture.asset(shareIcon),
             tooltip: 'Edit Message',
           ),
-          overflowWidget: Text(getTranslated("editMessage", context)),
+          overflowWidget: Text(getTranslated("editMessage")),
           showAsAction: controller.canEditMessage.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -807,7 +807,7 @@ class ChatView extends GetView<ChatController> {
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(
-                overflowWidget: Text(getTranslated("clearChat", context)),
+                overflowWidget: Text(getTranslated("clearChat")),
                 showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull() ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
@@ -823,7 +823,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
-                overflowWidget: Text(getTranslated("report", context)),
+                overflowWidget: Text(getTranslated("report")),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Report',
                 onItemClick: () {
@@ -840,7 +840,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("unBlock", context)),
+                overflowWidget: Text(getTranslated("unBlock")),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Unblock',
                 onItemClick: () {
@@ -856,7 +856,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("block", context)),
+                overflowWidget: Text(getTranslated("block")),
                 showAsAction: controller.profile.isGroupProfile ?? false ? ShowAsAction.gone : ShowAsAction.never,
                 keyValue: 'Block',
                 onItemClick: () {
@@ -869,7 +869,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: () {},
                   icon: const Icon(Icons.search),
                 ),
-                overflowWidget: Text(getTranslated("search", context)),
+                overflowWidget: Text(getTranslated("search")),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Search',
                 onItemClick: () {
@@ -887,7 +887,7 @@ class ChatView extends GetView<ChatController> {
                     controller.closeKeyBoard();
                     controller.exportChat();
                   },
-                  child: Text(getTranslated("emailChat", context)),
+                  child: Text(getTranslated("emailChat")),
                 ),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'EmailChat',
@@ -901,7 +901,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: () {},
                   icon: const Icon(Icons.shortcut),
                 ),
-                overflowWidget: Text(getTranslated("addChatShortcut", context)),
+                overflowWidget: Text(getTranslated("addChatShortcut")),
                 showAsAction: ShowAsAction.gone,
                 keyValue: 'Shortcut',
                 onItemClick: () {
@@ -915,7 +915,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: SvgPicture.asset(videoCallIcon),
                 ),
-                overflowWidget: Text(getTranslated("videoCall", context)),
+                overflowWidget: Text(getTranslated("videoCall")),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
@@ -929,7 +929,7 @@ class ChatView extends GetView<ChatController> {
                   },
                   icon: SvgPicture.asset(audioCallIcon),
                 ),
-                overflowWidget: Text(getTranslated("audioCall", context)),
+                overflowWidget: Text(getTranslated("audioCall")),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {

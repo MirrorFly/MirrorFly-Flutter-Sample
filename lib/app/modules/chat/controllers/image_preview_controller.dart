@@ -36,7 +36,7 @@ class ImagePreviewController extends GetxController {
           Get.back();
         }
       // }else{
-      //   toToast(Constants.noInternetConnection);
+      //   toToast(getTranslated("noInternetConnection"));
       // }
     } else {
       debugPrint("File Not Found For Image Upload");

@@ -13,7 +13,7 @@ class LocationSentView extends GetView<LocationController>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: Text(getTranslated("userLocation", context)),
+        title: Text(getTranslated("userLocation")),
     automaticallyImplyLeading: true,
         ),
       body:SafeArea(
@@ -49,7 +49,7 @@ class LocationSentView extends GetView<LocationController>{
                         ()=>controller.address1.value.isNotEmpty ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(getTranslated("sendThisLocation", context),style: const TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.normal),),
+                            Text(getTranslated("sendThisLocation"),style: const TextStyle(color: buttonBgColor,fontSize: 14,fontWeight: FontWeight.normal),),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(controller.address1.value,style: const TextStyle(color: textHintColor,fontSize: 16,fontWeight: FontWeight.w700),),

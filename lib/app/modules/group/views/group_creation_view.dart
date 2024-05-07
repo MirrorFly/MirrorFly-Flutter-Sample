@@ -19,13 +19,13 @@ class GroupCreationView extends GetView<GroupCreationController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          getTranslated("newGroup", context),
+          getTranslated("newGroup"),
         ),
         actions: [
           TextButton(
               onPressed: () => controller.goToAddParticipantsPage(),
               child: Text(
-                getTranslated("next", context).toUpperCase(),
+                getTranslated("next").toUpperCase(),
                 style: const TextStyle(color: Colors.black),
               )),
         ],
@@ -137,7 +137,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                                 maxLength: 25,
                                 maxLines: 1,
                                 controller: controller.groupName,
-                                decoration: const InputDecoration(border: InputBorder.none, counterText: "", hintText: "Type group name here..."),
+                                decoration: InputDecoration(border: InputBorder.none, counterText: "", hintText: getTranslated("typeGroupNameHere")),
                               ),
                             ),
                           ),
@@ -171,7 +171,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                         ],
                       ),
                       const AppDivider(),
-                      Text(getTranslated("provideGroupNameIcon", context),
+                      Text(getTranslated("provideGroupNameIcon"),
                         style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                       ),
                     ],

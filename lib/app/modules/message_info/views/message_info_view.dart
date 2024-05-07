@@ -17,7 +17,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("messageInfo", context)),
+          title: Text(getTranslated("messageInfo")),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -89,7 +89,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
             title: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
-              child: Text(getTranslated("deliveredTo", context).replaceAll("%d","${controller.messageDeliveredList
+              child: Text(getTranslated("deliveredTo").replaceAll("%d","${controller.messageDeliveredList
                   .length}").replaceAll("%s", "${controller.statusCount.value}"),
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.w600),
@@ -114,7 +114,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                       blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
                       unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
                   }) : emptyDeliveredSeen(
-                  context, getTranslated("sentNotDelivered", context))),
+                  context, getTranslated("sentNotDelivered"))),
           const AppDivider(),
           ListItem(
             leading: !controller.visibleReadList.value ? SvgPicture.asset(
@@ -123,7 +123,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
               child: Text(
-      getTranslated("readBy", context).replaceAll("%d","${controller.messageReadList.length}").replaceAll("%s", "${controller
+      getTranslated("readBy").replaceAll("%d","${controller.messageReadList.length}").replaceAll("%s", "${controller
                     .statusCount.value}"),
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.w600),
@@ -147,7 +147,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
                         onTap: () {},
                       blocked: member.isBlockedMe.checkNull() || member.isAdminBlocked.checkNull(),
                       unknown: (!member.isItSavedContact.checkNull() || member.isDeletedContact()),);
-                  }) : emptyDeliveredSeen(context, getTranslated("notRead", context))),
+                  }) : emptyDeliveredSeen(context, getTranslated("notRead"))),
           const AppDivider(),
         ],
       );
@@ -158,7 +158,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
       children: [
         const Divider(),
         Text(
-          getTranslated("delivered", context),
+          getTranslated("delivered"),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(
@@ -166,7 +166,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
         ),
         Obx(() {
           return Text(controller.deliveredTime.value == ""
-              ? getTranslated("sentNotDelivered", context)
+              ? getTranslated("sentNotDelivered")
               : controller.getChatTime(
               context, int.parse(controller.deliveredTime.value)));
         }),
@@ -175,7 +175,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
         ),
         const Divider(),
         Text(
-          getTranslated("read", context),
+          getTranslated("read"),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(
@@ -183,7 +183,7 @@ class MessageInfoView extends GetView<MessageInfoController> {
         ),
         Obx(() {
           return Text(controller.readTime.value == ""
-              ? getTranslated("notRead", context)
+              ? getTranslated("notRead")
               : controller.getChatTime(
               context, int.parse(controller.readTime.value)));
         }),

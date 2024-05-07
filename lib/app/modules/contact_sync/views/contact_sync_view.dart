@@ -18,7 +18,7 @@ class ContactSyncPage extends GetView<ContactSyncController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(),
-            Text(getTranslated("hello", context), style: const TextStyle(fontSize: 23,
+            Text(getTranslated("hello"), style: const TextStyle(fontSize: 23,
                 fontWeight: FontWeight.w800,
                 color: textHintColor), textAlign: TextAlign.center,),
             Text(controller.name,

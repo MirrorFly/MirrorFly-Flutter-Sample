@@ -2,6 +2,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/constants.dart';
@@ -80,7 +81,7 @@ class LocalContactController extends GetxController {
       contactsSelected.remove(localContact);
     }else {
       if(contactsSelected.length == 5){
-        toToast("Can't share more than 5 contacts");
+        toToast(getTranslated("cantShare5More"));
         return;
       }
       localContact.isSelected = true;

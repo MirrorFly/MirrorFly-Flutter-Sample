@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
@@ -14,33 +15,27 @@ class DeleteAccountReasonController extends FullLifeCycleController
   var reasonValue = "".obs;
   TextEditingController feedback = TextEditingController();
 
-  var deleteReasons = [
-    'I am changing my device',
-    'I am changing my phone number',
-    'MirrorFly is missing a feature',
-    'MirrorFly is not working',
-    'Other',
-  ];
+  var deleteReasons = getTranslatedList("deleteReasons");
 
   get focusNode => FocusNode();
 
   deleteAccount() {
     Helper.showAlert(
-        title: "Proceed to delete your account?",
+        title: getTranslated("proceedDeleteAccount"),
         message:
-            "Deleting your account is permanent. Your data cannot be recovered if you reactivate your MirrorFly account in future.",
+            getTranslated("proceedDeleteAccountContent"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel"),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 // Get.back();
                 deleteUserAccount();
               },
-              child: const Text("OK",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -48,7 +43,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       Get.back();
       // Future.delayed(const Duration(milliseconds: 100), () {
-       Helper.showLoading(message: "Deleting Account");
+       Helper.showLoading(message: getTranslated("deletingAccount"));
       debugPrint("on DeleteAccount");
       SessionManagement.setLogin(false);
       Mirrorfly.deleteAccount(reason: reasonValue.value, feedback: feedback.text, flyCallBack: (FlyResponse response) {
@@ -58,18 +53,18 @@ class DeleteAccountReasonController extends FullLifeCycleController
             Helper.hideLoading();
             SessionManagement.clear()
                 .then((value) => Get.offAllNamed(Routes.login));
-            toToast('Your MirrorFly account has been deleted');
+            toToast(getTranslated("accountDeleted"));
           });
         }else{
           SessionManagement.setLogin(true);
-          toToast("Unable to delete the account");
+          toToast(getTranslated("unableToDeleteAccount"));
         }
       }).catchError((error) {
         Helper.hideLoading();
       });
       // });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -20,12 +21,12 @@ class DeleteAccountController extends GetxController {
   deleteAccount() async {
     if(await AppUtils.isNetConnected()) {
       if(mobileNumber.text.isEmpty){
-        Helper.showAlert(message: "Please enter your mobile number", actions: [
+        Helper.showAlert(message: getTranslated("enterYourMobileNumber"), actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("Ok",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok"),style: TextStyle(color: buttonBgColor))),
         ]);
         return;
       }
@@ -40,13 +41,13 @@ class DeleteAccountController extends GetxController {
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {
           Helper.showAlert(
-              message: "The mobile number you entered doesn't match your account",
+              message: getTranslated("mobileNumberNotMatch"),
               actions: [
                 TextButton(
                     onPressed: () {
                       Get.back();
                     },
-                    child: const Text("Ok",style: TextStyle(color: buttonBgColor))),
+                    child: Text(getTranslated("ok"),style: TextStyle(color: buttonBgColor))),
               ]);
           return;
         }
@@ -54,20 +55,20 @@ class DeleteAccountController extends GetxController {
         var mob = '${countryCode?.replaceAll('+', '').toString().checkNull()}${mobileNumber.text.trim()}';
         if (mob != SessionManagement.getMobileNumber()) {
           Helper.showAlert(
-              message: "The mobile number you entered doesn't match your account",
+              message: getTranslated("mobileNumberNotMatch"),
               actions: [
                 TextButton(
                     onPressed: () {
                       Get.back();
                     },
-                    child: const Text("Ok")),
+                    child: Text(getTranslated("ok"))),
               ]);
           return;
         }
       }
       Get.toNamed(Routes.deleteAccountReason);
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
