@@ -1,5 +1,5 @@
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
@@ -111,9 +111,7 @@ class SessionManagement {
   static Future setWebChatLogin(bool webChatLogin) async {
     await _preferences.setBool("${prefix}web_chat_login", webChatLogin);
   }
-  static Future setChatJid(String setChatJid) async {
-    await _preferences.setString("${prefix}chatJid", setChatJid);
-  }
+
   static void setAdminBlocked(bool status) async {
     await _preferences.setBool("${prefix}admin_blocked", status);
   }
@@ -183,7 +181,7 @@ class SessionManagement {
   static bool getLogin() => _preferences.getBool("${prefix}login") ?? false;
 
   static String getUserIdentifier() => _preferences.getString("${prefix}userIdentifier") ?? "";
-  static String? getChatJid() => _preferences.getString("${prefix}chatJid");
+
   static String getCurrentChatJID() => _preferences.getString("${prefix}CurrentChatJID") ?? "";
   static String? getName() => _preferences.getString("${prefix}name");
   static String? getMobileNumber() => _preferences.getString("${prefix}mobileNumber");

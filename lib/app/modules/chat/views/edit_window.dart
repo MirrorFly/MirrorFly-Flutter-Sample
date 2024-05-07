@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
+import '../widgets/message_content.dart';
+import '../widgets/reply_message_widgets.dart';
+import '../widgets/sender_header.dart';
 
 class EditMessageScreen extends StatefulWidget {
   final ChatController chatController;
@@ -60,7 +63,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   widget.chatController.closeKeyBoard();
-                  Get.back();
+                  Navigator.pop(context);
                 },
               ),
             ),

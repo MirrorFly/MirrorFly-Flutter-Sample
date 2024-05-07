@@ -11,7 +11,7 @@ import '../../../../common/app_localizations.dart';
 import '../../../../data/apputils.dart';
 import '../../../../data/helper.dart';
 import '../../../../data/permissions.dart';
-import '../../../../routes/app_pages.dart';
+import '../../../../routes/route_settings.dart';
 
 class ChatSettingsController extends GetxController {
 

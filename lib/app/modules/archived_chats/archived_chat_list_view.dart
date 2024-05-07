@@ -3,14 +3,21 @@ import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/constants.dart';
 import '../../widgets/custom_action_bar_icons.dart';
 import '../dashboard/widgets.dart';
 import 'archived_chat_list_controller.dart';
 
-class ArchivedChatListView extends GetView<ArchivedChatListController> {
-  const ArchivedChatListView({Key? key}) : super(key: key);
+class ArchivedChatListView extends StatelessWidget {
+  ArchivedChatListView(
+      {super.key,
+        this.enableAppBar = true,
+        this.showChatDeliveryIndicator = true});
+  final bool enableAppBar;
+  final bool showChatDeliveryIndicator;
+
+  final ArchivedChatListController controller = ArchivedChatListController().get();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +35,7 @@ class ArchivedChatListView extends GetView<ArchivedChatListController> {
             controller.clearAllChatSelection();
             return;
           }
-          Get.back();
+          Navigator.pop(context);
         },
         child: Obx(() {
           return Scaffold(

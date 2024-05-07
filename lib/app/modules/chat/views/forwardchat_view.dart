@@ -4,15 +4,36 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../dashboard/widgets.dart';
 
-class ForwardChatView extends GetView<ForwardChatController> {
-  const ForwardChatView({Key? key}) : super(key: key);
+class ForwardChatView extends StatefulWidget{
+  const ForwardChatView(
+      {super.key, required this.forwardMessageIds, this.enableAppBar = true});
+  final List<String> forwardMessageIds;
+  final bool enableAppBar;
 
+  @override
+  State<ForwardChatView> createState() => _ForwardChatViewState();
+}
+
+class _ForwardChatViewState extends State<ForwardChatView> {
+  final ForwardChatController controller = ForwardChatController().get();
+
+  @override
+  void dispose() {
+    Get.delete<ForwardChatController>();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    controller.init(widget.forwardMessageIds, context);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Obx(() {

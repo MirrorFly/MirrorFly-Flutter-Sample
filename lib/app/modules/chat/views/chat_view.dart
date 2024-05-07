@@ -9,25 +9,67 @@ import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/constants.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
-import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
+import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
-class ChatView extends GetView<ChatController> {
-  const ChatView({Key? key}) : super(key: key);
+class ChatView extends StatefulWidget {
+  const ChatView(
+      {super.key,
+        required this.jid,
+        this.isUser = false,
+        this.messageId,
+        this.isFromStarred = false,
+        this.enableAppBar = true,
+        this.enableCalls = false,
+        this.showChatDeliveryIndicator = true});
+  final String jid;
+  final bool isUser;
+  final bool isFromStarred;
+  final String? messageId;
+  final bool enableAppBar;
+  final bool enableCalls;
+  final bool showChatDeliveryIndicator;
+
+  @override
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
+  final ChatController controller = ChatController().get();
+
+  @override
+  void initState() {
+    controller.init(context,
+        jid: widget.jid,
+        isUser: widget.isUser,
+        isFromStarred: widget.isFromStarred,
+        messageId: widget.messageId,
+        showChatDeliveryIndicator: widget.showChatDeliveryIndicator);
+    controller.profile.isGroupProfile.checkNull()
+        ? debugPrint("this is group profile")
+        : debugPrint("this is single page");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ChatController>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     LogMessage.d("chatview build", "${Get.height}");
     return Scaffold(
-        appBar: getAppBar(context),
+        appBar: widget.enableAppBar ? getAppBar(context) : null,
         body: SafeArea(
           child: Container(
             width: Get.width,
@@ -50,14 +92,14 @@ class ChatView extends GetView<ChatController> {
                 } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
                   //FocusManager.instance.primaryFocus?.unfocus();
                   controller.focusNode.unfocus();
-                } else if (controller.nJid != null) {
+                } else if (controller.nJid.isNotEmpty) {
                   // controller.saveUnsentMessage();
                   Get.offAllNamed(Routes.dashboard);
-                  Get.back();
+                  Navigator.pop(context);
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  Get.back();
+                  Navigator.pop(context);
                 }
               },
               child: Stack(
@@ -517,10 +559,10 @@ class ChatView extends GetView<ChatController> {
           onTap: () {
             if (controller.showEmoji.value) {
               controller.showEmoji(false);
-            } else if (controller.nJid != null) {
+            } else if (controller.nJid.isNotEmpty) {
               Get.offAllNamed(Routes.dashboard);
             } else {
-              Get.back();
+              Navigator.pop(context);
             }
           },
           child: Row(
@@ -748,7 +790,6 @@ class ChatView extends GetView<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
-              // Get.back();
               controller.messageInfo();
             },
             icon: SvgPicture.asset(
@@ -835,7 +876,6 @@ class ChatView extends GetView<ChatController> {
                   ? CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
-                    // Get.back();
                     controller.unBlockUser();
                   },
                   icon: const Icon(Icons.block),
@@ -851,7 +891,6 @@ class ChatView extends GetView<ChatController> {
                   : CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
-                    // Get.back();
                     controller.blockUser();
                   },
                   icon: const Icon(Icons.block),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
@@ -9,9 +10,14 @@ import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
+import '../widgets/message_content.dart';
+import '../widgets/notification_message_view.dart';
+import '../widgets/reply_message_widgets.dart';
+import '../widgets/sender_header.dart';
 
-class ChatSearchView extends GetView<ChatController> {
-  const ChatSearchView({super.key});
+class ChatSearchView extends StatelessWidget {
+  ChatSearchView({super.key});
+  final ChatController controller = ChatController().get();
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +145,7 @@ class ChatSearchView extends GetView<ChatController> {
                                   index: index,
                                   search: controller.searchedText.text.trim(),
                                   onPlayAudio: () {
-                                    controller.playAudio(chatList[index]);
+                                    // controller.playAudio(chatList[index]);
                                   },
                                   onSeekbarChange:(value){
 

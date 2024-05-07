@@ -7,18 +7,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/app_localizations.dart';
 import '../common/widgets.dart';
 import '../model/chat_message_model.dart';
+import '../routes/route_settings.dart';
 import 'apputils.dart';
 
 class Helper {
@@ -84,7 +84,7 @@ class Helper {
                   title,
                   style: const TextStyle(fontSize: 17),
                 )
-              : const SizedBox.shrink(),
+              : const Offstage(),
           contentPadding: title != null
               ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
               : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),

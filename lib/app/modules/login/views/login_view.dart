@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
 import '../controllers/login_controller.dart';

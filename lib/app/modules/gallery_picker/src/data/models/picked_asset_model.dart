@@ -2,7 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:photo_manager/src/types/entity.dart';
+// import 'package:photo_manager/src/types/entity.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class PickedAssetModel {
   String? id;

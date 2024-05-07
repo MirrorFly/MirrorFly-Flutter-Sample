@@ -3,14 +3,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/caption_message_view.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../chat_widgets.dart';
 import 'ImageCacheManager.dart';
+import 'media_message_overlay.dart';
 
 class ImageMessageView extends StatefulWidget {
   final ChatMessageModel chatMessage;
@@ -29,7 +31,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
     var mediaMessage = widget.chatMessage.mediaChatMessage!;
     return Container(
       key: ValueKey(widget.chatMessage.messageId),
-      width: Get.width * 0.60,
+      width: MediaQuery.of(context).size.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -44,8 +46,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                 }),
               ),
               Obx(() {
-                // LogMessage.d("ImageMessageView", "getImageOverlay ${widget.chatMessage.messageId}");
-                return getImageOverlay(widget.chatMessage);
+                return MediaMessageOverlay(chatMessage: widget.chatMessage);
               }),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
@@ -79,7 +80,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
             ],
           ),
           mediaMessage.mediaCaptionText.checkNull().isNotEmpty
-              ? setCaptionMessage(mediaMessage, widget.chatMessage, context, search: widget.search)
+              ? CaptionMessageView(mediaMessage: mediaMessage, chatMessage: widget.chatMessage, context: context, search: widget.search)
               : const Offstage(),
         ],
       ),
@@ -123,8 +124,8 @@ getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext co
                 child: Text("$obj"),
               );
             },
-            width: Get.width * 0.60,
-            height: Get.height * 0.4,
+            width: MediaQuery.of(context).size.width * 0.60,
+            height: MediaQuery.of(context).size.height * 0.4,
             fit: BoxFit.cover,
           );
         }));

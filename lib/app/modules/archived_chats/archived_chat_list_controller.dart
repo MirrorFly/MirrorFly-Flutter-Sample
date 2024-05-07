@@ -5,12 +5,12 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/app_localizations.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
-import '../../routes/app_pages.dart';
+import '../../routes/route_settings.dart';
 
 class ArchivedChatListController extends GetxController {
   DashboardController dashboardController = Get.find<DashboardController>();

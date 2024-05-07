@@ -4,7 +4,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
 import 'about/about_and_help_view.dart';

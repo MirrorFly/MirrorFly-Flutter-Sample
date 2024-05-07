@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -57,10 +57,11 @@ class ForwardChatController extends GetxController {
 
   var forwardMessageIds = <String>[];
 
-  @override
-  void onInit() {
-    super.onInit();
-    var messageIds = Get.arguments["messageIds"] as List<String>;
+  late final BuildContext buildContext;
+
+  init(List<String> messageId, BuildContext context) {
+    buildContext = context;
+    var messageIds = messageId;
     forwardMessageIds.addAll(messageIds);
     userlistScrollController.addListener(_scrollListener);
     getRecentChatList();
@@ -336,25 +337,24 @@ class ForwardChatController extends GetxController {
     Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            Navigator.pop(buildContext);
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
-            if(await AppUtils.isNetConnected()) {
-              Get.back();
-              // Helper.progressLoading();
-              Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
-                // Helper.hideLoading();
-                if(response.isSuccess && response.hasData) {
+            AppUtils.isNetConnected().then((isConnected) {
+              if (isConnected) {
+                Navigator.pop(buildContext);
+                Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess && response.hasData) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", name));
-                  userUpdatedHisProfile(jid);
-                }
-              });
-            }else{
+                    userUpdatedHisProfile(jid);
+                  }
+                });
+              } else {
               toToast(getTranslated("noInternetConnection"));
-            }
-
+              }
+            });
           },
           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
@@ -410,43 +410,54 @@ class ForwardChatController extends GetxController {
     _userList(_mainuserList);
   }
 
-  forwardMessages() async {
-    if (await AppUtils.isNetConnected()) {
-      var busyStatus = await Mirrorfly.isBusyStatusEnabled();
-      if (!busyStatus.checkNull()) {
-        if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
+  forwardMessages() {
+    AppUtils.isNetConnected().then((isConnected) {
+      if (isConnected) {
+        Mirrorfly.isBusyStatusEnabled().then((isSuccess) {
+          if (isSuccess){
+            if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
           Helper.showLoading(message: getTranslated("forwardMessage"));
-          Future.delayed(const Duration(milliseconds: 1000),() async {
-            await Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
-              // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-              Helper.hideLoading();
-              updateLastMessage(selectedJids);
-              getProfileDetails(selectedJids.last)
-                  .then((value) {
-                if (value.jid != null) {
-                  // Get.back(result: value);
-                  Get.offNamedUntil(Routes.chat,arguments: value, (route){
-                    LogMessage.d("offNamedUntil",route.settings.name);
-                    return route.settings.name.toString().startsWith(Routes.dashboard);
+              Future.delayed(const Duration(milliseconds: 1000), () async {
+                await Mirrorfly.forwardMessagesToMultipleUsers(
+                    messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
+                  // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+                  Helper.hideLoading();
+                  updateLastMessage(selectedJids);
+                  getProfileDetails(selectedJids.last)
+                      .then((value) {
+                    if (value.jid != null) {
+                      // Get.offNamedUntil(Routes.chat, arguments: value, (route) {
+                      //   LogMessage.d("offNamedUntil", route.settings.name);
+                      //   return route.settings.name.toString().startsWith(Routes.dashboard);
+                      // });
+                      Navigator.pushNamedAndRemoveUntil(
+                        buildContext,
+                        Routes.chat,
+                        ModalRoute.withName(Routes.dashboard),
+                        arguments: value,
+                      );
+
+                    } else {
+                      if (response.hasError) {
+                        toToast(response.errorMessage);
+                        // Get.back(result: null);
+                        Navigator.pop(buildContext, null);
+                      }
+                    }
                   });
-                }else{
-                  if(response.hasError) {
-                    toToast(response.errorMessage);
-                    Get.back(result: null);
-                  }
-                }
+                });
               });
-            });
-          });
-        }
+            }
+          }else{
+            //show busy status popup
+            // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
+            //showBusyStatusAlert(disableBusyChatAndSend());
+          }
+        });
       } else {
-        //show busy status popup
-        // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
-        //showBusyStatusAlert(disableBusyChatAndSend());
-      }
-    } else {
       toToast(getTranslated("noInternetConnection"));
-    }
+      }
+    });
   }
 
   void updateLastMessage(List<String> chatJid){
