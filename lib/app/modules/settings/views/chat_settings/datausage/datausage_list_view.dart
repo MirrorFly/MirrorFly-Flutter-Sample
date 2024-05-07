@@ -49,10 +49,10 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openMobileData,
                     child: Column(
                       children: [
-                        mediaItem(getTranslated("autoDownloadPhoto"), controller.autoDownloadMobilePhoto, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadVideo"), controller.autoDownloadMobileVideo, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadAudio"), controller.autoDownloadMobileAudio, controller.mobile),
-                        mediaItem(getTranslated("autoDownloadDocument"), controller.autoDownloadMobileDocument, controller.mobile),
+                        mediaItem(Constants.photo,getTranslated("autoDownloadPhoto"), controller.autoDownloadMobilePhoto, controller.mobile),
+                        mediaItem(Constants.video,getTranslated("autoDownloadVideo"), controller.autoDownloadMobileVideo, controller.mobile),
+                        mediaItem(Constants.audio,getTranslated("autoDownloadAudio"), controller.autoDownloadMobileAudio, controller.mobile),
+                        mediaItem(Constants.document,getTranslated("autoDownloadDocument"), controller.autoDownloadMobileDocument, controller.mobile),
                       ],
                     )//buildMediaTypeList(controller.mobile),
                   ),
@@ -74,10 +74,10 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openWifiData,
                       child: Column(
                         children: [
-                          mediaItem(getTranslated("autoDownloadPhoto"), controller.autoDownloadWifiPhoto, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadVideo"), controller.autoDownloadWifiVideo, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadAudio"), controller.autoDownloadWifiAudio, controller.wifi),
-                          mediaItem(getTranslated("autoDownloadDocument"), controller.autoDownloadWifiDocument, controller.wifi),
+                          mediaItem(Constants.photo,getTranslated("autoDownloadPhoto"), controller.autoDownloadWifiPhoto, controller.wifi),
+                          mediaItem(Constants.video,getTranslated("autoDownloadVideo"), controller.autoDownloadWifiVideo, controller.wifi),
+                          mediaItem(Constants.audio,getTranslated("autoDownloadAudio"), controller.autoDownloadWifiAudio, controller.wifi),
+                          mediaItem(Constants.document,getTranslated("autoDownloadDocument"), controller.autoDownloadWifiDocument, controller.wifi),
                         ],
                       )//buildMediaTypeList(controller.wifi),
                   ),
@@ -88,7 +88,7 @@ class DataUsageListView extends GetView<DataUsageController> {
         ));
   }
 
-  Widget mediaItem(String item, bool on, String type) {
+  Widget mediaItem(String itemValue,String item, bool on, String type) {
     return Padding(
           padding: const EdgeInsets.only(
               left: 15.0, right: 5, bottom: 5),
@@ -113,7 +113,7 @@ class DataUsageListView extends GetView<DataUsageController> {
               ],
             ),
             onTap: () {
-              controller.onClick(type,item);
+              controller.onClick(type,itemValue);
             },
           ),
         );
