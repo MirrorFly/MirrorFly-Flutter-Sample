@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -30,11 +31,10 @@ class GroupParticipantsView extends GetView<GroupParticipantsController> {
             style: const TextStyle(fontSize: 16),
             controller: controller.searchQuery,
             autofocus: true,
-            decoration: const InputDecoration(
-                hintText: "Search...", border: InputBorder.none),
+            decoration: InputDecoration(
+                hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
           )
-              : const Text(
-            "Add Participants",
+              : Text(getTranslated("addParticipants"),
             overflow: TextOverflow.fade,
           ), actions: [
             Visibility(
@@ -108,7 +108,7 @@ class GroupParticipantsView extends GetView<GroupParticipantsController> {
                                   : videoCallSmallIcon,
                             ),
                             const SizedBox(width: 8,),
-                            Text("CALL NOW ( ${(controller.groupCallMembersCount.value - 1)} )",
+                            Text(getTranslated("callNowWithCount").replaceFirst("%d", "${(controller.groupCallMembersCount.value - 1)}"),
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
                                   fontFamily: 'sf_ui'),)

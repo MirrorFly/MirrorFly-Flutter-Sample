@@ -41,7 +41,7 @@ class ContactusView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("contactUs", context)),
+          title: Text(getTranslated("contactUs")),
           automaticallyImplyLeading: true,
         ),
         body: SafeArea(
@@ -51,7 +51,7 @@ class ContactusView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getTranslated("title", context),
+                  getTranslated("title"),
                   style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
                 TextField(
@@ -72,7 +72,7 @@ class ContactusView extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  getTranslated("description", context),
+                  getTranslated("description"),
                   style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
                 TextField(
@@ -109,17 +109,17 @@ class ContactusView extends StatelessWidget {
                         Mirrorfly.sendContactUsInfo(title: title.text.trim(),description: description.text.trim(),flyCallBack: (response){
                           Helper.hideLoading();
                           if(response.isSuccess){
-                            toToast(getTranslated("thankYou", context));
+                            toToast(getTranslated("thankYou"));
                             title.clear();
                             description.clear();
                           }
                         });
                       }else{
-                        toToast(getTranslated("titleAndDescRequired", context));
+                        toToast(getTranslated("titleAndDescRequired"));
                       }
                     },
                     child: Text(
-                      getTranslated("send", context),
+                      getTranslated("send"),
                       style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),

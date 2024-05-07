@@ -18,23 +18,23 @@ class AboutAndHelpView extends StatelessWidget {
         fontWeight: FontWeight.w400);
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("aboutAndHelp", context)),
+        title: Text(getTranslated("aboutAndHelp")),
         automaticallyImplyLeading: true,
       ),
       body: Column(
         children: [
-          ListItem(title: Text(getTranslated("aboutUs", context), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
+          ListItem(title: Text(getTranslated("aboutUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
             if(await AppUtils.isNetConnected()){
               Get.to(const AboutUsView());
             }else{
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           }),
-          ListItem(title: Text(getTranslated("contactUs", context), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>Get.to(ContactusView())),
+          ListItem(title: Text(getTranslated("contactUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>Get.to(ContactusView())),
           ListItem(title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(getTranslated("termsAndPolicy", context), style: textStyle),
+              Text(getTranslated("termsAndPolicy"), style: textStyle),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -42,13 +42,13 @@ class AboutAndHelpView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        "${getTranslated("termsAndCondition", context)},",
+                        "${getTranslated("termsAndCondition")},",
                         style: const TextStyle(
                             decoration: TextDecoration.underline,
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap:()=>launchWeb(getTranslated("termsConditionsLink", context)),
+                    onTap:()=>launchWeb(getTranslated("termsConditionsLink")),
                   ),
                   const SizedBox(
                     width: 5,
@@ -57,13 +57,13 @@ class AboutAndHelpView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        '${getTranslated("privacyPolicy", context)}.',
+                        '${getTranslated("privacyPolicy")}.',
                         style: const TextStyle(
                             decoration: TextDecoration.underline,
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap: ()=>launchWeb(getTranslated("privacyPolicyLink", context)),
+                    onTap: ()=>launchWeb(getTranslated("privacyPolicyLink")),
                   ),
                 ],
               )

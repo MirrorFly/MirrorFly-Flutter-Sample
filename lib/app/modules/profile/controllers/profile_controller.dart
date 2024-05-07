@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -24,7 +25,7 @@ class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
   TextEditingController profileEmail = TextEditingController();
   TextEditingController profileMobile = TextEditingController();
-  var profileStatus = "I am in Mirror Fly".obs;
+  var profileStatus = getTranslated("defaultStatus").obs;
   var isImageSelected = false.obs;
   var isUserProfileRemoved = false.obs;
   var imagePath = "".obs;
@@ -60,7 +61,7 @@ class ProfileController extends GetxController {
       if(await AppUtils.isNetConnected()) {
         getProfile();
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
       checkAndEnableNotificationSound();
     }else{
@@ -78,19 +79,19 @@ class ProfileController extends GetxController {
       if (profileName.text
           .trim()
           .isEmpty) {
-        toToast("Please enter your username");
+        toToast(getTranslated("pleaseEnterUserName"));
       } else if (profileName.text
           .trim()
           .length < 3) {
-        toToast("Username is too short");
+        toToast(getTranslated("userNameTooShort"));
       } else if (profileEmail.text
           .trim()
           .isEmpty) {
-        toToast("Email should not be empty");
+        toToast(getTranslated("emailNotEmpty"));
       } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
-        toToast("Please enter a valid Mail");
+        toToast(getTranslated("pleaseEnterValidMail"));
       } else if (profileStatus.value.isEmpty) {
-        toToast("Enter Profile Status");
+        toToast(getTranslated("pleaseEnterProfileStatus"));
       } else {
         loading.value = true;
         showLoader();
@@ -115,7 +116,7 @@ class ProfileController extends GetxController {
                   LogMessage.d("updateMyProfile", response.data.toString());
                   var data = profileUpdateFromJson(response.data);
                   if (data.status != null) {
-                    toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
+                    toToast(frmImage ? getTranslated("removedProfileImage") : data.message.toString());
                     if (data.status!) {
                       changed(false);
                       var userProfileData = ProData(
@@ -138,7 +139,7 @@ class ProfileController extends GetxController {
                     }
                   }
                 } else {
-                  toToast("Unable to update profile");
+                  toToast(getTranslated("unableToUpdateProfile"));
                 }
               }
             );
@@ -184,7 +185,7 @@ class ProfileController extends GetxController {
           } else {
             loading(false);
             hideLoader();
-            toToast(Constants.noInternetConnection);
+            toToast(getTranslated("noInternetConnection"));
           }
         }
       }
@@ -213,7 +214,7 @@ class ProfileController extends GetxController {
               save();
             }
           }else{
-            toToast(Constants.profileImageUpdateFailed);
+            toToast(getTranslated("profileImageUpdateFailed"));
             debugPrint("Profile Update on error--> ${response.exception.toString()}");
             loading.value = false;
             hideLoader();
@@ -239,7 +240,7 @@ class ProfileController extends GetxController {
       //   toToast("Image Size exceeds 10MB");
       // }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
 
   }
@@ -264,11 +265,11 @@ class ProfileController extends GetxController {
             }
             update();
           } else {
-            toToast(Constants.profileImageRemoveFailed);
+            toToast(getTranslated("profileImageRemoveFailed"));
           }
         });
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }else{
       imagePath("");
@@ -309,7 +310,7 @@ class ProfileController extends GetxController {
                 profileStatus.value = data.data!
                     .status
                     .checkNull()
-                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+                    .isNotEmpty ? data.data!.status.checkNull() : getTranslated("defaultStatus");
                 userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
                 SessionManagement.setUserImage(Constants.emptyString);
                 changed((from == Routes.login));
@@ -326,11 +327,11 @@ class ProfileController extends GetxController {
               }
             } else {
               debugPrint("Unable to load Profile data");
-              toToast("Unable to Connect to Server. Please login Again");
+              toToast(getTranslated("unableConnectServer"));
             }
           }else{
             loading.value = false;
-            toToast("Unable to load profile data, please login again");
+            toToast(getTranslated("unableToLoadProfileData"));
           }
         });
             /*.then((value) {
@@ -387,7 +388,7 @@ class ProfileController extends GetxController {
         });*/
       }
    /* }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       Get.back();
     }*/
 
@@ -401,7 +402,7 @@ class ProfileController extends GetxController {
           var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
             debugPrint("profile status list is not empty");
-            var defaultStatus = Constants.defaultStatusList;
+            var defaultStatus = getTranslatedList("defaultStatusList");
 
             for (var statusValue in defaultStatus) {
               var isStatusNotExist = true;
@@ -458,14 +459,14 @@ class ProfileController extends GetxController {
               });
             });
           } else {
-            toToast("Please select Image less than 10MB");
+            toToast(getTranslated("imageLess10mb"));
           }
         } else {
           // User canceled the picker
           isImageSelected.value = false;
         }
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }
   }
@@ -502,7 +503,7 @@ class ProfileController extends GetxController {
         isImageSelected.value = false;
       }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -560,7 +561,7 @@ class ProfileController extends GetxController {
 
   static void insertStatus() {
     debugPrint("Inserting Status");
-    var defaultStatus = Constants.defaultStatusList;
+    var defaultStatus = getTranslatedList("defaultStatusList");
 
     for (var statusValue in defaultStatus) {
       Mirrorfly.insertDefaultStatus(status: statusValue);

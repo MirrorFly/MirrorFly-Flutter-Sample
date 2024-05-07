@@ -7,6 +7,7 @@ import '../../../routes/route_settings.dart';
 import 'package:yaml/yaml.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -53,7 +54,8 @@ class SettingsController extends GetxController {
         if (response.isSuccess) {
           clearAllPreferences();
         } else {
-          Get.snackbar("Logout", "Logout Failed");
+          toToast(getTranslated("logoutFailed"));
+          // Get.snackbar("Logout", "Logout Failed");
         }
       })/*.catchError((er) {
         Helper.hideLoading();
@@ -63,7 +65,7 @@ class SettingsController extends GetxController {
         });
       })*/;
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

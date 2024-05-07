@@ -128,7 +128,7 @@ class CameraPickView extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        getTranslated("holdToRecord", context),
+                        getTranslated("holdToRecord"),
                         style: const TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),

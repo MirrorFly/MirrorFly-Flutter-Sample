@@ -16,7 +16,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("deleteMyAccount", context)),
+        title: Text(getTranslated("deleteMyAccount")),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -33,7 +33,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 ),
                     const SizedBox(width: 15),
                     Text(
-                      getTranslated("deletingYourAccount", context),
+                      getTranslated("deletingYourAccount"),
                       style: const TextStyle(color: Colors.red, fontSize: 17),
                     ),
                   ],
@@ -43,7 +43,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   children: [
                     const SizedBox(width: 30,),
                     const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription1", context),style: const TextStyle(color: textColor),),
+                    Text(getTranslated("deletingYourAccountDescription1"),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
@@ -51,7 +51,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   children: [
                     const SizedBox(width: 30,),
                     const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription2", context),style: const TextStyle(color: textColor),),
+                    Text(getTranslated("deletingYourAccountDescription2"),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 10,),
@@ -59,16 +59,16 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                   children: [
                     const SizedBox(width: 30,),
                     const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription3", context),style: const TextStyle(color: textColor),),
+                    Text(getTranslated("deletingYourAccountDescription3"),style: const TextStyle(color: textColor),),
                   ],
                 ),
                 const SizedBox(height: 15,),
-          Text(getTranslated("deleteConfirmation", context),
+          Text(getTranslated("deleteConfirmation"),
                   style: const TextStyle(color: textHintColor, fontSize: 15),
                 ),
                 const SizedBox(height: 10,),
                 Text(
-                  getTranslated("country", context),
+                  getTranslated("country"),
                   style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Obx(() => countryItem(
@@ -82,7 +82,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                 )),
                 const SizedBox(height: 10,),
                 Text(
-                  getTranslated("mobileNumber", context),
+                  getTranslated("mobileNumber"),
                   style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 10,),
@@ -121,7 +121,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                               focusedBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: buttonBgColor),
                               ),
-                              hintText: getTranslated("mobileNumber", context)
+                              hintText: getTranslated("mobileNumber")
                             ),
                           ),
                         ),
@@ -145,7 +145,7 @@ class DeleteAccountView extends GetView<DeleteAccountController> {
                       controller.deleteAccount();
                     },
                     child: Text(
-                      getTranslated("continue", context),
+                      getTranslated("continue"),
                       style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                     ),
                   ),

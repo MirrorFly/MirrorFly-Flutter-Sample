@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -269,13 +270,13 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   showBusyStatusAlert(Function? function) {
     Helper.showAlert(
-        message: "Disable busy status. Do you want to continue?",
+        message: getTranslated("disableBusy"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("No",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
                 Get.back();
@@ -287,7 +288,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                   }
                 });
               },
-              child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -332,7 +333,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     Clipboard.setData(
         ClipboardData(text: selectedChatList[0].messageTextContent ?? ""));
     clearChatSelection(selectedChatList[0]);
-    toToast("1 Text Copied Successfully to the clipboard");
+    toToast(getTranslated("textCopiedSuccess"));
   }
 
   Map<bool, bool> isMessageCanbeRecalled() {
@@ -369,7 +370,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                "Are you sure you want to delete selected Message${selectedChatList.length > 1 ? "s" : ""}?"),
+              selectedChatList.length > 1 ? getTranslated("deleteSelectedMessages") : getTranslated("deleteSelectedMessage"),),
             isCheckBoxShown
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
@@ -391,8 +392,8 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                                         "isMediaDelete", value.toString());
                                   });
                             }),
-                            const Expanded(
-                              child: Text("Delete media from my phone"),
+                            Expanded(
+                              child: Text(getTranslated("deleteMediaFromPhone")),
                             ),
                           ],
                         ),
@@ -408,7 +409,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
               onPressed: () {
                 Get.back();
               },
-              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -427,32 +428,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                       selectedChatList.clear();
                     });
               },
-              child: const Text("DELETE FOR ME",style: TextStyle(color: buttonBgColor))),
-          /*isRecallAvailable
-              ? TextButton(
-              onPressed: () {
-                Get.back();
-                Helper.showLoading(
-                    message: 'Deleting Message for Everyone');
-                */ /*Mirrorfly.deleteMessagesForEveryone(
-                    profile.jid!,chatType, deleteChatListID, isMediaDelete.value)
-                    .then((value) {
-                  debugPrint(value.toString());
-                  Helper.hideLoading();
-                  if (value!=null && value) {
-                    // removeChatList(selectedChatList);//
-                    for (var chatList in selectedChatList) {
-                      chatList.isMessageRecalled = true;
-                      chatList.isSelected=false;
-                      this.chatList.refresh();
-                    }
-                  }
-                  isSelected(false);
-                  selectedChatList.clear();
-                });*/ /*
-              },
-              child: const Text("DELETE FOR EVERYONE"))
-              : const SizedBox.shrink(),*/
+              child: Text(getTranslated("deleteForMe").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ]);
   }
 
@@ -642,7 +618,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
             starredChatList.add(message);
             debugPrint('starredChatList ${message.messageId}you');
           }
-        } else if ((message.messageChatType == Constants.typeGroupChat)){
+        } else if ((message.messageChatType == ChatType.groupChat)){
           var name = await getProfileDetails(message.chatUserJid.checkNull());
             if(name.name.checkNull().contains(filterKey.toLowerCase())) {
               if(starredChatList.indexWhere((element) => element.messageId==message.messageId).isNegative) {

@@ -58,7 +58,7 @@ class ImageViewView extends GetView<ImageViewController> {
                       ),
                     )
                   : Center(
-                      child: Text(getTranslated("unableToLoadImage", context)),
+                      child: Text(getTranslated("unableToLoadImage")),
                     );
         }),
       ),

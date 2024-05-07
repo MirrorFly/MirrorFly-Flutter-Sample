@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../common/app_localizations.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
@@ -70,7 +71,7 @@ class ArchivedChatListController extends GetxController {
       var item = archivedChats.firstWhere((element) => selectedChats.first == element.jid);
       // delete(Constants.typeGroupChat != item.getChatType());
       menuValidationForDeleteIcon();
-      if ((Constants.typeBroadcastChat != item.getChatType() && !archiveEnabled.value)) {
+      if ((ChatType.broadcastChat != item.getChatType() && !archiveEnabled.value)) {
         unMute(item.isMuted!);
         mute(!item.isMuted!);
         // shortcut(true);
@@ -150,7 +151,7 @@ class ArchivedChatListController extends GetxController {
       if (selectedChats.length == 1) {
         _itemUnArchive(0);
         clearAllChatSelection();
-        toToast("1 chat has been unarchived");
+        toToast(getTranslated("chatHasBeenUnArchived"));
       } else {
         selected(false);
         var count = selectedChats.length;
@@ -158,10 +159,10 @@ class ArchivedChatListController extends GetxController {
           _itemUnArchive(key);
         });
         clearAllChatSelection();
-        toToast("$count chats has been unarchived");
+        toToast("$count ${getTranslated("chatsHasBeenUnArchived")}");
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -235,7 +236,7 @@ class ArchivedChatListController extends GetxController {
     var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
       var isMember = await Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(), userJid: SessionManagement.getUserJID().checkNull());
-      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
+      if ((item.getChatType() == ChatType.groupChat) && isMember!) {
         delete(false);
         return;
         //return false;
@@ -314,13 +315,13 @@ class ArchivedChatListController extends GetxController {
     profile = archivedChats.firstWhere((element) => selectedChats.first == element.jid).profileName;
     Helper.showAlert(
         title:
-            selectedChats.length == 1 ? "Delete chat with $profile?" : "Delete ${selectedChats.length} selected chats?",
+            selectedChats.length == 1 ? getTranslated("deleteChatWith").replaceFirst("%d", "$profile") : getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChats.length}"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -330,7 +331,7 @@ class ArchivedChatListController extends GetxController {
                   itemsDelete();
                 }
               },
-              child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
         ],
         message: '');
   }

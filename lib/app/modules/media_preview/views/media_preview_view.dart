@@ -122,7 +122,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   ),
                                   const SizedBox(height: 50),
                                   Text(
-                                    getTranslated("No Media selected", context),
+                                    getTranslated("noMediaSelected"),
                                     style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -158,13 +158,13 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return Text(getTranslated("errorLoadingImage", context));
+                                              return Text(getTranslated("errorLoadingImage"));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return Center(
                                                 child: imagePreview(snapshot.data!),
                                               );
                                             } else {
-                                              return Text(getTranslated("noData", context));
+                                              return Text(getTranslated("noData"));
                                             }
                                           },
                                         );
@@ -177,14 +177,14 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return Text(getTranslated("errorLoadingImage", context));
+                                              return Text(getTranslated("errorLoadingImage"));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return VideoPlayerWidget(
                                                 videoPath: snapshot.data?.path ?? "",
                                                 videoTitle: data.title ?? "Video",
                                               );
                                             } else {
-                                              return Text(getTranslated("noData", context));
+                                              return Text(getTranslated("noData"));
                                             }
                                           },
                                         );
@@ -194,7 +194,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   else
                                   ...[
                                         () {
-                                      return Center(child: Text(getTranslated("noDataAvailable", context)));
+                                      return Center(child: Text(getTranslated("noDataAvailable")));
                                     }()
                                   ],
                                 ],
@@ -274,7 +274,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                           minLines: 1,
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
-                                            hintText: getTranslated("addCaption", context),
+                                            hintText: getTranslated("addCaption"),
                                             hintStyle: const TextStyle(
                                               color: previewTextColor,
                                               fontSize: 15,

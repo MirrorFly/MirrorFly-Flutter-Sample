@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
@@ -105,9 +106,8 @@ getReplyTitle(bool isMessageSentByMe, String senderUserName) {
   /*debugPrint("issentby me $isMessageSentByMe");
   debugPrint("senderUserName $senderUserName");*/
   return isMessageSentByMe
-      ? const Text(
-    'You',
-    style: TextStyle(fontWeight: FontWeight.bold),
+      ? Text(getTranslated("you"),
+    style: const TextStyle(fontWeight: FontWeight.bold),
   )
       : Text(senderUserName,
       style: const TextStyle(fontWeight: FontWeight.bold));
@@ -138,7 +138,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text(Helper.capitalize(Constants.mImage)),
+          Text(Constants.mImage.capitalizeFirst!),
         ],
       );
     case Constants.mVideo:
@@ -148,7 +148,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text(Helper.capitalize(Constants.mVideo)),
+          Text(Constants.mVideo.capitalizeFirst!),
         ],
       );
     case Constants.mAudio:
@@ -175,7 +175,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          // Text(Helper.capitalize(Constants.mAudio)),
+          // Text(Constants.mAudio.capitalizeFirst!),
         ],
       );
     case Constants.mContact:
@@ -185,7 +185,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text("${Helper.capitalize(Constants.mContact)} :"),
+          Text("${Constants.mContact.capitalizeFirst} :"),
           const SizedBox(
             width: 5,
           ),
@@ -206,7 +206,7 @@ getReplyMessage(String messageType,
           const SizedBox(
             width: 5,
           ),
-          Text(Helper.capitalize(Constants.mLocation)),
+          Text(Constants.mLocation.capitalizeFirst!),
         ],
       );
     case Constants.mDocument:
@@ -343,7 +343,7 @@ Widget messageNotAvailableWidget(ChatMessageModel chatMessage) {
           ? chatReplyContainerColor
           : chatReplySenderColor,
     ),
-    child: const Text("The Original Message is not Available", maxLines: 2, overflow: TextOverflow.ellipsis,),
+    child: Text(getTranslated("messageUnavailable"), maxLines: 2, overflow: TextOverflow.ellipsis,),
   );
 }
 
@@ -457,7 +457,7 @@ class SenderHeader extends StatelessWidget {
       if (currentMessage.isMessageSentByMe !=
           previousMessage.isMessageSentByMe ||
           previousMessage.messageType == Constants.msgTypeNotification ||
-          (currentMessage.messageChatType == Constants.typeGroupChat &&
+          (currentMessage.messageChatType == ChatType.groupChat &&
               currentMessage.isThisAReplyMessage)) {
         return true;
       }
@@ -584,14 +584,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
     switch (widget.chatMessage.isMessageSentByMe
         ? widget.chatMessage.mediaChatMessage?.mediaUploadStatus.value
         : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
+      case MediaDownloadStatus.isMediaDownloaded:
+      case MediaUploadStatus.isMediaUploaded:
         if (checkFile(
             widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
             (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                Constants.mediaDownloaded ||
+                MediaDownloadStatus.isMediaDownloaded ||
                 widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                    Constants.mediaUploaded ||
+                    MediaUploadStatus.isMediaUploaded ||
                 widget.chatMessage.isMessageSentByMe)) {
           //playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
         } else {
@@ -1201,8 +1201,8 @@ class ContactMessageView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: (userJid != null && userJid.isNotEmpty)
-                              ? const Text("Message")
-                              : const Text("Invite"),
+                              ? Text(getTranslated("message"))
+                              : Text(getTranslated("invite")),
                         ))),
               ],
             ),
@@ -1229,26 +1229,25 @@ class ContactMessageView extends StatelessWidget {
 
   showInvitePopup(ContactChatMessage contactChatMessage) {
     Helper.showButtonAlert(actions: [
-      const ListTile(
-        contentPadding: EdgeInsets.only(left: 10),
-        title: Text("Invite Friend",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      ListTile(
+        contentPadding: const EdgeInsets.only(left: 10),
+        title: Text(getTranslated("inviteFriend"),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
       ),
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),
-        title: const Text("Copy Link",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+        title: Text(getTranslated("copyLink"),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
         onTap: () {
-          Clipboard.setData(
-              const ClipboardData(text: Constants.applicationLink));
+          Clipboard.setData(ClipboardData(text: getTranslated("applicationLink")));
           Get.back();
-          toToast("Link Copied");
+          toToast(getTranslated("linkCopied"));
         },
       ),
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),
-        title: const Text("Send SMS",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
+        title: Text(getTranslated("sendSMS"),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
         onTap: () {
           Get.back();
           sendSMS(contactChatMessage.contactPhoneNumbers[0]);
@@ -1258,7 +1257,7 @@ class ContactMessageView extends StatelessWidget {
   }
 
   void sendSMS(String contactPhoneNumber) async {
-    Uri sms = Uri.parse('sms:$contactPhoneNumber?body=${Constants.smsContent}');
+    Uri sms = Uri.parse('sms:$contactPhoneNumber?body=${getTranslated("smsContent")}');
     if (await launchUrl(sms)) {
       //app opened
     } else {
@@ -1436,14 +1435,14 @@ class VideoMessageView extends StatelessWidget {
     switch (chatMessage.isMessageSentByMe
         ? chatMessage.mediaChatMessage?.mediaUploadStatus.value
         : chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
+      case MediaDownloadStatus.isMediaDownloaded:
+      case MediaUploadStatus.isMediaUploaded:
         if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
           if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
               (chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                  Constants.mediaDownloaded ||
+                  MediaDownloadStatus.isMediaDownloaded ||
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                      Constants.mediaUploaded ||
+                      MediaUploadStatus.isMediaUploaded ||
                   chatMessage.isMessageSentByMe)) {
             Get.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
@@ -1727,7 +1726,7 @@ Widget setCaptionMessage(MediaChatMessage mediaMessage,
             ),
 
             if (chatMessage.isMessageEdited.value) ... [
-              const Text('Edited', style: TextStyle(
+              Text(getTranslated("edited"), style: const TextStyle(
                   fontSize: 11)),
               const SizedBox(width: 5,),
             ],
@@ -1922,7 +1921,7 @@ class TextMessageView extends StatelessWidget {
                 width: 5,
               ),
               if (chatMessage.isMessageEdited.value) ... [
-                const Text('Edited', style: TextStyle(
+                Text(getTranslated("edited"), style: const TextStyle(
                     fontSize: 11)),
                 const SizedBox(width: 5,),
               ],
@@ -1969,8 +1968,8 @@ class RecalledMessageView extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   chatMessage.isMessageSentByMe
-                      ? "You deleted this message"
-                      : "This message was deleted",
+                      ? getTranslated("youDeletedThisMessage")
+                      : getTranslated("thisMessageWasDeleted"),
                   maxLines: 2,
                 ),
               ],
@@ -2067,19 +2066,19 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
   } else {
     var status = 0;
     if(chatMessage.isMessageSentByMe){
-      if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == Constants.mediaDownloading ){
-        status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploading) ? Constants.mediaUploading : Constants.mediaDownloading;
+      if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.isMediaDownloading ){
+        status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploading) ? MediaUploadStatus.isMediaUploading : MediaDownloadStatus.isMediaDownloading;
       }else {
         if (chatMessage.mediaChatMessage!
             .mediaLocalStoragePath.value
             .checkNull()
             .isNotEmpty) {
           if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
-            if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == Constants.mediaUploaded) {
-              status = Constants.mediaNotDownloaded; // for uploaded and deleted in local
+            if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploaded) {
+              status = MediaDownloadStatus.isMediaNotDownloaded; // for uploaded and deleted in local
             } else {
                status = -1;
-              //status = Constants.mediaNotDownloaded;
+              //status = MediaDownloadStatus.isMediaNotDownloaded;
             }
           } else {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
@@ -2095,9 +2094,9 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
     // debugPrint(
     //     "overlay status-->${chatMessage.isMessageSentByMe ? chatMessage.mediaChatMessage!.mediaUploadStatus : chatMessage.mediaChatMessage!.mediaDownloadStatus}");
     switch (status) {
-      case Constants.mediaDownloaded:
-      case Constants.mediaUploaded:
-      case Constants.storageNotEnough:
+      case MediaDownloadStatus.isMediaDownloaded:
+      case MediaUploadStatus.isMediaUploaded:
+      case MediaDownloadStatus.isStorageNotEnough:
         if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           return InkWell(
             child: downloadView(
@@ -2110,8 +2109,8 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
         } else {
           return const Offstage();
         }
-      case Constants.mediaDownloadedNotAvailable:
-      case Constants.mediaUploadedNotAvailable:
+      case MediaDownloadStatus.isMediaDownloadedNotAvailable:
+      case MediaUploadStatus.isMediaUploadedNotAvailable:
         return InkWell(
           child: downloadView(
               chatMessage.mediaChatMessage!.mediaFileSize,
@@ -2120,7 +2119,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             downloadMedia(chatMessage.messageId);
           },
         );
-      case Constants.mediaNotDownloaded:
+      case MediaDownloadStatus.isMediaNotDownloaded:
         return InkWell(
           child: downloadView(
               chatMessage.mediaChatMessage!.mediaFileSize,
@@ -2129,15 +2128,15 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
             downloadMedia(chatMessage.messageId);
           },
         );
-      case Constants.mediaNotUploaded:
+      case MediaUploadStatus.isMediaNotUploaded:
         return InkWell(
             onTap: () {
               debugPrint("upload Media ==> ${chatMessage.messageId}");
               uploadMedia(chatMessage.messageId);
             },
             child: uploadView(chatMessage.messageType.toUpperCase()));
-      case Constants.mediaDownloading:
-      case Constants.mediaUploading:
+      case MediaDownloadStatus.isMediaDownloading:
+      case MediaUploadStatus.isMediaUploading:
         return Obx(() {
           return InkWell(onTap: () {
             cancelMediaUploadOrDownload(chatMessage.messageId);
@@ -2148,7 +2147,7 @@ Widget getImageOverlay(ChatMessageModel chatMessage,
       default:
         return InkWell(
             onTap: () {
-              toToast(Constants.mediaDoesNotExist);
+              toToast(getTranslated("mediaDoesNotExist"));
             },
             child: uploadView(chatMessage.messageType.toUpperCase()));
     }
@@ -2185,9 +2184,9 @@ Widget uploadView(String messageType) {
             const SizedBox(
               width: 5,
             ),
-            const Text(
-              "RETRY",
-              style: TextStyle(color: Colors.white, fontSize: 10),
+            Text(
+              getTranslated("retry").toUpperCase(),
+              style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
           ],
         )),
@@ -2199,7 +2198,7 @@ void cancelMediaUploadOrDownload(String messageId) {
     if(value){
       Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   });
 }
@@ -2208,7 +2207,7 @@ void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
     Mirrorfly.uploadMedia(messageId: messageId);
   } else {
-    toToast(Constants.noInternetConnection);
+    toToast(getTranslated("noInternetConnection"));
   }
 }
 
@@ -2216,7 +2215,7 @@ void downloadMedia(String messageId) async {
   debugPrint("media download click");
   debugPrint("media download click--> $messageId");
   if (await AppUtils.isNetConnected()) {
-    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
+    var permission = await AppPermission.getStoragePermission(permissionContent: getTranslated("writeStoragePermissionContent"),deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
     if (permission) {
       debugPrint("media permission granted");
       Mirrorfly.downloadMedia(messageId: messageId);
@@ -2224,7 +2223,7 @@ void downloadMedia(String messageId) async {
       debugPrint("storage permission not granted");
     }
   } else {
-    toToast(Constants.noInternetConnection);
+    toToast(getTranslated("noInternetConnection"));
   }
 }
 
@@ -2526,20 +2525,20 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
       break;
 
     case Constants.mediaDownloadedNotAvailable:
-    case Constants.mediaNotDownloaded:
+    case MediaDownloadStatus.isMediaNotDownloaded:
     //download
       debugPrint("Download");
       debugPrint(chatList.messageId);
       chatList.mediaChatMessage!.mediaDownloadStatus =
-          Constants.mediaDownloading;
+          MediaDownloadStatus.isMediaDownloading;
       downloadMedia(chatList.messageId);
       break;
     case Constants.mediaUploadedNotAvailable:
     //upload
       break;
-    case Constants.mediaNotUploaded:
-    case Constants.mediaDownloading:
-    case Constants.mediaUploading:
+    case MediaUploadStatus.isMediaNotUploaded:
+    case MediaDownloadStatus.isMediaDownloading:
+    case MediaUploadStatus.isMediaUploading:
       return uploadingView(chatList.messageType);
   // break;
   }
@@ -2672,10 +2671,10 @@ String addDateHeaderMessage(ChatMessageModel item) {
   // debugPrint("today $today");
   // debugPrint("yesterday $yesterday");
   if (messageDate.toString() == (today).toString()) {
-    return "Today";
+    return getTranslated("today");
     //dateHeaderMessage = createDateHeaderMessageWithDate(date, item)
   } else if (messageDate == yesterday) {
-    return "Yesterday";
+    return getTranslated("yesterday");
     //dateHeaderMessage = createDateHeaderMessageWithDate(date, item)
   } else if (!messageDate.contains("1970")) {
     //dateHeaderMessage = createDateHeaderMessageWithDate(messageDate, item)

@@ -17,7 +17,7 @@ class StatusListView extends GetView<StatusListController> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: Text(getTranslated("status", context)),
+        title: Text(getTranslated("status")),
       ),
       body: PopScope(
         canPop: false,
@@ -35,7 +35,7 @@ class StatusListView extends GetView<StatusListController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                getTranslated("yourCurrentStatus", context),
+                getTranslated("yourCurrentStatus"),
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(
@@ -67,7 +67,7 @@ class StatusListView extends GetView<StatusListController> {
                 height: 10,
               ),
               Text(
-                getTranslated("selectNewStatus", context),
+                getTranslated("selectNewStatus"),
                 style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(() => controller.statusList.isNotEmpty

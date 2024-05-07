@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -155,7 +156,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   Future<void> sendMedia() async {
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
-    Platform.isIOS ? Helper.showLoading(message: "Compressing files") : Helper.progressLoading();
+    Platform.isIOS ? Helper.showLoading(message: getTranslated("compressingFiles")) : Helper.progressLoading();
     var featureNotAvailable = false;
     try {
       int i = 0;

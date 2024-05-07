@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -282,18 +283,18 @@ class ViewAllMediaController extends GetxController {
       return MapEntry(5, year.toString());
     } else if ((currentMonth - month) == 1) {
       if (day > currentDay) {
-        return const MapEntry(3, "Last Month");
+        return MapEntry(3, getTranslated("lastMonth"));
       } else {
         return MapEntry(4, dateSymbols[month]);
       }
     } else if (currentMonth > month) {
       return MapEntry(4, dateSymbols[month]);
     } else if ((currentDay - day) > 7) {
-      return const MapEntry(2, "Last Month");
+      return MapEntry(2, getTranslated("lastMonth"));
     } else if ((currentDay - day) > 2) {
-      return const MapEntry(1, "Last Week");
+      return MapEntry(1, getTranslated("lastWeek"));
     }
-    return const MapEntry(0, "Recent");
+    return MapEntry(0, getTranslated("recent"));
   }
 
   Image imageFromBase64String(String base64String,

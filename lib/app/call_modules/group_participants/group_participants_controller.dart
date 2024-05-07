@@ -12,6 +12,8 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../routes/route_settings.dart';
 
+import '../../common/app_localizations.dart';
+
 class GroupParticipantsController extends GetxController {
   var usersList = <ProfileDetails>[].obs;
   var mainUserList = <ProfileDetails>[].obs;
@@ -136,12 +138,12 @@ class GroupParticipantsController extends GetxController {
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
+    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -150,15 +152,15 @@ class GroupParticipantsController extends GetxController {
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
                 if (response.isSuccess && response.hasData) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -198,7 +200,7 @@ class GroupParticipantsController extends GetxController {
         selectedUsersJIDList.add(item.jid!);
         groupCallMembersCount(groupCallMembersCount.value + 1);
       } else {
-        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+        toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
       }
     }
     usersList.refresh();
@@ -214,11 +216,11 @@ class GroupParticipantsController extends GetxController {
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callType.value == CallType.audio) {

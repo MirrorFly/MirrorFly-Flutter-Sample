@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../../common/app_localizations.dart';
 import '../../../../data/apputils.dart';
 
 
@@ -71,7 +72,7 @@ class BlockedListController extends GetxController {
                 }
               },);
             }else{
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
 
           },

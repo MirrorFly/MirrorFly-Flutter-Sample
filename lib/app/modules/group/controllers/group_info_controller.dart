@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
@@ -187,7 +188,7 @@ class GroupInfoController extends GetxController {
         notifyDashboardUI();
       }
     }else{
-      toToast("You're no longer a participant in this group");
+      toToast(getTranslated("youAreNoLonger"));
     }
   }
 
@@ -208,26 +209,26 @@ class GroupInfoController extends GetxController {
       Helper.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(title: "Report this group?",message: "The last 5 messages from this group will be forwarded to admin. No one in this group will be notified.",actions: [
+    Helper.showAlert(title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             Helper.progressLoading();
-            Mirrorfly.reportUserOrMessages(jid: profile.jid.checkNull(),type: Constants.typeGroupChat, messageId: "", flyCallBack: (FlyResponse response) {
+            Mirrorfly.reportUserOrMessages(jid: profile.jid.checkNull(),type: ChatType.groupChat, messageId: "", flyCallBack: (FlyResponse response) {
               Helper.hideLoading();
               if(response.isSuccess){
-                toToast("Report sent");
+                toToast(getTranslated("reportSentSuccess"));
               }else{
-                toToast("There are no messages available");
+                toToast(getTranslated("thereNoMessagesAvailable"));
               }
             });
           },
-          child: const Text("REPORT",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("report").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
   exitOrDeleteGroup(){
@@ -244,18 +245,18 @@ class GroupInfoController extends GetxController {
       Helper.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(message: "Are you sure you want to leave from group?.",actions: [
+    Helper.showAlert(message: getTranslated("areYouLeaveGroup"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             exitFromGroup();
           },
-          child: const Text("LEAVE",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("leave").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
   var leavedGroup = false.obs;
@@ -272,11 +273,11 @@ class GroupInfoController extends GetxController {
           _isMemberOfGroup(!response.isSuccess);
           leavedGroup(response.isSuccess);
         }else{
-          toToast(Constants.errorTryAgain);
+          toToast(getTranslated("errorTryAgain"));
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
   deleteGroup(){
@@ -284,12 +285,12 @@ class GroupInfoController extends GetxController {
       Helper.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(message: "Are you sure you want to delete this group?.",actions: [
+    Helper.showAlert(message: getTranslated("areYouDeleteGroup"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
@@ -304,15 +305,15 @@ class GroupInfoController extends GetxController {
                 if(response.isSuccess){
                   Get.offAllNamed(Routes.dashboard);
                 }else{
-                  toToast(Constants.errorTryAgain);
+                  toToast(getTranslated("errorTryAgain"));
                 }
               });
             }else{
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
 
           },
-          child: const Text("DELETE",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("delete").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -336,7 +337,7 @@ class GroupInfoController extends GetxController {
         // User canceled the picker
       }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -364,7 +365,7 @@ class GroupInfoController extends GetxController {
         // User canceled the Camera
       }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -400,18 +401,18 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    Helper.showAlert(message: "Are you sure you want to remove the group photo?",actions: [
+    Helper.showAlert(message: getTranslated("areYouRemoveGroupPhoto"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             revokeAccessForProfileImage();
           },
-          child: const Text("REMOVE",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -430,7 +431,7 @@ class GroupInfoController extends GetxController {
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -461,11 +462,11 @@ class GroupInfoController extends GetxController {
         if(response.isSuccess){
           //getGroupMembers(false);
         }else{
-          toToast("Error while adding Members in this group");
+          toToast(getTranslated("errorWhileAddingMember"));
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -486,14 +487,14 @@ class GroupInfoController extends GetxController {
           if(response.isSuccess){
             //getGroupMembers(false);
           }else{
-            toToast("Error while Removing this member");
+            toToast(getTranslated("errorWhileRemovingMember"));
           }
         });
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }else{
-      toToast("You're no longer a participant in this group");
+      toToast(getTranslated("youAreNoLonger"));
     }
   }
 
@@ -510,14 +511,14 @@ class GroupInfoController extends GetxController {
           if(response.isSuccess){
             //getGroupMembers(false);
           }else{
-            toToast("Error while make admin this member");
+            toToast(getTranslated("errorWhileMakeAdmin"));
           }
         });
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }else{
-      toToast("You're no longer a participant in this group");
+      toToast(getTranslated("youAreNoLonger"));
     }
   }
 
@@ -534,7 +535,7 @@ class GroupInfoController extends GetxController {
         }
       });
     }else{
-      toToast("You're no longer a participant in this group");
+      toToast(getTranslated("youAreNoLonger"));
     }
   }
   var nameController = TextEditingController();

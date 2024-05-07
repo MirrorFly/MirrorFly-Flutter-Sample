@@ -38,7 +38,7 @@ class ProfileView extends GetView<ProfileController> {
       child: Scaffold(
           appBar: AppBar(
               title: Text(
-                getTranslated("profile", context),
+                getTranslated("profile"),
                 style: const TextStyle(color: appbarTextColor),
               ),
               centerTitle: true,
@@ -153,7 +153,7 @@ class ProfileView extends GetView<ProfileController> {
                             controller: controller.profileName,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: getTranslated("userName", context),
+                              hintText: getTranslated("userName"),
                               counterText: '',
                             ),
                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -164,7 +164,7 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(getTranslated("email", context),
+                    Text(getTranslated("email"),
                       style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     TextField(
@@ -176,7 +176,7 @@ class ProfileView extends GetView<ProfileController> {
                       enabled: controller.emailEditAccess,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: getTranslated("enterEmailID", context),
+                        hintText: getTranslated("enterEmailID"),
                         icon: SvgPicture.asset('assets/logos/email.svg'),
                       ),
                       style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
@@ -185,7 +185,7 @@ class ProfileView extends GetView<ProfileController> {
                     const SizedBox(
                       height: 20,
                     ),
-                Text(getTranslated("mobileNumber", context),
+                Text(getTranslated("mobileNumber"),
                       style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     Obx(() {
@@ -196,7 +196,7 @@ class ProfileView extends GetView<ProfileController> {
                         enabled: controller.mobileEditAccess.value,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: getTranslated("enterMobileNumber", context),
+                          hintText: getTranslated("enterMobileNumber"),
                           icon: SvgPicture.asset('assets/logos/phone.svg'),
                         ),
                         style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
@@ -207,13 +207,13 @@ class ProfileView extends GetView<ProfileController> {
                       height: 20,
                     ),
                     Text(
-                      getTranslated("status", context),
+                      getTranslated("status"),
                       style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
                     Obx(() => ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(
-                            controller.profileStatus.value.isNotEmpty ? controller.profileStatus.value : Constants.defaultStatus,
+                            controller.profileStatus.value.isNotEmpty ? controller.profileStatus.value : getTranslated("defaultStatus"),
                             style: TextStyle(
                                 color: controller.profileStatus.value.isNotEmpty ? textColor : Colors.black38, fontWeight: FontWeight.normal),
                           ),
@@ -250,10 +250,10 @@ class ProfileView extends GetView<ProfileController> {
                                   : null,
                           child: Text(
                             controller.from == Routes.login
-                                ? getTranslated("save", context)
+                                ? getTranslated("save")
                                 : controller.changed.value
-                                    ? getTranslated("updateAndContinue", context)
-                                    : getTranslated("save", context),
+                                    ? getTranslated("updateAndContinue")
+                                    : getTranslated("save"),
                             style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                           ),
                         ),
@@ -287,7 +287,7 @@ class ProfileView extends GetView<ProfileController> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(getTranslated("options", context)),
+                      Text(getTranslated("options")),
                       const SizedBox(
                         height: 10,
                       ),
@@ -299,7 +299,7 @@ class ProfileView extends GetView<ProfileController> {
                           controller.camera();
                         },
                         title: Text(
-                          getTranslated("takePhoto", context),
+                          getTranslated("takePhoto"),
                           style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
@@ -311,7 +311,7 @@ class ProfileView extends GetView<ProfileController> {
                           controller.imagePicker(context);
                         },
                         title: Text(
-                          getTranslated("chooseFromGallery", context),
+                          getTranslated("chooseFromGallery"),
                           style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ),
@@ -321,22 +321,22 @@ class ProfileView extends GetView<ProfileController> {
                               contentPadding: EdgeInsets.zero,
                               onTap: () {
                                 Get.back();
-                                Helper.showAlert(message: getTranslated("areYouSureToRemovePhoto", context), actions: [
+                                Helper.showAlert(message: getTranslated("areYouSureToRemovePhoto"), actions: [
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                       },
-                                      child: Text(getTranslated("cancel", context).toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                                      child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                                   TextButton(
                                       onPressed: () {
                                         Get.back();
                                         controller.removeProfileImage();
                                       },
-                                      child: Text(getTranslated("remove", context).toUpperCase(),style: const TextStyle(color: buttonBgColor)))
+                                      child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
                                 ]);
                               },
                               title: Text(
-                                getTranslated("removePhoto", context),
+                                getTranslated("removePhoto"),
                                 style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             )

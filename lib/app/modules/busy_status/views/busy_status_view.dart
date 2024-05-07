@@ -38,7 +38,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(getTranslated("editBusyStatus", context)),
+          title: Text(getTranslated("editBusyStatus")),
         ),
         body: SafeArea(
           child: Padding(
@@ -47,7 +47,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  getTranslated("yourBusyStatus", context),
+                  getTranslated("yourBusyStatus"),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
@@ -86,14 +86,14 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                 ),
 
                 Text(
-                  getTranslated("busyStatusDescription", context),
+                  getTranslated("busyStatusDescription"),
                   style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(
                   height: 40,
                 ),
                 Text(
-                  getTranslated("selectYourBusyStatus", context),
+                  getTranslated("selectYourBusyStatus"),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(

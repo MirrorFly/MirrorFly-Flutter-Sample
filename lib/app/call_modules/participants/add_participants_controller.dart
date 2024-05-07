@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
 import '../../data/apputils.dart';
@@ -68,7 +69,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         isPageLoading(true);
         fetchUsers(false);
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     } else {
       getGroupMembers();
@@ -173,12 +174,12 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
+    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
@@ -187,15 +188,15 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 Helper.hideLoading();
                 if (response.isSuccess && response.hasData) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES")),
+          child: Text(getTranslated("yes").toUpperCase())),
     ]);
   }
 
@@ -213,16 +214,16 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             selectedUsersJIDList.add(item.jid!);
             groupCallMembersCount(groupCallMembersCount.value + 1);
           } else {
-            toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+            toToast(getTranslated("youCanSelectForCall").replaceFirst("%d", (groupCallMembersCount.value).toString()));
           }
         } else {
-          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+          toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
         //item.isSelected = true;
       }
       usersList.refresh();
     } else {
-      toToast("User Already Added");
+      toToast(getTranslated("userAlreadyAddedInCall"));
     }
   }
 
@@ -296,7 +297,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callList.length != getMaxCallUsersCount) {
@@ -309,7 +310,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         }
       });
     } else {
-      toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+      toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
     }
   }
 
@@ -537,7 +538,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         toToast(error.toString());
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/helper.dart';
@@ -134,8 +135,8 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
       Helper.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
-          title: const Text("Delete",
-              style: TextStyle(
+          title: Text(getTranslated("delete"),
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal)),
 
@@ -169,7 +170,7 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
     if (addStatusController.text.trim().isNotEmpty) {
       Navigator.pop(context, addStatusController.text.trim().toString());
     } else {
-      toToast("Status cannot be empty");
+      toToast(getTranslated("statusNotEmpty"));
     }
   }
 
@@ -183,12 +184,12 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
   }
 
   void busyDeleteConfirmation(StatusData item, BuildContext context) {
-    Helper.showAlert(message: "Do you want to delete the status?", actions: [
+    Helper.showAlert(message: getTranslated("deleteStatus"), actions: [
       TextButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             AppUtils.isNetConnected().then((isConnected) {
@@ -202,14 +203,14 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
                   Helper.hideLoading();
                 }).catchError((error) {
                   Helper.hideLoading();
-                  toToast("Unable to delete the Busy Status");
+                toToast(getTranslated("unableDeleteBusyStatus"));
                 });
               } else {
-                toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
               }
             });
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 

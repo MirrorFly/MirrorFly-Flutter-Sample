@@ -1,5 +1,6 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
@@ -52,12 +53,12 @@ class ContactSyncController extends GetxController
   Rx<String> textContactSync = ''.obs;
   openContactPermission() async {
     if(!await Mirrorfly.contactSyncStateValue()) {
-      var contactPermissionHandle = await AppPermission.checkPermission(
-          Permission.contacts, contactPermission,
-          Constants.contactPermission);
+      var contactPermissionHandle = await AppPermission.checkAndRequestPermissions(permissions: [Permission.contacts],
+          permissionIcon: contactPermission,
+          permissionContent:getTranslated("contactPermissionContent"),permissionPermanentlyDeniedContent:getTranslated("contactPermissionDeniedContent") );
       if (contactPermissionHandle) {
         syncing(true);
-        textContactSync('Contact sync is in process');
+        textContactSync(getTranslated("contactSyncInProcess"));
         Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  });
         checkContactSync();
       } else {
@@ -65,7 +66,7 @@ class ContactSyncController extends GetxController
       }
     }else{
       syncing(true);
-      textContactSync('Contact sync is in process');
+      textContactSync(getTranslated("contactSyncInProcess"));
     }
   }
   checkContactSync() async {
@@ -104,12 +105,12 @@ class ContactSyncController extends GetxController
       openContactPermission();
     }else{
       syncing(true);
-      textContactSync('Contact sync is in process');
+      textContactSync(getTranslated("contactSyncInProcess"));
     }
   }
 
   void networkDisconnected() {
     syncing(false);
-    textContactSync(Constants.noInternetConnection);
+    textContactSync(getTranslated("noInternetConnection"));
   }
 }

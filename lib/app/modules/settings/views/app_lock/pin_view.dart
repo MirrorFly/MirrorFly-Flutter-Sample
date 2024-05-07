@@ -34,7 +34,7 @@ class PinView extends GetView<AppLockController> {
                     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
                     child: Image.asset(icLogo),
                   ),
-                  Text(getTranslated("enterYourPIN", context),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
+                  Text(getTranslated("enterYourPIN"),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
                   Obx(() {
                     return Row(
                       mainAxisSize: MainAxisSize.min,
@@ -71,7 +71,7 @@ class PinView extends GetView<AppLockController> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        getTranslated("forgotPIN", context),
+                        getTranslated("forgotPIN"),
                         style: const TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
                       ),
                     ),

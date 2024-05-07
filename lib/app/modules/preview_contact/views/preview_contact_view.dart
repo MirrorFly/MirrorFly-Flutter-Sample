@@ -14,8 +14,8 @@ class PreviewContactView extends GetView<PreviewContactController> {
     return Scaffold(
         appBar: AppBar(
           title: controller.from == "contact_pick"
-              ? Text(getTranslated("sendContacts", context))
-              : Text(getTranslated("contactDetails", context)),
+              ? Text(getTranslated("sendContacts"))
+              : Text(getTranslated("contactDetails")),
         ),
         body: SafeArea(
           child: Stack(

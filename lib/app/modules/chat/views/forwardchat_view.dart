@@ -55,9 +55,9 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                   controller: controller.searchQuery,
                   autofocus: true,
                   decoration: InputDecoration(
-                      hintText: getTranslated("searchPlaceholder", context), border: InputBorder.none),
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
-              : Text(getTranslated("forwardTo", context)),
+              : Text(getTranslated("forwardTo")),
           actions: [
             Visibility(
               visible: controller.isSearchVisible,
@@ -81,12 +81,12 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                           visible: !controller.searchLoading.value && controller.recentChats.isEmpty && controller.groupList.isEmpty && controller.userList.isEmpty,
                           child: Center(child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20.0),
-                            child: Text(getTranslated("noResultsFound", context)),
+                            child: Text(getTranslated("noResultsFound")),
                           ),),
                         ),
                         Visibility(
                           visible: controller.recentChats.isNotEmpty,
-                          child: searchHeader(getTranslated("recentChat", context),
+                          child: searchHeader(getTranslated("recentChat"),
                               "", context),
                         ),
                         ListView.builder(
@@ -115,7 +115,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
-                          child: searchHeader(getTranslated("groups", context),"", context),
+                          child: searchHeader(getTranslated("groups"),"", context),
                         ),
                         ListView.builder(
                             itemCount: controller.groupList.length,
@@ -161,7 +161,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                             }),
                         Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: searchHeader(getTranslated("contacts", context), "", context),
+                          child: searchHeader(getTranslated("contacts"), "", context),
                         ),
                         Visibility(
                           visible: controller.searchLoading.value || controller.contactLoading.value,
@@ -223,7 +223,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Expanded(child: controller.selectedNames.isEmpty ? Text(getTranslated("noUsersSelected", context),style: const TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
+                    Expanded(child: controller.selectedNames.isEmpty ? Text(getTranslated("noUsersSelected"),style: const TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
                     Visibility(
                       visible: controller.selectedNames.isNotEmpty,
                       child: InkWell(
@@ -232,7 +232,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(getTranslated("next", context).toUpperCase(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
+                          child: Text(getTranslated("next").toUpperCase(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
                         ),
                       ),
                     )

@@ -8,6 +8,7 @@ import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/apputils.dart';
@@ -201,7 +202,7 @@ class ForwardChatController extends GetxController {
         contactLoading(false);
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -310,7 +311,7 @@ class ForwardChatController extends GetxController {
         searchLoading(false);
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -322,7 +323,7 @@ class ForwardChatController extends GetxController {
       return;
     }
     if(isGroup.checkNull() && !(await Mirrorfly.isMemberOfGroup(groupJid: jid, userJid: SessionManagement.getUserJID().checkNull())).checkNull()){
-      toToast("You're no longer a participant in this group");
+      toToast(getTranslated("youAreNoLonger"));
       return;
     }
     if(isBlocked.checkNull()){
@@ -333,12 +334,12 @@ class ForwardChatController extends GetxController {
   }
 
   unBlock(String jid, String name,){
-    Helper.showAlert(message: "Unblock $name?", actions: [
+    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
       TextButton(
           onPressed: () {
             Navigator.pop(buildContext);
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
@@ -346,16 +347,16 @@ class ForwardChatController extends GetxController {
                 Navigator.pop(buildContext);
                 Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
                   if (response.isSuccess && response.hasData) {
-                    toToast("$name has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", name));
                     userUpdatedHisProfile(jid);
                   }
                 });
               } else {
-                toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
               }
             });
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -368,7 +369,7 @@ class ForwardChatController extends GetxController {
         selectedJids.add(jid);
         selectedNames.add(name);
       } else {
-        toToast("You can only forward with upto 5 users or groups");
+        toToast(getTranslated("onlyForwardLimit"));
       }
     }
 
@@ -415,7 +416,7 @@ class ForwardChatController extends GetxController {
         Mirrorfly.isBusyStatusEnabled().then((isSuccess) {
           if (isSuccess){
             if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
-              Helper.showLoading(message: "Forward message");
+          Helper.showLoading(message: getTranslated("forwardMessage"));
               Future.delayed(const Duration(milliseconds: 1000), () async {
                 await Mirrorfly.forwardMessagesToMultipleUsers(
                     messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
@@ -454,7 +455,7 @@ class ForwardChatController extends GetxController {
           }
         });
       } else {
-        toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       }
     });
   }

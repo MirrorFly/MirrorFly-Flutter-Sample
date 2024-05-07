@@ -37,15 +37,15 @@ class AdminBlockedView extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("adminBlockedMessage",context),style: const TextStyle(decoration: TextDecoration.none,color: textColorBlack,fontSize: 18.0,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+                child: Text(getTranslated("adminBlockedMessage"),style: const TextStyle(decoration: TextDecoration.none,color: textColorBlack,fontSize: 18.0,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("adminBlockedMessageLabel",context),style: const TextStyle(decoration: TextDecoration.none,color: textColor,fontSize: 16.0,fontWeight: FontWeight.w200),textAlign: TextAlign.center,),
+                child: Text(getTranslated("adminBlockedMessageLabel"),style: const TextStyle(decoration: TextDecoration.none,color: textColor,fontSize: 16.0,fontWeight: FontWeight.w200),textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("supportMail",context),style: const TextStyle(decoration: TextDecoration.underline,color: buttonBgColor,fontSize: 16.0,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                child: Text(getTranslated("supportMail"),style: const TextStyle(decoration: TextDecoration.underline,color: buttonBgColor,fontSize: 16.0,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
@@ -62,7 +62,7 @@ class AdminBlockedView extends StatelessWidget {
                     onFinish(context);
                   },
                   child: Text(
-                    getTranslated("ok", context),
+                    getTranslated("ok"),
                     style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                   ),
                 ),

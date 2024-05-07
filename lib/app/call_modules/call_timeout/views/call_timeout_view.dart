@@ -4,7 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../call_widgets.dart';
@@ -29,7 +31,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 10,),
-                    const Text(Constants.unavailableTryAgain, style: TextStyle(
+                    Text(getTranslated("unavailableTryAgain"), style: const TextStyle(
                         fontSize: 14, color: AppColors.callerStatus),),
                     const SizedBox(height: 16,),
                     Obx(() {
@@ -98,7 +100,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                     child: Obx(() {
                       return Column(
                         children: [
-                          if(controller.users.length > 1) ...[const Text(Constants.callTimeoutMessage, style: TextStyle(color: Colors.white),),],
+                          if(controller.users.length > 1) ...[Text(getTranslated("callTimeoutMessage"), style: const TextStyle(color: Colors.white),),],
                           if(controller.users.length > 1) ...[const SizedBox(height: 20,),],
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +119,7 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                                       child: SvgPicture.asset(callCancel),
                                     ),
                                     const SizedBox(height: 13,),
-                                    const Text(Constants.cancel, style: TextStyle(
+                                    Text(getTranslated("cancel"), style: const TextStyle(
                                         fontSize: 12, color: Colors.white))
                                   ],
                                 ),
@@ -134,13 +136,13 @@ class CallTimeoutView extends GetView<CallTimeoutController> {
                                         onPressed: () {
                                           controller.callAgain();
                                         },
-                                        child: controller.callType.value == Constants.audioCall ?
+                                        child: controller.callType.value == CallType.audio ?
                                         SvgPicture.asset(audioCallAgain) : SvgPicture
                                             .asset(videoCallAgain),
                                       );
                                     }),
                                     const SizedBox(height: 13,),
-                                    const Text(Constants.callAgain, style: TextStyle(
+                                    Text(getTranslated("callAgain"), style: const TextStyle(
                                         fontSize: 12, color: Colors.white))
                                   ],
                                 ),

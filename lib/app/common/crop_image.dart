@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 class CropImage extends StatefulWidget {
   const CropImage({Key? key, required this.imageFile}) : super(key: key);
@@ -62,7 +63,7 @@ class _CropImageState extends State<CropImage> {
                   child: ElevatedButton(
                     onPressed: ()=>Get.back(),
                     style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                    child: const Text("CANCEL",style: TextStyle(color: Colors.black,fontSize:16.0),),
+                    child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
                 /*SizedBox(width: 1.0,),
@@ -77,7 +78,7 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      Helper.showLoading(message: "Image Cropping...");
+                      Helper.showLoading(message: getTranslated("imageCropping"));
                       await controller.onCropImage().then((image){
                         Helper.hideLoading();
                         Get.back(result: image);
@@ -85,7 +86,7 @@ class _CropImageState extends State<CropImage> {
 
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                    child: const Text("SAVE",style: TextStyle(color: Colors.black,fontSize:16.0),),
+                    child: Text(getTranslated("save").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
               ],

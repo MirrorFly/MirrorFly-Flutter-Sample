@@ -5,6 +5,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -371,8 +372,8 @@ Widget memberItem(
                   ),
                 ),
                 (isAdmin != null && isAdmin)
-                    ? const Text("Admin",
-                        style: TextStyle(
+                    ? Text(getTranslated("groupAdmin"),
+                        style: const TextStyle(
                           color: Colors.blue,
                           fontSize: 12.0,
                         ))

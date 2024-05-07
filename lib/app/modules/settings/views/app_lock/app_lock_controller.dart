@@ -15,6 +15,7 @@ import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../../common/app_localizations.dart';
 import '../../../../data/apputils.dart';
 import '../../../../routes/route_settings.dart';
 
@@ -93,14 +94,14 @@ class AppLockController extends FullLifeCycleController
       //enable pin to enable bio alert popup
       Helper.showAlert(
           message:
-              "You need to set pin first in order to enable bio metric authentication",
+              getTranslated("needToSetPin"),
           actions: [
             TextButton(
                 onPressed: () {
                   fromBio = true;
                   enablePin();
                 },
-                child: const Text("OK",style: TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           ]);
     }
   }
@@ -154,17 +155,17 @@ class AppLockController extends FullLifeCycleController
         SessionManagement.setEnablePIN(true);
         SessionManagement.setEnableBio(fromBio);
         (modifyPin.value)
-            ? toToast('PIN changed successfully')
-            : toToast('PIN set successfully');
+            ? toToast(getTranslated("pinChangedSuccess"))
+            : toToast(getTranslated("pinSetSuccess"));
         _pinEnabled(true);
         _bioEnabled(fromBio);
         modifyPin(false);
         Get.back(result: true);
       } else {
-        toToast("PIN not Matched");
+        toToast(getTranslated("pinNotMatched"));
       }
     } else {
-      toToast("Enter New and Confirm PIN");
+      toToast(getTranslated("enterNewPin"));
     }
   }
 
@@ -174,7 +175,7 @@ class AppLockController extends FullLifeCycleController
   bool validateOldAndNewPin() {
     if (modifyPin.value) {
       if (oldPin.text.toString() != SessionManagement.getPin()) {
-        errorMessage = "Invalid old PIN";
+        errorMessage = getTranslated("invalidOldPin");
         return false;
       }
       return validatePin();
@@ -184,28 +185,28 @@ class AppLockController extends FullLifeCycleController
 
   bool validatePin() {
     if (newPin.text.isEmpty) {
-      errorMessage = "Enter the PIN";
+      errorMessage = getTranslated("enterPin");
       return false;
     } else if (newPin.text.length < 4) {
-      errorMessage = "PIN must be of 4 digits";
+      errorMessage = getTranslated("pinMust");
       return false;
     } else if (confirmPin.text.isEmpty) {
-      errorMessage = "Enter the Confirm PIN";
+      errorMessage = getTranslated("enterConfirmPin");
       return false;
     } else if (confirmPin.text.length < 4) {
-      errorMessage = "Confirm PIN must be of 4 digits";
+      errorMessage = getTranslated("confirmPinMust");
       return false;
     } else if (newPin.text.toString() != confirmPin.text.toString()) {
-      errorMessage = "PIN and Confirm PIN must be same";
+      errorMessage = getTranslated("pinMustSame");
       return false;
     } else if (modifyPin.value &&
             oldPin.text.toString() == confirmPin.text.toString() ||
         SessionManagement.getPin() == confirmPin.text.toString()) {
-      errorMessage = "Old PIN and new PIN should not be same";
+      errorMessage = getTranslated("oldNewPinSame");
       return false;
     } else if (!modifyPin.value &&
         newPin.text.toString() == SessionManagement.getChangePinNext()) {
-      errorMessage = "PIN should not be same as immediate previous PIN";
+      errorMessage = getTranslated("pinShouldNotPrevious");
       return false;
     } else {
       errorMessage = '';
@@ -310,7 +311,7 @@ class AppLockController extends FullLifeCycleController
           forgetPin(fromInvalid: true);
         }
         if (wrongPinCount <= 6) {
-          toToast("Invalid PIN! Try again");
+          toToast(getTranslated("invalidPinTryAgain"));
         }
         clearFields();
       }
@@ -330,7 +331,7 @@ class AppLockController extends FullLifeCycleController
       titlePadding: const EdgeInsets.only(top: 20, right: 20, left: 20),
       contentPadding: EdgeInsets.zero,
       title: Text(
-        fromInvalid ? Constants.invalidPinOTPText : Constants.forgetPinOTPText,
+        fromInvalid ? getTranslated("invalidPINGenerateOTP") : getTranslated("forgetPinOTPText"),
         style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -339,18 +340,17 @@ class AppLockController extends FullLifeCycleController
             onPressed: () {
               Get.back();
             },
-            child: const Text(
-              'CANCEL',
-              style: TextStyle(color: buttonBgColor),
+            child: Text(getTranslated("cancel").toUpperCase(),
+              style: const TextStyle(color: buttonBgColor),
             )),
         TextButton(
             onPressed: () {
               Get.back();
               sendOtp();
             },
-            child: const Text(
-              'GENERATE OTP',
-              style: TextStyle(color: buttonBgColor),
+            child: Text(
+              getTranslated("generateOTP").toUpperCase(),
+              style: const TextStyle(color: buttonBgColor),
             )),
       ],
     ));
@@ -424,8 +424,7 @@ class AppLockController extends FullLifeCycleController
     Get.dialog(AlertDialog(
       titlePadding: const EdgeInsets.only(top: 20, right: 20, left: 20),
       contentPadding: EdgeInsets.zero,
-      title: Text(
-        'Your PIN will be expired in $daysBetween day(s)',
+      title: Text(getTranslated("pinExpiredIn").replaceFirst("%d", "$daysBetween"),
         style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -435,18 +434,18 @@ class AppLockController extends FullLifeCycleController
               Get.back();
               changePin();
             },
-            child: const Text(
-              'Change PIN',
-              style: TextStyle(color: buttonBgColor),
+            child: Text(
+              getTranslated("changePin"),
+              style: const TextStyle(color: buttonBgColor),
             )),
         TextButton(
             onPressed: () {
               Get.back();
               SessionManagement.setDontShowAlert();
             },
-            child: const Text(
-              'OK',
-              style: TextStyle(color: buttonBgColor),
+            child: Text(
+              getTranslated("ok"),
+              style: const TextStyle(color: buttonBgColor),
             )),
       ],
     ));
@@ -465,9 +464,9 @@ class AppLockController extends FullLifeCycleController
           child: AlertDialog(
             titlePadding: const EdgeInsets.only(top: 20.0, right: 20, left: 20),
             contentPadding: EdgeInsets.zero,
-            title: const Text(
-              'Your current PIN has been expired. Please set a new PIN to continue further',
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+            title: Text(
+              getTranslated("plsSetNewPIN"),
+              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             insetPadding: const EdgeInsets.symmetric(horizontal: 20),
             actionsAlignment: MainAxisAlignment.center,
@@ -479,13 +478,13 @@ class AppLockController extends FullLifeCycleController
                     child: TextButton(
                         onPressed: () {
                           toToast(
-                              'Enter Current Pin To Disable Pin And FingerPrint');
+                              getTranslated("toDisablePIN"));
                           disablePin = true;
                           Get.back();
                         },
-                        child: const Text(
-                          'Disable PIN',
-                          style: TextStyle(
+                        child: Text(
+                          getTranslated("disablePIN"),
+                          style: const TextStyle(
                             color: buttonBgColor,
                             fontSize: 16,
                           ),
@@ -498,9 +497,9 @@ class AppLockController extends FullLifeCycleController
                           Get.back();
                           changePin();
                         },
-                        child: const Text(
-                          'Change PIN',
-                          style: TextStyle(
+                        child: Text(
+                          getTranslated("changePin"),
+                          style: const TextStyle(
                             color: buttonBgColor,
                             fontSize: 16,
                           ),
@@ -513,9 +512,9 @@ class AppLockController extends FullLifeCycleController
                           Get.back();
                           sendOtp();
                         },
-                        child: const Text(
-                          'Forgot PIN?',
-                          style: TextStyle(
+                        child: Text(
+                          getTranslated("forgotPin"),
+                          style: const TextStyle(
                             color: Color(0XFFFF0000),
                             fontSize: 16,
                           ),
@@ -531,10 +530,10 @@ class AppLockController extends FullLifeCycleController
 
   Future<void> sendOtp({bool fromInvalid = false}) async {
     if (await AppUtils.isNetConnected()) {
-      Helper.showLoading(message: 'Sending OTP to your Mobile Number');
+      Helper.showLoading(message: getTranslated("sentOTP"));
       sendVerificationCode();
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -579,18 +578,18 @@ class AppLockController extends FullLifeCycleController
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Forget PIN ?',
+                        Text(
+                          getTranslated("forgotPin"),
                           textAlign: TextAlign.center,
                           style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                          const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 16.0, right: 8, left: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0, right: 8, left: 8),
                           child: Text(
-                            'We have sent you the OTP to the registered mobile number enter the 6 digit verification code below',
+                            getTranslated("sentOtpSuccess"),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w300,
                                 color: Color(0Xff737373)),
@@ -627,7 +626,7 @@ class AppLockController extends FullLifeCycleController
                               },
                               child: Text(
                                 timeout.value
-                                    ? 'Resend OTP'
+                                    ? getTranslated("resendOTP")
                                     : '00:${(myDuration.value.inSeconds.remainder(
                                     60).toStringAsFixed(0).padLeft(2, '0'))}',
                                 style: TextStyle(
@@ -647,9 +646,9 @@ class AppLockController extends FullLifeCycleController
                                 onPressed: () {
                                   Get.back();
                                 },
-                                child: const Text(
-                                  'Cancel',
-                                  style: TextStyle(
+                                child: Text(
+                                  getTranslated("cancel"),
+                                  style: const TextStyle(
                                       color: Color(0XFFFF0000),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700),
@@ -658,9 +657,9 @@ class AppLockController extends FullLifeCycleController
                                 onPressed: () {
                                   verifyOTP();
                                 },
-                                child: const Text(
-                                  'Verify OTP',
-                                  style: TextStyle(
+                                child: Text(
+                                  getTranslated("verifyOTP"),
+                                  style: const TextStyle(
                                       color: buttonBgColor,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700),
@@ -738,7 +737,7 @@ class AppLockController extends FullLifeCycleController
           timeout(true);
           LogMessage.d("verificationFailed", e.toString());
           //verificationFailed==>[firebase_auth/too-many-requests] We have blocked all requests from this device due to unusual activity. Try again later.
-          toToast("OTP sent failed");
+          toToast(getTranslated("otpSentFailed"));
           hideLoading();
         },
         codeSent: (String verificationId, int? resendToken) {
@@ -746,7 +745,7 @@ class AppLockController extends FullLifeCycleController
           this.verificationId = verificationId;
           resendingToken = resendToken;
           startTimer();
-          toToast('OTP sent Successfully');
+          toToast(getTranslated("otpSentSuccess"));
           if (verificationId.isNotEmpty) {
             hideLoading();
             showOtpView();
@@ -768,7 +767,7 @@ class AppLockController extends FullLifeCycleController
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        Helper.showLoading(message: 'verifying OTP');
+        Helper.showLoading(message: getTranslated("verifyingOTP"));
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
         // Sign the user in (or link) with the credential
@@ -776,10 +775,10 @@ class AppLockController extends FullLifeCycleController
         debugPrint("smsCode $smsCode");
         signIn(credential);
       } else {
-        toToast("InValid OTP");
+        toToast(getTranslated("inValidOTP"));
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -800,12 +799,12 @@ class AppLockController extends FullLifeCycleController
         });
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
-        toToast("Invalid OTP");
+        toToast(getTranslated("inValidOTP"));
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
       LogMessage.d("sign in error", e.toString());
-      toToast("Enter Valid Otp");
+      toToast(getTranslated("enterValidOTP"));
       hideLoading();
     }
   }

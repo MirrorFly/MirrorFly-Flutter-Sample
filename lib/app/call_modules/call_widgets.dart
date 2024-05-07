@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -560,15 +561,15 @@ String getTileCallStatus(String? callStatus, String userjid, bool isOnetoOneCall
     case CallStatus.callingAfter10s:
       return '';
     case CallStatus.connecting:
-      return userjid == SessionManagement.getUserJID() ? "" : "${CallStatus.connecting}…";
+      return userjid == SessionManagement.getUserJID() ? "" : "${getTranslated("connectingCall")}…";
     case CallStatus.ringing:
-      return userjid == SessionManagement.getUserJID() ? "" : "${CallStatus.ringing}…";
+      return userjid == SessionManagement.getUserJID() ? "" : "${getTranslated("ringing")}…";
     case CallStatus.calling:
-      return userjid == SessionManagement.getUserJID() ? "" : isOnetoOneCall ? "" : "Calling…";
+      return userjid == SessionManagement.getUserJID() ? "" : isOnetoOneCall ? "" : "${getTranslated("calling")}…";
     case CallStatus.onHold:
-      return "${CallStatus.onHold}…";
+      return "${getTranslated("callOnHold")}…";
     case CallStatus.reconnecting:
-      return "Reconnecting…";
+      return "${getTranslated("reconnecting")}…";
     default:
       return '';
   }

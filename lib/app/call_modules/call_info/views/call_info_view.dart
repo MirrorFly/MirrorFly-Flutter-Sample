@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/app_localizations.dart';
 import '../../../modules/dashboard/widgets.dart';
 import '../../call_utils.dart';
 
@@ -19,8 +20,8 @@ class CallInfoView extends GetView<CallInfoController> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          Constants.callInfo,
+        title: Text(
+          getTranslated("callInfo"),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -223,9 +224,9 @@ class CallInfoView extends GetView<CallInfoController> {
         Offset.zero & overlay.size,
       ),
       items: <PopupMenuEntry>[
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 0,
-          child: Text(Constants.removeFromCallLog),
+          child: Text(getTranslated("removeFromCallLog")),
         ),
       ],
     ).then((value) {

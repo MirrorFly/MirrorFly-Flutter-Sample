@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../common/app_localizations.dart';
 import '../../data/apputils.dart';
 import '../../routes/route_settings.dart';
 
@@ -64,7 +65,7 @@ class ScannerController extends GetxController {
           controller!.resumeCamera();
         });*/
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
 
     }
@@ -82,7 +83,7 @@ class ScannerController extends GetxController {
         }
       });*/
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -136,18 +137,18 @@ class ScannerController extends GetxController {
   }
 
   logoutWeb() {
-    Helper.showAlert(message: "Are you want to logout?", actions: [
+    Helper.showAlert(message: getTranslated("logoutConfirmation"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             logoutWebUser();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
     ]);
   }
 }

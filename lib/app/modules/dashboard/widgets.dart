@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/constants.dart';
@@ -112,8 +113,8 @@ class RecentChatItem extends StatelessWidget {
           Row(
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
-                  ? (item.lastMessageType == Constants.msgTypeText && item.lastMessageContent.checkNull().isNotEmpty ||
-                              item.lastMessageType != Constants.msgTypeText) &&
+                  ? (item.lastMessageType == MessageType.isText && item.lastMessageContent.checkNull().isNotEmpty ||
+                              item.lastMessageType != MessageType.isText) &&
                           typingUserid.isEmpty
                       ? buildMessageIndicator()
                       : const SizedBox()
@@ -253,9 +254,9 @@ class RecentChatItem extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.0), border: Border.all(color: buttonBgColor, width: 0.8)),
-          child: const Text(
-            "Archived",
-            style: TextStyle(color: buttonBgColor),
+          child: Text(
+            getTranslated("archived"),
+            style: const TextStyle(color: buttonBgColor),
           ),
         ) /*SvgPicture.asset(
                                       archive,
@@ -312,9 +313,9 @@ class RecentChatItem extends StatelessWidget {
 
   String getTypingUser(ProfileDetails profile, bool? isGroup) {
     if (isGroup.checkNull()) {
-      return "${profile.getName().checkNull()} typing...";
+      return "${profile.getName().checkNull()} ${getTranslated("typingIndicator")}";
     } else {
-      return "typing...";
+      return getTranslated("typingIndicator");
     }
   }
 
@@ -436,7 +437,7 @@ class RecentChatItem extends StatelessWidget {
   }
 
   String setRecalledMessageText(bool isFromSender) {
-    return (isFromSender) ? "You deleted this message" : "This message was deleted";
+    return (isFromSender) ? getTranslated("youDeletedThisMessage") : getTranslated("thisMessageWasDeleted");
   }
 }
 

@@ -74,7 +74,7 @@ class StarredMessageHeader extends StatelessWidget {
                               color: Colors.black,
                               size: 14,
                             )),
-                        Text(getTranslated("you", context),
+                        Text(getTranslated("you"),
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(
@@ -131,7 +131,7 @@ class StarredMessageHeader extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )
-                            : Text(getTranslated("you", context),
+                            : Text(getTranslated("you"),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 15)),
                         const SizedBox(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
@@ -43,7 +44,7 @@ class CallTimeoutController extends GetxController {
   callAgain() async {
     // Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
-      if(callType.value == Constants.audioCall) {
+      if(callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVoiceCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
@@ -83,7 +84,7 @@ class CallTimeoutController extends GetxController {
         }
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

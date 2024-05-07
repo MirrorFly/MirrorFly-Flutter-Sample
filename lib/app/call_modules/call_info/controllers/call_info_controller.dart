@@ -9,6 +9,8 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../common/app_localizations.dart';
+
 
 class CallInfoController extends GetxController{
 
@@ -29,7 +31,7 @@ class CallInfoController extends GetxController{
             Get.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msgOngoingCallAlert);
+              toToast(getTranslated("msgOngoingCallAlert"));
             } else {
               Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
@@ -43,7 +45,7 @@ class CallInfoController extends GetxController{
             Get.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
-              toToast(Constants.msgOngoingCallAlert);
+              toToast(getTranslated("msgOngoingCallAlert"));
             } else {
               Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
@@ -54,20 +56,20 @@ class CallInfoController extends GetxController{
           }
         }
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }
   }
 
   itemDeleteCallLog(List<String> selectedCallLogs) {
     Helper.showAlert(
-        message: "Do you want to delete a call log?",
+        message: getTranslated("deleteCallLogConfirmation"),
         actions: [
           TextButton(
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -75,11 +77,11 @@ class CallInfoController extends GetxController{
                   if (response.isSuccess) {
                     Get.back(result: true);
                   } else {
-                    toToast("Error in call log delete");
+                    toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
               },
-              child: const Text(Constants.ok,style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

@@ -15,7 +15,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getTranslated("chats", context)),
+        title: Text(getTranslated("chats")),
         automaticallyImplyLeading: true,
       ),
       body: Obx(() {
@@ -23,18 +23,18 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              lockItem(title: getTranslated("archiveSetting", context),
-                  subtitle: getTranslated("archiveSettingDec", context),
+              lockItem(title: getTranslated("archiveSetting"),
+                  subtitle: getTranslated("archiveSettingDec"),
                   on: controller.archiveEnabled,
                   onToggle: (value) => controller.enableArchive()),
               notificationItem(
-                  title: getTranslated("lastSeen", context),
-                  subtitle: getTranslated("lastSeenDec", context),
+                  title: getTranslated("lastSeen"),
+                  subtitle: getTranslated("lastSeenDec"),
                   on: controller.lastSeenPreference.value,
                   onTap: () => controller.lastSeenEnableDisable()),
               notificationItem(
-                  title: getTranslated("userBusyStatus", context),
-                  subtitle: getTranslated("userBusyStatusDescription", context),
+                  title: getTranslated("userBusyStatus"),
+                  subtitle: getTranslated("userBusyStatusDescription"),
                   on: controller.busyStatusPreference.value,
                   onTap: () => controller.busyStatusEnable()),
               Visibility(
@@ -43,7 +43,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                    Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(getTranslated("editBusyStatus", context),
+                      Text(getTranslated("editBusyStatus"),
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400)),
@@ -60,19 +60,19 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                   ),
                   rightArrowIcon, () => {Get.toNamed(Routes.busyStatus)},
                   )),
-              notificationItem(title: getTranslated("autoDownload", context), subtitle: getTranslated("autoDownloadLabel", context),on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
+              notificationItem(title: getTranslated("autoDownload"), subtitle: getTranslated("autoDownloadLabel"),on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
               Visibility(
                 visible: controller.autoDownloadEnabled,
                   child: chatListItem(Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(getTranslated("dataUsageSettings", context),
+                    Text(getTranslated("dataUsageSettings"),
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400)),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text(getTranslated("dataUsageSettingsLabel", context),
+                      child: Text(getTranslated("dataUsageSettingsLabel"),
                           style: const TextStyle(
                               color: textColor,
                               fontSize: 14,
@@ -82,13 +82,13 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                 ),
                 rightArrowIcon, () => {Get.toNamed(Routes.dataUsageSetting)},
               )),
-              notificationItem(title: getTranslated("googleTranslationLabel", context), subtitle: getTranslated("googleTranslationMessage", context),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
+              notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
               Visibility(
                   visible: controller.translationEnabled,
                   child: chatListItem(Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(getTranslated("googleTranslationLanguageLable", context),
+                      Text(getTranslated("googleTranslationLanguageLable"),
                           style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
@@ -101,7 +101,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400)),
                       ),
-                      Text(getTranslated("googleTranslationLanguageDoubleTap", context),
+                      Text(getTranslated("googleTranslationLanguageDoubleTap"),
                           style: const TextStyle(
                               color: textColor,
                               fontSize: 13,
@@ -110,7 +110,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                   ), rightArrowIcon, () => controller.chooseLanguage())),
 
               ListItem(
-                  title: Text(getTranslated("clearAllConversation", context),
+                  title: Text(getTranslated("clearAllConversation"),
                       style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14,
