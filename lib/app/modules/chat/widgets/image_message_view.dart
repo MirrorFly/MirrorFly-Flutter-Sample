@@ -10,7 +10,7 @@ import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 import '../chat_widgets.dart';
-import 'ImageCacheManager.dart';
+import 'image_cache_manager.dart';
 
 class ImageMessageView extends StatefulWidget {
   final ChatMessageModel chatMessage;

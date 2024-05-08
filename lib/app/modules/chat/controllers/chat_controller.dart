@@ -39,7 +39,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 import '../chat_widgets.dart';
-import '../widgets/ImageCacheManager.dart';
+import '../widgets/image_cache_manager.dart';
 
 class ChatController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
   // final translator = Translation(apiKey: Constants.googleTranslateKey);

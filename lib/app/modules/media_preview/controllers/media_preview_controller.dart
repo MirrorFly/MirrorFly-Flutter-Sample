@@ -77,7 +77,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     });
   }
 
-  Future<void> _loadFiles() async {
+  /*Future<void> _loadFiles() async {
     int index = 0;
     for (var pickedAssetModel in filePath) {
       try {
@@ -90,7 +90,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       }
       index++;
     }
-  }
+  }*/
   Future<File?> _getFileFromAsset(PickedAssetModel pickedAssetModel) async {
     return await pickedAssetModel.asset?.file;
   }
