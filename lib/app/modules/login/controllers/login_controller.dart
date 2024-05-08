@@ -113,7 +113,7 @@ class LoginController extends GetxController {
       LogMessage.d("validMobileNumber", "parse : $parse");
       return true;
     }catch(e){
-      LogMessage.e("validMobileNumber", "error : $e");
+      LogMessage.d("validMobileNumber", "error : $e");
       return false;
     }
   }
@@ -150,14 +150,14 @@ class LoginController extends GetxController {
           verificationFailed: (FirebaseAuthException e) {
             timeout(true);
 
-            mirrorFlyLog("verificationFailed", e.toString());
-            mirrorFlyLog("verificationFailed", e.message!);
-            mirrorFlyLog("verificationFailed", e.code);
+            LogMessage.d("verificationFailed", e.toString());
+            LogMessage.d("verificationFailed", e.message!);
+            LogMessage.d("verificationFailed", e.code);
             toToast("Please Enter Valid Mobile Number");
             hideLoading();
           },
           codeSent: (String verificationId, int? resendToken) {
-            mirrorFlyLog("codeSent", verificationId);
+            LogMessage.d("codeSent", verificationId);
             this.verificationId = verificationId;
             resendingToken = resendToken;
 
@@ -169,7 +169,7 @@ class LoginController extends GetxController {
               Get.toNamed(Routes.otp)?.then((value) {
                 //Change Number
                 if (value != null) {
-                  mirrorFlyLog("change number", "initiated");
+                  LogMessage.d("change number", "initiated");
                 } else {
                   Get.back();
                 }
@@ -178,7 +178,7 @@ class LoginController extends GetxController {
           },
           forceResendingToken: resendingToken,
           codeAutoRetrievalTimeout: (String verificationId) {
-            mirrorFlyLog("codeAutoRetrievalTimeout", verificationId);
+            LogMessage.d("codeAutoRetrievalTimeout", verificationId);
             timeout(true);
           },
         );
@@ -211,11 +211,11 @@ class LoginController extends GetxController {
 
   _onVerificationCompleted(PhoneAuthCredential credential) async {
     timeout(true);
-    mirrorFlyLog("verificationCompleted providerId", credential.providerId.toString());
-    mirrorFlyLog("verificationCompleted signInMethod", credential.signInMethod.toString());
-    mirrorFlyLog("verificationCompleted verificationId", credential.verificationId.toString());
-    mirrorFlyLog("verificationCompleted smsCode", credential.smsCode.toString());
-    mirrorFlyLog("verificationCompleted token", credential.token.toString());
+    LogMessage.d("verificationCompleted providerId", credential.providerId.toString());
+    LogMessage.d("verificationCompleted signInMethod", credential.signInMethod.toString());
+    LogMessage.d("verificationCompleted verificationId", credential.verificationId.toString());
+    LogMessage.d("verificationCompleted smsCode", credential.smsCode.toString());
+    LogMessage.d("verificationCompleted token", credential.token.toString());
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
@@ -234,14 +234,14 @@ class LoginController extends GetxController {
           //registerAccount();//for get registered user purpose
         }
         stopTimer();
-        mirrorFlyLog("sign in ", value.toString());
+        LogMessage.d("sign in ", value.toString());
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
         toToast("Invalid OTP");
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
-      mirrorFlyLog("sign in error", e.toString());
+      LogMessage.d("sign in error", e.toString());
       toToast("Enter Valid Otp");
       hideLoading();
     }
@@ -253,7 +253,7 @@ class LoginController extends GetxController {
       await mUser.getIdToken(true).then((value) {
         verifyTokenWithServer(value!);
       }).catchError((er) {
-        mirrorFlyLog("sendTokenToServer", er.toString());
+        LogMessage.d("sendTokenToServer", er.toString());
         hideLoading();
       });
     } else {
@@ -289,12 +289,12 @@ class LoginController extends GetxController {
         FirebaseMessaging.instance.getToken().then((value) {
           if (value != null) {
             firebaseToken = value;
-            mirrorFlyLog("firebase_token", firebaseToken);
+            LogMessage.d("firebase_token", firebaseToken);
             SessionManagement.setToken(firebaseToken);
             navigateToUserRegisterMethod(deviceToken, firebaseToken);
           } else {}
         }).catchError((er) {
-          mirrorFlyLog("FirebaseInstallations", er.toString());
+          LogMessage.d("FirebaseInstallations", er.toString());
           hideLoading();
         });
       } else {
@@ -334,6 +334,7 @@ class LoginController extends GetxController {
       Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
+          identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
           flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
                 if (response.hasData) {
@@ -368,7 +369,7 @@ class LoginController extends GetxController {
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
                   debugPrint("issue else ===> ${response.errorMessage }");
-                  toToast(response.exception!.message.toString());
+                  toToast(getErrorDetails(response));
                 }
               }
             });
@@ -394,7 +395,7 @@ class LoginController extends GetxController {
     //Already Logged Popup
     hideLoading();
     verifyVisible(false);
-    mirrorFlyLog("showUserAccountDeviceStatus", "Already Login");
+    LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
     Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?", actions: [
       TextButton(
@@ -416,7 +417,7 @@ class LoginController extends GetxController {
     //Already Logged Popup
     hideLoading();
     verifyVisible(false);
-    mirrorFlyLog("sessionExpiredDialogShow", "Already Login");
+    LogMessage.d("sessionExpiredDialogShow", "Already Login");
     //PlatformRepo.logout();
     Helper.showAlert(message: message.toString(), actions: [
       TextButton(

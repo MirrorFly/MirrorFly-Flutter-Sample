@@ -54,7 +54,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, left: 15.0),
                       child: getReplyTitle(chatMessage.isMessageSentByMe,
-                          chatMessage.senderUserName),
+                          chatMessage.senderUserName.checkNull().isNotEmpty ? chatMessage.senderUserName : chatMessage.senderNickName),
                     ),
                     const SizedBox(height: 8),
                     Padding(
@@ -488,7 +488,7 @@ class SenderHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // mirrorFlyLog("index", index.toString());
+    // LogMessage.d("index", index.toString());
     return Visibility(
       visible: isGroupProfile ?? false
           ? (index == chatList.length - 1 ||
@@ -626,7 +626,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
     // });
     //
     // player.onAudioPositionChanged.listen((Duration p) {
-    //   mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
+    //   LogMessage.d('p.inMilliseconds', p.inMilliseconds.toString());
     //   widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
     //   currentPos(p.inMilliseconds.toDouble());
     //   currentPos.refresh();
@@ -657,7 +657,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
       player.stop();
     });
     player.onPositionChanged.listen((Duration  p) {
-      mirrorFlyLog('p.inMilliseconds', p.inMilliseconds.toString());
+      LogMessage.d('p.inMilliseconds', p.inMilliseconds.toString());
       widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
       currentPos(p.inMilliseconds.toDouble());
       currentPos.refresh();
@@ -941,7 +941,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                         // if (result == 1) {
                         //   isPlaying(true);
                         // } else {
-                        //   mirrorFlyLog("", "Error while playing audio.");
+                        //   LogMessage.d("", "Error while playing audio.");
                         // }
                         await player.play(DeviceFileSource(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value),position: Duration(
                             milliseconds:
@@ -952,7 +952,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                         // if (result == 1) {
                         //   isPlaying(false);
                         // } else {
-                        //   mirrorFlyLog("", "Error on pause audio.");
+                        //   LogMessage.d("", "Error on pause audio.");
                         // }
                         await player.pause();
                         isPlaying(false);
@@ -1212,7 +1212,7 @@ class ContactMessageView extends StatelessWidget {
 
   sendToChatPage(String userJid) {
     // Get.back();
-    mirrorFlyLog('Get.currentRoute', Get.currentRoute);
+    LogMessage.d('Get.currentRoute', Get.currentRoute);
     if (Get.currentRoute == Routes.chat) {
       Get.back();
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -1790,7 +1790,7 @@ class MessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
     var chatMessage = chatList[index];
-    //mirrorFlyLog("message==>", json.encode(chatMessage));
+    //LogMessage.d("message==>", json.encode(chatMessage));
     // debugPrint("Message Type===> ${chatMessage.messageType}");
     if (chatList[index].isMessageRecalled.value) {
       return RecalledMessageView(
@@ -2195,7 +2195,13 @@ Widget uploadView(String messageType) {
 }
 
 void cancelMediaUploadOrDownload(String messageId) {
-  Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
+  AppUtils.isNetConnected().then((value) {
+    if(value){
+      Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
+    } else {
+      toToast(Constants.noInternetConnection);
+    }
+  });
 }
 
 void uploadMedia(String messageId) async {
@@ -2589,21 +2595,21 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying = true;
       } else {
-        mirrorFlyLog("", "Error while playing audio.");
+        LogMessage.d("", "Error while playing audio.");
       }
     } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying = true;
       } else {
-        mirrorFlyLog("", "Error on resume audio.");
+        LogMessage.d("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying = false;
       } else {
-        mirrorFlyLog("", "Error on pause audio.");
+        LogMessage.d("", "Error on pause audio.");
       }
     }
   }

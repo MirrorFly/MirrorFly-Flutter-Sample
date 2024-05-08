@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 
 class NetworkManager extends GetxController{
 
@@ -15,10 +15,10 @@ class NetworkManager extends GetxController{
           (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-            mirrorFlyLog("network",'Data connection is available.');
+            LogMessage.d("network",'Data connection is available.');
             break;
           case InternetConnectionStatus.disconnected:
-            mirrorFlyLog("network",'You are disconnected from the internet.');
+            LogMessage.d("network",'You are disconnected from the internet.');
             break;
         }
       },

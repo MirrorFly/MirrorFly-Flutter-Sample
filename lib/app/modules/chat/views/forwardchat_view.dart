@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../dashboard/widgets.dart';
@@ -25,7 +26,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
           title: !controller.isSearchVisible
               ? TextField(
                   onChanged: (text) {
-                    mirrorFlyLog("text", text);
+                    LogMessage.d("text", text);
                     controller.onSearch(text);
                   },
                   style: const TextStyle(fontSize: 16),

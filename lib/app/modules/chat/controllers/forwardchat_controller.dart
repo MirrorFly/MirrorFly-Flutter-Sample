@@ -95,7 +95,7 @@ class ForwardChatController extends GetxController {
           isPageLoading.value == false) {
         if (scrollable.value && !searching) {
           //isPageLoading.value = true;
-          mirrorFlyLog("scroll", "end");
+          LogMessage.d("scroll", "end");
           pageNum++;
           getUsers(bottom: true);
         }
@@ -177,7 +177,9 @@ class ForwardChatController extends GetxController {
         }
       }
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
@@ -283,7 +285,9 @@ class ForwardChatController extends GetxController {
         }
       }
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
@@ -381,7 +385,7 @@ class ForwardChatController extends GetxController {
   String lastInputValue = "";
 
   void onSearch(String search) {
-    mirrorFlyLog("search", "onSearch");
+    LogMessage.d("search", "onSearch");
     if (lastInputValue != searchQuery.text.toString().trim()) {
       lastInputValue = searchQuery.text.toString().trim();
       if (searchQuery.text.toString().trim().isNotEmpty) {

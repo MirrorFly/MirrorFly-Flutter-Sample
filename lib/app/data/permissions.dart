@@ -15,12 +15,6 @@ import 'helper.dart';
 class AppPermission {
   AppPermission._();
 
-  /*static Future<bool> getLocationPermission() async{
-    var permission = await Geolocator.requestPermission();
-    mirrorFlyLog(permission.name, permission.index.toString());
-    return permission.index==2 || permission.index==3;
-  }*/
-
   static Future<bool> getStoragePermission({String? permissionContent, String? deniedContent}) async {
     var sdkVersion = 0;
     if (Platform.isAndroid) {
@@ -70,7 +64,7 @@ class AppPermission {
               photos != PermissionStatus.permanentlyDenied) ||
           (storage != PermissionStatus.granted &&
               storage != PermissionStatus.permanentlyDenied)) {
-        mirrorFlyLog("showing mirrorfly popup", "");
+        LogMessage.d("showing mirrorfly popup", "");
         var deniedPopupValue = await mirrorFlyPermissionDialog(
             icon: filePermission, content: permissionContent ?? Constants.filePermission);
         if (deniedPopupValue) {
@@ -98,7 +92,7 @@ class AppPermission {
           return false; //PermissionStatus.denied;
         }
       } else {
-        mirrorFlyLog("showing mirrorfly popup",
+        LogMessage.d("showing mirrorfly popup",
             "${photos.isGranted} ${storage.isGranted}");
         return (photos.isGranted && storage.isGranted);
         // ? photos
@@ -126,7 +120,7 @@ class AppPermission {
             videos != PermissionStatus.permanentlyDenied) ||
         (mediaLibrary != PermissionStatus.granted &&
             mediaLibrary != PermissionStatus.permanentlyDenied)) {
-      mirrorFlyLog("showing mirrorfly popup", "");
+      LogMessage.d("showing mirrorfly popup", "");
       var deniedPopupValue = await mirrorFlyPermissionDialog(
           icon: filePermission, content: Constants.filePermission);
       if (deniedPopupValue) {
@@ -156,7 +150,7 @@ class AppPermission {
         return false; //PermissionStatus.denied;
       }
     } else {
-      mirrorFlyLog("showing mirrorfly popup",
+      LogMessage.d("showing mirrorfly popup",
           "${photos.isGranted} ${videos.isGranted} ${mediaLibrary.isGranted}");
       return (photos.isGranted && videos.isGranted && mediaLibrary.isGranted);
       // ? photos
@@ -604,11 +598,11 @@ class AppPermission {
   static Future<PermissionStatus> requestPermission(
       Permission permission) async {
     var status1 = await permission.status;
-    mirrorFlyLog('status', status1.toString());
+    LogMessage.d('status', status1.toString());
     savePermissionAsked(permission);
     if (status1 == PermissionStatus.denied &&
         status1 != PermissionStatus.permanentlyDenied) {
-      mirrorFlyLog('permission.request', status1.toString());
+      LogMessage.d('permission.request', status1.toString());
       final status = await permission.request();
       return status;
     }
@@ -624,7 +618,7 @@ class AppPermission {
       return true;
     } else if (status == PermissionStatus.denied ||
         (Platform.isAndroid && await permission.shouldShowRequestRationale)) {
-      mirrorFlyLog('denied', 'permission');
+      LogMessage.d('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {
@@ -634,7 +628,7 @@ class AppPermission {
         return false;
       }
     } else if (status == PermissionStatus.denied) {
-      mirrorFlyLog('denied', 'permission');
+      LogMessage.d('denied', 'permission');
       var popupValue = await customPermissionDialog(
           icon: permissionIcon, content: permissionContent);
       if (popupValue) {
@@ -709,7 +703,6 @@ class AppPermission {
         if (popupValue) {
           var afterAskRationale = await permissions.request();
           var hasGrantedPermissionAfterAsk = afterAskRationale.values
-              .toList()
               .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
               "rationale hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
@@ -719,7 +712,7 @@ class AppPermission {
                 permissionIcon: permissionIcon,
                 permissionPermanentlyDeniedContent: permissionPermanentlyDeniedContent);
           } else {
-            return (hasGrantedPermissionAfterAsk.length == permissions.length);
+            return (hasGrantedPermissionAfterAsk.length >= permissions.length);
           }
         }
         return popupValue;
@@ -730,7 +723,6 @@ class AppPermission {
         if (popupValue) {
           var afterAsk = await permissions.request();
           var hasGrantedPermissionAfterAsk = afterAsk.values
-              .toList()
               .where((element) => element.isGranted);
           LogMessage.d("checkAndRequestPermissions",
               "hasGrantedPermissionAfterAsk : $hasGrantedPermissionAfterAsk hasPermanentlyDeniedPermission : $hasPermanentlyDeniedPermission");
@@ -741,7 +733,7 @@ class AppPermission {
                 permissionPermanentlyDeniedContent:
                     permissionPermanentlyDeniedContent);
           } else {
-            return (hasGrantedPermissionAfterAsk.length == permissions.length);
+            return (hasGrantedPermissionAfterAsk.length >= permissions.length);
           }
         } else {
           //user clicked not now in popup
@@ -785,14 +777,13 @@ class AppPermission {
       sdkVersion = 0;
     }
     if (Platform.isIOS) {
-      permissions.addAll([Permission.photos,Permission.storage,Permission.mediaLibrary]);
+      permissions.addAll([Permission.photos,Permission.storage]);
     }else if (sdkVersion < 33 && Platform.isAndroid) {
       permissions.add(Permission.storage);
     } else{
       ///[Permission.photos] for Android 33+ gallery access
       ///[Permission.videos] for Android 33+ gallery access
-      ///[Permission.mediaLibrary] for iOS gallery access
-      permissions.addAll([Permission.photos, Permission.videos,Permission.videos]);
+      permissions.addAll([Permission.photos, Permission.videos]);
     }
     LogMessage.d("getGalleryAccessPermissions", permissions.join(","));
     return permissions;

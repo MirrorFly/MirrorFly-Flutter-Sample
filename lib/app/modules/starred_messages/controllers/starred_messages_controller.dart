@@ -377,7 +377,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                       InkWell(
                         onTap: () {
                           isMediaDelete(!isMediaDelete.value);
-                          mirrorFlyLog(
+                          LogMessage.d(
                               "isMediaDelete", isMediaDelete.value.toString());
                         },
                         child: Row(
@@ -387,7 +387,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                                   value: isMediaDelete.value,
                                   onChanged: (value) {
                                     isMediaDelete(!isMediaDelete.value);
-                                    mirrorFlyLog(
+                                    LogMessage.d(
                                         "isMediaDelete", value.toString());
                                   });
                             }),
@@ -465,7 +465,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying=true;
       } else {
-        mirrorFlyLog("", "Error while playing audio.");
+        LogMessage.d("", "Error while playing audio.");
       }
     } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
@@ -473,7 +473,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         playingChat!.mediaChatMessage!.isPlaying=true;
         starredChatList.refresh();
       } else {
-        mirrorFlyLog("", "Error on resume audio.");
+        LogMessage.d("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -481,7 +481,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         playingChat!.mediaChatMessage!.isPlaying=false;
         starredChatList.refresh();
       } else {
-        mirrorFlyLog("", "Error on pause audio.");
+        LogMessage.d("", "Error on pause audio.");
       }
     }*/
   }

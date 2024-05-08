@@ -51,20 +51,20 @@ class ViewAllMediaController extends GetxController {
 
     _medialist.bindStream(_medialist.stream);
     ever(_medialist, (callback) {
-      mirrorFlyLog("media list", medialistdata.length.toString());
+      LogMessage.d("media list", medialistdata.length.toString());
     });
     _docslist.bindStream(_docslist.stream);
     ever(_docslist, (callback) {
-      mirrorFlyLog("docs list", docslistdata.length.toString());
+      LogMessage.d("docs list", docslistdata.length.toString());
     });
     _linklist.bindStream(_linklist.stream);
     ever(_linklist, (callback) {
-      mirrorFlyLog("link list", linklistdata.length.toString());
+      LogMessage.d("link list", linklistdata.length.toString());
     });
   }
 
   void onMessageReceived(ChatMessageModel chatMessageModel) {
-    mirrorFlyLog("View All Media Controller", "onMessageReceived");
+    LogMessage.d("View All Media Controller", "onMessageReceived");
     getLinkMessages();
   }
 
@@ -109,7 +109,7 @@ class ViewAllMediaController extends GetxController {
         LogMessage.d("getDocsMessages",value);
         var data = chatMessageModelFromJson(value);
         documentCount(data.length);
-        // mirrorFlyLog("getDocsMessagess",json.encode(data));
+        // LogMessage.d("getDocsMessagess",json.encode(data));
         if (data.isNotEmpty) {
           _docslist(await getMapGroupedMediaList(data, true));
         }
@@ -220,7 +220,7 @@ class ViewAllMediaController extends GetxController {
         map["host"] = it.key;
         map["url"] = it.value;
         messageList.add(MessageItem(message, map));
-        mirrorFlyLog("link msg", map.toString());
+        LogMessage.d("link msg", map.toString());
       });
     }
     return messageList;
@@ -237,10 +237,10 @@ class ViewAllMediaController extends GetxController {
             urls.add(MapEntry(item.host, item.toString()));
           }
         } catch (ignored) {
-          mirrorFlyLog('$string url exception', ignored.toString());
+          LogMessage.d('$string url exception', ignored.toString());
         }
     }
-    mirrorFlyLog("urls", urls.toString());
+    LogMessage.d("urls", urls.toString());
     return urls;
   }
 

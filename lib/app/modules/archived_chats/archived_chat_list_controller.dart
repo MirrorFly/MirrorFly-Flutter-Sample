@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:queue/queue.dart';
 import '../../data/apputils.dart';
 import '../../data/helper.dart';
 import '../../model/chat_message_model.dart';
@@ -32,7 +31,7 @@ class ArchivedChatListController extends GetxController {
 
   getArchivedChatsList() async {
     await Mirrorfly.getArchivedChatList(flyCallBack: (FlyResponse response) {
-      mirrorFlyLog("archived response", response.toString());
+      LogMessage.d("archived response", response.toString());
       if (response.isSuccess && response.hasData) {
         var data = recentChatFromJson(response.data);
         archivedChats(data.data!);
@@ -170,7 +169,7 @@ class ArchivedChatListController extends GetxController {
     Mirrorfly.isArchivedSettingsEnabled().then((value) {
       if (value.checkNull()) {
         var archiveIndex = archivedChats.indexWhere((element) => recent.jid == element.jid);
-        mirrorFlyLog("checkArchiveList", "$archiveIndex");
+        LogMessage.d("checkArchiveList", "$archiveIndex");
         if (!archiveIndex.isNegative) {
           archivedChats.removeAt(archiveIndex);
           archivedChats.insert(0, recent);
@@ -186,35 +185,27 @@ class ArchivedChatListController extends GetxController {
           /*var lastPinnedChat = dashboardController.recentChats.lastIndexWhere((element) =>
           element.isChatPinned!);
           var nxtIndex = lastPinnedChat.isNegative ? 0 : (lastPinnedChat + 1);
-          mirrorFlyLog("lastPinnedChat", lastPinnedChat.toString());
+          LogMessage.d("lastPinnedChat", lastPinnedChat.toString());
           dashboardController.recentChats.insert(nxtIndex, recent);*/
         }
       }
     });
   }
 
-  final onMessageReceivedQueue = Queue();
-  final onMessageStatusUpdatedQueue = Queue();
 
   Future<void> onMessageReceived(ChatMessageModel chatMessage) async {
-    await onMessageReceivedQueue.add(() => updateArchiveRecentChat(chatMessage.chatUserJid));
+    updateArchiveRecentChat(chatMessage.chatUserJid);
   }
 
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     // mirrorFlyLog("MESSAGE STATUS UPDATED", event);
-    await onMessageStatusUpdatedQueue.add(() => updateArchiveRecentChat(chatMessageModel.chatUserJid));
+    updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
 
-  @override
-  void dispose() {
-    onMessageReceivedQueue.dispose();
-    onMessageStatusUpdatedQueue.dispose();
-    super.dispose();
-  }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid: jid);
-    mirrorFlyLog("chat", value.toString());
+    LogMessage.d("chat", value.toString());
     if (value.isNotEmpty) {
       var data = recentChatDataFromJson(value);
       return data;
@@ -224,7 +215,7 @@ class ArchivedChatListController extends GetxController {
   }
 
   Future<bool> updateArchiveRecentChat(String jid) async {
-    mirrorFlyLog("checkArchiveList", jid);
+    LogMessage.d("checkArchiveList", jid);
     var recent = await getRecentChatOfJid(jid);
     final index = archivedChats.indexWhere((chat) => chat.jid == jid);
     if (recent != null) {
@@ -373,7 +364,9 @@ class ArchivedChatListController extends GetxController {
       if (!index.isNegative) {
         var recent = await getRecentChatOfJid(jid);
         if (recent != null) {
-          archivedChats[index] = recent;
+          var updateIndex =
+          archivedChats.indexWhere((element) => element.jid == jid);
+          archivedChats[updateIndex] = recent;
         }
       }
     }

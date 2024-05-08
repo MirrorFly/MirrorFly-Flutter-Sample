@@ -47,7 +47,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                 ),
                 title: Visibility(
                   visible: !controller.isSliverAppBarExpanded,
-                  child: Text(getName(controller.profile),/*controller.profile.name
+                  child: Text(controller.profile.getName(),/*controller.profile.name
                       .checkNull()
                       .isEmpty
                       ? controller.profile.nickName.checkNull()
@@ -71,15 +71,7 @@ class ChatInfoView extends GetView<ChatInfoController> {
                         .height * 0.45,
                     clipOval: false,
                     errorWidget: ProfileTextImage(
-                      text: getName(controller.profile),/*controller.profile.name
-                          .checkNull()
-                          .isEmpty
-                          ? controller.profile.nickName
-                          .checkNull()
-                          .isEmpty
-                          ? controller.profile.mobileNumber.checkNull()
-                          : controller.profile.nickName.checkNull()
-                          : controller.profile.name.checkNull(),*/
+                      text: controller.profile.getName(),
                       radius: 0,
                       fontSize: 120,
                     ),
@@ -90,15 +82,6 @@ class ChatInfoView extends GetView<ChatInfoController> {
                           .checkNull() || controller.profile.isDeletedContact())) {
                         Get.toNamed(Routes.imageView, arguments: {
                           'imageName': getName(controller.profile),
-                          /*'imageName': controller.profile.name
-                                              .checkNull()
-                                              .isEmpty
-                                              ? controller.profile.nickName
-                                              .checkNull()
-                                              .isEmpty
-                                              ? controller.profile.mobileNumber.checkNull()
-                                              : controller.profile.nickName.checkNull()
-                                              : controller.profile.name.checkNull(),*/
                           'imageUrl': controller.profile.image.checkNull()
                         });
                       }

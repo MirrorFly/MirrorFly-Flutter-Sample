@@ -28,8 +28,6 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 
-
-
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -70,11 +68,8 @@ Future<void> main() async {
   }
   //check app opened from notification
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-
-
-
+  
   await SessionManagement.onInit();
-  // Get.put<MainController>(MainController());
   Mirrorfly.initializeSDK(
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.flutter',//group.com.mirrorfly.flutter
@@ -103,7 +98,6 @@ class MyApp extends StatefulWidget{
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
   @override
   void initState() {
     super.initState();
@@ -121,12 +115,9 @@ class _MyAppState extends State<MyApp> {
       onInit: () {
         ReplyHashMap.init();
         NotificationBuilder.cancelNotifications();
-        // Mirrorfly.isTrailLicence().then((value) => SessionManagement.setIsTrailLicence(value.checkNull()));
         Get.put<MainController>(MainController());
       },
-      //initialBinding: getBinding(),
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
-      //initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );
   }
@@ -189,19 +180,19 @@ String getInitialRoute() {
             .checkNull()
             .isEmpty) {
           if(Constants.enableContactSync) {
-              // mirrorFlyLog("nonChatUsers", nonChatUsers.toString());
-              mirrorFlyLog("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
+              // LogMessage.d("nonChatUsers", nonChatUsers.toString());
+              LogMessage.d("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
               if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
                 return AppPages.contactSync;
               }else{
                 return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
               }
           }else{
-            mirrorFlyLog("login", "${SessionManagement
+            LogMessage.d("login", "${SessionManagement
                 .getChatJid()
                 .checkNull()
                 .isEmpty}");
-            mirrorFlyLog("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
+            LogMessage.d("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
             return "${AppPages.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
           }
         } else {

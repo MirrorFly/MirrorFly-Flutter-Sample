@@ -287,7 +287,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("#Disconnect call disconnect value ${response.isSuccess}");
       if (response.isSuccess) {
         debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        backCalledFromDisconnect();
+        // backCalledFromDisconnect();
       }
     });
   }
@@ -297,16 +297,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("#Disconnect previous route is not empty");
       if (Get.currentRoute == Routes.onGoingCallView) {
         debugPrint("#Disconnect current route is ongoing call view");
-        Future.delayed(const Duration(seconds: 1), () {
-          debugPrint("#Disconnect call controller back called from Ongoing Screen");
+        // Future.delayed(const Duration(seconds: 1), () {
+        //   debugPrint("#Disconnect call controller back called from Ongoing Screen");
           Get.back();
-        });
+        // });
       }else if(Get.currentRoute == Routes.participants){
         Get.back();
-        Future.delayed(const Duration(seconds: 1), () {
+        // Future.delayed(const Duration(seconds: 1), () {
           debugPrint("#Disconnect call controller back called from Participant Screen");
           Get.back();
-        });
+        // });
       }else{
         Get.back();
       }
@@ -377,10 +377,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     debugPrint("#Mirrorfly call call disconnect called ${callList.length} userJid to remove $userJid");
     debugPrint("#Mirrorfly call call disconnect called ${callUserListToJson(callList)}");
-    if (callList.isEmpty) {
-      debugPrint("call list is empty returning");
-      return;
-    }
+    // if (callList.isEmpty) {
+    //   debugPrint("call list is empty returning");
+    //   return;
+    // }
     debugPrint("call list is not empty");
     var index = callList.indexWhere((user) => user.userJid!.value == userJid);
     debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");

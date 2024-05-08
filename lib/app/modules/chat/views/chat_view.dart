@@ -43,7 +43,7 @@ class ChatView extends GetView<ChatController> {
                 if (didPop) {
                   return;
                 }
-                mirrorFlyLog("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
+                LogMessage.d("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
                 if (controller.showEmoji.value) {
                   controller.showEmoji(false);
                 } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
@@ -323,7 +323,7 @@ class ChatView extends GetView<ChatController> {
                     return false;
                   },
                   onUpdate: (details) {
-                    mirrorFlyLog("dismiss", details.progress.toString());
+                    LogMessage.d("dismiss", details.progress.toString());
                     if (details.progress > 0.5) {
                       controller.cancelRecording();
                     }
@@ -737,7 +737,7 @@ class ChatView extends GetView<ChatController> {
                         ),
                       )
                     : ProfileTextImage(
-                        text: getName(controller.profile),
+                        text: controller.profile.getName(),
                         /*controller.profile.name.checkNull().isEmpty
                             ? controller.profile.nickName.checkNull().isEmpty
                                 ? controller.profile.mobileNumber.checkNull()
@@ -760,7 +760,7 @@ class ChatView extends GetView<ChatController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  getName(controller.profile),
+                  controller.profile.getName(),
                   /*controller.profile.name.checkNull().isEmpty
                       ? controller.profile.nickName.checkNull()
                       : controller.profile.name.checkNull(),*/
@@ -783,7 +783,7 @@ class ChatView extends GetView<ChatController> {
               ],
             ),
             onTap: () {
-              mirrorFlyLog("title clicked", controller.profile.isGroupProfile.toString());
+              LogMessage.d("title clicked", controller.profile.isGroupProfile.toString());
               controller.infoPage();
             },
           ),

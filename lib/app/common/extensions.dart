@@ -48,13 +48,13 @@ extension RecentChatParsing on RecentChatData {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
         return Constants.you;
       } else if (isDeletedContact()) {
-        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        LogMessage.d('isDeletedContact', isDeletedContact().toString());
         return Constants.deletedUser;
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
-        mirrorFlyLog('isUnknownContact', jid.toString());
+        LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());
       } else {
-        mirrorFlyLog('nickName', nickName.toString());
+        LogMessage.d('nickName', nickName.toString());
         return nickName.checkNull();
       }
     }
@@ -108,13 +108,13 @@ extension ProfileParesing on ProfileDetails {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
         return Constants.you;
       } else if (isDeletedContact()) {
-        mirrorFlyLog('isDeletedContact', isDeletedContact().toString());
+        LogMessage.d('isDeletedContact', isDeletedContact().toString());
         return Constants.deletedUser;
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
-        mirrorFlyLog('isUnknownContact', jid.toString());
+        LogMessage.d('isUnknownContact', jid.toString());
         return getMobileNumberFromJid(jid.checkNull());
       } else {
-        mirrorFlyLog('nickName', nickName.toString());
+        LogMessage.d('nickName', nickName.toString());
         return nickName.checkNull().isEmpty
             ? (name.checkNull().isEmpty ? getMobileNumberFromJid(jid.checkNull()) : name.checkNull())
             : nickName.checkNull();//#FLUTTER-1300

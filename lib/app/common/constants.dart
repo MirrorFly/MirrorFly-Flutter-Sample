@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -330,17 +330,8 @@ toToast(String text) {
   // );
 }
 
-mirrorFlyLog(String tag, String msg) {
-  if (kDebugMode) {
-    // print("MirrorFly : $tag ==> $msg");
-    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern
-        .allMatches(msg)
-        .forEach((match) => debugPrint("MirrorFly : $tag==>${match.group(0)}"));
-  }
-}
-
 class Constants {
+  static MetaDataUserList? metaDataUserList = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
   static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
@@ -519,7 +510,6 @@ class Constants {
 
   static const String yesterday = "yesterday";
   static const String today = "today";
-  static const String yesterdayUpper = "YESTERDAY";
   static const bool isMobileLogin = true;
   static const String baseUrl = "com.contus.flycommons.base_url";
   static const String apiKey = "com.contus.flycommons.api_key";
@@ -556,6 +546,7 @@ class Constants {
   static const mobileImageMaxHeight = 320;
   static const mobileImageMinHeight = 80;
 
+  static const editMessage = "Edit Message";
   static const editMessageTimeLimit = 15; // in Minutes
 
   static const mediaMaxLimitRestriction = 'File size is too large. Try uploading file size below %d MB';
@@ -687,6 +678,11 @@ class Constants {
   static const String audioRecordDone = "AUDIO_RECORDING_COMPLETED";
   static const String audioRecordDelete = "AUDIO_RECORDING_DELETE";
   static const String audioRecordInitial = "AUDIO_RECORDING_NOT_INITIALIZED";
+
+  //Picker Type
+  static const String camera = "camera_pick";
+  static const String gallery = "gallery_pick";
+
 
   //Permission dialog contents
   static const String settingPermission =
@@ -931,7 +927,7 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
 }
 
 String? forMessageTypeString(String messageType, {String? content}) {
-  // mirrorFlyLog("Recent Chat content", content.toString());
+  // LogMessage.d("Recent Chat content", content.toString());
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
       return content.checkNull().isNotEmpty ? content : "Image";

@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/main.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -264,7 +265,7 @@ class AppLockController extends FullLifeCycleController
     } else {
       removeClick();
     }
-    mirrorFlyLog("add text", text.join().toString());
+    LogMessage.d("add text", text.join().toString());
   }
 
   removeClick() {
@@ -281,7 +282,7 @@ class AppLockController extends FullLifeCycleController
       _pin1(false);
       text.removeLast();
     } else {}
-    mirrorFlyLog("rem text", text.join().toString());
+    LogMessage.d("rem text", text.join().toString());
   }
 
   int wrongPinCount = 0;
@@ -735,13 +736,13 @@ class AppLockController extends FullLifeCycleController
         verificationCompleted: _onVerificationCompleted,
         verificationFailed: (FirebaseAuthException e) {
           timeout(true);
-          mirrorFlyLog("verificationFailed", e.toString());
+          LogMessage.d("verificationFailed", e.toString());
           //verificationFailed==>[firebase_auth/too-many-requests] We have blocked all requests from this device due to unusual activity. Try again later.
           toToast("OTP sent failed");
           hideLoading();
         },
         codeSent: (String verificationId, int? resendToken) {
-          mirrorFlyLog("codeSent", verificationId);
+          LogMessage.d("codeSent", verificationId);
           this.verificationId = verificationId;
           resendingToken = resendToken;
           startTimer();
@@ -753,7 +754,7 @@ class AppLockController extends FullLifeCycleController
         },
         forceResendingToken: resendingToken,
         codeAutoRetrievalTimeout: (String verificationId) {
-          mirrorFlyLog("codeAutoRetrievalTimeout", verificationId);
+          LogMessage.d("codeAutoRetrievalTimeout", verificationId);
           timeout(true);
         },
       );
@@ -786,7 +787,7 @@ class AppLockController extends FullLifeCycleController
     try {
       await _auth.signInWithCredential(credential).then((value) {
         stopTimer();
-        mirrorFlyLog("sign in ", value.toString());
+        LogMessage.d("sign in ", value.toString());
         hideLoading();
         Get.toNamed(Routes.setPin)?.then((value) {
           if (Get.isBottomSheetOpen.checkNull()) {
@@ -803,7 +804,7 @@ class AppLockController extends FullLifeCycleController
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
-      mirrorFlyLog("sign in error", e.toString());
+      LogMessage.d("sign in error", e.toString());
       toToast("Enter Valid Otp");
       hideLoading();
     }

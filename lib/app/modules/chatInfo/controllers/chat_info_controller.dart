@@ -58,7 +58,7 @@ class ChatInfoController extends GetxController {
 
   onToggleChange(bool value) async {
     if(muteable.value) {
-      mirrorFlyLog("change", value.toString());
+      LogMessage.d("change", value.toString());
       mute(value);
       Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
       notifyDashboardUI();
@@ -102,14 +102,14 @@ class ChatInfoController extends GetxController {
   }
 
   void networkConnected() {
-    mirrorFlyLog("networkConnected", 'true');
+    LogMessage.d("networkConnected", 'true');
     Future.delayed(const Duration(milliseconds: 2000), () {
       getUserLastSeen();
     });
   }
 
   void networkDisconnected() {
-    mirrorFlyLog('networkDisconnected', 'false');
+    LogMessage.d('networkDisconnected', 'false');
     getUserLastSeen();
   }
 

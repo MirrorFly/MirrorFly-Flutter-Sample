@@ -10,6 +10,7 @@ import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 import '../chat_widgets.dart';
+import 'image_cache_manager.dart';
 
 class ImageMessageView extends StatefulWidget {
   final ChatMessageModel chatMessage;
@@ -25,8 +26,6 @@ class ImageMessageView extends StatefulWidget {
 class _ImageMessageViewState extends State<ImageMessageView> {
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
-    // LogMessage.d("ImageMessageView", "build ${widget.chatMessage.toJson()}");
     var mediaMessage = widget.chatMessage.mediaChatMessage!;
     return Container(
       key: ValueKey(widget.chatMessage.messageId),
@@ -41,7 +40,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                 borderRadius: BorderRadius.circular(15),
                 child: Obx(() {
                   return getImage(
-                      mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected);
+                      mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId);
                 }),
               ),
               Obx(() {
@@ -91,7 +90,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
   bool get wantKeepAlive => true;*/
 }
 
-getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext context, String mediaFileName, bool isSelected) {
+getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext context, String mediaFileName, bool isSelected, String messageId) {
   debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
   if (checkFile(mediaLocalStoragePath.value)) {
     return InkWell(
@@ -130,8 +129,7 @@ getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext co
           );
         }));
   } else {
-    return imageFromBase64String(mediaThumbImage, context, null, null);
-    // return ImageScreen(base64: mediaThumbImage);
-    // return NetworkImage(url)
+    return ImageCacheManager.getImage(mediaThumbImage, messageId);
   }
 }
+
