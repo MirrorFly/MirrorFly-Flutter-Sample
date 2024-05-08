@@ -463,14 +463,14 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
-            Navigator.pop(buildContext);
+            navigateBack();
           },
           child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
-                Navigator.pop(buildContext);
+                navigateBack();
                 Helper.progressLoading();
                 Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                   Helper.hideLoading();
@@ -601,11 +601,11 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         context: buildContext,
         // chatItem: chatItem,
         chatTap: () {
-          Navigator.pop(buildContext);
+          navigateBack();
           onListItemPressed(profile.value);
         },
         infoTap: () {
-          Navigator.pop(buildContext);
+          navigateBack();
           if (profile.value.isGroupProfile ?? false) {
             Get.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
