@@ -90,10 +90,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       }
       index++;
     }
-  }*/
+  }
   Future<File?> _getFileFromAsset(PickedAssetModel pickedAssetModel) async {
     return await pickedAssetModel.asset?.file;
-  }
+  }*/
 
   checkCacheFile(int index){
     if (imageCache.containsKey(index)) {
