@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+
+import '../common/constants.dart';
+
+class DialogUtils {
+  DialogUtils._();
+
+  // Method to show a loading dialog
+  static void showLoading(
+      {required BuildContext buildContext,
+      String? message,
+      bool dismiss = false}) {
+    showDialog(
+      context: buildContext,
+      builder: (_) {
+        return Dialog(
+          child: PopScope(
+            canPop: dismiss,
+            onPopInvoked: (didPop) {
+              if (didPop) {
+                return;
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(
+                    color: buttonBgColor,
+                  ),
+                  const SizedBox(width: 16),
+                  Text(message ?? getTranslated("loading")),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      barrierDismissible: dismiss,
+    );
+  }
+
+  // Method to show a simple progress loading dialog
+  static void progressLoading(
+      {required BuildContext buildContext, bool dismiss = false}) {
+    showDialog(
+        context: buildContext,
+        builder: (_) {
+          return AlertDialog(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            content: PopScope(
+              canPop: dismiss,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+              },
+              child: const SizedBox(
+                width: 60,
+                height: 60,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          );
+        },
+        barrierDismissible: dismiss,
+        barrierColor: Colors.transparent);
+  }
+
+  // Method to show an alert dialog
+  static void showAlert(
+      {required BuildContext buildContext,
+      String? title,
+      required String message,
+      List<Widget>? actions,
+      Widget? content,
+      bool? barrierDismissible}) {
+    showDialog(
+        context: buildContext,
+        builder: (_) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: title != null
+                ? Text(
+                    title,
+                    style: const TextStyle(fontSize: 17),
+                  )
+                : const Offstage(),
+            contentPadding: title != null
+                ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
+                : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
+            content: PopScope(
+              canPop: barrierDismissible ?? true,
+              onPopInvoked: (didPop) {
+                if (didPop) {
+                  return;
+                }
+              },
+              child: content ??
+                  Text(
+                    message,
+                    style: const TextStyle(
+                        color: textHintColor,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 18),
+                  ),
+            ),
+            contentTextStyle: const TextStyle(
+                color: textHintColor, fontWeight: FontWeight.w500),
+            actions: actions,
+          );
+        },
+        barrierDismissible: barrierDismissible ?? true);
+  }
+
+  // Method to show a dialog with vertical buttons
+  static void showVerticalButtonAlert(
+      {required BuildContext buildContext, required List<Widget> actions}) {
+    showDialog(
+        context: buildContext,
+        builder: (_) {
+          return Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: actions,
+            ),
+          );
+        });
+  }
+
+  // Method to show a dialog with horizontal buttons
+  static void showButtonAlert(
+      {required BuildContext buildContext, required List<Widget> actions}) {
+    showDialog(
+        context: buildContext,
+        builder: (_) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: actions,
+              ),
+            ),
+          );
+        });
+  }
+
+  // Method to hide loading dialog
+  static void hideLoading(BuildContext context) {
+    if (isDialogOpen(context)) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  // Method to check if any dialog is open
+  static bool isDialogOpen(BuildContext context) {
+    return ModalRoute.of(context)?.settings.name == '/dialog';
+  }
+
+  // Method to show a feature unavailable alert
+  static void showFeatureUnavailable(BuildContext context) {
+    DialogUtils.showAlert(
+      buildContext: context,
+        message: getTranslated("featureNotAvailableForYourPlan"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(getTranslated("ok"))),
+        ]);
+  }
+}

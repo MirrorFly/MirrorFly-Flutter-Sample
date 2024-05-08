@@ -468,6 +468,7 @@
     "areYouClearAllChat": "Are you sure want to clear your conversation history?",
     "allChatsCleared": "All your conversation are cleared",
     "serverError": "Server error, kindly try again later",
+    "loading": "Loading...",
     "notNow" : "Not Now",
     "turnOn" : "Turn ON",
     "audioPermissionContent" : "To send audio messages, allow MirrorFly access to your Microphone.",
