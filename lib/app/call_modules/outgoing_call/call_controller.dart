@@ -14,6 +14,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../main.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
 
 class CallController extends GetxController with GetTickerProviderStateMixin {
@@ -764,7 +765,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   Future<void> showVideoSwitchPopup() async {
     if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
-      Helper.showAlert(
+      DialogUtils.showAlert(
           message: getTranslated("videoSwitchMessage"),
           actions: [
             TextButton(
@@ -824,7 +825,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("videoSwitchRequestedMessage").replaceFirst("%d", profile.getName()),
         actions: [
           TextButton(
@@ -861,7 +862,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isWaitingCanceled = false;
     waitingCompleter = Completer<void>();
 
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("videoSwitchRequestMessage"),
         actions: [
           TextButton(
@@ -871,7 +872,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
         ],
         barrierDismissible: false);
 

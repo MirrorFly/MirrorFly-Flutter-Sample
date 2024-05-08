@@ -8,8 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/crop_image.dart';
 import '../../../data/permissions.dart';
@@ -174,9 +174,9 @@ class GroupCreationController extends GetxController {
     LogMessage.d("group name", groupName.text);
     LogMessage.d("users", users.toString());
     LogMessage.d("group image", imagePath.value);
-    Helper.showLoading();
+    DialogUtils.showLoading();
     Mirrorfly.createGroup(groupName: groupName.text.toString(),userList: users,image: imagePath.value, flyCallBack: (FlyResponse response) {
-      Helper.hideLoading();
+      DialogUtils.hideLoading();
       if(response.isSuccess) {
         Get.back();
         toToast(getTranslated("groupCreatedSuccessfully"));
@@ -185,7 +185,7 @@ class GroupCreationController extends GetxController {
   }
 
   void choosePhoto() {
-    Helper.showVerticalButtonAlert([
+    DialogUtils.showVerticalButtonAlert(actions:[
       ListTile(
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),

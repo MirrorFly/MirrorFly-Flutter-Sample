@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/caption_message_view.dart';
 
@@ -93,7 +94,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
 
 getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext context, String mediaFileName, bool isSelected, String messageId) {
   debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
-  if (checkFile(mediaLocalStoragePath.value)) {
+  if (MediaUtils.isFileExist(mediaLocalStoragePath.value)) {
     return InkWell(
         onTap: isSelected
             ? null

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -824,7 +824,7 @@ class AppPermission {
       {required String icon,
       required String title,
       required String message}) async {
-    return await Get.dialog(AlertDialog(
+    return await DialogUtils.createDialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
@@ -832,7 +832,7 @@ class AppPermission {
           if (didPop) {
             return;
           }
-          Get.back(result: false);
+          NavUtils.back(result: false);
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -872,7 +872,7 @@ class AppPermission {
                 children: [
                   TextButton(
                       onPressed: () {
-                        Get.back(result: false);
+                        NavUtils.back(result: false);
                         // notNowBtn();
                       },
                       child: Text(
@@ -885,7 +885,7 @@ class AppPermission {
                       )),
                   TextButton(
                       onPressed: () {
-                        Get.back(result: true);
+                        NavUtils.back(result: true);
                         // continueBtn();
                       },
                       child: Text(getTranslated("turnOn").toUpperCase(),
@@ -906,7 +906,7 @@ class AppPermission {
 
   static Future<bool> mirrorFlyPermissionDialog(
       {required String icon, required String content}) async {
-    return await Get.dialog(AlertDialog(
+    return await DialogUtils.createDialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
@@ -914,7 +914,7 @@ class AppPermission {
           if (didPop) {
             return;
           }
-          Get.back(result: false);
+          NavUtils.back(result: false);
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -937,7 +937,7 @@ class AppPermission {
       actions: [
         TextButton(
             onPressed: () {
-              Get.back(result: false);
+              NavUtils.back(result: false);
               // notNowBtn();
             },
             child: Text(
@@ -946,7 +946,7 @@ class AppPermission {
             )),
         TextButton(
             onPressed: () {
-              Get.back(result: true);
+              NavUtils.back(result: true);
               // continueBtn();
             },
             child: Text(
@@ -959,7 +959,7 @@ class AppPermission {
 
   static Future<bool> customPermissionDialog(
       {required String icon, required String content}) async {
-    return await Get.dialog(AlertDialog(
+    return await DialogUtils.createDialog(AlertDialog(
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
@@ -967,7 +967,7 @@ class AppPermission {
           if (didPop) {
             return;
           }
-          Get.back(result: false);
+          NavUtils.back(result: false);
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -990,7 +990,7 @@ class AppPermission {
       actions: [
         TextButton(
             onPressed: () {
-              Get.back(result: false);
+              NavUtils.back(result: false);
               // notNowBtn();
             },
             child: Text(
@@ -999,7 +999,7 @@ class AppPermission {
             )),
         TextButton(
             onPressed: () {
-              Get.back(result: true);
+              NavUtils.back(result: true);
               // continueBtn();
             },
             child: Text(

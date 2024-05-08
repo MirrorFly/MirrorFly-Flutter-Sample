@@ -158,7 +158,7 @@ class GalleryGridViewState extends State<GalleryGridView> {
     return GestureDetector(
       /// on tap thumbnail
       onTap: () async {
-        // Helper.showLoading(message: "Processing", dismiss: false);
+        // DialogUtils.showLoading(message: "Processing", dismiss: false);
         debugPrint("item click ${DateTime.now()}");
         var asset = cacheMap[index];
         if (asset == null) {

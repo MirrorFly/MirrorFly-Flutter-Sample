@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -21,7 +21,7 @@ class DeleteAccountController extends GetxController {
   deleteAccount() async {
     if(await AppUtils.isNetConnected()) {
       if(mobileNumber.text.isEmpty){
-        Helper.showAlert(message: getTranslated("enterYourMobileNumber"), actions: [
+        DialogUtils.showAlert(message: getTranslated("enterYourMobileNumber"), actions: [
           TextButton(
               onPressed: () {
                 Get.back();
@@ -40,7 +40,7 @@ class DeleteAccountController extends GetxController {
         if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {
-          Helper.showAlert(
+          DialogUtils.showAlert(
               message: getTranslated("mobileNumberNotMatch"),
               actions: [
                 TextButton(
@@ -54,7 +54,7 @@ class DeleteAccountController extends GetxController {
       }else{
         var mob = '${countryCode?.replaceAll('+', '').toString().checkNull()}${mobileNumber.text.trim()}';
         if (mob != SessionManagement.getMobileNumber()) {
-          Helper.showAlert(
+          DialogUtils.showAlert(
               message: getTranslated("mobileNumberNotMatch"),
               actions: [
                 TextButton(

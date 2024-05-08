@@ -1,15 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
-import '../common/constants.dart';
+part of 'utils.dart';
 
 class DialogUtils {
   DialogUtils._();
+  // DialogUtils(this.buildContext);
+
+  // final BuildContext buildContext;
+  static BuildContext get buildContext => NavUtils.currentContext;
+
+  static createDialog(Widget builder){
+    showDialog(context: buildContext, builder: (_){
+      return builder;
+    });
+  }
 
   // Method to show a loading dialog
   static void showLoading(
-      {required BuildContext buildContext,
-      String? message,
+      {String? message,
       bool dismiss = false}) {
     showDialog(
       context: buildContext,
@@ -44,7 +51,7 @@ class DialogUtils {
 
   // Method to show a simple progress loading dialog
   static void progressLoading(
-      {required BuildContext buildContext, bool dismiss = false}) {
+      {bool dismiss = false}) {
     showDialog(
         context: buildContext,
         builder: (_) {
@@ -74,8 +81,7 @@ class DialogUtils {
 
   // Method to show an alert dialog
   static void showAlert(
-      {required BuildContext buildContext,
-      String? title,
+      {String? title,
       required String message,
       List<Widget>? actions,
       Widget? content,
@@ -120,7 +126,7 @@ class DialogUtils {
 
   // Method to show a dialog with vertical buttons
   static void showVerticalButtonAlert(
-      {required BuildContext buildContext, required List<Widget> actions}) {
+      {required List<Widget> actions}) {
     showDialog(
         context: buildContext,
         builder: (_) {
@@ -136,7 +142,7 @@ class DialogUtils {
 
   // Method to show a dialog with horizontal buttons
   static void showButtonAlert(
-      {required BuildContext buildContext, required List<Widget> actions}) {
+      {required List<Widget> actions}) {
     showDialog(
         context: buildContext,
         builder: (_) {
@@ -153,9 +159,9 @@ class DialogUtils {
   }
 
   // Method to hide loading dialog
-  static void hideLoading(BuildContext context) {
-    if (isDialogOpen(context)) {
-      Navigator.of(context).pop();
+  static void hideLoading() {
+    if (isDialogOpen(buildContext)) {
+      Navigator.of(buildContext).pop();
     }
   }
 
@@ -165,14 +171,13 @@ class DialogUtils {
   }
 
   // Method to show a feature unavailable alert
-  static void showFeatureUnavailable(BuildContext context) {
+  static void showFeatureUnavailable() {
     DialogUtils.showAlert(
-      buildContext: context,
         message: getTranslated("featureNotAvailableForYourPlan"),
         actions: [
           TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(buildContext).pop();
               },
               child: Text(getTranslated("ok"))),
         ]);

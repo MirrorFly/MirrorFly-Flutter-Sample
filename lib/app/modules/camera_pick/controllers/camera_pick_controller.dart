@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
+import '../../../data/utils.dart';
 
 class CameraPickController extends GetxController with WidgetsBindingObserver  {
   RxDouble scale = 1.0.obs;
@@ -184,17 +185,17 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   Future<void> takePhoto(context) async {
     if(cameraInitialized.value) {
-      Helper.showLoading();
+      DialogUtils.showLoading();
       XFile? file;
       try {
         file = await cameraController?.takePicture();
       }catch(e){
         LogMessage.d("takePhoto", "$e");
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         toToast(getTranslated("insufficientMemoryError"));//CameraException(IOError, Failed saving image)
       }finally{
         debugPrint("file : ${file?.path}");
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         Get.back(result: file);
       }
     }
@@ -202,18 +203,18 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   stopRecord()async{
     if(cameraInitialized.value) {
-      //Helper.showLoading();
-      Helper.showLoading();
+      //DialogUtils.showLoading();
+      DialogUtils.showLoading();
       XFile? file;
       try {
        file = await stopVideoRecording();
       }catch(e){
         LogMessage.d("stopRecord", "$e");
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         toToast(getTranslated("insufficientMemoryError"));
       }finally{
         // debugPrint("file : ${file?.path}, ${file?.length()},");
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         Get.back(result: file);
         isRecording(false);
       }

@@ -5,7 +5,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/permissions.dart';
 import '../../../routes/route_settings.dart';
 

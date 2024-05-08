@@ -7,7 +7,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../common/app_localizations.dart';
-import '../../data/apputils.dart';
+import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
 
 class ScannerController extends GetxController {
@@ -73,10 +73,10 @@ class ScannerController extends GetxController {
 
   logoutWebUser() async {
     if(await AppUtils.isNetConnected()) {
-      Helper.progressLoading();
+      DialogUtils.progressLoading();
       /*Mirrorfly.webLoginDetailsCleared();
       Mirrorfly.logoutWebUser(loginQr).then((value) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         if (value != null && value) {
           SessionManagement.setWebChatLogin(false);
           Get.back();
@@ -137,7 +137,7 @@ class ScannerController extends GetxController {
   }
 
   logoutWeb() {
-    Helper.showAlert(message: getTranslated("logoutConfirmation"), actions: [
+    DialogUtils.showAlert(message: getTranslated("logoutConfirmation"), actions: [
       TextButton(
           onPressed: () {
             Get.back();

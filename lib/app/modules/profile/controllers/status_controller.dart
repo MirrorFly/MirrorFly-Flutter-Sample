@@ -8,8 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
@@ -107,7 +106,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   updateStatus([String? statusText, String? statusId]) async {
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
-      Helper.showLoading();
+      DialogUtils.showLoading();
       Mirrorfly.setMyProfileStatus(status: statusText!, statusId: statusId!,flyCallBack: (response){
         if(response.isSuccess) {
           LogMessage.d("setMyProfileStatus flutter", response.toString());
@@ -121,7 +120,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
         }else{
           toToast(response.exception!.message.toString());
         }
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
       }).then((value){
 
       }).catchError((er){
@@ -134,14 +133,14 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
 
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
-      Helper.showLoading();
+      DialogUtils.showLoading();
         Mirrorfly.insertNewProfileStatus(status: addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
           // var data = json.decode(value.toString());
           toToast(getTranslated("statusUpdated"));
-          Helper.hideLoading();
+          DialogUtils.hideLoading();
           if (value.checkNull()) {
             getStatusList();
           }
@@ -196,7 +195,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("item delete status-->${item.id}");
     debugPrint("item delete status-->${item.status}");
     if(!item.isCurrentStatus!){
-      Helper.showButtonAlert(actions: [
+      DialogUtils.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
           title: Text(getTranslated("delete"),
@@ -214,7 +213,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void statusDeleteConfirmation(StatusData item) {
-    Helper.showAlert(message: getTranslated("deleteStatus"), actions: [
+    DialogUtils.showAlert(message: getTranslated("deleteStatus"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -224,13 +223,13 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.showLoading(message: getTranslated("deletingStatus"));
+              DialogUtils.showLoading(message: getTranslated("deletingStatus"));
               Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
               }).catchError((error) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 toToast(getTranslated("unableDeleteBusyStatus"));
               });
             } else {

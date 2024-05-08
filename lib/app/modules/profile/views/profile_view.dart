@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/widgets.dart';
@@ -321,7 +321,7 @@ class ProfileView extends GetView<ProfileController> {
                               contentPadding: EdgeInsets.zero,
                               onTap: () {
                                 Get.back();
-                                Helper.showAlert(message: getTranslated("areYouSureToRemovePhoto"), actions: [
+                                DialogUtils.showAlert(message: getTranslated("areYouSureToRemovePhoto"), actions: [
                                   TextButton(
                                       onPressed: () {
                                         Get.back();

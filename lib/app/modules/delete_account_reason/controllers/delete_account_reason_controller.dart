@@ -5,7 +5,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/app_localizations.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
 import '../../../data/helper.dart';
 import '../../../routes/route_settings.dart';
@@ -20,7 +20,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
   get focusNode => FocusNode();
 
   deleteAccount() {
-    Helper.showAlert(
+    DialogUtils.showAlert(
         title: getTranslated("proceedDeleteAccount"),
         message:
             getTranslated("proceedDeleteAccountContent"),
@@ -43,14 +43,14 @@ class DeleteAccountReasonController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       Get.back();
       // Future.delayed(const Duration(milliseconds: 100), () {
-       Helper.showLoading(message: getTranslated("deletingAccount"));
+       DialogUtils.showLoading(message: getTranslated("deletingAccount"));
       debugPrint("on DeleteAccount");
       SessionManagement.setLogin(false);
       Mirrorfly.deleteAccount(reason: reasonValue.value, feedback: feedback.text, flyCallBack: (FlyResponse response) {
         debugPrint('DeleteAccount $response');
         if(response.isSuccess) {
           Future.delayed(const Duration(milliseconds: 500), () {
-            Helper.hideLoading();
+            DialogUtils.hideLoading();
             SessionManagement.clear()
                 .then((value) => Get.offAllNamed(Routes.login));
             toToast(getTranslated("accountDeleted"));
@@ -60,7 +60,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
           toToast(getTranslated("unableToDeleteAccount"));
         }
       }).catchError((error) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
       });
       // });
     } else {

@@ -6,7 +6,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel;
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
@@ -251,7 +251,7 @@ Widget downloadView(int mediaFileSize, String messageType) {
               width: 5,
             ),
             Text(
-              Helper.formatBytes(mediaFileSize, 0),
+              MediaUtils.fileSize(mediaFileSize),
               style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
           ],

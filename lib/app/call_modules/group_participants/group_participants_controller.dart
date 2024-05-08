@@ -4,12 +4,12 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
 
 import '../../common/app_localizations.dart';
@@ -138,7 +138,7 @@ class GroupParticipantsController extends GetxController {
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -148,9 +148,9 @@ class GroupParticipantsController extends GetxController {
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.progressLoading();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if (response.isSuccess && response.hasData) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
@@ -211,7 +211,7 @@ class GroupParticipantsController extends GetxController {
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {

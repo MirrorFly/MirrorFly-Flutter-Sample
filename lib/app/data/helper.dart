@@ -20,156 +20,25 @@ import '../common/app_localizations.dart';
 import '../common/widgets.dart';
 import '../model/chat_message_model.dart';
 import '../routes/route_settings.dart';
-import 'apputils.dart';
+import 'utils.dart';
+
+
 
 class Helper {
-  static void showLoading({String? message, bool dismiss = false}) {
-    Get.dialog(
-      Dialog(
-        child: PopScope(
-          canPop: dismiss,
-          onPopInvoked: (didPop) {
-            if (didPop) {
-              return;
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(color: buttonBgColor,),
-                const SizedBox(width: 16),
-                Text(message ?? 'Loading...'),
-              ],
-            ),
-          ),
-        ),
-      ),
-      barrierDismissible: dismiss,
-    );
-  }
-
-  static void progressLoading({bool dismiss = false}) {
-    Get.dialog(
-        AlertDialog(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          content: PopScope(
-              canPop: dismiss,
-              onPopInvoked: (didPop) {
-                if (didPop) {
-                  return;
-                }
-              },
-            child: const SizedBox(
-              width: 60,
-              height: 60,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
-        ),
-        barrierDismissible: dismiss,
-        barrierColor: Colors.transparent);
-  }
-
-  static void showAlert(
-      {String? title, required String message, List<Widget>? actions, Widget? content, bool? barrierDismissible}) {
-    Get.dialog(
-        AlertDialog(
-          backgroundColor: Colors.white,
-          title: title != null
-              ? Text(
-                  title,
-                  style: const TextStyle(fontSize: 17),
-                )
-              : const Offstage(),
-          contentPadding: title != null
-              ? const EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 0)
-              : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
-          content: PopScope(
-              canPop: barrierDismissible ?? true,
-              onPopInvoked: (didPop) {
-                if (didPop) {
-                  return;
-                }
-                },
-            child: content ??
-                Text(
-                  message,
-                  style: const TextStyle(color: textHintColor, fontWeight: FontWeight.normal, fontSize: 18),
-                ),
-          ),
-          contentTextStyle: const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
-          actions: actions,
-        ),
-        barrierDismissible: barrierDismissible ?? true);
-  }
-
-  static void showVerticalButtonAlert(List<Widget> actions) {
-    Get.dialog(
-      Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: actions,
-        ),
-      ),
-    );
-  }
-
-  static void showButtonAlert({required List<Widget> actions}) {
-    Get.dialog(
-      Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: actions,
-          ),
-        ),
-      ),
-    );
-  }
-
-//hide loading
-  static void hideLoading() {
-    if (Get.isDialogOpen!) {
-      Get.back(
-        canPop: true,
-      );
-    }
-  }
-
-  static void showFeatureUnavailable() {
-    Helper.showAlert(message: getTranslated("featureNotAvailableForYourPlan"), actions: [
-      TextButton(
-          onPressed: () {
-            Get.back();
-          },
-          child: Text(getTranslated("ok"))),
-    ]);
-  }
-
-  static String formatBytes(int bytes, int decimals) {
-    if (bytes <= 0) return "0 B";
-    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
-  }
-
   static String durationToString(Duration duration) {
     debugPrint("duration conversion $duration");
-    String hours = (duration.inHours == 00) ? "" : "${duration.inHours.toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
+    String hours = (duration.inHours == 00) ? "" : "${duration.inHours
+        .toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
     int minutes = duration.inMinutes % 60; // Get minutes
-    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
+    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(
+        2, '0');
     return '$hours${minutes.toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 
   static String getMapImageUri(double latitude, double longitude) {
-    var googleMapKey = Get.find<MainController>().googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
+    var googleMapKey = Get
+        .find<MainController>()
+        .googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
     return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
   }
 
@@ -231,95 +100,9 @@ class Helper {
     }
   }
 
-  static String forMessageTypeString(String? messageType) {
-    switch (messageType?.toUpperCase()) {
-      case Constants.mImage:
-        return "Image";
-      case Constants.mAudio:
-        return "Audio";
-      case Constants.mVideo:
-        return "Video";
-      case Constants.mDocument:
-        return "Document";
-      case Constants.mFile:
-        return "Document";
-      case Constants.mContact:
-        return "Contact";
-      case Constants.mLocation:
-        return "Location";
-      default:
-        return "";
-    }
-  }
-
   static String capitalize(String str) {
     return "${str[0].toUpperCase()}${str.substring(1).toLowerCase()}";
   }
-}
-Future<bool> getFileSizeInMb(String path, String mediaType) async {
-  try {
-    var file = File(path);
-    int sizeInBytes = await file.length();
-    double sizeInMb = sizeInBytes / (1024 * 1024);
-
-    if (mediaType == Constants.mImage && sizeInMb <= Constants.maxImageFileSize) {
-      return true;
-    } else if (mediaType == Constants.mAudio && sizeInMb <= Constants.maxAudioFileSize) {
-      return true;
-    } else if (mediaType == Constants.mVideo && sizeInMb <= Constants.maxVideoFileSize) {
-      return true;
-    } else if (mediaType == Constants.mDocument && sizeInMb <= Constants.maxDocFileSize) {
-      return true;
-    } else {
-      return false;
-    }
-  }catch(e){
-    debugPrint("File Size Calculation Error $e");
-    return false;
-  }
-}
-
-bool checkFileUploadSize(String path, String mediaType) {
-  var file = File(path);
-  int sizeInBytes = file.lengthSync();
-  debugPrint("file size --> $sizeInBytes");
-  double sizeInMb = sizeInBytes / (1024 * 1024);
-  debugPrint("sizeInBytes $sizeInMb");
-  debugPrint("Constants.maxImageFileSize ${Constants.maxImageFileSize}");
-
-  // debugPrint(getFileSizeText(sizeInBytes.toString()));
-
-  if (mediaType == Constants.mImage && sizeInMb <= Constants.maxImageFileSize) {
-    return true;
-  } else if (mediaType == Constants.mAudio && sizeInMb <= Constants.maxAudioFileSize) {
-    return true;
-  } else if (mediaType == Constants.mVideo && sizeInMb <= Constants.maxVideoFileSize) {
-    return true;
-  } else if (mediaType == Constants.mDocument && sizeInMb <= Constants.maxDocFileSize) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-String getFileSizeText(String fileSizeInBytes) {
-  var fileSizeBuilder = "";
-  var fileSize = int.parse(fileSizeInBytes);
-  if (fileSize > 1073741824) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1073741824)).toString() + (" ") + ("GB");
-  } else if (fileSize > 1048576) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1048576)).toString() + (" ") + ("MB");
-  } else if (fileSize > 1024) {
-    fileSizeBuilder = (getRoundedFileSize(fileSize / 1024)).toString() + (" ") + ("KB");
-  } else {
-    fileSizeBuilder = (fileSizeInBytes).toString() + (" ") + ("bytes");
-  }
-  return fileSizeBuilder.toString();
-}
-
-double getRoundedFileSize(double unscaledValue) {
-  //return BigDecimal.valueOf(unscaledValue).setScale(2, RoundingMode.HALF_UP).toDouble()
-  return unscaledValue.roundToDouble();
 }
 
 
@@ -437,9 +220,7 @@ String getChatTime(BuildContext context, int? epochTime) {
   return hourTime;
 }
 
-bool checkFile(String mediaLocalStoragePath) {
-  return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
-}
+
 
 
 openDocument(String mediaLocalStoragePath) async {
@@ -847,7 +628,7 @@ void showQuickProfilePopup(
 
 makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
   if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
-    Helper.showFeatureUnavailable();
+    DialogUtils.showFeatureUnavailable();
     return;
   }
   if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
@@ -975,10 +756,3 @@ String getErrorDetails(FlyResponse response) {
   }
 }
 
-navigateBack(){
-  Navigator.pop(navigatorKey.currentContext!);
-}
-
-BuildContext currentContext(){
-  return navigatorKey.currentContext!;
-}

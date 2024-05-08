@@ -7,8 +7,8 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/app_localizations.dart';
-import '../../data/apputils.dart';
 import '../../data/helper.dart';
+import '../../data/utils.dart';
 import '../../model/chat_message_model.dart';
 import '../../routes/route_settings.dart';
 
@@ -125,10 +125,10 @@ class ArchivedChatListController extends GetxController {
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
       Get.toNamed(Routes.chat, parameters: {"chatJid": jid});
-      // Helper.progressLoading();
+      // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
-          Helper.hideLoading();
+          DialogUtils.hideLoading();
           var profile = value;//profiledata(value.toString());
           Get.toNamed(Routes.chat, arguments: profile);
         }
@@ -313,7 +313,7 @@ class ArchivedChatListController extends GetxController {
   deleteChats() {
     String? profile = '';
     profile = archivedChats.firstWhere((element) => selectedChats.first == element.jid).profileName;
-    Helper.showAlert(
+    DialogUtils.showAlert(
         title:
             selectedChats.length == 1 ? getTranslated("deleteChatWith").replaceFirst("%d", "$profile") : getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChats.length}"),
         actions: [

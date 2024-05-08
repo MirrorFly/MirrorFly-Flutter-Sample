@@ -7,6 +7,7 @@ import 'package:mirrorfly_plugin/message_params.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 import 'media_message_overlay.dart';
@@ -33,7 +34,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
-        if (checkFile(
+        if (MediaUtils.isFileExist(
             widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
             (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                 MediaDownloadStatus.isMediaDownloaded ||

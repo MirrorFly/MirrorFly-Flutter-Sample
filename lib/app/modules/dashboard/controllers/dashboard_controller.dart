@@ -18,7 +18,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
@@ -283,10 +283,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
       Get.toNamed(Routes.chat, parameters: {"chatJid": jid, "topicId": topicId.value});
-      // Helper.progressLoading();
+      // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
-          Helper.hideLoading();
+          DialogUtils.hideLoading();
           // recentChats.firstWhere((element) => element.jid==jid).isConversationUnRead=false;
           // debugPrint("Dashboard Profile===>$value");
           var profile = value;//profiledata(value.toString());
@@ -523,11 +523,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     var chatIndex =
         recentChats.indexWhere((element) => selectedChats.first == element.jid); //selectedChatsPosition[index];
     var item = recentChats[chatIndex];
-    Helper.progressLoading();
+    DialogUtils.progressLoading();
     clearAllChatSelection();
     getProfileDetails(item.jid.checkNull()).then((value) {
       if (value.jid != null) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         var profile = value; //profiledata(value.toString());
         if (item.isGroup!) {
           Future.delayed(const Duration(milliseconds: 100), () => Get.toNamed(Routes.groupInfo, arguments: profile));
@@ -927,12 +927,12 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   _itemDelete(int index) {
     if (!availableFeatures.value.isDeleteChatAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     var chatIndex =
         recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    Helper.showAlert(message:getTranslated("deleteChatWith").replaceFirst("%d", recentChats[chatIndex].getName()), actions: [
+    DialogUtils.showAlert(message:getTranslated("deleteChatWith").replaceFirst("%d", recentChats[chatIndex].getName()), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -942,7 +942,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
             if (!availableFeatures.value.isDeleteChatAvailable.checkNull()) {
-              Helper.showFeatureUnavailable();
+              DialogUtils.showFeatureUnavailable();
               return;
             }
             Mirrorfly.deleteRecentChats(jidList: [selectedChats[index]], flyCallBack: (FlyResponse response) {
@@ -956,7 +956,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   itemsDelete() {
-    Helper.showAlert(message:getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChatsPosition.length}"), actions: [
+    DialogUtils.showAlert(message:getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChatsPosition.length}"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -1722,7 +1722,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   void makeVideoCall(String? fromUser) async {
     if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if (await AppUtils.isNetConnected()) {
@@ -1756,7 +1756,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void makeVoiceCall(String? toUser) async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
@@ -1798,7 +1798,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if (callType == CallType.video) {
@@ -1950,7 +1950,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   _itemDeleteCallLog(int index) {
     var logIndex =
         callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("deleteCallLogConfirmation"),
         actions: [
           TextButton(
@@ -1978,7 +1978,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   itemsDeleteCallLog() {
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("deleteSelectedCallLog"),
         actions: [
           TextButton(
@@ -2010,7 +2010,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   clearCallLog() {
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("deleteAllCallLog"),
         actions: [
           TextButton(

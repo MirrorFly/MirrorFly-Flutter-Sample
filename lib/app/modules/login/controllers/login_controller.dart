@@ -16,7 +16,7 @@ import 'package:otp_text_field/otp_field.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../routes/route_settings.dart';
@@ -53,11 +53,11 @@ class LoginController extends GetxController {
   // void registerUser(BuildContext context) {
 
   showLoading() {
-    Helper.showLoading(message: getTranslated("pleaseWait"));
+    DialogUtils.showLoading(message: getTranslated("pleaseWait"));
   }
 
   hideLoading() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   void startTimer() {
@@ -127,7 +127,7 @@ class LoginController extends GetxController {
     Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         Get.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
       }
     }).catchError((error) {
@@ -398,7 +398,7 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: getTranslated("deviceConfirmation"), actions: [
+    DialogUtils.showAlert(message: getTranslated("deviceConfirmation"), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -420,7 +420,7 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("sessionExpiredDialogShow", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: message.toString(), actions: [
+    DialogUtils.showAlert(message: message.toString(), actions: [
       TextButton(
           onPressed: () {
             Get.back();

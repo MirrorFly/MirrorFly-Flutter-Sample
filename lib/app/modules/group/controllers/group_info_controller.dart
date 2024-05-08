@@ -12,7 +12,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
 import '../../../routes/route_settings.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
@@ -206,10 +206,10 @@ class GroupInfoController extends GetxController {
 
   reportGroup(){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
+    DialogUtils.showAlert(title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -218,9 +218,9 @@ class GroupInfoController extends GetxController {
       TextButton(
           onPressed: () {
             Get.back();
-            Helper.progressLoading();
+            DialogUtils.progressLoading();
             Mirrorfly.reportUserOrMessages(jid: profile.jid.checkNull(),type: ChatType.groupChat, messageId: "", flyCallBack: (FlyResponse response) {
-              Helper.hideLoading();
+              DialogUtils.hideLoading();
               if(response.isSuccess){
                 toToast(getTranslated("reportSentSuccess"));
               }else{
@@ -242,10 +242,10 @@ class GroupInfoController extends GetxController {
   }
   leaveGroup(){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(message: getTranslated("areYouLeaveGroup"),actions: [
+    DialogUtils.showAlert(message: getTranslated("areYouLeaveGroup"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -262,13 +262,13 @@ class GroupInfoController extends GetxController {
   var leavedGroup = false.obs;
   exitFromGroup()async{
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(await AppUtils.isNetConnected()) {
-      Helper.progressLoading();
+      DialogUtils.progressLoading();
       Mirrorfly.leaveFromGroup(userJid: SessionManagement.getUserJID().checkNull() ,groupJid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         if(response.isSuccess){
           _isMemberOfGroup(!response.isSuccess);
           leavedGroup(response.isSuccess);
@@ -282,10 +282,10 @@ class GroupInfoController extends GetxController {
   }
   deleteGroup(){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull() || !availableFeatures.value.isDeleteChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
-    Helper.showAlert(message: getTranslated("areYouDeleteGroup"),actions: [
+    DialogUtils.showAlert(message: getTranslated("areYouDeleteGroup"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -296,12 +296,12 @@ class GroupInfoController extends GetxController {
             if(await AppUtils.isNetConnected()) {
               Get.back();
               if(!availableFeatures.value.isGroupChatAvailable.checkNull() || !availableFeatures.value.isDeleteChatAvailable.checkNull()){
-                Helper.showFeatureUnavailable();
+                DialogUtils.showFeatureUnavailable();
                 return;
               }
-              Helper.progressLoading();
+              DialogUtils.progressLoading();
               Mirrorfly.deleteGroup(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if(response.isSuccess){
                   Get.offAllNamed(Routes.dashboard);
                 }else{
@@ -344,7 +344,7 @@ class GroupInfoController extends GetxController {
   final ImagePicker _picker = ImagePicker();
   camera() async {
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(await AppUtils.isNetConnected()) {
@@ -371,7 +371,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupProfileImage(String path){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     showLoader();
@@ -386,7 +386,7 @@ class GroupInfoController extends GetxController {
 
   updateGroupName(String name){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     showLoader();
@@ -401,7 +401,7 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    Helper.showAlert(message: getTranslated("areYouRemoveGroupPhoto"),actions: [
+    DialogUtils.showAlert(message: getTranslated("areYouRemoveGroupPhoto"),actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -418,7 +418,7 @@ class GroupInfoController extends GetxController {
 
   revokeAccessForProfileImage()async{
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(await AppUtils.isNetConnected()) {
@@ -436,15 +436,15 @@ class GroupInfoController extends GetxController {
   }
 
   showLoader(){
-    Helper.progressLoading();
+    DialogUtils.progressLoading();
   }
   hideLoader(){
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   gotoAddParticipants(){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
@@ -476,7 +476,7 @@ class GroupInfoController extends GetxController {
 
   removeUser(String userJid) async {
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(isMemberOfGroup){
@@ -500,7 +500,7 @@ class GroupInfoController extends GetxController {
 
   makeAdmin(String userJid) async {
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(isMemberOfGroup){
@@ -525,7 +525,7 @@ class GroupInfoController extends GetxController {
   //New Name Change
   gotoNameEdit(){
     if(!availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(isMemberOfGroup) {

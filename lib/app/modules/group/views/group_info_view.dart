@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -241,7 +242,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
   }
 
   showOptions(ProfileDetails item,BuildContext context) {
-    Helper.showButtonAlert(
+    DialogUtils.showButtonAlert(
       actions: [
         ListTile(
             title: Text(
@@ -277,10 +278,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   onTap: () {
                     Get.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
-                      Helper.showFeatureUnavailable();
+                      DialogUtils.showFeatureUnavailable();
                       return;
                     }
-                    Helper.showAlert(message: getTranslated("areYouSureToRemove").replaceAll("%d", getName(item)), actions: [
+                    DialogUtils.showAlert(message: getTranslated("areYouSureToRemove").replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
                             Get.back();
@@ -307,10 +308,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                   onTap: () {
                     Get.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
-                      Helper.showFeatureUnavailable();
+                      DialogUtils.showFeatureUnavailable();
                       return;
                     }
-                    Helper.showAlert(message:getTranslated("areYouSureMakeAdmin").replaceAll("%d", getName(item)), actions: [
+                    DialogUtils.showAlert(message:getTranslated("areYouSureMakeAdmin").replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
                             Get.back();

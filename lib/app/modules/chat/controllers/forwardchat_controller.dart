@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -11,7 +12,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
-import '../../../data/apputils.dart';
 
 class ForwardChatController extends GetxController {
   //main list
@@ -319,7 +319,7 @@ class ForwardChatController extends GetxController {
 
   Future<void> onItemSelect(String jid, String name,bool isBlocked,bool isGroup) async {
     if(isGroup.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if(isGroup.checkNull() && !(await Mirrorfly.isMemberOfGroup(groupJid: jid, userJid: SessionManagement.getUserJID().checkNull())).checkNull()){
@@ -334,17 +334,17 @@ class ForwardChatController extends GetxController {
   }
 
   unBlock(String jid, String name,){
-    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
+    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
       TextButton(
           onPressed: () {
-            navigateBack();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
-                navigateBack();
+                NavUtils.back();
                 Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
                   if (response.isSuccess && response.hasData) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", name));
@@ -416,12 +416,12 @@ class ForwardChatController extends GetxController {
         Mirrorfly.isBusyStatusEnabled().then((isSuccess) {
           if (isSuccess){
             if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
-          Helper.showLoading(message: getTranslated("forwardMessage"));
+          DialogUtils.showLoading(message: getTranslated("forwardMessage"));
               Future.delayed(const Duration(milliseconds: 1000), () async {
                 await Mirrorfly.forwardMessagesToMultipleUsers(
                     messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
                   // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-                  Helper.hideLoading();
+                  DialogUtils.hideLoading();
                   updateLastMessage(selectedJids);
                   getProfileDetails(selectedJids.last)
                       .then((value) {

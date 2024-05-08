@@ -5,7 +5,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/about/contactus_view.dart';
 
 import '../../../../common/constants.dart';
-import '../../../../data/apputils.dart';
+import '../../../../data/utils.dart';
 import 'about_us_view.dart';
 
 class AboutAndHelpView extends StatelessWidget {

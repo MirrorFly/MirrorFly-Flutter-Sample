@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../settings/views/chat_settings/chat_settings_controller.dart';
 
 class BusyStatusController extends GetxController with WidgetsBindingObserver {
@@ -132,7 +131,7 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
   void deleteBusyStatus(StatusData item, BuildContext context) {
 
     if(!item.isCurrentStatus!){
-      Helper.showButtonAlert(actions: [
+      DialogUtils.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
           title: Text(getTranslated("delete"),
@@ -184,7 +183,7 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
   }
 
   void busyDeleteConfirmation(StatusData item, BuildContext context) {
-    Helper.showAlert(message: getTranslated("deleteStatus"), actions: [
+    DialogUtils.showAlert(message: getTranslated("deleteStatus"), actions: [
       TextButton(
           onPressed: () {
             Navigator.pop(context);
@@ -195,14 +194,14 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
                 Navigator.pop(context);
-                Helper.showLoading(message: "Deleting Busy Status");
+                DialogUtils.showLoading(message: "Deleting Busy Status");
                 Mirrorfly.deleteBusyStatus(id:
                 item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                     .then((value) {
                   busyStatusList.remove(item);
-                  Helper.hideLoading();
+                  DialogUtils.hideLoading();
                 }).catchError((error) {
-                  Helper.hideLoading();
+                  DialogUtils.hideLoading();
                 toToast(getTranslated("unableDeleteBusyStatus"));
                 });
               } else {

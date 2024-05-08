@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class ChatInfoController extends GetxController {
@@ -116,14 +117,14 @@ class ChatInfoController extends GetxController {
 
   reportChatOrUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Helper.showAlert(
+      DialogUtils.showAlert(
           title: getTranslated("reportUser").replaceFirst("%d", profile.getName()),
           message:getTranslated("last5Message"),
           actions: [
             TextButton(
                 onPressed: () {
                   Get.back();
-                  // Helper.showLoading(message: "Reporting User");
+                  // DialogUtils.showLoading(message: "Reporting User");
                   Mirrorfly
                       .reportUserOrMessages(jid: profile.jid!, type: "chat", flyCallBack: (FlyResponse response) {
                     if(response.isSuccess){

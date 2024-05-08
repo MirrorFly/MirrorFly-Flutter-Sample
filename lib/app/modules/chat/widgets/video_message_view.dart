@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
@@ -29,7 +30,7 @@ class VideoMessageView extends StatelessWidget {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
         if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-          if (checkFile(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+          if (MediaUtils.isFileExist(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
               (chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                   MediaDownloadStatus.isMediaDownloaded ||
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==

@@ -16,7 +16,7 @@ import 'package:otp_text_field/style.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../../common/app_localizations.dart';
-import '../../../../data/apputils.dart';
+import '../../../../data/utils.dart';
 import '../../../../routes/route_settings.dart';
 
 class AppLockController extends FullLifeCycleController
@@ -92,7 +92,7 @@ class AppLockController extends FullLifeCycleController
       }
     } else {
       //enable pin to enable bio alert popup
-      Helper.showAlert(
+      DialogUtils.showAlert(
           message:
               getTranslated("needToSetPin"),
           actions: [
@@ -530,7 +530,7 @@ class AppLockController extends FullLifeCycleController
 
   Future<void> sendOtp({bool fromInvalid = false}) async {
     if (await AppUtils.isNetConnected()) {
-      Helper.showLoading(message: getTranslated("sentOTP"));
+      DialogUtils.showLoading(message: getTranslated("sentOTP"));
       sendVerificationCode();
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -706,7 +706,7 @@ class AppLockController extends FullLifeCycleController
   }
 
   hideLoading() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   int? resendingToken;
@@ -767,7 +767,7 @@ class AppLockController extends FullLifeCycleController
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        Helper.showLoading(message: getTranslated("verifyingOTP"));
+        DialogUtils.showLoading(message: getTranslated("verifyingOTP"));
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
         // Sign the user in (or link) with the credential

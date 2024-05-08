@@ -8,8 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
 import '../../../../common/app_localizations.dart';
-import '../../../../data/apputils.dart';
-import '../../../../data/helper.dart';
+import '../../../../data/utils.dart';
 import '../../../../data/permissions.dart';
 import '../../../../routes/route_settings.dart';
 
@@ -94,7 +93,7 @@ class ChatSettingsController extends GetxController {
   }
 
   void clearAllConversation(){
-    Helper.showAlert(message: getTranslated("areYouClearAllChat"),actions: [
+    DialogUtils.showAlert(message: getTranslated("areYouClearAllChat"),actions: [
       TextButton(
           onPressed: () {
             Get.back();

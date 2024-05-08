@@ -11,8 +11,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
-import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class ContactController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -460,20 +460,20 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
-            navigateBack();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
-                navigateBack();
-                Helper.progressLoading();
+                NavUtils.back();
+                DialogUtils.progressLoading();
                 Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                  Helper.hideLoading();
+                  DialogUtils.hideLoading();
                   if (response.isSuccess) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                     userUpdatedHisProfile(item.jid.checkNull());
@@ -601,11 +601,11 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         context: buildContext,
         // chatItem: chatItem,
         chatTap: () {
-          navigateBack();
+          NavUtils.back();
           onListItemPressed(profile.value);
         },
         infoTap: () {
-          navigateBack();
+          NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
             Get.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
@@ -657,7 +657,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     var isGroupCall = selectedUsersJIDList.length > 1;
     if ((isGroupCall && !availableFeatures.value.isGroupCallAvailable.checkNull()) ||
         (isOneToOneCall && !availableFeatures.value.isOneToOneCallAvailable.checkNull())) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
@@ -679,7 +679,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                 "callType": CallType.audio
               });
             }else{
-              Helper.showAlert(message: getErrorDetails(response));
+              DialogUtils.showAlert(message: getErrorDetails(response));
             }
           });
         } else {

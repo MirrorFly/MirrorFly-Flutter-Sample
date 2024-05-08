@@ -5,7 +5,8 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+
+import '../data/utils.dart';
 class CropImage extends StatefulWidget {
   const CropImage({Key? key, required this.imageFile}) : super(key: key);
   final File imageFile;
@@ -78,9 +79,9 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      Helper.showLoading(message: getTranslated("imageCropping"));
+                      DialogUtils.showLoading(message: getTranslated("imageCropping"));
                       await controller.onCropImage().then((image){
-                        Helper.hideLoading();
+                        DialogUtils.hideLoading();
                         Get.back(result: image);
                       });
 

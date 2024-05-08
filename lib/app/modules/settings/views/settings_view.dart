@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
@@ -49,7 +49,7 @@ class SettingsView extends GetView<SettingsController> {
               Get.toNamed(Routes.deleteAccount);
             }),
             settingListItem(getTranslated("logout"), logoutIcon, rightArrowIcon, () {
-              Helper.showAlert(
+              DialogUtils.showAlert(
                   message:
                   getTranslated("logoutMessage"),
                   actions: [

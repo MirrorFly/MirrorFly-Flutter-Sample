@@ -12,7 +12,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:get/get.dart';
 
 import '../../../common/main_controller.dart';
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../../chat/controllers/chat_controller.dart';
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
@@ -78,7 +78,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     });
   }
 
-  Future<void> _loadFiles() async {
+  /*Future<void> _loadFiles() async {
     int index = 0;
     for (var pickedAssetModel in filePath) {
       try {
@@ -92,9 +92,10 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       index++;
     }
   }
+
   Future<File?> _getFileFromAsset(PickedAssetModel pickedAssetModel) async {
     return await pickedAssetModel.asset?.file;
-  }
+  }*/
 
   checkCacheFile(int index){
     if (imageCache.containsKey(index)) {
@@ -156,7 +157,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   Future<void> sendMedia() async {
     debugPrint("send media");
     var previousRoute = Get.previousRoute;
-    Platform.isIOS ? Helper.showLoading(message: getTranslated("compressingFiles")) : Helper.progressLoading();
+    Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingFiles")) : DialogUtils.progressLoading();
     var featureNotAvailable = false;
     try {
       int i = 0;
@@ -184,14 +185,14 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       });
     }finally {
       debugPrint("finally $featureNotAvailable");
-      Helper.hideLoading();
+      DialogUtils.hideLoading();
       if (!featureNotAvailable) {
         if (previousRoute == Routes.galleryPicker) {
           Get.back();
         }
         Get.back();
       } else {
-        Helper.showFeatureUnavailable();
+        DialogUtils.showFeatureUnavailable();
       }
     }
   }

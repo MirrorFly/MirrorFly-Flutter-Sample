@@ -1080,9 +1080,9 @@ abstract class BaseController {
         SessionManagement.setToken(token);
         Get.offAllNamed(Routes.login);
       });
-      // Helper.progressLoading();
+      // DialogUtils.progressLoading();
       // Mirrorfly.logoutOfChatSDK().then((value) {
-      //   Helper.hideLoading();
+      //   DialogUtils.hideLoading();
       //   if(value) {
       //     var token = SessionManagement.getToken().checkNull();
       //     SessionManagement.clear().then((value){
@@ -1093,7 +1093,7 @@ abstract class BaseController {
       //     Get.snackbar("Logout", "Logout Failed");
       //   }
       // }).catchError((er){
-      //   Helper.hideLoading();
+      //   DialogUtils.hideLoading();
       //   SessionManagement.clear().then((value){
       //     // SessionManagement.setToken(token);
       //     Get.offAllNamed(Routes.login);

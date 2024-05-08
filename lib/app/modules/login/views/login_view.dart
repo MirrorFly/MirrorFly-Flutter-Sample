@@ -5,13 +5,21 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final LoginController controller = LoginController().get();
 
   @override
   Widget build(BuildContext context) {

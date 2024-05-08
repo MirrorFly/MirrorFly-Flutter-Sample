@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
 
 class ContactusView extends StatelessWidget {
   ContactusView({Key? key}) : super(key: key);
@@ -105,9 +106,9 @@ class ContactusView extends StatelessWidget {
                         shape: const StadiumBorder()),
                     onPressed: () {
                       if(title.text.trim().isNotEmpty&&description.text.trim().isNotEmpty) {
-                        Helper.progressLoading();
+                        DialogUtils.progressLoading();
                         Mirrorfly.sendContactUsInfo(title: title.text.trim(),description: description.text.trim(),flyCallBack: (response){
-                          Helper.hideLoading();
+                          DialogUtils.hideLoading();
                           if(response.isSuccess){
                             toToast(getTranslated("thankYou"));
                             title.clear();

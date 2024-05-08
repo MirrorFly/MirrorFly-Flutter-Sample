@@ -7,7 +7,7 @@ import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../common/constants.dart';
-import '../data/apputils.dart';
+import '../data/utils.dart';
 
 class CallUtils {
   static Future<String> getCallersName(List<String?> callUsers,[bool addYou = false]) async {

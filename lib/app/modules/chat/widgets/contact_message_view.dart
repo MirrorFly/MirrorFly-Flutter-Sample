@@ -11,6 +11,7 @@ import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
 import '../../../data/session_management.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 import '../../dashboard/widgets.dart';
@@ -181,7 +182,7 @@ class ContactMessageView extends StatelessWidget {
   }
 
   showInvitePopup(ContactChatMessage contactChatMessage) {
-    Helper.showButtonAlert(actions: [
+    DialogUtils.showButtonAlert(actions: [
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),
         title: Text(getTranslated("inviteFriend"),

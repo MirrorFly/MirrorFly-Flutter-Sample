@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
@@ -18,7 +19,6 @@ import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
 
 class ProfileController extends GetxController {
@@ -435,7 +435,7 @@ class ProfileController extends GetxController {
         FilePickerResult? result = await FilePicker.platform
             .pickFiles(allowMultiple: false, type: FileType.image);
         if (result != null) {
-          if (checkFileUploadSize(
+          if (MediaUtils.checkFileUploadSize(
               result.files.single.path!, Constants.mImage)) {
             isImageSelected.value = true;
             Get.to(CropImage(
@@ -508,12 +508,12 @@ class ProfileController extends GetxController {
   }
 
   void showLoader() {
-    Helper.progressLoading();
+    DialogUtils.progressLoading();
   }
 
   /// To hide loader
   void hideLoader() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   nameChanges(String text) {

@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 
@@ -269,7 +270,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   showBusyStatusAlert(Function? function) {
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("disableBusy"),
         actions: [
           TextButton(
@@ -365,7 +366,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     }*/
     var isMediaDelete = false.obs;
     //var chatType =  profile.isGroupProfile ?? false ? "groupchat" : "chat";
-    Helper.showAlert(
+    DialogUtils.showAlert(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -504,7 +505,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForShareMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && checkFile(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && MediaUtils.isFileExist(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           canBeShare(true);
         } else {
           canBeShare(false);

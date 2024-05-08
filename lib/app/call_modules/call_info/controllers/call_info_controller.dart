@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/app_localizations.dart';
@@ -62,7 +61,7 @@ class CallInfoController extends GetxController{
   }
 
   itemDeleteCallLog(List<String> selectedCallLogs) {
-    Helper.showAlert(
+    DialogUtils.showAlert(
         message: getTranslated("deleteCallLogConfirmation"),
         actions: [
           TextButton(

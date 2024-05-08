@@ -11,8 +11,8 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
-import '../../data/apputils.dart';
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
   var callList = Get.find<CallController>().callList; //List<CallUserList>.empty(growable: true).obs;
@@ -174,7 +174,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -184,9 +184,9 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.progressLoading();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if (response.isSuccess && response.hasData) {
                   toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
@@ -293,7 +293,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if (!(await AppUtils.isNetConnected())) {

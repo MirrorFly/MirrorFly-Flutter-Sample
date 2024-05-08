@@ -7,7 +7,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../data/apputils.dart';
+import '../data/utils.dart';
 import '../model/chat_message_model.dart';
 import 'app_localizations.dart';
 
@@ -345,10 +345,7 @@ class Constants {
   static const pinExpiry = 31;//in Days
   static const pinAlert = pinExpiry-5;//in Days
 
-  static const maxAudioFileSize = 2 * 1024;//30;
-  static const maxVideoFileSize = 2 * 1024;//30;
-  static const maxImageFileSize = 2 * 1024;//10;
-  static const maxDocFileSize = 2 * 1024;//20;
+
 
   static const mobileImageMaxWidth = 250;
   static const mobileImageMinWidth = 210;

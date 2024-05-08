@@ -1,15 +1,14 @@
 
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:yaml/yaml.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
 
 class SettingsController extends GetxController {
@@ -48,9 +47,9 @@ class SettingsController extends GetxController {
 
   logoutFromSDK() async {
     if (await AppUtils.isNetConnected()) {
-      Helper.progressLoading();
+      DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         if (response.isSuccess) {
           clearAllPreferences();
         } else {
@@ -58,7 +57,7 @@ class SettingsController extends GetxController {
           // Get.snackbar("Logout", "Logout Failed");
         }
       })/*.catchError((er) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         SessionManagement.clear().then((value) {
           // SessionManagement.setToken(token);
           Get.offAllNamed(Routes.login);

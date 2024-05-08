@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/constants.dart';
@@ -105,8 +106,8 @@ class DocumentMessageView extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    Helper.formatBytes(
-                        chatMessage.mediaChatMessage?.mediaFileSize ?? 0, 0),
+                    MediaUtils.fileSize(
+                        chatMessage.mediaChatMessage?.mediaFileSize ?? 0),
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 7,

@@ -7,7 +7,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../../common/app_localizations.dart';
-import '../../../../data/apputils.dart';
+import '../../../../data/utils.dart';
 
 
 class BlockedListController extends GetxController {
@@ -53,7 +53,7 @@ class BlockedListController extends GetxController {
 
   }
   unBlock(ProfileDetails item){
-    Helper.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
+    DialogUtils.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
       TextButton(
           onPressed: () {
             Get.back();
@@ -63,9 +63,9 @@ class BlockedListController extends GetxController {
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
               Get.back();
-              Helper.progressLoading();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if(response.isSuccess) {
                   toToast("${getMemberName(item)} has been Unblocked");
                   getUsersIBlocked(false);
