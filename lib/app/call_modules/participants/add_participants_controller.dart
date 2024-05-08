@@ -429,7 +429,9 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       }
 
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: _searchText, flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {

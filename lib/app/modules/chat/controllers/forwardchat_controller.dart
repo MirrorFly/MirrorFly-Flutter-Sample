@@ -177,7 +177,9 @@ class ForwardChatController extends GetxController {
         }
       }
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
@@ -283,7 +285,9 @@ class ForwardChatController extends GetxController {
         }
       }
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
