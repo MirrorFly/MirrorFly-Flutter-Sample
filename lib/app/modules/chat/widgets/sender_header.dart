@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 
@@ -68,7 +68,7 @@ class SenderHeader extends StatelessWidget {
           style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: Color(Helper.getColourCode(
+              color: Color(MessageUtils.getColourCode(
                   chatList[index].senderUserName.checkNull()))),
         ),
       ),

@@ -9,7 +9,7 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
-import '../chat_widgets.dart';
+import 'image_cache_manager.dart';
 import 'caption_message_view.dart';
 import 'media_message_overlay.dart';
 
@@ -30,7 +30,7 @@ class VideoMessageView extends StatelessWidget {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
         if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-          if (MediaUtils.isFileExist(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+          if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
               (chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                   MediaDownloadStatus.isMediaDownloaded ||
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
@@ -67,8 +67,8 @@ class VideoMessageView extends StatelessWidget {
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: imageFromBase64String(
-                      mediaMessage.mediaThumbImage, context, null, null),
+                  child: ImageCacheManager.getImage(
+                      mediaMessage.mediaThumbImage, chatMessage.messageId),
                 ),
               ),
               Positioned(
@@ -85,7 +85,7 @@ class VideoMessageView extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      Helper.durationToString(
+                      DateTimeUtils.durationToString(
                           Duration(milliseconds: mediaMessage.mediaDuration)),
                       style: const TextStyle(fontSize: 11, color: Colors.white),
                     ),
@@ -111,7 +111,7 @@ class VideoMessageView extends StatelessWidget {
                     const SizedBox(
                       width: 5,
                     ),
-                    getMessageIndicator(
+                    MessageUtils.getMessageIndicatorIcon(
                         chatMessage.messageStatus.value,
                         chatMessage.isMessageSentByMe,
                         chatMessage.messageType,

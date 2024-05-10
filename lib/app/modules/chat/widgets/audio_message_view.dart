@@ -9,7 +9,6 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
 import 'media_message_overlay.dart';
 
 class AudioMessageView extends StatefulWidget {
@@ -34,7 +33,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
         : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
-        if (MediaUtils.isFileExist(
+        if (MediaUtils.isMediaExists(
             widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
             (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                 MediaDownloadStatus.isMediaDownloaded ||
@@ -257,7 +256,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                       Padding(
                         padding: const EdgeInsets.only(left: 2.0),
                         child: Text(
-                          Helper.durationToString(Duration(
+                          DateTimeUtils.durationToString(Duration(
                               milliseconds: currentPos !=
                                   0.0 // chatMessage.mediaChatMessage?.currentPos != 0
                                   ? currentPos
@@ -292,7 +291,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 const SizedBox(
                   width: 5,
                 ),
-                getMessageIndicator(
+                MessageUtils.getMessageIndicatorIcon(
                     widget.chatMessage.messageStatus.value,
                     widget.chatMessage.isMessageSentByMe,
                     widget.chatMessage.messageType,
@@ -473,7 +472,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                             return Padding(
                               padding: const EdgeInsets.only(left: 5.0),
                               child: Text(
-                                Helper.durationToString(Duration(
+                                DateTimeUtils.durationToString(Duration(
                                     milliseconds: currentPos.value == 0.0
                                         ? widget.chatMessage.mediaChatMessage!
                                         .mediaDuration
@@ -488,7 +487,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                           /*Padding(
                           padding: const EdgeInsets.only(left: 5.0),
                           child: Text(
-                            Helper.durationToString(Duration(
+                            DateTimeUtils.durationToString(Duration(
                                 milliseconds: chatMessage
                                     .mediaChatMessage!.mediaDuration)),
                             style: const TextStyle(

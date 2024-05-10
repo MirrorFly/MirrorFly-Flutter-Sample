@@ -11,8 +11,7 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
-import '../chat_widgets.dart';
-import 'ImageCacheManager.dart';
+import 'image_cache_manager.dart';
 import 'media_message_overlay.dart';
 
 class ImageMessageView extends StatefulWidget {
@@ -60,7 +59,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                           const SizedBox(
                             width: 5,
                           ),
-                          getMessageIndicator(widget.chatMessage.messageStatus.value, widget.chatMessage.isMessageSentByMe,
+                          MessageUtils.getMessageIndicatorIcon(widget.chatMessage.messageStatus.value, widget.chatMessage.isMessageSentByMe,
                               widget.chatMessage.messageType, widget.chatMessage.isMessageRecalled.value),
                           const SizedBox(
                             width: 4,
@@ -94,7 +93,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
 
 getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext context, String mediaFileName, bool isSelected, String messageId) {
   debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
-  if (MediaUtils.isFileExist(mediaLocalStoragePath.value)) {
+  if (MediaUtils.isMediaExists(mediaLocalStoragePath.value)) {
     return InkWell(
         onTap: isSelected
             ? null

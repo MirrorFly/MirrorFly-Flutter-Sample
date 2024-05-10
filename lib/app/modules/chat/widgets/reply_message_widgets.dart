@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/image_cache_manager.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 
@@ -92,7 +93,7 @@ getReplyMessage(
     case Constants.mText:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mText),
+          MessageUtils.getMediaTypeIcon(Constants.mText),
           // Text(messageTextContent!),
           Expanded(child: Text(messageTextContent!, maxLines: 1, overflow: TextOverflow.ellipsis)),
         ],
@@ -100,7 +101,7 @@ getReplyMessage(
     case Constants.mImage:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mImage),
+          MessageUtils.getMediaTypeIcon(Constants.mImage),
           const SizedBox(
             width: 5,
           ),
@@ -110,7 +111,7 @@ getReplyMessage(
     case Constants.mVideo:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mVideo),
+          MessageUtils.getMediaTypeIcon(Constants.mVideo),
           const SizedBox(
             width: 5,
           ),
@@ -121,7 +122,7 @@ getReplyMessage(
       return Row(
         children: [
           isReplying
-              ? Helper.forMessageTypeIcon(Constants.mAudio, mediaChatMessage != null ? mediaChatMessage.isAudioRecorded : true)
+              ? MessageUtils.getMediaTypeIcon(Constants.mAudio, mediaChatMessage != null ? mediaChatMessage.isAudioRecorded : true)
               : const Offstage(),
           isReplying
               ? const SizedBox(
@@ -129,7 +130,7 @@ getReplyMessage(
                 )
               : const Offstage(),
           Text(
-            Helper.durationToString(Duration(milliseconds: mediaChatMessage != null ? mediaChatMessage.mediaDuration : 0)),
+            DateTimeUtils.durationToString(Duration(milliseconds: mediaChatMessage != null ? mediaChatMessage.mediaDuration : 0)),
           ),
           const SizedBox(
             width: 5,
@@ -140,7 +141,7 @@ getReplyMessage(
     case Constants.mContact:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mContact),
+          MessageUtils.getMediaTypeIcon(Constants.mContact),
           const SizedBox(
             width: 5,
           ),
@@ -161,7 +162,7 @@ getReplyMessage(
     case Constants.mLocation:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mLocation),
+          MessageUtils.getMediaTypeIcon(Constants.mLocation),
           const SizedBox(
             width: 5,
           ),
@@ -171,7 +172,7 @@ getReplyMessage(
     case Constants.mDocument:
       return Row(
         children: [
-          Helper.forMessageTypeIcon(Constants.mDocument),
+          MessageUtils.getMediaTypeIcon(Constants.mDocument),
           const SizedBox(
             width: 5,
           ),
@@ -202,16 +203,16 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
         borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-        child: imageFromBase64String(
-            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage.checkNull(), context, size, size),
+        child: ImageCacheManager.getImage(
+            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage.checkNull(),chatMessageModel.messageId, size, size),
       );
     case Constants.mLocation:
       return getLocationImage(isReply ? locationChatMessage : chatMessageModel.locationChatMessage, size, size, isSelected: true);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-        child: imageFromBase64String(
-            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage, context, size, size),
+        child: ImageCacheManager.getImage(
+            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage, chatMessageModel.messageId, size, size),
       );
     case Constants.mDocument:
       debugPrint("isNotChatItem--> $isNotChatItem");
@@ -227,7 +228,7 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
                 color: Colors.white,
               ),
               child: Center(
-                child: documentIcon(isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!.mediaFileName, 30),
+                child: MessageUtils.getDocumentTypeIcon(isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!.mediaFileName, 30),
               ));
     case Constants.mAudio:
       return isNotChatItem

@@ -83,7 +83,7 @@ class ContactMessageView extends StatelessWidget {
                 const SizedBox(
                   width: 5,
                 ),
-                getMessageIndicator(
+                MessageUtils.getMessageIndicatorIcon(
                     chatMessage.messageStatus.value,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType,

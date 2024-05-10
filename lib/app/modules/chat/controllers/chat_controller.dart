@@ -40,7 +40,7 @@ import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
-import '../widgets/ImageCacheManager.dart';
+import '../widgets/image_cache_manager.dart';
 import '../widgets/attachment_view.dart';
 
 class ChatController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
@@ -1749,7 +1749,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
-      if (AppUtils.isMediaExists(filePath)) {
+      if (MediaUtils.isMediaExists(filePath)) {
         recordedAudioPath = filePath.checkNull();
       } else {
         debugPrint("File Not Found For Audio");
@@ -2275,7 +2275,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
     //Share Validation
     if (!canBeSharedSet &&
-        (!message.isMediaMessage() || (message.isMediaMessage() && !AppUtils.isMediaExists(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
+        (!message.isMediaMessage() || (message.isMediaMessage() && !MediaUtils.isMediaExists(message.mediaChatMessage!.mediaLocalStoragePath.value)))) {
       canBeShared(false);
       canBeSharedSet = true;
     }
@@ -2430,7 +2430,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var mediaPaths = <XFile>[];
     for (var item in selectedChatList) {
       if (item.isMediaMessage()) {
-        if (AppUtils.isMediaExists(item.mediaChatMessage!.mediaLocalStoragePath.value)) {
+        if (MediaUtils.isMediaExists(item.mediaChatMessage!.mediaLocalStoragePath.value)) {
           mediaPaths.add(XFile(item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()));
           debugPrint("mediaPaths ${item.mediaChatMessage!.mediaLocalStoragePath.value.checkNull()}");
         }

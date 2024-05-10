@@ -80,7 +80,7 @@ class CallInfoController extends GetxController{
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 
@@ -35,7 +36,7 @@ class LocationMessageView extends StatelessWidget {
                 const SizedBox(
                   width: 5,
                 ),
-                getMessageIndicator(
+                MessageUtils.getMessageIndicatorIcon(
                     chatMessage.messageStatus.value,
                     chatMessage.isMessageSentByMe,
                     chatMessage.messageType,

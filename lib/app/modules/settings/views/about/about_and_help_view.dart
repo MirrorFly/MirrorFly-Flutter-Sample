@@ -48,7 +48,7 @@ class AboutAndHelpView extends StatelessWidget {
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap:()=>launchWeb(getTranslated("termsConditionsLink")),
+                    onTap:()=>AppUtils.launchWeb(Uri.parse(getTranslated("termsConditionsLink"))),
                   ),
                   const SizedBox(
                     width: 5,
@@ -63,7 +63,7 @@ class AboutAndHelpView extends StatelessWidget {
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap: ()=>launchWeb(getTranslated("privacyPolicyLink")),
+                    onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("privacyPolicyLink"))),
                   ),
                 ],
               )

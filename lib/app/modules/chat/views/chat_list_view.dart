@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -42,7 +43,7 @@ class _ChatListViewState extends State<ChatListView> {
         child: Obx(() {
           return ScrollablePositionedList.separated(
             separatorBuilder: (context, index) {
-              var string = groupedDateMessage(index, widget.chatList); //Date Labels
+              var string = AppUtils.groupedDateMessage(index, widget.chatList); //Date Labels
               return string != null ? NotificationMessageView(chatMessage: string) : const Offstage();
             },
             itemScrollController: widget.chatController.newScrollController,

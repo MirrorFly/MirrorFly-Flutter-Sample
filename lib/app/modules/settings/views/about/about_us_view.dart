@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
 
 class AboutUsView extends StatelessWidget {
   const AboutUsView({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class AboutUsView extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,color: Color(
                   0xffa2a1a1)))),
-            ),onTap: ()=>launchWeb(getTranslated("aboutUsLink")),)
+            ),onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("aboutUsLink"))),)
           ],
         ),
       ),

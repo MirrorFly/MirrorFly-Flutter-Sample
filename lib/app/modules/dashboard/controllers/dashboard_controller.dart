@@ -56,23 +56,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   RxBool isRecentHistoryLoading = false.obs;
   int recentChatPage = 1;
 
-/*@override
-  void onInit() {
-    super.onInit();
-    recentChats.bindStream(recentChats.stream);
-    ever(recentChats, (callback) => unReadCount());
-    archivedChats.bindStream(archivedChats.stream);
-    ever(archivedChats, (callback) => archivedChatCount());
-    getRecentChatList();
-    getArchivedChatsList();
-    checkArchiveSetting();
-    userlistScrollController.addListener(_scrollListener);
-  }*/
-  /*@override
-  void onInit(){
-    super.onInit();
-    historyScrollController.addListener(historyScrollListener);
-  }*/
 
   TabController? tabController;
 
@@ -961,7 +944,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
           onPressed: () {
             Get.back();
           },
-          child: Text(getTranslated("no"),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             Get.back();
@@ -976,7 +959,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: Text(getTranslated("yes"),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 
@@ -2004,7 +1987,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }
@@ -2029,7 +2012,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ],
         barrierDismissible: true);
   }

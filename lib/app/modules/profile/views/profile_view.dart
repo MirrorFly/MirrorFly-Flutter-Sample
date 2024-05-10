@@ -14,9 +14,15 @@ import '../../../routes/route_settings.dart';
 import '../../../common/widgets.dart';
 import '../controllers/profile_controller.dart';
 
-class ProfileView extends GetView<ProfileController> {
+class ProfileView extends StatefulWidget {
   const ProfileView({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  final ProfileController controller = ProfileController().get();
   @override
   Widget build(BuildContext context) {
     return FocusDetector(

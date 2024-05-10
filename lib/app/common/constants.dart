@@ -5,11 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../data/utils.dart';
 import '../model/chat_message_model.dart';
-import 'app_localizations.dart';
 
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
@@ -857,35 +854,7 @@ class Constants {
   static const String profileImageUpdateFailed = "Error while updating profile image";*/
 }
 
-Future<void> launchWeb(String url) async {
-  if (await AppUtils.isNetConnected()) {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(
-        Uri.parse(url),
-        mode: LaunchMode.externalApplication,
-      );
-    } else {
-      throw "Could not launch $url";
-    }
-  } else {
-    toToast(getTranslated("noInternetConnection"));
-  }
-}
 
-Future<void> launchInWebViewOrVC(String url, String title) async {
-  if (await AppUtils.isNetConnected()) {
-    if (!await launchUrl(
-      Uri.parse(url),
-      mode: LaunchMode.inAppWebView,
-      webViewConfiguration: WebViewConfiguration(
-          headers: <String, String>{'my_header_key': title}),
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  } else {
-    toToast(getTranslated("noInternetConnection"));
-  }
-}
 
 Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage]) {
   // debugPrint("messagetype $messageType");

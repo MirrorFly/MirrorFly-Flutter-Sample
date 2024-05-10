@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -22,7 +23,7 @@ class CallInfoView extends GetView<CallInfoController> {
         centerTitle: true,
         title: Text(
           getTranslated("callInfo"),
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -106,7 +107,7 @@ class CallInfoView extends GetView<CallInfoController> {
                               }),
                       subtitle: SizedBox(
                         child: callLogTime(
-                            "${getCallLogDateFromTimestamp(controller.callLogData.callTime!, "dd-MMM")}  ${getChatTime(context, controller.callLogData.callTime)}",
+                            "${DateTimeUtils.getCallLogDate(controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
                             controller.callLogData.callState),
                       ),
                       trailing: SizedBox(

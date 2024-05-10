@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import '../data/utils.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -43,7 +43,7 @@ class ProfileTextImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return radius == 0
         ? Container(
-            decoration: BoxDecoration(color: bgColor ?? Color(Helper.getColourCode(text))),
+            decoration: BoxDecoration(color: bgColor ?? Color(MessageUtils.getColourCode(text))),
             child: Center(
               child: Text(
                 getString(text),
@@ -53,7 +53,7 @@ class ProfileTextImage extends StatelessWidget {
           )
         : CircleAvatar(
             radius: radius,
-            backgroundColor: bgColor ?? Color(Helper.getColourCode(text)),
+            backgroundColor: bgColor ?? Color(MessageUtils.getColourCode(text)),
             child: Center(
                 child: Text(
               getString(text),

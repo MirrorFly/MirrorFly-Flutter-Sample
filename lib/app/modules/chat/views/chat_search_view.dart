@@ -7,6 +7,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
 
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../chat_widgets.dart';
 import '../controllers/chat_controller.dart';
@@ -78,9 +79,9 @@ class ChatSearchView extends StatelessWidget {
       itemBuilder: (context, index) {
         return Column(
           children: [
-            groupedDateMessage(index, chatList) != null
+            AppUtils.groupedDateMessage(index, chatList) != null
                 ? NotificationMessageView(
-                    chatMessage: groupedDateMessage(index, chatList))
+                    chatMessage: AppUtils.groupedDateMessage(index, chatList))
                 : const SizedBox.shrink(),
             (chatList[index].messageType.toUpperCase() !=
                     Constants.mNotification)

@@ -14,16 +14,20 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
-import '../../chat/chat_widgets.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
-class DashboardView extends GetView<DashboardController> {
+class DashboardView extends StatefulWidget {
   const DashboardView({Key? key}) : super(key: key);
 
-  //final themeController = Get.put(DashboardController());
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
 
+class _DashboardViewState extends State<DashboardView> {
+  final DashboardController controller = DashboardController().get();
   @override
   Widget build(BuildContext context) {
     // Mirrorfly.setEventListener(this);
@@ -359,7 +363,6 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   // Create fab for provided index
-  // You can skip creating fab for any indexes you want
   Widget createFab(final int index) {
     if (index == 0) {
       return FloatingActionButton(
@@ -771,7 +774,7 @@ class DashboardView extends GetView<DashboardController> {
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
-                                          child: getMessageIndicator(item.messageStatus.value.checkNull(), item.isMessageSentByMe.checkNull(),
+                                          child: MessageUtils.getMessageIndicatorIcon(item.messageStatus.value.checkNull(), item.isMessageSentByMe.checkNull(),
                                               item.messageType.checkNull(), item.isMessageRecalled.value),
                                         ),
                                         item.isMessageRecalled.value
@@ -955,7 +958,7 @@ class DashboardView extends GetView<DashboardController> {
                         }),
                     subtitle: SizedBox(
                       child: callLogTime(
-                          "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                          "${DateTimeUtils.getCallLogDate(item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
                     ),
                     trailing: SizedBox(
                       child: Row(
@@ -1058,7 +1061,7 @@ class DashboardView extends GetView<DashboardController> {
                             }),
                     subtitle: SizedBox(
                       child: callLogTime(
-                          "${getCallLogDateFromTimestamp(item.callTime!, "dd-MMM")}  ${getChatTime(context, item.callTime)}", item.callState),
+                          "${DateTimeUtils.getCallLogDate(item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
                     ),
                     trailing: SizedBox(
                       child: Row(
@@ -1164,14 +1167,4 @@ class DashboardView extends GetView<DashboardController> {
               colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
             ));
   }
-
-  // @override
-  // void onMessageReceivedEvent(String message) {
-  //   debugPrint("onMessageReceivedEvent $message");
-  // }
-  //
-  // @override
-  // void onMessageStatusUpdatedEvent(status) {
-  //
-  // }
 }

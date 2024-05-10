@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
@@ -207,13 +206,13 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
                           var item = list[header]![listIndex].chatMessage;
                           return doc
                               ? docTile(
-                                  assetName: getDocAsset(
+                                  assetName: MessageUtils.getDocAsset(
                                       item.mediaChatMessage!.mediaFileName),
                                   title: item.mediaChatMessage!.mediaFileName,
                                   subtitle: MediaUtils.fileSize(item
                                       .mediaChatMessage!.mediaFileSize),
                                   //item.mediaChatMessage!.mediaFileSize.readableFileSize(base1024: false),
-                                  date: getDateFromTimestamp(
+                                  date: DateTimeUtils.convertTimeStampToDateString(
                                       item.messageSentTime.toInt(), "d/MM/yy"),
                                   path: item.mediaChatMessage!
                                       .mediaLocalStoragePath.value)
@@ -305,7 +304,7 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
             children: [
               InkWell(
                 onTap: () {
-                  launchWeb(item.linkMap!["url"]);
+                  AppUtils.launchWeb(Uri.parse(item.linkMap!["url"]));
                 },
                 child: Container(
                   decoration: const BoxDecoration(

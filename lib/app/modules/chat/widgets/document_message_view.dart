@@ -17,7 +17,7 @@ class DocumentMessageView extends StatelessWidget {
   final String search;
 
   onDocumentClick() {
-    openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
+    AppUtils.openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
   }
 
   @override
@@ -56,7 +56,7 @@ class DocumentMessageView extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  documentIcon(
+                  MessageUtils.getDocumentTypeIcon(
                       chatMessage.mediaChatMessage!.mediaFileName, 30),
                   const SizedBox(
                     width: 12,
@@ -120,7 +120,7 @@ class DocumentMessageView extends StatelessWidget {
                   const SizedBox(
                     width: 5,
                   ),
-                  getMessageIndicator(
+                  MessageUtils.getMessageIndicatorIcon(
                       chatMessage.messageStatus.value,
                       chatMessage.isMessageSentByMe,
                       chatMessage.messageType,

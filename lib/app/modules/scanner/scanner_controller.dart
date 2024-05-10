@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -142,13 +141,13 @@ class ScannerController extends GetxController {
           onPressed: () {
             Get.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
             Get.back();
             logoutWebUser();
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 
@@ -148,7 +149,7 @@ class _LoginViewState extends State<LoginView> {
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),
-                        onTap:()=>launchWeb(getTranslated("termsConditionsLink")),
+                        onTap:()=>AppUtils.launchWeb(Uri.parse(getTranslated("termsConditionsLink"))),
                       ),
                       const SizedBox(
                         width: 5,
@@ -160,7 +161,7 @@ class _LoginViewState extends State<LoginView> {
                               decoration: TextDecoration.underline,
                               color: buttonBgColor),
                         ),
-                        onTap: ()=>launchWeb(getTranslated("privacyPolicyLink")),
+                        onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("privacyPolicyLink"))),
                       ),
                     ],
                   )

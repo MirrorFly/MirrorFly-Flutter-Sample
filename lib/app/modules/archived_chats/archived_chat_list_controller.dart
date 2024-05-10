@@ -321,7 +321,7 @@ class ArchivedChatListController extends GetxController {
               onPressed: () {
                 Get.back();
               },
-              child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
@@ -331,7 +331,7 @@ class ArchivedChatListController extends GetxController {
                   itemsDelete();
                 }
               },
-              child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
         ],
         message: '');
   }

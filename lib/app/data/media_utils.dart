@@ -7,8 +7,16 @@ class MediaUtils {
   static const maxImageFileSize = 2 * 1024;//10;
   static const maxDocFileSize = 2 * 1024;//20;
 
-  static bool isFileExist(String mediaLocalStoragePath) {
-    return mediaLocalStoragePath.isNotEmpty && File(mediaLocalStoragePath).existsSync();
+  static bool isMediaFileNotAvailable(bool isMediaFileAvailable, ChatMessageModel message) {
+    return !isMediaFileAvailable && message.isMediaMessage();
+  }
+
+  static bool isMediaExists(String? filePath) {
+    if(filePath == null || filePath.isEmpty) {
+      return false;
+    }
+    File file = File(filePath);
+    return file.existsSync();
   }
 
   /// Converts a file size in bytes to a human-readable format with appropriate units.
@@ -59,6 +67,82 @@ class MediaUtils {
       // File size exceeds the acceptable limit for the specified media type
       return false;
     }
+  }
+
+  static bool isMediaFileAvailable(MessageType msgType, ChatMessageModel message) {
+    bool mediaExist = false;
+    if (msgType == MessageType.audio ||
+        msgType == MessageType.video ||
+        msgType == MessageType.image ||
+        msgType == MessageType.document) {
+      final downloadedMediaValue = message.mediaChatMessage?.mediaDownloadStatus.value ?? "";
+      final uploadedMediaValue = message.mediaChatMessage?.mediaUploadStatus.value ?? "";
+      if (MediaDownloadStatus.mediaDownloaded.value.toString() == downloadedMediaValue ||
+          MediaUploadStatus.mediaUploaded.value.toString() == uploadedMediaValue) {
+        mediaExist = true;
+      }
+    }
+    return mediaExist;
+  }
+
+  /// Get Width and Height from file
+  ///
+  /// @param filePath of the media
+  static Future<Tuple2<int, int>> getImageDimensions(String filePath) async {
+    try {
+      // Open the file
+      File file = File(filePath);
+      if (!file.existsSync()) {
+        return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+      }
+
+      // Read metadata
+      final bytes = await file.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+
+      // Get dimensions
+      final int width = image.width;
+      final int height = image.height;
+      debugPrint('Image dimensions: $width x $height');
+      return Tuple2(width,height);
+    } catch (e) {
+      debugPrint('Error: $e');
+      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+    }
+  }
+
+  /// Get Width and Height for Mobile
+  ///
+  /// @param originalWidth original width of media
+  /// @param originalHeight original height of media
+  static Tuple2<int, int> getMobileWidthAndHeight(int? originalWidth, int? originalHeight) {
+    if (originalWidth == null || originalHeight == null) {
+      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+    }
+
+    var newWidth = originalWidth;
+    var newHeight = originalHeight;
+
+    // First check if we need to scale width
+    if (originalWidth > Constants.mobileImageMaxWidth) {
+      //scale width to fit
+      newWidth = Constants.mobileImageMaxWidth;
+      //scale height to maintain aspect ratio
+      newHeight = (newWidth * originalHeight / originalWidth).round();
+    }
+
+    // then check if we need to scale even with the new height
+    if (newHeight > Constants.mobileImageMaxHeight) {
+      //scale height to fit instead
+      newHeight = Constants.mobileImageMaxHeight;
+      //scale width to maintain aspect ratio
+      newWidth = (newHeight * originalWidth / originalHeight).round();
+    }
+
+    return Tuple2(
+      newWidth > Constants.mobileImageMinWidth ? newWidth : Constants.mobileImageMinWidth,
+      newHeight > Constants.mobileImageMinHeight ? newHeight : Constants.mobileImageMinHeight,
+    );
   }
 
 }

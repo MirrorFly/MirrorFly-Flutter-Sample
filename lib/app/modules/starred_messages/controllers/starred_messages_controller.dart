@@ -505,7 +505,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   validateForShareMessage(){
     for (var value in selectedChatList) {
       if(value.isMediaMessage()) {
-        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && MediaUtils.isFileExist(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+        if ((value.isMediaDownloaded() || value.isMediaUploaded()) && MediaUtils.isMediaExists(value.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
           canBeShare(true);
         } else {
           canBeShare(false);

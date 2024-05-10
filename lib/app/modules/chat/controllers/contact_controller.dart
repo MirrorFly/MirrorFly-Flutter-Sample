@@ -465,7 +465,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
@@ -484,7 +484,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               }
             });
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
     ]);
   }
 

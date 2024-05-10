@@ -10,8 +10,8 @@ import '../../common/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 import '../../model/chat_message_model.dart';
-import '../chat/chat_widgets.dart';
 
 Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(
@@ -184,7 +184,7 @@ class RecentChatItem extends StatelessWidget {
     debugPrint("buildMessageIndicator ${item.nickName}");
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: getMessageIndicator(item.lastMessageStatus.checkNull(), item.isLastMessageSentByMe.checkNull(), item.lastMessageType.checkNull(),
+      child: MessageUtils.getMessageIndicatorIcon(item.lastMessageStatus.checkNull(), item.isLastMessageSentByMe.checkNull(), item.lastMessageType.checkNull(),
           item.isLastMessageRecalledByUser.checkNull()),
     );
   }

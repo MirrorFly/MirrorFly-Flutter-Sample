@@ -7,7 +7,6 @@ import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel;
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
-import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
 import '../../../model/chat_message_model.dart';
 
@@ -21,7 +20,7 @@ class MediaMessageOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    debugPrint("getImageOverlay media exists ${AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
+    debugPrint("getImageOverlay media exists ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
 
     debugPrint("isMediaDownloading ${chatMessage.isMediaDownloading()}");
     debugPrint("isMediaUploading ${chatMessage.isMediaUploading()}");
@@ -29,7 +28,7 @@ class MediaMessageOverlay extends StatelessWidget {
     debugPrint("#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
     debugPrint("#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
 
-    if (AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
+    if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
       if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
         return FloatingActionButton.small(
           heroTag: chatMessage.messageId,
@@ -68,7 +67,7 @@ class MediaMessageOverlay extends StatelessWidget {
               .mediaLocalStoragePath.value
               .checkNull()
               .isNotEmpty) {
-            if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+            if (!MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
               if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploaded) {
                 status = MediaDownloadStatus.isMediaNotDownloaded; // for uploaded and deleted in local
               } else {
@@ -92,7 +91,7 @@ class MediaMessageOverlay extends StatelessWidget {
         case MediaDownloadStatus.isMediaDownloaded:
         case MediaUploadStatus.isMediaUploaded:
         case MediaDownloadStatus.isStorageNotEnough:
-          if (!AppUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+          if (!MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
             return InkWell(
               child: downloadView(
                   chatMessage.mediaChatMessage!.mediaFileSize,

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:video_player/video_player.dart';
 
@@ -124,7 +124,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     final duration = _controller.value.duration;
 
     String formatDuration(Duration d) {
-      return Helper.durationToString(d);
+      return DateTimeUtils.durationToString(d);
     }
 
     return Column(

@@ -1,19 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/main.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/app_localizations.dart';
@@ -22,94 +18,6 @@ import '../model/chat_message_model.dart';
 import '../routes/route_settings.dart';
 import 'utils.dart';
 
-
-
-class Helper {
-  static String durationToString(Duration duration) {
-    debugPrint("duration conversion $duration");
-    String hours = (duration.inHours == 00) ? "" : "${duration.inHours
-        .toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
-    int minutes = duration.inMinutes % 60; // Get minutes
-    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(
-        2, '0');
-    return '$hours${minutes.toStringAsFixed(0).padLeft(2, '0')}:$seconds';
-  }
-
-  static String getMapImageUri(double latitude, double longitude) {
-    var googleMapKey = Get
-        .find<MainController>()
-        .googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
-    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
-  }
-
-  static int getColourCode(String name) {
-    if (name == getTranslated("you")) return 0Xff000000;
-    var colorsArray = Constants.defaultColorList;
-    var hashcode = name.hashCode;
-    var rand = hashcode % colorsArray.length;
-    return colorsArray[(rand).abs()];
-  }
-
-  static Widget forMessageTypeIcon(String? messageType, [bool isAudioRecorded = false]) {
-    LogMessage.d("iconfor", messageType.toString());
-    switch (messageType?.toUpperCase()) {
-      case Constants.mImage:
-        return SvgPicture.asset(
-          mImageIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mAudio:
-        return SvgPicture.asset(
-          isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mVideo:
-        return SvgPicture.asset(
-          mVideoIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mDocument:
-        return SvgPicture.asset(
-          mDocumentIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mFile:
-        return SvgPicture.asset(
-          mDocumentIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mContact:
-        return SvgPicture.asset(
-          mContactIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      case Constants.mLocation:
-        return SvgPicture.asset(
-          mLocationIcon,
-          fit: BoxFit.contain,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  static String capitalize(String str) {
-    return "${str[0].toUpperCase()}${str.substring(1).toLowerCase()}";
-  }
-}
-
-
-String getDateFromTimestamp(int convertedTime, String format) {
-  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  return DateFormat(format).format(calendar);
-}
 
 Future<ProfileDetails> getProfileDetails(String jid) async {
   var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
@@ -223,34 +131,7 @@ String getChatTime(BuildContext context, int? epochTime) {
 
 
 
-openDocument(String mediaLocalStoragePath) async {
-  // if (await askStoragePermission()) {
-  if (AppUtils.isMediaExists(mediaLocalStoragePath)) {
-    final result = await OpenFile.open(mediaLocalStoragePath);
-    debugPrint(result.message);
-    if (result.message.contains("file does not exist")) {
-      toToast(getTranslated("unableToOpen"));
-    } else if (result.message.contains('No APP found to open this file')) {
-      toToast(getTranslated("youMayNotProperApp"));
-    }
 
-    /*Mirrorfly.openFile(mediaLocalStoragePath).catchError((onError) {
-      final scaffold = ScaffoldMessenger.of(context);
-      scaffold.showSnackBar(
-        SnackBar(
-          content: const Text(
-              'No supported application available to open this file format'),
-          action: SnackBarAction(
-              label: 'Ok', onPressed: scaffold.hideCurrentSnackBar),
-        ),
-      );
-    });*/
-  } else {
-    toToast(getTranslated("mediaDoesNotExist"));
-    debugPrint("media does not exist");
-  }
-  // }
-}
 
 Future<void> launchInBrowser(String url) async {
   if (await AppUtils.isNetConnected()) {
@@ -294,9 +175,7 @@ launchCaller(String phoneNumber) async {
   // } else {
   //   throw 'Could not launch $url';
   // }
-  canLaunchUrl(Uri(scheme: 'tel', path: phoneNumber)).then((bool result) {
-    debugPrint("success");
-  });
+  AppUtils.launchWeb(Uri(scheme: 'tel', path: phoneNumber));
 }
 
 Future<void> launchEmail(String emailID) async {
@@ -676,64 +555,6 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
   } else {
     toToast(getTranslated("noInternetConnection"));
   }
-}
-
-String getDocAsset(String filename) {
-  if (filename.isEmpty || !filename.contains(".")) {
-    return "";
-  }
-  debugPrint("helper document--> ${filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)}");
-  switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
-    case "csv":
-      return csvImage;
-    case "pdf":
-      return pdfImage;
-    case "doc":
-      return docImage;
-    case "docx":
-      return docxImage;
-    case "txt":
-      return txtImage;
-    case "xls":
-      return xlsImage;
-    case "xlsx":
-      return xlsxImage;
-    case "ppt":
-      return pptImage;
-    case "pptx":
-      return pptxImage;
-    case "zip":
-      return zipImage;
-    case "rar":
-      return rarImage;
-    case "apk":
-      return apkImage;
-    default:
-      return "";
-  }
-}
-
-String getCallLogDateFromTimestamp(int convertedTime, String format) {
-  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  if (isToday(convertedTime)) {
-    return getTranslated("today");
-  } else if (isYesterday(convertedTime)) {
-    return getTranslated("yesterday");
-  } else {
-    return DateFormat(format).format(calendar);
-  }
-}
-
-bool isToday(int convertedTime) {
-  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  final now = DateTime.now();
-  return now.day == calendar.day && now.month == calendar.month && now.year == calendar.year;
-}
-
-bool isYesterday(int convertedTime) {
-  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  final yesterday = DateTime.now().subtract(const Duration(days: 1));
-  return yesterday.day == calendar.day && yesterday.month == calendar.month && yesterday.year == calendar.year;
 }
 
 String getCallLogDuration(int startTime, int endTime) {
