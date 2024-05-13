@@ -107,7 +107,7 @@ class CallInfoView extends GetView<CallInfoController> {
                               }),
                       subtitle: SizedBox(
                         child: callLogTime(
-                            "${DateTimeUtils.getCallLogDate(controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
+                            "${DateTimeUtils.getCallLogDate(microSeconds: controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
                             controller.callLogData.callState),
                       ),
                       trailing: SizedBox(

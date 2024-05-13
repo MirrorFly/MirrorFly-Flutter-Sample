@@ -40,14 +40,17 @@ class DateTimeUtils {
     return month;
   }
 
-  /// Generates a header message indicating the date of a message based on its sending time.
+  /// Generates a header message indicating the date of a message based on its sending time,
+  /// allowing customization of the date format.
   ///
   /// @param messageSentTime The timestamp of the message sending time.
-  /// @return A string representing the date of the message, or a translated string indicating
-  ///         'Today', 'Yesterday', or an DateString(MMMM dd, yyyy) string if the message date is not relevant.
-  static String getDateHeaderMessage(int messageSentTime) {
+  /// @param format Optional parameter that specifies the format of the date string.
+  ///               Defaults to "MMMM dd, yyyy".
+  /// @return A string representing the date of the message formatted according to the given
+  ///         format or the default format if no format is specified.
+  static String getDateHeaderMessage({required int messageSentTime, String format = "MMMM dd, yyyy"}) {
     // Convert message sending time to date string
-    return getDateString(messageSentTime, "MMMM dd, yyyy");
+    return getDateString(messageSentTime, format);
   }
 
   /// Generates a Date String indicating the date of a call based on its call log time.
@@ -55,8 +58,8 @@ class DateTimeUtils {
   /// @param microSeconds The timestamp of the call log time.
   /// @return A string representing the date of the call, or a translated string indicating
   ///         'Today', 'Yesterday', or an DateString(dd-MMM) string if the call log date is not relevant.
-  static String getCallLogDate(int microSeconds) {
-    return getDateString(microSeconds, "dd-MMM");
+  static String getCallLogDate({required int microSeconds, String format = "dd-MMM"}) {
+    return getDateString(microSeconds, format);
   }
 
   /// Converts a timestamp in microseconds to a formatted date string according to the specified format.
