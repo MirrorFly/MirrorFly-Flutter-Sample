@@ -3,11 +3,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../controllers/contact_sync_controller.dart';
 
-class ContactSyncPage extends GetView<ContactSyncController> {
+class ContactSyncPage extends StatefulWidget {
   const ContactSyncPage({super.key});
+
+  @override
+  State<ContactSyncPage> createState() => _ContactSyncPageState();
+}
+
+class _ContactSyncPageState extends State<ContactSyncPage> {
+  final ContactSyncController controller = ContactSyncController().get();
 
   @override
   Widget build(BuildContext context) {

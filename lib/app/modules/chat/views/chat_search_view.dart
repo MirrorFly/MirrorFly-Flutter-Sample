@@ -9,7 +9,7 @@ import '../../../common/constants.dart';
 
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
+import '../widgets/chat_widgets.dart';
 import '../controllers/chat_controller.dart';
 import '../widgets/message_content.dart';
 import '../widgets/notification_message_view.dart';

@@ -5,7 +5,7 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
+import 'chat_widgets.dart';
 
 class LocationMessageView extends StatelessWidget {
   const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected})

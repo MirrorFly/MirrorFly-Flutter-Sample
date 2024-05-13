@@ -7,7 +7,7 @@ import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../dashboard/widgets.dart';
-import '../chat_widgets.dart';
+import 'chat_widgets.dart';
 
 class TextMessageView extends StatelessWidget {
   const TextMessageView({

@@ -115,7 +115,8 @@ Route<dynamic> mirrorFlyRoute(RouteSettings settings) {
     case Routes.messageInfo:
       return MaterialPageRoute(builder: (_) => const MessageInfoView());
     case Routes.chatInfo:
-      return MaterialPageRoute(builder: (_) => const ChatInfoView());
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => ChatInfoView(jid: arguments['jid']));
     case Routes.deleteAccount:
       return MaterialPageRoute(builder: (_) => const DeleteAccountView());
     case Routes.deleteAccountReason:

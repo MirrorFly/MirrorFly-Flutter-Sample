@@ -8,7 +8,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
+import 'chat_widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
   const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel, required this.onClick}) : super(key: key);
