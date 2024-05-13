@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 
 class GroupParticipantsView extends GetView<GroupParticipantsController> {
   const GroupParticipantsView({Key? key}) : super(key: key);

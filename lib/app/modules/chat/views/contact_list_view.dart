@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../widgets/custom_action_bar_icons.dart';
-import '../../dashboard/widgets.dart';
+import '../../dashboard/dashboard_widgets/contact_item.dart';
 
 class ContactListView extends StatefulWidget {
   const ContactListView(

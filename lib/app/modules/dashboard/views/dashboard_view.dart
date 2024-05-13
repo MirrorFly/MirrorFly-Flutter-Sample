@@ -958,7 +958,7 @@ class _DashboardViewState extends State<DashboardView> {
                         }),
                     subtitle: SizedBox(
                       child: callLogTime(
-                          "${DateTimeUtils.getCallLogDate(item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
+                          "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
                     ),
                     trailing: SizedBox(
                       child: Row(
@@ -1061,7 +1061,7 @@ class _DashboardViewState extends State<DashboardView> {
                             }),
                     subtitle: SizedBox(
                       child: callLogTime(
-                          "${DateTimeUtils.getCallLogDate(item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
+                          "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
                     ),
                     trailing: SizedBox(
                       child: Row(

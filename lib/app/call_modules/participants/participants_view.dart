@@ -10,7 +10,7 @@ import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_c
 import '../../common/app_theme.dart';
 import '../../common/constants.dart';
 import '../../data/helper.dart';
-import '../../modules/dashboard/widgets.dart';
+import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
 

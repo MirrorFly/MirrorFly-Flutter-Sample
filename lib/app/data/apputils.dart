@@ -125,12 +125,12 @@ class AppUtils{
       return null;
     }
     if (index == chatList.length - 1) {
-      return DateTimeUtils.getDateHeaderMessage(chatList.last.messageSentTime);
+      return DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList.last.messageSentTime);
     } else {
       return (isDateChanged(index, chatList) &&
-          (DateTimeUtils.getDateHeaderMessage(chatList[index + 1].messageSentTime) !=
-              DateTimeUtils.getDateHeaderMessage(chatList[index].messageSentTime)))
-          ? DateTimeUtils.getDateHeaderMessage(chatList[index].messageSentTime)
+          (DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index + 1].messageSentTime) !=
+              DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)))
+          ? DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)
           : null;
     }
   }
