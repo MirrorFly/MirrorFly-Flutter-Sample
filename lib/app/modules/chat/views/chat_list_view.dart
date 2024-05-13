@@ -10,7 +10,7 @@ import 'package:swipe_to/swipe_to.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
+import '../widgets/chat_widgets.dart';
 import '../widgets/message_content.dart';
 import '../widgets/notification_message_view.dart';
 import '../widgets/reply_message_widgets.dart';

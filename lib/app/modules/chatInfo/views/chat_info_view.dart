@@ -11,13 +11,35 @@ import '../../../common/widgets.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/chat_info_controller.dart';
 
-class ChatInfoView extends GetView<ChatInfoController> {
-  const ChatInfoView({Key? key}) : super(key: key);
+class ChatInfoView extends StatefulWidget {
+  const ChatInfoView({super.key, required this.jid, this.enableAppBar = true});
+  final String jid;
+  final bool enableAppBar;
+
+  @override
+  State<ChatInfoView> createState() => _ChatInfoViewState();
+}
+
+class _ChatInfoViewState extends State<ChatInfoView> {
+  final ChatInfoController controller = ChatInfoController().get();
+
+  @override
+  void initState() {
+    controller.init(widget.jid);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<ChatInfoController>();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
+      body: widget.enableAppBar
+          ? NestedScrollView(
         controller: controller.scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           controller.silverBarHeight =
@@ -139,156 +161,159 @@ class ChatInfoView extends GetView<ChatInfoController> {
             }),
           ];
         },
-        body: ListView(
-          children: [
-            Obx(() {
-              return controller.isSliverAppBarExpanded
-                  ? const SizedBox.shrink()
-                  : const SizedBox(height: 60);
-            }),
-            Obx(() {
-              return listItem(
-                title: Text(getTranslated("muteNotification"),
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                trailing: FlutterSwitch(
-                    width: 40.0,
-                    height: 20.0,
-                    valueFontSize: 12.0,
-                    toggleSize: 12.0,
-                    activeColor: Colors.white,
-                    activeToggleColor: Colors.blue,
-                    inactiveToggleColor: Colors.grey,
-                    inactiveColor: Colors.white,
-                    switchBorder: Border.all(
-                        color: controller.mute.value ? Colors.blue : Colors
-                            .grey,
-                        width: 1),
-                    value: controller.mute.value,
-                    onToggle: (value) =>
-                    {
-                      controller.onToggleChange(value)
-                    }
-                ), onTap: () {
-                controller.onToggleChange(!controller.mute.value);
-              },
-              );
-            }),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("email"), style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, bottom: 16),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(emailIcon),
-                      const SizedBox(width: 10,),
-                      Obx(() {
-                        return Text(controller.profile.email.checkNull(),
-                            style: const TextStyle(
-                                fontSize: 13,
-                                color: textColor,
-                                fontWeight: FontWeight.w500));
-                      }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("mobileNumber"), style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, bottom: 16),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(phoneIcon),
-                      const SizedBox(width: 10,),
-                      Obx(() {
-                        return Text(controller.profile.mobileNumber.checkNull(),
-                            style: const TextStyle(
-                                fontSize: 13,
-                                color: textColor,
-                                fontWeight: FontWeight.w500));
-                      }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(getTranslated("status"), style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, bottom: 16),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(statusIcon),
-                      const SizedBox(width: 10,),
-                      Obx(() {
-                        return Text(controller.profile.status.checkNull(),
-                            style: const TextStyle(
-                                fontSize: 13,
-                                color: textColor,
-                                fontWeight: FontWeight.w500));
-                      }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            listItem(
-                leading: SvgPicture.asset(imageOutline),
-                title: Text(getTranslated("viewAllMedia"),
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () =>
-                {
-                  controller.gotoViewAllMedia()
-                } //controller.gotoViewAllMedia(),
-            ),
-            listItem(
-                leading: SvgPicture.asset(reportUser),
-                title: Text(getTranslated("report"),
-                    style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                onTap: () =>
-                {
-                  controller.reportChatOrUser()
-                }
-            ),
-          ],
-        ),
-      ),
+        body: infoContent(),
+      ) : SafeArea(child: infoContent()),
     );
   }
 
+  Widget infoContent(){
+    return ListView(
+      children: [
+        Obx(() {
+          return controller.isSliverAppBarExpanded
+              ? const SizedBox.shrink()
+              : const SizedBox(height: 60);
+        }),
+        Obx(() {
+          return listItem(
+            title: Text(getTranslated("muteNotification"),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500)),
+            trailing: FlutterSwitch(
+                width: 40.0,
+                height: 20.0,
+                valueFontSize: 12.0,
+                toggleSize: 12.0,
+                activeColor: Colors.white,
+                activeToggleColor: Colors.blue,
+                inactiveToggleColor: Colors.grey,
+                inactiveColor: Colors.white,
+                switchBorder: Border.all(
+                    color: controller.mute.value ? Colors.blue : Colors
+                        .grey,
+                    width: 1),
+                value: controller.mute.value,
+                onToggle: (value) =>
+                {
+                  controller.onToggleChange(value)
+                }
+            ), onTap: () {
+            controller.onToggleChange(!controller.mute.value);
+          },
+          );
+        }),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(getTranslated("email"), style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, bottom: 16),
+              child: Row(
+                children: [
+                  SvgPicture.asset(emailIcon),
+                  const SizedBox(width: 10,),
+                  Obx(() {
+                    return Text(controller.profile.email.checkNull(),
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: textColor,
+                            fontWeight: FontWeight.w500));
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(getTranslated("mobileNumber"), style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, bottom: 16),
+              child: Row(
+                children: [
+                  SvgPicture.asset(phoneIcon),
+                  const SizedBox(width: 10,),
+                  Obx(() {
+                    return Text(controller.profile.mobileNumber.checkNull(),
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: textColor,
+                            fontWeight: FontWeight.w500));
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(getTranslated("status"), style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, bottom: 16),
+              child: Row(
+                children: [
+                  SvgPicture.asset(statusIcon),
+                  const SizedBox(width: 10,),
+                  Obx(() {
+                    return Text(controller.profile.status.checkNull(),
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: textColor,
+                            fontWeight: FontWeight.w500));
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
+        listItem(
+            leading: SvgPicture.asset(imageOutline),
+            title: Text(getTranslated("viewAllMedia"),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500)),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+            onTap: () =>
+            {
+              controller.gotoViewAllMedia()
+            } //controller.gotoViewAllMedia(),
+        ),
+        listItem(
+            leading: SvgPicture.asset(reportUser),
+            title: Text(getTranslated("report"),
+                style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500)),
+            onTap: () =>
+            {
+              controller.reportChatOrUser()
+            }
+        ),
+      ],
+    );
+  }
 }

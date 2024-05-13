@@ -15,7 +15,7 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 import '../../dashboard/widgets.dart';
-import '../chat_widgets.dart';
+import 'chat_widgets.dart';
 
 class ContactMessageView extends StatelessWidget {
   const ContactMessageView({Key? key,

@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
-import '../../common/app_localizations.dart';
-import '../../common/constants.dart';
-import '../../model/chat_message_model.dart';
-import '../dashboard/widgets.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../model/chat_message_model.dart';
+import '../../dashboard/widgets.dart';
 
 Widget messageNotAvailableWidget(ChatMessageModel chatMessage) {
   return Container(
