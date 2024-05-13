@@ -128,7 +128,7 @@ class LoginController extends GetxController {
       if (value != null) {
         SessionManagement.setUserJID(value);
         DialogUtils.hideLoading();
-        Get.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -172,7 +172,7 @@ class LoginController extends GetxController {
                 if (value != null) {
                   LogMessage.d("change number", "initiated");
                 } else {
-                  Get.back();
+                  NavUtils.back();
                 }
               });
             }
@@ -363,7 +363,7 @@ class LoginController extends GetxController {
                 hideLoading();
                 if (response.exception?.code == "403") {
                   debugPrint("issue 403 ===> ${response.errorMessage }");
-                  Get.offAllNamed(Routes.adminBlocked);
+                  NavUtils.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
                   debugPrint("issue 405 ===> ${response.errorMessage }");
                   sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
@@ -401,13 +401,13 @@ class LoginController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("deviceConfirmation"), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             gotoLogin();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             registerAccount();
           },
           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -423,13 +423,13 @@ class LoginController extends GetxController {
     DialogUtils.showAlert(message: message.toString(), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = false;
           },
           child: Text(getTranslated("cancel"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = true;
             registerUser();
           },
@@ -438,6 +438,6 @@ class LoginController extends GetxController {
   }
 
   gotoLogin() {
-    Get.offAllNamed(Routes.login);
+    NavUtils.offAllNamed(Routes.login);
   }
 }
