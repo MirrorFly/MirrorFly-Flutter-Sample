@@ -300,6 +300,11 @@ abstract class BaseController {
           }
           break;
 
+        case CallStatus.callFailed:
+          // Helper.showAlert(message: callStatus);
+        toToast(callStatus);
+        break;
+
         default:
           debugPrint("onCall status updated error: $callStatus");
       }
