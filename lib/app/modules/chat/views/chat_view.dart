@@ -10,6 +10,8 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -20,60 +22,20 @@ import '../controllers/chat_controller.dart';
 import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
-class ChatView extends StatefulWidget {
-  const ChatView(
-      {super.key,
-        required this.jid,
-        this.isUser = false,
-        this.messageId,
-        this.isFromStarred = false,
-        this.enableAppBar = true,
-        this.enableCalls = false,
-        this.showChatDeliveryIndicator = true});
-  final String jid;
-  final bool isUser;
-  final bool isFromStarred;
-  final String? messageId;
-  final bool enableAppBar;
-  final bool enableCalls;
-  final bool showChatDeliveryIndicator;
+class ChatView extends StatelessWidget {
+  const ChatView({super.key});
 
-  @override
-  State<ChatView> createState() => _ChatViewState();
-}
-
-class _ChatViewState extends State<ChatView> {
-  final ChatController controller = ChatController().get();
-
-  @override
-  void initState() {
-    controller.init(context,
-        jid: widget.jid,
-        isUser: widget.isUser,
-        isFromStarred: widget.isFromStarred,
-        messageId: widget.messageId,
-        showChatDeliveryIndicator: widget.showChatDeliveryIndicator);
-    controller.profile.isGroupProfile.checkNull()
-        ? debugPrint("this is group profile")
-        : debugPrint("this is single page");
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    Get.delete<ChatController>();
-    super.dispose();
-  }
+  ChatController get controller => ChatController().get();
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("chatview build", "${Get.height}");
+    var arguments = NavUtils.arguments as ChatViewArguments;
     return Scaffold(
-        appBar: widget.enableAppBar ? getAppBar(context) : null,
+        appBar: arguments.enableAppBar ? getAppBar(context) : null,
         body: SafeArea(
           child: Container(
-            width: Get.width,
-            height: Get.height,
+            width: NavUtils.width,
+            height: NavUtils.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/logos/chat_bg.png"),
@@ -94,12 +56,13 @@ class _ChatViewState extends State<ChatView> {
                   controller.focusNode.unfocus();
                 } else if (controller.nJid.isNotEmpty) {
                   // controller.saveUnsentMessage();
-                  Get.offAllNamed(Routes.dashboard);
-                  Navigator.pop(context);
+                  // NavUtils.offAllNamed(Routes.dashboard);
+                  // Navigator.pop(context);
+                  NavUtils.back();
                 } else if (controller.isSelected.value) {
                   controller.clearAllChatSelection();
                 } else {
-                  Navigator.pop(context);
+                  NavUtils.back();
                 }
               },
               child: Stack(
@@ -110,7 +73,7 @@ class _ChatViewState extends State<ChatView> {
                         return Visibility(
                             visible: controller.topic.value.topicName != null,
                             child: Container(
-                                width: Get.width,
+                                width: NavUtils.width,
                                 decoration: const BoxDecoration(
                                   color: Color(0xffff9f00),
                                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
@@ -543,7 +506,7 @@ class _ChatViewState extends State<ChatView> {
       title: Text(controller.selectedChatList.length.toString()),
       actions: [
         CustomActionBarIcons(
-            availableWidth: Get.width / 2, // half the screen width
+            availableWidth: NavUtils.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: actionBarItems(context,isSelected: true)),
       ],
@@ -560,7 +523,7 @@ class _ChatViewState extends State<ChatView> {
             if (controller.showEmoji.value) {
               controller.showEmoji(false);
             } else if (controller.nJid.isNotEmpty) {
-              Get.offAllNamed(Routes.dashboard);
+              NavUtils.offAllNamed(Routes.dashboard);
             } else {
               Navigator.pop(context);
             }
@@ -606,7 +569,7 @@ class _ChatViewState extends State<ChatView> {
           ),
         ),
         title: SizedBox(
-          width: (Get.width) / 1.9,
+          width: (NavUtils.width) / 1.9,
           child: InkWell(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,7 +586,7 @@ class _ChatViewState extends State<ChatView> {
                 Obx(() {
                   return controller.groupParticipantsName.isNotEmpty
                       ? SizedBox(
-                          width: Get.width * 0.90,
+                          width: NavUtils.width * 0.90,
                           height: 15,
                           child: Marquee(text: "${controller.groupParticipantsName}       ", style: const TextStyle(fontSize: 12)))
                       : controller.subtitle.isNotEmpty
@@ -844,7 +807,7 @@ class _ChatViewState extends State<ChatView> {
       }else{
         return [
           CustomActionBarIcons(
-            availableWidth: Get.width / 2, // half the screen width
+            availableWidth: NavUtils.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(

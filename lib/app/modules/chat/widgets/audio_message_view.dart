@@ -144,7 +144,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = Get.width;
+    var screenWidth = NavUtils.width;
     var currentPos =
     0.0; /*double.parse(widget.chatMessage
         .mediaChatMessage!.currentPos

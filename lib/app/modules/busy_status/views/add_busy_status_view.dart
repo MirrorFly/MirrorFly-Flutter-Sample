@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../controllers/busy_status_controller.dart';
 
 class AddBusyStatusView extends StatelessWidget {
@@ -30,7 +31,7 @@ class AddBusyStatusView extends StatelessWidget {
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
-            Get.back();
+            NavUtils.back();
           }
         },
         child: SafeArea(
@@ -107,7 +108,7 @@ class AddBusyStatusView extends StatelessWidget {
                       if (controller.showEmoji.value) {
                         controller.showEmoji(false);
                       }
-                      Get.back();
+                      NavUtils.back();
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: MaterialStateColor.resolveWith(

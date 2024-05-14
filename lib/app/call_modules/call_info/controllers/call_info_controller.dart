@@ -27,28 +27,28 @@ class CallInfoController extends GetxController{
       if (await AppUtils.isNetConnected()) {
         if (callType == CallType.video) {
           if (await AppPermission.askVideoCallPermissions()) {
-            Get.back();
+            NavUtils.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(getTranslated("msgOngoingCallAlert"));
             } else {
               Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
+                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
                 }
               });
             }
           }
         } else {
           if (await AppPermission.askAudioCallPermissions()) {
-            Get.back();
+            NavUtils.back();
             if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
               debugPrint("#Mirrorfly Call You are on another call");
               toToast(getTranslated("msgOngoingCallAlert"));
             } else {
               Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
-                  Get.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
+                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
                 }
               });
             }
@@ -66,12 +66,12 @@ class CallInfoController extends GetxController{
         actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
                   if (response.isSuccess) {
                     Get.back(result: true);

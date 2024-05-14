@@ -159,7 +159,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
             .trim().toString());
       }else{
         toToast(getTranslated("noInternetConnection"));
-        Get.back();
+        NavUtils.back();
       }
     }else{
       toToast(getTranslated("statusCantEmpty"));
@@ -204,7 +204,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
                   fontWeight: FontWeight.normal)),
 
           onTap: () {
-            Get.back();
+            NavUtils.back();
             statusDeleteConfirmation(item);
           },
         ),
@@ -216,13 +216,13 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     DialogUtils.showAlert(message: getTranslated("deleteStatus"), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
+              NavUtils.back();
               DialogUtils.showLoading(message: getTranslated("deletingStatus"));
               Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
@@ -252,7 +252,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     if(result != null){
       Get.back(result: result);
     }else {
-      Get.back();
+      NavUtils.back();
     }
   }
 }

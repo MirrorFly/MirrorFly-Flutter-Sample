@@ -36,7 +36,7 @@ class VideoMessageView extends StatelessWidget {
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                       MediaUploadStatus.isMediaUploaded ||
                   chatMessage.isMessageSentByMe)) {
-            Get.toNamed(Routes.videoPlay, arguments: {
+            NavUtils.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
             });
           } else {
@@ -52,7 +52,7 @@ class VideoMessageView extends StatelessWidget {
   Widget build(BuildContext context) {
     var mediaMessage = chatMessage.mediaChatMessage!;
     return Container(
-      width: Get.width * 0.60,
+      width: NavUtils.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [

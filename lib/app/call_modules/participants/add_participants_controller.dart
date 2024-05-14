@@ -177,13 +177,13 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
+              NavUtils.back();
               DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();
@@ -304,7 +304,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList,flyCallback: (FlyResponse response){
         LogMessage.d("inviteUsersToOngoingCall", response.toString());
         if(response.isSuccess){
-          Get.back();
+          NavUtils.back();
         }else{
           toToast(getErrorDetails(response));
         }

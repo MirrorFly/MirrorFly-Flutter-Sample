@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../dashboard/widgets.dart';
 
 class ForwardChatView extends StatefulWidget{
@@ -42,7 +43,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
+              !controller.isSearchVisible ? controller.backFromSearch() : NavUtils.back();
             },
           ),
           title: !controller.isSearchVisible

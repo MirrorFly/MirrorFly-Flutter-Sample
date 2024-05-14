@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/dashboard_widgets/contact_item.dart';
 
@@ -132,7 +133,7 @@ class _ContactListViewState extends State<ContactListView> {
                   Visibility(
                     visible: controller.isSearchVisible,
                     child: CustomActionBarIcons(
-                      availableWidth: Get.width /
+                      availableWidth: NavUtils.width /
                           2, // half the screen width
                       actionWidth: 48,
                       actions: [
@@ -142,7 +143,7 @@ class _ContactListViewState extends State<ContactListView> {
                           overflowWidget: InkWell(
                             child: Text(getTranslated("refresh")),
                             onTap: () {
-                              Get.back();
+                              NavUtils.back();
                               controller.refreshContacts(true);
                             },
                           ),
@@ -150,7 +151,7 @@ class _ContactListViewState extends State<ContactListView> {
                               .never : ShowAsAction.gone,
                           keyValue: 'Refresh',
                           onItemClick: () {
-                            // Get.back();
+                            // NavUtils.back();
                             controller.refreshContacts(true);
                           },
                         )

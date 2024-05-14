@@ -33,9 +33,9 @@ class SettingsController extends GetxController {
   }
 
   logout() {
-    Get.back();
+    NavUtils.back();
     if (SessionManagement.getEnablePin()) {
-      Get.toNamed(Routes.pin)?.then((value){
+      NavUtils.toNamed(Routes.pin)?.then((value){
         if(value!=null && value){
           logoutFromSDK();
         }
@@ -60,7 +60,7 @@ class SettingsController extends GetxController {
         DialogUtils.hideLoading();
         SessionManagement.clear().then((value) {
           // SessionManagement.setToken(token);
-          Get.offAllNamed(Routes.login);
+          NavUtils.offAllNamed(Routes.login);
         });
       })*/;
     } else {
@@ -80,7 +80,7 @@ class SettingsController extends GetxController {
       SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
-      Get.offAllNamed(Routes.login);
+      NavUtils.offAllNamed(Routes.login);
     });
   }
 

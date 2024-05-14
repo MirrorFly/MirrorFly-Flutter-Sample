@@ -128,7 +128,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             icon: SvgPicture.asset(forwardMedia)),
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(maxWidth: Get.width * 0.75),
+                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
                                         decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
                                                 topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),

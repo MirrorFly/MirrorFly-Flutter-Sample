@@ -518,7 +518,7 @@ class _DashboardViewState extends State<DashboardView> {
                             : null,
                         dividerPadding: EdgeInsets.zero,
                         onTap: () {
-                          Get.toNamed(Routes.archivedChats);
+                          NavUtils.toNamed(Routes.archivedChats);
                         },
                       ),
                     );
@@ -592,7 +592,7 @@ class _DashboardViewState extends State<DashboardView> {
                                           : null,
                                       dividerPadding: EdgeInsets.zero,
                                       onTap: () {
-                                        Get.toNamed(Routes.archivedChats);
+                                        NavUtils.toNamed(Routes.archivedChats);
                                       },
                                     ),
                                   );

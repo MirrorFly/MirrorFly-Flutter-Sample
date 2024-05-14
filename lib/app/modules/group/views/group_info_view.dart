@@ -34,7 +34,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back, color: controller.isSliverAppBarExpanded ? Colors.white : Colors.black),
                   onPressed: () {
-                    Get.back();
+                    NavUtils.back();
                   },
                 ),
                 title: Visibility(
@@ -112,10 +112,10 @@ class GroupInfoView extends GetView<GroupInfoController> {
                             ),
                             onTap: () {
                               if (controller.imagePath.value.isNotEmpty) {
-                                Get.toNamed(Routes.imageView,
+                                NavUtils.toNamed(Routes.imageView,
                                     arguments: {'imageName': controller.profile.nickName, 'imagePath': controller.profile.image.checkNull()});
                               } else if (controller.profile.image.checkNull().isNotEmpty) {
-                                Get.toNamed(Routes.imageView,
+                                NavUtils.toNamed(Routes.imageView,
                                     arguments: {'imageName': controller.profile.nickName, 'imageUrl': controller.profile.image.checkNull()});
                               }
                             },
@@ -250,8 +250,8 @@ class GroupInfoView extends GetView<GroupInfoController> {
               style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
-              // Get.toNamed(Routes.CHAT, arguments: item);
-              Get.back();
+              // NavUtils.toNamed(Routes.CHAT, arguments: item);
+              NavUtils.back();
               Future.delayed(const Duration(milliseconds: 300), () {
                 Get.back(result: item);
               });
@@ -263,8 +263,8 @@ class GroupInfoView extends GetView<GroupInfoController> {
               style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
-              Get.back();
-              Get.toNamed(Routes.chatInfo, arguments: item);
+              NavUtils.back();
+              NavUtils.toNamed(Routes.chatInfo, arguments: item);
             },
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         Obx(() {
@@ -276,7 +276,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    Get.back();
+                    NavUtils.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
                       DialogUtils.showFeatureUnavailable();
                       return;
@@ -284,12 +284,12 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     DialogUtils.showAlert(message: getTranslated("areYouSureToRemove").replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
-                            Get.back();
+                            NavUtils.back();
                           },
                           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
-                            Get.back();
+                            NavUtils.back();
                             controller.removeUser(item.jid.checkNull());
                           },
                           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -306,7 +306,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    Get.back();
+                    NavUtils.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
                       DialogUtils.showFeatureUnavailable();
                       return;
@@ -314,12 +314,12 @@ class GroupInfoView extends GetView<GroupInfoController> {
                     DialogUtils.showAlert(message:getTranslated("areYouSureMakeAdmin").replaceAll("%d", getName(item)), actions: [
                       TextButton(
                           onPressed: () {
-                            Get.back();
+                            NavUtils.back();
                           },
                           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                       TextButton(
                           onPressed: () {
-                            Get.back();
+                            NavUtils.back();
                             controller.makeAdmin(item.jid.checkNull());
                           },
                           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -358,7 +358,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         onTap: () {
-                          Get.back();
+                          NavUtils.back();
                           controller.camera();
                         },
                         title: Text(
@@ -370,7 +370,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         onTap: () {
-                          Get.back();
+                          NavUtils.back();
                           controller.imagePicker(context);
                         },
                         title: Text(
@@ -383,7 +383,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
                               dense: true,
                               contentPadding: EdgeInsets.zero,
                               onTap: () {
-                                Get.back();
+                                NavUtils.back();
                                 controller.removeProfileImage();
                               },
                               title: Text(

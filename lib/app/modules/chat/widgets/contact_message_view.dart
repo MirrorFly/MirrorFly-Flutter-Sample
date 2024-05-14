@@ -29,7 +29,7 @@ class ContactMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = Get.width;
+    var screenWidth = NavUtils.width;
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -165,18 +165,18 @@ class ContactMessageView extends StatelessWidget {
   }
 
   sendToChatPage(String userJid) {
-    // Get.back();
+    // NavUtils.back();
     LogMessage.d('Get.currentRoute', Get.currentRoute);
     if (Get.currentRoute == Routes.chat) {
-      Get.back();
+      NavUtils.back();
       Future.delayed(const Duration(milliseconds: 500), () {
-        Get.toNamed(Routes.chat,
+        NavUtils.toNamed(Routes.chat,
             parameters: {'isFromStarred': 'true', "userJid": userJid});
       });
     } else {
-      Get.back();
+      NavUtils.back();
       sendToChatPage(userJid);
-      /*Get.toNamed(Routes.chat,
+      /*NavUtils.toNamed(Routes.chat,
           parameters: {'isFromStarred': 'true', "userJid": userJid});*/
     }
   }
@@ -194,7 +194,7 @@ class ContactMessageView extends StatelessWidget {
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
         onTap: () {
           Clipboard.setData(ClipboardData(text: getTranslated("applicationLink")));
-          Get.back();
+          NavUtils.back();
           toToast(getTranslated("linkCopied"));
         },
       ),
@@ -203,7 +203,7 @@ class ContactMessageView extends StatelessWidget {
         title: Text(getTranslated("sendSMS"),
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal)),
         onTap: () {
-          Get.back();
+          NavUtils.back();
           sendSMS(contactChatMessage.contactPhoneNumbers[0]);
         },
       ),

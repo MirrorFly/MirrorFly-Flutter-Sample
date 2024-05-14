@@ -22,7 +22,7 @@ class DocumentMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = Get.width;
+    var screenWidth = NavUtils.width;
     return InkWell(
       onTap: () {
         onDocumentClick();

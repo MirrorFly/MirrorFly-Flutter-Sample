@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/chat_info_controller.dart';
 
@@ -65,7 +66,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                           ? Colors.white
                           : Colors.black),
                   onPressed: () {
-                    Get.back();
+                    NavUtils.back();
                   },
                 ),
                 title: Visibility(
@@ -103,7 +104,7 @@ class _ChatInfoViewState extends State<ChatInfoView> {
                           .isBlockedMe.checkNull() || controller.profile.isAdminBlocked
                           .checkNull()) && !(!controller.profile.isItSavedContact
                           .checkNull() || controller.profile.isDeletedContact())) {
-                        Get.toNamed(Routes.imageView, arguments: {
+                        NavUtils.toNamed(Routes.imageView, arguments: {
                           'imageName': getName(controller.profile),
                           'imageUrl': controller.profile.image.checkNull()
                         });

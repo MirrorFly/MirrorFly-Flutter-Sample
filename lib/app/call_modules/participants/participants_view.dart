@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_c
 import '../../common/app_theme.dart';
 import '../../common/constants.dart';
 import '../../data/helper.dart';
+import '../../data/utils.dart';
 import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
@@ -37,7 +38,7 @@ class ParticipantsView extends GetView<AddParticipantsController> {
                               if(controller.isSearching.value) {
                                 controller.getBackFromSearch();
                               }else{
-                                Get.back();
+                                NavUtils.back();
                               }
                             },
                           ),

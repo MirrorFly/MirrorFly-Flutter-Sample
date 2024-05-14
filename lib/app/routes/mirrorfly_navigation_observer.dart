@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 class MirrorFlyNavigationObserver extends NavigatorObserver {
-  List<Route<dynamic>> routeStack = [];
+  static List<Route<dynamic>> routeStack = [];
 
-  Route<dynamic>? get currentRoute => routeStack.isNotEmpty ? routeStack.last : null;
-  Route<dynamic>? get previousRoute => routeStack.length > 1 ? routeStack[routeStack.length - 2] : null;
+  static Route<dynamic>? get current => routeStack.isNotEmpty ? routeStack.last : null;
+  static Route<dynamic>? get previous => routeStack.length > 1 ? routeStack[routeStack.length - 2] : null;
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
+    if(route.settings.name==null) {
+      debugPrint("Warning: Route pushed without Name");
+    }
     routeStack.add(route);
     logCurrentStack("push");
   }

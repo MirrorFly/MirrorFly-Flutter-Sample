@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/widgets/chat_widgets.dart';
@@ -38,7 +39,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
             controller.clearSearch();
             return;
           }
-          Get.back();
+          NavUtils.back();
         },
         child: Scaffold(
           appBar: getAppBar(context),

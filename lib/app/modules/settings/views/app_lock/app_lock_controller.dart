@@ -66,7 +66,7 @@ class AppLockController extends FullLifeCycleController
     if (SessionManagement.getEnablePin()) {
       //to confirm pin to off pin
       offPin = true;
-      Get.toNamed(Routes.pin);
+      NavUtils.toNamed(Routes.pin);
     } else {
       if (SessionManagement.getPin().isNotEmpty) {
         //if pin Available
@@ -74,7 +74,7 @@ class AppLockController extends FullLifeCycleController
         SessionManagement.setPIN(SessionManagement.getPin());
         _pinEnabled(true);
       } else {
-        Get.toNamed(Routes.setPin);
+        NavUtils.toNamed(Routes.setPin);
       }
     }
   }
@@ -108,7 +108,7 @@ class AppLockController extends FullLifeCycleController
   changePin() {
     modifyPin(true);
     clearTextViews();
-    Get.toNamed(Routes.setPin)?.then((value) {
+    NavUtils.toNamed(Routes.setPin)?.then((value) {
       Future.delayed(const Duration(milliseconds: 100), () {
         setUpPinExpiryDialog();
       });
@@ -222,7 +222,7 @@ class AppLockController extends FullLifeCycleController
       _pinEnabled(false);
       _bioEnabled(false);
       if (Get.previousRoute.isEmpty || Get.previousRoute == Routes.pin) {
-        Get.offNamed(getInitialRoute());
+        NavUtils.offNamed(getInitialRoute());
       } else {
         Get.back(result: true);
       }
@@ -295,11 +295,11 @@ class AppLockController extends FullLifeCycleController
           offPin = false;
           disablePIN();
         } else if (modifyPin.value) {
-          Get.offNamed(Routes.setPin);
+          NavUtils.offNamed(Routes.setPin);
         } else {
           debugPrint('route ${Get.previousRoute}');
           if (Get.previousRoute.isEmpty || Get.previousRoute == Routes.pin) {
-            Get.offNamed(getInitialRoute());
+            NavUtils.offNamed(getInitialRoute());
           } else {
             Get.back(result: true);
           }
@@ -337,14 +337,14 @@ class AppLockController extends FullLifeCycleController
       actions: [
         TextButton(
             onPressed: () {
-              Get.back();
+              NavUtils.back();
             },
             child: Text(getTranslated("cancel").toUpperCase(),
               style: const TextStyle(color: buttonBgColor),
             )),
         TextButton(
             onPressed: () {
-              Get.back();
+              NavUtils.back();
               sendOtp();
             },
             child: Text(
@@ -430,7 +430,7 @@ class AppLockController extends FullLifeCycleController
       actions: [
         TextButton(
             onPressed: () {
-              Get.back();
+              NavUtils.back();
               changePin();
             },
             child: Text(
@@ -439,7 +439,7 @@ class AppLockController extends FullLifeCycleController
             )),
         TextButton(
             onPressed: () {
-              Get.back();
+              NavUtils.back();
               SessionManagement.setDontShowAlert();
             },
             child: Text(
@@ -479,7 +479,7 @@ class AppLockController extends FullLifeCycleController
                           toToast(
                               getTranslated("toDisablePIN"));
                           disablePin = true;
-                          Get.back();
+                          NavUtils.back();
                         },
                         child: Text(
                           getTranslated("disablePIN"),
@@ -493,7 +493,7 @@ class AppLockController extends FullLifeCycleController
                     width: double.infinity,
                     child: TextButton(
                         onPressed: () {
-                          Get.back();
+                          NavUtils.back();
                           changePin();
                         },
                         child: Text(
@@ -508,7 +508,7 @@ class AppLockController extends FullLifeCycleController
                     width: double.infinity,
                     child: TextButton(
                         onPressed: () {
-                          Get.back();
+                          NavUtils.back();
                           sendOtp();
                         },
                         child: Text(
@@ -643,7 +643,7 @@ class AppLockController extends FullLifeCycleController
                           children: [
                             TextButton(
                                 onPressed: () {
-                                  Get.back();
+                                  NavUtils.back();
                                 },
                                 child: Text(
                                   getTranslated("cancel"),
@@ -787,10 +787,10 @@ class AppLockController extends FullLifeCycleController
         stopTimer();
         LogMessage.d("sign in ", value.toString());
         hideLoading();
-        Get.toNamed(Routes.setPin)?.then((value) {
+        NavUtils.toNamed(Routes.setPin)?.then((value) {
           if (Get.isBottomSheetOpen.checkNull()) {
             otpController.clear();
-            Get.back(); //for bottomsheetdialog close
+            NavUtils.back(); //for bottomsheetdialog close
           }
           Future.delayed(const Duration(milliseconds: 100), () {
             setUpPinExpiryDialog();

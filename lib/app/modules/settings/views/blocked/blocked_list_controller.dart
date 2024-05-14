@@ -56,13 +56,13 @@ class BlockedListController extends GetxController {
     DialogUtils.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: const Text("NO",style: TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
-              Get.back();
+              NavUtils.back();
               DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();

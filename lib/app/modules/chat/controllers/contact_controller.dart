@@ -454,7 +454,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         }
       } else {
         LogMessage.d("Contact Profile", item.toJson().toString());
-        Get.toNamed(Routes.chat, arguments: item, parameters: {"topicId": topicId});
+        NavUtils.toNamed(Routes.chat, arguments: {"chatJid": item.jid.checkNull(),"topicId": topicId});
       }
     }
   }
@@ -607,9 +607,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         infoTap: () {
           NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
-            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
-            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.chatInfo, arguments: {"jid":profile.value});
           }
         },
         profile: profile,
@@ -674,7 +674,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (isOneToOneCall) {
           Mirrorfly.makeVoiceCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.offNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.audio
               });
@@ -685,7 +685,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         } else {
           Mirrorfly.makeGroupVoiceCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView,
+              NavUtils.offNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
             }
           });
@@ -696,7 +696,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (isOneToOneCall) {
           Mirrorfly.makeVideoCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.offNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.video
               });
@@ -705,7 +705,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         } else {
           Mirrorfly.makeGroupVideoCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView,
+              NavUtils.offNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
             }
           });

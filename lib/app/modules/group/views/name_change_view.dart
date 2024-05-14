@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 
 class NameChangeView extends GetView<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
@@ -82,7 +83,7 @@ class NameChangeView extends GetView<GroupInfoController> {
                 child: Row(children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () => NavUtils.back(),
                       child: Text(
                         getTranslated("cancel").toUpperCase(),
                         style: const TextStyle(color: Colors.black, fontSize: 16.0),

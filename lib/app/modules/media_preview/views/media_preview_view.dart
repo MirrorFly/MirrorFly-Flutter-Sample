@@ -1,6 +1,5 @@
 import 'dart:io';
 
-// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -11,6 +10,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
 class MediaPreviewView extends GetView<MediaPreviewController> {
@@ -26,7 +26,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
           leadingWidth: 80,
           leading: InkWell(
             onTap: () {
-              Get.back();
+              NavUtils.back();
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -238,7 +238,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                                   controller.showAdd
                                               ? InkWell(
                                                   onTap: () {
-                                                    Get.back();
+                                                    NavUtils.back();
                                                   },
                                                   child: SvgPicture.asset(
                                                       previewAddImg),

@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -62,7 +63,7 @@ class ContactSyncController extends GetxController
         Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  });
         checkContactSync();
       } else {
-        Get.offNamed(Routes.dashboard);
+        NavUtils.offNamed(Routes.dashboard);
       }
     }else{
       syncing(true);
@@ -95,7 +96,7 @@ class ContactSyncController extends GetxController
 
   void navigateToDashboard() {
     animController.dispose();
-    Get.offNamed(Routes.dashboard);
+    NavUtils.offNamed(Routes.dashboard);
   }
 
   Future<void> networkConnected() async {

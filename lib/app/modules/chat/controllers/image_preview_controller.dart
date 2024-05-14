@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
+import '../../../data/utils.dart';
 import 'chat_controller.dart';
 
 class ImagePreviewController extends GetxController {
@@ -33,7 +34,7 @@ class ImagePreviewController extends GetxController {
             filePath.value, caption.text, "");
         // debugPrint("Preview View ==> $response");
         if (response != null) {
-          Get.back();
+          NavUtils.back();
         }
       // }else{
       //   toToast(getTranslated("noInternetConnection"));

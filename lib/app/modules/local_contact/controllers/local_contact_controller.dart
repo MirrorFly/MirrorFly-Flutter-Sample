@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
@@ -63,7 +64,7 @@ class LocalContactController extends GetxController {
     //   contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     // }
 
-    Get.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
+    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
 
   }
 

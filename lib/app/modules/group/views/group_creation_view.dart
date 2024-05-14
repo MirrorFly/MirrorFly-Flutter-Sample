@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_con
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class GroupCreationView extends GetView<GroupCreationController> {
@@ -39,7 +40,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
-            Get.back();
+            NavUtils.back();
           }
         },
         child: SafeArea(
@@ -88,10 +89,10 @@ class GroupCreationView extends GetView<GroupCreationController> {
                                         ),
                                   onTap: () {
                                     if (controller.imagePath.value.checkNull().isNotEmpty) {
-                                      Get.toNamed(Routes.imageView,
+                                      NavUtils.toNamed(Routes.imageView,
                                           arguments: {'imageName': controller.groupName.text, 'imagePath': controller.imagePath.value.checkNull()});
                                     } else if (controller.userImgUrl.value.checkNull().isNotEmpty) {
-                                      Get.toNamed(Routes.imageView,
+                                      NavUtils.toNamed(Routes.imageView,
                                           arguments: {'imageName': controller.groupName.text, 'imageUrl': controller.userImgUrl.value.checkNull()});
                                     } else {
                                       controller.choosePhoto();

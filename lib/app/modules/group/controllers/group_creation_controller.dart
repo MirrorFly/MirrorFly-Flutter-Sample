@@ -99,8 +99,8 @@ class GroupCreationController extends GetxController {
 
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
-      //Get.toNamed(Routes.ADD_PARTICIPANTS);
-      Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":"" })?.then((value){
+      //NavUtils.toNamed(Routes.ADD_PARTICIPANTS);
+      NavUtils.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":"" })?.then((value){
         if(value!=null){
           createGroup(value as List<String>);
         }
@@ -178,7 +178,7 @@ class GroupCreationController extends GetxController {
     Mirrorfly.createGroup(groupName: groupName.text.toString(),userList: users,image: imagePath.value, flyCallBack: (FlyResponse response) {
       DialogUtils.hideLoading();
       if(response.isSuccess) {
-        Get.back();
+        NavUtils.back();
         toToast(getTranslated("groupCreatedSuccessfully"));
       }
     });
@@ -190,7 +190,7 @@ class GroupCreationController extends GetxController {
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         onTap: () {
-          Get.back();
+          NavUtils.back();
           imagePick(Get.context!);
         },
         title: Text(
@@ -202,7 +202,7 @@ class GroupCreationController extends GetxController {
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         onTap: () {
-          Get.back();
+          NavUtils.back();
           camera();
         },
         title: Text(

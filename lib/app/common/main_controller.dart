@@ -51,7 +51,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     super.onInit();
     /*Mirrorfly.isOnGoingCall().then((value){
       if(value.checkNull()){
-        Get.toNamed(Routes.onGoingCallView);
+        NavUtils.toNamed(Routes.onGoingCallView);
       }
     });*/
     Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
@@ -133,20 +133,20 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
               Get.currentRoute == Routes.chatInfo ||
               Get.currentRoute == Routes.groupInfo ||
               Get.currentRoute == Routes.messageInfo) {
-            Get.back();
+            NavUtils.back();
           }
           if (Get.currentRoute.contains("from_notification=true")) {
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            Get.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
+            NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
             if(Get.isOverlaysOpen){
-              Get.back();
+              NavUtils.back();
             }
-            Get.offNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
+            NavUtils.offNamed(Routes.chat, arguments: {"chatJid": chatJid, "topicId": topicId});
           }
         } else {
           debugPrint("not chat page");
-          Get.toNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
+          NavUtils.toNamed(Routes.chat, arguments: {"chatJid": chatJid, "topicId": topicId});
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {
@@ -194,7 +194,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if (status) {
         //show Admin Blocked Activity
         SessionManagement.setAdminBlocked(status);
-        Get.toNamed(Routes.adminBlocked);
+        NavUtils.toNamed(Routes.adminBlocked);
       }
     }
   }
@@ -340,7 +340,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   void presentPinPage() {
     if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute != Routes.pin) {
-      Get.toNamed(
+      NavUtils.toNamed(
         Routes.pin,
       );
     }

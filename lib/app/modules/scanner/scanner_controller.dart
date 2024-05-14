@@ -56,7 +56,7 @@ class ScannerController extends GetxController {
         /*Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
           if (value != null) {
             SessionManagement.setWebChatLogin(value);
-            Get.back();
+            NavUtils.back();
           } else {
 
           }
@@ -78,7 +78,7 @@ class ScannerController extends GetxController {
         DialogUtils.hideLoading();
         if (value != null && value) {
           SessionManagement.setWebChatLogin(false);
-          Get.back();
+          NavUtils.back();
         }
       });*/
     }else{
@@ -130,7 +130,7 @@ class ScannerController extends GetxController {
 
   addLogin() {
     // Mirrorfly.webLoginDetailsCleared();
-    Get.toNamed(Routes.scanner)?.then((value) {
+    NavUtils.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
   }
@@ -139,12 +139,12 @@ class ScannerController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("logoutConfirmation"), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             logoutWebUser();
           },
           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),

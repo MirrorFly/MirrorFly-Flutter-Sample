@@ -167,7 +167,7 @@ class LoginController extends GetxController {
 
             if (verificationId.isNotEmpty) {
               hideLoading();
-              Get.toNamed(Routes.otp)?.then((value) {
+              NavUtils.toNamed(Routes.otp)?.then((value) {
                 //Change Number
                 if (value != null) {
                   LogMessage.d("change number", "initiated");

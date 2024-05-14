@@ -38,24 +38,24 @@ class CallTimeoutController extends GetxController {
   }
 
   void cancelCallTimeout() {
-    Get.back();
+    NavUtils.back();
   }
 
   callAgain() async {
-    // Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
+    // NavUtils.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
       if(callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVoiceCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
             Mirrorfly.makeGroupVoiceCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }
@@ -67,7 +67,7 @@ class CallTimeoutController extends GetxController {
           if(users.length==1) {
             Mirrorfly.makeVideoCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
               if (response.isSuccess) {
-                Get.offNamed(
+                NavUtils.offNamed(
                     Routes.outGoingCallView, arguments: {"userJid": users});
               }
             });
@@ -75,7 +75,7 @@ class CallTimeoutController extends GetxController {
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
             Mirrorfly.makeGroupVideoCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }

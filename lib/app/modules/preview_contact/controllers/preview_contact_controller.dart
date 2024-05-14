@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/local_contact_model.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -69,8 +70,8 @@ class PreviewContactController extends GetxController {
     //         contactList, contactName);
     //     debugPrint("ContactResponse ==> $response");
     //     if (response != null) {
-    //       Get.back();
-    //       Get.back();
+    //       NavUtils.back();
+    //       NavUtils.back();
     //     }
     //   }else{
     //     toToast("Contact Number is Empty");
@@ -112,8 +113,8 @@ class PreviewContactController extends GetxController {
         debugPrint("ContactResponse ==> $response");
       }
 
-      Get.back();
-      Get.back();
+      NavUtils.back();
+      NavUtils.back();
     // } else {
     //   toToast(getTranslated("noInternetConnection"));
     // }

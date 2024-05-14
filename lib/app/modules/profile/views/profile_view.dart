@@ -111,10 +111,10 @@ class _ProfileViewState extends State<ProfileView> {
                                             ),
                                   onTap: () {
                                     if (controller.imagePath.value.checkNull().isNotEmpty) {
-                                      Get.toNamed(Routes.imageView,
+                                      NavUtils.toNamed(Routes.imageView,
                                           arguments: {'imageName': controller.profileName.text, 'imagePath': controller.imagePath.value.checkNull()});
                                     } else if (controller.userImgUrl.value.checkNull().isNotEmpty) {
-                                      Get.toNamed(Routes.imageView,
+                                      NavUtils.toNamed(Routes.imageView,
                                           arguments: {'imageName': controller.profileName.text, 'imageUrl': controller.userImgUrl.value.checkNull()});
                                     }
                                   },
@@ -226,7 +226,7 @@ class _ProfileViewState extends State<ProfileView> {
                           minLeadingWidth: 10,
                           leading: SvgPicture.asset('assets/logos/status.svg'),
                           onTap: () {
-                            Get.toNamed(Routes.statusList, arguments: {'status': controller.profileStatus.value})?.then((value) {
+                            NavUtils.toNamed(Routes.statusList, arguments: {'status': controller.profileStatus.value})?.then((value) {
                               if (value != null) {
                                 controller.profileStatus.value = value;
                               }
@@ -301,7 +301,7 @@ class _ProfileViewState extends State<ProfileView> {
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         onTap: () {
-                          Get.back();
+                          NavUtils.back();
                           controller.camera();
                         },
                         title: Text(
@@ -313,7 +313,7 @@ class _ProfileViewState extends State<ProfileView> {
                         dense: true,
                         contentPadding: EdgeInsets.zero,
                         onTap: () {
-                          Get.back();
+                          NavUtils.back();
                           controller.imagePicker(context);
                         },
                         title: Text(
@@ -326,16 +326,16 @@ class _ProfileViewState extends State<ProfileView> {
                               dense: true,
                               contentPadding: EdgeInsets.zero,
                               onTap: () {
-                                Get.back();
+                                NavUtils.back();
                                 DialogUtils.showAlert(message: getTranslated("areYouSureToRemovePhoto"), actions: [
                                   TextButton(
                                       onPressed: () {
-                                        Get.back();
+                                        NavUtils.back();
                                       },
                                       child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                                   TextButton(
                                       onPressed: () {
-                                        Get.back();
+                                        NavUtils.back();
                                         controller.removeProfileImage();
                                       },
                                       child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor)))

@@ -212,12 +212,12 @@ class GroupInfoController extends GetxController {
     DialogUtils.showAlert(title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             DialogUtils.progressLoading();
             Mirrorfly.reportUserOrMessages(jid: profile.jid.checkNull(),type: ChatType.groupChat, messageId: "", flyCallBack: (FlyResponse response) {
               DialogUtils.hideLoading();
@@ -248,12 +248,12 @@ class GroupInfoController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("areYouLeaveGroup"),actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             exitFromGroup();
           },
           child: Text(getTranslated("leave").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -288,13 +288,13 @@ class GroupInfoController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("areYouDeleteGroup"),actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
-              Get.back();
+              NavUtils.back();
               if(!availableFeatures.value.isGroupChatAvailable.checkNull() || !availableFeatures.value.isDeleteChatAvailable.checkNull()){
                 DialogUtils.showFeatureUnavailable();
                 return;
@@ -303,7 +303,7 @@ class GroupInfoController extends GetxController {
               Mirrorfly.deleteGroup(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();
                 if(response.isSuccess){
-                  Get.offAllNamed(Routes.dashboard);
+                  NavUtils.offAllNamed(Routes.dashboard);
                 }else{
                   toToast(getTranslated("errorTryAgain"));
                 }
@@ -404,12 +404,12 @@ class GroupInfoController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("areYouRemoveGroupPhoto"),actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             revokeAccessForProfileImage();
           },
           child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -447,7 +447,7 @@ class GroupInfoController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
+    NavUtils.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
       if(value!=null){
         addUsers(value);
       }
@@ -471,7 +471,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoViewAllMedia(){
-    Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
+    NavUtils.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
   }
 
   removeUser(String userJid) async {
@@ -644,7 +644,7 @@ class GroupInfoController extends GetxController {
       showEmoji(false);
     } else {
       nameController.text = profile.nickName.checkNull();
-      Get.back();
+      NavUtils.back();
     }
   }
 }

@@ -114,15 +114,15 @@ class GroupParticipantsController extends GetxController {
         context: Get.context,
         // chatItem: chatItem,
         chatTap: () {
-          Get.back();
+          NavUtils.back();
           onListItemPressed(profile.value);
         },
         infoTap: () {
-          Get.back();
+          NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
-            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
-            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.chatInfo, arguments: profile.value);
           }
         },
         profile: profile,
@@ -141,13 +141,13 @@ class GroupParticipantsController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
+              NavUtils.back();
               DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();
@@ -227,7 +227,7 @@ class GroupParticipantsController extends GetxController {
       if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
-            Get.offNamed(Routes.outGoingCallView,
+            NavUtils.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
           }
         });
@@ -236,7 +236,7 @@ class GroupParticipantsController extends GetxController {
       if (await AppPermission.askVideoCallPermissions()) {
         Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
-            Get.offNamed(Routes.outGoingCallView,
+            NavUtils.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
           }
         });

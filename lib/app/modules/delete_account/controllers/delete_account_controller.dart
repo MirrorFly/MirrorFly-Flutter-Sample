@@ -23,7 +23,7 @@ class DeleteAccountController extends GetxController {
         DialogUtils.showAlert(message: getTranslated("enterYourMobileNumber"), actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("ok"),style: const TextStyle(color: buttonBgColor))),
         ]);
@@ -44,7 +44,7 @@ class DeleteAccountController extends GetxController {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Get.back();
+                      NavUtils.back();
                     },
                     child: Text(getTranslated("ok"),style: const TextStyle(color: buttonBgColor))),
               ]);
@@ -58,14 +58,14 @@ class DeleteAccountController extends GetxController {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Get.back();
+                      NavUtils.back();
                     },
                     child: Text(getTranslated("ok"))),
               ]);
           return;
         }
       }
-      Get.toNamed(Routes.deleteAccountReason);
+      NavUtils.toNamed(Routes.deleteAccountReason);
     }else{
       toToast(getTranslated("noInternetConnection"));
     }

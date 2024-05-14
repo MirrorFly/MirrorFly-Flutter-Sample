@@ -98,7 +98,7 @@ getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext co
         onTap: isSelected
             ? null
             : () {
-                Get.toNamed(Routes.imageView, arguments: {'imageName': mediaFileName, 'imagePath': mediaLocalStoragePath.value});
+                NavUtils.toNamed(Routes.imageView, arguments: {'imageName': mediaFileName, 'imagePath': mediaLocalStoragePath.value});
               },
         child: Obx(() {
           return Image(

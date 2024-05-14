@@ -24,29 +24,29 @@ class SettingsView extends GetView<SettingsController> {
           children: [
             settingListItem(getTranslated("profile"), profileIcon, rightArrowIcon,
                     () =>
-                    Get.toNamed(
+                    NavUtils.toNamed(
                         Routes.profile, arguments: {"from": Routes.settings})),
             settingListItem(getTranslated("chats"), chatIcon, rightArrowIcon, () {
-              Get.toNamed(Routes.chatSettings);
+              NavUtils.toNamed(Routes.chatSettings);
             }),
             settingListItem(
                 getTranslated("starredMessages"), staredMsgIcon, rightArrowIcon, () {
-              Get.toNamed(Routes.starredMessages);
+              NavUtils.toNamed(Routes.starredMessages);
             }),
             settingListItem(
                 getTranslated("notifications"), notificationIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.notification)),
+                NavUtils.toNamed(Routes.notification)),
             settingListItem(
                 getTranslated("blockedContacts"), blockedIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.blockedList)),
+                NavUtils.toNamed(Routes.blockedList)),
             settingListItem(getTranslated("appLock"), lockIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.appLock)),
+                NavUtils.toNamed(Routes.appLock)),
             settingListItem(getTranslated("aboutAndHelp"), aboutIcon, rightArrowIcon, () =>
                 Get.to(const AboutAndHelpView())),
             settingListItem(
                 getTranslated("connectionLabel"), connectionIcon, toggleOffIcon, () {}),
             settingListItem(getTranslated("deleteMyAccount"), delete, rightArrowIcon, () {
-              Get.toNamed(Routes.deleteAccount);
+              NavUtils.toNamed(Routes.deleteAccount);
             }),
             settingListItem(getTranslated("logout"), logoutIcon, rightArrowIcon, () {
               DialogUtils.showAlert(
@@ -55,7 +55,7 @@ class SettingsView extends GetView<SettingsController> {
                   actions: [
                     TextButton(
                         onPressed: () {
-                          Get.back();
+                          NavUtils.back();
                         },
                         child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
                     TextButton(

@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/chat_view.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -20,6 +22,7 @@ import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'app/common/main_controller.dart';
 import 'app/common/notification_service.dart';
 import 'app/data/session_management.dart';
+import 'app/model/arguments.dart';
 import 'app/model/reply_hash_map.dart';
 
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -50,6 +53,8 @@ MirrorflyNotificationAppLaunchDetails? appLaunchDetails;
 //check is on going call
 bool isOnGoingCall = false;
 final navigatorKey = GlobalKey<NavigatorState>();
+late ChatViewArguments chatViewArg;
+late DashboardViewArguments dashboardViewArg;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
@@ -130,6 +135,30 @@ class _MyAppState extends State<MyApp> {
         MirrorFlyNavigationObserver()
       ],
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
+      onGenerateInitialRoutes: (initialRoute) {
+        switch (initialRoute){
+          case Routes.chat:
+            return [MaterialPageRoute(
+              settings: RouteSettings(
+                name: Routes.chat,
+                arguments: chatViewArg,
+              ),
+              builder: (context) => const ChatView(),
+            )];
+          case Routes.dashboard:
+            return [
+              MaterialPageRoute(
+                settings: RouteSettings(
+                  name: Routes.dashboard,
+                  arguments: dashboardViewArg,
+                ),
+                builder: (context) => const DashboardView(),
+              )
+            ];
+          default:
+            return [];
+        }
+      },
       onGenerateRoute: mirrorFlyRoute,
       // getPages: AppPages.routes,
     );
@@ -160,11 +189,15 @@ String getInitialRoute() {
       notificationAppLaunchDetails = null;
       var chatJid = didNotificationLaunchResponse != null ? didNotificationLaunchResponse.checkNull().split(",")[0] : "";
       var topicId = didNotificationLaunchResponse != null ? didNotificationLaunchResponse.checkNull().split(",")[1] : "";
-      return "${Routes.chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
+      chatViewArg = ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp:didNotificationLaunchApp);
+      // return "${Routes.chat}?jid=$chatJid&from_notification=$didNotificationLaunchApp&topicId=$topicId";
+      return Routes.chat;
     } else {
       var chatJid = appLaunchDetails?.mediaProgressChatJid ?? "";
       appLaunchDetails = null;
-      return "${Routes.chat}?jid=$chatJid&from_notification=$didMediaProgressNotificationLaunchApp";
+      chatViewArg = ChatViewArguments(chatJid: chatJid,didNotificationLaunchApp:didMediaProgressNotificationLaunchApp);
+      // return "${Routes.chat}?jid=$chatJid&from_notification=$didMediaProgressNotificationLaunchApp";
+      return Routes.chat;
     }
   }
   if (!SessionManagement.adminBlocked()) {
@@ -176,11 +209,15 @@ String getInitialRoute() {
           if (!SessionManagement.isContactSyncDone() /*|| nonChatUsers.isEmpty*/) {
             return Routes.contactSync;
           } else {
-            return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+            dashboardViewArg = DashboardViewArguments(didMissedCallNotificationLaunchApp: didMissedCallNotificationLaunchApp);
+            // return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+            return Routes.dashboard;
           }
         } else {
           LogMessage.d("SessionManagement.getLogin()", "${SessionManagement.getLogin()}");
-          return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+          dashboardViewArg = DashboardViewArguments(didMissedCallNotificationLaunchApp: didMissedCallNotificationLaunchApp);
+          // return "${Routes.dashboard}?fromMissedCall=$didMissedCallNotificationLaunchApp";
+          return Routes.dashboard;
         }
       } else {
         return Routes.profile;

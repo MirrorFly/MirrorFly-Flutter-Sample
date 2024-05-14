@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../controllers/local_contact_controller.dart';
 
 class LocalContactView extends GetView<LocalContactController> {
@@ -72,7 +73,7 @@ class LocalContactView extends GetView<LocalContactController> {
               controller.search.value = false;
               return;
             } else {
-              Get.back();
+              NavUtils.back();
             }
           },
           child: SafeArea(

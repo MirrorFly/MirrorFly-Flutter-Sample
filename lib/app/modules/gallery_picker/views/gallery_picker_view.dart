@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/gallery_picker_controller.dart';
 import '../src/presentation/pages/gallery_media_picker.dart';
@@ -64,18 +65,18 @@ class GalleryPickerView extends GetView<GalleryPickerController> {
                               // }).toString();
                               if (controller.pickedFile.isNotEmpty) {
                                 // await Share.shareFiles(mediaPath);
-                                Get.toNamed(Routes.mediaPreview, arguments: {
+                                NavUtils.toNamed(Routes.mediaPreview, arguments: {
                                   "filePath": controller.pickedFile,
                                   "userName": controller.userName,
                                   'profile': controller.profile,
                                   'caption': controller.textMessage,
                                   'from': 'gallery_pick'
                                 })?.then((value) {
-                                  value != null ? Get.back() : null;
+                                  value != null ? NavUtils.back() : null;
 
                                 });
                               } else {
-                                Get.back();
+                                NavUtils.back();
                               }
                               // mediaPath.clear();
                             },

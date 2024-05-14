@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
@@ -122,7 +122,7 @@ class PushNotifications {
       // onMessage(initialMessage);
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data["to_user"]}");
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data}");
-      Get.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
+      NavUtils.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
       return;
     }else{
       debugPrint("#Mirrorfly Notification setupInteractedMessage else");
@@ -134,7 +134,7 @@ class PushNotifications {
     //This method will called, when the notification popup is clicked from the notification tray.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
       debugPrint("#Mirrorfly Notification message opened from notification click background");
-      Get.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
+      NavUtils.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
       return;
     });
   }

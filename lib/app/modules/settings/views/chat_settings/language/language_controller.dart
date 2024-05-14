@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../../data/session_management.dart';
+import '../../../../../data/utils.dart';
 import '../../../../../model/language_model.dart';
 
 class LanguageController extends GetxController{
@@ -37,7 +38,7 @@ class LanguageController extends GetxController{
      languageList.refresh();
      isSearching=false;
     }else{
-      Get.back();
+      NavUtils.back();
     }
   }
 

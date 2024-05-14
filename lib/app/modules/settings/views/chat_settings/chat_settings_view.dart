@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/chat_se
 
 import '../../../../common/constants.dart';
 import '../../../../common/widgets.dart';
+import '../../../../data/utils.dart';
 import '../../../../routes/route_settings.dart';
 import '../settings_widgets.dart';
 
@@ -58,7 +59,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                       ),
                     ],
                   ),
-                  rightArrowIcon, () => {Get.toNamed(Routes.busyStatus)},
+                  rightArrowIcon, () => {NavUtils.toNamed(Routes.busyStatus)},
                   )),
               notificationItem(title: getTranslated("autoDownload"), subtitle: getTranslated("autoDownloadLabel"),on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
               Visibility(
@@ -80,7 +81,7 @@ class ChatSettingsView extends GetView<ChatSettingsController> {
                     ),
                   ],
                 ),
-                rightArrowIcon, () => {Get.toNamed(Routes.dataUsageSetting)},
+                rightArrowIcon, () => {NavUtils.toNamed(Routes.dataUsageSetting)},
               )),
               notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
               Visibility(

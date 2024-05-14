@@ -215,7 +215,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                         : const SizedBox.shrink(),
                     onTap: () {
                       if (audioOutputType.value != audioItem.type) {
-                        Get.back();
+                        NavUtils.back();
                         debugPrint("selected audio item ${audioItem.type}");
                         audioOutputType(audioItem.type);
                         Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
@@ -301,19 +301,19 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         debugPrint("#Disconnect current route is ongoing call view");
         // Future.delayed(const Duration(seconds: 1), () {
         //   debugPrint("#Disconnect call controller back called from Ongoing Screen");
-          Get.back();
+          NavUtils.back();
         // });
       }else if(Get.currentRoute == Routes.participants){
-        Get.back();
+        NavUtils.back();
         // Future.delayed(const Duration(seconds: 1), () {
           debugPrint("#Disconnect call controller back called from Participant Screen");
-          Get.back();
+          NavUtils.back();
         // });
       }else{
-        Get.back();
+        NavUtils.back();
       }
     } else {
-      Get.offNamed(getInitialRoute());
+      NavUtils.offNamed(getInitialRoute());
     }
   }
 
@@ -373,7 +373,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if(Get.currentRoute == Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
-        Get.back();
+        NavUtils.back();
       }
       return;
     }
@@ -398,20 +398,20 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       isCallTimerEnabled = false;
       //if user is in the participants screen all users end the call then we should close call pages
       if(Get.currentRoute == Routes.participants){
-        Get.back();
+        NavUtils.back();
       }
 
       if (Get.previousRoute.isNotEmpty) {
         if (Get.currentRoute == Routes.onGoingCallView) {
           callTimer("Disconnected");
           Future.delayed(const Duration(seconds: 1), () {
-            Get.back();
+            NavUtils.back();
           });
         } else {
-          Get.back();
+          NavUtils.back();
         }
       } else {
-        Get.offNamed(getInitialRoute());
+        NavUtils.offNamed(getInitialRoute());
       }
     }
   }
@@ -511,7 +511,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // startTimer();
     if(Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
+        NavUtils.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
     }else if(Get.currentRoute == Routes.participants){
       //commenting this for when user reconnected then toast is displayed so no need to display
@@ -541,7 +541,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus -- current route ${Get.currentRoute}");
     if(Get.currentRoute==Routes.outGoingCallView) {
       debugPrint("#Mirrorfly Call navigating to Call Timeout");
-      Get.offNamed(Routes.callTimeOutView,
+      NavUtils.offNamed(Routes.callTimeOutView,
           arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
     }else{
       var userJids = userJid.split(",");
@@ -558,7 +558,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if(response.isSuccess) {
         callList.clear();
-        Get.back();
+        NavUtils.back();
       }
     });
   }
@@ -726,7 +726,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void denyCall() {
     LogMessage.d("denyCall", Get.currentRoute);
     if (Get.currentRoute == Routes.outGoingCallView) {
-      Get.back();
+      NavUtils.back();
     }
   }
 
@@ -749,13 +749,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     //
     //   //The below condition is must bcz iOS emit 2 times the delegate. so it navigates back to chat controller.
     //   if(Get.isDialogOpen ?? false) {
-    //     Get.back();
+    //     NavUtils.back();
     //   }
     // }
   }
   void closeDialog(){
     if (Get.isDialogOpen!) {
-      Get.back();
+      NavUtils.back();
     }
   }
 
@@ -884,7 +884,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         closeDialog();
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
-        // Get.back();
+        // NavUtils.back();
         var profile = await getProfileDetails(callList.first.userJid!.value.checkNull());
         toToast(getTranslated("noResponseFrom").replaceFirst("%d", profile.getName()));
       }
@@ -926,7 +926,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void openParticipantScreen() {
-    Get.toNamed(Routes.participants);
+    NavUtils.toNamed(Routes.participants);
   }
 
   void onUserInvite(String callMode, String userJid, String callType) {

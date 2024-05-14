@@ -426,7 +426,7 @@ class ForwardChatController extends GetxController {
                   getProfileDetails(selectedJids.last)
                       .then((value) {
                     if (value.jid != null) {
-                      // Get.offNamedUntil(Routes.chat, arguments: value, (route) {
+                      // NavUtils.offNamedUntil(Routes.chat, arguments: value, (route) {
                       //   LogMessage.d("offNamedUntil", route.settings.name);
                       //   return route.settings.name.toString().startsWith(Routes.dashboard);
                       // });

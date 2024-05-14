@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../data/utils.dart';
 import '../controllers/camera_pick_controller.dart';
 
 class CameraPickView extends StatelessWidget {
@@ -44,7 +45,7 @@ class CameraPickView extends StatelessWidget {
                     icon: const Icon(Icons.clear,
                         color: Colors.white),
                     onPressed: () {
-                      Get.back();
+                      NavUtils.back();
                     },
                   ),
                   Expanded(

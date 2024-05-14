@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../data/utils.dart';
 import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 
 class GroupParticipantsView extends GetView<GroupParticipantsController> {
@@ -20,7 +21,7 @@ class GroupParticipantsView extends GetView<GroupParticipantsController> {
           onPressed: () {
             controller.search
                 ? controller.backFromSearch()
-                : Get.back();
+                : NavUtils.back();
           },
         ),
           title: controller.search

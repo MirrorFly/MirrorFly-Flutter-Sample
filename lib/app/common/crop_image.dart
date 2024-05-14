@@ -62,7 +62,7 @@ class _CropImageState extends State<CropImage> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: ()=>Get.back(),
+                    onPressed: ()=>NavUtils.back(),
                     style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),

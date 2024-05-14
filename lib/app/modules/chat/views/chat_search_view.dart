@@ -112,7 +112,7 @@ class ChatSearchView extends StatelessWidget {
                           ),
                           Container(
                             constraints: BoxConstraints(
-                                maxWidth: Get.width * 0.75),
+                                maxWidth: NavUtils.width * 0.75),
                             decoration: BoxDecoration(
                                 borderRadius: chatList[index].isMessageSentByMe
                                     ? const BorderRadius.only(

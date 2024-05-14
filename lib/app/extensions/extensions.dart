@@ -34,12 +34,33 @@ extension FileFormatter on num {
 
 
 extension GetHelper on GetxController {
-  get() {
-    if (Get.isRegistered()) {
-      return Get.find();
+  T get<T extends GetxController>() {
+    if (Get.isRegistered<T>()) {
+      return Get.find<T>();
     } else {
-      LogMessage.d("Creating Controller: ", "$this not found, initializing a new instance.");
-      return Get.put(this); // Use the provided factory function to create a new instance
+      LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
+      return Get.put<T>(this as T); // Use the provided factory function to create a new instance
     }
   }
+}
+
+abstract class NavView<T extends GetxController> extends StatelessWidget {
+  const NavView({super.key});
+
+  final String? tag = null;
+
+  T get controller => _getController();
+  // dynamic get arguments => NavUtils.arguments;
+
+  T _getController() {
+    if (GetInstance().isRegistered<T>(tag: tag)) {
+      return GetInstance().find<T>(tag: tag);
+    } else {
+      LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
+      return GetInstance().put<T>(this as T);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context);
 }

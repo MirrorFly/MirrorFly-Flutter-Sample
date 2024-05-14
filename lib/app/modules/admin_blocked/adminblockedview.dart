@@ -73,7 +73,7 @@ class AdminBlockedView extends StatelessWidget {
   }
 
   onFinish(BuildContext context){
-    // Get.offAllNamed(Routes.login);
+    // NavUtils.offAllNamed(Routes.login);
     Navigator.pushNamedAndRemoveUntil(context, Routes.login, (Route<dynamic> route) => false);
   }
 }

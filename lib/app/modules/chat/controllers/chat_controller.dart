@@ -16,6 +16,7 @@ import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/edit_window.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -130,35 +131,30 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   //#metaData
   List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
-  init(
-    BuildContext context, {
-    String? jid,
-    bool isUser = false,
-    bool isFromStarred = false,
-    String? messageId,
-    String? topicId,
-    required bool showChatDeliveryIndicator,
-  }) async {
+  late ChatViewArguments arguments;
+  @override
+  Future<void> onInit() async {
+    arguments = NavUtils.arguments as ChatViewArguments;
     // buildContext = context;
-    this.showChatDeliveryIndicator = showChatDeliveryIndicator;
+    showChatDeliveryIndicator = arguments.showChatDeliveryIndicator;
 
     getAvailableFeatures();
 
-    if (topicId != null) {
-      this.topicId = topicId;
+    if (arguments.topicId.isNotEmpty) {
+      topicId = arguments.topicId;
       getTopicDetail();
     }
 
-    if (jid != null) {
-      nJid = jid;
-      debugPrint("parameter :$jid");
+    if (arguments.chatJid.isNotEmpty) {
+      nJid = arguments.chatJid;
+      debugPrint("parameter :${arguments.chatJid}");
     }
 
-    if (isFromStarred && messageId != null) {
+    if (arguments.isFromStarred && arguments.messageId != null) {
       // if (jid != null) {
       //   userJid = Get.parameters['userJid'] as String;
       // }
-      starredChatMessageId = messageId;
+      starredChatMessageId = arguments.messageId;
     }
 
     await getProfileDetails(nJid).then((value) {
@@ -182,6 +178,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       lastPosition(callback.length);
       //chatList.refresh();
     });
+    super.onInit();
   }
 
   void getAvailableFeatures() {
@@ -1311,7 +1308,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     setOnGoingUserGone();
     Future.delayed(const Duration(milliseconds: 100), () {
       debugPrint("sending mid ===> ${selectedChatList[0].messageId}");
-      Get.toNamed(Routes.messageInfo, arguments: {
+      NavUtils.toNamed(Routes.messageInfo, arguments: {
         "messageID": selectedChatList[0].messageId,
         "chatMessage": selectedChatList[0],
         "isGroupProfile": profile.isGroupProfile,
@@ -1660,7 +1657,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (messageIds.length == selectedChatList.length) {
       setOnGoingUserGone();
       clearAllChatSelection();
-      Get.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
+      NavUtils.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
         if (value != null) {
           debugPrint("result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
           profile_.value = value;
@@ -1797,7 +1794,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   infoPage() {
     setOnGoingUserGone();
     if (profile.isGroupProfile ?? false) {
-      Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
           profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
@@ -1812,7 +1809,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         setOnGoingUserAvail();
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
         debugPrint("chat info-->$value");
         setOnGoingUserAvail();
       });
@@ -1821,7 +1818,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      Get.toNamed(Routes.chatSearch, arguments: chatList);
+      NavUtils.toNamed(Routes.chatSearch, arguments: chatList);
     });
   }
 
@@ -2044,13 +2041,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     debugPrint("Camera Permission Status---> $cameraPermissionStatus");
     if (cameraPermissionStatus) {
       setOnGoingUserGone();
-      Get.toNamed(Routes.cameraPick)?.then((photo) {
+      NavUtils.toNamed(Routes.cameraPick)?.then((photo) {
         photo as XFile?;
         if (photo != null) {
           LogMessage.d("photo", photo.name.toString());
           LogMessage.d("caption text sending-->", messageController.text);
           var file = PickedAssetModel(path: photo.path, type: !photo.name.endsWith(".mp4") ? "image" : "video", file: File(photo.path));
-          Get.toNamed(Routes.mediaPreview, arguments: {
+          NavUtils.toNamed(Routes.mediaPreview, arguments: {
             "filePath": [file],
             "userName": profile.name!,
             'profile': profile,
@@ -2090,7 +2087,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (permission) {
       try {
         setOnGoingUserGone();
-        Get.toNamed(Routes.galleryPicker, arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text.trim()})
+        NavUtils.toNamed(Routes.galleryPicker, arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text.trim()})
             ?.then((value) => setOnGoingUserAvail());
       } catch (e) {
         debugPrint(e.toString());
@@ -2110,7 +2107,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         permissionPermanentlyDeniedContent: getTranslated("contactPermissionDeniedContent"));
     if (permission) {
       setOnGoingUserGone();
-      Get.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
+      NavUtils.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
     }
   }
 
@@ -2127,7 +2124,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           permissionPermanentlyDeniedContent: getTranslated("locationPermissionDeniedContent"));
       if (permission) {
         setOnGoingUserGone();
-        Get.toNamed(Routes.locationSent)?.then((value) {
+        NavUtils.toNamed(Routes.locationSent)?.then((value) {
           if (value != null) {
             value as LatLng;
             sendLocationMessage(profile, value.latitude, value.longitude);
@@ -2200,7 +2197,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     setOnGoingUserGone();
     var messageIds = <String>[];
     messageIds.add(messageId);
-    Get.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
+    NavUtils.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
       if (value != null) {
         debugPrint("result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
         profile_.value = value;
@@ -2675,7 +2672,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          Get.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.audio});
+          NavUtils.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.audio});
         } else {
           Mirrorfly.makeVoiceCall(
               toUserJid: profile.jid.checkNull(),
@@ -2683,7 +2680,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 if (response.isSuccess) {
                   debugPrint("#Mirrorfly Call userjid ${profile.jid}");
                   setOnGoingUserGone();
-                  Get.toNamed(Routes.outGoingCallView, arguments: {
+                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                     "userJid": [profile.jid],
                     "callType": CallType.audio
                   })?.then((value) => setOnGoingUserAvail());
@@ -2705,14 +2702,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          Get.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.video});
+          NavUtils.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
           Mirrorfly.makeVideoCall(
               toUserJid: profile.jid.checkNull(),
               flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
                   setOnGoingUserGone();
-                  Get.toNamed(Routes.outGoingCallView, arguments: {
+                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                     "userJid": [profile.jid],
                     "callType": CallType.video
                   })?.then((value) => setOnGoingUserAvail());

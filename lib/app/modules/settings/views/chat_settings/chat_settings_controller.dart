@@ -84,7 +84,7 @@ class ChatSettingsController extends GetxController {
   }
 
   void chooseLanguage(){
-    Get.toNamed(Routes.languages,arguments: translationLanguage)?.then((value){
+    NavUtils.toNamed(Routes.languages,arguments: translationLanguage)?.then((value){
       if(value!=null){
         var language = value as String;
         _translationLanguage(language);
@@ -96,12 +96,12 @@ class ChatSettingsController extends GetxController {
     DialogUtils.showAlert(message: getTranslated("areYouClearAllChat"),actions: [
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
           child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
       TextButton(
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             clearAllConv();
           },
           child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),

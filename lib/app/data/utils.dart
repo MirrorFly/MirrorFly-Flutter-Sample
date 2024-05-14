@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 

@@ -374,12 +374,12 @@ void showQuickProfilePopup(
   var isVideoCallAvailable =
       profile.value.isGroupProfile.checkNull() ? false : availableFeatures.value.isOneToOneCallAvailable.checkNull();
 
-  Get.dialog(
+  DialogUtils.createDialog(
     Obx(() {
       return Dialog(
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: SizedBox(
-          width: Get.width * 0.7,
+          width: NavUtils.width * 0.7,
           height: 300,
           child: Column(
             children: [
@@ -392,8 +392,8 @@ void showQuickProfilePopup(
                         !(profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull()) &&
                         !( //!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
                             profile.value.isDeletedContact())) {
-                      Get.back();
-                      Get.toNamed(Routes.imageView, arguments: {
+                      NavUtils.back();
+                      NavUtils.toNamed(Routes.imageView, arguments: {
                         'imageName': getName(profile.value),
                         'imageUrl': profile.value.image.checkNull()
                       });
@@ -461,7 +461,7 @@ void showQuickProfilePopup(
                         ? Expanded(
                             child: InkWell(
                               onTap: () {
-                                Get.back();
+                                NavUtils.back();
                                 makeVoiceCall(profile.value.jid.checkNull(), availableFeatures);
                               },
                               child: SvgPicture.asset(
@@ -475,7 +475,7 @@ void showQuickProfilePopup(
                         ? Expanded(
                             child: InkWell(
                               onTap: () {
-                                Get.back();
+                                NavUtils.back();
                                 makeVideoCall(profile.value.jid.checkNull(), availableFeatures);
                               },
                               child: SvgPicture.asset(
@@ -522,7 +522,7 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
   if (await AppPermission.askAudioCallPermissions()) {
     Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
       if (response.isSuccess) {
-        Get.toNamed(Routes.outGoingCallView, arguments: {
+        NavUtils.toNamed(Routes.outGoingCallView, arguments: {
           "userJid": [toUser],
           "callType": CallType.audio
         });
@@ -542,7 +542,7 @@ makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
       } else {
         Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
-            Get.toNamed(Routes.outGoingCallView, arguments: {
+            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
               "userJid": [toUser],
               "callType": CallType.video
             });

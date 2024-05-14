@@ -275,12 +275,12 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
-                Get.back();
+                NavUtils.back();
                 await Mirrorfly.enableDisableBusyStatus(enable: false, flyCallBack: (FlyResponse response) {
                   if(response.isSuccess) {
                     if (function != null) {
@@ -303,7 +303,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
     if (messageIds.length == selectedChatList.length) {
       isSelected(false);
       selectedChatList.clear();
-      Get.toNamed(Routes.forwardChat, arguments: {
+      NavUtils.toNamed(Routes.forwardChat, arguments: {
         "forward": true,
         "group": false,
         "groupJid": "",
@@ -312,7 +312,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         if (value != null) {
           debugPrint(
               "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
-          Get.toNamed(Routes.chat, arguments: value);
+          NavUtils.toNamed(Routes.chat, arguments: {"chatJid":value.jid});
         }
       });
     }
@@ -408,12 +408,12 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
                 var messageIds = selectedChatList.map((item) => item.messageId).toList();
                 Mirrorfly.deleteMessagesForMe(jid: selectedChatList[0].chatUserJid,
                     chatType: selectedChatList[0].messageChatType, messageIds: messageIds,
@@ -670,7 +670,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   navigateMessage(ChatMessageModel starredChat) {
-    Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
+    NavUtils.toNamed(Routes.chat,arguments: {'isFromStarred':'true',"chatJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
   }
 
   void share() {

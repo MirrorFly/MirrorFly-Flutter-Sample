@@ -124,7 +124,7 @@ class ChatInfoController extends GetxController {
           actions: [
             TextButton(
                 onPressed: () {
-                  Get.back();
+                  NavUtils.back();
                   // DialogUtils.showLoading(message: "Reporting User");
                   Mirrorfly
                       .reportUserOrMessages(jid: profile.jid!, type: "chat", flyCallBack: (FlyResponse response) {
@@ -138,7 +138,7 @@ class ChatInfoController extends GetxController {
                 child: Text(getTranslated("report").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
             TextButton(
                 onPressed: () {
-                  Get.back();
+                  NavUtils.back();
                 },
                 child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           ]);
@@ -147,7 +147,7 @@ class ChatInfoController extends GetxController {
 
   gotoViewAllMedia(){
     debugPrint("to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
-    Get.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false});
+    NavUtils.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false});
   }
 
   void onContactSyncComplete(bool result) {

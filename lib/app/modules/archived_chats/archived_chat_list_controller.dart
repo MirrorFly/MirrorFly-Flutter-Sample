@@ -124,17 +124,17 @@ class ArchivedChatListController extends GetxController {
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      Get.toNamed(Routes.chat, parameters: {"chatJid": jid});
+      NavUtils.toNamed(Routes.chat, arguments: {"chatJid": jid});
       // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
           DialogUtils.hideLoading();
           var profile = value;//profiledata(value.toString());
-          Get.toNamed(Routes.chat, arguments: profile);
+          NavUtils.toNamed(Routes.chat, arguments: profile);
         }
       });*/
       // SessionManagement.setChatJid(jid);
-      // Get.toNamed(Routes.chat);
+      // NavUtils.toNamed(Routes.chat);
     }
   }
 
@@ -319,12 +319,12 @@ class ArchivedChatListController extends GetxController {
         actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
                 if (selectedChats.length == 1) {
                   _itemDelete(0);
                 } else {
@@ -387,11 +387,11 @@ class ArchivedChatListController extends GetxController {
           context: context,
           // chatItem: chatItem,
           chatTap: () {
-            Get.back();
+            NavUtils.back();
             toChatPage(chatItem.jid.checkNull());
           },
           infoTap: () {
-            Get.back();
+            NavUtils.back();
             infoPage(value);
           },
           profile: profile_,
@@ -410,7 +410,7 @@ class ArchivedChatListController extends GetxController {
 
   infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
-      Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
           // profile_(value as Profile);
           // isBlocked(profile.isBlocked);
@@ -422,7 +422,7 @@ class ArchivedChatListController extends GetxController {
         }
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      NavUtils.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
     }
   }
 

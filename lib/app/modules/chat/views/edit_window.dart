@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../widgets/chat_widgets.dart';
 import '../widgets/message_content.dart';
@@ -82,7 +83,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                         alignment: Alignment.bottomRight,
                         child: Container(
                           key: ValueKey(widget.chatItem.messageId),
-                          constraints: BoxConstraints(maxWidth: Get.width * 0.75),
+                          constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
                           // color: Colors.transparent,
                           margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
                           decoration: BoxDecoration(

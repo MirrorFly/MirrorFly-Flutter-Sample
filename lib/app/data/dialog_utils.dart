@@ -9,7 +9,7 @@ class DialogUtils {
   static BuildContext get buildContext => NavUtils.currentContext;
 
   static createDialog(Widget builder){
-    showDialog(context: buildContext, builder: (_){
+    return showDialog(context: buildContext, builder: (_){
       return builder;
     });
   }

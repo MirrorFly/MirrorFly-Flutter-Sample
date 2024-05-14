@@ -26,12 +26,12 @@ class DeleteAccountReasonController extends FullLifeCycleController
         actions: [
           TextButton(
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
               child: Text(getTranslated("cancel"),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () async {
-                // Get.back();
+                // NavUtils.back();
                 deleteUserAccount();
               },
               child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
@@ -40,7 +40,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
 
   Future<void> deleteUserAccount() async {
     if (await AppUtils.isNetConnected()) {
-      Get.back();
+      NavUtils.back();
       // Future.delayed(const Duration(milliseconds: 100), () {
        DialogUtils.showLoading(message: getTranslated("deletingAccount"));
       debugPrint("on DeleteAccount");
@@ -51,7 +51,7 @@ class DeleteAccountReasonController extends FullLifeCycleController
           Future.delayed(const Duration(milliseconds: 500), () {
             DialogUtils.hideLoading();
             SessionManagement.clear()
-                .then((value) => Get.offAllNamed(Routes.login));
+                .then((value) => NavUtils.offAllNamed(Routes.login));
             toToast(getTranslated("accountDeleted"));
           });
         }else{

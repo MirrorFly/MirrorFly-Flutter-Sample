@@ -43,7 +43,7 @@ class AppLocalizations {
   }
 
   static dynamic translateList(String key) {
-    return _localizedStrings.containsKey(key) ?  _localizedStrings[key] : [];
+    return _localizedStrings.containsKey(key) ?  List<String>.from(json.decode(_localizedStrings[key] ?? '')) : [];
   }
 
   // Default language

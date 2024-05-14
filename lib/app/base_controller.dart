@@ -25,6 +25,7 @@ import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
+import 'data/utils.dart';
 import 'model/chat_message_model.dart';
 import 'model/notification_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
@@ -224,11 +225,11 @@ abstract class BaseController {
           debugPrint("onCallStatusUpdated Current Route ${Get.currentRoute}");
           if (Get.currentRoute == Routes.callTimeOutView) {
             debugPrint("onCallStatusUpdated Inside Get.back");
-            Get.back();
+            NavUtils.back();
           }
           if (Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            Get.toNamed(Routes.onGoingCallView, arguments: {
+            NavUtils.toNamed(Routes.onGoingCallView, arguments: {
               "userJid": [userJid]
             });
           }
@@ -1078,7 +1079,7 @@ abstract class BaseController {
       var token = SessionManagement.getToken().checkNull();
       SessionManagement.clear().then((value) {
         SessionManagement.setToken(token);
-        Get.offAllNamed(Routes.login);
+        NavUtils.offAllNamed(Routes.login);
       });
       // DialogUtils.progressLoading();
       // Mirrorfly.logoutOfChatSDK().then((value) {
@@ -1087,7 +1088,7 @@ abstract class BaseController {
       //     var token = SessionManagement.getToken().checkNull();
       //     SessionManagement.clear().then((value){
       //       SessionManagement.setToken(token);
-      //       Get.offAllNamed(Routes.login);
+      //       NavUtils.offAllNamed(Routes.login);
       //     });
       //   }else{
       //     Get.snackbar("Logout", "Logout Failed");
@@ -1096,7 +1097,7 @@ abstract class BaseController {
       //   DialogUtils.hideLoading();
       //   SessionManagement.clear().then((value){
       //     // SessionManagement.setToken(token);
-      //     Get.offAllNamed(Routes.login);
+      //     NavUtils.offAllNamed(Routes.login);
       //   });
       // });
     }

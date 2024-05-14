@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+import '../../../data/utils.dart';
 
 class ImageCacheManager {
   static final Map<String, Image> _cache = {};
@@ -12,8 +13,8 @@ class ImageCacheManager {
       return _cache[messageId]!;
     } else {
       Uint8List bytes = base64Decode(base64String);
-      Image image = Image.memory(bytes, gaplessPlayback: true,  width: width ?? Get.width * 0.60,
-        height: height ?? Get.height * 0.4, fit: BoxFit.cover,);
+      Image image = Image.memory(bytes, gaplessPlayback: true,  width: width ?? NavUtils.width * 0.60,
+        height: height ?? NavUtils.height * 0.4, fit: BoxFit.cover,);
       _cache[messageId] = image;
       return image;
     }
@@ -26,12 +27,12 @@ class ImageCacheManager {
     return Image.memory(
       image,
       key: ValueKey<String>(base64String),
-      width: width ?? Get.width * 0.60,
-      height: height ?? Get.height * 0.4,
+      width: width ?? NavUtils.width * 0.60,
+      height: height ?? NavUtils.height * 0.4,
       fit: BoxFit.cover,
       gaplessPlayback: true,
-      cacheHeight: (height ?? Get.height * 0.4).toInt(),
-      cacheWidth:  (width ?? Get.width * 0.60).toInt(),
+      cacheHeight: (height ?? NavUtils.height * 0.4).toInt(),
+      cacheWidth:  (width ?? NavUtils.width * 0.60).toInt(),
     );
   }
 

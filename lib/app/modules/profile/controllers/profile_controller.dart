@@ -34,7 +34,7 @@ class ProfileController extends GetxController {
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from = Get.previousRoute;//Routes.login.obs;
+  var from = NavUtils.previousRoute;//Routes.login.obs;
 
   var name = "".obs;
 
@@ -48,10 +48,10 @@ class ProfileController extends GetxController {
     super.onInit();
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     LogMessage.d("auth : ", SessionManagement.getAuthToken().toString());
-    if (Get.arguments != null) {
+    if (NavUtils.arguments != null) {
       // from(Get.arguments["from"]);
       if (from == Routes.login) {
-        profileMobile.text = Get.arguments['mobile'] ?? SessionManagement.getMobileNumber();
+        profileMobile.text = NavUtils.arguments['mobile'] ?? SessionManagement.getMobileNumber();
       }
     } else {
       profileMobile.text = "";
@@ -129,9 +129,9 @@ class ProfileController extends GetxController {
                       if (from == Routes.login) {
                         // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          Get.offNamed(Routes.dashboard);
+                          NavUtils.offNamed(Routes.dashboard);
                         }else{
-                          Get.offNamed(Routes.contactSync);
+                          NavUtils.offNamed(Routes.contactSync);
                         }
                         // });
                       }
@@ -164,9 +164,9 @@ class ProfileController extends GetxController {
                     if (from == Routes.login) {
                       // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          Get.offNamed(Routes.dashboard);
+                          NavUtils.offNamed(Routes.dashboard);
                         }else{
-                          Get.offNamed(Routes.contactSync);
+                          NavUtils.offNamed(Routes.contactSync);
                         }
                       // });
                     }
@@ -388,7 +388,7 @@ class ProfileController extends GetxController {
       }
    /* }else{
       toToast(getTranslated("noInternetConnection"));
-      Get.back();
+      NavUtils.back();
     }*/
 
   }
