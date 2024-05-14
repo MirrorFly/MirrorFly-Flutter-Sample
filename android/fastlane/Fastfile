@@ -15,8 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "Android Edit Message Bug fixes #FLUTTER-1491,#FLUTTER-1492,#FLUTTER-1493,#FLUTTER-1494,#FLUTTER-1495,#FLUTTER-1496,
-  MetaData #FLUTTER-1319 We have set MetaData as Platform Flutter in registration so that user list will be shown only registered users using this build "
+  change_Log = "Android Edit Message Bug fixes #FLUTTER-1491,#FLUTTER-1493,#FLUTTER-1495 "
 
 
   desc "Upload dev version to distributes in firebase"

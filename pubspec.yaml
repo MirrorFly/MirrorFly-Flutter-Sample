@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 2.7.5+89
+version: 2.7.5+90
 build_release_date: Mar 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.

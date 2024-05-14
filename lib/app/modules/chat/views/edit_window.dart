@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -128,7 +130,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                   border: Border.all(
                                     color: textColor,
                                   ),
-                                  borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                  borderRadius: const BorderRadius.all(Radius.circular(20)),
                                   color: Colors.white,
                                 ),
                                 child: Row(
@@ -150,18 +152,23 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                       width: 10,
                                     ),
                                     Expanded(
-                                      child: TextField(
-                                        focusNode: textFocusNode,
-                                        onChanged: (text) {
-                                          widget.chatController.editMessageText(text);
-                                        },
-                                        style: const TextStyle(fontWeight: FontWeight.w400),
-                                        keyboardType: TextInputType.multiline,
-                                        minLines: 1,
-                                        maxLines: 5,
-                                        controller: widget.chatController.editMessageController,
-                                        // focusNode: controller.focusNode,
-                                        decoration: const InputDecoration(hintText: "Start Typing...", border: InputBorder.none),
+                                      child: Scrollbar(
+                                        thumbVisibility: true, // Always show the scrollbar, optional
+                                        thickness: 4.0, // Set the thickness of the scrollbar
+                                        radius: const Radius.circular(20),
+                                        child: TextField(
+                                          focusNode: textFocusNode,
+                                          onChanged: (text) {
+                                            widget.chatController.editMessageText(text);
+                                          },
+                                          style: const TextStyle(fontWeight: FontWeight.w400),
+                                          keyboardType: TextInputType.multiline,
+                                          minLines: 1,
+                                          maxLines: 5,
+                                          controller: widget.chatController.editMessageController,
+                                          // focusNode: controller.focusNode,
+                                          decoration: const InputDecoration(hintText: "Start Typing...", border: InputBorder.none, contentPadding: EdgeInsets.all(0)),
+                                        ),
                                       ),
                                     ),
                                   ],

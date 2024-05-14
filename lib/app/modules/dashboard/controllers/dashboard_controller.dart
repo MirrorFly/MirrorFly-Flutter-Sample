@@ -2050,9 +2050,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (!index.isNegative) {
       recentChats[index].lastMessageContent = editedChatMessage.messageTextContent;
       recentChats.refresh();
-    } else {
-      updateRecentChat(jid: editedChatMessage.chatUserJid);
     }
+    // else {
+    //   updateRecentChat(jid: editedChatMessage.chatUserJid);
+    // }
   }
 }
 
