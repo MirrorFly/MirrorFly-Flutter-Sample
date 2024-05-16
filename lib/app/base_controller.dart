@@ -595,6 +595,12 @@ abstract class BaseController {
     }
   }
 
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated",chatMessageModel.toJson());

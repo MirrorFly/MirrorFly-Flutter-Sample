@@ -143,6 +143,7 @@ class ArchivedChatListController extends GetxController {
         archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isChatArchived = (false);
     archivedChats.removeAt(chatIndex);
+    updateRecentChatListHistory();
   }
 
   Future<void> unArchiveSelectedChats() async {
@@ -433,5 +434,11 @@ class ArchivedChatListController extends GetxController {
 
   void onMessageEdited(ChatMessageModel editedChatMessage) {
     updateArchiveRecentChat(editedChatMessage.chatUserJid);
+  }
+
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<MainController>()) {
+      Get.find<MainController>().updateRecentChatListHistory();
+    }
   }
 }

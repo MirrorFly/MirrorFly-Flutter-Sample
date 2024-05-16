@@ -1464,11 +1464,20 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   @override
   void onInactive() {}
 
+  var hasPaused = false;
   @override
-  void onPaused() {}
+  void onPaused() {
+    hasPaused = true;
+  }
 
   @override
   void onResumed() {
+    if (hasPaused) {
+      hasPaused = false;
+      LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
+      getRecentChatList();
+      fetchCallLogList();
+    }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
       if (searchFocusNode.hasFocus) {
