@@ -250,7 +250,7 @@ class ProfileView extends GetView<ProfileController> {
                                     }
                                   : null,
                           child: Text(
-                            controller.from == Routes.login
+                            controller.from == Routes.login || controller.from.isEmpty
                                 ? 'Save'
                                 : controller.changed.value
                                     ? 'Update & Continue'
