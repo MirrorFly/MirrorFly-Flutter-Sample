@@ -73,6 +73,7 @@ class ProfileController extends GetxController {
 
 
   Future<void> save({bool frmImage=false}) async {
+    var valid = await validMobileNumber(profileMobile.text);
     // var permission = await AppPermission.getStoragePermission();
     // if (permission) {
       if (profileName.text
@@ -91,7 +92,10 @@ class ProfileController extends GetxController {
         toToast("Please enter a valid Mail");
       } else if (profileStatus.value.isEmpty) {
         toToast("Enter Profile Status");
-      } else {
+      } else if(!valid){
+        toToast("Enter Valid Mobile Number");
+      }
+      else {
         loading.value = true;
         showLoader();
         if (imagePath.value.isNotEmpty) {
@@ -488,9 +492,9 @@ class ProfileController extends GetxController {
       coded = SessionManagement.getCountryCode().checkNull()+text;
     }
     var m = coded.contains("+") ? coded : "+$coded";
-    libphonenumber.init();
-    var formatNumberSync = libphonenumber.formatNumberSync(m);
+    await libphonenumber.init();
     try {
+      var formatNumberSync = libphonenumber.formatNumberSync(m);
       var parse = await libphonenumber.parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
