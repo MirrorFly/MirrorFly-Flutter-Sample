@@ -335,6 +335,7 @@ getReplyImageHolder(BuildContext context,
 
 Widget messageNotAvailableWidget(ChatMessageModel chatMessage) {
   return Container(
+    width: double.infinity,
     padding: const EdgeInsets.all(12),
     margin: const EdgeInsets.all(2),
     decoration: BoxDecoration(
@@ -1882,9 +1883,7 @@ class TextMessageView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Row(
-            mainAxisSize: chatMessage.replyParentChatMessage == null
-                ? MainAxisSize.min
-                : MainAxisSize.max,
+            mainAxisSize: chatMessage.isThisAReplyMessage ? MainAxisSize.max : MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
