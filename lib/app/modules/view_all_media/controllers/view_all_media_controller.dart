@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
+import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
 import '../../../routes/route_settings.dart';
@@ -30,9 +32,7 @@ class ViewAllMediaController extends GetxController {
   set linklist(Map<String, List<MessageItem>> value) => _linklist.value = value;
   Map<String, List<MessageItem>> get linklistdata => _linklist;
 
-  var name = Get.arguments["name"] as String;
-  var jid = Get.arguments["jid"] as String;
-  var isGroup = Get.arguments["isgroup"] as bool;
+  var name = ''.obs;
 
   var imageCount = 0.obs;
   var audioCount = 0.obs;
@@ -42,6 +42,7 @@ class ViewAllMediaController extends GetxController {
   var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
   var newLinkMessages = List<ChatMessageModel>.empty(growable: true).obs;
 
+  ViewAllMediaArguments get arguments => NavUtils.arguments as ViewAllMediaArguments;
 
   @override
   void onInit() {
@@ -78,7 +79,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   getMediaMessages() {
-    Mirrorfly.getMediaMessages(jid: jid).then((value) async {
+    Mirrorfly.getMediaMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
@@ -105,7 +106,7 @@ class ViewAllMediaController extends GetxController {
 
   //getDocsMessages
   getDocsMessages() {
-    Mirrorfly.getDocsMessages(jid: jid).then((value) async {
+    Mirrorfly.getDocsMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getDocsMessages",value);
         var data = chatMessageModelFromJson(value);
@@ -120,7 +121,7 @@ class ViewAllMediaController extends GetxController {
 
   //getLinkMessages
   getLinkMessages() {
-    Mirrorfly.getLinkMessages(jid: jid).then((value) async {
+    Mirrorfly.getLinkMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getLinkMessages", value);
         var data = chatMessageModelFromJson(value);

@@ -162,7 +162,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   }
 
   void showInSnackBar(String message) {
-    ScaffoldMessenger.of(Get.context!)
+    ScaffoldMessenger.of(NavUtils.currentContext)
         .showSnackBar(SnackBar(content: Text(message)));
   }
 

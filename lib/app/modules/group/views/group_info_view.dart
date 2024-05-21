@@ -12,11 +12,17 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_control
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-class GroupInfoView extends GetView<GroupInfoController> {
+class GroupInfoView extends NavView<GroupInfoController> {
   const GroupInfoView({Key? key}) : super(key: key);
+
+  @override
+  GroupInfoController createController() {
+    return GroupInfoController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +270,7 @@ class GroupInfoView extends GetView<GroupInfoController> {
             ),
             onTap: () {
               NavUtils.back();
-              NavUtils.toNamed(Routes.chatInfo, arguments: item);
+              NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:item.jid.checkNull()));
             },
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         Obx(() {

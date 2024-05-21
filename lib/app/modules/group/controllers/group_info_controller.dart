@@ -14,6 +14,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 import '../views/name_change_view.dart';
@@ -323,7 +324,7 @@ class GroupInfoController extends GetxController {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(result.files.single.path!),
         ))?.then((value) {
           value as MemoryImage;
@@ -351,7 +352,7 @@ class GroupInfoController extends GetxController {
       final XFile? photo = await _picker.pickImage(
           source: ImageSource.camera);
       if (photo != null) {
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(photo.path),
         ))?.then((value) {
           value as MemoryImage;
@@ -447,7 +448,7 @@ class GroupInfoController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    NavUtils.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":profile.jid })?.then((value){
+    NavUtils.toNamed(Routes.contacts, arguments: ContactListArguments(forGroup: true,groupJid:profile.jid.checkNull()))?.then((value){
       if(value!=null){
         addUsers(value);
       }
@@ -471,7 +472,7 @@ class GroupInfoController extends GetxController {
   }
 
   gotoViewAllMedia(){
-    NavUtils.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile});
+    NavUtils.toNamed(Routes.viewMedia,arguments: ViewAllMediaArguments(chatJid: profile.jid.checkNull())/*{"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile}*/);
   }
 
   removeUser(String userJid) async {
@@ -529,7 +530,7 @@ class GroupInfoController extends GetxController {
       return;
     }
     if(isMemberOfGroup) {
-      Get.to(const NameChangeView())?.then((value) {
+      NavUtils.to(const NameChangeView())?.then((value) {
         if (value != null) {
           updateGroupName(nameController.text);
         }

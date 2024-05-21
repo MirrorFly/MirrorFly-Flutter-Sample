@@ -25,12 +25,12 @@ class AboutAndHelpView extends StatelessWidget {
         children: [
           ListItem(title: Text(getTranslated("aboutUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
             if(await AppUtils.isNetConnected()){
-              Get.to(const AboutUsView());
+              NavUtils.to(const AboutUsView());
             }else{
               toToast(getTranslated("noInternetConnection"));
             }
           }),
-          ListItem(title: Text(getTranslated("contactUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>Get.to(ContactusView())),
+          ListItem(title: Text(getTranslated("contactUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>NavUtils.to(ContactusView())),
           ListItem(title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

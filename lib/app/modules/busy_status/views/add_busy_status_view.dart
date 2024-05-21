@@ -9,12 +9,16 @@ import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../controllers/busy_status_controller.dart';
 
-class AddBusyStatusView extends StatelessWidget {
-  AddBusyStatusView(
+class AddBusyStatusView extends NavView<BusyStatusController> {
+  const AddBusyStatusView(
       {super.key, required String status, this.enableAppBar = true});
   final bool enableAppBar;
 
-  final BusyStatusController controller = BusyStatusController().get();
+  @override
+  BusyStatusController createController() {
+    return BusyStatusController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

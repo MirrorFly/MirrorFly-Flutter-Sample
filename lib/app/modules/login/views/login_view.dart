@@ -12,24 +12,18 @@ import '../../../routes/route_settings.dart';
 import '../../../common/constants.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends NavView<LoginController> {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  final LoginController controller = LoginController().get();
+  LoginController createController() {
+    return LoginController();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        /*FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }*/
         controller.focusNode.unfocus();
       },
       child: Scaffold(

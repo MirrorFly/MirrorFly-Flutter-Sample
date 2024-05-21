@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/widgets.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/preview_contact_controller.dart';
 
-class PreviewContactView extends GetView<PreviewContactController> {
+class PreviewContactView extends NavView<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
+
+  @override
+  PreviewContactController createController() {
+    return PreviewContactController();
+  }
 
   @override
   Widget build(BuildContext context) {

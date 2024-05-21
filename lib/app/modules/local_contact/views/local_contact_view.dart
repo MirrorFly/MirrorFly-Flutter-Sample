@@ -8,10 +8,16 @@ import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/local_contact_controller.dart';
 
-class LocalContactView extends GetView<LocalContactController> {
+class LocalContactView extends NavView<LocalContactController> {
   const LocalContactView({Key? key}) : super(key: key);
+
+  @override
+  LocalContactController createController() {
+    return LocalContactController();
+  }
 
   @override
   Widget build(BuildContext context) {

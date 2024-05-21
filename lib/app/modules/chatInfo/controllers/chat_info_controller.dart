@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_cont
 import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 
 class ChatInfoController extends GetxController {
@@ -24,10 +25,12 @@ class ChatInfoController extends GetxController {
 
   final muteable = false.obs;
   var userPresenceStatus = ''.obs;
+  ChatInfoArguments get argument => NavUtils.arguments as ChatInfoArguments;
 
-
-  init(String jid) async {
-    getProfileDetails(jid).then((value) {
+  @override
+  void onInit(){
+    super.onInit();
+    getProfileDetails(argument.chatJid).then((value) {
       profile_(value);
       mute(profile.isMuted!);
       scrollController.addListener(_scrollListener);
@@ -147,7 +150,7 @@ class ChatInfoController extends GetxController {
 
   gotoViewAllMedia(){
     debugPrint("to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
-    NavUtils.toNamed(Routes.viewMedia,arguments: {"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false});
+    NavUtils.toNamed(Routes.viewMedia,arguments: ViewAllMediaArguments(chatJid: profile.jid.checkNull())/*{"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false}*/);
   }
 
   void onContactSyncComplete(bool result) {

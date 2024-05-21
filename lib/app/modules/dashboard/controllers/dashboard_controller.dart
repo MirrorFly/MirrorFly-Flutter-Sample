@@ -195,7 +195,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         }
       });
     } else {
-      NavUtils.toNamed(Routes.chatInfo, arguments: {"jid":profile.jid})?.then((value) {});
+      NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.jid.checkNull()))?.then((value) {});
     }
   }
 
@@ -515,7 +515,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         if (item.isGroup!) {
           Future.delayed(const Duration(milliseconds: 100), () => NavUtils.toNamed(Routes.groupInfo, arguments: profile));
         } else {
-          Future.delayed(const Duration(milliseconds: 100), () => NavUtils.toNamed(Routes.chatInfo, arguments: profile));
+          Future.delayed(const Duration(milliseconds: 100), () => NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.jid.checkNull())));
         }
       }
     });
@@ -1467,7 +1467,6 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       profile_(value);
       debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(
-          context: context,
           // chatItem: chatItem,
           chatTap: () {
             NavUtils.back();
@@ -1490,23 +1489,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   Future<void> gotoContacts({bool forCalls = false, String callType = ""}) async {
     if (!Constants.enableContactSync) {
-      NavUtils.toNamed(Routes.contacts, arguments: {
-        "is_make_call": forCalls,
-        "call_type": callType,
-      }, parameters: {
-        "topicId": topicId.value
-      });
+      NavUtils.toNamed(Routes.contacts, arguments: ContactListArguments(topicId: topicId.value,forMakeCall: forCalls,callType: callType));
     } else {
       var contactPermissionHandle = await AppPermission.checkAndRequestPermissions(permissions: [Permission.contacts],
           permissionIcon: contactPermission,
           permissionContent:getTranslated("contactPermissionContent"),permissionPermanentlyDeniedContent:getTranslated("contactPermissionDeniedContent") );
       if (contactPermissionHandle) {
-        NavUtils.toNamed(Routes.contacts, arguments: {
-          "is_make_call": forCalls,
-          "call_type": callType,
-        }, parameters: {
-          "topicId": topicId.value
-        });
+        NavUtils.toNamed(Routes.contacts, arguments: ContactListArguments(topicId: topicId.value,forMakeCall: forCalls,callType: callType));
       }
     }
 

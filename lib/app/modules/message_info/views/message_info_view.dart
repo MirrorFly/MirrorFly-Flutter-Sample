@@ -13,8 +13,13 @@ import '../../chat/widgets/reply_message_widgets.dart';
 import '../../chat/widgets/sender_header.dart';
 import '../controllers/message_info_controller.dart';
 
-class MessageInfoView extends GetView<MessageInfoController> {
+class MessageInfoView extends NavView<MessageInfoController> {
   const MessageInfoView({Key? key}) : super(key: key);
+
+  @override
+  MessageInfoController createController() {
+    return MessageInfoController();
+  }
 
   @override
   Widget build(BuildContext context) {

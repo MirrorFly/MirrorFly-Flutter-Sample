@@ -19,15 +19,14 @@ import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
-class DashboardView extends StatefulWidget {
+class DashboardView extends NavView<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
-}
+  DashboardController createController() {
+    return DashboardController();
+  }
 
-class _DashboardViewState extends State<DashboardView> {
-  final DashboardController controller = DashboardController().get();
   @override
   Widget build(BuildContext context) {
     // Mirrorfly.setEventListener(this);

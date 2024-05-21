@@ -12,8 +12,13 @@ import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
-class GroupCreationView extends GetView<GroupCreationController> {
+class GroupCreationView extends NavView<GroupCreationController> {
   const GroupCreationView({Key? key}) : super(key: key);
+
+  @override
+  GroupCreationController createController() {
+    return GroupCreationController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +161,7 @@ class GroupCreationView extends GetView<GroupCreationController> {
                           Obx(() {
                             return IconButton(
                                 onPressed: () {
-                                  controller.showHideEmoji(context);
+                                  controller.showHideEmoji();
                                 },
                                 icon: controller.showEmoji.value
                                     ? const Icon(

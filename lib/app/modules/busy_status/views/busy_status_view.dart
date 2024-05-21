@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../controllers/busy_status_controller.dart';
 import 'add_busy_status_view.dart';
 
@@ -73,7 +74,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                         onTap: () {
                           controller.addStatusController.text = controller.busyStatus.value;
                           controller.onChanged();
-                          Get.to(AddBusyStatusView(status: controller.selectedStatus.value,),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                          NavUtils.to(AddBusyStatusView(status: controller.selectedStatus.value,),arguments: {"status":controller.selectedStatus.value})?.then((value){
                             if(value!=null){
                               controller.insertBusyStatus(value);
                             }

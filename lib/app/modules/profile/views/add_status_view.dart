@@ -6,9 +6,15 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 
-class AddStatusView extends GetView<StatusListController> {
+class AddStatusView extends NavView<StatusListController> {
   const AddStatusView({Key? key}) : super(key: key);
+
+  @override
+  StatusListController createController() {
+    return StatusListController();
+  }
 
   @override
   Widget build(BuildContext context) {

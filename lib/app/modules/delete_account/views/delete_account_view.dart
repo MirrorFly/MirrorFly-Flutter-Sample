@@ -8,11 +8,18 @@ import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/delete_account_controller.dart';
 
-class DeleteAccountView extends GetView<DeleteAccountController> {
+class DeleteAccountView extends NavView<DeleteAccountController> {
   const DeleteAccountView({Key? key}) : super(key: key);
+
+  @override
+  DeleteAccountController createController() {
+    return DeleteAccountController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

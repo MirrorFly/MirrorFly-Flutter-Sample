@@ -6,11 +6,17 @@ import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/chat_se
 import '../../../../common/constants.dart';
 import '../../../../common/widgets.dart';
 import '../../../../data/utils.dart';
+import '../../../../extensions/extensions.dart';
 import '../../../../routes/route_settings.dart';
 import '../settings_widgets.dart';
 
-class ChatSettingsView extends GetView<ChatSettingsController> {
+class ChatSettingsView extends NavView<ChatSettingsController> {
   const ChatSettingsView({Key? key}) : super(key: key);
+
+  @override
+  ChatSettingsController createController() {
+    return ChatSettingsController();
+  }
 
   @override
   Widget build(BuildContext context) {

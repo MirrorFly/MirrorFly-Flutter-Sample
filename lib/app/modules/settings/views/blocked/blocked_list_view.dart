@@ -7,8 +7,13 @@ import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_
 
 import '../../../../common/widgets.dart';
 
-class BlockedListView extends GetView<BlockedListController> {
+class BlockedListView extends NavView<BlockedListController> {
   const BlockedListView({Key? key}) : super(key: key);
+
+  @override
+  BlockedListController createController() {
+    return BlockedListController();
+  }
 
   @override
   Widget build(BuildContext context) {

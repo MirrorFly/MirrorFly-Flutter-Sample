@@ -4,12 +4,18 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/gallery_picker_controller.dart';
 import '../src/presentation/pages/gallery_media_picker.dart';
 
-class GalleryPickerView extends GetView<GalleryPickerController> {
+class GalleryPickerView extends NavView<GalleryPickerController> {
   const GalleryPickerView({Key? key}) : super(key: key);
+
+  @override
+  GalleryPickerController createController() {
+    return GalleryPickerController();
+  }
 
   @override
   Widget build(BuildContext context) {

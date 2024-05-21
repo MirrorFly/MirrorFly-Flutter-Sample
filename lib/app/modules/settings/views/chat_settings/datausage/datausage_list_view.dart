@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
+import '../../../../../extensions/extensions.dart';
 import 'datausage_controller.dart';
 
-class DataUsageListView extends GetView<DataUsageController> {
+class DataUsageListView extends NavView<DataUsageController> {
   const DataUsageListView({Key? key}) : super(key: key);
+
+  @override
+  DataUsageController createController() {
+    return DataUsageController();
+  }
 
   @override
   Widget build(BuildContext context) {

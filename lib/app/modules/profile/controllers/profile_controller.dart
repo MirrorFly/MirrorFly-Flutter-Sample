@@ -437,7 +437,7 @@ class ProfileController extends GetxController {
           if (MediaUtils.checkFileUploadSize(
               result.files.single.path!, Constants.mImage)) {
             isImageSelected.value = true;
-            Get.to(CropImage(
+            NavUtils.to(CropImage(
               imageFile: File(result.files.single.path!),
             ))?.then((value) {
               value as MemoryImage;
@@ -477,7 +477,7 @@ class ProfileController extends GetxController {
           source: ImageSource.camera);
       if (photo != null) {
         isImageSelected.value = true;
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(photo.path),
         ))?.then((value) {
           debugPrint("Profile Controller Got Image from Crop Image $value");

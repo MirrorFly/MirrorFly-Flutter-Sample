@@ -8,10 +8,16 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../../extensions/extensions.dart';
 import '../controllers/image_view_controller.dart';
 
-class ImageViewView extends GetView<ImageViewController> {
+class ImageViewView extends NavView<ImageViewController> {
   const ImageViewView({Key? key}) : super(key: key);
+
+  @override
+  ImageViewController createController() {
+    return ImageViewController();
+  }
 
   @override
   Widget build(BuildContext context) {

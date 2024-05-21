@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/app_localizations.dart';
+import '../data/utils.dart';
 
 part 'recent_chat_extension.dart';
 part 'profile_parsing_extension.dart';
@@ -49,17 +50,10 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 
   final String? tag = null;
 
-  T get controller => _getController();
-  // dynamic get arguments => NavUtils.arguments;
+  T get controller => createController().get();
+  dynamic get arguments => NavUtils.arguments;
 
-  T _getController() {
-    if (GetInstance().isRegistered<T>(tag: tag)) {
-      return GetInstance().find<T>(tag: tag);
-    } else {
-      LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
-      return GetInstance().put<T>(this as T);
-    }
-  }
+  T createController();
 
   @override
   Widget build(BuildContext context);

@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
+import '../../../extensions/extensions.dart';
 import '../controllers/country_controller.dart';
 
-class CountryListView extends GetView<CountryController> {
+class CountryListView extends NavView<CountryController> {
   const CountryListView({Key? key}) : super(key: key);
+
+  @override
+  CountryController createController() {
+    return CountryController();
+  }
 
   @override
   Widget build(BuildContext context) {

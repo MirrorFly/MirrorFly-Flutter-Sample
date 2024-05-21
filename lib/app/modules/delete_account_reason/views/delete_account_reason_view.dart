@@ -4,10 +4,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/delete_account_reason_controller.dart';
 
-class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
+class DeleteAccountReasonView extends NavView<DeleteAccountReasonController> {
   const DeleteAccountReasonView({Key? key}) : super(key: key);
+
+  @override
+  DeleteAccountReasonController createController() {
+    return DeleteAccountReasonController();
+  }
 
   @override
   Widget build(BuildContext context) {

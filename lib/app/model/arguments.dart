@@ -1,3 +1,5 @@
+import '../common/constants.dart';
+
 class DashboardViewArguments{
   final bool didMissedCallNotificationLaunchApp;
 
@@ -24,4 +26,26 @@ class ChatViewArguments{
   final bool enableCalls;
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;
+}
+
+class ContactListArguments{
+  ContactListArguments(
+      {this.messageIds = const [], this.topicId = "", this.callType = "", this.forMakeCall = false,this.groupJid = "",this.forGroup = false});
+  final List<String> messageIds;
+  final String groupJid;
+  final String topicId;
+  final String callType;
+  final bool forMakeCall;
+  final bool forGroup;
+}
+
+class ChatInfoArguments{
+  final String chatJid;
+  final bool disableAppbar;
+  ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
+}
+
+class ViewAllMediaArguments{
+  final String chatJid;
+  ViewAllMediaArguments({required this.chatJid});
 }

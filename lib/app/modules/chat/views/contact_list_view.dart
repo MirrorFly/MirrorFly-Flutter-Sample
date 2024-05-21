@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -11,45 +12,18 @@ import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/dashboard_widgets/contact_item.dart';
 
-class ContactListView extends StatefulWidget {
-  const ContactListView(
-      {super.key,
-        this.messageIds,
-        this.group = false,
-        this.groupJid = '',
-        this.enableAppBar = true,
-        this.showSettings = false});
-  final List<String>? messageIds;
-  final bool group;
-  final String groupJid;
-  final bool enableAppBar;
-  final bool showSettings;
+class ContactListView extends NavView<ContactController> {
+  const ContactListView({super.key});
+
 
   @override
-  State<ContactListView> createState() => _ContactListViewState();
-}
-
-class _ContactListViewState extends State<ContactListView> {
-  final ContactController controller = ContactController().get();
-
-  @override
-  void initState() {
-    controller.init(context,
-        messageIds: widget.messageIds,
-        group: widget.group,
-        groupjid: widget.groupJid);
-    super.initState();
+  ContactController createController() {
+    return ContactController();
   }
-
-  @override
-  void dispose() {
-    Get.delete<ContactController>();
-    super.dispose();
-  }
-
 
   @override
   Widget build(BuildContext context) {
+    var arg = arguments as ContactListArguments;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
@@ -60,22 +34,18 @@ class _ContactListViewState extends State<ContactListView> {
           controller.backFromSearch();
           return;
         }
-        Navigator.pop(context);
+        NavUtils.back();
       },
       child: Obx(
             () =>
             Scaffold(
               appBar: AppBar(
                 leading: IconButton(
-                  icon: controller.isForward.value
-                      ? const Icon(Icons.close)
-                      : const Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
-                    controller.isForward.value
-                        ? Navigator.pop(context)
-                        : controller.search
+                    controller.search
                         ? controller.backFromSearch()
-                        : Navigator.pop(context);
+                        : NavUtils.back();
                   },
                 ),
                 title: controller.search
@@ -90,9 +60,7 @@ class _ContactListViewState extends State<ContactListView> {
                   decoration: InputDecoration(
                       hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
-                    : controller.isForward.value
-                    ? Text(getTranslated("forwardTo"))
-                    : controller.isCreateGroup.value
+                    :  arg.forGroup
                     ? Text(
                   getTranslated("addParticipants"),
                   overflow: TextOverflow.fade,
@@ -122,11 +90,11 @@ class _ContactListViewState extends State<ContactListView> {
                         icon: const Icon(Icons.clear)),
                   ),
                   Visibility(
-                    visible: controller.isCreateVisible,
+                    visible: arg.forGroup,
                     child: TextButton(
                         onPressed: () => controller.backToCreateGroup(),
                         child: Text(
-                          (controller.groupJid.value.isNotEmpty ? getTranslated("next") : getTranslated("create")).toUpperCase(),
+                          (arg.groupJid.isNotEmpty ? getTranslated("next") : getTranslated("create")).toUpperCase(),
                           style: const TextStyle(color: Colors.black),
                         )),
                   ),
@@ -160,17 +128,6 @@ class _ContactListViewState extends State<ContactListView> {
                   ),
                 ],
               ),
-              floatingActionButton: controller.isForward.value &&
-                  controller.selectedUsersList.isNotEmpty
-                  ? FloatingActionButton(
-                  tooltip: "Forward",
-                  onPressed: () {
-                    FocusManager.instance.primaryFocus!.unfocus();
-                    controller.forwardMessages();
-                  },
-                  backgroundColor: buttonBgColor,
-                  child: const Icon(Icons.check))
-                  : const SizedBox.shrink(),
               body: Obx(() {
                 return RefreshIndicator(
                   key: controller.refreshIndicatorKey,
@@ -212,7 +169,7 @@ class _ContactListViewState extends State<ContactListView> {
                                         controller.showProfilePopup(item.obs);
                                       },
                                         spanTxt: controller.searchQuery.text,
-                                        isCheckBoxVisible: controller.isCheckBoxVisible,
+                                        isCheckBoxVisible: arg.forMakeCall || arg.forGroup,
                                         checkValue: controller.selectedUsersJIDList.contains(item.jid),
                                         onCheckBoxChange: (value){
                                           controller.onListItemPressed(item);
@@ -243,7 +200,7 @@ class _ContactListViewState extends State<ContactListView> {
                                         // crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
                                           SvgPicture.asset(
-                                            controller.callType.value == CallType.audio
+                                            arg.callType == CallType.audio
                                                 ? audioCallSmallIcon
                                                 : videoCallSmallIcon,
                                           ),

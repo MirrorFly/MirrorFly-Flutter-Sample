@@ -20,7 +20,6 @@ import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/edit_window.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/main.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -1809,7 +1808,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         setOnGoingUserAvail();
       });
     } else {
-      NavUtils.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.jid.checkNull()))?.then((value) {
         debugPrint("chat info-->$value");
         setOnGoingUserAvail();
       });
@@ -2991,7 +2990,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     //   isScrollControlled: true, // Important for full screen
     // );
     showModalBottomSheet(
-      context: navigatorKey.currentContext!,
+      context: NavUtils.currentContext,
       useSafeArea: false,
       builder: (BuildContext context) {
         return EditMessageScreen(chatItem: chatItem, chatController: this);

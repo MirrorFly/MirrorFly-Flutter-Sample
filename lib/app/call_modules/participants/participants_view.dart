@@ -15,8 +15,13 @@ import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
 
-class ParticipantsView extends GetView<AddParticipantsController> {
+class ParticipantsView extends NavView<AddParticipantsController> {
   const ParticipantsView({Key? key}) : super(key: key);
+
+  @override
+  AddParticipantsController createController() {
+    return AddParticipantsController();
+  }
 
   @override
   Widget build(BuildContext context) {

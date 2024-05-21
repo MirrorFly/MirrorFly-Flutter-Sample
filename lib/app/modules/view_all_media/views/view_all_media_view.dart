@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
@@ -12,8 +13,13 @@ import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
 import '../controllers/view_all_media_controller.dart';
 
-class ViewAllMediaView extends GetView<ViewAllMediaController> {
+class ViewAllMediaView extends NavView<ViewAllMediaController> {
   const ViewAllMediaView({Key? key}) : super(key: key);
+
+  @override
+  ViewAllMediaController createController() {
+    return ViewAllMediaController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,15 @@ class ViewAllMediaView extends GetView<ViewAllMediaController> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,
-          title: Text(controller.name),
+          title: FutureBuilder(
+            future: getProfileDetails(controller.arguments.chatJid),
+            builder: (context,data) {
+              if(data.data != null) {
+                return Text(data.data!.getName());
+              }
+              return const Offstage();
+            }
+          ),
           centerTitle: false,
           bottom: TabBar(
               indicatorColor: buttonBgColor,

@@ -6,10 +6,16 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
-class SetPinView extends GetView<AppLockController> {
+class SetPinView extends NavView<AppLockController> {
   const SetPinView({Key? key}) : super(key: key);
+
+  @override
+  AppLockController createController() {
+    return AppLockController();
+  }
 
   @override
   Widget build(BuildContext context) {

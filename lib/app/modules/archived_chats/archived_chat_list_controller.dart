@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/app_localizations.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
+import '../../model/arguments.dart';
 import '../../model/chat_message_model.dart';
 import '../../routes/route_settings.dart';
 
@@ -384,7 +385,6 @@ class ArchivedChatListController extends GetxController {
       profile_(value);
       debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(
-          context: context,
           // chatItem: chatItem,
           chatTap: () {
             NavUtils.back();
@@ -422,7 +422,7 @@ class ArchivedChatListController extends GetxController {
         }
       });
     } else {
-      NavUtils.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.jid.checkNull()))?.then((value) {});
     }
   }
 

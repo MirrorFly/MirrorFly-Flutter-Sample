@@ -12,34 +12,19 @@ import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/chat_info_controller.dart';
 
-class ChatInfoView extends StatefulWidget {
-  const ChatInfoView({super.key, required this.jid, this.enableAppBar = true});
-  final String jid;
-  final bool enableAppBar;
+class ChatInfoView extends NavView<ChatInfoController> {
+  const ChatInfoView({super.key});
 
   @override
-  State<ChatInfoView> createState() => _ChatInfoViewState();
-}
-
-class _ChatInfoViewState extends State<ChatInfoView> {
-  final ChatInfoController controller = ChatInfoController().get();
-
-  @override
-  void initState() {
-    controller.init(widget.jid);
-    super.initState();
+  ChatInfoController createController() {
+    return ChatInfoController();
   }
 
-  @override
-  void dispose() {
-    Get.delete<ChatInfoController>();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: widget.enableAppBar
+      body: !controller.argument.disableAppbar
           ? NestedScrollView(
         controller: controller.scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {

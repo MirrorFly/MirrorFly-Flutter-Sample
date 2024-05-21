@@ -9,11 +9,17 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../extensions/extensions.dart';
 import '../../call_widgets.dart';
 import '../controllers/call_timeout_controller.dart';
 
-class CallTimeoutView extends GetView<CallTimeoutController> {
+class CallTimeoutView extends NavView<CallTimeoutController> {
   const CallTimeoutView({Key? key}) : super(key: key);
+
+  @override
+  CallTimeoutController createController() {
+    return CallTimeoutController();
+  }
 
   @override
   Widget build(BuildContext context) {

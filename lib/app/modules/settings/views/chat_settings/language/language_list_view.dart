@@ -4,9 +4,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/language/language_controller.dart';
 
+import '../../../../../extensions/extensions.dart';
 
-class LanguageListView extends GetView<LanguageController> {
+
+class LanguageListView extends NavView<LanguageController> {
   const LanguageListView({Key? key}) : super(key: key);
+
+  @override
+  LanguageController createController() {
+    return LanguageController();
+  }
 
   @override
   Widget build(BuildContext context) {

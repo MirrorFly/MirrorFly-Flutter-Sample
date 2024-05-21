@@ -3,11 +3,17 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../extensions/extensions.dart';
 import '../settings_widgets.dart';
 import 'app_lock_controller.dart';
 
-class AppLockSettingsView extends GetView<AppLockController> {
+class AppLockSettingsView extends NavView<AppLockController> {
   const AppLockSettingsView({Key? key}) : super(key: key);
+
+  @override
+  AppLockController createController() {
+    return AppLockController();
+  }
 
   @override
   Widget build(BuildContext context) {

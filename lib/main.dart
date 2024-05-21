@@ -10,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/chat_view.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart';
+import 'package:mirror_fly_demo/app/modules/login/views/login_view.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -137,6 +138,13 @@ class _MyAppState extends State<MyApp> {
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),
       onGenerateInitialRoutes: (initialRoute) {
         switch (initialRoute){
+          case Routes.login:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.login,
+              ),
+              builder: (context) => const LoginView(),
+            )];
           case Routes.chat:
             return [MaterialPageRoute(
               settings: RouteSettings(

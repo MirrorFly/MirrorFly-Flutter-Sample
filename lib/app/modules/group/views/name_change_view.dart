@@ -8,9 +8,15 @@ import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_control
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 
-class NameChangeView extends GetView<GroupInfoController> {
+class NameChangeView extends NavView<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
+
+  @override
+  GroupInfoController createController() {
+    return GroupInfoController();
+  }
 
   @override
   Widget build(BuildContext context) {

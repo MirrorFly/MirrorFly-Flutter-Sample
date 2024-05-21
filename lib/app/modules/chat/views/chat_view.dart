@@ -22,10 +22,13 @@ import '../controllers/chat_controller.dart';
 import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
-class ChatView extends StatelessWidget {
+class ChatView extends NavView<ChatController> {
   const ChatView({super.key});
 
-  ChatController get controller => ChatController().get();
+  @override
+  ChatController createController() {
+    return ChatController();
+  }
 
   @override
   Widget build(BuildContext context) {

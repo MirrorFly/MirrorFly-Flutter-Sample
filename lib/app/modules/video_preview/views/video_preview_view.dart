@@ -5,10 +5,16 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../extensions/extensions.dart';
 import '../controllers/video_preview_controller.dart';
 
-class VideoPreviewView extends GetView<VideoPreviewController> {
+class VideoPreviewView extends NavView<VideoPreviewController> {
   const VideoPreviewView({Key? key}) : super(key: key);
+
+  @override
+  VideoPreviewController createController() {
+    return VideoPreviewController();
+  }
 
   @override
   Widget build(BuildContext context) {

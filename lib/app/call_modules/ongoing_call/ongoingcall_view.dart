@@ -11,8 +11,13 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../../common/constants.dart';
 import '../../data/session_management.dart';
 
-class OnGoingCallView extends GetView<CallController> {
+class OnGoingCallView extends NavView<CallController> {
   const OnGoingCallView({super.key});
+
+  @override
+  CallController createController() {
+    return CallController();
+  }
 
   @override
   Widget build(BuildContext context) {

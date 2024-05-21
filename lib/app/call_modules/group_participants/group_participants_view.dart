@@ -7,10 +7,16 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/utils.dart';
+import '../../extensions/extensions.dart';
 import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 
-class GroupParticipantsView extends GetView<GroupParticipantsController> {
+class GroupParticipantsView extends NavView<GroupParticipantsController> {
   const GroupParticipantsView({Key? key}) : super(key: key);
+
+  @override
+  GroupParticipantsController createController() {
+    return GroupParticipantsController();
+  }
 
   @override
   Widget build(BuildContext context) {

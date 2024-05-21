@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/widgets/chat_widgets.dart';
@@ -16,8 +17,14 @@ import '../../chat/widgets/reply_message_widgets.dart';
 import 'starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
 
-class StarredMessagesView extends GetView<StarredMessagesController> {
+class StarredMessagesView extends NavView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
+
+  @override
+  StarredMessagesController createController() {
+    return StarredMessagesController();
+  }
+
   @override
   Widget build(BuildContext context) {
     controller.height = MediaQuery.of(context).size.height;

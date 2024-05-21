@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class ScannerView extends GetView<ScannerController> {
+import '../../extensions/extensions.dart';
+
+class ScannerView extends NavView<ScannerController> {
   const ScannerView({Key? key}) : super(key: key);
+
+  @override
+  ScannerController createController() {
+    return ScannerController();
+  }
 
   @override
   Widget build(BuildContext context) {

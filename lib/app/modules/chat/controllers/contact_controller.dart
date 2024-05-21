@@ -13,6 +13,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 
 class ContactController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -29,40 +30,21 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   var _searchText = "";
   var _first = true;
 
-  var isForward = false.obs;
-  var isMakeCall = false.obs;
-  var callType = "".obs;
-  var isCreateGroup = false.obs;
-  var groupJid = "".obs;
 
-  var topicId = "";
+
   var getMaxCallUsersCount = 8;
-  late final BuildContext buildContext;
+  ContactListArguments get arguments => NavUtils.arguments as ContactListArguments;
 
-  Future<void> init(BuildContext context,
-      {bool forward = false,
-        List<String>? messageIds,
-        bool group = false,
-        String groupjid = Constants.emptyString,
-        String? topicId,
-      String? callType,
-      bool? isMakeCall}) async {
-    buildContext = context;
+  @override
+  void dispose(){
+    super.dispose();
+    Get.delete<ContactController>();
+  }
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
-    debugPrint("topicId : $topicId");
-    if (topicId != null) {
-      this.topicId = topicId;
-    }
-    this.isMakeCall(isMakeCall);
-    this.callType(callType);
-    isForward(forward);
-    if (isForward.value) {
-      isCreateGroup(false);
-      forwardMessageIds.addAll(Get.arguments["messageIds"]);
-    } else {
-      isCreateGroup(group);
-      groupJid(groupjid);
-    }
     scrollController.addListener(_scrollListener);
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       isPageLoading(true);
@@ -112,16 +94,12 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  bool get isCreateVisible => isCreateGroup.value;
-
   bool get isSearchVisible => !_search.value;
 
   bool get isClearVisible =>
       _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
 
-  bool get isMenuVisible => !_search.value && !isForward.value;
-
-  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value || isMakeCall.value;
+  bool get isMenuVisible => !_search.value /*&& !isForward.value*/;
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -206,9 +184,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           var item = userListFromJson(data);
           var list = <ProfileDetails>[];
 
-          if (groupJid.value.checkNull().isNotEmpty) {
+          if (arguments.groupJid.isNotEmpty) {
             await Future.forEach(item.data!, (it) async {
-              await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(), userJid: it.jid.checkNull()).then((value) {
+              await Mirrorfly.isMemberOfGroup(groupJid: arguments.groupJid, userJid: it.jid.checkNull()).then((value) {
                 LogMessage.d("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
@@ -403,7 +381,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   Future<List<ProfileDetails>> removeGroupMembers(List<ProfileDetails> items) async {
     var list = <ProfileDetails>[];
     for (var it in items) {
-      var value = await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(),userJid: it.jid.checkNull());
+      var value = await Mirrorfly.isMemberOfGroup(groupJid: arguments.groupJid,userJid: it.jid.checkNull());
       LogMessage.d("item", value.toString());
       if (value == null || !value) {
         list.add(it);
@@ -431,7 +409,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     if (await AppUtils.isNetConnected()) {
       Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds,userList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
         debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-        Navigator.pop(buildContext, selectedUsersList[0]);
+        NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: selectedUsersList[0].jid.checkNull()),predicate: (Route<dynamic> route)=>route.settings.name!.startsWith(Routes.dashboard));
       });
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -439,14 +417,15 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   }
 
   onListItemPressed(ProfileDetails item) {
-    if (isForward.value || isCreateGroup.value) {
+    if (arguments.forGroup) {
       if (item.isBlocked.checkNull()) {
         unBlock(item);
       } else {
         contactSelected(item);
       }
     } else {
-      if (isMakeCall.value) {
+      LogMessage.d("arguments.forMakeCall", arguments.forMakeCall);
+      if (arguments.forMakeCall) {
         if (item.isBlocked.checkNull()) {
           unBlock(item);
         } else {
@@ -454,7 +433,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         }
       } else {
         LogMessage.d("Contact Profile", item.toJson().toString());
-        NavUtils.toNamed(Routes.chat, arguments: {"chatJid": item.jid.checkNull(),"topicId": topicId});
+        NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: item.jid.checkNull(),topicId: arguments.topicId));
       }
     }
   }
@@ -491,15 +470,17 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   backToCreateGroup() {
     AppUtils.isNetConnected().then((isConnected) {
       if (isConnected) {
-        if (groupJid.value.isEmpty) {
+        if (arguments.groupJid.isEmpty) {
           if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
-            Navigator.pop(buildContext, selectedUsersJIDList);
+            // Navigator.pop(buildContext, selectedUsersJIDList);
+            NavUtils.back();
           } else {
           toToast(getTranslated("addAtLeastTwoContact"));
           }
         } else {
           if (selectedUsersJIDList.isNotEmpty) {
-            Navigator.pop(buildContext, selectedUsersJIDList);
+            // Navigator.pop(buildContext, selectedUsersJIDList);
+            NavUtils.back();
           } else {
           toToast(getTranslated("selectAnyContact"));
           }
@@ -598,7 +579,6 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
-        context: buildContext,
         // chatItem: chatItem,
         chatTap: () {
           NavUtils.back();
@@ -609,7 +589,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           if (profile.value.isGroupProfile ?? false) {
             NavUtils.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
-            NavUtils.toNamed(Routes.chatInfo, arguments: {"jid":profile.value});
+            NavUtils.toNamed(Routes.chatInfo, arguments:ChatInfoArguments(chatJid:(profile.value.jid.checkNull())));
           }
         },
         profile: profile,
@@ -629,7 +609,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
   void validateForCall(ProfileDetails item) {
-    if (isMakeCall.value) {
+    if (arguments.forMakeCall) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.remove(item);
         selectedUsersJIDList.remove(item.jid);
@@ -669,7 +649,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       toToast(getTranslated("noInternetConnection"));
       return;
     }
-    if (callType.value == CallType.audio) {
+    if (arguments.callType == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (isOneToOneCall) {
           Mirrorfly.makeVoiceCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
@@ -691,7 +671,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           });
         }
       }
-    } else if (callType.value == CallType.video) {
+    } else if (arguments.callType == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (isOneToOneCall) {
           Mirrorfly.makeVideoCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {

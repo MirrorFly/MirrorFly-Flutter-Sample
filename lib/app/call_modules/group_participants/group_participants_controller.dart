@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/utils.dart';
+import '../../model/arguments.dart';
 import '../../routes/route_settings.dart';
 
 import '../../common/app_localizations.dart';
@@ -111,7 +112,6 @@ class GroupParticipantsController extends GetxController {
 
   showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
-        context: Get.context,
         // chatItem: chatItem,
         chatTap: () {
           NavUtils.back();
@@ -120,9 +120,9 @@ class GroupParticipantsController extends GetxController {
         infoTap: () {
           NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
-            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value.jid.checkNull());
           } else {
-            NavUtils.toNamed(Routes.chatInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.value.jid.checkNull()));
           }
         },
         profile: profile,

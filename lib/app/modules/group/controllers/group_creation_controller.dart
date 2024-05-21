@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/crop_image.dart';
@@ -100,7 +101,8 @@ class GroupCreationController extends GetxController {
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
       //NavUtils.toNamed(Routes.ADD_PARTICIPANTS);
-      NavUtils.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":"" })?.then((value){
+      NavUtils.toNamed(Routes.contacts, arguments: ContactListArguments(forGroup:true)
+          /*{"forward" : false,"group":true,"groupJid":"" }*/)?.then((value){
         if(value!=null){
           createGroup(value as List<String>);
         }
@@ -110,7 +112,7 @@ class GroupCreationController extends GetxController {
     }
   }
 
-  showHideEmoji(BuildContext context){
+  showHideEmoji(){
     if (!showEmoji.value) {
       focusNode.unfocus();
     }else{
@@ -123,13 +125,13 @@ class GroupCreationController extends GetxController {
   }
 
 
-  Future imagePick(BuildContext context) async {
+  Future imagePick() async {
     if(await AppPermission.getStoragePermission()) {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
         // isImageSelected.value = true;
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(result.files.single.path!),
         ))?.then((value) {
           value as MemoryImage;
@@ -154,7 +156,7 @@ class GroupCreationController extends GetxController {
         source: ImageSource.camera);
     if (photo != null) {
       // isImageSelected.value = true;
-      Get.to(CropImage(
+      NavUtils.to(CropImage(
         imageFile: File(photo.path),
       ))?.then((value) {
         value as MemoryImage;
@@ -191,7 +193,7 @@ class GroupCreationController extends GetxController {
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         onTap: () {
           NavUtils.back();
-          imagePick(Get.context!);
+          imagePick();
         },
         title: Text(
           getTranslated("chooseFromGallery"),

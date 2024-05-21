@@ -4,13 +4,19 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
 import 'about/about_and_help_view.dart';
 
-class SettingsView extends GetView<SettingsController> {
+class SettingsView extends NavView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
+
+  @override
+  SettingsController createController() {
+    return SettingsController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,7 @@ class SettingsView extends GetView<SettingsController> {
             settingListItem(getTranslated("appLock"), lockIcon, rightArrowIcon, () =>
                 NavUtils.toNamed(Routes.appLock)),
             settingListItem(getTranslated("aboutAndHelp"), aboutIcon, rightArrowIcon, () =>
-                Get.to(const AboutAndHelpView())),
+                NavUtils.to(const AboutAndHelpView())),
             settingListItem(
                 getTranslated("connectionLabel"), connectionIcon, toggleOffIcon, () {}),
             settingListItem(getTranslated("deleteMyAccount"), delete, rightArrowIcon, () {

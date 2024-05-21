@@ -8,9 +8,15 @@ import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
 import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 
-class OtpView extends GetView<LoginController> {
+class OtpView extends NavView<LoginController> {
   const OtpView({Key? key}) : super(key: key);
+
+  @override
+  LoginController createController() {
+    return LoginController();
+  }
 
   @override
   Widget build(BuildContext context) {

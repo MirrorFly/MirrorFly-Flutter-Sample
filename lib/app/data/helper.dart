@@ -362,7 +362,7 @@ String getDisplayImage(RecentChatData recentChat) {
 }
 
 void showQuickProfilePopup(
-    {required context,
+    {
     required Function() chatTap,
     Function()? callTap,
     Function()? videoTap,
@@ -407,14 +407,14 @@ void showQuickProfilePopup(
                               const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                           child: ImageNetwork(
                             url: profile.value.image.toString(),
-                            width: MediaQuery.of(context).size.width * 0.7,
+                            width: NavUtils.width * 0.7,
                             height: 250,
                             clipOval: false,
                             errorWidget: profile.value.isGroupProfile!
                                 ? Image.asset(
                                     groupImg,
                                     height: 250,
-                                    width: MediaQuery.of(context).size.width * 0.72,
+                                    width: NavUtils.width * 0.72,
                                     fit: BoxFit.cover,
                                   )
                                 : ProfileTextImage(

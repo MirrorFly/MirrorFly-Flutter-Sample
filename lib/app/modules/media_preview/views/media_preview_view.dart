@@ -13,8 +13,13 @@ import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
-class MediaPreviewView extends GetView<MediaPreviewController> {
+class MediaPreviewView extends NavView<MediaPreviewController> {
   const MediaPreviewView({Key? key}) : super(key: key);
+
+  @override
+  MediaPreviewController createController() {
+    return MediaPreviewController();
+  }
 
   @override
   Widget build(BuildContext context) {
