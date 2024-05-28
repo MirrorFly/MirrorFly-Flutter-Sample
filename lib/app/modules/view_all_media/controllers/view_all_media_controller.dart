@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 import '../../../common/constants.dart';
 import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';

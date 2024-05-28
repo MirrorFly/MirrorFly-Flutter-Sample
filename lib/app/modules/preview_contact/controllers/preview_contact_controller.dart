@@ -18,14 +18,14 @@ class PreviewContactController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    from = Get.arguments['from'];
+    from = NavUtils.arguments['from'];
   }
   @override
   void onReady() {
     super.onReady();
     if (from == "chat") {
-      previewContactList = Get.arguments['previewContactList'];
-      previewContactName = Get.arguments['contactName'];
+      previewContactList = NavUtils.arguments['previewContactList'];
+      previewContactName = NavUtils.arguments['contactName'];
 
       var newContactList = <ContactDetail>[];
       for (var phone in previewContactList) {
@@ -37,7 +37,7 @@ class PreviewContactController extends GetxController {
           contactNo: newContactList, userName: previewContactName);
       contactList.add(localContactPhone);
     } else {
-      argContactList = Get.arguments['contactList'];
+      argContactList = NavUtils.arguments['contactList'];
       for (var contact in argContactList) {
         var newContactList = <ContactDetail>[];
         for (var phone in contact.contact.phones!) {

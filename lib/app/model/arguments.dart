@@ -1,4 +1,3 @@
-import '../common/constants.dart';
 
 class DashboardViewArguments{
   final bool didMissedCallNotificationLaunchApp;

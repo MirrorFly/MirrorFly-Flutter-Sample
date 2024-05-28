@@ -22,12 +22,12 @@ class VideoPreviewController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    userName = Get.arguments['userName'];
-    videoPath = Get.arguments['filePath'];
-    textMessage = Get.arguments['caption'];
+    userName = NavUtils.arguments['userName'];
+    videoPath = NavUtils.arguments['filePath'];
+    textMessage = NavUtils.arguments['caption'];
     debugPrint("caption text received--> $textMessage");
     caption.text = textMessage;
-    videoPlayerController = VideoPlayerController.file(File(Get.arguments['filePath']))
+    videoPlayerController = VideoPlayerController.file(File(NavUtils.arguments['filePath']))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         isInitialized(true);

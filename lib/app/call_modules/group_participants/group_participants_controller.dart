@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../common/app_localizations.dart';
 import '../../data/utils.dart';
 import '../../model/arguments.dart';
 import '../../routes/route_settings.dart';
-
-import '../../common/app_localizations.dart';
 
 class GroupParticipantsController extends GetxController {
   var usersList = <ProfileDetails>[].obs;
@@ -27,8 +26,8 @@ class GroupParticipantsController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
-    groupId(Get.arguments["groupId"]);
-    callType(Get.arguments["callType"]);
+    groupId(NavUtils.arguments["groupId"]);
+    callType(NavUtils.arguments["callType"]);
     getGroupMembers();
   }
 

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import '../../../data/utils.dart';
-import '../../../routes/route_settings.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends StatefulWidget {
@@ -48,7 +48,7 @@ class _ProfileViewState extends State<ProfileView> {
                 style: const TextStyle(color: appbarTextColor),
               ),
               centerTitle: true,
-              automaticallyImplyLeading: Get.previousRoute != Routes.login //controller.from.value == Routes.login
+              automaticallyImplyLeading: NavUtils.previousRoute != Routes.login //controller.from.value == Routes.login
               // ? false
               // : true,
               ),

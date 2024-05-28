@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
   var statusList = List<StatusData>.empty(growable: true).obs;
@@ -81,7 +81,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   @override
   void onInit() {
     super.onInit();
-    selectedStatus.value = Get.arguments['status'];
+    selectedStatus.value = NavUtils.arguments['status'];
     addStatusController.text= selectedStatus.value;
     // onChanged();
     getStatusList();

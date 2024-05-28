@@ -5,8 +5,8 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/utils.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class CallTimeoutController extends GetxController {
@@ -23,10 +23,10 @@ class CallTimeoutController extends GetxController {
     super.onInit();
     enterFullScreen();
     groupId(await Mirrorfly.getCallGroupJid());
-    callType(Get.arguments["callType"]);
-    callMode(Get.arguments["callMode"]);
-    users.value = (Get.arguments["userJid"] as List<String?>);
-    calleeName(Get.arguments["calleeName"]);
+    callType(NavUtils.arguments["callType"]);
+    callMode(NavUtils.arguments["callMode"]);
+    users.value = (NavUtils.arguments["userJid"] as List<String?>);
+    calleeName(NavUtils.arguments["calleeName"]);
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
   }

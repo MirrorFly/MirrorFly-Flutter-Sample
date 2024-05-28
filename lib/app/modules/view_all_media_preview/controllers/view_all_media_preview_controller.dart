@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class ViewAllMediaPreviewController extends GetxController {
@@ -17,8 +18,8 @@ class ViewAllMediaPreviewController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    previewMediaList.addAll(Get.arguments['images']);
-    index(Get.arguments['index']);
+    previewMediaList.addAll(NavUtils.arguments['images']);
+    index(NavUtils.arguments['index']);
     pageViewController = PageController(initialPage: index.value, keepPage: false);
   }
 

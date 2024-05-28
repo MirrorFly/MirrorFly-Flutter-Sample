@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel, ContactChatMessage;
 import 'package:url_launcher/url_launcher.dart';
@@ -166,8 +165,8 @@ class ContactMessageView extends StatelessWidget {
 
   sendToChatPage(String userJid) {
     // NavUtils.back();
-    LogMessage.d('Get.currentRoute', Get.currentRoute);
-    if (Get.currentRoute == Routes.chat) {
+    LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
+    if (NavUtils.currentRoute == Routes.chat) {
       NavUtils.back();
       Future.delayed(const Duration(milliseconds: 500), () {
         NavUtils.toNamed(Routes.chat,

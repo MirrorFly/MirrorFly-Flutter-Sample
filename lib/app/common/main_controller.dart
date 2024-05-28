@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -18,7 +18,6 @@ import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dar
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -123,19 +122,19 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${Get.currentRoute}");
+      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${NavUtils.currentRoute}");
       if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
         if (Get.isRegistered<ChatController>()) {
           LogMessage.d("#Mirrorfly Notification ->","already chat page");
-          if (Get.currentRoute == Routes.forwardChat ||
-              Get.currentRoute == Routes.chatInfo ||
-              Get.currentRoute == Routes.groupInfo ||
-              Get.currentRoute == Routes.messageInfo) {
+          if (NavUtils.currentRoute == Routes.forwardChat ||
+              NavUtils.currentRoute == Routes.chatInfo ||
+              NavUtils.currentRoute == Routes.groupInfo ||
+              NavUtils.currentRoute == Routes.messageInfo) {
             NavUtils.back();
           }
-          if (Get.currentRoute.contains("from_notification=true")) {
+          if (NavUtils.currentRoute.contains("from_notification=true")) {
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
             NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
@@ -339,7 +338,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   void presentPinPage() {
-    if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute != Routes.pin) {
+    if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
       NavUtils.toNamed(
         Routes.pin,
       );

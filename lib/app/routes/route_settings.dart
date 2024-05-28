@@ -125,11 +125,11 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.starredMessages:
       return MaterialPageRoute(builder: (_) => const StarredMessagesView(),settings: settings);
     case Routes.cameraPick:
-      return MaterialPageRoute(builder: (_) => CameraPickView(),settings: settings);
+      return MaterialPageRoute(builder: (_) => const CameraPickView(),settings: settings);
     case Routes.adminBlocked:
       return MaterialPageRoute(builder: (_) => const AdminBlockedView(),settings: settings);
     case Routes.archivedChats:
-      return MaterialPageRoute(builder: (_) => ArchivedChatListView(),settings: settings);
+      return MaterialPageRoute(builder: (_) => const ArchivedChatListView(),settings: settings);
     case Routes.chatSettings:
       return MaterialPageRoute(builder: (_) => const ChatSettingsView(),settings: settings);
     case Routes.galleryPicker:

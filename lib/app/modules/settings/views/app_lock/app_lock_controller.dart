@@ -7,12 +7,12 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/main.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../../common/app_localizations.dart';
 import '../../../../data/utils.dart';
@@ -43,7 +43,7 @@ class AppLockController extends FullLifeCycleController
   @override
   void onReady() {
     super.onReady();
-    if (Get.currentRoute == Routes.pin) {
+    if (NavUtils.currentRoute == Routes.pin) {
       setUpPinExpiryDialog();
     }
   }
@@ -221,7 +221,7 @@ class AppLockController extends FullLifeCycleController
       SessionManagement.setEnableBio(false);
       _pinEnabled(false);
       _bioEnabled(false);
-      if (Get.previousRoute.isEmpty || Get.previousRoute == Routes.pin) {
+      if (NavUtils.previousRoute.isEmpty || NavUtils.previousRoute == Routes.pin) {
         NavUtils.offNamed(getInitialRoute());
       } else {
         Get.back(result: true);
@@ -297,8 +297,8 @@ class AppLockController extends FullLifeCycleController
         } else if (modifyPin.value) {
           NavUtils.offNamed(Routes.setPin);
         } else {
-          debugPrint('route ${Get.previousRoute}');
-          if (Get.previousRoute.isEmpty || Get.previousRoute == Routes.pin) {
+          debugPrint('route ${NavUtils.previousRoute}');
+          if (NavUtils.previousRoute.isEmpty || NavUtils.previousRoute == Routes.pin) {
             NavUtils.offNamed(getInitialRoute());
           } else {
             Get.back(result: true);
@@ -366,7 +366,7 @@ class AppLockController extends FullLifeCycleController
 
   @override
   void onResumed() {
-    if (Get.currentRoute == Routes.setPin) {
+    if (NavUtils.currentRoute == Routes.setPin) {
       if (!KeyboardVisibilityController().isVisible) {
         if (oldPinFocus.hasFocus) {
           oldPinFocus.unfocus();

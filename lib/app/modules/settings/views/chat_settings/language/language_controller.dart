@@ -45,7 +45,7 @@ class LanguageController extends GetxController{
   @override
   void onInit() {
     super.onInit();
-    translationLanguage(Get.arguments as String);
+    translationLanguage(NavUtils.arguments as String);
     loadAsset().then((value){
       mainLanguageList.addAll(value);
       languageList(value);

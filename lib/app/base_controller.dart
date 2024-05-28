@@ -4,24 +4,24 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
-import 'package:mirror_fly_demo/app/routes/route_settings.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
@@ -222,12 +222,12 @@ abstract class BaseController {
         case CallStatus.inviteCallTimeout:
           break;
         case CallStatus.attended:
-          debugPrint("onCallStatusUpdated Current Route ${Get.currentRoute}");
-          if (Get.currentRoute == Routes.callTimeOutView) {
+          debugPrint("onCallStatusUpdated Current Route ${NavUtils.currentRoute}");
+          if (NavUtils.currentRoute == Routes.callTimeOutView) {
             debugPrint("onCallStatusUpdated Inside Get.back");
             NavUtils.back();
           }
-          if (Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
+          if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute != Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
             NavUtils.toNamed(Routes.onGoingCallView, arguments: {
               "userJid": [userJid]
@@ -1074,8 +1074,8 @@ abstract class BaseController {
   }
 
   void onLogout(isLogout) {
-    LogMessage.d('Get.currentRoute', Get.currentRoute);
-    if (isLogout && Get.currentRoute != Routes.login && SessionManagement.getLogin()) {
+    LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
+    if (isLogout && NavUtils.currentRoute != Routes.login && SessionManagement.getLogin()) {
       var token = SessionManagement.getToken().checkNull();
       SessionManagement.clear().then((value) {
         SessionManagement.setToken(token);

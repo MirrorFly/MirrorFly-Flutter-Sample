@@ -8,12 +8,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
+
 import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
-import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
+import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
@@ -46,7 +47,7 @@ class GroupInfoController extends GetxController {
   @override
   void onInit(){
     super.onInit();
-    profile_((Get.arguments as ProfileDetails));
+    profile_((NavUtils.arguments as ProfileDetails));
     _mute(profile.isMuted!);
     scrollController.addListener(_scrollListener);
     getGroupMembers(false);

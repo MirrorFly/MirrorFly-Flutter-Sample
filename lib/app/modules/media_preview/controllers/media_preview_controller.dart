@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:get/get.dart';
 
 import '../../../common/main_controller.dart';
 import '../../../data/utils.dart';
@@ -19,8 +19,8 @@ import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 
 class MediaPreviewController extends FullLifeCycleController with FullLifeCycleMixin {
 
-  var userName = Get.arguments['userName'];
-  var profile = Get.arguments['profile'] as ProfileDetails;
+  var userName = NavUtils.arguments['userName'];
+  var profile = NavUtils.arguments['profile'] as ProfileDetails;
 
   TextEditingController caption = TextEditingController();
 
@@ -29,9 +29,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   var pickerType = Constants.camera.obs;
 
   var captionMessage = <String>[].obs;
-  var textMessage = Get.arguments['caption'];
-  var from = Get.arguments['from'];
-  var showAdd = Get.arguments['showAdd'] ?? true;
+  var textMessage = NavUtils.arguments['caption'];
+  var from = NavUtils.arguments['from'];
+  var showAdd = NavUtils.arguments['showAdd'] ?? true;
   var currentPageIndex = 0.obs;
   var isFocused = false.obs;
   var showEmoji = false.obs;
@@ -47,14 +47,14 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     super.onInit();
     SchedulerBinding.instance
         .addPostFrameCallback((_) {
-      pickerType(Get.arguments['from']);
+      pickerType(NavUtils.arguments['from']);
       debugPrint("pickerType $pickerType");
       // if(pickerType.value == Constants.gallery) {
         debugPrint("pickerType inside gallery type");
-        filePath(Get.arguments['filePath']);
+        filePath(NavUtils.arguments['filePath']);
       // }else{
       //   debugPrint("pickerType inside camera type");
-      //   cameraFilePath(Get.arguments['filePath']);
+      //   cameraFilePath(NavUtils.arguments['filePath']);
       // }
       var index = 0;
       for(var _ in filePath){
@@ -156,7 +156,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
 
   Future<void> sendMedia() async {
     debugPrint("send media");
-    var previousRoute = Get.previousRoute;
+    var previousRoute = NavUtils.previousRoute;
     Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingFiles")) : DialogUtils.progressLoading();
     var featureNotAvailable = false;
     try {

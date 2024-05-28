@@ -5,19 +5,20 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
   var chatController = Get.find<ChatController>();
 
-  var messageID = Get.arguments["messageID"];
-  var jid = Get.arguments["jid"];
-  var isGroupProfile = Get.arguments["isGroupProfile"];
-  var chatMessage = [Get.arguments["chatMessage"] as ChatMessageModel].obs;
+  var messageID = NavUtils.arguments["messageID"];
+  var jid = NavUtils.arguments["jid"];
+  var isGroupProfile = NavUtils.arguments["isGroupProfile"];
+  var chatMessage = [NavUtils.arguments["chatMessage"] as ChatMessageModel].obs;
   var readTime = ''.obs;
   var deliveredTime = ''.obs;
 

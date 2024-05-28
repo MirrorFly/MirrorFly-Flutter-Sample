@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import '../../../data/utils.dart';
-import '../../../routes/route_settings.dart';
-import 'package:mirrorfly_plugin/model/call_log_model.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
 import '../../../common/app_localizations.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 
 class CallInfoController extends GetxController{
@@ -18,7 +18,7 @@ class CallInfoController extends GetxController{
 
   @override
   void onInit() {
-    callLogData_((Get.arguments as CallLogData));
+    callLogData_((NavUtils.arguments as CallLogData));
     super.onInit();
   }
 
