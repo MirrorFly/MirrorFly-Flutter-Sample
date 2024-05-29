@@ -716,7 +716,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 300), () {
       var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
       if (!index.isNegative) {
-        speakingUsers[index].audioLevel(-1);
+        speakingUsers[index].audioLevel(0);
       }
     });
   }
