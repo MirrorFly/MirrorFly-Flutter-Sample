@@ -1,6 +1,5 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -69,7 +68,7 @@ class CameraPickView extends NavView<CameraPickController> {
               Positioned(
                 bottom: 0,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: NavUtils.size.width,
                   color: Colors.transparent,
                   padding: const EdgeInsets.only(top: 5, bottom: 5),
                   child: Column(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/video_preview_controller.dart';
 
@@ -43,7 +43,7 @@ class VideoPreviewView extends NavView<VideoPreviewController> {
                 if (controller.isInitialized.value) {
                   return Center(
                     child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
+                        width: NavUtils.size.width,
                         height: controller.videoPlayerController.value.size.height,
                         child: AspectRatio(
                           aspectRatio:

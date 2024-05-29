@@ -15,7 +15,7 @@ import '../../model/chat_message_model.dart';
 
 Widget searchHeader(String? type, String count, BuildContext context) {
   return Container(
-    width: MediaQuery.of(context).size.width,
+    width: NavUtils.size.width,
     padding: const EdgeInsets.all(8),
     color: dividerColor,
     child: Text.rich(

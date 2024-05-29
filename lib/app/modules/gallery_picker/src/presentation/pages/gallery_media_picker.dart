@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../data/utils.dart';
 import '../../core/functions.dart';
 import '../../data/models/picked_asset_model.dart';
 import '../widgets/gallery_grid/gallery_grid_view.dart';
@@ -192,8 +193,8 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
               /// grid view
               Expanded(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
+                  height: NavUtils.size.height,
+                  width: NavUtils.size.width,
                   child: widget.provider != null
                       ? AnimatedBuilder(
                           animation: widget.provider.currentAlbumNotifier,

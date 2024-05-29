@@ -11,6 +11,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
+import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
@@ -109,7 +110,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ]),
                                   actions: [
                                     CustomActionBarIcons(
-                                        availableWidth: MediaQuery.of(context).size.width * 0.80,
+                                        availableWidth: NavUtils.size.width * 0.80,
                                         // 80 percent of the screen width
                                         actionWidth: 48,
                                         // default for IconButtons

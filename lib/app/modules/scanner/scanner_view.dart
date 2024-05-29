@@ -15,8 +15,8 @@ class ScannerView extends NavView<ScannerController> {
 
   @override
   Widget build(BuildContext context) {
-    // var scanArea = (MediaQuery.of(context).size.width < 400 ||
-    //     MediaQuery.of(context).size.height < 400)
+    // var scanArea = (NavUtils.size.width < 400 ||
+    //     NavUtils.size.height < 400)
     //     ? 150.0
     //     : 300.0;
     return Scaffold(

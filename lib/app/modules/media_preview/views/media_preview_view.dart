@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -100,7 +99,7 @@ class MediaPreviewView extends NavView<MediaPreviewController> {
           child: GestureDetector(
             onTap: () => controller.hideKeyBoard(),
             child: Container(
-              height: MediaQuery.of(context).size.height,
+              height: NavUtils.size.height,
               color: Colors.black,
               child: Column(
                 children: [
@@ -209,7 +208,7 @@ class MediaPreviewView extends NavView<MediaPreviewController> {
                   ),
                   Container(
                     color: Colors.black38,
-                    width: MediaQuery.of(context).size.width,
+                    width: NavUtils.size.width,
                     child: Column(
                       children: [
                         IntrinsicHeight(

@@ -6,15 +6,16 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
+
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class GroupInfoView extends NavView<GroupInfoController> {
   const GroupInfoView({Key? key}) : super(key: key);
@@ -99,7 +100,7 @@ class GroupInfoView extends NavView<GroupInfoController> {
                     ),
                     background: controller.imagePath.value.isNotEmpty
                         ? SizedBox(
-                            width: MediaQuery.of(context).size.width,
+                            width: NavUtils.size.width,
                             height: 300,
                             child: Image.file(
                               File(controller.imagePath.value),
@@ -107,13 +108,13 @@ class GroupInfoView extends NavView<GroupInfoController> {
                             ))
                         : ImageNetwork(
                             url: controller.profile.image.checkNull(),
-                            width: MediaQuery.of(context).size.width,
+                            width: NavUtils.size.width,
                             height: 300,
                             clipOval: false,
                             errorWidget: Image.asset(
                               groupImg,
                               height: 300,
-                              width: MediaQuery.of(context).size.width,
+                              width: NavUtils.size.width,
                               fit: BoxFit.fill,
                             ),
                             onTap: () {
@@ -344,7 +345,7 @@ class GroupInfoView extends NavView<GroupInfoController> {
         builder: (builder) {
           return SafeArea(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: NavUtils.size.width,
               child: Card(
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
                 child: Padding(

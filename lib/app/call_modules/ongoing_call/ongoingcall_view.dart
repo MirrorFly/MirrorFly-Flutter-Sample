@@ -10,6 +10,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 
 class OnGoingCallView extends NavView<CallController> {
   const OnGoingCallView({super.key});
@@ -35,8 +36,8 @@ class OnGoingCallView extends NavView<CallController> {
             fit: StackFit.expand,
             children: [
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
+                  width: NavUtils.size.width,
+                  height: NavUtils.size.height,
                   child: Stack(
                     children: [
                       Obx(() {

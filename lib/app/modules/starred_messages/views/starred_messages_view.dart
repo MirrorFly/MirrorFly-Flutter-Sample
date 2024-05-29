@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
-
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
@@ -14,8 +13,8 @@ import '../../../widgets/custom_action_bar_icons.dart';
 import '../../chat/widgets/chat_widgets.dart';
 import '../../chat/widgets/message_content.dart';
 import '../../chat/widgets/reply_message_widgets.dart';
-import 'starred_message_header.dart';
 import '../controllers/starred_messages_controller.dart';
+import 'starred_message_header.dart';
 
 class StarredMessagesView extends NavView<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
@@ -27,8 +26,8 @@ class StarredMessagesView extends NavView<StarredMessagesController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.height = MediaQuery.of(context).size.height;
-    controller.width = MediaQuery.of(context).size.width;
+    controller.height = NavUtils.size.height;
+    controller.width = NavUtils.size.width;
     return FocusDetector(
       onFocusGained: () {
         controller.getFavouriteMessages();

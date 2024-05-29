@@ -31,7 +31,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
     var mediaMessage = widget.chatMessage.mediaChatMessage!;
     return Container(
       key: ValueKey(widget.chatMessage.messageId),
-      width: MediaQuery.of(context).size.width * 0.60,
+      width: NavUtils.size.width * 0.60,
       padding: const EdgeInsets.all(2.0),
       child: Column(
         children: [
@@ -124,8 +124,8 @@ getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext co
                 child: Text("$obj"),
               );
             },
-            width: MediaQuery.of(context).size.width * 0.60,
-            height: MediaQuery.of(context).size.height * 0.4,
+            width: NavUtils.size.width * 0.60,
+            height: NavUtils.size.height * 0.4,
             fit: BoxFit.cover,
           );
         }));

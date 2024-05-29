@@ -281,7 +281,7 @@ class _ProfileViewState extends State<ProfileView> {
         builder: (builder) {
           return SafeArea(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: NavUtils.size.width,
               child: Card(
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
                 child: Padding(
