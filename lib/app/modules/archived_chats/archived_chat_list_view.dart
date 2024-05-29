@@ -4,6 +4,8 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/model/recent_chat.dart';
+
 import '../../common/constants.dart';
 import '../../widgets/custom_action_bar_icons.dart';
 import '../dashboard/widgets.dart';
@@ -136,7 +138,7 @@ class ArchivedChatListView extends NavView<ArchivedChatListController> {
                         return Obx(() {
                           return RecentChatItem(
                             item: item,
-                            onAvatarClick: (){
+                            onAvatarClick: (RecentChatData chatItem){
                               controller.getProfileDetail(context, item, index);
                             },
                             isSelected: controller.isSelected(index),
@@ -144,14 +146,14 @@ class ArchivedChatListView extends NavView<ArchivedChatListController> {
                                 item.jid.checkNull()),
                             archiveVisible: false,
                             archiveEnabled: controller.archiveEnabled.value,
-                            onTap: () {
+                            onTap: (RecentChatData chatItem) {
                               if (controller.selected.value) {
                                 controller.selectOrRemoveChatFromList(index);
                               } else {
                                 controller.toChatPage(item.jid.checkNull());
                               }
                             },
-                            onLongPress: () {
+                            onLongPress: (RecentChatData chatItem) {
                               controller.selected(true);
                               controller.selectOrRemoveChatFromList(index);
                             },

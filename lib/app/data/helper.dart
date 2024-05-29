@@ -60,24 +60,6 @@ InkWell listItem({Widget? leading, required Widget title, Widget? trailing, requ
   );
 }
 
-String getRecentChatTime(BuildContext context, int? epochTime) {
-  if (epochTime == null) return "";
-  if (epochTime == 0) return "";
-  var convertedTime = epochTime; // / 1000;
-  //messageDate.time = convertedTime
-  var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
-  var currentYear = DateTime.now().year;
-  var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
-  var time = (currentYear == calendar.year)
-      ? DateFormat("dd-MMM").format(calendar)
-      : DateFormat("yyyy/MM/dd").format(calendar);
-  return (equalsWithYesterday(calendar, getTranslated("today")))
-      ? hourTime
-      : (equalsWithYesterday(calendar, getTranslated("yesterday")))
-          ? getTranslated("yesterday").toUpperCase()
-          : time;
-}
-
 String manipulateMessageTime(BuildContext context, DateTime messageDate) {
   var format = MediaQuery.of(context).alwaysUse24HourFormat ? 24 : 12;
   calendar = messageDate;

@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import '../../common/constants.dart';
-import '../../common/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../common/constants.dart';
+import '../../common/widgets.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../model/chat_message_model.dart';
@@ -41,9 +41,9 @@ class RecentChatItem extends StatelessWidget {
       this.archiveEnabled = false})
       : super(key: key);
   final RecentChatData item;
-  final Function() onTap;
-  final Function()? onLongPress;
-  final Function()? onAvatarClick;
+  final Function(RecentChatData chatItem) onTap;
+  final Function(RecentChatData chatItem)? onLongPress;
+  final Function(RecentChatData chatItem)? onAvatarClick;
   final String spanTxt;
   final bool isCheckBoxVisible;
   final bool isChecked;
@@ -53,7 +53,7 @@ class RecentChatItem extends StatelessWidget {
   final bool isSelected;
   final String typingUserid;
 
-  final titleStyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor);
+  final titleStyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui');
   final typingStyle = const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'sf_ui', color: buttonBgColor);
   final bool archiveEnabled;
 
@@ -68,8 +68,8 @@ class RecentChatItem extends StatelessWidget {
           buildProfileImage(),
           Expanded(
             child: InkWell(
-              onLongPress: onLongPress,
-              onTap: onTap,
+              onLongPress: ()=> onLongPress != null ?  onLongPress!(item) : null,
+              onTap: ()=>onTap(item),
               child: Container(
                 padding: const EdgeInsets.only(top: 8),
                 child: Column(
@@ -166,7 +166,7 @@ class RecentChatItem extends StatelessWidget {
     return Visibility(
       visible: !isCheckBoxVisible,
       child: Text(
-        getRecentChatTime(context, item.lastMessageTime),
+        DateTimeUtils.getRecentChatTime(context, item.lastMessageTime),
         textAlign: TextAlign.end,
         style: TextStyle(
             fontSize: 12.0,
@@ -191,7 +191,7 @@ class RecentChatItem extends StatelessWidget {
 
   InkWell buildProfileImage() {
     return InkWell(
-      onTap: onAvatarClick,
+      onTap: ()=> onAvatarClick != null ? onAvatarClick!(item) : null,
       child: Container(
           margin: const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
           child: Stack(

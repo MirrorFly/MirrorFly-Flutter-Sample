@@ -3,9 +3,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/model/recent_chat.dart';
+
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
@@ -99,7 +101,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                               return Opacity(
                                 opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
                                 child: RecentChatItem(
-                                    item: item,onTap:() {
+                                    item: item,onTap:(RecentChatData chatItem) {
                                       //chat page
                                       controller.onItemSelect(item.jid.checkNull(),
                                           getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull(),item.isGroup.checkNull());
