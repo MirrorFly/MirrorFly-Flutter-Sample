@@ -228,9 +228,15 @@ abstract class BaseController {
           }
           if (Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            Get.toNamed(Routes.onGoingCallView, arguments: {
-              "userJid": [userJid]
-            });
+            if(Get.currentRoute == Routes.outGoingCallView) {
+              Get.offNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }else{
+              Get.toNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }
           }
           break;
 

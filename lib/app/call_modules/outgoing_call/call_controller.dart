@@ -111,7 +111,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           debugPrint("#Mirrorfly call get users --> $value");
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
-          if(callUserList.length>1) {
+          if(callUserList.length > 1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
             pinnedUserJid(firstAttendedCallUser.userJid!.value);
@@ -153,6 +153,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
       debugPrint("#Mirrorfly call list ${callUserListToJson(callList)}");
+      if (pinnedUserJid.isEmpty){
+        CallUserList firstAttendedCallUser = callList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected || callUser.callStatus?.value == CallStatus.ringing, orElse: () => callList[0]);
+        pinnedUserJid(firstAttendedCallUser.userJid!.value);
+      }
     });
   }
 
