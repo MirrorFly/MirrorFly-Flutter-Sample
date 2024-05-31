@@ -73,7 +73,7 @@ class ProfileController extends GetxController {
 
 
   Future<void> save({bool frmImage=false}) async {
-    var valid = await validMobileNumber(profileMobile.text);
+    var valid = await validMobileNumber(profileMobile.text.removeAllWhitespace.replaceAll("+", ""));
     // var permission = await AppPermission.getStoragePermission();
     // if (permission) {
       if (profileName.text
