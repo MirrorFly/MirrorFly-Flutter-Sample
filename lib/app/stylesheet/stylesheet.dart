@@ -8,4 +8,5 @@ part 'chat_page_style.dart';
 part 'custom_styles.dart';
 part 'dashboard_page_style.dart';
 part 'login_page_style.dart';
+part 'message_view_styles.dart';
 part 'otp_page_style.dart';
