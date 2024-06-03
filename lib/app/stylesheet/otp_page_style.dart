@@ -6,10 +6,20 @@ class OTPPageStyle{
     this.bodyTitleStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff767676),fontSize: 14),
     this.bodyDescriptionStyle = const TextStyle(fontWeight: FontWeight.w500, color: Color(0xff181818),fontSize: 15),
     OTPTextFieldStyle? otpTextFieldStyle,
-    ElevatedButtonThemeData? verifyOtpButtonStyle,
+    this.verifyOtpButtonStyle = const ElevatedButtonThemeData(
+        style: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Color(0xff3276E2)),
+            padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(
+                horizontal: 40, vertical: 10)),
+            shape: MaterialStatePropertyAll(StadiumBorder()),
+            textStyle: MaterialStatePropertyAll<TextStyle?>(TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500),)
+        )
+    ),
     this.changeNumberTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xffFF0000),fontSize: 12),
     this.resendOtpTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff181818),fontSize: 12),
-  }) : verifyOtpButtonStyle = verifyOtpButtonStyle ?? _defaultLoginButtonStyle , otpTextFieldStyle = otpTextFieldStyle ?? _defaultOtpTextFieldStyle;
+  }): otpTextFieldStyle = otpTextFieldStyle ?? _defaultOtpTextFieldStyle;
 
   final AppBarTheme appBarTheme;
   final TextStyle bodyTitleStyle;
@@ -19,16 +29,6 @@ class OTPPageStyle{
   final TextStyle changeNumberTextStyle;
   final TextStyle resendOtpTextStyle;
 
-  static final ElevatedButtonThemeData _defaultLoginButtonStyle = ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff3276E2),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 40, vertical: 10),
-        textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500),
-        shape: const StadiumBorder()),
-  );
 
   static final OTPTextFieldStyle _defaultOtpTextFieldStyle = OTPTextFieldStyle(otpFieldStyle: OtpFieldStyle());
 }

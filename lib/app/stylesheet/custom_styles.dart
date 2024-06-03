@@ -79,17 +79,21 @@ class RecentChatItemStyle {
       {this.profileImageSize = const Size(48, 48),
         this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
         this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+        this.spanTextColor = Colors.blue,
         this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff3276E2),fontSize: 14.0),
-        this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff4879F9),fontSize: 12),
+        this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
         this.dividerColor = const Color(0XffE2E2E2),
+        this.unreadColor = const Color(0xff4879F9),
         this.selectedBgColor = Colors.black12,
         this.unselectedBgColor = Colors.transparent});
   final Size profileImageSize;
   final TextStyle titleTextStyle;
   final TextStyle subtitleTextStyle;
+  final Color spanTextColor;
   final TextStyle typingTextStyle;
   final TextStyle timeTextStyle;
   final Color dividerColor;
+  final Color unreadColor;
   final Color selectedBgColor;
   final Color unselectedBgColor;
 }

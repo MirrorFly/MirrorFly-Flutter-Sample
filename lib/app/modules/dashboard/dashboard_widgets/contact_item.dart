@@ -79,7 +79,7 @@ class ContactItem extends StatelessWidget {
                       getName(item),
                       //item.profileName.checkNull(),
                       spanTxt.trim(),
-                      const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor)),
+                      const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),Colors.blue),
                   Text(
                     item.status.toString(),
                     style: Theme.of(context).textTheme.titleSmall,

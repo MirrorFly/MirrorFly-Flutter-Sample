@@ -1,7 +1,7 @@
 part of 'stylesheet.dart';
 
 class LoginPageStyle{
-  LoginPageStyle({
+  const LoginPageStyle({
     this.appBarTextStyle = const TextStyle(fontWeight: FontWeight.w700, color: Color(0xff181818),fontSize: 20),
     this.bodyTitleStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff767676),fontSize: 14),
     this.bodyDescriptionStyle = const TextStyle(fontWeight: FontWeight.w500, color: Color(0xff181818),fontSize: 15),
@@ -10,8 +10,18 @@ class LoginPageStyle{
     this.editTextFieldStyle =  const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff181818),fontSize: 14),editTextHintStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff959595),fontSize: 12)),
     this.footerHeadlineStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff767676),fontSize: 11),
     this.termsTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff3276E2),fontSize: 11),
-    ElevatedButtonThemeData? loginButtonStyle,
-  }) : loginButtonStyle = loginButtonStyle ?? _defaultLoginButtonStyle;
+    this.loginButtonStyle = const ElevatedButtonThemeData(
+        style: ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Color(0xff3276E2)),
+            padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(
+                horizontal: 40, vertical: 10)),
+            shape: MaterialStatePropertyAll(StadiumBorder()),
+            textStyle: MaterialStatePropertyAll<TextStyle?>(TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500),)
+        )
+    ),
+  });
 
   final TextStyle appBarTextStyle;
   final TextStyle bodyTitleStyle;
@@ -23,16 +33,6 @@ class LoginPageStyle{
   final TextStyle termsTextStyle;
   final ElevatedButtonThemeData loginButtonStyle;
 
-  static final ElevatedButtonThemeData _defaultLoginButtonStyle = ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff3276E2),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 40, vertical: 10),
-        textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500),
-        shape: const StadiumBorder()),
-  );
 }
 
 class check{

@@ -10,21 +10,23 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 import '../data/utils.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
 class AppDivider extends StatelessWidget {
-  const AppDivider({Key? key, this.padding}) : super(key: key);
+  const AppDivider({Key? key, this.padding,this.color}) : super(key: key);
 
   final EdgeInsetsGeometry? padding;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: padding,
       height: 0.29,
-      color: dividerColor,
+      color: color ?? dividerColor,
     );
   }
 }
@@ -361,7 +363,7 @@ Widget memberItem(
                             : spannableText(
                                 name.checkNull(),
                                 spantext,
-                                titlestyle,
+                                titlestyle,Colors.blue
                               ),
                         Text(
                           status.checkNull(),

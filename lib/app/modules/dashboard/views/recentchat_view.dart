@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/recent_chat.dart';
 
@@ -15,8 +16,10 @@ import '../../../routes/route_settings.dart';
 import '../widgets.dart';
 
 class RecentChatView extends StatelessWidget {
-  const RecentChatView({super.key,required this.controller});
+  const RecentChatView({super.key,required this.controller,required this.archivedTileStyle,required this.recentChatItemStyle});
   final DashboardController controller;
+  final ArchivedTileStyle archivedTileStyle;
+  final RecentChatItemStyle recentChatItemStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +100,12 @@ class RecentChatView extends StatelessWidget {
                   ),
                   title: Text(
                     getTranslated("archived"),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+                    style: archivedTileStyle.textStyle,
                   ),
                   trailing: controller.archivedCount != "0"
                       ? Text(
                     controller.archivedCount,
-                    style: const TextStyle(color: buttonBgColor),
+                    style: archivedTileStyle.countTextStyle,//const TextStyle(color: buttonBgColor),
                   )
                       : null,
                   dividerPadding: EdgeInsets.zero,
@@ -128,6 +131,7 @@ class RecentChatView extends StatelessWidget {
                       var item = controller.recentChats[index];
                       return Obx(() {
                         return RecentChatItem(
+                          recentChatItemStyle: recentChatItemStyle,
                           item: item,
                           isSelected: controller.isSelected(index),
                           typingUserid: controller.typingUser(item.jid.checkNull()),
@@ -381,7 +385,7 @@ class RecentChatView extends StatelessWidget {
                                               ? spannableText(
                                             item.messageTextContent.toString(),
                                             controller.search.text,
-                                            Theme.of(context).textTheme.titleSmall,
+                                            Theme.of(context).textTheme.titleSmall,Colors.blue,
                                           )
                                               : Text(
                                             forMessageTypeString(item.messageType,

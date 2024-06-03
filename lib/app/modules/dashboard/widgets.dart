@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
@@ -38,7 +39,8 @@ class RecentChatItem extends StatelessWidget {
       this.isForwardMessage = false,
       this.typingUserid = "",
       this.archiveVisible = true,
-      this.archiveEnabled = false})
+      this.archiveEnabled = false,
+      this.recentChatItemStyle = const RecentChatItemStyle()})
       : super(key: key);
   final RecentChatData item;
   final Function(RecentChatData chatItem) onTap;
@@ -56,6 +58,7 @@ class RecentChatItem extends StatelessWidget {
   final titleStyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui');
   final typingStyle = const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600, fontFamily: 'sf_ui', color: buttonBgColor);
   final bool archiveEnabled;
+  final RecentChatItemStyle recentChatItemStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +82,9 @@ class RecentChatItem extends StatelessWidget {
                     Row(
                       children: [buildRecentChatMessageDetails(), buildRecentChatActions(context)],
                     ),
-                    const AppDivider(
-                      padding: EdgeInsets.only(top: 8),
+                    AppDivider(
+                      padding: const EdgeInsets.only(top: 8),
+                      color: recentChatItemStyle.dividerColor,
                     )
                   ],
                 ),
@@ -101,7 +105,7 @@ class RecentChatItem extends StatelessWidget {
           spanTxt.isEmpty
               ? Text(
                   getRecentName(item),
-                  style: titleStyle,
+                  style: recentChatItemStyle.titleTextStyle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 )
@@ -109,7 +113,7 @@ class RecentChatItem extends StatelessWidget {
                   getRecentName(item),
                   //item.profileName.checkNull(),
                   spanTxt,
-                  titleStyle),
+                  recentChatItemStyle.titleTextStyle,recentChatItemStyle.spanTextColor),
           Row(
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
@@ -168,14 +172,15 @@ class RecentChatItem extends StatelessWidget {
       child: Text(
         DateTimeUtils.getRecentChatTime(context, item.lastMessageTime),
         textAlign: TextAlign.end,
-        style: TextStyle(
+        style: returnFormattedCount(item.unreadMessageCount!) != "0" ? recentChatItemStyle.timeTextStyle.copyWith(color: recentChatItemStyle.unreadColor) : recentChatItemStyle.timeTextStyle
+        /* TextStyle(
             fontSize: 12.0,
             fontWeight: FontWeight.w600,
             fontFamily: 'sf_ui',
             color: returnFormattedCount(item.unreadMessageCount!) != "0"
                 //item.isConversationUnRead!
                 ? buttonBgColor
-                : textColor),
+                : textColor)*/,
       ),
     );
   }
@@ -196,7 +201,7 @@ class RecentChatItem extends StatelessWidget {
           margin: const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
           child: Stack(
             children: [
-              buildProfileImageView(),
+              buildProfileImageView(recentChatItemStyle.profileImageSize),
               item.isConversationUnRead! ? buildConvReadIcon() : const SizedBox(),
               item.isEmailContact().checkNull() ? buildEmailIcon() : const SizedBox.shrink(),
             ],
@@ -204,11 +209,11 @@ class RecentChatItem extends StatelessWidget {
     );
   }
 
-  ImageNetwork buildProfileImageView() {
+  ImageNetwork buildProfileImageView(Size profileImageSize) {
     return ImageNetwork(
       url: item.profileImage.toString(),
-      width: 48,
-      height: 48,
+      width: profileImageSize.width,
+      height: profileImageSize.height,
       clipOval: true,
       errorWidget: item.isGroup!
           ? ClipOval(
@@ -344,7 +349,7 @@ class RecentChatItem extends StatelessWidget {
                     ? Flexible(
                         child: Text(
                           "${chat.senderUserName.checkNull()}:",
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -365,7 +370,7 @@ class RecentChatItem extends StatelessWidget {
                               ? setRecalledMessageText(chat.isMessageSentByMe)
                               : forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         )
@@ -375,7 +380,7 @@ class RecentChatItem extends StatelessWidget {
                               : forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           spanTxt,
-                          Theme.of(context).textTheme.titleSmall),
+                      recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor)//Theme.of(context).textTheme.titleSmall),
                 ),
               ],
             );
@@ -392,7 +397,7 @@ class RecentChatItem extends StatelessWidget {
             future: getProfileDetails(item.jid!),
             builder: (context, profileData) {
               if (profileData.hasData) {
-                return Text(profileData.data?.status ?? "");
+                return Text(profileData.data?.status ?? "",style: recentChatItemStyle.subtitleTextStyle,);
               }
               return const Text("");
             }));
@@ -408,6 +413,7 @@ class RecentChatItem extends StatelessWidget {
                 data.data ?? "",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: recentChatItemStyle.subtitleTextStyle,
               );
             }
             return const Text("");
@@ -441,7 +447,7 @@ class RecentChatItem extends StatelessWidget {
   }
 }
 
-Widget spannableText(String text, String spannableText, TextStyle? style) {
+Widget spannableText(String text, String spannableText, TextStyle? style,Color? spanTextColor) {
   var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
   var endIndex = startIndex + spannableText.length;
   if (startIndex != -1 && endIndex != -1) {
@@ -454,7 +460,7 @@ Widget spannableText(String text, String spannableText, TextStyle? style) {
     return Text.rich(
       TextSpan(
           text: startText,
-          children: [TextSpan(text: colorText, style: const TextStyle(color: Colors.blue)), TextSpan(text: endText, style: style)],
+          children: [TextSpan(text: colorText, style: TextStyle(color: spanTextColor)/*const TextStyle(color: Colors.blue)*/), TextSpan(text: endText, style: style)],
           style: style),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

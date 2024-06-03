@@ -13,3 +13,16 @@ part 'message_view_styles.dart';
 part 'otp_page_style.dart';
 part 'settings_page_style.dart';
 part 'view_all_media_page_style.dart';
+
+class AppStyle{
+
+  final LoginPageStyle loginPageStyle;
+  final OTPPageStyle otpPageStyle;
+  final DashBoardPageStyle dashBoardPageStyle;
+  final ArchivedChatsPageStyle archivedChatsPageStyle;
+  final ChatPageStyle chatPageStyle;
+  final ChatInfoPageStyle chatInfoPageStyle;
+  final ViewAllMediaPageStyle viewAllMediaPageStyle;
+
+  const AppStyle({required this.loginPageStyle, required this.otpPageStyle, required this.dashBoardPageStyle, required this.archivedChatsPageStyle, required this.chatPageStyle, required this.chatInfoPageStyle, required this.viewAllMediaPageStyle});
+}
