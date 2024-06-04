@@ -95,7 +95,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (widget.chatController.profile.isGroupProfile.checkNull()) ...[
-                                SenderHeader(isGroupProfile: widget.chatController.profile.isGroupProfile, chatList: [widget.chatItem], index: 0),
+                                SenderHeader(isGroupProfile: widget.chatController.profile.isGroupProfile, chatList: [widget.chatItem], index: 0,textStyle: null,),
                               ],
                               widget.chatItem.isThisAReplyMessage
                                   ? widget.chatItem.replyParentChatMessage == null

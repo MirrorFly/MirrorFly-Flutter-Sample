@@ -77,10 +77,10 @@ class ArchivedTileStyle {
 class RecentChatItemStyle {
   const RecentChatItemStyle(
       {this.profileImageSize = const Size(48, 48),
-        this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
-        this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+        this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),
+        this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 14),
         this.spanTextColor = Colors.blue,
-        this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff3276E2),fontSize: 14.0),
+        this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff3276E2),fontSize: 14),
         this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
         this.dividerColor = const Color(0XffE2E2E2),
         this.unreadColor = const Color(0xff4879F9),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel, ContactChatMessage;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,22 +21,27 @@ class ContactMessageView extends StatelessWidget {
   const ContactMessageView({Key? key,
     required this.chatMessage,
     this.search = "",
-    required this.isSelected})
+    required this.isSelected,
+  this.contactMessageViewStyle = const ContactMessageViewStyle(),
+  this.decoration = const BoxDecoration()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
+  final ContactMessageViewStyle contactMessageViewStyle;
+  final Decoration decoration;
 
   @override
   Widget build(BuildContext context) {
     var screenWidth = NavUtils.width;
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: chatMessage.isMessageSentByMe
-            ? chatReplyContainerColor
-            : chatReplySenderColor,
-      ),
+      decoration: decoration,
+      // decoration: BoxDecoration(
+      //   borderRadius: const BorderRadius.all(Radius.circular(10)),
+      //   color: chatMessage.isMessageSentByMe
+      //       ? chatReplyContainerColor
+      //       : chatReplySenderColor,
+      // ),
       width: screenWidth * 0.60,
       child: Column(
         children: [
@@ -45,8 +51,8 @@ class ContactMessageView extends StatelessWidget {
               children: [
                 Image.asset(
                   profileImage,
-                  width: 35,
-                  height: 35,
+                  width: contactMessageViewStyle.profileImageSize.width,//35,
+                  height: contactMessageViewStyle.profileImageSize.height,//35
                 ),
                 const SizedBox(
                   width: 12,
@@ -55,14 +61,14 @@ class ContactMessageView extends StatelessWidget {
                     child: search.isEmpty
                         ? textMessageSpannableText(
                         chatMessage.contactChatMessage!.contactName
-                            .checkNull(),
+                            .checkNull(),contactMessageViewStyle.textMessageViewStyle.textStyle,
                         maxLines: 2)
                         : chatSpannedText(
                         chatMessage.contactChatMessage!.contactName,
                         search,
-                        const TextStyle(fontSize: 14, color: textHintColor),
-                        maxLines:
-                        2) /*,Text(
+                        contactMessageViewStyle.textMessageViewStyle.textStyle,//const TextStyle(fontSize: 14, color: textHintColor),
+                        maxLines: 2,
+                        spanColor: contactMessageViewStyle.textMessageViewStyle.highlightColor) /*,Text(
                   chatMessage.contactChatMessage!.contactName,
                   maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -92,11 +98,12 @@ class ContactMessageView extends StatelessWidget {
                 ),
                 Text(
                   getChatTime(context, chatMessage.messageSentTime.toInt()),
-                  style: TextStyle(
+                  style: contactMessageViewStyle.textMessageViewStyle.timeTextStyle,
+                  /*style: TextStyle(
                       fontSize: 11,
                       color: chatMessage.isMessageSentByMe
                           ? durationTextColor
-                          : textHintColor),
+                          : textHintColor),*/
                 ),
                 const SizedBox(
                   width: 10,
@@ -104,11 +111,8 @@ class ContactMessageView extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(
-            height: 5,
-          ),
-          const AppDivider(),
-          getJidOfContact(chatMessage.contactChatMessage),
+          AppDivider(color: contactMessageViewStyle.dividerColor,),
+          getJidOfContact(chatMessage.contactChatMessage,contactMessageViewStyle.viewTextStyle),
         ],
       ),
     );
@@ -126,7 +130,7 @@ class ContactMessageView extends StatelessWidget {
     return '';
   }
 
-  Widget getJidOfContact(ContactChatMessage? contactChatMessage) {
+  Widget getJidOfContact(ContactChatMessage? contactChatMessage,TextStyle? textStyle) {
     // String? userJid;
     if (contactChatMessage == null ||
         contactChatMessage.contactPhoneNumbers.isEmpty) {

@@ -14,6 +14,12 @@ class DialogUtils {
     });
   }
 
+  static bottomSheet(Widget builder,{bool ignoreSafeArea = false }){
+    return showModalBottomSheet(context: buildContext, builder: (_){
+      return builder;
+    },useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent);
+  }
+
   // Method to show a loading dialog
   static void showLoading(
       {String? message,

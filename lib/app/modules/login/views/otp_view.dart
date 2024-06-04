@@ -83,10 +83,7 @@ class OtpView extends NavView<LoginController> {
                           OTPTextField(
                               controller: controller.otpController,
                               length: 6,
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
+                              width: NavUtils.size.width,
                               textFieldAlignment: MainAxisAlignment.center,
                               margin: const EdgeInsets.all(4),
                               fieldWidth: 40,

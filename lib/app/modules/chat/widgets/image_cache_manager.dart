@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -14,7 +15,10 @@ class ImageCacheManager {
     } else {
       Uint8List bytes = base64Decode(base64String);
       Image image = Image.memory(bytes, gaplessPlayback: true,  width: width ?? NavUtils.width * 0.60,
-        height: height ?? NavUtils.height * 0.4, fit: BoxFit.cover,);
+        height: height ?? NavUtils.height * 0.4, fit: BoxFit.cover,errorBuilder: (ctx,obj,strace){
+          return Container(color: Colors.black12,width: width ?? NavUtils.width * 0.60,
+            height: height ?? NavUtils.height * 0.4,);
+        },);
       _cache[messageId] = image;
       return image;
     }

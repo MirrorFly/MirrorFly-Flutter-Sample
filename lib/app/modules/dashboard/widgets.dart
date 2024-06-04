@@ -501,10 +501,10 @@ bool isCountryCode(String text) {
   return false;
 }
 
-Widget textMessageSpannableText(String message, {int? maxLines}) {
+Widget textMessageSpannableText(String message, TextStyle? textStyle,{int? maxLines,}) {
   //final GlobalKey textKey = GlobalKey();
-  TextStyle underlineStyle = const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
-  TextStyle normalStyle = const TextStyle(fontSize: 14, color: textHintColor);
+  TextStyle? underlineStyle = textStyle?.copyWith(color: Colors.blueAccent,decoration: TextDecoration.underline);//const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
+  TextStyle? normalStyle = textStyle;//const TextStyle(fontSize: 14, color: textHintColor);
   var prevValue = "";
   return Text.rich(
     customTextSpan(message, prevValue, normalStyle, underlineStyle),
@@ -513,7 +513,7 @@ Widget textMessageSpannableText(String message, {int? maxLines}) {
   );
 }
 
-TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle, TextStyle underlineStyle) {
+TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle, TextStyle? underlineStyle) {
   return TextSpan(
     children: message.split(" ").map((e) {
       if (isCountryCode(e)) {

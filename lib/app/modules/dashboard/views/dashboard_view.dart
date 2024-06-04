@@ -123,7 +123,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.chatInfo();
                                                 },
-                                                icon: SvgPicture.asset(infoIcon),
+                                                icon: SvgPicture.asset(infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Info',
                                               ),
                                               overflowWidget: Text(getTranslated("info")),
@@ -138,7 +138,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.currentTab.value == 0 ? controller.deleteChats() : controller.deleteCallLog();
                                                 },
-                                                icon: SvgPicture.asset(delete),
+                                                icon: SvgPicture.asset(delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Delete',
                                               ),
                                               overflowWidget: Text(getTranslated("delete")),
@@ -157,7 +157,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.pinChats();
                                                 },
-                                                icon: SvgPicture.asset(pin),
+                                                icon: SvgPicture.asset(pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Pin',
                                               ),
                                               overflowWidget: Text(getTranslated("pin")),
@@ -172,7 +172,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.unPinChats();
                                                 },
-                                                icon: SvgPicture.asset(unpin),
+                                                icon: SvgPicture.asset(unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'UnPin',
                                               ),
                                               overflowWidget: Text(getTranslated("unPin")),
@@ -187,7 +187,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.muteChats();
                                                 },
-                                                icon: SvgPicture.asset(mute),
+                                                icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Mute',
                                               ),
                                               overflowWidget: Text(getTranslated("mute")),
@@ -202,7 +202,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.unMuteChats();
                                                 },
-                                                icon: SvgPicture.asset(unMute),
+                                                icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'UnMute',
                                               ),
                                               overflowWidget: Text(getTranslated("unMute")),
@@ -217,7 +217,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 onPressed: () {
                                                   controller.archiveChats();
                                                 },
-                                                icon: SvgPicture.asset(archive),
+                                                icon: SvgPicture.asset(archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Archive',
                                               ),
                                               overflowWidget: Text(getTranslated("archived")),
@@ -255,6 +255,7 @@ class DashboardView extends NavView<DashboardController> {
                                                   width: 18,
                                                   height: 18,
                                                   fit: BoxFit.contain,
+                                                    colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
                                                 ),
                                                 tooltip: 'Search',
                                               ),

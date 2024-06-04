@@ -2,7 +2,7 @@ part of 'stylesheet.dart';
 
 class ChatPageStyle {
   const ChatPageStyle(
-      {this.appBarTheme = const AppBarTheme(backgroundColor: Color(0xffF2F2F2)),
+      {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
         this.chatUserAppBarStyle = const ChatUserAppBarStyle(),
         this.searchTextFieldStyle = const EditTextFieldStyle(),
         this.textTypingAreaStyle = const TextTypingAreaStyle(),
@@ -38,6 +38,7 @@ class SenderChatBubbleStyle{
      this.imageMessageViewStyle = const ImageMessageViewStyle(
          captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
          timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
+       imageBorderRadius: BorderRadius.all(Radius.circular(10)),
        downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
          border: Border.fromBorderSide(BorderSide(width: 1.0)),
          borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -48,6 +49,7 @@ class SenderChatBubbleStyle{
      this.videoMessageViewStyle = const VideoMessageViewStyle(
          captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
          timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
+         videoBorderRadius: BorderRadius.all(Radius.circular(10)),
          downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
            border: Border.fromBorderSide(BorderSide(width: 1.0)),
            borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -68,7 +70,7 @@ class SenderChatBubbleStyle{
          inactiveTrackColor: Color(0xffAFB8D0),
          // overlayShape: SliderComponentShape.noThumb,
          thumbShape: RoundSliderThumbShape(
-             enabledThumbRadius: 4),
+             enabledThumbRadius: (10/2)),
        ),
        timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
        downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -77,16 +79,16 @@ class SenderChatBubbleStyle{
              width: 1.0
          )),
          borderRadius: BorderRadius.all(Radius.circular(3)),
-       ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+       ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
+       iconStyle: IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
      ),
      this.docMessageViewStyle = const DocMessageViewStyle(
          decoration: BoxDecoration(
              borderRadius: BorderRadius.only(
                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
              color: Color(0xffD0D8EB)),
-         fileTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 12),
+         fileTextStyle: TextMessageViewStyle(textStyle:TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 12),highlightColor: Colors.orange,timeTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff455E93),fontSize: 11),),
          sizeTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 7),
-         timeTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff455E93),fontSize: 11),
          downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
            border: Border.fromBorderSide(BorderSide(
                color: Color(0xffAFB8D0),
@@ -97,15 +99,17 @@ class SenderChatBubbleStyle{
      ),
      this.contactMessageViewStyle = const ContactMessageViewStyle(
    textMessageViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
-       viewTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12)
+       viewTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),
+       profileImageSize: Size(30, 30),
+       dividerColor: Color(0xffD2D8E8)
    ),
-     this.locationMessageViewStyle = const LocationMessageViewStyle(timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),),
+     this.locationMessageViewStyle = const LocationMessageViewStyle(timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),locationBorderRadius: BorderRadius.all(Radius.circular(10))),
      this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle(
        decoration: BoxDecoration(
          borderRadius: BorderRadius.all(Radius.circular(10)),
          color: Color(0xffD0D8EB),),
        titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
-       contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 12),
+       contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
        mediaIconBgColor: Color(0xff7285B5),
      ),
      this.decoration = const BoxDecoration(
@@ -132,6 +136,7 @@ class ReceiverChatBubbleStyle{
     this.imageMessageViewStyle = const ImageMessageViewStyle(
         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
+        imageBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
           border: Border.fromBorderSide(BorderSide(width: 1.0)),
           borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -142,6 +147,7 @@ class ReceiverChatBubbleStyle{
     this.videoMessageViewStyle = const VideoMessageViewStyle(
         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
+        videoBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
           border: Border.fromBorderSide(BorderSide(width: 1.0)),
           borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -162,7 +168,7 @@ class ReceiverChatBubbleStyle{
         inactiveTrackColor: Color(0xffB9C1D6),
         // overlayShape: SliderComponentShape.noThumb,
         thumbShape: RoundSliderThumbShape(
-            enabledThumbRadius: 4),
+            enabledThumbRadius: (10/2)),
       ),
       timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff9E9E9E),fontSize: 11),
       downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -171,15 +177,15 @@ class ReceiverChatBubbleStyle{
             width: 1.0
         )),
         borderRadius: BorderRadius.all(Radius.circular(3)),
-      ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+      ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
+      iconStyle: IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
     ),
     this.docMessageViewStyle = const DocMessageViewStyle(decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         color: Color(0xffEFEFEF)),
-        fileTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Color(0xff313131),fontSize: 12),
+        fileTextStyle: TextMessageViewStyle(textStyle:TextStyle(fontWeight: FontWeight.w300,color: Color(0xff313131),fontSize: 12),highlightColor: Colors.orange,timeTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff9E9E9E),fontSize: 11),),
         sizeTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Color(0xff313131),fontSize: 7),
-        timeTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff9E9E9E),fontSize: 11),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
           border: Border.fromBorderSide(BorderSide(
               color: Color(0xffAFB8D0),
@@ -190,15 +196,17 @@ class ReceiverChatBubbleStyle{
     ),
     this.contactMessageViewStyle = const ContactMessageViewStyle(
         textMessageViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff9E9E9E),fontSize: 11)),
-        viewTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 12)
+        viewTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 12),
+      profileImageSize: Size(30, 30),
+      dividerColor: Color(0xffE3E7F1)
     ),
-    this.locationMessageViewStyle = const LocationMessageViewStyle(timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),),
+    this.locationMessageViewStyle = const LocationMessageViewStyle(timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),locationBorderRadius: BorderRadius.all(Radius.circular(10))),
     this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(10)),
         color: Color(0xffEFEFEF),),
       titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff313131),fontSize: 11),
-      contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff313131),fontSize: 12),
+      contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff313131),fontSize: 13),
       mediaIconBgColor: Color(0xff7285B5),
     ),
    this.decoration = const BoxDecoration(

@@ -1,6 +1,10 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
@@ -29,17 +33,21 @@ Widget getLocationImage(LocationChatMessage? locationChatMessage, double width, 
         Uri googleUrl = MessageUtils.getMapLaunchUri(locationChatMessage!.latitude,locationChatMessage.longitude);
         AppUtils.launchWeb(googleUrl);
       },
-      child: Image.network(
-        MessageUtils.getMapImageUri(
-            locationChatMessage!.latitude, locationChatMessage.longitude).path,
-        fit: BoxFit.fill,
-        width: width,
-        height: height,
+      child: FutureBuilder(
+        future: Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY"),
+        builder: (context,snap) {
+          return CachedNetworkImage(
+            imageUrl: AppUtils.getMapImageUrl(locationChatMessage!.latitude,locationChatMessage.longitude,snap.data.checkNull()),
+            fit: BoxFit.fill,
+            width: width,
+            height: height,
+          );
+        }
       ));
 }
 
 Widget chatSpannedText(String text, String spannableText, TextStyle? style,
-    {int? maxLines}) {
+    {int? maxLines,Color spanColor = Colors.orange}) {
   var startIndex = text.toLowerCase().contains(spannableText.toLowerCase())
       ? text.toLowerCase().indexOf(spannableText.toLowerCase())
       : -1;
@@ -53,7 +61,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
           text: startText,
           children: [
             TextSpan(
-                text: colorText, style: const TextStyle(color: Colors.orange)),
+                text: colorText, style: TextStyle(color: spanColor)),
             TextSpan(text: endText)
           ],
           style: style),
@@ -61,7 +69,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
       overflow: TextOverflow.ellipsis,
     );
   } else {
-    return textMessageSpannableText(text,
+    return textMessageSpannableText(text,style,
         maxLines: maxLines);
   }
 }

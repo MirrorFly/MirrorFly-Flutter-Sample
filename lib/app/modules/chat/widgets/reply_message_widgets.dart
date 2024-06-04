@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/image_cache_manager.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -11,10 +12,11 @@ import '../../../model/chat_message_model.dart';
 import 'chat_widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
-  const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel, required this.onClick}) : super(key: key);
+  const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel, required this.onClick, this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle()}) : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onCancel;
   final Function() onClick;
+  final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, left: 15.0),
                       child: getReplyTitle(chatMessage.isMessageSentByMe,
-                          chatMessage.senderUserName.checkNull().isNotEmpty ? chatMessage.senderUserName : chatMessage.senderNickName),
+                          chatMessage.senderUserName.checkNull().isNotEmpty ? chatMessage.senderUserName : chatMessage.senderNickName,replyHeaderMessageViewStyle.titleTextStyle),
                     ),
                     const SizedBox(height: 8),
                     Padding(
@@ -51,7 +53,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.contactChatMessage?.contactName,
                           chatMessage.mediaChatMessage?.mediaFileName,
                           chatMessage.mediaChatMessage,
-                          true),
+                          true,replyHeaderMessageViewStyle.contentTextStyle),
                     ),
                   ],
                 ),
@@ -77,17 +79,18 @@ class ReplyingMessageHeader extends StatelessWidget {
   }
 }
 
-getReplyTitle(bool isMessageSentByMe, String senderUserName) {
+getReplyTitle(bool isMessageSentByMe, String senderUserName,TextStyle textStyle) {
   return isMessageSentByMe
       ? Text(
           getTranslated("you"),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: textStyle,
+          // style: const TextStyle(fontWeight: FontWeight.bold),
         )
-      : Text(senderUserName, style: const TextStyle(fontWeight: FontWeight.bold));
+      : Text(senderUserName, style: textStyle,/*style: const TextStyle(fontWeight: FontWeight.bold)*/);
 }
 
 getReplyMessage(
-    String messageType, String? messageTextContent, String? contactName, String? mediaFileName, MediaChatMessage? mediaChatMessage, bool isReplying) {
+    String messageType, String? messageTextContent, String? contactName, String? mediaFileName, MediaChatMessage? mediaChatMessage, bool isReplying,TextStyle textStyle) {
   debugPrint(messageType);
   switch (messageType) {
     case Constants.mText:
@@ -95,7 +98,7 @@ getReplyMessage(
         children: [
           MessageUtils.getMediaTypeIcon(Constants.mText),
           // Text(messageTextContent!),
-          Expanded(child: Text(messageTextContent!, maxLines: 1, overflow: TextOverflow.ellipsis)),
+          Expanded(child: Text(messageTextContent!, maxLines: 1, overflow: TextOverflow.ellipsis,style: textStyle,)),
         ],
       );
     case Constants.mImage:
@@ -105,7 +108,7 @@ getReplyMessage(
           const SizedBox(
             width: 5,
           ),
-          Text(Constants.mImage.capitalizeFirst!),
+          Text(Constants.mImage.capitalizeFirst!,style: textStyle,),
         ],
       );
     case Constants.mVideo:
@@ -115,7 +118,7 @@ getReplyMessage(
           const SizedBox(
             width: 5,
           ),
-          Text(Constants.mVideo.capitalizeFirst!),
+          Text(Constants.mVideo.capitalizeFirst!,style: textStyle),
         ],
       );
     case Constants.mAudio:
@@ -130,7 +133,7 @@ getReplyMessage(
                 )
               : const Offstage(),
           Text(
-            DateTimeUtils.durationToString(Duration(milliseconds: mediaChatMessage != null ? mediaChatMessage.mediaDuration : 0)),
+            DateTimeUtils.durationToString(Duration(milliseconds: mediaChatMessage != null ? mediaChatMessage.mediaDuration : 0)),style: textStyle
           ),
           const SizedBox(
             width: 5,
@@ -145,7 +148,7 @@ getReplyMessage(
           const SizedBox(
             width: 5,
           ),
-          Text("${Constants.mContact.capitalizeFirst} :"),
+          Text("${Constants.mContact.capitalizeFirst} :",style: textStyle),
           const SizedBox(
             width: 5,
           ),
@@ -155,7 +158,7 @@ getReplyMessage(
                 contactName!,
                 maxLines: 1,
                 softWrap: false,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis, style: textStyle
               )),
         ],
       );
@@ -166,7 +169,7 @@ getReplyMessage(
           const SizedBox(
             width: 5,
           ),
-          Text(Constants.mLocation.capitalizeFirst!),
+          Text(Constants.mLocation.capitalizeFirst!,style: textStyle),
         ],
       );
     case Constants.mDocument:
@@ -180,7 +183,7 @@ getReplyMessage(
               child: Text(
             mediaFileName!,
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+            maxLines: 1, style: textStyle
           )),
         ],
       );
@@ -258,21 +261,23 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
 }
 
 class ReplyMessageHeader extends StatelessWidget {
-  const ReplyMessageHeader({Key? key, required this.chatMessage})
+  const ReplyMessageHeader({Key? key, required this.chatMessage, this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle()})
       : super(key: key);
   final ChatMessageModel chatMessage;
+  final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+      margin: const EdgeInsets.all(4),
+      decoration: replyHeaderMessageViewStyle.decoration,
+      /*decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: chatMessage.isMessageSentByMe
             ? chatReplyContainerColor
             : chatReplySenderColor,
-      ),
+      ),*/
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -282,7 +287,7 @@ class ReplyMessageHeader extends StatelessWidget {
               children: [
                 getReplyTitle(
                     chatMessage.replyParentChatMessage!.isMessageSentByMe,
-                    chatMessage.replyParentChatMessage!.senderUserName),
+                    chatMessage.replyParentChatMessage!.senderUserName,replyHeaderMessageViewStyle.titleTextStyle),
                 const SizedBox(height: 5),
                 getReplyMessage(
                     chatMessage.replyParentChatMessage!.messageType,
@@ -292,7 +297,7 @@ class ReplyMessageHeader extends StatelessWidget {
                     chatMessage.replyParentChatMessage?.mediaChatMessage
                         ?.mediaFileName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage,
-                    false),
+                    false,replyHeaderMessageViewStyle.contentTextStyle),
               ],
             ),
           ),

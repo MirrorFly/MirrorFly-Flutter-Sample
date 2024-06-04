@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+
 import '../../../common/constants.dart';
 import '../../chat/widgets/chat_widgets.dart';
-
 import '../../chat/widgets/message_content.dart';
 import '../../chat/widgets/reply_message_widgets.dart';
 import '../../chat/widgets/sender_header.dart';
@@ -59,7 +58,7 @@ class MessageInfoView extends NavView<MessageInfoController> {
                             SenderHeader(
                                 isGroupProfile: controller.isGroupProfile,
                                 chatList: controller.chatMessage,
-                                index: 0),
+                                index: 0,textStyle: null,),
                             //getMessageContent(index, context, chatList),
                             MessageContent(chatList: controller.chatMessage,
                               index: 0,

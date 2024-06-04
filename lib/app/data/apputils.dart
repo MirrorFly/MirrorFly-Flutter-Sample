@@ -8,6 +8,13 @@ class AppUtils{
     return isConnected;
   }
 
+  static String getMapImageUrl(double latitude, double longitude,String googleMapKey) {
+    // var googleMapKey = Get
+    //     .find<MainController>()
+    //     .googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
+  }
+
   static openDocument(String path) async {
     // if (await askStoragePermission()) {
     if (MediaUtils.isMediaExists(path)) {

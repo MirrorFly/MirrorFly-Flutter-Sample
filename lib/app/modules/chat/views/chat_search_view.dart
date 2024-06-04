@@ -6,11 +6,10 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../common/constants.dart';
-
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../widgets/chat_widgets.dart';
 import '../controllers/chat_controller.dart';
+import '../widgets/chat_widgets.dart';
 import '../widgets/message_content.dart';
 import '../widgets/notification_message_view.dart';
 import '../widgets/reply_message_widgets.dart';
@@ -136,7 +135,7 @@ class ChatSearchView extends StatelessWidget {
                                     isGroupProfile:
                                         controller.profile.isGroupProfile,
                                     chatList: chatList,
-                                    index: index),
+                                    index: index,textStyle: null,),
                                 chatList[index].isThisAReplyMessage ? chatList[index].replyParentChatMessage == null
                                     ? messageNotAvailableWidget(chatList[index])
                                     : ReplyMessageHeader(

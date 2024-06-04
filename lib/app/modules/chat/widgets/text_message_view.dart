@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -14,14 +15,16 @@ class TextMessageView extends StatelessWidget {
     Key? key,
     required this.chatMessage,
     this.search = "",
+    this.textMessageViewStyle = const TextMessageViewStyle()
   }) : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
+  final TextMessageViewStyle textMessageViewStyle;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 5, 2),
+      padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -35,11 +38,13 @@ class TextMessageView extends StatelessWidget {
             children: [
               Flexible(
                 child: search.isEmpty
-                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "")
+                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "",textMessageViewStyle.textStyle)
                     : chatSpannedText(
                   chatMessage.messageTextContent ?? "",
                   search,
-                  const TextStyle(fontSize: 14, color: textHintColor),
+                  textMessageViewStyle.textStyle,
+                    spanColor:textMessageViewStyle.highlightColor
+                  //const TextStyle(fontSize: 14, color: textHintColor),
                 ),
               ),
               const SizedBox(width: 60,),
@@ -67,17 +72,19 @@ class TextMessageView extends StatelessWidget {
                 width: 5,
               ),
               if (chatMessage.isMessageEdited.value) ... [
-                Text(getTranslated("edited"), style: const TextStyle(
-                    fontSize: 11)),
+                Text(getTranslated("edited"), //style: const TextStyle(fontSize: 11)
+                  style: textMessageViewStyle.timeTextStyle,
+                ),
                 const SizedBox(width: 5,),
               ],
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: TextStyle(
+                style: textMessageViewStyle.timeTextStyle,
+                /*style: TextStyle(
                     fontSize: 11,
                     color: chatMessage.isMessageSentByMe
                         ? durationTextColor
-                        : textHintColor),
+                        : textHintColor),*/
               ),
             ],
           ),

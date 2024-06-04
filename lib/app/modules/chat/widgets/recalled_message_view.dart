@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -7,9 +8,10 @@ import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 
 class RecalledMessageView extends StatelessWidget {
-  const RecalledMessageView({Key? key, required this.chatMessage})
+  const RecalledMessageView({Key? key, required this.chatMessage, this.textMessageViewStyle = const TextMessageViewStyle()})
       : super(key: key);
   final ChatMessageModel chatMessage;
+  final TextMessageViewStyle textMessageViewStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class RecalledMessageView extends StatelessWidget {
                       ? getTranslated("youDeletedThisMessage")
                       : getTranslated("thisMessageWasDeleted"),
                   maxLines: 2,
+                  style: textMessageViewStyle.textStyle,
                 ),
               ],
             ),
@@ -47,11 +50,12 @@ class RecalledMessageView extends StatelessWidget {
             children: [
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: TextStyle(
+                style: textMessageViewStyle.timeTextStyle,
+                /*style: TextStyle(
                     fontSize: 12,
                     color: chatMessage.isMessageSentByMe
                         ? durationTextColor
-                        : textHintColor),
+                        : textHintColor),*/
               ),
             ],
           ),

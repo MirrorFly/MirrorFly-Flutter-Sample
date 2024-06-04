@@ -6,16 +6,18 @@ import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel;
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/utils.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 class MediaMessageOverlay extends StatelessWidget {
-  const MediaMessageOverlay({super.key, required this.chatMessage, this.onAudio, this.onVideo, this.progress});
+  const MediaMessageOverlay({super.key, required this.chatMessage, this.onAudio, this.onVideo, this.progress, this.downloadUploadViewStyle = const DownloadUploadViewStyle(),});
   final ChatMessageModel chatMessage;
   final Function()? onAudio;
   final Function()? onVideo;
   final int? progress;
+  final DownloadUploadViewStyle downloadUploadViewStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -176,16 +178,17 @@ void downloadMedia(String messageId) async {
 
 
 
-Widget uploadView(String messageType) {
+Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewStyle) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
         height: 30,
         width: 30,
-        decoration: BoxDecoration(
+        decoration: downloadUploadViewStyle.decoration,
+        /*decoration: BoxDecoration(
             border: Border.all(color: borderColor),
-            borderRadius: BorderRadius.circular(3)),
+            borderRadius: BorderRadius.circular(3)),*/
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
@@ -194,10 +197,11 @@ Widget uploadView(String messageType) {
         : Container(
         height: 35,
         width: 80,
-        decoration: const BoxDecoration(
+        decoration: downloadUploadViewStyle.decoration,
+        /*decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           color: Colors.black45,
-        ),
+        ),*/
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -208,7 +212,8 @@ Widget uploadView(String messageType) {
             ),
             Text(
               getTranslated("retry").toUpperCase(),
-              style: const TextStyle(color: Colors.white, fontSize: 10),
+              style: downloadUploadViewStyle.textStyle,
+              // style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
           ],
         )),
@@ -216,16 +221,17 @@ Widget uploadView(String messageType) {
 }
 
 
-Widget downloadView(int mediaFileSize, String messageType) {
+Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyle downloadUploadViewStyle) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
         height: 30,
         width: 30,
-        decoration: BoxDecoration(
-            border: Border.all(color: borderColor),
-            borderRadius: BorderRadius.circular(3)),
+        decoration: downloadUploadViewStyle.decoration,
+        // decoration: BoxDecoration(
+        //     border: Border.all(color: borderColor),
+        //     borderRadius: BorderRadius.circular(3)),
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
@@ -234,13 +240,14 @@ Widget downloadView(int mediaFileSize, String messageType) {
         : Container(
         height: 35,
         width: 80,
-        decoration: BoxDecoration(
+        decoration: downloadUploadViewStyle.decoration,
+        /*decoration: BoxDecoration(
           border: Border.all(
             color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
-        ),
+        ),*/
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +258,8 @@ Widget downloadView(int mediaFileSize, String messageType) {
             ),
             Text(
               MediaUtils.fileSize(mediaFileSize),
-              style: const TextStyle(color: Colors.white, fontSize: 10),
+              style: downloadUploadViewStyle.textStyle,
+              // style: const TextStyle(color: Colors.white, fontSize: 10),
             ),
           ],
         )),
@@ -269,7 +277,7 @@ void cancelMediaUploadOrDownload(String messageId) {
   });
 }
 
-downloadingOrUploadingView(String messageType, int progress) {
+downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewStyle downloadUploadViewStyle) {
   debugPrint('downloadingOrUploadingView progress $progress');
   if (messageType == MessageType.audio.value || messageType == MessageType.document.value) {
     return Padding(
@@ -277,13 +285,14 @@ downloadingOrUploadingView(String messageType, int progress) {
       child: Container(
           width: 30,
           height: 30,
-          decoration: BoxDecoration(
+          decoration: downloadUploadViewStyle.decoration,
+          /*decoration: BoxDecoration(
             border: Border.all(
               color: borderColor,
             ),
             borderRadius: const BorderRadius.all(Radius.circular(3)),
             // color: Colors.black45,
-          ),
+          ),*/
           child: Stack(
               alignment: Alignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
@@ -297,15 +306,17 @@ downloadingOrUploadingView(String messageType, int progress) {
                   alignment: Alignment.bottomCenter,
                   child: SizedBox(
                     height: 2,
-                    child: LinearProgressIndicator(
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        progressColor,
+                    child: ProgressIndicatorTheme(
+                      data: downloadUploadViewStyle.progressIndicatorThemeData,
+                      child: LinearProgressIndicator(
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          progressColor,
+                        ),
+                        value: progress == 0 || progress == 100
+                            ? null
+                            : (progress / 100),
+                        // minHeight: 1,
                       ),
-                      value: progress == 0 || progress == 100
-                          ? null
-                          : (progress / 100),
-                      backgroundColor: Colors.transparent,
-                      // minHeight: 1,
                     ),
                   ),
                 ),
@@ -315,10 +326,11 @@ downloadingOrUploadingView(String messageType, int progress) {
     return Container(
         height: 35,
         width: 80,
-        decoration: const BoxDecoration(
+        decoration: downloadUploadViewStyle.decoration,
+        /*decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
-        ),
+        ),*/
         child: Stack(
             alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
@@ -331,15 +343,17 @@ downloadingOrUploadingView(String messageType, int progress) {
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
                   height: 2,
-                  child: LinearProgressIndicator(
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.white,
+                  child: ProgressIndicatorTheme(
+                    data: downloadUploadViewStyle.progressIndicatorThemeData,
+                    child: LinearProgressIndicator(
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                      value: progress == 0 || progress == 100
+                          ? null
+                          : (progress / 100),
+                      // minHeight: 1,
                     ),
-                    value: progress == 0 || progress == 100
-                        ? null
-                        : (progress / 100),
-                    backgroundColor: Colors.transparent,
-                    // minHeight: 1,
                   ),
                 ),
               ),

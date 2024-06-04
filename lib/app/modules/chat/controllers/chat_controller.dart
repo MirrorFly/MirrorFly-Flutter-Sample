@@ -8,23 +8,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as lib_phone_number;
 import 'package:get/get.dart';
-
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/edit_window.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:record/record.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
 
@@ -36,12 +36,9 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/route_settings.dart';
-
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
-import '../widgets/image_cache_manager.dart';
 import '../widgets/attachment_view.dart';
+import '../widgets/image_cache_manager.dart';
 
 class ChatController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
   // final translator = Translation(apiKey: Constants.googleTranslateKey);
@@ -325,7 +322,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   showBottomSheetAttachment() {
-    Get.bottomSheet(
+    DialogUtils.bottomSheet(
       Container(
           margin: const EdgeInsets.only(right: 18.0, left: 18.0, bottom: 50),
           child: BottomSheet(

@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
@@ -15,11 +16,13 @@ class AudioMessageView extends StatefulWidget {
   const AudioMessageView({Key? key,
     required this.chatMessage,
     required this.onPlayAudio,
-    required this.onSeekbarChange})
+    required this.onSeekbarChange,this.audioMessageViewStyle = const AudioMessageViewStyle(), this.decoration = const BoxDecoration()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onPlayAudio;
   final Function(double) onSeekbarChange;
+  final AudioMessageViewStyle audioMessageViewStyle;
+  final Decoration decoration;
 
   @override
   State<AudioMessageView> createState() => _AudioMessageViewState();
@@ -161,33 +164,39 @@ class _AudioMessageViewState extends State<AudioMessageView>
     debugPrint(
         "max duration--> ${double.parse(widget.chatMessage.mediaChatMessage!.mediaDuration.toString())}");
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: widget.chatMessage.isMessageSentByMe
-              ? chatReplyContainerColor
-              : chatReplySenderColor,
-        ),
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: Colors.transparent,
-      ),
+      color: Colors.transparent,
+      // decoration: widget.decoration,
+      // decoration: BoxDecoration(
+      //   border: Border.all(
+      //     color: widget.chatMessage.isMessageSentByMe
+      //         ? chatReplyContainerColor
+      //         : chatReplySenderColor,
+      //   ),
+      //   borderRadius: const BorderRadius.all(Radius.circular(10)),
+      //   color: Colors.transparent,
+      // ),
       width: screenWidth * 0.80,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              color: widget.chatMessage.isMessageSentByMe
-                  ? chatReplyContainerColor
-                  : chatReplySenderColor,
-            ),
-            padding: const EdgeInsets.all(8),
+            decoration: widget.audioMessageViewStyle.decoration,
+            // decoration: BoxDecoration(
+            //   borderRadius: const BorderRadius.only(
+            //       topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+            //   color: widget.chatMessage.isMessageSentByMe
+            //       ? chatReplyContainerColor
+            //       : chatReplySenderColor,
+            // ),
+            padding: const EdgeInsets.all(10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 widget.chatMessage.mediaChatMessage!.isAudioRecorded
-                    ? Stack(
+                    ? CircleAvatar(radius: (28/2),
+                  backgroundColor: widget.audioMessageViewStyle.iconStyle.bgColor,
+                  child: SvgPicture.asset(audioMic,
+                    colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),height: 13,),)/*Stack(
                   alignment: Alignment.center,
                   children: [
                     SvgPicture.asset(
@@ -201,19 +210,13 @@ class _AudioMessageViewState extends State<AudioMessageView>
                       fit: BoxFit.contain,
                     ),
                   ],
-                )
-                    : SvgPicture.asset(
-                  musicIcon,
-                  width: 32,
-                  height: 32,
-                  fit: BoxFit.contain,
-                ),
-                Obx(() {
-                  return MediaMessageOverlay(chatMessage: widget.chatMessage, onAudio: () {
+                )*/
+                    : SvgPicture.asset(musicIcon,
+                  colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),),
+                MediaMessageOverlay(chatMessage: widget.chatMessage, onAudio: () {
                     widget.onPlayAudio();
                     playAudio(widget.chatMessage);
-                  },);
-                }), //widget.onPlayAudio),
+                  },), //widget.onPlayAudio),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -222,22 +225,20 @@ class _AudioMessageViewState extends State<AudioMessageView>
                       Container(
                         padding: const EdgeInsets.only(top: 8),
                         child: SliderTheme(
-                          data: SliderThemeData(
+                          data: widget.audioMessageViewStyle.sliderThemeData.copyWith(overlayShape: SliderComponentShape.noThumb),
+                          /*SliderThemeData(
                             thumbColor: audioColorDark,
                             trackHeight: 2,
                             overlayShape: SliderComponentShape.noThumb,
                             thumbShape: const RoundSliderThumbShape(
                                 enabledThumbRadius: 4),
-                          ),
+                          ),*/
                           child: Slider(
                             value: currentPos,
                             /*double.parse(chatMessage
                                 .mediaChatMessage!.currentPos
                                 .toString()),*/
                             min: 0.0,
-                            activeColor: Colors.white,
-                            thumbColor: audioColorDark,
-                            inactiveColor: borderColor,
                             max: double.parse(widget
                                 .chatMessage.mediaChatMessage!.mediaDuration
                                 .toString()),
@@ -265,10 +266,11 @@ class _AudioMessageViewState extends State<AudioMessageView>
                                           0*/
                                   : widget.chatMessage.mediaChatMessage!
                                   .mediaDuration)),
-                          style: const TextStyle(
-                              color: durationTextColor,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w300),
+                          style: widget.audioMessageViewStyle.durationTextStyle,
+                          // style: const TextStyle(
+                          //     color: durationTextColor,
+                          //     fontSize: 8,
+                          //     fontWeight: FontWeight.w300),
                         ),
                       ),
                     ],
@@ -302,11 +304,12 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 Text(
                   getChatTime(
                       context, widget.chatMessage.messageSentTime.toInt()),
-                  style: TextStyle(
+                  style: widget.audioMessageViewStyle.timeTextStyle,
+                  /*style: TextStyle(
                       fontSize: 12,
                       color: widget.chatMessage.isMessageSentByMe
                           ? durationTextColor
-                          : textHintColor),
+                          : textHintColor),*/
                 ),
                 const SizedBox(
                   width: 10,
@@ -328,7 +331,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
     /*if(!(currentPos >= 0.0 && currentPos <= maxPos)){
       currentPos(maxPos);
     }*/
-    Get.dialog(
+    DialogUtils.createDialog(
       Dialog(
         child: PopScope(
           canPop: true,
@@ -429,7 +432,9 @@ class _AudioMessageViewState extends State<AudioMessageView>
                           data: SliderThemeData(
                             thumbColor: audioColorDark,
                             trackHeight: 2,
-                            overlayShape: SliderComponentShape.noOverlay,
+                            overlayShape: SliderComponentShape.noThumb,
+                            activeTrackColor: Colors.white,
+                            inactiveTickMarkColor: borderColor,
                             thumbShape: const RoundSliderThumbShape(
                                 enabledThumbRadius: 6),
                           ),
@@ -443,9 +448,9 @@ class _AudioMessageViewState extends State<AudioMessageView>
                                 .mediaChatMessage!.currentPos
                                 .toString()),*/
                               min: 0.0,
-                              activeColor: Colors.white,
-                              thumbColor: audioColorDark,
-                              inactiveColor: borderColor,
+                              // activeColor: Colors.white,
+                              // thumbColor: audioColorDark,
+                              // inactiveColor: borderColor,
                               max: double.parse(chatMessage
                                   .mediaChatMessage!.mediaDuration
                                   .toString()),

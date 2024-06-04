@@ -1,21 +1,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-
 // import 'package:grouped_list/grouped_list.dart';
 import 'package:marquee/marquee.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/arguments.dart';
-import '../../../data/utils.dart';
-import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
 import '../controllers/chat_controller.dart';
@@ -33,241 +32,247 @@ class ChatView extends NavView<ChatController> {
   @override
   Widget build(BuildContext context) {
     var arguments = NavUtils.arguments as ChatViewArguments;
-    return Scaffold(
-        appBar: arguments.enableAppBar ? getAppBar(context) : null,
-        body: SafeArea(
-          child: Container(
-            width: NavUtils.width,
-            height: NavUtils.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/logos/chat_bg.png"),
-                fit: BoxFit.cover,
+    return Theme(
+      data: ThemeData(
+        appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
+      ),
+      child: Scaffold(
+          appBar: arguments.enableAppBar ? getAppBar(context) : null,
+          body: SafeArea(
+            child: Container(
+              width: NavUtils.width,
+              height: NavUtils.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/logos/chat_bg.png"),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: PopScope(
-              canPop: false,
-              onPopInvoked: (didPop) {
-                if (didPop) {
-                  return;
-                }
-                LogMessage.d("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
-                if (controller.showEmoji.value) {
-                  controller.showEmoji(false);
-                } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
-                  //FocusManager.instance.primaryFocus?.unfocus();
-                  controller.focusNode.unfocus();
-                } else if (controller.nJid.isNotEmpty) {
-                  // controller.saveUnsentMessage();
-                  // NavUtils.offAllNamed(Routes.dashboard);
-                  // Navigator.pop(context);
-                  NavUtils.back();
-                } else if (controller.isSelected.value) {
-                  controller.clearAllChatSelection();
-                } else {
-                  NavUtils.back();
-                }
-              },
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      Obx(() {
-                        return Visibility(
-                            visible: controller.topic.value.topicName != null,
-                            child: Container(
-                                width: NavUtils.width,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xffff9f00),
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
-                                ),
-                                padding: const EdgeInsets.all(2),
-                                child: Text(
-                                  controller.topic.value.topicName.checkNull(),
-                                  textAlign: TextAlign.center,
-                                )));
-                      }),
-                      Expanded(child: Obx(() {
-                        return controller.chatLoading.value
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : ChatListView(chatController: controller, chatList: controller.chatList);
-                      })),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Obx(() {
-                          return Container(
-                            color: Colors.white,
-                            child: controller.isBlocked.value
-                                ? userBlocked(context)
-                                : controller.isMemberOfGroup
-                                    ? Column(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Obx(() {
-                                            if (controller.isReplying.value) {
-                                              return ReplyingMessageHeader(
-                                                chatMessage: controller.replyChatMessage,
-                                                onCancel: () => controller.cancelReplyMessage(),
-                                                onClick: () {
-                                                  controller.navigateToMessage(controller.replyChatMessage);
-                                                },
-                                              );
-                                            } else {
-                                              return const SizedBox.shrink();
-                                            }
-                                          }),
-                                          const Divider(
-                                            height: 1,
-                                            thickness: 0.29,
-                                            color: textBlackColor,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          IntrinsicHeight(
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                                              children: [
-                                                Flexible(
-                                                  child: Container(
-                                                    padding: const EdgeInsets.only(left: 10),
-                                                    margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        color: textColor,
-                                                      ),
-                                                      borderRadius: const BorderRadius.all(Radius.circular(40)),
-                                                      color: Colors.white,
-                                                    ),
-                                                    child: Obx(() {
-                                                      return messageTypingView(context);
-                                                    }),
-                                                  ),
-                                                ),
-                                                Obx(() {
-                                                  return controller.isUserTyping.value
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            controller.isAudioRecording.value == Constants.audioRecordDone
-                                                                ? controller.sendRecordedAudioMessage()
-                                                                : controller.sendMessage(controller.profile);
-                                                          },
-                                                          child: Padding(
-                                                            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
-                                                            child: SvgPicture.asset(sendIcon),
-                                                          ))
-                                                      : const SizedBox.shrink();
-                                                }),
-                                                Obx(() {
-                                                  return controller.isAudioRecording.value == Constants.audioRecording
-                                                      ? InkWell(
-                                                          onTap: () {
-                                                            controller.stopRecording();
-                                                          },
-                                                          child: const Padding(
-                                                            padding: EdgeInsets.only(bottom: 8.0),
-                                                            child: LottieAnimation(
-                                                              lottieJson: audioJson1,
-                                                              showRepeat: true,
-                                                              width: 54,
-                                                              height: 54,
-                                                            ),
-                                                          ))
-                                                      : const SizedBox.shrink();
-                                                }),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          controller.emojiLayout(textEditingController: controller.messageController, sendTypingStatus: true),
-                                        ],
-                                      )
-                                    : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
-                                        ? featureNotAvailable(context)
-                                        : userNoLonger(context),
-                          );
+              child: PopScope(
+                canPop: false,
+                onPopInvoked: (didPop) {
+                  if (didPop) {
+                    return;
+                  }
+                  LogMessage.d("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
+                  if (controller.showEmoji.value) {
+                    controller.showEmoji(false);
+                  } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
+                    //FocusManager.instance.primaryFocus?.unfocus();
+                    controller.focusNode.unfocus();
+                  } else if (controller.nJid.isNotEmpty) {
+                    // controller.saveUnsentMessage();
+                    // NavUtils.offAllNamed(Routes.dashboard);
+                    // Navigator.pop(context);
+                    NavUtils.back();
+                  } else if (controller.isSelected.value) {
+                    controller.clearAllChatSelection();
+                  } else {
+                    NavUtils.back();
+                  }
+                },
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        Obx(() {
+                          return Visibility(
+                              visible: controller.topic.value.topicName != null,
+                              child: Container(
+                                  width: NavUtils.width,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8)),
+                                  ),
+                                  padding: const EdgeInsets.all(2),
+                                  child: Text(
+                                    controller.topic.value.topicName.checkNull(),
+                                    textAlign: TextAlign.center,
+                                  )));
                         }),
-                      ),
-                    ],
-                  ),
-                  Obx(() {
-                    return Visibility(
-                      visible: controller.showHideRedirectToLatest.value,
-                      child: Positioned(
-                        bottom: controller.isReplying.value ? 160 : 100,
-                        right: 0,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            controller.unreadCount.value != 0
-                                ? CircleAvatar(
-                                    radius: 8,
-                                    child: Text(
-                                      returnFormattedCount(controller.unreadCount.value),
-                                      style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
-                                    ),
-                                  )
-                                : const SizedBox.shrink(),
-                            IconButton(
-                              icon: Image.asset(
-                                redirectLastMessage,
-                                width: 32,
-                                height: 32,
-                              ),
-                              onPressed: () {
-                                //scroll to end
-                                controller.scrollToEnd();
-                              },
-                            ),
-                          ],
+                        Expanded(child: Obx(() {
+                          return controller.chatLoading.value
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ChatListView(chatController: controller, chatList: controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,);
+                        })),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Obx(() {
+                            return Container(
+                              color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.bgColor,//Colors.white,
+                              child: controller.isBlocked.value
+                                  ? userBlocked(context)
+                                  : controller.isMemberOfGroup
+                                      ? Column(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Obx(() {
+                                              if (controller.isReplying.value) {
+                                                return ReplyingMessageHeader(
+                                                  chatMessage: controller.replyChatMessage,
+                                                  onCancel: () => controller.cancelReplyMessage(),
+                                                  onClick: () {
+                                                    controller.navigateToMessage(controller.replyChatMessage);
+                                                  },
+                                                );
+                                              } else {
+                                                return const SizedBox.shrink();
+                                              }
+                                            }),
+                                            Divider(
+                                              height: 1,
+                                              thickness: 0.29,
+                                              color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            IntrinsicHeight(
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                children: [
+                                                  Flexible(
+                                                    child: Container(
+                                                      padding: const EdgeInsets.only(left: 10),
+                                                      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                                      width: double.infinity,
+                                                      decoration: AppStyleConfig.chatPageStyle.textTypingAreaStyle.decoration,
+                                                      // decoration: BoxDecoration(
+                                                      //   border: Border.all(
+                                                      //     color: textColor,
+                                                      //   ),
+                                                      //   borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                                      //   color: Colors.white,
+                                                      // ),
+                                                      child: Obx(() {
+                                                        return messageTypingView(context);
+                                                      }),
+                                                    ),
+                                                  ),
+                                                  Obx(() {
+                                                    return controller.isUserTyping.value
+                                                        ? InkWell(
+                                                            onTap: () {
+                                                              controller.isAudioRecording.value == Constants.audioRecordDone
+                                                                  ? controller.sendRecordedAudioMessage()
+                                                                  : controller.sendMessage(controller.profile);
+                                                            },
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
+                                                              child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.textTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,),
+                                                            ))
+                                                        : const SizedBox.shrink();
+                                                  }),
+                                                  Obx(() {
+                                                    return controller.isAudioRecording.value == Constants.audioRecording
+                                                        ? InkWell(
+                                                            onTap: () {
+                                                              controller.stopRecording();
+                                                            },
+                                                            child: const Padding(
+                                                              padding: EdgeInsets.only(bottom: 8.0),
+                                                              child: LottieAnimation(
+                                                                lottieJson: audioJson1,
+                                                                showRepeat: true,
+                                                                width: 54,
+                                                                height: 54,
+                                                              ),
+                                                            ))
+                                                        : const SizedBox.shrink();
+                                                  }),
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            controller.emojiLayout(textEditingController: controller.messageController, sendTypingStatus: true),
+                                          ],
+                                        )
+                                      : !controller.availableFeatures.value.isGroupChatAvailable.checkNull()
+                                          ? featureNotAvailable(context)
+                                          : userNoLonger(context),
+                            );
+                          }),
                         ),
-                      ),
-                    );
-                  }),
-                  if (Constants.enableContactSync) ...[
+                      ],
+                    ),
                     Obx(() {
-                      return !controller.profile.isItSavedContact.checkNull()
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const SizedBox(
-                                  width: 8,
+                      return Visibility(
+                        visible: controller.showHideRedirectToLatest.value,
+                        child: Positioned(
+                          bottom: controller.isReplying.value ? 160 : 100,
+                          right: 0,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              controller.unreadCount.value != 0
+                                  ? CircleAvatar(
+                                      radius: 8,
+                                      child: Text(
+                                        returnFormattedCount(controller.unreadCount.value),
+                                        style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              IconButton(
+                                icon: Image.asset(
+                                  redirectLastMessage,
+                                  width: 32,
+                                  height: 32,
                                 ),
-                                buttonNotSavedContact(
-                                    text: getTranslated("add"),
-                                    onClick: () {
-                                      controller.saveContact();
-                                    }),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                buttonNotSavedContact(
-                                    text: controller.profile.isBlocked.checkNull() ? getTranslated("unblock") : getTranslated("block"),
-                                    onClick: () {
-                                      if (controller.profile.isBlocked.checkNull()) {
-                                        controller.unBlockUser();
-                                      } else {
-                                        controller.blockUser();
-                                      }
-                                    }),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                              ],
-                            )
-                          : const SizedBox.shrink();
-                    })
+                                onPressed: () {
+                                  //scroll to end
+                                  controller.scrollToEnd();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    if (Constants.enableContactSync) ...[
+                      Obx(() {
+                        return !controller.profile.isItSavedContact.checkNull()
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  buttonNotSavedContact(
+                                      text: getTranslated("add"),
+                                      onClick: () {
+                                        controller.saveContact();
+                                      }),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  buttonNotSavedContact(
+                                      text: controller.profile.isBlocked.checkNull() ? getTranslated("unblock") : getTranslated("block"),
+                                      onClick: () {
+                                        if (controller.profile.isBlocked.checkNull()) {
+                                          controller.unBlockUser();
+                                        } else {
+                                          controller.blockUser();
+                                        }
+                                      }),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink();
+                      })
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 
   Widget buttonNotSavedContact({required String text, required Function()? onClick}) => Expanded(
@@ -289,7 +294,7 @@ class ChatView extends NavView<ChatController> {
     return Row(
       children: <Widget>[
         controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone
-            ? Text(controller.timerInit.value, style: const TextStyle(color: buttonBgColor))
+            ? Text(controller.timerInit.value, style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.durationTextStyle)
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? InkWell(
@@ -341,7 +346,7 @@ class ChatView extends NavView<ChatController> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 15.0),
                     child: SizedBox(
-                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel"), textAlign: TextAlign.end))),
+                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel"), textAlign: TextAlign.end,style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle,))),
                   ),
                 ),
               )
@@ -369,14 +374,14 @@ class ChatView extends NavView<ChatController> {
                   onChanged: (text) {
                     controller.isTyping(text);
                   },
-                  style: const TextStyle(fontWeight: FontWeight.w400),
+                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,//const TextStyle(fontWeight: FontWeight.w400),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 5,
                   enabled: controller.isAudioRecording.value == Constants.audioRecordInitial ? true : false,
                   controller: controller.messageController,
                   focusNode: controller.focusNode,
-                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none),
+                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle),
                 ),
               )
             : const SizedBox.shrink(),
@@ -455,18 +460,19 @@ class ChatView extends NavView<ChatController> {
   Widget userNoLonger(BuildContext context) {
     return Column(
       children: [
-        const Divider(
+        Divider(
           height: 1,
           thickness: 0.29,
-          color: textBlackColor,
+          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             getTranslated("youCantSentMessageNoLonger"),
-            style: const TextStyle(
-              fontSize: 15,
-            ),
+            style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle,
+            // style: const TextStyle(
+            //   fontSize: 15,
+            // ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -477,18 +483,19 @@ class ChatView extends NavView<ChatController> {
   Widget featureNotAvailable(BuildContext context) {
     return Column(
       children: [
-        const Divider(
+        Divider(
           height: 1,
           thickness: 0.29,
-          color: textBlackColor,
+          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             getTranslated("featureNotAvailable"),
-            style: const TextStyle(
-              fontSize: 15,
-            ),
+            style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle,
+            // style: const TextStyle(
+            //   fontSize: 15,
+            // ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -499,14 +506,13 @@ class ChatView extends NavView<ChatController> {
   selectedAppBar(BuildContext context) {
     return AppBar(
       // leadingWidth: 25,
-      backgroundColor: Colors.white,
       leading: IconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
           controller.clearAllChatSelection();
         },
       ),
-      title: Text(controller.selectedChatList.length.toString()),
+      title: Text(controller.selectedChatList.length.toString(),style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.titleTextStyle,),
       actions: [
         CustomActionBarIcons(
             availableWidth: NavUtils.width / 2, // half the screen width
@@ -543,16 +549,16 @@ class ChatView extends NavView<ChatController> {
               ),
               ImageNetwork(
                 url: controller.profile.image.checkNull(),
-                width: 35,
-                height: 35,
+                width: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.profileImageSize.width,//35,
+                height: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.profileImageSize.height,//35,
                 clipOval: true,
                 isGroup: controller.profile.isGroupProfile.checkNull(),
                 errorWidget: controller.profile.isGroupProfile ?? false
                     ? ClipOval(
                         child: Image.asset(
                           groupImg,
-                          height: 35,
-                          width: 35,
+                          width: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.profileImageSize.width,//35,
+                          height: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.profileImageSize.height,//35,
                           fit: BoxFit.cover,
                         ),
                       )
@@ -585,6 +591,7 @@ class ChatView extends NavView<ChatController> {
                       ? controller.profile.nickName.checkNull()
                       : controller.profile.name.checkNull(),*/
                   overflow: TextOverflow.fade,
+                  style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.titleTextStyle,
                 ),
                 Obx(() {
                   return controller.groupParticipantsName.isNotEmpty
@@ -595,7 +602,7 @@ class ChatView extends NavView<ChatController> {
                       : controller.subtitle.isNotEmpty
                           ? Text(
                               controller.subtitle,
-                              style: const TextStyle(fontSize: 12),
+                              style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.subtitleTextStyle,//const TextStyle(fontSize: 12),
                               overflow: TextOverflow.fade,
                             )
                           : const SizedBox();
@@ -622,7 +629,7 @@ class ChatView extends NavView<ChatController> {
               controller.handleReplyChatMessage(controller.selectedChatList[0]);
               controller.clearChatSelection(controller.selectedChatList[0]);
             },
-            icon: SvgPicture.asset(replyIcon),
+            icon: SvgPicture.asset(replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn),),
             tooltip: 'Reply',
           ),
           overflowWidget: Text(getTranslated("reply")),
@@ -643,7 +650,7 @@ class ChatView extends NavView<ChatController> {
             onPressed: () {
               controller.checkBusyStatusForForward();
             },
-            icon: SvgPicture.asset(forwardIcon),
+            icon: SvgPicture.asset(forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Forward',
           ),
           overflowWidget: Text(getTranslated("forward")),
@@ -663,7 +670,7 @@ class ChatView extends NavView<ChatController> {
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: SvgPicture.asset(favouriteIcon),
+            icon: SvgPicture.asset(favouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Favourite',
           ),
           overflowWidget: Text(getTranslated("favourite")),
@@ -683,7 +690,7 @@ class ChatView extends NavView<ChatController> {
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: SvgPicture.asset(unFavouriteIcon),
+            icon: SvgPicture.asset(unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'unFavourite',
           ),
           overflowWidget: Text(getTranslated("unFavourite")),
@@ -701,7 +708,7 @@ class ChatView extends NavView<ChatController> {
             onPressed: () {
               controller.deleteMessages();
             },
-            icon: SvgPicture.asset(deleteIcon),
+            icon: SvgPicture.asset(deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Delete',
           ),
           overflowWidget: Text(getTranslated("delete")),
@@ -740,6 +747,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(
               copyIcon,
               fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
             ),
             tooltip: 'Copy',
           ),
@@ -761,6 +769,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(
               infoIcon,
               fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
             ),
             tooltip: 'Message Info',
           ),
@@ -777,7 +786,7 @@ class ChatView extends NavView<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: SvgPicture.asset(shareIcon),
+            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Share',
           ),
           overflowWidget: Text(getTranslated("share")),
@@ -793,7 +802,7 @@ class ChatView extends NavView<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: SvgPicture.asset(shareIcon),
+            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Edit Message',
           ),
           overflowWidget: Text(getTranslated("editMessage")),
@@ -918,7 +927,7 @@ class ChatView extends NavView<ChatController> {
                   onPressed: () {
                     controller.makeVideoCall();
                   },
-                  icon: SvgPicture.asset(videoCallIcon),
+                  icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("videoCall")),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
@@ -932,7 +941,7 @@ class ChatView extends NavView<ChatController> {
                   onPressed: () {
                     controller.makeVoiceCall();
                   },
-                  icon: SvgPicture.asset(audioCallIcon),
+                  icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("audioCall")),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,

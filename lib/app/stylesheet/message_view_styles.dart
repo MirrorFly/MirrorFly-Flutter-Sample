@@ -14,10 +14,13 @@ class TextTypingAreaStyle{
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Color(0xffD0D8EB),),titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
-        contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 12),
+        contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
         mediaIconBgColor: Color(0xff7285B5)
     ),
-    this.replyBgColor = const  Color(0xffE2E8F7)
+    this.replyBgColor = const  Color(0xffE2E8F7),
+    this.audioRecordingViewStyle = const AudioRecordingViewStyle(durationTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff3276E2),fontSize: 12),
+    cancelTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Color(0xff363636),fontSize: 12)),
+    this.bgColor = Colors.white
   });
   final EditTextFieldStyle textFieldStyle;
   final Decoration decoration;
@@ -25,6 +28,8 @@ class TextTypingAreaStyle{
   final Color sentIconColor;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
   final Color replyBgColor;
+  final AudioRecordingViewStyle audioRecordingViewStyle;
+  final Color bgColor;
 
 }
 
@@ -39,7 +44,7 @@ class AudioRecordingViewStyle{
 
 class NotificationMessageViewStyle{
   const NotificationMessageViewStyle({this.decoration = const BoxDecoration(
-      color: Color(0xff00001F),
+      color: Color(0xffDADADA),
       borderRadius: BorderRadius.all(Radius.circular(15))),
     this.textStyle = const TextStyle(fontWeight: FontWeight.w500, color: Color(0xff565656),fontSize: 13),});
   final Decoration decoration;
@@ -52,7 +57,7 @@ class ReplyHeaderMessageViewStyle{
       borderRadius: BorderRadius.all(Radius.circular(10)),
       color: Color(0xffD0D8EB),),
     this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
-    this.contentTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 12),
+    this.contentTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
     this.mediaIconBgColor = const Color(0xff7285B5)
   });
   final Decoration decoration;
@@ -64,17 +69,23 @@ class ReplyHeaderMessageViewStyle{
 class LocationMessageViewStyle{
   const LocationMessageViewStyle({
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),
+    this.locationBorderRadius = const BorderRadius.all(Radius.circular(10))
   });
   final TextStyle timeTextStyle;
+  final BorderRadiusGeometry locationBorderRadius;
 }
 
 class ContactMessageViewStyle{
   const ContactMessageViewStyle({
     this.textMessageViewStyle = const TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
-    this.viewTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12)
+    this.viewTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),
+    this.profileImageSize = const Size(30, 30),
+    this.dividerColor = const Color(0xffD2D8E8)
   });
   final TextMessageViewStyle textMessageViewStyle;
   final TextStyle viewTextStyle;
+  final Size profileImageSize;
+  final Color dividerColor;
 }
 
 class TextMessageViewStyle{
@@ -109,9 +120,8 @@ class DocMessageViewStyle{
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         color: Color(0xffD0D8EB)),
-    this.fileTextStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 12),
+    this.fileTextStyle = const TextMessageViewStyle(textStyle:TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 12),highlightColor: Colors.orange,timeTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff455E93),fontSize: 11)),
     this.sizeTextStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.black,fontSize: 7),
-    this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff455E93),fontSize: 11),
     this.downloadUploadViewStyle = const DownloadUploadViewStyle(decoration: BoxDecoration(
       border: Border.fromBorderSide(BorderSide(
           color: Color(0xffAFB8D0),
@@ -121,9 +131,8 @@ class DocMessageViewStyle{
     ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
   });
   final Decoration decoration;
-  final TextStyle fileTextStyle;
+  final TextMessageViewStyle fileTextStyle;
   final TextStyle sizeTextStyle;
-  final TextStyle timeTextStyle;
   final DownloadUploadViewStyle downloadUploadViewStyle;
 }
 
@@ -131,6 +140,7 @@ class VideoMessageViewStyle{
   const VideoMessageViewStyle({
     this.captionTextViewStyle = const TextMessageViewStyle(),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),
+    this.videoBorderRadius = const BorderRadius.all(Radius.circular(10)),
     this.downloadUploadViewStyle = const DownloadUploadViewStyle(decoration: BoxDecoration(
       border: Border.fromBorderSide(BorderSide(width: 1.0)),
       borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -141,12 +151,14 @@ class VideoMessageViewStyle{
   });
   final TextMessageViewStyle captionTextViewStyle;
   final TextStyle timeTextStyle;
+  final BorderRadiusGeometry videoBorderRadius;
   final DownloadUploadViewStyle downloadUploadViewStyle;
 }
 class ImageMessageViewStyle{
   const ImageMessageViewStyle({
     this.captionTextViewStyle = const TextMessageViewStyle(),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11),
+    this.imageBorderRadius = const BorderRadius.all(Radius.circular(10)),
     this.downloadUploadViewStyle = const DownloadUploadViewStyle(decoration: BoxDecoration(
       border: Border.fromBorderSide(BorderSide(width: 1.0)),
       borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -157,6 +169,7 @@ class ImageMessageViewStyle{
   });
   final TextMessageViewStyle captionTextViewStyle;
   final TextStyle timeTextStyle;
+  final BorderRadiusGeometry imageBorderRadius;
   final DownloadUploadViewStyle downloadUploadViewStyle;
 }
 class AudioMessageViewStyle{
@@ -173,7 +186,7 @@ class AudioMessageViewStyle{
       inactiveTrackColor: Color(0xffAFB8D0),
       // overlayShape: SliderComponentShape.noThumb,
       thumbShape: RoundSliderThumbShape(
-          enabledThumbRadius: 4),
+          enabledThumbRadius: (10/2)),
     ),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
     this.downloadUploadViewStyle = const DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -182,11 +195,19 @@ class AudioMessageViewStyle{
           width: 1.0
       )),
       borderRadius: BorderRadius.all(Radius.circular(3)),
-    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),this.iconStyle = const IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
   });
   final Decoration decoration;
   final TextStyle durationTextStyle;
   final SliderThemeData sliderThemeData;
   final TextStyle timeTextStyle;
   final DownloadUploadViewStyle downloadUploadViewStyle;
+  final IconStyle iconStyle;
+}
+
+class IconStyle{
+  final Color? bgColor;
+  final Color iconColor;
+  const IconStyle({this.bgColor, required this.iconColor});
+
 }

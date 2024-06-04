@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -13,12 +14,13 @@ import 'chat_widgets.dart';
 
 class CaptionMessageView extends StatelessWidget {
   const CaptionMessageView({super.key, required this.mediaMessage,
-  required this.chatMessage, required this.context, this.search = ""});
+  required this.chatMessage, required this.context, this.search = "", this.textMessageViewStyle = const TextMessageViewStyle()});
 
   final MediaChatMessage mediaMessage;
   final ChatMessageModel chatMessage;
   final BuildContext context;
   final String search;
+  final TextMessageViewStyle textMessageViewStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +31,11 @@ class CaptionMessageView extends StatelessWidget {
         children: [
           search.isEmpty
               ? textMessageSpannableText(
-              mediaMessage.mediaCaptionText.checkNull())
+              mediaMessage.mediaCaptionText.checkNull(),textMessageViewStyle.textStyle)
               : chatSpannedText(
             mediaMessage.mediaCaptionText.checkNull(),
-            search,
-            const TextStyle(fontSize: 14, color: textHintColor),
+            search,textMessageViewStyle.textStyle,spanColor: textMessageViewStyle.highlightColor
+            // const TextStyle(fontSize: 14, color: textHintColor),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -54,17 +56,18 @@ class CaptionMessageView extends StatelessWidget {
               ),
 
               if (chatMessage.isMessageEdited.value) ... [
-                Text(getTranslated("edited"), style: const TextStyle(
-                    fontSize: 11)),
+                Text(getTranslated("edited"), //style: const TextStyle(fontSize: 11)
+                style: textMessageViewStyle.timeTextStyle,),
                 const SizedBox(width: 5,),
               ],
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
-                style: TextStyle(
-                    fontSize: 12,
-                    color: chatMessage.isMessageSentByMe
-                        ? durationTextColor
-                        : textHintColor),
+                style: textMessageViewStyle.timeTextStyle,
+                // style: TextStyle(
+                //     fontSize: 12,
+                //     color: chatMessage.isMessageSentByMe
+                //         ? durationTextColor
+                //         : textHintColor),
               ),
             ],
           ),

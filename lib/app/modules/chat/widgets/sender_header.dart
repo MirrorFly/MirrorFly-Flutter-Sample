@@ -12,11 +12,12 @@ class SenderHeader extends StatelessWidget {
   const SenderHeader({Key? key,
     required this.isGroupProfile,
     required this.chatList,
-    required this.index})
+    required this.index, required this.textStyle})
       : super(key: key);
   final bool? isGroupProfile;
   final List<ChatMessageModel> chatList;
   final int index;
+  final TextStyle? textStyle;
 
   bool isSenderChanged(List<ChatMessageModel> messageList, int position) {
     var preposition = position + 1;
@@ -65,11 +66,13 @@ class SenderHeader extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
         child: Text(
           chatList[index].senderUserName.checkNull(),
-          style: TextStyle(
+          style: textStyle?.copyWith(color: Color(MessageUtils.getColourCode(
+    chatList[index].senderUserName.checkNull()))),
+          /*style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: Color(MessageUtils.getColourCode(
-                  chatList[index].senderUserName.checkNull()))),
+                  chatList[index].senderUserName.checkNull()))),*/
         ),
       ),
     );

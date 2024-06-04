@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -19,8 +20,11 @@ import '../widgets/sender_header.dart';
 class ChatListView extends StatefulWidget {
   final ChatController chatController;
   final List<ChatMessageModel> chatList;
+  final SenderChatBubbleStyle senderChatStyle;
+  final ReceiverChatBubbleStyle receiverChatStyle;
+  final Color chatSelectedColor;
 
-  const ChatListView({super.key, required this.chatController, required this.chatList});
+  const ChatListView({super.key, required this.chatController, required this.chatList,required this.senderChatStyle,required this.receiverChatStyle, required this.chatSelectedColor});
 
   @override
   State<ChatListView> createState() => _ChatListViewState();
@@ -111,7 +115,7 @@ class _ChatListViewState extends State<ChatListView> {
                               LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
-                                color: widget.chatList[index].isSelected.value ? chatReplyContainerColor : Colors.transparent,
+                                color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
                                 margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
                                 child: Align(
                                   alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
@@ -129,13 +133,14 @@ class _ChatListViewState extends State<ChatListView> {
                                       ),
                                       Container(
                                         constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
-                                        decoration: BoxDecoration(
+                                        decoration: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.decoration : widget.receiverChatStyle.decoration,
+                                        /*decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
                                                 topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                                             color: (widget.chatList[index].isMessageSentByMe ? chatSentBgColor : Colors.white),
                                             border: widget.chatList[index].isMessageSentByMe
                                                 ? Border.all(color: chatSentBgColor)
-                                                : Border.all(color: chatBorderColor)),
+                                                : Border.all(color: chatBorderColor)),*/
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
@@ -143,12 +148,12 @@ class _ChatListViewState extends State<ChatListView> {
                                               SenderHeader(
                                                   isGroupProfile: widget.chatController.profile.isGroupProfile,
                                                   chatList: widget.chatList,
-                                                  index: index),
+                                                  index: index,textStyle: widget.receiverChatStyle.participantNameTextStyle,),
                                             ],
                                             widget.chatList[index].isThisAReplyMessage
                                                 ? widget.chatList[index].replyParentChatMessage == null
                                                     ? messageNotAvailableWidget(widget.chatList[index])
-                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index])
+                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
                                                 : const SizedBox.shrink(),
                                             MessageContent(
                                                 chatList: widget.chatList,

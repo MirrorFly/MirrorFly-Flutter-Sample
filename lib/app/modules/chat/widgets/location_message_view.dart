@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -8,11 +10,12 @@ import '../../../model/chat_message_model.dart';
 import 'chat_widgets.dart';
 
 class LocationMessageView extends StatelessWidget {
-  const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected})
+  const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected,
+  this.locationMessageViewStyle = const LocationMessageViewStyle(),})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final bool isSelected;
-
+  final LocationMessageViewStyle locationMessageViewStyle;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,7 +23,7 @@ class LocationMessageView extends StatelessWidget {
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: locationMessageViewStyle.locationBorderRadius,
             child: getLocationImage(chatMessage.locationChatMessage, 200, 171,
                 isSelected: isSelected),
           ),

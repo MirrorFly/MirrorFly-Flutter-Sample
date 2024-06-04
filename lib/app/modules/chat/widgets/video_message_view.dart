@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
-import 'image_cache_manager.dart';
 import 'caption_message_view.dart';
+import 'image_cache_manager.dart';
 import 'media_message_overlay.dart';
 
 class VideoMessageView extends StatelessWidget {
   const VideoMessageView({Key? key,
     required this.chatMessage,
     this.search = "",
-    required this.isSelected})
+    required this.isSelected,
+  this.videoMessageViewStyle = const VideoMessageViewStyle()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
   final bool isSelected;
+  final VideoMessageViewStyle videoMessageViewStyle;
 
   onVideoClick() {
     switch (chatMessage.isMessageSentByMe
@@ -66,7 +68,7 @@ class VideoMessageView extends StatelessWidget {
                   onVideoClick();
                 },
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: videoMessageViewStyle.videoBorderRadius,
                   child: ImageCacheManager.getImage(
                       mediaMessage.mediaThumbImage, chatMessage.messageId),
                 ),
@@ -87,15 +89,14 @@ class VideoMessageView extends StatelessWidget {
                     Text(
                       DateTimeUtils.durationToString(
                           Duration(milliseconds: mediaMessage.mediaDuration)),
-                      style: const TextStyle(fontSize: 11, color: Colors.white),
+                      style: videoMessageViewStyle.timeTextStyle,
+                      // style: const TextStyle(fontSize: 11, color: Colors.white),
                     ),
                   ],
                 ),
               ),
-              Obx(() {
-                return MediaMessageOverlay(chatMessage: chatMessage,
-                    onVideo: isSelected ? null : onVideoClick);
-              }),
+              MediaMessageOverlay(chatMessage: chatMessage,
+                    onVideo: isSelected ? null : onVideoClick),
               mediaMessage.mediaCaptionText
                   .checkNull()
                   .isEmpty
@@ -122,11 +123,12 @@ class VideoMessageView extends StatelessWidget {
                     Text(
                       getChatTime(
                           context, chatMessage.messageSentTime.toInt()),
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: chatMessage.isMessageSentByMe
-                              ? durationTextColor
-                              : textHintColor),
+                      style: videoMessageViewStyle.timeTextStyle,
+                      // style: TextStyle(
+                      //     fontSize: 11,
+                      //     color: chatMessage.isMessageSentByMe
+                      //         ? durationTextColor
+                      //         : textHintColor),
                     ),
                   ],
                 ),
@@ -138,7 +140,7 @@ class VideoMessageView extends StatelessWidget {
               .checkNull()
               .isNotEmpty
               ? CaptionMessageView(mediaMessage: mediaMessage, chatMessage: chatMessage, context: context,
-              search: search)
+              search: search,textMessageViewStyle: videoMessageViewStyle.captionTextViewStyle,)
               : const SizedBox()
         ],
       ),
