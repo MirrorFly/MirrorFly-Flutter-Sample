@@ -45,6 +45,10 @@ class ProfileController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    if (NavUtils.previousRoute.isEmpty){
+      from = Routes.login;
+    }
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     LogMessage.d("auth : ", SessionManagement.getAuthToken().toString());
     if (NavUtils.arguments != null) {
@@ -56,20 +60,17 @@ class ProfileController extends GetxController {
       profileMobile.text = "";
     }
     if (from == Routes.login) {
-      if(await AppUtils.isNetConnected()) {
-        getProfile();
-      }else{
+      if (!await AppUtils.isNetConnected()) {
         toToast(getTranslated("noInternetConnection"));
+        return;
       }
-      checkAndEnableNotificationSound();
-    }else{
-      getProfile();
     }
+    checkAndEnableNotificationSound();
+    getProfile();
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
     getMetaData();
   }
-
 
   Future<void> save({bool frmImage=false}) async {
     // var permission = await AppPermission.getStoragePermission();
