@@ -497,6 +497,11 @@
     "microphonePermissionName" : "Microphone",
     "nearByPermissionName" : "Nearby devices",
     "notificationPermissionName" : "Notifications",
-    "phonePermissionName" : "Phone"
-
+    "phonePermissionName" : "Phone",
+    "attachment_Document" : "Document",
+    "attachment_Camera" : "Camera",
+    "attachment_Gallery" : "Gallery",
+    "attachment_Audio" : "Audio",
+    "attachment_Contact" : "Contact",
+    "attachment_Location" : "Location"
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../common/constants.dart';
+import '../../../app_style_config.dart';
 
 class AttachmentsSheetView extends StatelessWidget {
   const AttachmentsSheetView({Key? key,
@@ -31,19 +32,19 @@ class AttachmentsSheetView extends StatelessWidget {
     LogMessage.d("attachments", attachments.length);
     // final attachments = [AttachmentIcon(documentImg, "Document", onDocument),AttachmentIcon(cameraImg, "Camera", onCamera),AttachmentIcon(galleryImg, "Gallery", onGallery),AttachmentIcon(audioImg, "Audio", onAudio),AttachmentIcon(contactImg, "Contact", onContact),AttachmentIcon(locationImg, "Location", onLocation)];
     return Card(
-      color: bottomSheetColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: AppStyleConfig.chatPageStyle.attachmentViewStyle.bgColor,
+      shape: AppStyleConfig.chatPageStyle.attachmentViewStyle.shapeBorder,
       child: Container(
-        height: 250,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Obx(() {
           return GridView.builder(gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,
-              childAspectRatio: 1
+              childAspectRatio: (1.1)
           ),
               itemCount: attachments.length,
               shrinkWrap: true,
               itemBuilder: (BuildContext ctx, index) {
                 LogMessage.d("attachments", attachments[index].text);
+                var iconStyle = getIconStyle(attachments[index].text);
                 return iconCreation(
                     attachments[index].iconPath, attachments[index].text,
                     (attachments[index].text == "Document") ? onDocument :
@@ -51,34 +52,57 @@ class AttachmentsSheetView extends StatelessWidget {
                     (attachments[index].text == "Gallery") ? onGallery :
                     (attachments[index].text == "Audio") ? onAudio :
                     (attachments[index].text == "Contact") ? onContact :
-                    (attachments[index].text == "Location") ? onLocation : () {});
+                    (attachments[index].text == "Location") ? onLocation : () {},iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
               });
         }),
       ),
     );
+  }
+
+  IconStyle getIconStyle(String attachment){
+    switch(attachment){
+      case "Document":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
+      case "Camera":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.cameraStyle;
+      case "Gallery":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.galleryStyle;
+      case "Audio":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.audioStyle;
+      case "Contact":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.contactStyle;
+      case "Location":
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.locationStyle;
+      default :
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
+    }
   }
 }
 
 class AttachmentIcon {
   String iconPath;
   String text;
-
   AttachmentIcon(this.iconPath, this.text);
 }
 
 
-Widget iconCreation(String iconPath, String text, VoidCallback onTap) {
+Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle iconStyle,TextStyle textStyle) {
   return InkWell(
     onTap: onTap,
     child: Column(
       children: [
-        SvgPicture.asset(iconPath),
+        CircleAvatar(
+          radius: (50/2),
+          backgroundColor: iconStyle.bgColor,
+            child: SvgPicture.asset(iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
+        ),
         const SizedBox(
-          height: 5,
+          height: 7,
         ),
         Text(
           text,
-          style: const TextStyle(fontSize: 12, color: Colors.white),
+          style: textStyle,
+          // style: const TextStyle(fontSize: 12, color: Colors.white),
         )
       ],
     ),

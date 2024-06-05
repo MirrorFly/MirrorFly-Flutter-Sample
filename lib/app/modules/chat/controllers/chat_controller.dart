@@ -28,6 +28,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -328,7 +329,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           child: BottomSheet(
               onClosing: () {},
               backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              shape: AppStyleConfig.chatPageStyle.attachmentViewStyle.shapeBorder,
               builder: (builder) => AttachmentsSheetView(
                   attachments: availableAttachments,
                   availableFeatures: availableFeatures,
@@ -2789,20 +2790,20 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     availableFeatures(features);
     var availableAttachment = <AttachmentIcon>[];
     if (features.isDocumentAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(documentImg, "Document"));
+      availableAttachment.add(AttachmentIcon(documentImg, getTranslated("attachment_Document")));
     }
     if (features.isImageAttachmentAvailable.checkNull() || features.isVideoAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(cameraImg, "Camera"));
-      availableAttachment.add(AttachmentIcon(galleryImg, "Gallery"));
+      availableAttachment.add(AttachmentIcon(cameraImg, getTranslated("attachment_Camera")));
+      availableAttachment.add(AttachmentIcon(galleryImg, getTranslated("attachment_Gallery")));
     }
     if (features.isAudioAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(audioImg, "Audio"));
+      availableAttachment.add(AttachmentIcon(audioImg, getTranslated("attachment_Audio")));
     }
     if (features.isContactAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(contactImg, "Contact"));
+      availableAttachment.add(AttachmentIcon(contactImg, getTranslated("attachment_Contact")));
     }
     if (features.isLocationAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(locationImg, "Location"));
+      availableAttachment.add(AttachmentIcon(locationImg, getTranslated("attachment_Location")));
     }
     availableAttachments(availableAttachment);
   }

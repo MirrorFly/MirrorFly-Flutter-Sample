@@ -10,7 +10,8 @@ class ChatPageStyle {
         this.notificationMessageViewStyle = const NotificationMessageViewStyle(),
         this.chatSelectionBgColor = Colors.black12,
         this.senderChatBubbleStyle = const SenderChatBubbleStyle(),
-        this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle()
+        this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle(),
+        this.attachmentViewStyle = const AttachmentViewStyle()
       });
   final AppBarTheme appBarTheme;
   final ChatUserAppBarStyle chatUserAppBarStyle;
@@ -20,6 +21,30 @@ class ChatPageStyle {
   final Color chatSelectionBgColor;
   final SenderChatBubbleStyle senderChatBubbleStyle;
   final ReceiverChatBubbleStyle receiverChatBubbleStyle;
+  final AttachmentViewStyle attachmentViewStyle;
+}
+
+class AttachmentViewStyle{
+  final Color bgColor;
+  final ShapeBorder shapeBorder;
+  final IconStyle documentStyle;
+  final IconStyle cameraStyle;
+  final IconStyle galleryStyle;
+  final IconStyle audioStyle;
+  final IconStyle contactStyle;
+  final IconStyle locationStyle;
+  final TextStyle textStyle;
+  const AttachmentViewStyle({
+    this.bgColor = const Color(0xff242A3F),
+    this.shapeBorder = const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+    this.documentStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xff34B197)),//Document
+    this.cameraStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xffEF5B5A)),//Camera
+    this.galleryStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xff3093DF)),//Gallery
+    this.audioStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xffF37627)),//Audio
+    this.contactStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xff46BF69)),//Contact
+    this.locationStyle = const IconStyle(iconColor: Colors.white,bgColor: Color(0xffB66AE6)),//Location
+    this.textStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.white,fontSize: 9)
+  });
 }
 
 class ChatUserAppBarStyle{
