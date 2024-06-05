@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/constants.dart';
@@ -17,7 +18,7 @@ class ContactItem extends StatelessWidget {
     this.isCheckBoxVisible = false,
     required this.checkValue,
     required this.onCheckBoxChange,
-    this.onListItemPressed,
+    this.onListItemPressed,this.contactItemStyle = const ContactItemStyle(),
   }) : super(key: key);
   final ProfileDetails item;
   final Function()? onAvatarClick;
@@ -26,6 +27,7 @@ class ContactItem extends StatelessWidget {
   final bool checkValue;
   final Function(bool?) onCheckBoxChange;
   final Function()? onListItemPressed;
+  final ContactItemStyle contactItemStyle;
   @override
   Widget build(BuildContext context) {
     // LogMessage.d("Contact item", item.toJson());
@@ -34,73 +36,83 @@ class ContactItem extends StatelessWidget {
       opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
       child: InkWell(
         onTap: onListItemPressed,
-        child: Row(
+        child: Column(
           children: [
-            InkWell(
-              onTap: onAvatarClick,
-              child: Container(
-                  margin: const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: item.image.checkNull().isEmpty ? iconBgColor : buttonBgColor,
-                    shape: BoxShape.circle,
+            Row(
+              children: [
+                InkWell(
+                  onTap: onAvatarClick,
+                  child: Container(
+                      margin: const EdgeInsets.only(left: 18.0, top: 10, bottom: 10, right: 10),
+                      width: contactItemStyle.profileImageSize.width,
+                      height: contactItemStyle.profileImageSize.height,
+                      decoration: BoxDecoration(
+                        color: item.image.checkNull().isEmpty ? iconBgColor : buttonBgColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: ImageNetwork(
+                        url: item.image.toString(),
+                        width: contactItemStyle.profileImageSize.width - 2,
+                        height: contactItemStyle.profileImageSize.height - 2,
+                        clipOval: true,
+                        errorWidget: getName(item) //item.nickName
+                            .checkNull()
+                            .isNotEmpty
+                            ? ProfileTextImage(text: getName(item))
+                            : const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                        unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+                        isGroup: item.isGroupProfile.checkNull(),
+                      )), //controller.showProfilePopup(item.obs);
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      spanTxt.isEmpty
+                          ? Text(
+                        getName(item),
+                        style: contactItemStyle.titleStyle,
+                        // style: Theme.of(context).textTheme.titleMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                          : spannableText(
+                          getName(item),
+                          //item.profileName.checkNull(),
+                          spanTxt.trim(),
+                          contactItemStyle.titleStyle,
+                          // const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
+                          Colors.blue),
+                      const SizedBox(height: 5,),
+                      Text(
+                        item.status.toString(),
+                        style: contactItemStyle.descriptionStyle,
+                        // style: Theme.of(context).textTheme.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  child: ImageNetwork(
-                    url: item.image.toString(),
-                    width: 48,
-                    height: 48,
-                    clipOval: true,
-                    errorWidget: getName(item) //item.nickName
-                        .checkNull()
-                        .isNotEmpty
-                        ? ProfileTextImage(text: getName(item))
-                        : const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-                    unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
-                    isGroup: item.isGroupProfile.checkNull(),
-                  )), //controller.showProfilePopup(item.obs);
+                ),
+                Visibility(
+                  visible: isCheckBoxVisible,
+                  child: Checkbox(
+                    value: checkValue, //controller.selectedUsersJIDList.contains(item.jid),
+                    onChanged: (value) {
+                      onCheckBoxChange(value);
+                      //controller.onListItemPressed(item);
+                    },
+                    activeColor: AppColors.checkBoxChecked,
+                    shape: contactItemStyle.checkBoxShape,
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  spanTxt.isEmpty
-                      ? Text(
-                    getName(item),
-                    style: Theme.of(context).textTheme.titleMedium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                      : spannableText(
-                      getName(item),
-                      //item.profileName.checkNull(),
-                      spanTxt.trim(),
-                      const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),Colors.blue),
-                  Text(
-                    item.status.toString(),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                ],
-              ),
-            ),
-            Visibility(
-              visible: isCheckBoxVisible,
-              child: Checkbox(
-                value: checkValue, //controller.selectedUsersJIDList.contains(item.jid),
-                onChanged: (value) {
-                  onCheckBoxChange(value);
-                  //controller.onListItemPressed(item);
-                },
-                activeColor: AppColors.checkBoxChecked,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2), side: const BorderSide(color: AppColors.checkBoxBorder)),
-              ),
-            ),
+            AppDivider(color: contactItemStyle.dividerColor,padding: EdgeInsets.only(left: contactItemStyle.profileImageSize.width),)
           ],
         ),
         // onTap: () {

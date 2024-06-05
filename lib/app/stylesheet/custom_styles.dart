@@ -97,3 +97,26 @@ class RecentChatItemStyle {
   final Color selectedBgColor;
   final Color unselectedBgColor;
 }
+
+class CallHistoryItemStyle{
+
+  final Size profileImageSize;
+  final TextStyle titleTextStyle;
+  final TextStyle subtitleTextStyle;
+  final TextStyle durationTextStyle;
+  final Color iconColor;
+  final Color selectedBgColor;
+  final Color unselectedBgColor;
+  final Color dividerColor;
+
+  const CallHistoryItemStyle({
+    this.profileImageSize = const Size(48, 48),
+    this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
+    this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+    this.durationTextStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff767676),fontSize: 12),
+    this.iconColor = Colors.grey,
+    this.selectedBgColor = Colors.black12,
+    this.unselectedBgColor = Colors.transparent,
+    this.dividerColor = const Color(0XffE2E2E2),
+  });
+}

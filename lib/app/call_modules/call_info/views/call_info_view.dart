@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+
 import '../../../common/app_localizations.dart';
 import '../../../modules/dashboard/widgets.dart';
 import '../../call_utils.dart';
@@ -113,7 +114,7 @@ class CallInfoView extends NavView<CallInfoController> {
                       subtitle: SizedBox(
                         child: callLogTime(
                             "${DateTimeUtils.getCallLogDate(microSeconds: controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
-                            controller.callLogData.callState),
+                            controller.callLogData.callState,null),
                       ),
                       trailing: SizedBox(
                         child: Row(

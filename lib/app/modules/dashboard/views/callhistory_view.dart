@@ -13,11 +13,14 @@ import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
+import '../../../stylesheet/stylesheet.dart';
 import '../widgets.dart';
 
 class CallHistoryView extends StatelessWidget {
-  const CallHistoryView({super.key,required this.controller});
+  const CallHistoryView({super.key,required this.controller, required this.callHistoryItemStyle, required this.noDataTextStyle});
   final DashboardController controller;
+  final CallHistoryItemStyle callHistoryItemStyle;
+  final TextStyle noDataTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +64,17 @@ class CallHistoryView extends StatelessWidget {
           }
           return item.callMode == CallMode.oneToOne && (item.userList == null || item.userList!.length < 2)
               ? Obx(() => ListTile(
+            titleTextStyle: callHistoryItemStyle.titleTextStyle,
+            subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
+            shape: Border(bottom: BorderSide(color: callHistoryItemStyle.dividerColor,width: 0.5)),
             leading: FutureBuilder(
                 future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
                 builder: (context, snap) {
                   return snap.hasData && snap.data != null
                       ? ImageNetwork(
                     url: snap.data!.image!,
-                    width: 48,
-                    height: 48,
+                    width: callHistoryItemStyle.profileImageSize.width,
+                    height: callHistoryItemStyle.profileImageSize.height,
                     clipOval: true,
                     errorWidget: snap.data!.getName() //item.nickName
                         .checkNull()
@@ -92,13 +98,15 @@ class CallHistoryView extends StatelessWidget {
                       : snap.hasData && snap.data != null && controller.search.text.isEmpty
                       ? Text(
                     snap.data!.name!,
-                    style: const TextStyle(color: Colors.black),
+                    style: callHistoryItemStyle.titleTextStyle,
+                    // style: const TextStyle(color: Colors.black),
                   )
                       : const SizedBox.shrink();
                 }),
             subtitle: SizedBox(
               child: callLogTime(
-                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState,
+                  callHistoryItemStyle.subtitleTextStyle),
             ),
             trailing: SizedBox(
               child: Row(
@@ -107,16 +115,17 @@ class CallHistoryView extends StatelessWidget {
                 children: [
                   Text(
                     getCallLogDuration(item.startTime!, item.endTime!),
-                    style: const TextStyle(color: Colors.black),
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
-                  callIcon(item.callType, item, item.callMode, []),
+                  callIcon(item.callType, item, item.callMode, [],callHistoryItemStyle.iconColor),
                 ],
               ),
             ),
-            selectedTileColor: controller.isLogSelected(index) ? Colors.grey[400] : null,
+            selectedTileColor: controller.isLogSelected(index) ? callHistoryItemStyle.selectedBgColor : callHistoryItemStyle.unselectedBgColor,
             selected: controller.isLogSelected(index),
             onLongPress: () {
               controller.selectedLog(true);
@@ -131,12 +140,15 @@ class CallHistoryView extends StatelessWidget {
             },
           ))
               : Obx(() => ListTile(
+            titleTextStyle: callHistoryItemStyle.titleTextStyle,
+            subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
+            shape: Border(bottom: BorderSide(color: callHistoryItemStyle.dividerColor,width: 0.5)),
             leading: item.groupId.checkNull().isEmpty
                 ? ClipOval(
               child: Image.asset(
                 groupImg,
-                height: 48,
-                width: 48,
+                width: callHistoryItemStyle.profileImageSize.width,
+                height: callHistoryItemStyle.profileImageSize.height,
                 fit: BoxFit.cover,
               ),
             )
@@ -146,14 +158,14 @@ class CallHistoryView extends StatelessWidget {
                   return snap.hasData && snap.data != null
                       ? ImageNetwork(
                     url: snap.data!.image!,
-                    width: 48,
-                    height: 48,
+                    width: callHistoryItemStyle.profileImageSize.width,
+                    height: callHistoryItemStyle.profileImageSize.height,
                     clipOval: true,
                     errorWidget: ClipOval(
                       child: Image.asset(
                         groupImg,
-                        height: 48,
-                        width: 48,
+                        width: callHistoryItemStyle.profileImageSize.width,
+                        height: callHistoryItemStyle.profileImageSize.height,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -164,8 +176,8 @@ class CallHistoryView extends StatelessWidget {
                       : ClipOval(
                     child: Image.asset(
                       groupImg,
-                      height: 48,
-                      width: 48,
+                      width: callHistoryItemStyle.profileImageSize.width,
+                      height: callHistoryItemStyle.profileImageSize.height,
                       fit: BoxFit.cover,
                     ),
                   );
@@ -179,7 +191,8 @@ class CallHistoryView extends StatelessWidget {
                         ? CallHighlightedText(content: snap.data!, searchString: controller.search.text.trim())
                         : Text(
                       snap.data!,
-                      style: const TextStyle(color: Colors.black),
+                      style: callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
                     );
                   } else {
                     return const SizedBox.shrink();
@@ -193,7 +206,8 @@ class CallHistoryView extends StatelessWidget {
                         ? CallHighlightedText(content: snap.data!.name!, searchString: controller.search.text.trim())
                         : Text(
                       snap.data!.name!,
-                      style: const TextStyle(color: Colors.black),
+                      style: callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
                     );
                   } else {
                     return const SizedBox.shrink();
@@ -201,7 +215,8 @@ class CallHistoryView extends StatelessWidget {
                 }),
             subtitle: SizedBox(
               child: callLogTime(
-                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState),
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}", item.callState,
+                  callHistoryItemStyle.subtitleTextStyle),
             ),
             trailing: SizedBox(
               child: Row(
@@ -210,12 +225,13 @@ class CallHistoryView extends StatelessWidget {
                 children: [
                   Text(
                     getCallLogDuration(item.startTime!, item.endTime!),
-                    style: const TextStyle(color: Colors.black),
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
-                  callIcon(item.callType, item, item.callMode, item.userList),
+                  callIcon(item.callType, item, item.callMode, item.userList,callHistoryItemStyle.iconColor),
                 ],
               ),
             ),
@@ -250,7 +266,8 @@ class CallHistoryView extends StatelessWidget {
           Text(
             getTranslated("noCallLogsFound"),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: noDataTextStyle,
+            // style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(
             height: 10,
@@ -258,7 +275,8 @@ class CallHistoryView extends StatelessWidget {
           Text(
             getTranslated("noCallLogsContent"),
             textAlign: TextAlign.center,
-            style: const TextStyle(color: callsSubText),
+            style: noDataTextStyle.copyWith(fontWeight: FontWeight.w300),
+            // style: const TextStyle(color: callsSubText),
           ),
         ],
       ),
@@ -266,7 +284,7 @@ class CallHistoryView extends StatelessWidget {
         : const Center(child: CircularProgressIndicator());
   }
 
-  Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList) {
+  Widget callIcon(String? callType, CallLogData item, String? callMode, List<String>? userList,Color iconColor) {
     List<String>? localUserList = [];
     if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
       localUserList.addAll(item.userList!);
@@ -289,7 +307,7 @@ class CallHistoryView extends StatelessWidget {
       },
       icon: SvgPicture.asset(
         videoCallIcon,
-        colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
       ),
     )
         : IconButton(
@@ -304,7 +322,7 @@ class CallHistoryView extends StatelessWidget {
         },
         icon: SvgPicture.asset(
           audioCallIcon,
-          colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
         ));
   }
 }

@@ -13,11 +13,16 @@ class DashBoardPageStyle {
       this.searchTextFieldStyle = const EditTextFieldStyle(),
       this.tabItemStyle = const TabItemStyle(),
       this.archivedTileStyle = const ArchivedTileStyle(),
-      this.recentChatItemStyle = const RecentChatItemStyle()});
+      this.recentChatItemStyle = const RecentChatItemStyle(),
+      this.callHistoryItemStyle = const CallHistoryItemStyle(),
+        this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
+      });
   final AppBarTheme appBarTheme;
   final TabBarTheme tabBarTheme;
   final EditTextFieldStyle searchTextFieldStyle;
   final TabItemStyle tabItemStyle;
   final ArchivedTileStyle archivedTileStyle;
   final RecentChatItemStyle recentChatItemStyle;
+  final CallHistoryItemStyle callHistoryItemStyle;
+  final TextStyle noDataTextStyle;
 }

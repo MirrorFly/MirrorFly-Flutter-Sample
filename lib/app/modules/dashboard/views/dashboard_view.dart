@@ -328,8 +328,8 @@ class DashboardView extends NavView<DashboardController> {
                               ];
                             },
                             body: TabBarView(controller: controller.tabController, children: [
-                              RecentChatView(controller: controller, archivedTileStyle: AppStyleConfig.dashBoardPageStyle.archivedTileStyle, recentChatItemStyle: AppStyleConfig.dashBoardPageStyle.recentChatItemStyle,),
-                              CallHistoryView(controller: controller,)
+                              RecentChatView(controller: controller, archivedTileStyle: AppStyleConfig.dashBoardPageStyle.archivedTileStyle, recentChatItemStyle: AppStyleConfig.dashBoardPageStyle.recentChatItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,),
+                              CallHistoryView(controller: controller,callHistoryItemStyle: AppStyleConfig.dashBoardPageStyle.callHistoryItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,)
                             ])));
                   }),
                 ),

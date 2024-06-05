@@ -16,10 +16,11 @@ import '../../../routes/route_settings.dart';
 import '../widgets.dart';
 
 class RecentChatView extends StatelessWidget {
-  const RecentChatView({super.key,required this.controller,required this.archivedTileStyle,required this.recentChatItemStyle});
+  const RecentChatView({super.key,required this.controller,required this.archivedTileStyle,required this.recentChatItemStyle, required this.noDataTextStyle});
   final DashboardController controller;
   final ArchivedTileStyle archivedTileStyle;
   final RecentChatItemStyle recentChatItemStyle;
+  final TextStyle noDataTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -456,7 +457,8 @@ class RecentChatView extends StatelessWidget {
           Text(
             getTranslated("noNewMessages"),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
+            style: noDataTextStyle,
+            // style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(
             height: 8,
@@ -464,7 +466,8 @@ class RecentChatView extends StatelessWidget {
           Text(
             getTranslated("noMessagesContent"),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleSmall,
+            style: noDataTextStyle.copyWith(fontWeight: FontWeight.w300),
+            // style: Theme.of(context).textTheme.titleSmall,
           ),
         ],
       ),

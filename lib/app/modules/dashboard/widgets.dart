@@ -553,7 +553,7 @@ onTapForSpanText(String e) {
   // return;
 }
 
-Widget callLogTime(String time, int? callState) {
+Widget callLogTime(String time, int? callState,TextStyle? textStyle) {
   return Row(
     children: [
       callState == 0
@@ -575,7 +575,8 @@ Widget callLogTime(String time, int? callState) {
       ),
       Text(
         time,
-        style: const TextStyle(color: Colors.black),
+        style: textStyle,
+        // style: const TextStyle(color: Colors.black),
       ),
     ],
   );

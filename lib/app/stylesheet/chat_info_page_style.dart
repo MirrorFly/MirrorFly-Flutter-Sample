@@ -2,7 +2,8 @@ part of 'stylesheet.dart';
 
 class ChatInfoPageStyle{
   const ChatInfoPageStyle({
-    this.appBarTheme = const AppBarTheme(),
+    this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+        elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.appBarTitleStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.white,fontSize: 18),
     this.appBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),
     this.muteNotificationStyle = const MuteNotificationStyle(textStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
