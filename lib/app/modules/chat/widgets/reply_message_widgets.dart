@@ -206,16 +206,24 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
         borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-        child: ImageCacheManager.getImage(
-            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage.checkNull(),chatMessageModel.messageId, size, size),
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: ImageCacheManager.getImage(
+              isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage.checkNull(),chatMessageModel.messageId, size, size),
+        ),
       );
     case Constants.mLocation:
       return getLocationImage(isReply ? locationChatMessage : chatMessageModel.locationChatMessage, size, size, isSelected: true);
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-        child: ImageCacheManager.getImage(
-            isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage, chatMessageModel.messageId, size, size),
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: ImageCacheManager.getImage(
+              isReply ? mediaChatMessage!.mediaThumbImage : chatMessageModel.mediaChatMessage!.mediaThumbImage, chatMessageModel.messageId, size, size),
+        ),
       );
     case Constants.mDocument:
       debugPrint("isNotChatItem--> $isNotChatItem");

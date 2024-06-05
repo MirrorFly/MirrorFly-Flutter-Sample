@@ -148,8 +148,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
   @override
   Widget build(BuildContext context) {
     var screenWidth = NavUtils.width;
-    var currentPos =
-    0.0; /*double.parse(widget.chatMessage
+    var currentPos = 0.0; /*double.parse(widget.chatMessage
         .mediaChatMessage!.currentPos
         .toString());
     var maxPos = double.parse(widget.chatMessage
@@ -192,31 +191,17 @@ class _AudioMessageViewState extends State<AudioMessageView>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                widget.chatMessage.mediaChatMessage!.isAudioRecorded
-                    ? CircleAvatar(radius: (28/2),
+                 CircleAvatar(radius: (30/2),
                   backgroundColor: widget.audioMessageViewStyle.iconStyle.bgColor,
-                  child: SvgPicture.asset(audioMic,
-                    colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),height: 13,),)/*Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      audioMicBg,
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.contain,
-                    ),
-                    SvgPicture.asset(
-                      audioMic1,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                )*/
+                  child: widget.chatMessage.mediaChatMessage!.isAudioRecorded
+                      ? SvgPicture.asset(audioMic,
+                    colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),height: 13,)
                     : SvgPicture.asset(musicIcon,
-                  colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),),
+                  colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),)),
                 MediaMessageOverlay(chatMessage: widget.chatMessage, onAudio: () {
                     widget.onPlayAudio();
-                    playAudio(widget.chatMessage);
-                  },), //widget.onPlayAudio),
+                    playAudio(widget.chatMessage,);
+                  },downloadUploadViewStyle:  widget.audioMessageViewStyle.downloadUploadViewStyle,), //widget.onPlayAudio),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,

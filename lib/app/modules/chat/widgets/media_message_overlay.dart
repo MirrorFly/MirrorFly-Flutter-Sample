@@ -38,7 +38,7 @@ class MediaMessageOverlay extends StatelessWidget {
           backgroundColor: Colors.white,
           child: const Icon(
             Icons.play_arrow_rounded,
-            color: buttonBgColor,
+            // color: buttonBgColor,
           ),
         );
       } else if (chatMessage.messageType.toUpperCase() == 'AUDIO') {
@@ -53,6 +53,7 @@ class MediaMessageOverlay extends StatelessWidget {
                   child: SvgPicture.asset(
                     chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
                     height: 17,
+                    colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
                   ))
           ),
         ); //const Icon(Icons.play_arrow_sharp);
@@ -97,7 +98,7 @@ class MediaMessageOverlay extends StatelessWidget {
             return InkWell(
               child: downloadView(
                   chatMessage.mediaChatMessage!.mediaFileSize,
-                  chatMessage.messageType.toUpperCase()),
+                  chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
               onTap: () {
                 downloadMedia(chatMessage.messageId);
               },
@@ -110,7 +111,7 @@ class MediaMessageOverlay extends StatelessWidget {
           return InkWell(
             child: downloadView(
                 chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase()),
+                chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
             onTap: () {
               downloadMedia(chatMessage.messageId);
             },
@@ -119,7 +120,7 @@ class MediaMessageOverlay extends StatelessWidget {
           return InkWell(
             child: downloadView(
                 chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase()),
+                chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
             onTap: () {
               downloadMedia(chatMessage.messageId);
             },
@@ -130,14 +131,14 @@ class MediaMessageOverlay extends StatelessWidget {
                 debugPrint("upload Media ==> ${chatMessage.messageId}");
                 uploadMedia(chatMessage.messageId);
               },
-              child: uploadView(chatMessage.messageType.toUpperCase()));
+              child: uploadView(chatMessage.messageType.toUpperCase(),downloadUploadViewStyle));
         case MediaDownloadStatus.isMediaDownloading:
         case MediaUploadStatus.isMediaUploading:
           return Obx(() {
             return InkWell(onTap: () {
               cancelMediaUploadOrDownload(chatMessage.messageId);
             }, child: downloadingOrUploadingView(chatMessage.messageType,
-                chatMessage.mediaChatMessage!.mediaProgressStatus.value)
+                chatMessage.mediaChatMessage!.mediaProgressStatus.value,downloadUploadViewStyle)
             );
           });
         default:
@@ -145,7 +146,7 @@ class MediaMessageOverlay extends StatelessWidget {
               onTap: () {
                 toToast(getTranslated("mediaDoesNotExist"));
               },
-              child: uploadView(chatMessage.messageType.toUpperCase()));
+              child: uploadView(chatMessage.messageType.toUpperCase(),downloadUploadViewStyle));
       }
     }
   }
@@ -192,7 +193,7 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           uploadIcon,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
         ))
         : Container(
         height: 35,
@@ -206,7 +207,7 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(uploadIcon),
+            SvgPicture.asset(uploadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
             const SizedBox(
               width: 5,
             ),
@@ -223,11 +224,11 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
 
 Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyle downloadUploadViewStyle) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    padding: messageType == 'AUDIO' ? const EdgeInsets.symmetric(horizontal: 8.0) : const EdgeInsets.only(left: 8),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
-        height: 30,
-        width: 30,
+        height: 28,
+        width: 28,
         decoration: downloadUploadViewStyle.decoration,
         // decoration: BoxDecoration(
         //     border: Border.all(color: borderColor),
@@ -235,11 +236,11 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         padding: const EdgeInsets.all(7),
         child: SvgPicture.asset(
           downloadIcon,
-          colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)
         ))
         : Container(
-        height: 35,
-        width: 80,
+        height: 31,
+        width: 72,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: BoxDecoration(
           border: Border.all(
@@ -252,7 +253,7 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(downloadIcon),
+            SvgPicture.asset(downloadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
             const SizedBox(
               width: 5,
             ),
@@ -300,7 +301,8 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
                 SvgPicture.asset(
                   downloading,
                   fit: BoxFit.contain,
-                  colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
+                  // colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -338,6 +340,7 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
               SvgPicture.asset(
                 downloading,
                 fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
               ),
               Align(
                 alignment: Alignment.bottomCenter,

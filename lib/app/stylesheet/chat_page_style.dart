@@ -2,7 +2,7 @@ part of 'stylesheet.dart';
 
 class ChatPageStyle {
   const ChatPageStyle(
-      {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
+      {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
         this.chatUserAppBarStyle = const ChatUserAppBarStyle(),
         this.searchTextFieldStyle = const EditTextFieldStyle(),
         this.textTypingAreaStyle = const TextTypingAreaStyle(),
@@ -44,7 +44,8 @@ class SenderChatBubbleStyle{
          borderRadius: BorderRadius.all(Radius.circular(4)),
          color: Colors.black45,
        ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-       progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+       progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
+       iconStyle: IconStyle(iconColor: Colors.white))
      ),
      this.videoMessageViewStyle = const VideoMessageViewStyle(
          captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
@@ -55,7 +56,8 @@ class SenderChatBubbleStyle{
            borderRadius: BorderRadius.all(Radius.circular(4)),
            color: Colors.black45,
          ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-             progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+             progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
+         iconStyle: IconStyle(iconColor: Colors.white))
      ),
      this.audioMessageViewStyle = const AudioMessageViewStyle(
        decoration: BoxDecoration(
@@ -79,7 +81,7 @@ class SenderChatBubbleStyle{
              width: 1.0
          )),
          borderRadius: BorderRadius.all(Radius.circular(3)),
-       ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
+       ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5))),
        iconStyle: IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
      ),
      this.docMessageViewStyle = const DocMessageViewStyle(
@@ -95,7 +97,7 @@ class SenderChatBubbleStyle{
                width: 1.0
            )),
            borderRadius: BorderRadius.all(Radius.circular(3)),
-         ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+         ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5)))
      ),
      this.contactMessageViewStyle = const ContactMessageViewStyle(
    textMessageViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
@@ -138,22 +140,20 @@ class ReceiverChatBubbleStyle{
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
         imageBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
-          border: Border.fromBorderSide(BorderSide(width: 1.0)),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
         ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Colors.white))
     ),
     this.videoMessageViewStyle = const VideoMessageViewStyle(
         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
         videoBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
-          border: Border.fromBorderSide(BorderSide(width: 1.0)),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
         ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Colors.white))
     ),
     this.audioMessageViewStyle = const AudioMessageViewStyle(
       decoration: BoxDecoration(
@@ -177,8 +177,8 @@ class ReceiverChatBubbleStyle{
             width: 1.0
         )),
         borderRadius: BorderRadius.all(Radius.circular(3)),
-      ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
-      iconStyle: IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
+      ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5))),
+        iconStyle: IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
     ),
     this.docMessageViewStyle = const DocMessageViewStyle(decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -192,7 +192,7 @@ class ReceiverChatBubbleStyle{
               width: 1.0
           )),
           borderRadius: BorderRadius.all(Radius.circular(3)),
-        ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+        ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5)))
     ),
     this.contactMessageViewStyle = const ContactMessageViewStyle(
         textMessageViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff9E9E9E),fontSize: 11)),
@@ -211,7 +211,7 @@ class ReceiverChatBubbleStyle{
     ),
    this.decoration = const BoxDecoration(
        borderRadius: BorderRadius.only(
-           topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
+           topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
        color: Colors.white,
        border: Border.fromBorderSide(BorderSide(color: Color(0xffDDE3E5)))),
  });

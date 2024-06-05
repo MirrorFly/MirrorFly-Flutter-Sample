@@ -94,7 +94,7 @@ class DocumentMessageView extends StatelessWidget {
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
                   )*/
                   ),
-                  MediaMessageOverlay(chatMessage: chatMessage,),
+                  MediaMessageOverlay(chatMessage: chatMessage,downloadUploadViewStyle:  docMessageViewStyle.downloadUploadViewStyle,),
                 ],
               ),
             ),

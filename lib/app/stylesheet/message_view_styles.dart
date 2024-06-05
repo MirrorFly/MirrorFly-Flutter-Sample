@@ -10,6 +10,9 @@ class TextTypingAreaStyle{
     this.textFieldStyle = const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),editTextHintStyle: TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 12)),
     this.dividerColor = const Color(0xff000000),
     this.sentIconColor = const Color(0xff4879F9),
+    this.audioIconColor = const Color(0xff363636),
+    this.attachmentIconColor = const Color(0xff363636),
+    this.emojiIconColor = const Color(0xff363636),
     this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -26,6 +29,9 @@ class TextTypingAreaStyle{
   final Decoration decoration;
   final Color dividerColor;
   final Color sentIconColor;
+  final Color audioIconColor;
+  final Color attachmentIconColor;
+  final Color emojiIconColor;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
   final Color replyBgColor;
   final AudioRecordingViewStyle audioRecordingViewStyle;
@@ -107,11 +113,13 @@ class DownloadUploadViewStyle{
       color: Colors.black45,
     ),
     this.textStyle = const TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-    this.progressIndicatorThemeData = const ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent)
+    this.progressIndicatorThemeData = const ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
+    this.iconStyle = const IconStyle(iconColor: Colors.white)
   });
   final Decoration decoration;
   final TextStyle textStyle;
   final ProgressIndicatorThemeData progressIndicatorThemeData;
+  final IconStyle iconStyle;
 }
 
 class DocMessageViewStyle{
@@ -128,7 +136,8 @@ class DocMessageViewStyle{
           width: 1.0
       )),
       borderRadius: BorderRadius.all(Radius.circular(3)),
-    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent))
+    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
+    iconStyle: const IconStyle(iconColor: Color(0xff7285B5))
   });
   final Decoration decoration;
   final TextMessageViewStyle fileTextStyle;
@@ -147,7 +156,8 @@ class VideoMessageViewStyle{
       color: Colors.black45,
     ),
         textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-        progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+        progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
+    iconStyle: IconStyle(iconColor: Colors.white))
   });
   final TextMessageViewStyle captionTextViewStyle;
   final TextStyle timeTextStyle;
@@ -165,7 +175,8 @@ class ImageMessageViewStyle{
       color: Colors.black45,
     ),
         textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-        progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent))
+        progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
+    iconStyle: IconStyle(iconColor: Colors.white))
   });
   final TextMessageViewStyle captionTextViewStyle;
   final TextStyle timeTextStyle;
@@ -195,7 +206,9 @@ class AudioMessageViewStyle{
           width: 1.0
       )),
       borderRadius: BorderRadius.all(Radius.circular(3)),
-    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),this.iconStyle = const IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white)
+    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5))),
+    this.iconStyle = const IconStyle(bgColor:Color(0xff97A5C7),iconColor: Colors.white),
+
   });
   final Decoration decoration;
   final TextStyle durationTextStyle;

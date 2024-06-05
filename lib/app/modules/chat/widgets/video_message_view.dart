@@ -96,7 +96,7 @@ class VideoMessageView extends StatelessWidget {
                 ),
               ),
               MediaMessageOverlay(chatMessage: chatMessage,
-                    onVideo: isSelected ? null : onVideoClick),
+                    onVideo: isSelected ? null : onVideoClick,downloadUploadViewStyle: videoMessageViewStyle.downloadUploadViewStyle,),
               mediaMessage.mediaCaptionText
                   .checkNull()
                   .isEmpty

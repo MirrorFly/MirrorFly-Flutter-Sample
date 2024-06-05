@@ -213,7 +213,7 @@ class ChatView extends NavView<ChatController> {
                                       radius: 8,
                                       child: Text(
                                         returnFormattedCount(controller.unreadCount.value),
-                                        style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                                        style: const TextStyle(fontSize: 9, color: Colors.white),
                                       ),
                                     )
                                   : const SizedBox.shrink(),
@@ -302,11 +302,11 @@ class ChatView extends NavView<ChatController> {
                   controller.showHideEmoji(context);
                 },
                 child: controller.showEmoji.value
-                    ? const Icon(
+                    ? Icon(
                         Icons.keyboard,
-                        color: iconColor,
+                        color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor,
                       )
-                    : SvgPicture.asset(smileIcon))
+                    : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(
@@ -362,12 +362,12 @@ class ChatView extends NavView<ChatController> {
                     child: Text(
                       getTranslated("cancel"),
                       textAlign: TextAlign.end,
-                      style: const TextStyle(color: Colors.red),
+                      style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle.copyWith(color: Colors.red),
                     ),
                   ),
                 ),
               )
-            : const SizedBox.shrink(),
+            : const Offstage(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? Expanded(
                 child: TextField(
@@ -384,24 +384,24 @@ class ChatView extends NavView<ChatController> {
                   decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle),
                 ),
               )
-            : const SizedBox.shrink(),
+            : const Offstage(),
         (controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAttachmentAvailable.checkNull())
             ? IconButton(
                 onPressed: () {
                   controller.showAttachmentsView(context);
                 },
-                icon: SvgPicture.asset('assets/logos/attach.svg'),
+                icon: SvgPicture.asset('assets/logos/attach.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
-            : const SizedBox.shrink(),
+            : const Offstage(),
         (controller.isAudioRecording.value == Constants.audioRecordInitial &&
                 controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())
             ? IconButton(
                 onPressed: () {
                   controller.startRecording();
                 },
-                icon: SvgPicture.asset('assets/logos/mic.svg'),
+                icon: SvgPicture.asset('assets/logos/mic.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
-            : const SizedBox.shrink(),
+            : const Offstage(),
         const SizedBox(
           width: 5,
         ),
@@ -412,10 +412,10 @@ class ChatView extends NavView<ChatController> {
   Widget userBlocked(BuildContext context) {
     return Column(
       children: [
-        const Divider(
+        Divider(
           height: 1,
           thickness: 0.29,
-          color: textBlackColor,
+          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0, left: 10),
@@ -426,7 +426,8 @@ class ChatView extends NavView<ChatController> {
                 getTranslated("youHaveBlocked"),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 15),
+                style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,
+                // style: const TextStyle(fontSize: 15),
               ),
               const SizedBox(
                 width: 5,
@@ -437,7 +438,8 @@ class ChatView extends NavView<ChatController> {
                   //controller.profile.name.checkNull(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 15),
+                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,
+                  // style: const TextStyle(fontSize: 15),
                 ),
               ),
               const SizedBox(
@@ -446,7 +448,8 @@ class ChatView extends NavView<ChatController> {
               InkWell(
                 child: Text(
                   getTranslated("unblock"),
-                  style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
+                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle.copyWith(color: Colors.blue),
+                  // style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                 ),
                 onTap: () => controller.unBlockUser(),
               ),
@@ -580,6 +583,7 @@ class ChatView extends NavView<ChatController> {
         title: SizedBox(
           width: (NavUtils.width) / 1.9,
           child: InkWell(
+            highlightColor: Colors.transparent,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
@@ -959,9 +963,11 @@ class ChatView extends NavView<ChatController> {
   getAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
-      child: Obx(() {
+      child:
+      Obx(() {
         return Container(
           child: controller.isSelected.value ? selectedAppBar(context) : chatAppBar(context),
+          color: AppStyleConfig.chatPageStyle.appBarTheme.backgroundColor,
         );
       }),
     );

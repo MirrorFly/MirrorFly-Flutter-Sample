@@ -48,7 +48,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                       mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId);
                 }),
               ),
-              MediaMessageOverlay(chatMessage: widget.chatMessage),
+              MediaMessageOverlay(chatMessage: widget.chatMessage,downloadUploadViewStyle: widget.imageMessageViewStyle.downloadUploadViewStyle,),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,

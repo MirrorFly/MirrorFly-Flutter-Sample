@@ -34,14 +34,7 @@ class ContactMessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenWidth = NavUtils.width;
-    return Container(
-      decoration: decoration,
-      // decoration: BoxDecoration(
-      //   borderRadius: const BorderRadius.all(Radius.circular(10)),
-      //   color: chatMessage.isMessageSentByMe
-      //       ? chatReplyContainerColor
-      //       : chatReplySenderColor,
-      // ),
+    return SizedBox(
       width: screenWidth * 0.60,
       child: Column(
         children: [
@@ -156,7 +149,7 @@ class ContactMessageView extends StatelessWidget {
                 Expanded(
                     child: Center(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(5.0),
                           child: (userJid != null && userJid.isNotEmpty)
                               ? Text(getTranslated("message"))
                               : Text(getTranslated("invite")),
