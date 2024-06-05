@@ -136,8 +136,7 @@ class DocMessageViewStyle{
           width: 1.0
       )),
       borderRadius: BorderRadius.all(Radius.circular(3)),
-    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent)),
-    iconStyle: const IconStyle(iconColor: Color(0xff7285B5))
+    ),progressIndicatorThemeData: ProgressIndicatorThemeData(color: Color(0xff7285B5),linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Color(0xff7285B5))),
   });
   final Decoration decoration;
   final TextMessageViewStyle fileTextStyle;

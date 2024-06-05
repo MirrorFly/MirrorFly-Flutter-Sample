@@ -34,16 +34,3 @@ class LoginPageStyle{
   final ElevatedButtonThemeData loginButtonStyle;
 
 }
-
-class check{
-  var log = LoginPageStyle(loginButtonStyle: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xff3276E2),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 40, vertical: 10),
-        textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500),
-        shape: const StadiumBorder()),
-  ));
-}

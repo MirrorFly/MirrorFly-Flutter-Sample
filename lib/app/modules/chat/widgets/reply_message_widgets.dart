@@ -61,7 +61,7 @@ class ReplyingMessageHeader extends StatelessWidget {
               Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  getReplyImageHolder(context, chatMessage, chatMessage.mediaChatMessage, 70, true, chatMessage.locationChatMessage),
+                  getReplyImageHolder(context, chatMessage, chatMessage.mediaChatMessage, 70, true, chatMessage.locationChatMessage,replyHeaderMessageViewStyle.mediaIconBgColor),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -193,7 +193,7 @@ getReplyMessage(
 }
 
 getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, MediaChatMessage? mediaChatMessage, double size, bool isNotChatItem,
-    LocationChatMessage? locationChatMessage) {
+    LocationChatMessage? locationChatMessage,Color bgColor) {
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
@@ -214,7 +214,9 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
         ),
       );
     case Constants.mLocation:
-      return getLocationImage(isReply ? locationChatMessage : chatMessageModel.locationChatMessage, size, size, isSelected: true);
+      return ClipRRect(
+          borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+          child: getLocationImage(isReply ? locationChatMessage : chatMessageModel.locationChatMessage, size, size, isSelected: true));
     case Constants.mVideo:
       return ClipRRect(
         borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
@@ -228,15 +230,14 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
     case Constants.mDocument:
       debugPrint("isNotChatItem--> $isNotChatItem");
       debugPrint("Document --> $isReply");
-      debugPrint("Document --> ${isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!.mediaFileName}");
       return isNotChatItem
           ? SizedBox(height: size)
           : Container(
               width: size,
               height: size,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                color: Colors.white,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                color: bgColor,
               ),
               child: Center(
                 child: MessageUtils.getDocumentTypeIcon(isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!.mediaFileName, 30),
@@ -249,7 +250,7 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
               child: Container(
                 height: size,
                 width: size,
-                color: audioBgColor,
+                color: bgColor,
                 child: Center(
                   child: SvgPicture.asset(
                     mediaChatMessage!.isAudioRecorded.checkNull() ? mAudioRecordIcon : mAudioIcon,
@@ -277,7 +278,7 @@ class ReplyMessageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
       decoration: replyHeaderMessageViewStyle.decoration,
       /*decoration: BoxDecoration(
@@ -315,7 +316,7 @@ class ReplyMessageHeader extends StatelessWidget {
               chatMessage.replyParentChatMessage?.mediaChatMessage,
               55,
               false,
-              chatMessage.replyParentChatMessage?.locationChatMessage),
+              chatMessage.replyParentChatMessage?.locationChatMessage,replyHeaderMessageViewStyle.mediaIconBgColor),
         ],
       ),
     );

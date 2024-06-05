@@ -2,7 +2,8 @@ part of 'stylesheet.dart';
 
 class ChatPageStyle {
   const ChatPageStyle(
-      {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
+      {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+  elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
         this.chatUserAppBarStyle = const ChatUserAppBarStyle(),
         this.searchTextFieldStyle = const EditTextFieldStyle(),
         this.textTypingAreaStyle = const TextTypingAreaStyle(),
