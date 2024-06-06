@@ -11,7 +11,12 @@ class ChatPageStyle {
         this.chatSelectionBgColor = Colors.black12,
         this.senderChatBubbleStyle = const SenderChatBubbleStyle(),
         this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle(),
-        this.attachmentViewStyle = const AttachmentViewStyle()
+        this.attachmentViewStyle = const AttachmentViewStyle(),
+        this.popupMenuThemeData = const PopupMenuThemeData(
+            color: Color(0xff181818),
+            textStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
+            shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1))
+        )
       });
   final AppBarTheme appBarTheme;
   final ChatUserAppBarStyle chatUserAppBarStyle;
@@ -22,6 +27,7 @@ class ChatPageStyle {
   final SenderChatBubbleStyle senderChatBubbleStyle;
   final ReceiverChatBubbleStyle receiverChatBubbleStyle;
   final AttachmentViewStyle attachmentViewStyle;
+  final PopupMenuThemeData popupMenuThemeData;
 }
 
 class AttachmentViewStyle{

@@ -12,6 +12,7 @@ part 'dashboard_page_style.dart';
 part 'login_page_style.dart';
 part 'message_view_styles.dart';
 part 'otp_page_style.dart';
+part 'profile_view_style.dart';
 part 'settings_page_style.dart';
 part 'view_all_media_page_style.dart';
 

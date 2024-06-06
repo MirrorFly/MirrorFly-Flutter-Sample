@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
+import '../../../routes/route_settings.dart';
 import '../controllers/login_controller.dart';
 
 class LoginView extends NavView<LoginController> {
@@ -43,26 +43,27 @@ class LoginView extends NavView<LoginController> {
                   Text(
                     getTranslated("registerYourNumber"),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w600),
+                    style: AppStyleConfig.loginPageStyle.bodyTitleStyle,
+                    // style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, right: 8, left: 8),
                     child: Text(
                       getTranslated("registerMessage"),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: AppStyleConfig.loginPageStyle.bodyDescriptionStyle,
+                      /*style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w300,
-                          color: textColor),
+                          color: textColor),*/
                     ),
                   ),
                   Obx(() => Padding(
                     padding: const EdgeInsets.only(left : 10.0 , right: 10.0,top: 10.0),
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(controller.selectedCountry.value.name ?? "",
-                          style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
+                      title: Text(controller.selectedCountry.value.name ?? "",style: AppStyleConfig.loginPageStyle.selectedCountryTextStyle,),
+                          // style: const TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500)),
                       trailing: const Icon(Icons.keyboard_arrow_down_outlined),
                       onTap: (){
                         NavUtils.toNamed(Routes.countries)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
@@ -78,7 +79,8 @@ class LoginView extends NavView<LoginController> {
                           Obx(
                                 ()=> Text(
                               controller.selectedCountry.value.dialCode ?? "",
-                              style: const TextStyle(fontSize: 15),
+                              style: AppStyleConfig.loginPageStyle.selectedCountryCodeTextStyle,
+                              // style: const TextStyle(fontSize: 15),
                             ),
                           ),
                           const VerticalDivider(
@@ -98,8 +100,10 @@ class LoginView extends NavView<LoginController> {
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: getTranslated("enterMobileNumber"),
+                                hintStyle: AppStyleConfig.loginPageStyle.editTextFieldStyle.editTextHintStyle
                                 //hintStyle: TextStyle(color: Colors.black26)
                               ),
+                              style: AppStyleConfig.loginPageStyle.editTextFieldStyle.editTextStyle,
                             ),
                           ),
                         ],
@@ -109,27 +113,34 @@ class LoginView extends NavView<LoginController> {
                   const SizedBox(
                     height: 40,
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonBgColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 10),
-                        textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                        shape: const StadiumBorder()),
-                    onPressed: () {
-                      controller.registerUser();
-                    },
-                    child: Text(
-                      getTranslated("continue"),
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                  ElevatedButtonTheme(
+                    data: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                    child: ElevatedButton(
+                      /*style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonBgColor,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 10),
+                          textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                          shape: const StadiumBorder()),*/
+                      onPressed: () {
+                        controller.registerUser();
+                      },
+                      child: Text(
+                        getTranslated("continue"),
+                        style: ElevatedButtonTheme.of(context).style!.textStyle?.resolve({}),
+                        // style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
                     ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(getTranslated("agree"),style: const TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),),
+                  Text(getTranslated("agree"),
+                    style: AppStyleConfig.loginPageStyle.footerHeadlineStyle,
+                    // style: const TextStyle(color: textColor,fontSize: 13,fontWeight: FontWeight.w300),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -139,9 +150,10 @@ class LoginView extends NavView<LoginController> {
                       InkWell(
                         child: Text(
                           '${getTranslated("termsAndCondition")},',
-                          style: const TextStyle(
+                          style: AppStyleConfig.loginPageStyle.termsTextStyle,
+                          /*style: const TextStyle(
                               decoration: TextDecoration.underline,
-                              color: buttonBgColor),
+                              color: buttonBgColor),*/
                         ),
                         onTap:()=>AppUtils.launchWeb(Uri.parse(getTranslated("termsConditionsLink"))),
                       ),
@@ -151,9 +163,10 @@ class LoginView extends NavView<LoginController> {
                       InkWell(
                         child: Text(
                           '${getTranslated("privacyPolicy")}.',
-                          style: const TextStyle(
+                          style: AppStyleConfig.loginPageStyle.termsTextStyle,
+                          /*style: const TextStyle(
                               decoration: TextDecoration.underline,
-                              color: buttonBgColor),
+                              color: buttonBgColor),*/
                         ),
                         onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("privacyPolicyLink"))),
                       ),

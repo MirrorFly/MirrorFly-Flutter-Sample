@@ -1,7 +1,8 @@
 part of 'stylesheet.dart';
 
 class EditTextFieldStyle{
-  const EditTextFieldStyle({this.editTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff181818),fontSize: 14),this.editTextHintStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff959595),fontSize: 12)});
+  const EditTextFieldStyle({this.editTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff181818),fontSize: 14),this.editTextHintStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff959595),fontSize: 12),this.titleStyle});
+  final TextStyle? titleStyle;
   final TextStyle editTextStyle;
   final TextStyle editTextHintStyle;
 }

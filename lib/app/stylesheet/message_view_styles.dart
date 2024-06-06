@@ -220,6 +220,7 @@ class AudioMessageViewStyle{
 class IconStyle{
   final Color? bgColor;
   final Color iconColor;
-  const IconStyle({this.bgColor, required this.iconColor});
+  final Color? borderColor;
+  const IconStyle({required this.iconColor,this.bgColor,this.borderColor,});
 
 }

@@ -2,7 +2,11 @@ part of 'stylesheet.dart';
 
 class SettingsPageStyle{
   const SettingsPageStyle({
-    this.appBarTheme = const AppBarTheme(backgroundColor: Color(0xffF2F2F2)),
+    this.appBarTheme = const AppBarTheme(backgroundColor: Color(0xffF2F2F2),
+      shadowColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      iconTheme: IconThemeData(color: Color(0xff181818)),
+      actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.listItemStyle = const ListItemStyle(
       titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
       leadingIconColor: Color(0xff181818),

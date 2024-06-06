@@ -81,7 +81,7 @@ class DashboardView extends NavView<DashboardController> {
                                           )
                                         : controller.isSearching.value
                                             ? IconButton(
-                                                icon: const Icon(Icons.arrow_back, color: iconColor),
+                                                icon: const Icon(Icons.arrow_back),
                                                 onPressed: () {
                                                   controller.getBackFromSearch();
                                                 },
@@ -113,6 +113,7 @@ class DashboardView extends NavView<DashboardController> {
                                               ]),
                                     actions: [
                                       CustomActionBarIcons(
+                                        popupMenuThemeData: AppStyleConfig.dashBoardPageStyle.popupMenuThemeData,
                                           availableWidth: NavUtils.size.width * 0.80,
                                           // 80 percent of the screen width
                                           actionWidth: 48,
@@ -126,7 +127,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Info',
                                               ),
-                                              overflowWidget: Text(getTranslated("info")),
+                                              overflowWidget: Text(getTranslated("info"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.info.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'Info',
                                               onItemClick: () {
@@ -141,7 +142,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Delete',
                                               ),
-                                              overflowWidget: Text(getTranslated("delete")),
+                                              overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.availableFeatures.value.isDeleteChatAvailable.checkNull()
                                                   ? controller.delete.value
                                                       ? ShowAsAction.always
@@ -160,7 +161,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Pin',
                                               ),
-                                              overflowWidget: Text(getTranslated("pin")),
+                                              overflowWidget: Text(getTranslated("pin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.pin.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'Pin',
                                               onItemClick: () {
@@ -175,7 +176,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'UnPin',
                                               ),
-                                              overflowWidget: Text(getTranslated("unPin")),
+                                              overflowWidget: Text(getTranslated("unPin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.unpin.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'UnPin',
                                               onItemClick: () {
@@ -190,7 +191,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Mute',
                                               ),
-                                              overflowWidget: Text(getTranslated("mute")),
+                                              overflowWidget: Text(getTranslated("mute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.mute.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'Mute',
                                               onItemClick: () {
@@ -205,7 +206,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'UnMute',
                                               ),
-                                              overflowWidget: Text(getTranslated("unMute")),
+                                              overflowWidget: Text(getTranslated("unMute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.unmute.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'UnMute',
                                               onItemClick: () {
@@ -220,7 +221,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 icon: SvgPicture.asset(archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                                                 tooltip: 'Archive',
                                               ),
-                                              overflowWidget: Text(getTranslated("archived")),
+                                              overflowWidget: Text(getTranslated("archived"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.archive.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'Archived',
                                               onItemClick: () {
@@ -229,7 +230,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.mark_chat_read),
-                                              overflowWidget: Text(getTranslated("markAsRead")),
+                                              overflowWidget: Text(getTranslated("markAsRead"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.read.value ? ShowAsAction.never : ShowAsAction.gone,
                                               keyValue: 'Mark as Read',
                                               onItemClick: () {
@@ -238,7 +239,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.mark_chat_unread),
-                                              overflowWidget: Text(getTranslated("markAsUnread")),
+                                              overflowWidget: Text(getTranslated("markAsUnread"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.unread.value ? ShowAsAction.never : ShowAsAction.gone,
                                               keyValue: 'Mark as unread',
                                               onItemClick: () {
@@ -259,7 +260,7 @@ class DashboardView extends NavView<DashboardController> {
                                                 ),
                                                 tooltip: 'Search',
                                               ),
-                                              overflowWidget: Text(getTranslated("search")),
+                                              overflowWidget: Text(getTranslated("search"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.availableFeatures.value.isRecentChatSearchAvailable.checkNull()
                                                   ? controller.selected.value || controller.isSearching.value
                                                       ? ShowAsAction.gone
@@ -272,7 +273,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: IconButton(onPressed: () => controller.onClearPressed(), icon: const Icon(Icons.close)),
-                                              overflowWidget: Text(getTranslated("clear")),
+                                              overflowWidget: Text(getTranslated("clear"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.clearVisible.value ? ShowAsAction.always : ShowAsAction.gone,
                                               keyValue: 'Clear',
                                               onItemClick: () {
@@ -281,7 +282,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.group_add),
-                                              overflowWidget: Text(getTranslated("newGroup")),
+                                              overflowWidget: Text(getTranslated("newGroup"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction: controller.availableFeatures.value.isGroupChatAvailable.checkNull()
                                                   ? controller.selected.value || controller.isSearching.value
                                                       ? ShowAsAction.gone
@@ -294,7 +295,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.web),
-                                              overflowWidget: Text(getTranslated("clearCallLog")),
+                                              overflowWidget: Text(getTranslated("clearCallLog"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
                                                       ? ShowAsAction.gone
@@ -305,7 +306,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.settings),
-                                              overflowWidget: Text(getTranslated("settings")),
+                                              overflowWidget: Text(getTranslated("settings"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                               keyValue: 'Settings',
@@ -315,7 +316,7 @@ class DashboardView extends NavView<DashboardController> {
                                             ),
                                             CustomAction(
                                               visibleWidget: const Icon(Icons.web),
-                                              overflowWidget: Text(getTranslated("web")),
+                                              overflowWidget: Text(getTranslated("web"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                               keyValue: 'Web',

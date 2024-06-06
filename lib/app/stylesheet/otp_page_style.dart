@@ -2,7 +2,11 @@ part of 'stylesheet.dart';
 
 class OTPPageStyle{
   OTPPageStyle({
-    this.appBarTheme = const AppBarTheme(titleTextStyle: TextStyle(fontWeight: FontWeight.w700, color: Color(0xff181818),fontSize: 20),centerTitle: true),
+    this.appBarTheme = const AppBarTheme(titleTextStyle: TextStyle(fontWeight: FontWeight.w700, color: Color(0xff181818),fontSize: 20),centerTitle: true,
+      shadowColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      iconTheme: IconThemeData(color: Color(0xff181818)),
+      actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.bodyTitleStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff767676),fontSize: 14),
     this.bodyDescriptionStyle = const TextStyle(fontWeight: FontWeight.w500, color: Color(0xff181818),fontSize: 15),
     OTPTextFieldStyle? otpTextFieldStyle,

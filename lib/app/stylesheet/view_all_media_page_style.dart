@@ -2,7 +2,11 @@ part of 'stylesheet.dart';
 
 class ViewAllMediaPageStyle{
   const ViewAllMediaPageStyle({
-    this.appBarTheme = const AppBarTheme(color: Colors.white),
+    this.appBarTheme = const AppBarTheme(color: Colors.white,
+      shadowColor: Colors.white,
+      surfaceTintColor: Colors.white,
+      iconTheme: IconThemeData(color: Color(0xff181818)),
+      actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.tabBarTheme = const TabBarTheme(
         indicatorColor: Color(0xff3276E2),
         labelColor: Color(0xff3276E2),

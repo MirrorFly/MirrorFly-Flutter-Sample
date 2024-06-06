@@ -518,6 +518,7 @@ class ChatView extends NavView<ChatController> {
       title: Text(controller.selectedChatList.length.toString(),style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.titleTextStyle,),
       actions: [
         CustomActionBarIcons(
+          popupMenuThemeData: AppStyleConfig.chatPageStyle.popupMenuThemeData,
             availableWidth: NavUtils.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: actionBarItems(context,isSelected: true)),
@@ -636,7 +637,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn),),
             tooltip: 'Reply',
           ),
-          overflowWidget: Text(getTranslated("reply")),
+          overflowWidget: Text(getTranslated("reply"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: (controller.canBeReplied.value &&
               controller.availableFeatures.value.isClearChatAvailable
                   .checkNull())
@@ -657,7 +658,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Forward',
           ),
-          overflowWidget: Text(getTranslated("forward")),
+          overflowWidget: Text(getTranslated("forward"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeForwarded.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -677,7 +678,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(favouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Favourite',
           ),
-          overflowWidget: Text(getTranslated("favourite")),
+          overflowWidget: Text(getTranslated("favourite"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeStarred.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -697,7 +698,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'unFavourite',
           ),
-          overflowWidget: Text(getTranslated("unFavourite")),
+          overflowWidget: Text(getTranslated("unFavourite"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeUnStarred.value
               ? ShowAsAction.always
               : ShowAsAction.gone,
@@ -715,7 +716,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Delete',
           ),
-          overflowWidget: Text(getTranslated("delete")),
+          overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.availableFeatures.value
               .isDeleteMessageAvailable.checkNull()
               ? ShowAsAction.always
@@ -732,7 +733,7 @@ class ChatView extends NavView<ChatController> {
                 controller.reportChatOrUser();
               },
               icon: const Icon(Icons.report_problem_rounded)),
-          overflowWidget: Text(getTranslated("report")),
+          overflowWidget: Text(getTranslated("report"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canShowReport.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -755,7 +756,7 @@ class ChatView extends NavView<ChatController> {
             ),
             tooltip: 'Copy',
           ),
-          overflowWidget: Text(getTranslated("copy")),
+          overflowWidget: Text(getTranslated("copy"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeCopied.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -777,7 +778,7 @@ class ChatView extends NavView<ChatController> {
             ),
             tooltip: 'Message Info',
           ),
-          overflowWidget: Text(getTranslated("messageInfo")),
+          overflowWidget: Text(getTranslated("messageInfo"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canShowInfo.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -793,7 +794,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Share',
           ),
-          overflowWidget: Text(getTranslated("share")),
+          overflowWidget: Text(getTranslated("share"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeShared.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -809,7 +810,7 @@ class ChatView extends NavView<ChatController> {
             icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
             tooltip: 'Edit Message',
           ),
-          overflowWidget: Text(getTranslated("editMessage")),
+          overflowWidget: Text(getTranslated("editMessage"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canEditMessage.value
               ? ShowAsAction.never
               : ShowAsAction.gone,
@@ -823,11 +824,12 @@ class ChatView extends NavView<ChatController> {
       }else{
         return [
           CustomActionBarIcons(
+            popupMenuThemeData: AppStyleConfig.chatPageStyle.popupMenuThemeData,
             availableWidth: NavUtils.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
               CustomAction(
-                overflowWidget: Text(getTranslated("clearChat")),
+                overflowWidget: Text(getTranslated("clearChat"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.availableFeatures.value.isClearChatAvailable.checkNull() ? ShowAsAction.never : ShowAsAction.gone,
                 keyValue: 'Clear Chat',
                 onItemClick: () {
@@ -843,7 +845,7 @@ class ChatView extends NavView<ChatController> {
                   },
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
-                overflowWidget: Text(getTranslated("report")),
+                overflowWidget: Text(getTranslated("report"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Report',
                 onItemClick: () {
@@ -859,7 +861,7 @@ class ChatView extends NavView<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("unBlock")),
+                overflowWidget: Text(getTranslated("unBlock"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Unblock',
                 onItemClick: () {
@@ -874,7 +876,7 @@ class ChatView extends NavView<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("block")),
+                overflowWidget: Text(getTranslated("block"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.profile.isGroupProfile ?? false ? ShowAsAction.gone : ShowAsAction.never,
                 keyValue: 'Block',
                 onItemClick: () {
@@ -887,7 +889,7 @@ class ChatView extends NavView<ChatController> {
                   onPressed: () {},
                   icon: const Icon(Icons.search),
                 ),
-                overflowWidget: Text(getTranslated("search")),
+                overflowWidget: Text(getTranslated("search"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Search',
                 onItemClick: () {
@@ -905,7 +907,7 @@ class ChatView extends NavView<ChatController> {
                     controller.closeKeyBoard();
                     controller.exportChat();
                   },
-                  child: Text(getTranslated("emailChat")),
+                  child: Text(getTranslated("emailChat"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 ),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'EmailChat',
@@ -919,7 +921,7 @@ class ChatView extends NavView<ChatController> {
                   onPressed: () {},
                   icon: const Icon(Icons.shortcut),
                 ),
-                overflowWidget: Text(getTranslated("addChatShortcut")),
+                overflowWidget: Text(getTranslated("addChatShortcut"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.gone,
                 keyValue: 'Shortcut',
                 onItemClick: () {
@@ -933,7 +935,7 @@ class ChatView extends NavView<ChatController> {
                   },
                   icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                 ),
-                overflowWidget: Text(getTranslated("videoCall")),
+                overflowWidget: Text(getTranslated("videoCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: () {
@@ -947,7 +949,7 @@ class ChatView extends NavView<ChatController> {
                   },
                   icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
                 ),
-                overflowWidget: Text(getTranslated("audioCall")),
+                overflowWidget: Text(getTranslated("audioCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: () {

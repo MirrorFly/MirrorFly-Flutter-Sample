@@ -7,9 +7,10 @@ class ContactListPageStyle{
   final EditTextFieldStyle searchTextFieldStyle;
   final TextStyle noDataTextStyle;
 
-  ContactListPageStyle({
+  const ContactListPageStyle({
     this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
-        elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
+        iconTheme: IconThemeData(color: Color(0xff181818)),
+        actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.searchTextFieldStyle = const EditTextFieldStyle(),
     this.contactItemStyle = const ContactItemStyle(
       profileImageSize: Size(50, 50),
