@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 // import 'package:grouped_list/grouped_list.dart';
-import 'package:marquee/marquee.dart';
+// import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
@@ -603,7 +603,7 @@ class ChatView extends NavView<ChatController> {
                       ? SizedBox(
                           width: NavUtils.width * 0.90,
                           height: 15,
-                          child: Marquee(text: "${controller.groupParticipantsName}       ", style: const TextStyle(fontSize: 12)))
+                          child: Text("${controller.groupParticipantsName}", style: const TextStyle(fontSize: 12,overflow: TextOverflow.ellipsis)))
                       : controller.subtitle.isNotEmpty
                           ? Text(
                               controller.subtitle,
