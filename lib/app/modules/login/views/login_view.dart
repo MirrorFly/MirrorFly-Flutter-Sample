@@ -113,25 +113,13 @@ class LoginView extends NavView<LoginController> {
                   const SizedBox(
                     height: 40,
                   ),
-                  ElevatedButtonTheme(
-                    data: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                    child: ElevatedButton(
-                      /*style: ElevatedButton.styleFrom(
-                          backgroundColor: buttonBgColor,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 10),
-                          textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
-                          shape: const StadiumBorder()),*/
-                      onPressed: () {
-                        controller.registerUser();
-                      },
-                      child: Text(
-                        getTranslated("continue"),
-                        style: ElevatedButtonTheme.of(context).style!.textStyle?.resolve({}),
-                        // style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
-                      ),
+                  ElevatedButton(
+                    style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                    onPressed: () {
+                      controller.registerUser();
+                    },
+                    child: Text(
+                      getTranslated("continue"),
                     ),
                   ),
                   const SizedBox(

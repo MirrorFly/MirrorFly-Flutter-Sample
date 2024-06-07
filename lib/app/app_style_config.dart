@@ -1,9 +1,46 @@
+import 'package:flutter/material.dart';
+
 import 'stylesheet/stylesheet.dart';
 
 class AppStyleConfig{
 
-  static LoginPageStyle _loginPageStyle = const LoginPageStyle();
-  static ProfileViewStyle _profileViewStyle = const ProfileViewStyle();
+  static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: ButtonStyle(
+    padding: MaterialStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 40, vertical: 10)),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey; // Color when the button is disabled
+        }
+        return const Color(0xff3276E2); // Default color
+      }),
+      foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.white.withOpacity(0.5); // Text color when the button is disabled
+        }
+        return Colors.white; // Default text color
+      }),
+      textStyle: MaterialStateProperty.resolveWith<TextStyle>((Set<MaterialState> states) {
+        return const TextStyle(fontSize: 14, fontWeight: FontWeight.w500); // Default text style
+      })));
+  static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: ButtonStyle(
+    padding: MaterialStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 55, vertical: 15)),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey; // Color when the button is disabled
+        }
+        return const Color(0xff3276E2); // Default color
+      }),
+      foregroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.white.withOpacity(0.5); // Text color when the button is disabled
+        }
+        return Colors.white; // Default text color
+      }),
+      textStyle: MaterialStateProperty.resolveWith<TextStyle>((Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return TextStyle(color: Colors.white.withOpacity(0.5)); // Text color when the button is disabled
+        }
+        return const TextStyle(color: Colors.white); // Default text color
+      })));
   static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();

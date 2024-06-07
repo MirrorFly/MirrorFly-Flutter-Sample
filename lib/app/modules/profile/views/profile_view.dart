@@ -43,7 +43,6 @@ class ProfileView extends NavView<ProfileController> {
       child: Theme(
         data: ThemeData(
           appBarTheme: AppStyleConfig.profileViewStyle.appBarTheme,
-          // elevatedButtonTheme: AppStyleConfig.profileViewStyle.buttonStyle,
         ),
         child: Scaffold(
             appBar: AppBar(
@@ -258,11 +257,7 @@ class ProfileView extends NavView<ProfileController> {
                       Center(
                         child: Obx(
                           () => ElevatedButton(
-                            style: ElevatedButtonTheme.of(context).style,
-                            /*style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 55, vertical: 15),
-                                textStyle: const TextStyle(fontSize: 14),
-                                shape: const StadiumBorder()),*/
+                            style: AppStyleConfig.profileViewStyle.buttonStyle,
                             onPressed: controller.loading.value
                                 ? null
                                 : controller.changed.value
@@ -279,7 +274,6 @@ class ProfileView extends NavView<ProfileController> {
                                   : controller.changed.value
                                       ? getTranslated("updateAndContinue")
                                       : getTranslated("save"),
-                              style: ElevatedButtonTheme.of(context).style?.textStyle?.resolve({MaterialState.selected}),
                               // style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                           ),
