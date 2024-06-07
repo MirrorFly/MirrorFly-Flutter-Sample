@@ -5,6 +5,7 @@ class ContactListPageStyle{
   final AppBarTheme appBarTheme;
   final ContactItemStyle contactItemStyle;
   final EditTextFieldStyle searchTextFieldStyle;
+  final TextStyle actionTextStyle;
   final TextStyle noDataTextStyle;
 
   const ContactListPageStyle({
@@ -12,6 +13,7 @@ class ContactListPageStyle{
         iconTheme: IconThemeData(color: Color(0xff181818)),
         actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.searchTextFieldStyle = const EditTextFieldStyle(),
+    this.actionTextStyle = const TextStyle(color: Colors.black),
     this.contactItemStyle = const ContactItemStyle(
       profileImageSize: Size(50, 50),
       titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),

@@ -101,7 +101,8 @@ class ContactListView extends NavView<ContactController> {
                           onPressed: () => controller.backToCreateGroup(),
                           child: Text(
                             (arg.groupJid.isNotEmpty ? getTranslated("next") : getTranslated("create")).toUpperCase(),
-                            style: const TextStyle(color: Colors.black),
+                            style: AppStyleConfig.contactListPageStyle.actionTextStyle,
+                            // style: const TextStyle(color: Colors.black),
                           )),
                     ),
                     Visibility(

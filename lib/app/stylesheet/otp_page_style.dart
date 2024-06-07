@@ -12,11 +12,11 @@ class OTPPageStyle{
     OTPTextFieldStyle? otpTextFieldStyle,
     this.verifyOtpButtonStyle = const ElevatedButtonThemeData(
         style: ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Color(0xff3276E2)),
-            padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(
+            backgroundColor: WidgetStatePropertyAll(Color(0xff3276E2)),
+            padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(
                 horizontal: 40, vertical: 10)),
-            shape: MaterialStatePropertyAll(StadiumBorder()),
-            textStyle: MaterialStatePropertyAll<TextStyle?>(TextStyle(
+            shape: WidgetStatePropertyAll(StadiumBorder()),
+            textStyle: WidgetStatePropertyAll<TextStyle?>(TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500),)
         )
