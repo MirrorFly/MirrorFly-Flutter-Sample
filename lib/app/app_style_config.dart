@@ -45,6 +45,7 @@ class AppStyleConfig{
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();
   static ContactListPageStyle _contactListPageStyle = const ContactListPageStyle();
+  static SettingsPageStyle _settingsPageStyle = const SettingsPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -52,6 +53,7 @@ class AppStyleConfig{
   static ChatPageStyle chatPageStyle = _chatPageStyle;
   static ChatInfoPageStyle chatInfoPageStyle = _chatInfoPageStyle;
   static ContactListPageStyle contactListPageStyle= _contactListPageStyle;
+  static SettingsPageStyle settingsPageStyle= _settingsPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -75,6 +77,10 @@ class AppStyleConfig{
 
   static setContactListPageStyle(ContactListPageStyle contactListPageStyle){
     _contactListPageStyle = contactListPageStyle;
+  }
+
+  static setSettingsPageStyle(SettingsPageStyle settingsPageStyle){
+    _settingsPageStyle = settingsPageStyle;
   }
 
 }

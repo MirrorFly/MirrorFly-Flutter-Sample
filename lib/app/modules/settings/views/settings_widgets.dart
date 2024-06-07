@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -75,7 +76,7 @@ ListItem notificationItem({required String title,
 }
 
 Widget settingListItem(
-    String title, String? leading, String trailing, Function() onTap) {
+    {required String title, String? leading, required String trailing, required Function() onTap,required ListItemStyle listItemStyle}) {
   return Column(
     children: [
       InkWell(
@@ -84,19 +85,18 @@ Widget settingListItem(
           children: [
             leading != null ? Padding(
               padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(leading),
+              child: SizedBox(
+                width: 24,
+                  child: SvgPicture.asset(leading,colorFilter: ColorFilter.mode(listItemStyle.leadingIconColor, BlendMode.srcIn))),
             ) :  const SizedBox(height: 4,),
             Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                      fontSize: 15.0,
-                      fontFamily: 'sf_ui',
-                      fontWeight: FontWeight.w400),
+                  style: listItemStyle.titleTextStyle,
                 )),
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(trailing),
+              child: SvgPicture.asset(trailing,colorFilter: ColorFilter.mode(listItemStyle.trailingIconColor, BlendMode.srcIn)),
             ),
           ],
         ),
