@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -27,221 +28,229 @@ class GroupInfoView extends NavView<GroupInfoController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: NestedScrollView(
-        controller: controller.scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            Obx(() {
-              return SliverAppBar(
-                centerTitle: false,
-                snap: false,
-                pinned: true,
-                floating: false,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: controller.isSliverAppBarExpanded ? Colors.white : Colors.black),
-                  onPressed: () {
-                    NavUtils.back();
-                  },
-                ),
-                title: Visibility(
-                  visible: !controller.isSliverAppBarExpanded,
-                  child: Text(controller.profile.nickName.checkNull(),
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18.0,
-                      )),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                    titlePadding: const EdgeInsets.only(left: 16),
-                    title: Visibility(
-                      visible: controller.isSliverAppBarExpanded,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(controller.profile.nickName.checkNull(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12.0,
-                                      ) //TextStyle
-                                      ),
-                                  Text(getTranslated("membersCount").replaceAll("%d", "${controller.groupMembers.length}"),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.0,
-                                      ) //TextStyle
-                                      ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            visible: controller.availableFeatures.value.isGroupChatAvailable.checkNull() && controller.isMemberOfGroup,
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                edit,
-                                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                                width: 16.0,
-                                height: 16.0,
-                              ),
-                              tooltip: 'edit',
-                              onPressed: () => controller.gotoNameEdit(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    background: controller.imagePath.value.isNotEmpty
-                        ? SizedBox(
-                            width: NavUtils.size.width,
-                            height: 300,
-                            child: Image.file(
-                              File(controller.imagePath.value),
-                              fit: BoxFit.fill,
-                            ))
-                        : ImageNetwork(
-                            url: controller.profile.image.checkNull(),
-                            width: NavUtils.size.width,
-                            height: 300,
-                            clipOval: false,
-                            errorWidget: Image.asset(
-                              groupImg,
-                              height: 300,
-                              width: NavUtils.size.width,
-                              fit: BoxFit.fill,
-                            ),
-                            onTap: () {
-                              if (controller.imagePath.value.isNotEmpty) {
-                                NavUtils.toNamed(Routes.imageView,
-                                    arguments: {'imageName': controller.profile.nickName, 'imagePath': controller.profile.image.checkNull()});
-                              } else if (controller.profile.image.checkNull().isNotEmpty) {
-                                NavUtils.toNamed(Routes.imageView,
-                                    arguments: {'imageName': controller.profile.nickName, 'imageUrl': controller.profile.image.checkNull()});
-                              }
-                            },
-                            isGroup: controller.profile.isGroupProfile.checkNull(),
-                            blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
-                            unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
-                          ) //Images.network
-                    ),
-                //FlexibleSpaceBar
-                expandedHeight: 300,
-                //IconButton
-                actions: <Widget>[
-                  Visibility(
-                    visible: controller.availableFeatures.value.isGroupChatAvailable.checkNull() && controller.isMemberOfGroup,
-                    child: IconButton(
-                      icon: SvgPicture.asset(
-                        imageEdit,
-                        colorFilter: ColorFilter.mode(controller.isSliverAppBarExpanded ? Colors.white : Colors.black, BlendMode.srcIn),
-                      ),
-                      tooltip: 'Image edit',
-                      onPressed: () {
-                        if (controller.isMemberOfGroup) {
-                          bottomSheetView(context);
-                        } else {
-                          toToast(getTranslated("youAreNoLonger"));
-                        }
-                      },
-                    ),
+    return Theme(
+      data: ThemeData(appBarTheme: AppStyleConfig.groupChatInfoPageStyle.appBarTheme),
+      child: Scaffold(
+        body: NestedScrollView(
+          controller: controller.scrollController,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              Obx(() {
+                return SliverAppBar(
+                  centerTitle: false,
+                  snap: false,
+                  pinned: true,
+                  floating: false,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back,color: controller.isSliverAppBarExpanded
+                        ? AppStyleConfig.groupChatInfoPageStyle.silverAppBarIconColor
+                        : AppBarTheme.of(context).actionsIconTheme?.color),
+                    onPressed: () {
+                      NavUtils.back();
+                    },
                   ),
-                ],
-              );
-            })
-          ];
-        },
-        body: SafeArea(
-          child: ListView(
-            children: <Widget>[
-              Obx(() {
-                return ListItem(
-                    title: Text(getTranslated("muteNotification"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
-                    trailing: FlutterSwitch(
-                      width: 40.0,
-                      height: 20.0,
-                      valueFontSize: 12.0,
-                      toggleSize: 12.0,
-                      activeColor: Colors.white,
-                      activeToggleColor: Colors.blue,
-                      inactiveToggleColor: Colors.grey,
-                      inactiveColor: Colors.white,
-                      switchBorder: Border.all(color: controller.mute ? Colors.blue : Colors.grey, width: 1),
-                      value: controller.mute,
-                      onToggle: (value) {
-                        controller.onToggleChange(value);
-                      },
-                    ),
-                    onTap: () {
-                      controller.onToggleChange(!controller.mute);
-                    });
-              }),
-              Obx(() => Visibility(
-                    visible: controller.isAdmin,
-                    child: ListItem(
-                        leading: SvgPicture.asset(addUser),
-                        title: Text(getTranslated("addParticipants"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
-                        onTap: () => controller.gotoAddParticipants()),
-                  )),
-              Obx(() {
-                return ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.groupMembers.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      var item = controller.groupMembers[index];
-                      return memberItem(
-                        name: item.getName().checkNull(),
-                        image: item.image.checkNull(),
-                        isAdmin: item.isGroupAdmin,
-                        status: item.status.checkNull(),
-                        onTap: () {
-                          if (item.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
-                            showOptions(item,context);
+                  title: Visibility(
+                    visible: !controller.isSliverAppBarExpanded,
+                    child: Text(controller.profile.nickName.checkNull(),
+                      style: AppBarTheme.of(context).titleTextStyle,
+                        /*style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.0,
+                        )*/),
+                  ),
+                  flexibleSpace: FlexibleSpaceBar(
+                      titlePadding: const EdgeInsets.only(left: 16),
+                      title: Visibility(
+                        visible: controller.isSliverAppBarExpanded,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(controller.profile.nickName.checkNull(),
+                                        style: controller.isSliverAppBarExpanded ? AppStyleConfig.groupChatInfoPageStyle.silverAppbarTitleStyle : AppBarTheme.of(context).titleTextStyle
+                                      /*style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12.0,
+                                        )*/ //TextStyle
+                                        ),
+                                    Text(getTranslated("membersCount").replaceAll("%d", "${controller.groupMembers.length}"),
+                                      style: AppStyleConfig.groupChatInfoPageStyle.silverAppBarSubTitleStyle,
+                                        /*style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 8.0,
+                                        ) *///TextStyle
+                                        ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: controller.availableFeatures.value.isGroupChatAvailable.checkNull() && controller.isMemberOfGroup,
+                              child: IconButton(
+                                icon: SvgPicture.asset(
+                                  edit,
+                                  colorFilter: ColorFilter.mode(AppStyleConfig.groupChatInfoPageStyle.silverAppBarIconColor, BlendMode.srcIn),
+                                  width: 16.0,
+                                  height: 16.0,
+                                ),
+                                tooltip: 'edit',
+                                onPressed: () => controller.gotoNameEdit(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      background: controller.imagePath.value.isNotEmpty
+                          ? SizedBox(
+                              width: NavUtils.size.width,
+                              height: 300,
+                              child: Image.file(
+                                File(controller.imagePath.value),
+                                fit: BoxFit.fill,
+                              ))
+                          : ImageNetwork(
+                              url: controller.profile.image.checkNull(),
+                              width: NavUtils.size.width,
+                              height: NavUtils.height * 0.45,
+                              clipOval: false,
+                              errorWidget: Image.asset(
+                                groupImg,
+                                height: NavUtils.height * 0.45,
+                                width: NavUtils.size.width,
+                                fit: BoxFit.fill,
+                              ),
+                              onTap: () {
+                                if (controller.imagePath.value.isNotEmpty) {
+                                  NavUtils.toNamed(Routes.imageView,
+                                      arguments: {'imageName': controller.profile.nickName, 'imagePath': controller.profile.image.checkNull()});
+                                } else if (controller.profile.image.checkNull().isNotEmpty) {
+                                  NavUtils.toNamed(Routes.imageView,
+                                      arguments: {'imageName': controller.profile.nickName, 'imageUrl': controller.profile.image.checkNull()});
+                                }
+                              },
+                              isGroup: controller.profile.isGroupProfile.checkNull(),
+                              blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
+                              unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
+                            ) //Images.network
+                      ),
+                  //FlexibleSpaceBar
+                  expandedHeight: NavUtils.height * 0.45,
+                  //IconButton
+                  actions: <Widget>[
+                    Visibility(
+                      visible: controller.availableFeatures.value.isGroupChatAvailable.checkNull() && controller.isMemberOfGroup,
+                      child: IconButton(
+                        icon: SvgPicture.asset(
+                          imageEdit,
+                          colorFilter: ColorFilter.mode(controller.isSliverAppBarExpanded ? AppStyleConfig.groupChatInfoPageStyle.silverAppBarIconColor : AppBarTheme.of(context).actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),
+                        ),
+                        tooltip: 'Image edit',
+                        onPressed: () {
+                          if (controller.isMemberOfGroup) {
+                            bottomSheetView(context);
+                          } else {
+                            toToast(getTranslated("youAreNoLonger"));
                           }
                         },
-                        isGroup: item.isGroupProfile.checkNull(),
-                        blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
-                        unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
-                      );
-                    });
-              }),
-              ListItem(
-                leading: SvgPicture.asset(imageOutline),
-                title: Text(getTranslated("viewAllMedia"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () => controller.gotoViewAllMedia(),
-              ),
-              ListItem(
-                leading: SvgPicture.asset(reportGroup),
-                title: Text(getTranslated("reportGroup"), style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
-                onTap: () => controller.reportGroup(),
-              ),
-              Obx(() {
-                LogMessage.d("Delete or Leave",
-                    "${controller.isMemberOfGroup} ${controller.availableFeatures.value.isDeleteChatAvailable.checkNull()} ${controller.isMemberOfGroup} ${controller.leavedGroup.value}");
-                return Visibility(
-                  visible: !controller.isMemberOfGroup
-                      ? controller.availableFeatures.value.isDeleteChatAvailable.checkNull()
-                      : (controller.isMemberOfGroup && !controller.leavedGroup.value),
-                  child: ListItem(
-                    leading: SvgPicture.asset(
-                      leaveGroup,
-                      width: 18,
+                      ),
                     ),
-                    title: Text(!controller.isMemberOfGroup ? getTranslated("deleteGroup") : getTranslated("leaveGroup"),
-                        style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
-                    onTap: () => controller.exitOrDeleteGroup(),
-                  ),
+                  ],
                 );
-              }),
-            ],
+              })
+            ];
+          },
+          body: SafeArea(
+            child: ListView(
+              children: <Widget>[
+                Obx(() {
+                  return ListItem(
+                      title: Text(getTranslated("muteNotification"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                      trailing: FlutterSwitch(
+                        width: 40.0,
+                        height: 20.0,
+                        valueFontSize: 12.0,
+                        toggleSize: 12.0,
+                        activeColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeColor,
+                        activeToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeToggleColor,
+                        inactiveToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveToggleColor,
+                        inactiveColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveColor,
+                        switchBorder: Border.all(color: controller.mute ? AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeToggleColor : AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveToggleColor, width: 1),
+                        value: controller.mute,
+                        onToggle: (value) {
+                          controller.onToggleChange(value);
+                        },
+                      ),
+                      onTap: () {
+                        controller.onToggleChange(!controller.mute);
+                      });
+                }),
+                Obx(() => Visibility(
+                      visible: controller.isAdmin,
+                      child: ListItem(
+                          leading: SvgPicture.asset(addUser),
+                          title: Text(getTranslated("addParticipants"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                          onTap: () => controller.gotoAddParticipants()),
+                    )),
+                Obx(() {
+                  return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.groupMembers.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        var item = controller.groupMembers[index];
+                        return memberItem(
+                          name: item.getName().checkNull(),
+                          image: item.image.checkNull(),
+                          isAdmin: item.isGroupAdmin,
+                          status: item.status.checkNull(),
+                          onTap: () {
+                            if (item.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
+                              showOptions(item,context);
+                            }
+                          },
+                          isGroup: item.isGroupProfile.checkNull(),
+                          blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
+                          unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+                        );
+                      });
+                }),
+                ListItem(
+                  leading: SvgPicture.asset(imageOutline),
+                  title: Text(getTranslated("viewAllMedia"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
+                  onTap: () => controller.gotoViewAllMedia(),
+                ),
+                ListItem(
+                  leading: SvgPicture.asset(reportGroup),
+                  title: Text(getTranslated("reportGroup"), style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
+                  onTap: () => controller.reportGroup(),
+                ),
+                Obx(() {
+                  LogMessage.d("Delete or Leave",
+                      "${controller.isMemberOfGroup} ${controller.availableFeatures.value.isDeleteChatAvailable.checkNull()} ${controller.isMemberOfGroup} ${controller.leavedGroup.value}");
+                  return Visibility(
+                    visible: !controller.isMemberOfGroup
+                        ? controller.availableFeatures.value.isDeleteChatAvailable.checkNull()
+                        : (controller.isMemberOfGroup && !controller.leavedGroup.value),
+                    child: ListItem(
+                      leading: SvgPicture.asset(
+                        leaveGroup,
+                        width: 18,
+                      ),
+                      title: Text(!controller.isMemberOfGroup ? getTranslated("deleteGroup") : getTranslated("leaveGroup"),
+                          style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
+                      onTap: () => controller.exitOrDeleteGroup(),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
       ),

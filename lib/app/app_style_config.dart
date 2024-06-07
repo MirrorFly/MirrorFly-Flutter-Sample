@@ -45,6 +45,7 @@ class AppStyleConfig{
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
   static CreateGroupPageStyle _createGroupPageStyle = const CreateGroupPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();
+  static GroupChatInfoPageStyle _groupChatInfoPageStyle = const GroupChatInfoPageStyle();
   static ContactListPageStyle _contactListPageStyle = const ContactListPageStyle();
   static SettingsPageStyle _settingsPageStyle = const SettingsPageStyle();
 
@@ -54,6 +55,7 @@ class AppStyleConfig{
   static ChatPageStyle chatPageStyle = _chatPageStyle;
   static CreateGroupPageStyle createGroupPageStyle = _createGroupPageStyle;
   static ChatInfoPageStyle chatInfoPageStyle = _chatInfoPageStyle;
+  static GroupChatInfoPageStyle groupChatInfoPageStyle = _groupChatInfoPageStyle;
   static ContactListPageStyle contactListPageStyle= _contactListPageStyle;
   static SettingsPageStyle settingsPageStyle= _settingsPageStyle;
 
@@ -79,6 +81,10 @@ class AppStyleConfig{
 
   static setChatInfoPageStyle(ChatInfoPageStyle chatInfoPageStyle){
     _chatInfoPageStyle = chatInfoPageStyle;
+  }
+
+  static setGroupChatInfoPageStyle(GroupChatInfoPageStyle groupChatInfoPageStyle){
+    _groupChatInfoPageStyle = groupChatInfoPageStyle;
   }
 
   static setContactListPageStyle(ContactListPageStyle contactListPageStyle){

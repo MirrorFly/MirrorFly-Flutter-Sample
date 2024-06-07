@@ -25,62 +25,47 @@ class ChatInfoView extends NavView<ChatInfoController> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.chatInfoPageStyle.appBarTheme),
+      data: ThemeData(appBarTheme: AppStyleConfig.chatInfoPageStyle.appBarTheme,),
       child: Scaffold(
         body: !controller.argument.disableAppbar
             ? NestedScrollView(
           controller: controller.scrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            controller.silverBarHeight =
-                MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.45;
+            controller.silverBarHeight = NavUtils.height * 0.45;
             return <Widget>[
               Obx(() {
                 return SliverAppBar(
                   centerTitle: false,
                   titleSpacing: 0.0,
-                  expandedHeight: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.45,
+                  expandedHeight: NavUtils.height * 0.45,
                   snap: false,
                   pinned: true,
                   floating: false,
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back,
                         color: controller.isSliverAppBarExpanded
-                            ? Colors.white
-                            : Colors.black),
+                            ? AppStyleConfig.chatInfoPageStyle.silverAppBarIconColor
+                            : AppBarTheme.of(context).actionsIconTheme?.color),
                     onPressed: () {
                       NavUtils.back();
                     },
                   ),
                   title: Visibility(
                     visible: !controller.isSliverAppBarExpanded,
-                    child: Text(controller.profile.getName(),/*controller.profile.name
-                        .checkNull()
-                        .isEmpty
-                        ? controller.profile.nickName.checkNull()
-                        : controller.profile.name.checkNull(),*/
-                        style: const TextStyle(
+                    child: Text(controller.profile.getName(),
+                        style: AppBarTheme.of(context).titleTextStyle,
+                        /*style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18.0,
-                        )),
+                        )*/
+                    ),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
                     centerTitle: false,
                     background: ImageNetwork(
                       url: controller.profile.image.checkNull(),
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height * 0.45,
+                      width: NavUtils.width,
+                      height: NavUtils.height * 0.45,
                       clipOval: false,
                       errorWidget: ProfileTextImage(
                         text: controller.profile.getName(),
@@ -117,23 +102,22 @@ class ChatInfoView extends NavView<ChatInfoController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(getName(controller.profile),/*controller.profile.name
-                                .checkNull()
-                                .isEmpty
-                                ? controller.profile.nickName.checkNull()
-                                : controller.profile.name.checkNull(),*/
-                                style: TextStyle(
+                            Text(getName(controller.profile),
+                                style: controller.isSliverAppBarExpanded ? AppStyleConfig.chatInfoPageStyle.silverAppbarTitleStyle : AppBarTheme.of(context).titleTextStyle
+                                /*TextStyle(
                                   color: controller.isSliverAppBarExpanded
                                       ? Colors.white
                                       : Colors.black,
                                   fontSize: 18.0,
-                                )),
+                                )*/
+                            ),
                             Obx(() {
                               return Text(controller.userPresenceStatus.value,
-                                  style: const TextStyle(
+                                  style: AppStyleConfig.chatInfoPageStyle.silverAppBarSubTitleStyle,
+                                  /*style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 8.0,
-                                  ) //TextStyle
+                                  ) *///TextStyle
                               );
                             }),
                           ],
@@ -161,29 +145,28 @@ class ChatInfoView extends NavView<ChatInfoController> {
       children: [
         Obx(() {
           return controller.isSliverAppBarExpanded
-              ? const SizedBox.shrink()
+              ? const Offstage()
               : const SizedBox(height: 60);
         }),
         Obx(() {
           return listItem(
             title: Text(getTranslated("muteNotification"),
-                style: const TextStyle(
+                style: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.textStyle,
+                /*style: const TextStyle(
                     color: Colors.black,
                     fontSize: 14,
-                    fontWeight: FontWeight.w500)),
+                    fontWeight: FontWeight.w500)*/
+            ),
             trailing: FlutterSwitch(
                 width: 40.0,
                 height: 20.0,
                 valueFontSize: 12.0,
                 toggleSize: 12.0,
-                activeColor: Colors.white,
-                activeToggleColor: Colors.blue,
-                inactiveToggleColor: Colors.grey,
-                inactiveColor: Colors.white,
-                switchBorder: Border.all(
-                    color: controller.mute.value ? Colors.blue : Colors
-                        .grey,
-                    width: 1),
+                activeColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeColor,
+                activeToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeToggleColor,
+                inactiveToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveToggleColor,
+                inactiveColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveColor,
+                switchBorder: Border.all(color: controller.mute.value ? AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeToggleColor : AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveToggleColor, width: 1),
                 value: controller.mute.value,
                 onToggle: (value) =>
                 {

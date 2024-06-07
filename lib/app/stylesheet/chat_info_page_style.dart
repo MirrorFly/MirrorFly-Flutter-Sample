@@ -4,22 +4,21 @@ class ChatInfoPageStyle{
   const ChatInfoPageStyle({
     this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
         elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
-    this.appBarTitleStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.white,fontSize: 18),
-    this.appBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),
+    this.silverAppbarTitleStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.white,fontSize: 18),
+    this.silverAppBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),
+    this.silverAppBarIconColor = Colors.white,
     this.muteNotificationStyle = const MuteNotificationStyle(textStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
     activeColor: Colors.white,
     inactiveColor: Colors.white,
     activeToggleColor: Colors.blue,
-    inactiveToggleColor: Colors.blue,
-    switchBorder: Border.fromBorderSide(BorderSide(
-        color: Colors.grey,
-        width: 1))),
+    inactiveToggleColor: Colors.grey,),
     this.optionsViewStyle = const OptionsViewStyle(titleStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),contentStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 13)),
     this.dividerColor = Colors.grey
 });
   final AppBarTheme appBarTheme;
-  final TextStyle appBarTitleStyle;
-  final TextStyle appBarSubTitleStyle;
+  final TextStyle silverAppbarTitleStyle;
+  final TextStyle silverAppBarSubTitleStyle;
+  final Color silverAppBarIconColor;
   final MuteNotificationStyle muteNotificationStyle;
   final OptionsViewStyle optionsViewStyle;
   final Color dividerColor;
@@ -42,9 +41,6 @@ class MuteNotificationStyle{
     this.inactiveColor = Colors.white,
     this.activeToggleColor = Colors.blue,
     this.inactiveToggleColor = Colors.grey,
-    this.switchBorder = const Border.fromBorderSide(BorderSide(
-        color: Colors.grey,
-        width: 1)),
   });
   final TextStyle textStyle;
 
@@ -52,13 +48,13 @@ class MuteNotificationStyle{
   ///
   /// If [inactiveToggleColor] is used and this property is null. the value of
   /// [Colors.white] will be used.
-  final Color? activeToggleColor;
+  final Color activeToggleColor;
 
   /// The color to use on the toggle of the switch when the given value is false.
   ///
   /// If [activeToggleColor] is used and this property is null. the value of
   /// [Colors.white] will be used.
-  final Color? inactiveToggleColor;
+  final Color inactiveToggleColor;
   /// The color to use on the switch when the switch is on.
   ///
   /// Defaults to [Colors.blue].
@@ -68,12 +64,5 @@ class MuteNotificationStyle{
   ///
   /// Defaults to [Colors.grey].
   final Color inactiveColor;
-
-  /// The border of the switch.
-  ///
-  /// This property will give a uniform border to both states of the toggle
-  ///
-  /// If the [activeSwitchBorder] or [inactiveSwitchBorder] is used, this property must be null.
-  final BoxBorder? switchBorder;
 }
 

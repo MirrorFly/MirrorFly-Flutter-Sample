@@ -5,6 +5,7 @@ import 'package:otp_text_field/style.dart';
 
 part 'archived_page_style.dart';
 part 'chat_info_page_style.dart';
+part 'groupchat_info_page_style.dart';
 part 'chat_page_style.dart';
 part 'contacts_page_style.dart';
 part 'custom_styles.dart';
