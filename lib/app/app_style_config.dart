@@ -48,6 +48,7 @@ class AppStyleConfig{
   static GroupChatInfoPageStyle _groupChatInfoPageStyle = const GroupChatInfoPageStyle();
   static ContactListPageStyle _contactListPageStyle = const ContactListPageStyle();
   static SettingsPageStyle _settingsPageStyle = const SettingsPageStyle();
+  static ViewAllMediaPageStyle _viewAllMediaPageStyle = const ViewAllMediaPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -58,6 +59,7 @@ class AppStyleConfig{
   static GroupChatInfoPageStyle groupChatInfoPageStyle = _groupChatInfoPageStyle;
   static ContactListPageStyle contactListPageStyle= _contactListPageStyle;
   static SettingsPageStyle settingsPageStyle= _settingsPageStyle;
+  static ViewAllMediaPageStyle viewAllMediaPageStyle= _viewAllMediaPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -94,5 +96,10 @@ class AppStyleConfig{
   static setSettingsPageStyle(SettingsPageStyle settingsPageStyle){
     _settingsPageStyle = settingsPageStyle;
   }
+
+  static setViewAllMediaPageStyle(ViewAllMediaPageStyle viewAllMediaPageStyle){
+    _viewAllMediaPageStyle = viewAllMediaPageStyle;
+  }
+
 
 }

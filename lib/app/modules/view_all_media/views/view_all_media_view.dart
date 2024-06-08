@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
@@ -23,60 +25,60 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: FutureBuilder(
-            future: getProfileDetails(controller.arguments.chatJid),
-            builder: (context,data) {
-              if(data.data != null) {
-                return Text(data.data!.getName());
+    return Theme(
+      data: ThemeData(appBarTheme: AppStyleConfig.viewAllMediaPageStyle.appBarTheme,tabBarTheme: AppStyleConfig.viewAllMediaPageStyle.tabBarTheme),
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: FutureBuilder(
+              future: getProfileDetails(controller.arguments.chatJid),
+              builder: (context,data) {
+                if(data.data != null) {
+                  return Text(data.data!.getName());
+                }
+                return const Offstage();
               }
-              return const Offstage();
-            }
+            ),
+            centerTitle: false,
+            bottom: TabBar(
+                indicatorWeight: 2,
+                tabs: [
+                  Center(
+                    child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          getTranslated("media"),
+                          // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                        )),
+                  ),
+                  Center(
+                    child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(getTranslated("docs"),
+                            // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)
+                        )),
+                  ),
+                  Center(
+                    child: Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(getTranslated("links"),
+                            // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)
+                        )),
+                  ),
+                ]),
           ),
-          centerTitle: false,
-          bottom: TabBar(
-              indicatorColor: buttonBgColor,
-              labelColor: buttonBgColor,
-              unselectedLabelColor: appbarTextColor,
-              indicatorWeight: 2,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: const EdgeInsets.symmetric(horizontal: 16),
-              tabs: [
-                Center(
-                  child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        getTranslated("media"),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 16),
-                      )),
-                ),
-                Center(
-                  child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(getTranslated("docs"),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16))),
-                ),
-                Center(
-                  child: Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(getTranslated("links"),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16))),
-                ),
-              ]),
+          body: TabBarView(children: [
+            mediaView(context,AppStyleConfig.viewAllMediaPageStyle.groupedMediaItem),
+            docsView(context,AppStyleConfig.viewAllMediaPageStyle.groupedMediaItem),
+            linksView(context,AppStyleConfig.viewAllMediaPageStyle.groupedMediaItem)
+          ]),
         ),
-        body: TabBarView(children: [mediaView(context), docsView(context), linksView(context)]),
       ),
     );
   }
 
-  Widget mediaView(BuildContext context) {
+  Widget mediaView(BuildContext context,GroupedMediaItemStyle groupedMediaItemStyle) {
     return SafeArea(
       child: Obx(() {
         return controller.medialistdata.isNotEmpty
@@ -93,7 +95,7 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.max,
-                            children: [headerItem(header), gridView(header)],
+                            children: [headerItem(header,groupedMediaItemStyle.titleStyle), gridView(header,groupedMediaItemStyle)],
                           );
                         }),
                     const SizedBox(
@@ -102,16 +104,16 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                     Text(getTranslated("mediaCount")
                         .replaceFirst("%p", "${controller.imageCount}")
                         .replaceFirst("%v", "${controller.videoCount}")
-                        .replaceFirst("%a", "${controller.audioCount}")),
+                        .replaceFirst("%a", "${controller.audioCount}"),style: AppStyleConfig.viewAllMediaPageStyle.noDataTextStyle,),
                   ],
                 ),
               )
-            : Center(child: Text(getTranslated("noMediaFound")));
+            : Center(child: Text(getTranslated("noMediaFound"),style: AppStyleConfig.viewAllMediaPageStyle.noDataTextStyle,));
       }),
     );
   }
 
-  Widget gridView(String header) {
+  Widget gridView(String header,GroupedMediaItemStyle groupedMediaItemStyle) {
     return GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -122,34 +124,35 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
         ),
         itemBuilder: (context, gridIndex) {
           var item = controller.medialistdata[header]![gridIndex].chatMessage;
-          return gridItem(item, gridIndex);
+          return gridItem(item, gridIndex,groupedMediaItemStyle);
         });
   }
 
-  Widget headerItem(String header) {
+  Widget headerItem(String header,TextStyle style) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
       child: Text(
         header,
-        style: const TextStyle(
+        style: style,
+        /*style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Color(0xff323232)),
+            color: Color(0xff323232)),*/
       ),
     );
   }
 
-  Widget gridItem(ChatMessageModel item, int gridIndex) {
+  Widget gridItem(ChatMessageModel item, int gridIndex,GroupedMediaItemStyle groupedMediaItemStyle) {
     return InkWell(
       child: Container(
           margin: const EdgeInsets.only(right: 3),
           color: item.isAudioMessage()
-              ? const Color(0xff97A5C7)
+              ? groupedMediaItemStyle.mediaAudioItemStyle.bgColor//const Color(0xff97A5C7)
               : Colors.transparent,
           child: item.isAudioMessage()
-              ? audioItem(item)
+              ? audioItem(item,groupedMediaItemStyle.mediaAudioItemStyle)
               : item.isVideoMessage()
-                  ? videoItem(item)
+                  ? videoItem(item,groupedMediaItemStyle.mediaVideoItemStyle)
                   : item.isImageMessage()
                       ? Image.file(
                           File(item
@@ -168,36 +171,37 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
     );
   }
 
-  Widget videoItem(ChatMessageModel item) {
+  Widget videoItem(ChatMessageModel item,MediaItemStyle mediaItemStyle) {
     return Stack(
       children: [
         controller.imageFromBase64String(
             item.mediaChatMessage!.mediaThumbImage, null, null),
         Center(
-          child: SvgPicture.asset(videoWhite),
+          child: SvgPicture.asset(videoWhite,colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
         )
       ],
     );
   }
 
-  Widget audioItem(ChatMessageModel item) {
+  Widget audioItem(ChatMessageModel item,MediaItemStyle mediaItemStyle) {
     return Center(
       child: SvgPicture.asset(
-          item.mediaChatMessage!.isAudioRecorded ? audioMic1 : audioWhite),
+          item.mediaChatMessage!.isAudioRecorded ? audioMic1 : audioWhite,
+      colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
     );
   }
 
-  Widget docsView(BuildContext context) {
+  Widget docsView(BuildContext context,GroupedMediaItemStyle groupedMediaItemStyle) {
     return SafeArea(
       child: Obx(() {
         return controller.docslistdata.isNotEmpty
-            ? listView(controller.docslistdata, true,context)
-            : Center(child: Text(getTranslated("noDocsFound")));
+            ? listView(controller.docslistdata, true,context,groupedMediaItemStyle)
+            : Center(child: Text(getTranslated("noDocsFound"),style: AppStyleConfig.viewAllMediaPageStyle.noDataTextStyle,));
       }),
     );
   }
 
-  Widget listView(Map<String, List<MessageItem>> list, bool doc,BuildContext context) {
+  Widget listView(Map<String, List<MessageItem>> list, bool doc,BuildContext context,GroupedMediaItemStyle groupedMediaItemStyle) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -211,7 +215,7 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    headerItem(header),
+                    headerItem(header,groupedMediaItemStyle.titleStyle),
                     ListView.builder(
                         itemCount: list[header]!.length,
                         shrinkWrap: true,
@@ -229,8 +233,8 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                                   date: DateTimeUtils.convertTimeStampToDateString(
                                       item.messageSentTime.toInt(), "d/MM/yy"),
                                   path: item.mediaChatMessage!
-                                      .mediaLocalStoragePath.value)
-                              : linkTile(list[header]![listIndex]);
+                                      .mediaLocalStoragePath.value,documentItemStyle: groupedMediaItemStyle.documentItemStyle)
+                              : linkTile(list[header]![listIndex],groupedMediaItemStyle.linkItemStyle);
                         }),
                   ],
                 );
@@ -251,7 +255,7 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
       required String title,
       required String subtitle,
       required String date,
-      required String path}) {
+      required String path,required DocumentItemStyle documentItemStyle}) {
     return InkWell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -275,13 +279,15 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(fontSize: 13),
+                        style: documentItemStyle.titleTextStyle,
+                        // style: const TextStyle(fontSize: 13),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
                       Text(
                         subtitle,
-                        style: const TextStyle(fontSize: 11),
+                        style: documentItemStyle.sizeTextStyle,
+                        // style: const TextStyle(fontSize: 11),
                       ),
                     ],
                   ),
@@ -290,12 +296,15 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
               Center(
                   child: Padding(
                 padding: const EdgeInsets.only(right: 20.0),
-                child: Text(date, style: const TextStyle(fontSize: 11)),
+                child: Text(date, style: documentItemStyle.dateTextStyle,
+                    // style: const TextStyle(fontSize: 11)
+                ),
               )),
             ],
           ),
-          const AppDivider(
-            padding: EdgeInsets.only(top: 8, bottom: 8),
+          AppDivider(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            color: documentItemStyle.dividerColor,
           )
         ],
       ),
@@ -305,14 +314,12 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
     );
   }
 
-  Widget linkTile(MessageItem item) {
+  Widget linkTile(MessageItem item,LinkItemStyle linkItemStyle) {
     return Column(
       children: [
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-          decoration: const BoxDecoration(
-              color: Color(0xffE2E8F7),
-              borderRadius: BorderRadius.all(Radius.circular(8))),
+          decoration: linkItemStyle.outerDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -321,9 +328,7 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                   AppUtils.launchWeb(Uri.parse(item.linkMap!["url"]));
                 },
                 child: Container(
-                  decoration: const BoxDecoration(
-                      color: Color(0xffD0D8EB),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  decoration: linkItemStyle.innerDecoration,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -331,8 +336,8 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                               item.chatMessage.isVideoMessage())
                           ? ClipRRect(
                               borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(8),
-                                  bottomLeft: Radius.circular(8)),
+                                  topLeft: Radius.circular(6),
+                                  bottomLeft: Radius.circular(6)),
                               child: controller.imageFromBase64String(
                                   item.chatMessage.mediaChatMessage!
                                       .mediaThumbImage,
@@ -342,13 +347,9 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                           : Container(
                               height: 70,
                               width: 70,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xff97A5C7),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      bottomLeft: Radius.circular(8))),
+                              decoration: linkItemStyle.iconDecoration,
                               child: Center(
-                                child: SvgPicture.asset(linkImage),
+                                child: SvgPicture.asset(linkImage,colorFilter: ColorFilter.mode(linkItemStyle.iconColor, BlendMode.srcIn),),
                               ),
                             ),
                       Expanded(
@@ -359,11 +360,13 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                           children: [
                             Text(
                               item.linkMap!["url"],
-                              style: const TextStyle(fontSize: 14),
+                              style: linkItemStyle.titleTextStyle,
+                              // style: const TextStyle(fontSize: 14),
                             ),
                             Text(
                               item.linkMap!["host"],
-                              style: const TextStyle(fontSize: 10),
+                              style: linkItemStyle.descriptionTextStyle,
+                              // style: const TextStyle(fontSize: 10),
                             ),
                           ],
                         ),
@@ -390,15 +393,16 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
                                   ? item.chatMessage.mediaChatMessage!
                                       .mediaCaptionText
                                   : Constants.emptyString,
-                          style: const TextStyle(
-                              fontSize: 13, color: Color(0xff7889B3)),
+                          // style: const TextStyle(fontSize: 13, color: Color(0xff7889B3)),
+                          style: linkItemStyle.linkTextStyle,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.keyboard_arrow_right,
-                        color: Color(0xff7185b5),
+                        color: linkItemStyle.linkTextStyle.color,
+                        // color: Color(0xff7185b5),
                       )
                     ],
                   ),
@@ -412,11 +416,11 @@ class ViewAllMediaView extends NavView<ViewAllMediaController> {
     );
   }
 
-  Widget linksView(BuildContext context) {
+  Widget linksView(BuildContext context,GroupedMediaItemStyle groupedMediaItemStyle) {
     return SafeArea(
       child: Obx(() {
         return controller.linklistdata.isNotEmpty
-            ? listView(controller.linklistdata, false,context)
+            ? listView(controller.linklistdata, false,context,groupedMediaItemStyle)
             : Center(child: Text(getTranslated("noLinksFound")));
       }),
     );
