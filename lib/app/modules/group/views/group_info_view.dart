@@ -17,6 +17,7 @@ import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
+import '../../settings/views/settings_widgets.dart';
 
 class GroupInfoView extends NavView<GroupInfoController> {
   const GroupInfoView({Key? key}) : super(key: key);
@@ -170,7 +171,7 @@ class GroupInfoView extends NavView<GroupInfoController> {
               children: <Widget>[
                 Obx(() {
                   return ListItem(
-                      title: Text(getTranslated("muteNotification"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                      title: Text(getTranslated("muteNotification"), style:  AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.textStyle),
                       trailing: FlutterSwitch(
                         width: 40.0,
                         height: 20.0,
@@ -193,8 +194,11 @@ class GroupInfoView extends NavView<GroupInfoController> {
                 Obx(() => Visibility(
                       visible: controller.isAdmin,
                       child: ListItem(
-                          leading: SvgPicture.asset(addUser),
-                          title: Text(getTranslated("addParticipants"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
+                          leading: SvgPicture.asset(addUser,colorFilter: ColorFilter.mode(AppStyleConfig.groupChatInfoPageStyle.addParticipantStyle.leadingIconColor, BlendMode.srcIn),),
+                          title: Text(getTranslated("addParticipants"),
+                              style: AppStyleConfig.groupChatInfoPageStyle.addParticipantStyle.titleTextStyle,
+                              // style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)
+                          ),
                           onTap: () => controller.gotoAddParticipants()),
                     )),
                 Obx(() {
@@ -204,7 +208,8 @@ class GroupInfoView extends NavView<GroupInfoController> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var item = controller.groupMembers[index];
-                        return memberItem(
+                        return MemberItem(
+                          itemStyle: AppStyleConfig.groupChatInfoPageStyle.groupMemberStyle,
                           name: item.getName().checkNull(),
                           image: item.image.checkNull(),
                           isAdmin: item.isGroupAdmin,
@@ -220,17 +225,23 @@ class GroupInfoView extends NavView<GroupInfoController> {
                         );
                       });
                 }),
-                ListItem(
-                  leading: SvgPicture.asset(imageOutline),
-                  title: Text(getTranslated("viewAllMedia"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500)),
-                  trailing: const Icon(Icons.keyboard_arrow_right),
+                SettingListItem(leading: imageOutline,title: getTranslated("viewAllMedia"),trailing: rightArrowIcon,onTap: (){
+                  controller.gotoViewAllMedia();
+                }, listItemStyle: AppStyleConfig.groupChatInfoPageStyle.viewAllMediaStyle,),
+                /*ListItem(
+                  leading: SvgPicture.asset(imageOutline,colorFilter: ColorFilter.mode(AppStyleConfig.groupChatInfoPageStyle.viewAllMediaStyle.leadingIconColor, BlendMode.srcIn),),
+                  title: Text(getTranslated("viewAllMedia"), style: AppStyleConfig.groupChatInfoPageStyle.viewAllMediaStyle.titleTextStyle),
+                  trailing: Icon(Icons.keyboard_arrow_right,color: AppStyleConfig.groupChatInfoPageStyle.viewAllMediaStyle.trailingIconColor,),
                   onTap: () => controller.gotoViewAllMedia(),
-                ),
-                ListItem(
-                  leading: SvgPicture.asset(reportGroup),
-                  title: Text(getTranslated("reportGroup"), style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
+                ),*/
+                SettingListItem(leading: reportGroup,title: getTranslated("reportGroup"),trailing: rightArrowIcon,onTap: (){
+                  controller.reportGroup();
+                }, listItemStyle: AppStyleConfig.groupChatInfoPageStyle.reportGroupStyle,),
+                /*ListItem(
+                  leading: SvgPicture.asset(reportGroup,colorFilter: ColorFilter.mode(AppStyleConfig.groupChatInfoPageStyle.reportGroupStyle.leadingIconColor, BlendMode.srcIn),),
+                  title: Text(getTranslated("reportGroup"), style: AppStyleConfig.groupChatInfoPageStyle.reportGroupStyle.titleTextStyle),
                   onTap: () => controller.reportGroup(),
-                ),
+                ),*/
                 Obx(() {
                   LogMessage.d("Delete or Leave",
                       "${controller.isMemberOfGroup} ${controller.availableFeatures.value.isDeleteChatAvailable.checkNull()} ${controller.isMemberOfGroup} ${controller.leavedGroup.value}");
@@ -238,15 +249,18 @@ class GroupInfoView extends NavView<GroupInfoController> {
                     visible: !controller.isMemberOfGroup
                         ? controller.availableFeatures.value.isDeleteChatAvailable.checkNull()
                         : (controller.isMemberOfGroup && !controller.leavedGroup.value),
-                    child: ListItem(
+                    child: SettingListItem(leading: leaveGroup,title: !controller.isMemberOfGroup ? getTranslated("deleteGroup") : getTranslated("leaveGroup"),trailing: rightArrowIcon,onTap: (){
+                      controller.exitOrDeleteGroup();
+                    }, listItemStyle: AppStyleConfig.groupChatInfoPageStyle.leaveGroupStyle,),/*ListItem(
                       leading: SvgPicture.asset(
                         leaveGroup,
                         width: 18,
+                        colorFilter: ColorFilter.mode(AppStyleConfig.groupChatInfoPageStyle.leaveGroupStyle.leadingIconColor, BlendMode.srcIn),
                       ),
                       title: Text(!controller.isMemberOfGroup ? getTranslated("deleteGroup") : getTranslated("leaveGroup"),
-                          style: const TextStyle(color: Colors.red, fontSize: 14, fontWeight: FontWeight.w500)),
+                          style: AppStyleConfig.groupChatInfoPageStyle.leaveGroupStyle.titleTextStyle),
                       onTap: () => controller.exitOrDeleteGroup(),
-                    ),
+                    ),*/
                   );
                 }),
               ],
@@ -266,11 +280,12 @@ class GroupInfoView extends NavView<GroupInfoController> {
               style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
+              NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: item.jid.checkNull()),predicate: (Route<dynamic> route)=>route.settings.name!.startsWith(Routes.dashboard));
               // NavUtils.toNamed(Routes.CHAT, arguments: item);
-              NavUtils.back();
+              /*NavUtils.back();
               Future.delayed(const Duration(milliseconds: 300), () {
                 Get.back(result: item);
-              });
+              });*/
             },
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         ListTile(

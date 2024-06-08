@@ -75,35 +75,44 @@ ListItem notificationItem({required String title,
       onTap: onTap);
 }
 
-Widget settingListItem(
-    {required String title, String? leading, required String trailing, required Function() onTap,required ListItemStyle listItemStyle}) {
-  return Column(
-    children: [
-      InkWell(
-        onTap: onTap,
-        child: Row(
-          children: [
-            leading != null ? Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SizedBox(
-                width: 24,
-                  child: SvgPicture.asset(leading,colorFilter: ColorFilter.mode(listItemStyle.leadingIconColor, BlendMode.srcIn))),
-            ) :  const SizedBox(height: 4,),
-            Expanded(
-                child: Text(
-                  title,
-                  style: listItemStyle.titleTextStyle,
-                )),
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(trailing,colorFilter: ColorFilter.mode(listItemStyle.trailingIconColor, BlendMode.srcIn)),
-            ),
-          ],
+class SettingListItem extends StatelessWidget {
+  const SettingListItem({super.key, required this.title, this.leading, this.trailing, required this.onTap, required this.listItemStyle});
+  final String title;
+  final String? leading;
+  final String? trailing;
+  final Function() onTap;
+  final ListItemStyle listItemStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Row(
+            children: [
+              leading != null ? Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                    width: 24,
+                    child: SvgPicture.asset(leading!,colorFilter: ColorFilter.mode(listItemStyle.leadingIconColor, BlendMode.srcIn))),
+              ) :  const SizedBox(height: 4,),
+              Expanded(
+                  child: Text(
+                    title,
+                    style: listItemStyle.titleTextStyle,
+                  )),
+              trailing != null ? Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SvgPicture.asset(trailing!,colorFilter: ColorFilter.mode(listItemStyle.trailingIconColor, BlendMode.srcIn)),
+              ) : const Offstage(),
+            ],
+          ),
         ),
-      ),
-      const AppDivider(),
-    ],
-  );
+        AppDivider(color: listItemStyle.dividerColor,),
+      ],
+    );
+  }
 }
 
 

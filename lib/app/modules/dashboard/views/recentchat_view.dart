@@ -261,11 +261,11 @@ class RecentChatView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else {
             var item = controller.userList[index];
-            return memberItem(
+            return MemberItem(
               name: item.getName(),
               image: item.image.checkNull(),
               status: item.status.checkNull(),
-              spantext: controller.search.text.toString(),
+              searchTxt: controller.search.text.toString(),
               onTap: () {
                 controller.toChatPage(item.jid.checkNull());
               },

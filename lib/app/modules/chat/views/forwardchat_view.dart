@@ -135,11 +135,11 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                                     if (data.data != null) {
                                       return Opacity(
                                         opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                        child: memberItem(
+                                        child: MemberItem(
                                             name: getName(item),//item.name.checkNull(),
                                             image: item.image.checkNull(),
                                             status: data.data.checkNull(),
-                                            spantext: controller.searchQuery.text.toString(),
+                                            searchTxt: controller.searchQuery.text.toString(),
                                             onTap: () {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
@@ -148,7 +148,7 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                                             isCheckBoxVisible: true,
                                             isChecked: controller.isChecked(
                                                 item.jid.checkNull()),
-                                            onchange: (value) {
+                                            onChange: (value) {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
                                                   getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
@@ -196,18 +196,18 @@ class _ForwardChatViewState extends State<ForwardChatView> {
                                   var item = controller.userList[index];
                                   return Opacity(
                                     opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                    child: memberItem(
+                                    child: MemberItem(
                                         name: getName(item),
                                         image: item.image.checkNull(),
                                         status: item.status.checkNull(),
-                                        spantext: controller.searchQuery.text.toString(),
+                                        searchTxt: controller.searchQuery.text.toString(),
                                         onTap: () {
                                           controller.onItemSelect(item.jid.checkNull(),
                                               getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },
                                         isCheckBoxVisible: true,
                                         isChecked: controller.isChecked(item.jid.checkNull()),
-                                        onchange: (value) {
+                                        onChange: (value) {
                                           controller.onItemSelect(item.jid.checkNull(),
                                               getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },

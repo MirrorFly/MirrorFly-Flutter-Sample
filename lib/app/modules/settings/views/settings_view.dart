@@ -31,38 +31,38 @@ class SettingsView extends NavView<SettingsController> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              settingListItem(title:
+              SettingListItem(title:
                 getTranslated("profile"), leading: profileIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle,
                       onTap: () =>
                       NavUtils.toNamed(
                           Routes.profile, arguments: {"from": Routes.settings})),
-              settingListItem(title:
+              SettingListItem(title:
                 getTranslated("chats"), leading: chatIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.chatSettings);
               }),
-              settingListItem(title:
+              SettingListItem(title:
                 getTranslated("starredMessages"), leading: staredMsgIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.starredMessages);
               }),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.toNamed(Routes.notification)),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("blockedContacts"), leading: blockedIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.toNamed(Routes.blockedList)),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("appLock"), leading: lockIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.toNamed(Routes.appLock)),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("aboutAndHelp"),leading:  aboutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.to(const AboutAndHelpView())),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("connectionLabel"), leading: connectionIcon, trailing: toggleOffIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {}),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("deleteMyAccount"), leading: delete, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.deleteAccount);
               }),
-              settingListItem(title:
+              SettingListItem(title:
                   getTranslated("logout"), leading: logoutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 DialogUtils.showAlert(
                     message:

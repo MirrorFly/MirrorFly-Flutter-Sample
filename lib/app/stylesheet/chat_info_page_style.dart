@@ -12,25 +12,30 @@ class ChatInfoPageStyle{
     inactiveColor: Colors.white,
     activeToggleColor: Colors.blue,
     inactiveToggleColor: Colors.grey,),
-    this.optionsViewStyle = const OptionsViewStyle(titleStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),contentStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 13)),
-    this.dividerColor = Colors.grey
+    this.optionsViewStyle = const ListItemStyle(
+      leadingIconColor: Color(0xff181818),
+        titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
+        descriptionTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 13), dividerColor: Color(0xffFAFAFA)),
+    this.viewAllMediaStyle = const ListItemStyle(
+        leadingIconColor: Color(0xff181818),
+        titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
+        trailingIconColor: Color(0xff767676),
+        dividerColor: Color(0xffFAFAFA)
+    ),
+    this.reportUserStyle = const ListItemStyle(
+        leadingIconColor: Color(0xffFF3939),
+        titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xffFF3939),fontSize: 14),
+        dividerColor: Color(0xffFAFAFA)
+    ),
 });
   final AppBarTheme appBarTheme;
   final TextStyle silverAppbarTitleStyle;
   final TextStyle silverAppBarSubTitleStyle;
   final Color silverAppBarIconColor;
   final MuteNotificationStyle muteNotificationStyle;
-  final OptionsViewStyle optionsViewStyle;
-  final Color dividerColor;
-}
-
-class OptionsViewStyle{
-  const OptionsViewStyle({
-    this.titleStyle = const TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
-    this.contentStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 13),
-  });
-  final TextStyle titleStyle;
-  final TextStyle contentStyle;
+  final ListItemStyle optionsViewStyle;
+  final ListItemStyle viewAllMediaStyle;
+  final ListItemStyle reportUserStyle;
 
 }
 

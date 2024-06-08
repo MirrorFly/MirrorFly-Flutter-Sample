@@ -31,7 +31,7 @@ class BlockedListView extends NavView<BlockedListController> {
             itemCount: controller.blockedUsers.length,
               itemBuilder: (context, index) {
             var item = controller.blockedUsers[index];
-            return memberItem(name :getMemberName(item).checkNull(),image: item.image.checkNull(),status: item.mobileNumber.checkNull(),onTap: (){
+            return MemberItem(name :getMemberName(item).checkNull(),image: item.image.checkNull(),status: item.mobileNumber.checkNull(),onTap: (){
               if (item.jid.checkNull().isNotEmpty) {
                 controller.unBlock(item);
               }

@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../data/utils.dart';
+import '../stylesheet/stylesheet.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
@@ -306,7 +307,120 @@ class ListItem extends StatelessWidget {
   }
 }
 
-Widget memberItem(
+class MemberItem extends StatelessWidget {
+  const MemberItem({super.key,
+    required this.name,
+    required this.image,
+    required this.status,
+    this.isAdmin,
+    required this.onTap,
+    this.onChange,
+    required this.blocked,
+    required this.unknown,
+    this.itemStyle = const ContactItemStyle(),
+    this.searchTxt = "",
+    this.isCheckBoxVisible = false,
+    this.isChecked = false,
+    this.isGroup = false});
+  final String name;
+  final String image;
+  final String status;
+  final bool? isAdmin;
+  final Function() onTap;
+  final String searchTxt;
+  final bool isCheckBoxVisible;
+  final bool isChecked;
+  final Function(bool? value)? onChange;
+  final bool isGroup;
+  final bool blocked;
+  final bool unknown;
+  final ContactItemStyle itemStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 4, bottom: 4),
+              child: Row(
+                children: [
+                  ImageNetwork(
+                    url: image.checkNull(),
+                    width: itemStyle.profileImageSize.width,
+                    height: itemStyle.profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: name.checkNull().isNotEmpty
+                        ? ProfileTextImage(
+                      radius: itemStyle.profileImageSize.width/2,
+                      text: name.checkNull(),
+                    )
+                        : null,
+                    blocked: blocked,
+                    unknown: unknown,
+                    isGroup: isGroup,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          searchTxt.isEmpty
+                              ? Text(
+                            name.checkNull(),
+                            style: itemStyle.titleStyle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, //TextStyle
+                          )
+                              : spannableText(
+                              name.checkNull(),
+                              searchTxt,
+                              itemStyle.titleStyle,itemStyle.spanTextColor
+                          ),
+                          Text(
+                            status.checkNull(),
+                           style: itemStyle.descriptionStyle,
+                           /* style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.0,
+                            ),*/
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, //T
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  (isAdmin != null && isAdmin!)
+                      ? Text(getTranslated("groupAdmin"),
+                      style: itemStyle.actionTextStyle,)
+                      : const SizedBox(),
+                  Visibility(
+                    visible: isCheckBoxVisible,
+                    child: Checkbox(
+                      value: isChecked,
+                      onChanged: onChange,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AppDivider(padding: const EdgeInsets.only(right: 16, left: 16, top: 4),color: itemStyle.dividerColor,)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+/*Widget memberItem(
     {required String name,
     required String image,
     required String status,
@@ -400,7 +514,7 @@ Widget memberItem(
       ),
     ),
   );
-}
+}*/
 
 class EmojiLayout extends StatelessWidget {
   const EmojiLayout({Key? key, required this.textController, this.onEmojiSelected, this.onBackspacePressed}) : super(key: key);

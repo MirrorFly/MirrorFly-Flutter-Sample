@@ -12,19 +12,41 @@ class GroupChatInfoPageStyle{
         inactiveColor: Colors.white,
         activeToggleColor: Colors.blue,
         inactiveToggleColor: Colors.grey,),
-    this.optionsViewStyle = const OptionsViewStyle(titleStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),contentStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 13)),
-    this.dividerColor = Colors.grey,
     this.groupMemberStyle = const ContactItemStyle(
         titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
         descriptionStyle:TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 12),
-        actionTextStyle:TextStyle(fontWeight: FontWeight.w600,color: Color(0xff4879F9),fontSize: 12))
+        actionTextStyle:TextStyle(fontWeight: FontWeight.w600,color: Color(0xff4879F9),fontSize: 12)),
+    this.addParticipantStyle = const ListItemStyle(
+      leadingIconColor: Color(0xff181818),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
+      trailingIconColor: Color(0xff767676),
+        dividerColor: Color(0xffFAFAFA)
+    ),
+    this.viewAllMediaStyle = const ListItemStyle(
+      leadingIconColor: Color(0xff181818),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
+      trailingIconColor: Color(0xff767676),
+      dividerColor: Color(0xffFAFAFA)
+    ),
+    this.reportGroupStyle = const ListItemStyle(
+      leadingIconColor: Color(0xffFF3939),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xffFF3939),fontSize: 14),
+      dividerColor: Color(0xffFAFAFA)
+    ),
+    this.leaveGroupStyle = const ListItemStyle(
+      leadingIconColor: Color(0xffFF3939),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xffFF3939),fontSize: 14),
+      dividerColor: Color(0xffFAFAFA)
+    ),
 });
   final AppBarTheme appBarTheme;
   final TextStyle silverAppbarTitleStyle;
   final TextStyle silverAppBarSubTitleStyle;
   final Color silverAppBarIconColor;
   final MuteNotificationStyle muteNotificationStyle;
-  final OptionsViewStyle optionsViewStyle;
-  final Color dividerColor;
   final ContactItemStyle groupMemberStyle;
+  final ListItemStyle addParticipantStyle;
+  final ListItemStyle viewAllMediaStyle;
+  final ListItemStyle reportGroupStyle;
+  final ListItemStyle leaveGroupStyle;
 }

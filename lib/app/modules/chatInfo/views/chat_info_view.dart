@@ -11,6 +11,7 @@ import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
+import '../../settings/views/settings_widgets.dart';
 import '../controllers/chat_info_controller.dart';
 
 class ChatInfoView extends NavView<ChatInfoController> {
@@ -143,11 +144,11 @@ class ChatInfoView extends NavView<ChatInfoController> {
   Widget infoContent(){
     return ListView(
       children: [
-        Obx(() {
+        /*Obx(() {
           return controller.isSliverAppBarExpanded
               ? const Offstage()
               : const SizedBox(height: 60);
-        }),
+        }),*/
         Obx(() {
           return listItem(
             title: Text(getTranslated("muteNotification"),
@@ -182,23 +183,28 @@ class ChatInfoView extends NavView<ChatInfoController> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(getTranslated("email"), style: const TextStyle(
+              child: Text(getTranslated("email"),
+                  style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.titleTextStyle,
+                  /*style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500)),
+                  fontWeight: FontWeight.w500)*/
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(emailIcon),
+                  SvgPicture.asset(emailIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.email.checkNull(),
-                        style: const TextStyle(
+                        style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.descriptionTextStyle,
+                        /*style: const TextStyle(
                             fontSize: 13,
                             color: textColor,
-                            fontWeight: FontWeight.w500));
+                            fontWeight: FontWeight.w500)*/
+                    );
                   }),
                 ],
               ),
@@ -210,23 +216,28 @@ class ChatInfoView extends NavView<ChatInfoController> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(getTranslated("mobileNumber"), style: const TextStyle(
+              child: Text(getTranslated("mobileNumber"),
+                  style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.titleTextStyle,
+                  /*style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500)),
+                  fontWeight: FontWeight.w500)*/
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(phoneIcon),
+                  SvgPicture.asset(phoneIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.mobileNumber.checkNull(),
-                        style: const TextStyle(
+                        style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.descriptionTextStyle,
+                        /*style: const TextStyle(
                             fontSize: 13,
                             color: textColor,
-                            fontWeight: FontWeight.w500));
+                            fontWeight: FontWeight.w500)*/
+                    );
                   }),
                 ],
               ),
@@ -238,31 +249,42 @@ class ChatInfoView extends NavView<ChatInfoController> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(getTranslated("status"), style: const TextStyle(
+              child: Text(getTranslated("status"),
+                  style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.titleTextStyle,
+                  /*style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.w500)),
+                  fontWeight: FontWeight.w500)*/
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(statusIcon),
+                  SvgPicture.asset(statusIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.status.checkNull(),
-                        style: const TextStyle(
+                        style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.descriptionTextStyle,
+                        /*style: const TextStyle(
                             fontSize: 13,
                             color: textColor,
-                            fontWeight: FontWeight.w500));
+                            fontWeight: FontWeight.w500)*/
+                    );
                   }),
                 ],
               ),
             ),
           ],
         ),
-        listItem(
-            leading: SvgPicture.asset(imageOutline),
+        SettingListItem(leading: imageOutline,title: getTranslated("viewAllMedia"),trailing: rightArrowIcon,onTap: (){
+          controller.gotoViewAllMedia();
+        }, listItemStyle: AppStyleConfig.chatInfoPageStyle.viewAllMediaStyle,),
+        SettingListItem(leading: reportUser,title: getTranslated("report"),onTap: (){
+          controller.reportChatOrUser();
+        }, listItemStyle: AppStyleConfig.chatInfoPageStyle.viewAllMediaStyle,),
+        /*listItem(
+            leading: SvgPicture.asset(imageOutline,),
             title: Text(getTranslated("viewAllMedia"),
                 style: const TextStyle(
                     color: Colors.black,
@@ -273,8 +295,8 @@ class ChatInfoView extends NavView<ChatInfoController> {
             {
               controller.gotoViewAllMedia()
             } //controller.gotoViewAllMedia(),
-        ),
-        listItem(
+        ),*/
+        /*listItem(
             leading: SvgPicture.asset(reportUser),
             title: Text(getTranslated("report"),
                 style: const TextStyle(
@@ -285,7 +307,7 @@ class ChatInfoView extends NavView<ChatInfoController> {
             {
               controller.reportChatOrUser()
             }
-        ),
+        ),*/
       ],
     );
   }

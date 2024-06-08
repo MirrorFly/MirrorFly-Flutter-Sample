@@ -114,7 +114,7 @@ class MessageInfoView extends NavView<MessageInfoController> {
                   itemBuilder: (cxt, index) {
                     var member = controller.messageDeliveredList[index]
                         .profileDetails!;
-                    return memberItem(name: member.name.checkNull().isNotEmpty ? member.name.checkNull() : member.nickName.checkNull(),
+                    return MemberItem(name: member.name.checkNull().isNotEmpty ? member.name.checkNull() : member.nickName.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context, controller.messageDeliveredList[index]),
                         onTap: () {},
@@ -147,7 +147,7 @@ class MessageInfoView extends NavView<MessageInfoController> {
                   itemBuilder: (cxt, index) {
                     var member = controller.messageReadList[index]
                         .profileDetails!;
-                    return memberItem(name: member.name.checkNull().isNotEmpty ? member.name.checkNull() : member.nickName.checkNull(),
+                    return MemberItem(name: member.name.checkNull().isNotEmpty ? member.name.checkNull() : member.nickName.checkNull(),
                         image: member.image.checkNull(),
                         status: controller.chatDate(context,
                             controller.messageDeliveredList[index]),
