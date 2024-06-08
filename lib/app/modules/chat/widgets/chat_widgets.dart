@@ -47,7 +47,7 @@ Widget getLocationImage(LocationChatMessage? locationChatMessage, double width, 
 }
 
 Widget chatSpannedText(String text, String spannableText, TextStyle? style,
-    {int? maxLines,Color spanColor = Colors.orange}) {
+    {int? maxLines,Color spanColor = Colors.orange,Color urlColor = Colors.blue}) {
   var startIndex = text.toLowerCase().contains(spannableText.toLowerCase())
       ? text.toLowerCase().indexOf(spannableText.toLowerCase())
       : -1;
@@ -69,7 +69,7 @@ Widget chatSpannedText(String text, String spannableText, TextStyle? style,
       overflow: TextOverflow.ellipsis,
     );
   } else {
-    return textMessageSpannableText(text,style,
+    return textMessageSpannableText(text,style,urlColor,
         maxLines: maxLines);
   }
 }

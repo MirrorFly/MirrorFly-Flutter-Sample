@@ -88,7 +88,7 @@ class DocumentMessageView extends StatelessWidget {
                         // const TextStyle(
                         //     color: Colors.black,
                         //     fontWeight: FontWeight.w400),
-                        maxLines: 2,spanColor: docMessageViewStyle.fileTextStyle.highlightColor), /*Text(
+                        maxLines: 2,spanColor: docMessageViewStyle.fileTextStyle.highlightColor,), /*Text(
                     chatMessage.mediaChatMessage!.mediaFileName,
                     maxLines: 2,
                         style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),

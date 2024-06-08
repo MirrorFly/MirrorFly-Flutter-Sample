@@ -83,6 +83,8 @@ class RecentChatItemStyle {
         this.spanTextColor = Colors.blue,
         this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff3276E2),fontSize: 14),
         this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+        this.unreadCountBgColor = const Color(0xff4879F9),
+        this.unreadCountTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.white,fontSize: 8,),
         this.dividerColor = const Color(0XffE2E2E2),
         this.unreadColor = const Color(0xff4879F9),
         this.selectedBgColor = Colors.black12,
@@ -93,6 +95,8 @@ class RecentChatItemStyle {
   final Color spanTextColor;
   final TextStyle typingTextStyle;
   final TextStyle timeTextStyle;
+  final Color unreadCountBgColor;
+  final TextStyle unreadCountTextStyle;
   final Color dividerColor;
   final Color unreadColor;
   final Color selectedBgColor;

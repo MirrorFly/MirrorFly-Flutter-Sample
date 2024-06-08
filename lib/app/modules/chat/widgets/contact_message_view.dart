@@ -54,14 +54,15 @@ class ContactMessageView extends StatelessWidget {
                     child: search.isEmpty
                         ? textMessageSpannableText(
                         chatMessage.contactChatMessage!.contactName
-                            .checkNull(),contactMessageViewStyle.textMessageViewStyle.textStyle,
+                            .checkNull(),contactMessageViewStyle.textMessageViewStyle.textStyle,contactMessageViewStyle.textMessageViewStyle.urlMessageColor,
                         maxLines: 2)
                         : chatSpannedText(
                         chatMessage.contactChatMessage!.contactName,
                         search,
                         contactMessageViewStyle.textMessageViewStyle.textStyle,//const TextStyle(fontSize: 14, color: textHintColor),
                         maxLines: 2,
-                        spanColor: contactMessageViewStyle.textMessageViewStyle.highlightColor) /*,Text(
+                        spanColor: contactMessageViewStyle.textMessageViewStyle.highlightColor,
+                    urlColor: contactMessageViewStyle.textMessageViewStyle.urlMessageColor) /*,Text(
                   chatMessage.contactChatMessage!.contactName,
                   maxLines: 2,
                       overflow: TextOverflow.ellipsis,

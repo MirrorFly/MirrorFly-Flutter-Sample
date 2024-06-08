@@ -68,7 +68,7 @@ class RecentChatItem extends StatelessWidget {
       color: isSelected ? Colors.black12 : Colors.transparent,
       child: Row(
         children: [
-          buildProfileImage(),
+          buildProfileImage(recentChatItemStyle),
           Expanded(
             child: InkWell(
               onLongPress: ()=> onLongPress != null ?  onLongPress!(item) : null,
@@ -194,7 +194,7 @@ class RecentChatItem extends StatelessWidget {
     );
   }
 
-  InkWell buildProfileImage() {
+  InkWell buildProfileImage(RecentChatItemStyle recentChatItemStyle) {
     return InkWell(
       onTap: ()=> onAvatarClick != null ? onAvatarClick!(item) : null,
       child: Container(
@@ -202,8 +202,8 @@ class RecentChatItem extends StatelessWidget {
           child: Stack(
             children: [
               buildProfileImageView(recentChatItemStyle.profileImageSize),
-              item.isConversationUnRead! ? buildConvReadIcon() : const SizedBox(),
-              item.isEmailContact().checkNull() ? buildEmailIcon() : const SizedBox.shrink(),
+              item.isConversationUnRead! ? buildConvReadIcon(recentChatItemStyle.unreadCountTextStyle,recentChatItemStyle.unreadCountBgColor) : const Offstage(),
+              item.isEmailContact().checkNull() ? buildEmailIcon() : const Offstage(),
             ],
           )),
     );
@@ -219,12 +219,13 @@ class RecentChatItem extends StatelessWidget {
           ? ClipOval(
               child: Image.asset(
                 groupImg,
-                height: 48,
-                width: 48,
+                height: profileImageSize.width,
+                width: profileImageSize.height,
                 fit: BoxFit.cover,
               ),
             )
           : ProfileTextImage(
+        radius: profileImageSize.width/2,
               text: getRecentName(
                   item), /* item.profileName.checkNull().isEmpty
                               ? item.nickName.checkNull()
@@ -236,15 +237,16 @@ class RecentChatItem extends StatelessWidget {
     );
   }
 
-  Positioned buildConvReadIcon() {
+  Positioned buildConvReadIcon(TextStyle textStyle,Color bgColor) {
     return Positioned(
         right: 0,
         child: CircleAvatar(
-          backgroundColor: buttonBgColor,
+          backgroundColor: bgColor,
           radius: 9,
           child: Text(
             returnFormattedCount(item.unreadMessageCount!) != "0" ? returnFormattedCount(item.unreadMessageCount!) : "",
-            style: const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'sf_ui'),
+            style: textStyle,
+            // style: const TextStyle(fontSize: 8, color: Colors.white, fontFamily: 'sf_ui'),
           ),
         ));
   }
@@ -447,6 +449,145 @@ class RecentChatItem extends StatelessWidget {
   }
 }
 
+class RecentChatMessageItem extends StatelessWidget {
+  const RecentChatMessageItem({super.key, required this.profile, required this.item,required this.onTap,this.searchTxt = "", this.recentChatItemStyle = const RecentChatItemStyle()});
+  final ProfileDetails profile;
+  final ChatMessageModel item;
+  final RecentChatItemStyle recentChatItemStyle;
+  final Function() onTap;
+  final String searchTxt;
+
+  @override
+  Widget build(BuildContext context) {
+    var unreadMessageCount = "0";
+    return InkWell(
+      onTap:()=>onTap,
+      child: Row(
+        children: [
+          Container(
+              margin: const EdgeInsets.only(left: 19.0, top: 10, bottom: 10, right: 10),
+              child: Stack(
+                children: [
+                  ImageNetwork(
+                    url: profile.image.checkNull(),
+                    width: recentChatItemStyle.profileImageSize.width,
+                    height: recentChatItemStyle.profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: ProfileTextImage(
+                      text: profile.getName(),
+                      radius: recentChatItemStyle.profileImageSize.width/2,
+                    ),
+                    isGroup: profile.isGroupProfile.checkNull(),
+                    blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
+                    unknown: (!profile.isItSavedContact.checkNull() || profile.isDeletedContact()),
+                  ),
+                  unreadMessageCount.toString() != "0"
+                      ? Positioned(
+                      right: 0,
+                      child: CircleAvatar(
+                        radius: 9,
+                        backgroundColor: recentChatItemStyle.unreadCountBgColor,
+                        child: Text(
+                          unreadMessageCount.toString(),
+                          style: recentChatItemStyle.unreadCountTextStyle,
+                          // style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                        ),
+                      ))
+                      : const Offstage(),
+                ],
+              )),
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(profile.getName(), //profile.name.toString(),
+                        style: recentChatItemStyle.titleTextStyle,
+                        // style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0, left: 8),
+                      child: Text(
+                        DateTimeUtils.getRecentChatTime(context, item.messageSentTime.toInt()),
+                        textAlign: TextAlign.end,
+                          style: unreadMessageCount != "0" ? recentChatItemStyle.timeTextStyle.copyWith(color: recentChatItemStyle.unreadColor) : recentChatItemStyle.timeTextStyle
+                        /*style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'sf_ui',
+                            color: unreadMessageCount.toString() != "0" ? buttonBgColor : textColor),*/
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    unreadMessageCount.toString() != "0"
+                        ? const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: CircleAvatar(
+                        radius: 4,
+                        backgroundColor: Colors.green,
+                      ),
+                    )
+                        : const Offstage(),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: MessageUtils.getMessageIndicatorIcon(item.messageStatus.value.checkNull(), item.isMessageSentByMe.checkNull(),
+                                item.messageType.checkNull(), item.isMessageRecalled.value),
+                          ),
+                          item.isMessageRecalled.value
+                              ? const Offstage()
+                              : forMessageTypeIcon(item.messageType, item.mediaChatMessage),
+                          SizedBox(
+                            width:
+                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
+                                null
+                                ? 3.0
+                                : 0.0,
+                          ),
+                          Expanded(
+                            child:
+                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                                null
+                                ? spannableText(
+                              item.messageTextContent.toString(),
+                              searchTxt,
+                              recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor,
+                            )
+                                : Text(
+                              forMessageTypeString(item.messageType,
+                                  content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                                  item.messageTextContent.toString(),
+                              // style: Theme.of(context).textTheme.titleSmall,
+                              style: recentChatItemStyle.subtitleTextStyle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                AppDivider(color: recentChatItemStyle.dividerColor,)
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
 Widget spannableText(String text, String spannableText, TextStyle? style,Color? spanTextColor) {
   var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
   var endIndex = startIndex + spannableText.length;
@@ -501,7 +642,7 @@ bool isCountryCode(String text) {
   return false;
 }
 
-Widget textMessageSpannableText(String message, TextStyle? textStyle,{int? maxLines,}) {
+Widget textMessageSpannableText(String message, TextStyle? textStyle,Color urlColor,{int? maxLines,}) {
   //final GlobalKey textKey = GlobalKey();
   TextStyle? underlineStyle = textStyle?.copyWith(color: Colors.blueAccent,decoration: TextDecoration.underline);//const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
   TextStyle? normalStyle = textStyle;//const TextStyle(fontSize: 14, color: textHintColor);

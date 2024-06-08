@@ -38,12 +38,12 @@ class TextMessageView extends StatelessWidget {
             children: [
               Flexible(
                 child: search.isEmpty
-                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "",textMessageViewStyle.textStyle)
+                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "",textMessageViewStyle.textStyle,textMessageViewStyle.urlMessageColor)
                     : chatSpannedText(
                   chatMessage.messageTextContent ?? "",
                   search,
                   textMessageViewStyle.textStyle,
-                    spanColor:textMessageViewStyle.highlightColor
+                    spanColor:textMessageViewStyle.highlightColor,urlColor: textMessageViewStyle.urlMessageColor
                   //const TextStyle(fontSize: 14, color: textHintColor),
                 ),
               ),

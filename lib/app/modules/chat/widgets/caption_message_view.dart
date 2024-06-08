@@ -31,10 +31,11 @@ class CaptionMessageView extends StatelessWidget {
         children: [
           search.isEmpty
               ? textMessageSpannableText(
-              mediaMessage.mediaCaptionText.checkNull(),textMessageViewStyle.textStyle)
+              mediaMessage.mediaCaptionText.checkNull(),textMessageViewStyle.textStyle,textMessageViewStyle.urlMessageColor)
               : chatSpannedText(
             mediaMessage.mediaCaptionText.checkNull(),
-            search,textMessageViewStyle.textStyle,spanColor: textMessageViewStyle.highlightColor
+            search,textMessageViewStyle.textStyle,spanColor: textMessageViewStyle.highlightColor,
+            urlColor: textMessageViewStyle.urlMessageColor
             // const TextStyle(fontSize: 14, color: textHintColor),
           ),
           Row(

@@ -25,6 +25,12 @@ class DashBoardPageStyle {
           textStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
           shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1)),
           iconColor: Color(0xff181818)
+        ),
+        this.contactItemStyle = const ContactItemStyle(
+            profileImageSize: Size(50, 50),
+            titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
+            descriptionStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 12),
+            dividerColor: Color(0xffEBEBEB)
         )
       });
   final AppBarTheme appBarTheme;
@@ -36,4 +42,5 @@ class DashBoardPageStyle {
   final CallHistoryItemStyle callHistoryItemStyle;
   final TextStyle noDataTextStyle;
   final PopupMenuThemeData popupMenuThemeData;
+  final ContactItemStyle contactItemStyle;
 }

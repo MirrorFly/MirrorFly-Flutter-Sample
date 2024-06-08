@@ -86,7 +86,7 @@ class ContactItem extends StatelessWidget {
                           spanTxt.trim(),
                           contactItemStyle.titleStyle,
                           // const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
-                          Colors.blue),
+                          contactItemStyle.spanTextColor),
                       const SizedBox(height: 5,),
                       Text(
                         item.status.toString(),

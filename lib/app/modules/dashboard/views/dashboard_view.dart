@@ -329,7 +329,7 @@ class DashboardView extends NavView<DashboardController> {
                               ];
                             },
                             body: TabBarView(controller: controller.tabController, children: [
-                              RecentChatView(controller: controller, archivedTileStyle: AppStyleConfig.dashBoardPageStyle.archivedTileStyle, recentChatItemStyle: AppStyleConfig.dashBoardPageStyle.recentChatItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,),
+                              RecentChatView(controller: controller, archivedTileStyle: AppStyleConfig.dashBoardPageStyle.archivedTileStyle, recentChatItemStyle: AppStyleConfig.dashBoardPageStyle.recentChatItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,contactItemStyle: AppStyleConfig.dashBoardPageStyle.contactItemStyle,),
                               CallHistoryView(controller: controller,callHistoryItemStyle: AppStyleConfig.dashBoardPageStyle.callHistoryItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,)
                             ])));
                   }),
@@ -398,7 +398,7 @@ class DashboardView extends NavView<DashboardController> {
         },
       );
     }
-    return const SizedBox.shrink();
+    return const Offstage();
   }
 
   Widget tabItem({required String title, required String count,required TabItemStyle tabItemStyle}) {

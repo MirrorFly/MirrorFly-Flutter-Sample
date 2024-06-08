@@ -17,7 +17,7 @@ import '../../../stylesheet/stylesheet.dart';
 import '../widgets.dart';
 
 class CallHistoryView extends StatelessWidget {
-  const CallHistoryView({super.key,required this.controller, required this.callHistoryItemStyle, required this.noDataTextStyle});
+  const CallHistoryView({super.key,required this.controller, this.callHistoryItemStyle = const CallHistoryItemStyle(), required this.noDataTextStyle});
   final DashboardController controller;
   final CallHistoryItemStyle callHistoryItemStyle;
   final TextStyle noDataTextStyle;

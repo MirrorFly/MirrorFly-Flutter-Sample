@@ -16,10 +16,11 @@ import '../../../routes/route_settings.dart';
 import '../widgets.dart';
 
 class RecentChatView extends StatelessWidget {
-  const RecentChatView({super.key,required this.controller,required this.archivedTileStyle,required this.recentChatItemStyle, required this.noDataTextStyle});
+  const RecentChatView({super.key,required this.controller,required this.archivedTileStyle, this.recentChatItemStyle = const RecentChatItemStyle(), required this.noDataTextStyle, this.contactItemStyle = const ContactItemStyle()});
   final DashboardController controller;
   final ArchivedTileStyle archivedTileStyle;
   final RecentChatItemStyle recentChatItemStyle;
+  final ContactItemStyle contactItemStyle;
   final TextStyle noDataTextStyle;
 
   @override
@@ -273,6 +274,7 @@ class RecentChatView extends StatelessWidget {
               isGroup: item.isGroupProfile.checkNull(),
               blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
               unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
+              itemStyle: contactItemStyle,
             );
           }
         });
@@ -291,8 +293,10 @@ class RecentChatView extends StatelessWidget {
                 if (snap.hasData) {
                   var profile = snap.data!.entries.first.key!;
                   var item = snap.data!.entries.first.value!;
-                  var unreadMessageCount = "0";
-                  return InkWell(
+                  // var unreadMessageCount = "0";
+                  return RecentChatMessageItem(profile: profile, item: item, searchTxt: controller.search.text,
+                    onTap: () { controller.toChatPage(items.chatUserJid.checkNull()); },);
+                  /*return InkWell(
                     child: Row(
                       children: [
                         Container(
@@ -301,11 +305,12 @@ class RecentChatView extends StatelessWidget {
                               children: [
                                 ImageNetwork(
                                   url: profile.image.checkNull(),
-                                  width: 48,
-                                  height: 48,
+                                  width: recentChatItemStyle.profileImageSize.width,
+                                  height: recentChatItemStyle.profileImageSize.height,
                                   clipOval: true,
                                   errorWidget: ProfileTextImage(
-                                      text: profile.getName()
+                                      text: profile.getName(),
+                                    radius: recentChatItemStyle.profileImageSize.width/2,
                                   ),
                                   isGroup: profile.isGroupProfile.checkNull(),
                                   blocked: profile.isBlockedMe.checkNull() || profile.isAdminBlocked.checkNull(),
@@ -315,13 +320,15 @@ class RecentChatView extends StatelessWidget {
                                     ? Positioned(
                                     right: 0,
                                     child: CircleAvatar(
-                                      radius: 8,
+                                      radius: 9,
+                                      backgroundColor: recentChatItemStyle.unreadCountBgColor,
                                       child: Text(
                                         unreadMessageCount.toString(),
-                                        style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
+                                        style: recentChatItemStyle.unreadCountTextStyle,
+                                        // style: const TextStyle(fontSize: 9, color: Colors.white, fontFamily: 'sf_ui'),
                                       ),
                                     ))
-                                    : const SizedBox(),
+                                    : const Offstage(),
                               ],
                             )),
                         Flexible(
@@ -370,7 +377,7 @@ class RecentChatView extends StatelessWidget {
                                               item.messageType.checkNull(), item.isMessageRecalled.value),
                                         ),
                                         item.isMessageRecalled.value
-                                            ? const SizedBox.shrink()
+                                            ? const Offstage()
                                             : forMessageTypeIcon(item.messageType, item.mediaChatMessage),
                                         SizedBox(
                                           width:
@@ -411,7 +418,7 @@ class RecentChatView extends StatelessWidget {
                     onTap: () {
                       controller.toChatPage(items.chatUserJid.checkNull());
                     },
-                  );
+                  );*/
                 } else if (snap.hasError) {
                   LogMessage.d("snap error", snap.error.toString());
                 }
@@ -436,8 +443,8 @@ class RecentChatView extends StatelessWidget {
                   item: item,
                   spanTxt: controller.search.text,
                   onTap: (RecentChatData chatItem) {
-                    controller.toChatPage(item.jid.checkNull());
-                  },
+                    controller.toChatPage(item.jid.checkNull(),);
+                  },recentChatItemStyle: recentChatItemStyle,
                 )
                     : const SizedBox();
               });
