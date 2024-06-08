@@ -21,7 +21,8 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavView<ChatController> {
-  const ChatView({super.key});
+  const ChatView({super.key,this.disableAppBar = false});
+  final bool disableAppBar;
 
   @override
   ChatController createController() {
@@ -30,13 +31,12 @@ class ChatView extends NavView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    var arguments =  controller.arguments;
     return Theme(
       data: ThemeData(
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
       child: Scaffold(
-          appBar: arguments.enableAppBar ? getAppBar(context) : null,
+          appBar: !disableAppBar ? getAppBar(context) : null,
           body: SafeArea(
             child: Container(
               width: NavUtils.width,
@@ -116,6 +116,7 @@ class ChatView extends NavView<ChatController> {
                                                   onClick: () {
                                                     controller.navigateToMessage(controller.replyChatMessage);
                                                   },
+                                                  replyBgColor: AppStyleConfig.chatPageStyle.textTypingAreaStyle.replyBgColor,
                                                 );
                                               } else {
                                                 return const SizedBox.shrink();

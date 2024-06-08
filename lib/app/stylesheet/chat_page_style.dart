@@ -13,9 +13,12 @@ class ChatPageStyle {
         this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle(),
         this.attachmentViewStyle = const AttachmentViewStyle(),
         this.popupMenuThemeData = const PopupMenuThemeData(
-            color: Color(0xff181818),
+            color: Colors.white,
+            surfaceTintColor: Colors.white,
+            shadowColor: Colors.white,
             textStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
-            shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1))
+            shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1)),
+            iconColor: Color(0xff181818)
         )
       });
   final AppBarTheme appBarTheme;
@@ -144,7 +147,8 @@ class SenderChatBubbleStyle{
          color: Color(0xffD0D8EB),),
        titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
        contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
-       mediaIconBgColor: Color(0xff7285B5),
+         mediaIconStyle: IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
+         borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
      ),
      this.decoration = const BoxDecoration(
          borderRadius: BorderRadius.only(
@@ -239,7 +243,8 @@ class ReceiverChatBubbleStyle{
         color: Color(0xffEFEFEF),),
       titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff313131),fontSize: 11),
       contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff313131),fontSize: 13),
-      mediaIconBgColor: Color(0xff7285B5),
+        mediaIconStyle: IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
+        borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
     ),
    this.decoration = const BoxDecoration(
        borderRadius: BorderRadius.only(

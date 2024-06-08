@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/image_cache_manager.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -12,27 +13,30 @@ import '../../../model/chat_message_model.dart';
 import 'chat_widgets.dart';
 
 class ReplyingMessageHeader extends StatelessWidget {
-  const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel, required this.onClick, this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle()}) : super(key: key);
+  const ReplyingMessageHeader({Key? key, required this.chatMessage, required this.onCancel, required this.onClick, this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle(), required this.replyBgColor}) : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onCancel;
   final Function() onClick;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
+  final Color replyBgColor;
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("ReplyingMessageHeader", chatMessage.toJson());
     return InkWell(
       onTap: onClick,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(6),
-        decoration: const BoxDecoration(
-          color: chatSentBgColor,
+        decoration: BoxDecoration(
+          color: replyBgColor,
         ),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: replyHeaderMessageViewStyle.decoration,
+          /*decoration: const BoxDecoration(
             color: chatReplyContainerColor,
             borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
+          ),*/
           child: Row(
             children: [
               Expanded(
@@ -61,7 +65,12 @@ class ReplyingMessageHeader extends StatelessWidget {
               Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  getReplyImageHolder(context, chatMessage, chatMessage.mediaChatMessage, 70, true, chatMessage.locationChatMessage,replyHeaderMessageViewStyle.mediaIconBgColor),
+                  getReplyImageHolder(context,
+                      chatMessage,
+                      chatMessage.mediaChatMessage,
+                      70, true,
+                      chatMessage.locationChatMessage,
+                      replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -193,19 +202,22 @@ getReplyMessage(
 }
 
 getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, MediaChatMessage? mediaChatMessage, double size, bool isNotChatItem,
-    LocationChatMessage? locationChatMessage,Color bgColor) {
+    LocationChatMessage? locationChatMessage,IconStyle iconStyle,BorderRadius borderRadius) {
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
   }
-  var condition = isReply
-      ? (mediaChatMessage == null ? Constants.mLocation : mediaChatMessage.messageType)
-      : chatMessageModel.replyParentChatMessage?.messageType;
+  var condition = !isNotChatItem
+      ? chatMessageModel.replyParentChatMessage?.messageType //(mediaChatMessage == null ? Constants.mLocation : mediaChatMessage.messageType)
+      : chatMessageModel.messageType;
+  LogMessage.d("isReply", isReply);
+  LogMessage.d("condition", condition);
+  LogMessage.d("chatMessageModel.messageType", chatMessageModel.messageType);
   switch (condition) {
     case Constants.mImage:
       debugPrint("reply header--> IMAGE");
       return ClipRRect(
-        borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+        borderRadius: borderRadius,//const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: SizedBox(
           width: size,
           height: size,
@@ -215,11 +227,11 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
       );
     case Constants.mLocation:
       return ClipRRect(
-          borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+          borderRadius: borderRadius,//const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
           child: getLocationImage(isReply ? locationChatMessage : chatMessageModel.locationChatMessage, size, size, isSelected: true));
     case Constants.mVideo:
       return ClipRRect(
-        borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+        borderRadius: borderRadius,//const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
         child: SizedBox(
           width: size,
           height: size,
@@ -236,8 +248,8 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
               width: size,
               height: size,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                color: bgColor,
+                borderRadius: borderRadius,//const BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                color: iconStyle.bgColor,
               ),
               child: Center(
                 child: MessageUtils.getDocumentTypeIcon(isReply ? mediaChatMessage!.mediaFileName : chatMessageModel.mediaChatMessage!.mediaFileName, 30),
@@ -246,16 +258,16 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
       return isNotChatItem
           ? SizedBox(height: size)
           : ClipRRect(
-              borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+              borderRadius: borderRadius,//const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
               child: Container(
                 height: size,
                 width: size,
-                color: bgColor,
+                color: iconStyle.bgColor,
                 child: Center(
                   child: SvgPicture.asset(
                     mediaChatMessage!.isAudioRecorded.checkNull() ? mAudioRecordIcon : mAudioIcon,
                     fit: BoxFit.contain,
-                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),
                     height: 18,
                   ),
                 ),
@@ -277,6 +289,7 @@ class ReplyMessageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("ReplyMessageHeader", chatMessage.toJson());
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
@@ -316,7 +329,7 @@ class ReplyMessageHeader extends StatelessWidget {
               chatMessage.replyParentChatMessage?.mediaChatMessage,
               55,
               false,
-              chatMessage.replyParentChatMessage?.locationChatMessage,replyHeaderMessageViewStyle.mediaIconBgColor),
+              chatMessage.replyParentChatMessage?.locationChatMessage,replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius),
         ],
       ),
     );

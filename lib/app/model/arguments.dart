@@ -12,7 +12,6 @@ class ChatViewArguments{
     this.isUser = false,
     this.messageId,
     this.isFromStarred = false,
-    this.enableAppBar = true,
     this.enableCalls = false,
     this.showChatDeliveryIndicator = true});
 
@@ -21,7 +20,6 @@ class ChatViewArguments{
   final bool isUser;
   final bool isFromStarred;
   final String? messageId;
-  final bool enableAppBar;
   final bool enableCalls;
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;

@@ -18,7 +18,8 @@ class TextTypingAreaStyle{
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Color(0xffD0D8EB),),titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
         contentTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
-        mediaIconBgColor: Color(0xff7285B5)
+        mediaIconStyle: IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
+      borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
     ),
     this.replyBgColor = const  Color(0xffE2E8F7),
     this.audioRecordingViewStyle = const AudioRecordingViewStyle(durationTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff3276E2),fontSize: 12),
@@ -64,12 +65,14 @@ class ReplyHeaderMessageViewStyle{
       color: Color(0xffD0D8EB),),
     this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
     this.contentTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
-    this.mediaIconBgColor = const Color(0xff7285B5)
+    this.mediaIconStyle = const IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
+    this.borderRadius = const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
   });
   final Decoration decoration;
   final TextStyle titleTextStyle;
   final TextStyle contentTextStyle;
-  final Color mediaIconBgColor;
+  final IconStyle mediaIconStyle;
+  final BorderRadius borderRadius;
 }
 
 class LocationMessageViewStyle{

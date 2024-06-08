@@ -17,6 +17,7 @@ part 'profile_view_style.dart';
 part 'settings_page_style.dart';
 part 'view_all_media_page_style.dart';
 part 'create_group_page_style.dart';
+part 'message_info_page_style.dart';
 
 class AppStyle{
 

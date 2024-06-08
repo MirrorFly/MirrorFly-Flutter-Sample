@@ -49,6 +49,7 @@ class AppStyleConfig{
   static ContactListPageStyle _contactListPageStyle = const ContactListPageStyle();
   static SettingsPageStyle _settingsPageStyle = const SettingsPageStyle();
   static ViewAllMediaPageStyle _viewAllMediaPageStyle = const ViewAllMediaPageStyle();
+  static MessageInfoPageStyle _messageInfoPageStyle = const MessageInfoPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -60,6 +61,7 @@ class AppStyleConfig{
   static ContactListPageStyle contactListPageStyle= _contactListPageStyle;
   static SettingsPageStyle settingsPageStyle= _settingsPageStyle;
   static ViewAllMediaPageStyle viewAllMediaPageStyle= _viewAllMediaPageStyle;
+  static MessageInfoPageStyle messageInfoPageStyle= _messageInfoPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -99,6 +101,10 @@ class AppStyleConfig{
 
   static setViewAllMediaPageStyle(ViewAllMediaPageStyle viewAllMediaPageStyle){
     _viewAllMediaPageStyle = viewAllMediaPageStyle;
+  }
+
+  static setMessageInfoPageStyle(MessageInfoPageStyle messageInfoPageStyle){
+    _messageInfoPageStyle = messageInfoPageStyle;
   }
 
 
