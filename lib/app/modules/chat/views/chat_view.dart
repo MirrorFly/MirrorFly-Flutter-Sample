@@ -9,7 +9,6 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/constants.dart';
@@ -31,7 +30,7 @@ class ChatView extends NavView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    var arguments = NavUtils.arguments as ChatViewArguments;
+    var arguments =  controller.arguments;
     return Theme(
       data: ThemeData(
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
