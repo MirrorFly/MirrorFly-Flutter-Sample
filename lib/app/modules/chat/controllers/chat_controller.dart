@@ -267,8 +267,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   @override
   void dispose() {
+    LogMessage.d("dispose","Chat controller");
     super.dispose();
-    debugPrint("dispose");
   }
 
   clearMessage() {

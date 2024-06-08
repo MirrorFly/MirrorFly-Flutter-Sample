@@ -20,14 +20,22 @@ import '../controllers/chat_controller.dart';
 import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
-class ChatView extends NavView<ChatController> {
-  const ChatView({super.key,this.disableAppBar = false});
+class ChatView extends StatefulWidget {
+   const ChatView({super.key,this.disableAppBar = false});
   final bool disableAppBar;
 
   @override
-  ChatController createController() {
-    return ChatController();
-  }
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
+   final ChatController controller = Get.put(ChatController());
+
+   @override
+    void dispose() {
+      Get.delete<ChatController>();
+      super.dispose();
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +44,7 @@ class ChatView extends NavView<ChatController> {
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
       child: Scaffold(
-          appBar: !disableAppBar ? getAppBar(context) : null,
+          appBar: !widget.disableAppBar ? getAppBar(context) : null,
           body: SafeArea(
             child: Container(
               width: NavUtils.width,
