@@ -22,9 +22,10 @@ class ChatListView extends StatefulWidget {
   final List<ChatMessageModel> chatList;
   final SenderChatBubbleStyle senderChatStyle;
   final ReceiverChatBubbleStyle receiverChatStyle;
+  final NotificationMessageViewStyle notificationMessageViewStyle;
   final Color chatSelectedColor;
 
-  const ChatListView({super.key, required this.chatController, required this.chatList,required this.senderChatStyle,required this.receiverChatStyle, required this.chatSelectedColor});
+  const ChatListView({super.key, required this.chatController, required this.chatList,required this.senderChatStyle,required this.receiverChatStyle, required this.chatSelectedColor, required this.notificationMessageViewStyle});
 
   @override
   State<ChatListView> createState() => _ChatListViewState();
@@ -154,7 +155,7 @@ class _ChatListViewState extends State<ChatListView> {
                                                 ? widget.chatList[index].replyParentChatMessage == null
                                                     ? messageNotAvailableWidget(widget.chatList[index])
                                                     : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
-                                                : const SizedBox.shrink(),
+                                                : const Offstage(),
                                             MessageContent(
                                                 chatList: widget.chatList,
                                                 index: index,
@@ -167,7 +168,10 @@ class _ChatListViewState extends State<ChatListView> {
                                                 onSeekbarChange: (double value) {
                                                   // widget.chatController.onSeekbarChange(value, widget.chatList[index]);
                                                 },
-                                                isSelected: widget.chatController.isSelected.value)
+                                                isSelected: widget.chatController.isSelected.value,
+                                            senderChatBubbleStyle: widget.senderChatStyle,
+                                                receiverChatBubbleStyle: widget.receiverChatStyle,
+                                            notificationMessageViewStyle: widget.notificationMessageViewStyle,)
                                           ],
                                         ),
                                       ),

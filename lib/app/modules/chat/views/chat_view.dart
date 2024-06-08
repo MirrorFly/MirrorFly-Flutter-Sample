@@ -94,7 +94,8 @@ class ChatView extends NavView<ChatController> {
                               ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
-                              : ChatListView(chatController: controller, chatList: controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,);
+                              : ChatListView(chatController: controller, chatList: controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,
+                          notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle,);
                         })),
                         Align(
                           alignment: Alignment.bottomCenter,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -8,6 +9,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../stylesheet/stylesheet.dart';
 import '../controllers/chat_controller.dart';
 import '../widgets/chat_widgets.dart';
 import '../widgets/message_content.dart';
@@ -29,117 +31,106 @@ class ChatSearchView extends StatelessWidget {
           return;
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: TextField(
-            onChanged: (text) => controller.setSearch(text),
-            controller: controller.searchedText,
-            focusNode: controller.searchfocusNode,
-            autofocus: true,
-            decoration: InputDecoration(
-                hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
-            onSubmitted: (str) {
-              if (controller.filteredPosition.isNotEmpty) {
-                controller.scrollUp();
-              } else {
-                toToast(getTranslated("noResultsFound"));
-              }
-            },
-          ),
-          iconTheme: const IconThemeData(color: iconColor),
-          actions: [
-            IconButton(
-                onPressed: () {
+      child: Theme(
+        data: ThemeData(appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme),
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+            title: TextField(
+              onChanged: (text) => controller.setSearch(text),
+              controller: controller.searchedText,
+              focusNode: controller.searchfocusNode,
+              autofocus: true,
+              style: AppStyleConfig.chatPageStyle.searchTextFieldStyle.editTextStyle,
+              decoration: InputDecoration(
+                  hintText: getTranslated("searchPlaceholder"), border: InputBorder.none,
+                hintStyle: AppStyleConfig.chatPageStyle.searchTextFieldStyle.editTextHintStyle
+              ),
+              onSubmitted: (str) {
+                if (controller.filteredPosition.isNotEmpty) {
                   controller.scrollUp();
-                },
-                icon: const Icon(Icons.keyboard_arrow_up)),
-            IconButton(
-                onPressed: () {
-                  controller.scrollDown();
-                },
-                icon: const Icon(Icons.keyboard_arrow_down)),
-          ],
+                } else {
+                  toToast(getTranslated("noResultsFound"));
+                }
+              },
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    controller.scrollUp();
+                  },
+                  icon: const Icon(Icons.keyboard_arrow_up)),
+              IconButton(
+                  onPressed: () {
+                    controller.scrollDown();
+                  },
+                  icon: const Icon(Icons.keyboard_arrow_down)),
+            ],
+          ),
+          body: Obx(() => controller.chatList.isEmpty
+              ? const Offstage()
+              : chatListView(controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle)),
         ),
-        body: Obx(() => controller.chatList.isEmpty
-            ? const SizedBox.shrink()
-            : chatListView(controller.chatList)),
       ),
     );
   }
 
-  Widget chatListView(List<ChatMessageModel> chatList) {
-    return ScrollablePositionedList.builder(
+  Widget chatListView(List<ChatMessageModel> chatList,{required SenderChatBubbleStyle senderChatStyle,required ReceiverChatBubbleStyle receiverChatStyle, required Color chatSelectedColor,required NotificationMessageViewStyle notificationMessageViewStyle}) {
+    return ScrollablePositionedList.separated(
+      separatorBuilder: (context, index) {
+        var string = AppUtils.groupedDateMessage(index, chatList); //Date Labels
+        return string != null ? NotificationMessageView(chatMessage: string) : const Offstage();
+      },
       itemCount: chatList.length,
-      //initialScrollIndex: chatList.length,
       itemScrollController: controller.searchScrollController,
       itemPositionsListener: controller.itemPositionsListener,
       reverse: true,
       itemBuilder: (context, index) {
         return Column(
           children: [
-            AppUtils.groupedDateMessage(index, chatList) != null
-                ? NotificationMessageView(
-                    chatMessage: AppUtils.groupedDateMessage(index, chatList))
-                : const SizedBox.shrink(),
+            Obx(() {
+              // LogMessage.d("ScrollablePositionedList inside AutomaticKeepAlive", "build $index");
+              return controller.showLoadingPrevious.value && index == chatList.length - 1
+                  ? const Center(child: CircularProgressIndicator())
+                  : const Offstage();
+            }),
             (chatList[index].messageType.toUpperCase() !=
                     Constants.mNotification)
                 ? Container(
-                    color: chatList[index].isSelected.value
-                        ? chatReplyContainerColor
-                        : Colors.transparent,
-                    margin: const EdgeInsets.only(
-                        left: 14, right: 14, top: 5, bottom: 10),
-                    child: Align(
-                      alignment: (chatList[index].isMessageSentByMe
-                          ? Alignment.bottomRight
-                          : Alignment.bottomLeft),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Visibility(
-                            visible: chatList[index].isMessageSentByMe &&
-                                controller
-                                    .forwardMessageVisibility(chatList[index]),
-                            child: IconButton(
-                                onPressed: () {
-                                  controller.forwardSingleMessage(
-                                      chatList[index].messageId);
-                                },
-                                icon: SvgPicture.asset(forwardMedia)),
-                          ),
-                          Container(
-                            constraints: BoxConstraints(
-                                maxWidth: NavUtils.width * 0.75),
-                            decoration: BoxDecoration(
-                                borderRadius: chatList[index].isMessageSentByMe
-                                    ? const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10))
-                                    : const BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10)),
-                                color: (chatList[index].isMessageSentByMe
-                                    ? chatSentBgColor
-                                    : Colors.white),
-                                border: chatList[index].isMessageSentByMe
-                                    ? Border.all(color: chatSentBgColor)
-                                    : Border.all(color: chatBorderColor)),
+              key: ValueKey(chatList[index].messageId),
+              color: chatList[index].isSelected.value ? chatSelectedColor : Colors.transparent,
+              margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
+              child: Align(
+                alignment: (chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Visibility(
+                      visible: chatList[index].isMessageSentByMe && controller.forwardMessageVisibility(chatList[index]),
+                      child: IconButton(
+                          onPressed: () {
+                            controller.forwardSingleMessage(chatList[index].messageId);
+                          },
+                          icon: SvgPicture.asset(forwardMedia)),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
+                      decoration: chatList[index].isMessageSentByMe ? senderChatStyle.decoration : receiverChatStyle.decoration,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SenderHeader(
-                                    isGroupProfile:
-                                        controller.profile.isGroupProfile,
+                                if (controller.profile.isGroupProfile.checkNull()) ...[
+                                  SenderHeader(
+                                    isGroupProfile: controller.profile.isGroupProfile,
                                     chatList: chatList,
-                                    index: index,textStyle: null,),
-                                chatList[index].isThisAReplyMessage ? chatList[index].replyParentChatMessage == null
+                                    index: index,textStyle: receiverChatStyle.participantNameTextStyle,),
+                                ],
+                                chatList[index].isThisAReplyMessage
+                                    ? chatList[index].replyParentChatMessage == null
                                     ? messageNotAvailableWidget(chatList[index])
-                                    : ReplyMessageHeader(
-                                        chatMessage: chatList[index]): const SizedBox.shrink(),
+                                    : ReplyMessageHeader(chatMessage: chatList[index],replyHeaderMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatStyle.replyHeaderMessageViewStyle : receiverChatStyle.replyHeaderMessageViewStyle,)
+                                    : const Offstage(),
                                 MessageContent(
                                   chatList: chatList,
                                   index: index,
@@ -150,27 +141,33 @@ class ChatSearchView extends StatelessWidget {
                                   onSeekbarChange:(value){
 
                                   },
-                                ),
+                                  senderChatBubbleStyle: senderChatStyle,
+                                  receiverChatBubbleStyle: receiverChatStyle,
+                                  notificationMessageViewStyle: notificationMessageViewStyle,)
                               ],
                             ),
                           ),
-                          Visibility(
-                            visible: !chatList[index].isMessageSentByMe &&
-                                controller
-                                    .forwardMessageVisibility(chatList[index]),
-                            child: IconButton(
-                                onPressed: () {
-                                  controller.forwardSingleMessage(
-                                      chatList[index].messageId);
-                                },
-                                icon: SvgPicture.asset(forwardMedia)),
-                          ),
+                    if (!chatList[index].isMessageSentByMe &&
+                        controller.forwardMessageVisibility(chatList[index])) ...[
+                      IconButton(
+                          onPressed: () {
+                            controller.forwardSingleMessage(chatList[index].messageId);
+                          },
+                          icon: SvgPicture.asset(forwardMedia))
+                    ],
                         ],
                       ),
                     ),
                   )
                 : NotificationMessageView(
                     chatMessage: chatList[index].messageTextContent),
+            Obx(() {
+              return controller.showLoadingNext.value && index == 0
+                  ? const Center(
+                child: CircularProgressIndicator(),
+              )
+                  : const Offstage();
+            }),
           ],
         );
       },

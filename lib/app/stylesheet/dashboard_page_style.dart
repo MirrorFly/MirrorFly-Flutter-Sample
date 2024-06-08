@@ -31,7 +31,8 @@ class DashBoardPageStyle {
             titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
             descriptionStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 12),
             dividerColor: Color(0xffEBEBEB)
-        )
+        ),
+        this.floatingActionButtonThemeData = const FloatingActionButtonThemeData(backgroundColor: Color(0xff3276E2),foregroundColor: Colors.white,elevation: 12,iconSize: 21,shape: CircleBorder())
       });
   final AppBarTheme appBarTheme;
   final TabBarTheme tabBarTheme;
@@ -43,4 +44,5 @@ class DashBoardPageStyle {
   final TextStyle noDataTextStyle;
   final PopupMenuThemeData popupMenuThemeData;
   final ContactItemStyle contactItemStyle;
+  final FloatingActionButtonThemeData floatingActionButtonThemeData;
 }

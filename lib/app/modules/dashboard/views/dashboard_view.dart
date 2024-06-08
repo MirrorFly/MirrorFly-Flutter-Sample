@@ -52,7 +52,8 @@ class DashboardView extends NavView<DashboardController> {
             },
             child: Theme(
               data: ThemeData(tabBarTheme: AppStyleConfig.dashBoardPageStyle.tabBarTheme,
-              appBarTheme: AppStyleConfig.dashBoardPageStyle.appBarTheme),
+              appBarTheme: AppStyleConfig.dashBoardPageStyle.appBarTheme,
+                  floatingActionButtonTheme: AppStyleConfig.dashBoardPageStyle.floatingActionButtonThemeData),
               child: CustomSafeArea(
                 child: DefaultTabController(
                   length: 2,
@@ -61,7 +62,7 @@ class DashboardView extends NavView<DashboardController> {
                         floatingActionButton: controller.isSearching.value
                             ? null
                             : Obx(() {
-                                return createFab(controller.currentTab.value);
+                                return createFab(controller.currentTab.value,ctx);
                               }),
                         body: NestedScrollView(
                             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -340,7 +341,7 @@ class DashboardView extends NavView<DashboardController> {
         ));
   }
 
-  Widget? createScaledFab() {
+  Widget? createScaledFab(BuildContext context) {
     // Searching for index of a tab with not 0.0 scale
     final indexOfCurrentFab = controller.tabScales.indexWhere((fabScale) => fabScale != 0);
     // If there are no fabs with non-zero opacity return nothing
@@ -348,7 +349,7 @@ class DashboardView extends NavView<DashboardController> {
       return null;
     }
     // Creating fab for current index
-    final fab = createFab(indexOfCurrentFab);
+    final fab = createFab(indexOfCurrentFab,context);
     // If no fab created return nothing
     /*if (fab == null) {
       return null;
@@ -362,7 +363,7 @@ class DashboardView extends NavView<DashboardController> {
   }
 
   // Create fab for provided index
-  Widget createFab(final int index) {
+  Widget createFab(final int index,BuildContext context) {
     if (index == 0) {
       return FloatingActionButton(
         tooltip: "New Chat",
@@ -370,12 +371,11 @@ class DashboardView extends NavView<DashboardController> {
         onPressed: () {
           controller.gotoContacts();
         },
-        backgroundColor: buttonBgColor,
-        child: SvgPicture.asset(
+        child:
+        SvgPicture.asset(
           chatFabIcon,
-          width: 18,
-          height: 18,
-          fit: BoxFit.contain,
+          width: Theme.of(context).floatingActionButtonTheme.iconSize,
+          colorFilter: ColorFilter.mode(Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),
         ),
       );
     }
@@ -383,11 +383,12 @@ class DashboardView extends NavView<DashboardController> {
     if (index == 1) {
       return AnimatedFloatingAction(
         tooltip: "New Call",
+        backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+        foregroundColor: Theme.of(context).floatingActionButtonTheme.foregroundColor,
         icon: SvgPicture.asset(
           plusIcon,
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+          width: Theme.of(context).floatingActionButtonTheme.iconSize,
+          colorFilter: ColorFilter.mode(Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),
           fit: BoxFit.contain,
         ),
         audioCallOnPressed: () {
