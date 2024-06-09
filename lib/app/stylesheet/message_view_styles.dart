@@ -10,7 +10,8 @@ class MessageTypingAreaStyle{
     this.textFieldStyle = const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),editTextHintStyle: TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 12)),
     this.dividerColor = const Color(0xff000000),
     this.sentIconColor = const Color(0xff4879F9),
-    this.audioIconColor = const Color(0xff363636),
+    this.audioRecordIcon = const IconStyle(iconColor: Colors.white,bgColor:Color(0xff3276E2)),
+    this.rippleColor = const Color(0xff4879F9),
     this.attachmentIconColor = const Color(0xff363636),
     this.emojiIconColor = const Color(0xff363636),
     this.replyHeaderMessageViewStyle = const ReplyHeaderMessageViewStyle(
@@ -30,7 +31,8 @@ class MessageTypingAreaStyle{
   final Decoration decoration;
   final Color dividerColor;
   final Color sentIconColor;
-  final Color audioIconColor;
+  final IconStyle audioRecordIcon;
+  final Color rippleColor;
   final Color attachmentIconColor;
   final Color emojiIconColor;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;

@@ -1030,7 +1030,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   void isTyping([String? typingText]) {
     LogMessage.d("isTyping", typingText.toString());
-    messageController.text.trim().isNotEmpty ? isUserTyping(true) : isUserTyping(false);
+    isUserTyping(messageController.text.trim().isNotEmpty);
     sendUserTypingStatus();
     debugPrint('User is typing');
     deBouncer.cancel();
@@ -1715,6 +1715,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           permissionPermanentlyDeniedContent: getTranslated("microPhonePermissionDeniedContent"));
       debugPrint("microPhone Permission Status---> $microPhonePermissionStatus");
       if (microPhonePermissionStatus) {
+        isUserTyping(false);
         record = Record();
         timerInit("00:00");
         isAudioRecording(Constants.audioRecording);
@@ -1739,7 +1740,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   Future<void> stopRecording() async {
     isAudioRecording(Constants.audioRecordDone);
-    isUserTyping(true);
+    isUserTyping(messageController.text.trim().isNotEmpty);
     _audioTimer?.cancel();
     _audioTimer = null;
     await Record().stop().then((filePath) async {
@@ -1755,7 +1756,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   Future<void> deleteRecording() async {
     var filePath = await record.stop();
     File(filePath!).delete();
-    isUserTyping(false);
+    isUserTyping(messageController.text.trim().isNotEmpty);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00:00");
     record.dispose();

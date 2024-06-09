@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
+import '../../../call_modules/ripple_animation_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
@@ -124,7 +125,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                   replyBgColor: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.replyBgColor,
                                                 );
                                               } else {
-                                                return const SizedBox.shrink();
+                                                return const Offstage();
                                               }
                                             }),
                                             Divider(
@@ -132,17 +133,16 @@ class ChatView extends NavViewStateful<ChatController> {
                                               thickness: 0.29,
                                               color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.dividerColor//textBlackColor,
                                             ),
-                                            const SizedBox(
+                                            /*const SizedBox(
                                               height: 10,
-                                            ),
+                                            ),*/
                                             IntrinsicHeight(
                                               child: Row(
                                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                                 children: [
                                                   Flexible(
                                                     child: Container(
-                                                      padding: const EdgeInsets.only(left: 10),
-                                                      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                                                      margin: const EdgeInsets.all(10),
                                                       width: double.infinity,
                                                       decoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.decoration,
                                                       // decoration: BoxDecoration(
@@ -165,11 +165,8 @@ class ChatView extends NavViewStateful<ChatController> {
                                                                   ? controller.sendRecordedAudioMessage()
                                                                   : controller.sendMessage(controller.profile);
                                                             },
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
-                                                              child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,),
-                                                            ))
-                                                        : const SizedBox.shrink();
+                                                            child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,))
+                                                        : const Offstage();
                                                   }),
                                                   Obx(() {
                                                     return controller.isAudioRecording.value == Constants.audioRecording
@@ -177,7 +174,17 @@ class ChatView extends NavViewStateful<ChatController> {
                                                             onTap: () {
                                                               controller.stopRecording();
                                                             },
-                                                            child: const Padding(
+                                                      child: RippleWidget(
+                                                        size: 50,
+                                                        rippleColor: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.rippleColor,
+                                                        child: CircleAvatar(
+                                                          backgroundColor: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordIcon.bgColor,//const Color(0xff3276E2),
+                                                          radius: 48/2,
+                                                          child: SvgPicture.asset("assets/logos/mic.svg",
+                                                            colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordIcon.iconColor, BlendMode.srcIn),
+                                                          ),),
+                                                      ),
+                                                            /*child: const Padding(
                                                               padding: EdgeInsets.only(bottom: 8.0),
                                                               child: LottieAnimation(
                                                                 lottieJson: audioJson1,
@@ -185,8 +192,9 @@ class ChatView extends NavViewStateful<ChatController> {
                                                                 width: 54,
                                                                 height: 54,
                                                               ),
-                                                            ))
-                                                        : const SizedBox.shrink();
+                                                            )*/
+                                                    )
+                                                        : const Offstage();
                                                   }),
                                                   const SizedBox(
                                                     width: 5,
@@ -299,37 +307,38 @@ class ChatView extends NavViewStateful<ChatController> {
   messageTypingView(BuildContext context) {
     return Row(
       children: <Widget>[
-        controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone
-            ? Text(controller.timerInit.value, style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordingViewStyle.durationTextStyle)
-            : const SizedBox.shrink(),
-        controller.isAudioRecording.value == Constants.audioRecordInitial
-            ? InkWell(
-                onTap: () {
-                  controller.showHideEmoji(context);
-                },
-                child: controller.showEmoji.value
-                    ? Icon(
-                        Icons.keyboard,
-                        color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor,
-                      )
-                    : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),))
-            : const SizedBox.shrink(),
-        controller.isAudioRecording.value == Constants.audioRecordDelete
-            ? const Padding(
-                padding: EdgeInsets.all(13.0),
+        if(controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone)...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(controller.timerInit.value, style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordingViewStyle.durationTextStyle),
+            )
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordInitial)...[
+            IconButton(onPressed: (){
+          controller.showHideEmoji(context);
+        }, icon: controller.showEmoji.value
+            ? Icon(
+          Icons.keyboard,
+          color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor,
+        )
+            : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),))
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordDelete)...[
+          const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: LottieAnimation(
                   lottieJson: deleteDustbin,
                   showRepeat: false,
-                  width: 25,
-                  height: 25,
+                  width: 24,
+                  height: 24,
                 ),
               )
-            : const SizedBox.shrink(),
-        const SizedBox(
+         ],
+        /*const SizedBox(
           width: 10,
-        ),
-        controller.isAudioRecording.value == Constants.audioRecording
-            ? Expanded(
+        ),*/
+        if(controller.isAudioRecording.value == Constants.audioRecording)...[
+            Expanded(
                 child: Dismissible(
                   key: UniqueKey(),
                   dismissThresholds: const {
@@ -356,9 +365,9 @@ class ChatView extends NavViewStateful<ChatController> {
                   ),
                 ),
               )
-            : const SizedBox.shrink(),
-        controller.isAudioRecording.value == Constants.audioRecordDone
-            ? Expanded(
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordDone)...[
+            Expanded(
                 child: InkWell(
                   onTap: () {
                     controller.deleteRecording();
@@ -373,9 +382,9 @@ class ChatView extends NavViewStateful<ChatController> {
                   ),
                 ),
               )
-            : const Offstage(),
-        controller.isAudioRecording.value == Constants.audioRecordInitial
-            ? Expanded(
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordInitial)...[
+            Expanded(
                 child: TextField(
                   onChanged: (text) {
                     controller.isTyping(text);
@@ -390,27 +399,27 @@ class ChatView extends NavViewStateful<ChatController> {
                   decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle),
                 ),
               )
-            : const Offstage(),
-        (controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAttachmentAvailable.checkNull())
-            ? IconButton(
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordInitial && controller.availableFeatures.value.isAttachmentAvailable.checkNull())...[
+            IconButton(
                 onPressed: () {
                   controller.showAttachmentsView(context);
                 },
                 icon: SvgPicture.asset('assets/logos/attach.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
-            : const Offstage(),
-        (controller.isAudioRecording.value == Constants.audioRecordInitial &&
-                controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())
-            ? IconButton(
+        ],
+        if(controller.isAudioRecording.value == Constants.audioRecordInitial &&
+                controller.availableFeatures.value.isAudioAttachmentAvailable.checkNull())...[
+            IconButton(
                 onPressed: () {
                   controller.startRecording();
                 },
                 icon: SvgPicture.asset('assets/logos/mic.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
-            : const Offstage(),
-        const SizedBox(
+        ],
+        /*const SizedBox(
           width: 5,
-        ),
+        ),*/
       ],
     );
   }
