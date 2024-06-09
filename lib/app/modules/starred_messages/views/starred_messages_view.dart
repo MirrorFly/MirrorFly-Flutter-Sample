@@ -16,13 +16,11 @@ import '../../chat/widgets/reply_message_widgets.dart';
 import '../controllers/starred_messages_controller.dart';
 import 'starred_message_header.dart';
 
-class StarredMessagesView extends NavView<StarredMessagesController> {
+class StarredMessagesView extends NavViewStateful<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
 
   @override
-  StarredMessagesController createController() {
-    return StarredMessagesController();
-  }
+StarredMessagesController createController() => Get.put(StarredMessagesController());
 
   @override
   Widget build(BuildContext context) {

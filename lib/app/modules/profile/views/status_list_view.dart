@@ -10,13 +10,11 @@ import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import 'add_status_view.dart';
 
-class StatusListView extends NavView<StatusListController> {
+class StatusListView extends NavViewStateful<StatusListController> {
   const StatusListView({Key? key}) : super(key: key);
 
   @override
-  StatusListController createController() {
-    return StatusListController();
-  }
+StatusListController createController() => Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {

@@ -15,13 +15,11 @@ import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
 import '../controllers/view_all_media_controller.dart';
 
-class ViewAllMediaView extends NavView<ViewAllMediaController> {
+class ViewAllMediaView extends NavViewStateful<ViewAllMediaController> {
   const ViewAllMediaView({Key? key}) : super(key: key);
 
   @override
-  ViewAllMediaController createController() {
-    return ViewAllMediaController();
-  }
+ViewAllMediaController createController() => Get.put(ViewAllMediaController());
 
   @override
   Widget build(BuildContext context) {

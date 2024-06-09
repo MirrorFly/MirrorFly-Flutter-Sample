@@ -9,13 +9,11 @@ import '../../../../common/constants.dart';
 import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
-class SetPinView extends NavView<AppLockController> {
+class SetPinView extends NavViewStateful<AppLockController> {
   const SetPinView({Key? key}) : super(key: key);
 
   @override
-  AppLockController createController() {
-    return AppLockController();
-  }
+AppLockController createController() => Get.put(AppLockController());
 
   @override
   Widget build(BuildContext context) {

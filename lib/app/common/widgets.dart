@@ -81,7 +81,7 @@ class ProfileTextImage extends StatelessWidget {
   }
 }
 
-class ImageNetwork extends NavView<MainController> {
+class ImageNetwork extends NavViewStateful<MainController> {
   final double? width;
   final double? height;
   final String url;
@@ -106,9 +106,7 @@ class ImageNetwork extends NavView<MainController> {
   }) : super(key: key);
 
   @override
-  MainController createController() {
-    return MainController();
-  }
+MainController createController() => Get.put(MainController());
 
   @override
   Widget build(BuildContext context) {

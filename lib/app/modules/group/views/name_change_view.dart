@@ -10,13 +10,11 @@ import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 
-class NameChangeView extends NavView<GroupInfoController> {
+class NameChangeView extends NavViewStateful<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
 
   @override
-  GroupInfoController createController() {
-    return GroupInfoController();
-  }
+GroupInfoController createController() => Get.put(GroupInfoController());
 
   @override
   Widget build(BuildContext context) {

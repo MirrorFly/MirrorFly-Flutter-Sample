@@ -8,13 +8,11 @@ import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/video_preview_controller.dart';
 
-class VideoPreviewView extends NavView<VideoPreviewController> {
+class VideoPreviewView extends NavViewStateful<VideoPreviewController> {
   const VideoPreviewView({Key? key}) : super(key: key);
 
   @override
-  VideoPreviewController createController() {
-    return VideoPreviewController();
-  }
+VideoPreviewController createController() => Get.put(VideoPreviewController());
 
   @override
   Widget build(BuildContext context) {

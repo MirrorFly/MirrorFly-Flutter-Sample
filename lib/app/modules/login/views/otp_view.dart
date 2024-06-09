@@ -11,13 +11,11 @@ import 'package:otp_text_field/style.dart';
 import '../../../common/constants.dart';
 import '../../../extensions/extensions.dart';
 
-class OtpView extends NavView<LoginController> {
+class OtpView extends NavViewStateful<LoginController> {
   const OtpView({Key? key}) : super(key: key);
 
   @override
-  LoginController createController() {
-    return LoginController();
-  }
+LoginController createController() => Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {

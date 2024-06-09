@@ -6,13 +6,11 @@ import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
 
 import '../../common/constants.dart';
 
-class WebLoginResultView extends NavView<ScannerController> {
+class WebLoginResultView extends NavViewStateful<ScannerController> {
   const WebLoginResultView({Key? key}) : super(key: key);
 
   @override
-  ScannerController createController() {
-    return ScannerController();
-  }
+ScannerController createController() => Get.put(ScannerController());
 
   @override
   Widget build(BuildContext context) {

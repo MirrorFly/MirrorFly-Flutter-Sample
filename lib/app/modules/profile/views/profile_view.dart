@@ -15,12 +15,10 @@ import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/profile_controller.dart';
 
-class ProfileView extends NavView<ProfileController> {
+class ProfileView extends NavViewStateful<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
   @override
-  ProfileController createController() {
-    return ProfileController();
-  }
+ProfileController createController() => Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {

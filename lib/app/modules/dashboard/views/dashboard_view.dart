@@ -17,13 +17,11 @@ import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
-class DashboardView extends NavView<DashboardController> {
+class DashboardView extends NavViewStateful<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-  DashboardController createController() {
-    return DashboardController();
-  }
+DashboardController createController() => Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {

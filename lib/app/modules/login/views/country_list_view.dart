@@ -7,13 +7,11 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/country_controller.dart';
 
-class CountryListView extends NavView<CountryController> {
+class CountryListView extends NavViewStateful<CountryController> {
   const CountryListView({Key? key}) : super(key: key);
 
   @override
-  CountryController createController() {
-    return CountryController();
-  }
+CountryController createController() => Get.put(CountryController());
 
   @override
   Widget build(BuildContext context) {

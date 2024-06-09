@@ -12,13 +12,11 @@ import '../../../common/constants.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends NavView<LoginController> {
+class LoginView extends NavViewStateful<LoginController> {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  LoginController createController() {
-    return LoginController();
-  }
+LoginController createController() => Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {

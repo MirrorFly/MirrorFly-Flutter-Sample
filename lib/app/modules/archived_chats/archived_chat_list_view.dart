@@ -11,7 +11,7 @@ import '../../widgets/custom_action_bar_icons.dart';
 import '../dashboard/widgets.dart';
 import 'archived_chat_list_controller.dart';
 
-class ArchivedChatListView extends NavView<ArchivedChatListController> {
+class ArchivedChatListView extends NavViewStateful<ArchivedChatListController> {
   const ArchivedChatListView(
       {super.key,
         this.enableAppBar = true,
@@ -20,9 +20,7 @@ class ArchivedChatListView extends NavView<ArchivedChatListController> {
   final bool showChatDeliveryIndicator;
 
   @override
-  ArchivedChatListController createController() {
-    return ArchivedChatListController();
-  }
+ArchivedChatListController createController() => Get.put(ArchivedChatListController());
 
   @override
   Widget build(BuildContext context) {

@@ -11,13 +11,11 @@ import 'package:photo_view/photo_view.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/image_view_controller.dart';
 
-class ImageViewView extends NavView<ImageViewController> {
+class ImageViewView extends NavViewStateful<ImageViewController> {
   const ImageViewView({Key? key}) : super(key: key);
 
   @override
-  ImageViewController createController() {
-    return ImageViewController();
-  }
+ImageViewController createController() => Get.put(ImageViewController());
 
   @override
   Widget build(BuildContext context) {

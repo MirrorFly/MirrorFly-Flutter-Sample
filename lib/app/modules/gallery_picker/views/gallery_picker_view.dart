@@ -9,13 +9,11 @@ import '../../../routes/route_settings.dart';
 import '../controllers/gallery_picker_controller.dart';
 import '../src/presentation/pages/gallery_media_picker.dart';
 
-class GalleryPickerView extends NavView<GalleryPickerController> {
+class GalleryPickerView extends NavViewStateful<GalleryPickerController> {
   const GalleryPickerView({Key? key}) : super(key: key);
 
   @override
-  GalleryPickerController createController() {
-    return GalleryPickerController();
-  }
+GalleryPickerController createController() => Get.put(GalleryPickerController());
 
   @override
   Widget build(BuildContext context) {

@@ -14,13 +14,11 @@ import '../../../routes/route_settings.dart';
 import '../../settings/views/settings_widgets.dart';
 import '../controllers/chat_info_controller.dart';
 
-class ChatInfoView extends NavView<ChatInfoController> {
+class ChatInfoView extends NavViewStateful<ChatInfoController> {
   const ChatInfoView({super.key});
 
   @override
-  ChatInfoController createController() {
-    return ChatInfoController();
-  }
+ChatInfoController createController() => Get.put(ChatInfoController());
 
 
   @override

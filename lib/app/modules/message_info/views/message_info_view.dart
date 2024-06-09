@@ -14,14 +14,12 @@ import '../../chat/widgets/reply_message_widgets.dart';
 import '../../chat/widgets/sender_header.dart';
 import '../controllers/message_info_controller.dart';
 
-class MessageInfoView extends NavView<MessageInfoController> {
+class MessageInfoView extends NavViewStateful<MessageInfoController> {
   const MessageInfoView({super.key,this.appbar});
   final PreferredSizeWidget? appbar;
 
   @override
-  MessageInfoController createController() {
-    return MessageInfoController();
-  }
+MessageInfoController createController() => Get.put(MessageInfoController());
 
   @override
   Widget build(BuildContext context) {

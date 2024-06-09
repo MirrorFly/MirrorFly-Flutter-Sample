@@ -13,13 +13,11 @@ import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
-class GroupCreationView extends NavView<GroupCreationController> {
+class GroupCreationView extends NavViewStateful<GroupCreationController> {
   const GroupCreationView({Key? key}) : super(key: key);
 
   @override
-  GroupCreationController createController() {
-    return GroupCreationController();
-  }
+GroupCreationController createController() => Get.put(GroupCreationController());
 
   @override
   Widget build(BuildContext context) {

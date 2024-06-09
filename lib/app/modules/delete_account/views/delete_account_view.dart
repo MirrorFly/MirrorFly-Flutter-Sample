@@ -12,13 +12,11 @@ import '../../../extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 import '../controllers/delete_account_controller.dart';
 
-class DeleteAccountView extends NavView<DeleteAccountController> {
+class DeleteAccountView extends NavViewStateful<DeleteAccountController> {
   const DeleteAccountView({Key? key}) : super(key: key);
 
   @override
-  DeleteAccountController createController() {
-    return DeleteAccountController();
-  }
+DeleteAccountController createController() => Get.put(DeleteAccountController());
 
   @override
   Widget build(BuildContext context) {

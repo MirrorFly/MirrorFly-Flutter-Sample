@@ -15,9 +15,7 @@ class SettingsView extends NavView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
 
   @override
-  SettingsController createController() {
-    return SettingsController();
-  }
+  SettingsController createController() => SettingsController();
 
   @override
   Widget build(BuildContext context) {

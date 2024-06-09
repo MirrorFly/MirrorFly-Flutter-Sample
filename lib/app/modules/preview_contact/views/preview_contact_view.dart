@@ -7,13 +7,11 @@ import '../../../common/widgets.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/preview_contact_controller.dart';
 
-class PreviewContactView extends NavView<PreviewContactController> {
+class PreviewContactView extends NavViewStateful<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
 
   @override
-  PreviewContactController createController() {
-    return PreviewContactController();
-  }
+PreviewContactController createController() => Get.put(PreviewContactController());
 
   @override
   Widget build(BuildContext context) {

@@ -7,13 +7,11 @@ import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/languag
 import '../../../../../extensions/extensions.dart';
 
 
-class LanguageListView extends NavView<LanguageController> {
+class LanguageListView extends NavViewStateful<LanguageController> {
   const LanguageListView({Key? key}) : super(key: key);
 
   @override
-  LanguageController createController() {
-    return LanguageController();
-  }
+LanguageController createController() => Get.put(LanguageController());
 
   @override
   Widget build(BuildContext context) {

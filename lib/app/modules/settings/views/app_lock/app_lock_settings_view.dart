@@ -7,13 +7,11 @@ import '../../../../extensions/extensions.dart';
 import '../settings_widgets.dart';
 import 'app_lock_controller.dart';
 
-class AppLockSettingsView extends NavView<AppLockController> {
+class AppLockSettingsView extends NavViewStateful<AppLockController> {
   const AppLockSettingsView({Key? key}) : super(key: key);
 
   @override
-  AppLockController createController() {
-    return AppLockController();
-  }
+AppLockController createController() => Get.put(AppLockController());
 
   @override
   Widget build(BuildContext context) {

@@ -8,14 +8,12 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../controllers/location_controller.dart';
 
-class LocationSentView extends NavView<LocationController>{
+class LocationSentView extends NavViewStateful<LocationController>{
   const LocationSentView({super.key, this.enableAppBar = true});
   final bool enableAppBar;
 
   @override
-  LocationController createController() {
-    return LocationController();
-  }
+LocationController createController() => Get.put(LocationController());
 
   @override
   Widget build(BuildContext context) {

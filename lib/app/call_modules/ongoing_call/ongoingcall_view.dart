@@ -12,13 +12,11 @@ import '../../common/constants.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
 
-class OnGoingCallView extends NavView<CallController> {
+class OnGoingCallView extends NavViewStateful<CallController> {
   const OnGoingCallView({super.key});
 
   @override
-  CallController createController() {
-    return CallController();
-  }
+CallController createController() => Get.put(CallController());
 
   @override
   Widget build(BuildContext context) {

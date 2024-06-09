@@ -10,13 +10,11 @@ import '../../../../extensions/extensions.dart';
 import '../../../../routes/route_settings.dart';
 import '../settings_widgets.dart';
 
-class ChatSettingsView extends NavView<ChatSettingsController> {
+class ChatSettingsView extends NavViewStateful<ChatSettingsController> {
   const ChatSettingsView({Key? key}) : super(key: key);
 
   @override
-  ChatSettingsController createController() {
-    return ChatSettingsController();
-  }
+ChatSettingsController createController() => Get.put(ChatSettingsController());
 
   @override
   Widget build(BuildContext context) {

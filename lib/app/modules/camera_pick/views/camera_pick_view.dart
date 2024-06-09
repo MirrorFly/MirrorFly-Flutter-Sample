@@ -7,13 +7,11 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../data/utils.dart';
 import '../controllers/camera_pick_controller.dart';
 
-class CameraPickView extends NavView<CameraPickController> {
+class CameraPickView extends NavViewStateful<CameraPickController> {
   const CameraPickView({Key? key}) : super(key: key);
 
   @override
-  CameraPickController createController() {
-    return CameraPickController();
-  }
+CameraPickController createController() => Get.put(CameraPickController());
 
   @override
   Widget build(BuildContext context) {

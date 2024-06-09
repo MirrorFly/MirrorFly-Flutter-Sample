@@ -7,13 +7,11 @@ import '../../../common/constants.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/delete_account_reason_controller.dart';
 
-class DeleteAccountReasonView extends NavView<DeleteAccountReasonController> {
+class DeleteAccountReasonView extends NavViewStateful<DeleteAccountReasonController> {
   const DeleteAccountReasonView({Key? key}) : super(key: key);
 
   @override
-  DeleteAccountReasonController createController() {
-    return DeleteAccountReasonController();
-  }
+DeleteAccountReasonController createController() => Get.put(DeleteAccountReasonController());
 
   @override
   Widget build(BuildContext context) {

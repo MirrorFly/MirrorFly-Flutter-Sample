@@ -10,13 +10,11 @@ import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 
-class GroupParticipantsView extends NavView<GroupParticipantsController> {
+class GroupParticipantsView extends NavViewStateful<GroupParticipantsController> {
   const GroupParticipantsView({Key? key}) : super(key: key);
 
   @override
-  GroupParticipantsController createController() {
-    return GroupParticipantsController();
-  }
+GroupParticipantsController createController() => Get.put(GroupParticipantsController());
 
   @override
   Widget build(BuildContext context) {

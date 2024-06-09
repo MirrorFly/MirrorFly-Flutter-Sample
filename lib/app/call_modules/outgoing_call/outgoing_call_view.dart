@@ -14,13 +14,11 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/constants.dart';
 import '../../data/session_management.dart';
 
-class OutGoingCallView extends NavView<CallController> {
+class OutGoingCallView extends NavViewStateful<CallController> {
   const OutGoingCallView({Key? key}) : super(key: key);
 
   @override
-  CallController createController() {
-    return CallController();
-  }
+CallController createController() => Get.put(CallController());
 
   @override
   Widget build(BuildContext context) {

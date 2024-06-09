@@ -41,7 +41,8 @@ extension GetHelper on GetxController {
       return GetInstance().find<T>();
     } else {
       LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
-      return GetInstance().put<T>(this as T); // Use the provided factory function to create a new instance
+      GetInstance().lazyPut<T>(()=>this as T); // Use the provided factory function to create a new instance
+      return GetInstance().find<T>();
     }
   }
 }
@@ -60,3 +61,94 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
   Widget build(BuildContext context);
 
 }
+
+// Abstract class for StatefulWidget
+abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
+  const NavViewStateful({Key? key}) : super(key: key);
+
+  T get controller => Get.find<T>();
+  dynamic get arguments => NavUtils.arguments;
+
+  T createController();
+
+  @override
+  NavViewState<T> createState() {
+    return NavViewState<T>();
+  }
+
+  void onInit() {}
+  void onDispose() {}
+
+  Widget build(BuildContext context);
+}
+
+class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
+  // late T controller;
+
+  @override
+  void initState() {
+    widget.createController();
+    // Get.put<T>(controller);
+    super.initState();
+    widget.onInit();
+  }
+
+  @override
+  void dispose() {
+    widget.onDispose();
+    Get.delete<T>();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return widget.build(context);
+  }
+
+  // Widget buildPage(BuildContext context);
+}
+
+/*
+abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
+  const NavViewStateful({Key? key}) : super(key: key);
+
+  final String? tag = null;
+
+  T get controller => createController().get();
+  dynamic get arguments => NavUtils.arguments;
+
+  T createController();
+
+  @override
+  NavViewState<NavViewStateful<T>, T> createState();
+}
+
+abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxController> extends State<V> {
+  late T controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.createController();
+    // Initialize the controller
+    if (widget.tag == null) {
+      Get.put<T>(controller);
+    } else {
+      Get.put<T>(controller, tag: widget.tag);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller
+    if (widget.tag == null) {
+      Get.delete<T>();
+    } else {
+      Get.delete<T>(tag: widget.tag);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context);
+}*/

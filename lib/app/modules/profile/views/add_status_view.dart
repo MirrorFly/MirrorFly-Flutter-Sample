@@ -8,13 +8,11 @@ import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controlle
 import '../../../common/constants.dart';
 import '../../../extensions/extensions.dart';
 
-class AddStatusView extends NavView<StatusListController> {
+class AddStatusView extends NavViewStateful<StatusListController> {
   const AddStatusView({Key? key}) : super(key: key);
 
   @override
-  StatusListController createController() {
-    return StatusListController();
-  }
+StatusListController createController() => Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {

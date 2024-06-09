@@ -14,13 +14,11 @@ import '../../../common/app_localizations.dart';
 import '../../../modules/dashboard/widgets.dart';
 import '../../call_utils.dart';
 
-class CallInfoView extends NavView<CallInfoController> {
+class CallInfoView extends NavViewStateful<CallInfoController> {
   const CallInfoView({super.key});
 
   @override
-  CallInfoController createController() {
-    return CallInfoController();
-  }
+CallInfoController createController() => Get.put(CallInfoController());
 
   @override
   Widget build(BuildContext context) {

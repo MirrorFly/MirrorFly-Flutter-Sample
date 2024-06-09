@@ -7,13 +7,11 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import '../../../../../extensions/extensions.dart';
 import 'datausage_controller.dart';
 
-class DataUsageListView extends NavView<DataUsageController> {
+class DataUsageListView extends NavViewStateful<DataUsageController> {
   const DataUsageListView({Key? key}) : super(key: key);
 
   @override
-  DataUsageController createController() {
-    return DataUsageController();
-  }
+DataUsageController createController() => Get.put(DataUsageController());
 
   @override
   Widget build(BuildContext context) {

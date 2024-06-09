@@ -10,13 +10,11 @@ import '../../../../data/utils.dart';
 import '../../../../extensions/extensions.dart';
 import 'notification_not_working_view.dart';
 
-class NotificationSettingsView extends NavView<NotificationAlertController> {
+class NotificationSettingsView extends NavViewStateful<NotificationAlertController> {
   const NotificationSettingsView({Key? key}) : super(key: key);
 
   @override
-  NotificationAlertController createController() {
-    return NotificationAlertController();
-  }
+NotificationAlertController createController() => Get.put(NotificationAlertController());
 
   @override
   Widget build(BuildContext context) {

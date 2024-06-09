@@ -19,13 +19,11 @@ import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import '../../settings/views/settings_widgets.dart';
 
-class GroupInfoView extends NavView<GroupInfoController> {
+class GroupInfoView extends NavViewStateful<GroupInfoController> {
   const GroupInfoView({Key? key}) : super(key: key);
 
   @override
-  GroupInfoController createController() {
-    return GroupInfoController();
-  }
+GroupInfoController createController() => Get.put(GroupInfoController());
 
   @override
   Widget build(BuildContext context) {

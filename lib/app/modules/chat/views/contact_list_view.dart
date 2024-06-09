@@ -13,14 +13,12 @@ import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../dashboard/dashboard_widgets/contact_item.dart';
 
-class ContactListView extends NavView<ContactController> {
+class ContactListView extends NavViewStateful<ContactController> {
   const ContactListView({super.key});
 
 
   @override
-  ContactController createController() {
-    return ContactController();
-  }
+ContactController createController() => Get.put(ContactController());
 
   @override
   Widget build(BuildContext context) {

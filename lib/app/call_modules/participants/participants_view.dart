@@ -15,13 +15,11 @@ import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
 
-class ParticipantsView extends NavView<AddParticipantsController> {
+class ParticipantsView extends NavViewStateful<AddParticipantsController> {
   const ParticipantsView({Key? key}) : super(key: key);
 
   @override
-  AddParticipantsController createController() {
-    return AddParticipantsController();
-  }
+AddParticipantsController createController() => Get.put(AddParticipantsController());
 
   @override
   Widget build(BuildContext context) {

@@ -11,13 +11,11 @@ import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/local_contact_controller.dart';
 
-class LocalContactView extends NavView<LocalContactController> {
+class LocalContactView extends NavViewStateful<LocalContactController> {
   const LocalContactView({Key? key}) : super(key: key);
 
   @override
-  LocalContactController createController() {
-    return LocalContactController();
-  }
+LocalContactController createController() => Get.put(LocalContactController());
 
   @override
   Widget build(BuildContext context) {

@@ -13,13 +13,11 @@ import '../../../extensions/extensions.dart';
 import '../../call_widgets.dart';
 import '../controllers/call_timeout_controller.dart';
 
-class CallTimeoutView extends NavView<CallTimeoutController> {
+class CallTimeoutView extends NavViewStateful<CallTimeoutController> {
   const CallTimeoutView({Key? key}) : super(key: key);
 
   @override
-  CallTimeoutController createController() {
-    return CallTimeoutController();
-  }
+CallTimeoutController createController() => Get.put(CallTimeoutController());
 
   @override
   Widget build(BuildContext context) {
