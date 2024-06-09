@@ -49,7 +49,7 @@ DashboardController createController() => Get.put(DashboardController());
               }
             },
             child: Theme(
-              data: ThemeData(tabBarTheme: AppStyleConfig.dashBoardPageStyle.tabBarTheme,
+              data: Theme.of(context).copyWith(tabBarTheme: AppStyleConfig.dashBoardPageStyle.tabBarTheme,
               appBarTheme: AppStyleConfig.dashBoardPageStyle.appBarTheme,
                   floatingActionButtonTheme: AppStyleConfig.dashBoardPageStyle.floatingActionButtonThemeData),
               child: CustomSafeArea(

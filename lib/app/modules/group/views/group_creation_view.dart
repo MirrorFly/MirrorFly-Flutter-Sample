@@ -22,7 +22,7 @@ GroupCreationController createController() => Get.put(GroupCreationController())
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.createGroupPageStyle.appbarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.createGroupPageStyle.appbarTheme),
       child: Scaffold(
         appBar: AppBar(
           title: Text(

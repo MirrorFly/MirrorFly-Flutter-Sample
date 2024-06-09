@@ -39,7 +39,7 @@ ProfileController createController() => Get.put(ProfileController());
         }
       },
       child: Theme(
-        data: ThemeData(
+        data: Theme.of(context).copyWith(
           appBarTheme: AppStyleConfig.profileViewStyle.appBarTheme,
         ),
         child: Scaffold(
@@ -296,7 +296,7 @@ ProfileController createController() => Get.put(ProfileController());
             child: SizedBox(
               width: NavUtils.size.width,
               child: Theme(
-                data: ThemeData(cardTheme: AppStyleConfig.profileViewStyle.bottomSheetCardTheme),
+                data: Theme.of(context).copyWith(cardTheme: AppStyleConfig.profileViewStyle.bottomSheetCardTheme),
                 child: Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

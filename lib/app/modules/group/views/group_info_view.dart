@@ -28,7 +28,7 @@ GroupInfoController createController() => Get.put(GroupInfoController());
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.groupChatInfoPageStyle.appBarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.groupChatInfoPageStyle.appBarTheme),
       child: Scaffold(
         body: NestedScrollView(
           controller: controller.scrollController,

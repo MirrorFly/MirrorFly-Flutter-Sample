@@ -15,7 +15,7 @@ class CreateGroupPageStyle{
       centerTitle: true,
       shadowColor: Colors.white,
       surfaceTintColor: Colors.white,
-      titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 18),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
       iconTheme: IconThemeData(color: Color(0xff181818)),
       actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.actionTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff181818),fontSize: 18),

@@ -3,10 +3,11 @@ part of 'stylesheet.dart';
 class ChatPageStyle {
   const ChatPageStyle(
       {this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+          titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
   elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
         this.chatUserAppBarStyle = const ChatUserAppBarStyle(),
         this.searchTextFieldStyle = const EditTextFieldStyle(),
-        this.textTypingAreaStyle = const TextTypingAreaStyle(),
+        this.messageTypingAreaStyle = const MessageTypingAreaStyle(),
         this.notificationMessageViewStyle = const NotificationMessageViewStyle(),
         this.chatSelectionBgColor = Colors.black12,
         this.senderChatBubbleStyle = const SenderChatBubbleStyle(),
@@ -24,7 +25,7 @@ class ChatPageStyle {
   final AppBarTheme appBarTheme;
   final ChatUserAppBarStyle chatUserAppBarStyle;
   final EditTextFieldStyle searchTextFieldStyle;
-  final TextTypingAreaStyle textTypingAreaStyle;
+  final MessageTypingAreaStyle messageTypingAreaStyle;
   final NotificationMessageViewStyle notificationMessageViewStyle;
   final Color chatSelectionBgColor;
   final SenderChatBubbleStyle senderChatBubbleStyle;
@@ -250,7 +251,7 @@ class ReceiverChatBubbleStyle{
        borderRadius: BorderRadius.only(
            topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
        color: Colors.white,
-       border: Border.fromBorderSide(BorderSide(color: Color(0xffDDE3E5)))),
+       border: Border.fromBorderSide(BorderSide(color: Color(0xffE3E7F0)))),
  });
   final TextStyle participantNameTextStyle; // for Group participant name
  final TextMessageViewStyle textMessageViewStyle;

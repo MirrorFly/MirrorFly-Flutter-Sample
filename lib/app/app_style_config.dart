@@ -51,6 +51,7 @@ class AppStyleConfig{
   static ViewAllMediaPageStyle _viewAllMediaPageStyle = const ViewAllMediaPageStyle();
   static MessageInfoPageStyle _messageInfoPageStyle = const MessageInfoPageStyle();
   static BlockedListPageStyle _blockedListPageStyle = const BlockedListPageStyle();
+  static StarredMessageListPageStyle _starredMessageListPageStyle = const StarredMessageListPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -64,6 +65,7 @@ class AppStyleConfig{
   static ViewAllMediaPageStyle viewAllMediaPageStyle= _viewAllMediaPageStyle;
   static MessageInfoPageStyle messageInfoPageStyle= _messageInfoPageStyle;
   static BlockedListPageStyle blockedListPageStyle= _blockedListPageStyle;
+  static StarredMessageListPageStyle starredMessageListPageStyle = _starredMessageListPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -111,6 +113,10 @@ class AppStyleConfig{
 
   static setBlockedListPageStyle(BlockedListPageStyle blockedListPageStyle){
     _blockedListPageStyle = blockedListPageStyle;
+  }
+
+  static setStarredMessageListPageStyle(StarredMessageListPageStyle starredMessageListPageStyle){
+    _starredMessageListPageStyle = starredMessageListPageStyle;
   }
 
 

@@ -3,6 +3,7 @@ part of 'stylesheet.dart';
 class GroupChatInfoPageStyle{
   const GroupChatInfoPageStyle({
     this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+        titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
         elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.silverAppbarTitleStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.white,fontSize: 18),
     this.silverAppBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),

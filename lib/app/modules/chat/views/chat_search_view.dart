@@ -32,7 +32,7 @@ class ChatSearchView extends StatelessWidget {
         }
       },
       child: Theme(
-        data: ThemeData(appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme),
+        data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme),
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: true,

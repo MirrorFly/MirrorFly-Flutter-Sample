@@ -24,7 +24,7 @@ ViewAllMediaController createController() => Get.put(ViewAllMediaController());
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.viewAllMediaPageStyle.appBarTheme,tabBarTheme: AppStyleConfig.viewAllMediaPageStyle.tabBarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.viewAllMediaPageStyle.appBarTheme,tabBarTheme: AppStyleConfig.viewAllMediaPageStyle.tabBarTheme),
       child: DefaultTabController(
         length: 3,
         child: Scaffold(

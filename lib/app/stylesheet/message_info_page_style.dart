@@ -15,7 +15,7 @@ class MessageInfoPageStyle{
     this.appBarTheme = const AppBarTheme(color: Colors.white,
       shadowColor: Colors.white,
       surfaceTintColor: Colors.white,
-      titleTextStyle: TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 18),
+      titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
       iconTheme: IconThemeData(color: Color(0xff181818)),
       actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.senderChatBubbleStyle = const SenderChatBubbleStyle(),

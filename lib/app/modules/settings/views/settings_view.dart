@@ -20,7 +20,7 @@ class SettingsView extends NavView<SettingsController> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.settingsPageStyle.appBarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.settingsPageStyle.appBarTheme),
       child: Scaffold(
         appBar: AppBar(
           title: Text(getTranslated("settings")),

@@ -37,7 +37,7 @@ class ChatView extends NavViewStateful<ChatController> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(
+      data: Theme.of(context).copyWith(
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
       child: Scaffold(
@@ -106,7 +106,7 @@ class ChatView extends NavViewStateful<ChatController> {
                           alignment: Alignment.bottomCenter,
                           child: Obx(() {
                             return Container(
-                              color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.bgColor,//Colors.white,
+                              color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.bgColor,//Colors.white,
                               child: controller.isBlocked.value
                                   ? userBlocked(context)
                                   : controller.isMemberOfGroup
@@ -121,7 +121,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                   onClick: () {
                                                     controller.navigateToMessage(controller.replyChatMessage);
                                                   },
-                                                  replyBgColor: AppStyleConfig.chatPageStyle.textTypingAreaStyle.replyBgColor,
+                                                  replyBgColor: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.replyBgColor,
                                                 );
                                               } else {
                                                 return const SizedBox.shrink();
@@ -130,7 +130,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                             Divider(
                                               height: 1,
                                               thickness: 0.29,
-                                              color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
+                                              color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.dividerColor//textBlackColor,
                                             ),
                                             const SizedBox(
                                               height: 10,
@@ -144,7 +144,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                       padding: const EdgeInsets.only(left: 10),
                                                       margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                                                       width: double.infinity,
-                                                      decoration: AppStyleConfig.chatPageStyle.textTypingAreaStyle.decoration,
+                                                      decoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.decoration,
                                                       // decoration: BoxDecoration(
                                                       //   border: Border.all(
                                                       //     color: textColor,
@@ -167,7 +167,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                             },
                                                             child: Padding(
                                                               padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
-                                                              child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.textTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,),
+                                                              child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,),
                                                             ))
                                                         : const SizedBox.shrink();
                                                   }),
@@ -300,7 +300,7 @@ class ChatView extends NavViewStateful<ChatController> {
     return Row(
       children: <Widget>[
         controller.isAudioRecording.value == Constants.audioRecording || controller.isAudioRecording.value == Constants.audioRecordDone
-            ? Text(controller.timerInit.value, style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.durationTextStyle)
+            ? Text(controller.timerInit.value, style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordingViewStyle.durationTextStyle)
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordInitial
             ? InkWell(
@@ -310,9 +310,9 @@ class ChatView extends NavViewStateful<ChatController> {
                 child: controller.showEmoji.value
                     ? Icon(
                         Icons.keyboard,
-                        color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor,
+                        color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor,
                       )
-                    : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),))
+                    : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),))
             : const SizedBox.shrink(),
         controller.isAudioRecording.value == Constants.audioRecordDelete
             ? const Padding(
@@ -352,7 +352,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 15.0),
                     child: SizedBox(
-                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel"), textAlign: TextAlign.end,style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle,))),
+                        height: 50, child: Align(alignment: Alignment.centerRight, child: Text(getTranslated("slideToCancel"), textAlign: TextAlign.end,style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle,))),
                   ),
                 ),
               )
@@ -368,7 +368,7 @@ class ChatView extends NavViewStateful<ChatController> {
                     child: Text(
                       getTranslated("cancel"),
                       textAlign: TextAlign.end,
-                      style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle.copyWith(color: Colors.red),
+                      style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordingViewStyle.cancelTextStyle.copyWith(color: Colors.red),
                     ),
                   ),
                 ),
@@ -380,14 +380,14 @@ class ChatView extends NavViewStateful<ChatController> {
                   onChanged: (text) {
                     controller.isTyping(text);
                   },
-                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,//const TextStyle(fontWeight: FontWeight.w400),
+                  style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle,//const TextStyle(fontWeight: FontWeight.w400),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 5,
                   enabled: controller.isAudioRecording.value == Constants.audioRecordInitial ? true : false,
                   controller: controller.messageController,
                   focusNode: controller.focusNode,
-                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle),
+                  decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle),
                 ),
               )
             : const Offstage(),
@@ -396,7 +396,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 onPressed: () {
                   controller.showAttachmentsView(context);
                 },
-                icon: SvgPicture.asset('assets/logos/attach.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
+                icon: SvgPicture.asset('assets/logos/attach.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
             : const Offstage(),
         (controller.isAudioRecording.value == Constants.audioRecordInitial &&
@@ -405,7 +405,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 onPressed: () {
                   controller.startRecording();
                 },
-                icon: SvgPicture.asset('assets/logos/mic.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.textTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
+                icon: SvgPicture.asset('assets/logos/mic.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
             : const Offstage(),
         const SizedBox(
@@ -421,7 +421,7 @@ class ChatView extends NavViewStateful<ChatController> {
         Divider(
           height: 1,
           thickness: 0.29,
-          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor,
+          color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.dividerColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0, left: 10),
@@ -432,7 +432,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 getTranslated("youHaveBlocked"),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,
+                style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle,
                 // style: const TextStyle(fontSize: 15),
               ),
               const SizedBox(
@@ -444,7 +444,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   //controller.profile.name.checkNull(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle,
+                  style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle,
                   // style: const TextStyle(fontSize: 15),
                 ),
               ),
@@ -454,7 +454,7 @@ class ChatView extends NavViewStateful<ChatController> {
               InkWell(
                 child: Text(
                   getTranslated("unblock"),
-                  style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextStyle.copyWith(color: Colors.blue),
+                  style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle.copyWith(color: Colors.blue),
                   // style: const TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                 ),
                 onTap: () => controller.unBlockUser(),
@@ -472,13 +472,13 @@ class ChatView extends NavViewStateful<ChatController> {
         Divider(
           height: 1,
           thickness: 0.29,
-          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
+          color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.dividerColor//textBlackColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             getTranslated("youCantSentMessageNoLonger"),
-            style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle,
+            style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle,
             // style: const TextStyle(
             //   fontSize: 15,
             // ),
@@ -495,13 +495,13 @@ class ChatView extends NavViewStateful<ChatController> {
         Divider(
           height: 1,
           thickness: 0.29,
-          color: AppStyleConfig.chatPageStyle.textTypingAreaStyle.dividerColor//textBlackColor,
+          color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.dividerColor//textBlackColor,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
           child: Text(
             getTranslated("featureNotAvailable"),
-            style: AppStyleConfig.chatPageStyle.textTypingAreaStyle.textFieldStyle.editTextHintStyle,
+            style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle,
             // style: const TextStyle(
             //   fontSize: 15,
             // ),
@@ -640,7 +640,7 @@ class ChatView extends NavViewStateful<ChatController> {
               controller.handleReplyChatMessage(controller.selectedChatList[0]);
               controller.clearChatSelection(controller.selectedChatList[0]);
             },
-            icon: SvgPicture.asset(replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn),),
+            icon: SvgPicture.asset(replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),
             tooltip: 'Reply',
           ),
           overflowWidget: Text(getTranslated("reply"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -661,7 +661,7 @@ class ChatView extends NavViewStateful<ChatController> {
             onPressed: () {
               controller.checkBusyStatusForForward();
             },
-            icon: SvgPicture.asset(forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'Forward',
           ),
           overflowWidget: Text(getTranslated("forward"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -681,7 +681,7 @@ class ChatView extends NavViewStateful<ChatController> {
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: SvgPicture.asset(favouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(favouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'Favourite',
           ),
           overflowWidget: Text(getTranslated("favourite"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -701,7 +701,7 @@ class ChatView extends NavViewStateful<ChatController> {
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: SvgPicture.asset(unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'unFavourite',
           ),
           overflowWidget: Text(getTranslated("unFavourite"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -719,7 +719,7 @@ class ChatView extends NavViewStateful<ChatController> {
             onPressed: () {
               controller.deleteMessages();
             },
-            icon: SvgPicture.asset(deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'Delete',
           ),
           overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -758,7 +758,7 @@ class ChatView extends NavViewStateful<ChatController> {
             icon: SvgPicture.asset(
               copyIcon,
               fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
+                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)
             ),
             tooltip: 'Copy',
           ),
@@ -780,7 +780,7 @@ class ChatView extends NavViewStateful<ChatController> {
             icon: SvgPicture.asset(
               infoIcon,
               fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
+                colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)
             ),
             tooltip: 'Message Info',
           ),
@@ -797,7 +797,7 @@ class ChatView extends NavViewStateful<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'Share',
           ),
           overflowWidget: Text(getTranslated("share"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -813,7 +813,7 @@ class ChatView extends NavViewStateful<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+            icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
             tooltip: 'Edit Message',
           ),
           overflowWidget: Text(getTranslated("editMessage"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -939,7 +939,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   onPressed: () {
                     controller.makeVideoCall();
                   },
-                  icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                  icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("videoCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
@@ -953,7 +953,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   onPressed: () {
                     controller.makeVoiceCall();
                   },
-                  icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                  icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("audioCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,

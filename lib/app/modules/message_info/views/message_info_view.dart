@@ -24,7 +24,7 @@ MessageInfoController createController() => Get.put(MessageInfoController());
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.messageInfoPageStyle.appBarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.messageInfoPageStyle.appBarTheme),
       child: Scaffold(
           appBar: appbar ?? AppBar(
             title: Text(getTranslated("messageInfo")),

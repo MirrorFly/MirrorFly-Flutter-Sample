@@ -24,7 +24,7 @@ ChatInfoController createController() => Get.put(ChatInfoController());
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.chatInfoPageStyle.appBarTheme,),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.chatInfoPageStyle.appBarTheme,),
       child: Scaffold(
         body: !controller.argument.disableAppbar
             ? NestedScrollView(

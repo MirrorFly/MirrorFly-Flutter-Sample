@@ -19,6 +19,7 @@ part 'view_all_media_page_style.dart';
 part 'create_group_page_style.dart';
 part 'message_info_page_style.dart';
 part 'blocked_list_page_style.dart';
+part 'starred_message_list_page_style.dart';
 
 class AppStyle{
 

@@ -8,6 +8,7 @@ class BlockedListPageStyle{
 
   const BlockedListPageStyle({
     this.appbarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+        titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
         elevation: 0,actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.blockedUserItemStyle = const ContactItemStyle(
         titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),

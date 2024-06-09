@@ -17,7 +17,7 @@ BlockedListController createController() => Get.put(BlockedListController());
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.blockedListPageStyle.appbarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.blockedListPageStyle.appbarTheme),
       child: Scaffold(
         appBar: AppBar(
           title: Text(getTranslated("blockedContactList")),

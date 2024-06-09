@@ -10,6 +10,7 @@ class ContactListPageStyle{
 
   const ContactListPageStyle({
     this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
+        titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
         iconTheme: IconThemeData(color: Color(0xff181818)),
         actionsIconTheme: IconThemeData(color: Color(0xff181818))),
     this.searchTextFieldStyle = const EditTextFieldStyle(),

@@ -1,7 +1,7 @@
 part of 'stylesheet.dart';
 
-class TextTypingAreaStyle{
-  const TextTypingAreaStyle({
+class MessageTypingAreaStyle{
+  const MessageTypingAreaStyle({
     this.decoration = const BoxDecoration(
       border: Border.fromBorderSide(BorderSide(color: Color(0xffC1C1C1),)),
       borderRadius: BorderRadius.all(Radius.circular(40)),
@@ -101,7 +101,7 @@ class TextMessageViewStyle{
   const TextMessageViewStyle({this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
     this.highlightColor = Colors.orange,//while searching a message to highlight the text
-    this.urlMessageColor = Colors.blue});
+    this.urlMessageColor = const Color(0xff4879F9)});
   final TextStyle textStyle;
   final TextStyle timeTextStyle;
   final Color highlightColor;

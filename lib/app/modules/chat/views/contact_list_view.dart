@@ -24,7 +24,7 @@ ContactController createController() => Get.put(ContactController());
   Widget build(BuildContext context) {
     var arg = arguments as ContactListArguments;
     return Theme(
-      data: ThemeData(appBarTheme: AppStyleConfig.contactListPageStyle.appBarTheme),
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.contactListPageStyle.appBarTheme),
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {

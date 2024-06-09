@@ -7,23 +7,23 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../stylesheet/stylesheet.dart';
 import '../controllers/starred_messages_controller.dart';
 
 class StarredMessageHeader extends StatelessWidget {
-  StarredMessageHeader(
-      {Key? key, required this.chatList, required this.isTapEnabled})
+  const StarredMessageHeader(
+      {Key? key, required this.chatList, required this.isTapEnabled, required this.controller,this.style = const StarredMessageUserHeaderStyle()})
       : super(key: key);
   final ChatMessageModel chatList;
   final bool isTapEnabled;
-  final StarredMessagesController controller = StarredMessagesController().get();
+  final StarredMessagesController controller;// = StarredMessagesController().get();
+  final StarredMessageUserHeaderStyle style;
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       margin: const EdgeInsets.all(2),
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: getHeader(chatList, context),
+      child: getHeader(context),
     );
   }
 
@@ -33,7 +33,7 @@ class StarredMessageHeader extends StatelessWidget {
     return await getProfileDetails(chatList.chatUserJid);
   }
 
-  getHeader(ChatMessageModel chatList, BuildContext context) {
+  getHeader(BuildContext context) {
     return FutureBuilder(
         future: getProfile(),
         builder: (context, d) {
@@ -55,8 +55,8 @@ class StarredMessageHeader extends StatelessWidget {
                         Flexible(
                           child: Text(
                             userProfile.name.checkNull(),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: style.profileNameStyle,
+                            // style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -75,8 +75,9 @@ class StarredMessageHeader extends StatelessWidget {
                               size: 14,
                             )),
                         Text(getTranslated("you"),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                            style: style.profileNameStyle,
+                            // style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -102,8 +103,8 @@ class StarredMessageHeader extends StatelessWidget {
                         Flexible(
                           child: Text(
                         userProfile.isGroupProfile.checkNull() ? chatList.senderNickName : userProfile.name.checkNull(),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                            style: style.profileNameStyle,
+                            // style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -124,16 +125,18 @@ class StarredMessageHeader extends StatelessWidget {
                             ? Flexible(
                                 child: Text(
                                   userProfile.name.checkNull(),
-                                  style: const TextStyle(
+                                  style: style.profileNameStyle,
+                                  /*style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 15),
+                                      fontSize: 15),*/
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               )
                             : Text(getTranslated("you"),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15)),
+                                style: style.profileNameStyle,
+                                // style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -153,7 +156,8 @@ class StarredMessageHeader extends StatelessWidget {
   getChatTime(int messageSentTime, BuildContext context) {
     return Text(
       controller.getChatTime(context, messageSentTime),
-      style: const TextStyle(fontSize: 12, color: Color(0xff959595)),
+      style: style.dateTextStyle,
+      // style: const TextStyle(fontSize: 12, color: Color(0xff959595)),
     );
   }
 
@@ -161,13 +165,14 @@ class StarredMessageHeader extends StatelessWidget {
     if (userProfile.image.checkNull().isNotEmpty) {
       return ImageNetwork(
         url: userProfile.image.checkNull(),
-        width: 48,
-        height: 48,
+        width: style.profileImageSize.width,
+        height: style.profileImageSize.height,
         clipOval: true,
         errorWidget: ProfileTextImage(
           text: userProfile.name.checkNull().isEmpty
               ? userProfile.mobileNumber.checkNull()
               : userProfile.name.checkNull(),
+          radius: style.profileImageSize.width/2,
         ),
         isGroup: userProfile.isGroupProfile.checkNull(),
         blocked: userProfile.isBlockedMe.checkNull() || userProfile.isAdminBlocked.checkNull(),
@@ -178,6 +183,7 @@ class StarredMessageHeader extends StatelessWidget {
         text: userProfile.name.checkNull().isEmpty
             ? userProfile.mobileNumber.checkNull()
             : userProfile.name.checkNull(),
+        radius: style.profileImageSize.width/2,
       );
     }
   }

@@ -5,6 +5,7 @@ class SettingsPageStyle{
     this.appBarTheme = const AppBarTheme(backgroundColor: Color(0xffF2F2F2),
       shadowColor: Colors.white,
       surfaceTintColor: Colors.white,
+      titleTextStyle: TextStyle(fontWeight: FontWeight.bold,color: Color(0xff181818),fontSize: 20),
       iconTheme: IconThemeData(color: Color(0xff181818)),
       actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.listItemStyle = const ListItemStyle(

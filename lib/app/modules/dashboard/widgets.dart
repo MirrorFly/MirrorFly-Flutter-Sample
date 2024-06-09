@@ -644,7 +644,7 @@ bool isCountryCode(String text) {
 
 Widget textMessageSpannableText(String message, TextStyle? textStyle,Color urlColor,{int? maxLines,}) {
   //final GlobalKey textKey = GlobalKey();
-  TextStyle? underlineStyle = textStyle?.copyWith(color: Colors.blueAccent,decoration: TextDecoration.underline);//const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
+  TextStyle? underlineStyle = textStyle?.copyWith(color: urlColor,decoration: TextDecoration.underline,decorationColor: urlColor);//const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
   TextStyle? normalStyle = textStyle;//const TextStyle(fontSize: 14, color: textHintColor);
   var prevValue = "";
   return Text.rich(
