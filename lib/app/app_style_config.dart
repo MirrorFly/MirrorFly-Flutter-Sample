@@ -42,6 +42,7 @@ class AppStyleConfig{
         return const TextStyle(color: Colors.white); // Default text color
       })));
   static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
+  static ArchivedChatsPageStyle _archivedChatsPageStyle = const ArchivedChatsPageStyle();
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
   static CreateGroupPageStyle _createGroupPageStyle = const CreateGroupPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();
@@ -56,6 +57,7 @@ class AppStyleConfig{
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
   static DashBoardPageStyle dashBoardPageStyle = _dashBoardPageStyle;
+  static ArchivedChatsPageStyle archivedChatsPageStyle = _archivedChatsPageStyle;
   static ChatPageStyle chatPageStyle = _chatPageStyle;
   static CreateGroupPageStyle createGroupPageStyle = _createGroupPageStyle;
   static ChatInfoPageStyle chatInfoPageStyle = _chatInfoPageStyle;
@@ -81,6 +83,10 @@ class AppStyleConfig{
 
   static setDashboardStyle(DashBoardPageStyle dashBoardPageStyle){
     _dashBoardPageStyle = dashBoardPageStyle;
+  }
+
+  static setArchivedChatsPageStyle(ArchivedChatsPageStyle archivedChatsPageStyle){
+    _archivedChatsPageStyle = archivedChatsPageStyle;
   }
 
   static setChatPageStyle(ChatPageStyle chatPageStyle){
