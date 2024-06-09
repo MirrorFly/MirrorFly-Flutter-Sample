@@ -113,7 +113,7 @@ BusyStatusController createController() => Get.put(BusyStatusController());
                       NavUtils.back();
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: MaterialStateColor.resolveWith(
+                        backgroundColor: WidgetStateColor.resolveWith(
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
@@ -136,7 +136,7 @@ BusyStatusController createController() => Get.put(BusyStatusController());
                       controller.validateAndFinish(context);
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: MaterialStateColor.resolveWith(
+                        backgroundColor: WidgetStateColor.resolveWith(
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),

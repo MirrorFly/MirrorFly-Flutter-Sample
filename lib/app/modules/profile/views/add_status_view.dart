@@ -105,7 +105,7 @@ StatusListController createController() => Get.put(StatusListController());
                 child: ElevatedButton(
                   onPressed: () => controller.onBackPressed(),
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
+                      backgroundColor: WidgetStateColor.resolveWith(
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
@@ -125,7 +125,7 @@ StatusListController createController() => Get.put(StatusListController());
                     controller.validateAndFinish();
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
+                      backgroundColor: WidgetStateColor.resolveWith(
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
