@@ -1,11 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'stylesheet/stylesheet.dart';
 
 class AppStyleConfig{
 
-  static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: ButtonStyle(
-    padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 40, vertical: 10)),
+  static final ButtonStyle _defaultButtonStyle = ButtonStyle(
+      shape: WidgetStateProperty.resolveWith((states) => const StadiumBorder()),
+      padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 40, vertical: 10)),
       backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
           return Colors.grey; // Color when the button is disabled
@@ -20,27 +22,27 @@ class AppStyleConfig{
       }),
       textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
         return const TextStyle(fontSize: 14, fontWeight: FontWeight.w500); // Default text style
-      })));
-  static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: ButtonStyle(
-    padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 55, vertical: 15)),
-      backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-        if (states.contains(WidgetState.disabled)) {
-          return Colors.grey; // Color when the button is disabled
-        }
-        return const Color(0xff3276E2); // Default color
-      }),
-      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-        if (states.contains(WidgetState.disabled)) {
-          return Colors.white.withOpacity(0.5); // Text color when the button is disabled
-        }
-        return Colors.white; // Default text color
-      }),
-      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
-        if (states.contains(WidgetState.disabled)) {
-          return TextStyle(color: Colors.white.withOpacity(0.5)); // Text color when the button is disabled
-        }
-        return const TextStyle(color: Colors.white); // Default text color
-      })));
+      }));
+
+  static final ButtonStyle _disconnectButtonStyle = ButtonStyle(
+        shape: WidgetStateProperty.resolveWith((states) => const StadiumBorder()),
+    padding: WidgetStateProperty.resolveWith((states) => EdgeInsets.zero),
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Color when the button is disabled
+      }
+      return const Color(0xffff4d67); // Default color
+    }),
+    iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+      }
+      return Colors.white; // Default color
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50))
+  );
+
+  static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);
+  static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
   static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
   static ArchivedChatsPageStyle _archivedChatsPageStyle = const ArchivedChatsPageStyle();
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
@@ -53,6 +55,7 @@ class AppStyleConfig{
   static MessageInfoPageStyle _messageInfoPageStyle = const MessageInfoPageStyle();
   static BlockedListPageStyle _blockedListPageStyle = const BlockedListPageStyle();
   static StarredMessageListPageStyle _starredMessageListPageStyle = const StarredMessageListPageStyle();
+  static OutgoingCallPageStyle _outgoingCallPageStyle = OutgoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -68,6 +71,7 @@ class AppStyleConfig{
   static MessageInfoPageStyle messageInfoPageStyle= _messageInfoPageStyle;
   static BlockedListPageStyle blockedListPageStyle= _blockedListPageStyle;
   static StarredMessageListPageStyle starredMessageListPageStyle = _starredMessageListPageStyle;
+  static OutgoingCallPageStyle outgoingCallPageStyle = _outgoingCallPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -123,6 +127,10 @@ class AppStyleConfig{
 
   static setStarredMessageListPageStyle(StarredMessageListPageStyle starredMessageListPageStyle){
     _starredMessageListPageStyle = starredMessageListPageStyle;
+  }
+
+  static setOutgoingCallPageStyle(OutgoingCallPageStyle outgoingCallPageStyle){
+    _outgoingCallPageStyle = outgoingCallPageStyle;
   }
 
 

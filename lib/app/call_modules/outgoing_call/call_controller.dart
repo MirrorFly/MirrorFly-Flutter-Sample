@@ -194,7 +194,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("availableAudioList.length ${availableAudioList.length}");
     //if connected other audio devices
     // if (availableAudioList.length > 2) {
-    Get.dialog(
+    DialogUtils.createDialog(
       Dialog(
         child: Obx(() {
           return ListView.builder(
