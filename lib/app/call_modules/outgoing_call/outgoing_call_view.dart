@@ -25,18 +25,7 @@ class OutGoingCallView extends NavViewStateful<CallController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            transform: GradientRotation(180),
-            colors: [
-              Color(0xff152134),
-              Color(0xff0D2852),
-              Color(0xff152134),
-            ],
-          ),
-        ),
+        decoration: AppStyleConfig.outgoingCallPageStyle.backgroundDecoration,
         child: Scaffold(
           backgroundColor: Colors.transparent,//AppStyleConfig.outgoingCallPageStyle.scaffoldBackgroundColor,//AppColors.callerBackground,
           body: InkWell(
