@@ -50,7 +50,7 @@ CallTimeoutController createController() => Get.put(CallTimeoutController());
                                 style: AppStyleConfig.callAgainPageStyle.callerNameTextStyle,
                                 //controller.calleeNames.length>3 ? "${controller.calleeNames.take(3).join(",")} and (+${controller.calleeNames.length - 3 })" : controller.calleeNames.join(","),
                                 // style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
-                                overflow: TextOverflow.ellipsis,) : const SizedBox.shrink();
+                                overflow: TextOverflow.ellipsis,) : const Offstage();
                             }));
                       }),
                       const SizedBox(
@@ -76,7 +76,7 @@ CallTimeoutController createController() => Get.put(CallTimeoutController());
                             return snap.hasData && snap.data != null ? Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: buildProfileImage(snap.data!, size: 45),
-                            ) : const SizedBox.shrink();
+                            ) : const Offstage();
                           })),
                         );
                       }),
