@@ -11,6 +11,8 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../stylesheet/stylesheet.dart';
+
 Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
   return ImageNetwork(
     url: item.image.toString(),
@@ -37,10 +39,11 @@ Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
 }
 
 class SpeakingDots extends StatefulWidget {
-  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor, this.radius = 14}) : super(key: key);
+  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor, this.radius = 14, this.dotsColor = Colors.white}) : super(key: key);
   final double radius;
   final int audioLevel;
   final Color bgColor;
+  final Color dotsColor;
 
   @override
   State<SpeakingDots> createState() => _SpeakingDotsState();
@@ -84,7 +87,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -93,7 +96,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -102,7 +105,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -113,7 +116,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: widget.dotsColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(
               widget.radius * 0.4,
@@ -126,7 +129,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -135,7 +138,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -146,7 +149,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -155,7 +158,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -164,7 +167,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -175,7 +178,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -184,7 +187,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -193,7 +196,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -204,7 +207,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -213,7 +216,7 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -222,13 +225,13 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
 }
 
-Widget buildListItem(CallController controller) {
+Widget buildListItem(CallController controller,CallUserTileStyle style) {
   var callListLength = controller.callList.length;
   debugPrint("callListLength --> $callListLength");
   return SizedBox(
@@ -255,13 +258,13 @@ Widget buildListItem(CallController controller) {
                   MirrorFlyView(
                     key: UniqueKey(),
                     userJid: controller.callList[index].userJid?.value ?? "",
-                    viewBgColor: AppColors.callerTitleBackground,
-                    profileSize: 50,
+                    viewBgColor: style.backgroundColor,//AppColors.callerTitleBackground,
+                    profileSize: style.profileImageSize,
                     onClick: (){
                       //swap View
                       controller.swap(index);
                     },
-                  ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+                  ).setBorderRadius(style.borderRadius),
                   Obx(() {
                     return Positioned(
                       top: 0,
@@ -283,8 +286,8 @@ Widget buildListItem(CallController controller) {
                               child: SizedBox(
                                 width: 20,
                                 child: CircleAvatar(
-                                  backgroundColor: AppColors.audioMutedIconBgColor,
-                                  child: SvgPicture.asset(callMutedIcon),
+                                  backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
+                                  child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
                                 ),
                               ),
                             ),
@@ -298,7 +301,8 @@ Widget buildListItem(CallController controller) {
                                 child: SpeakingDots(
                                   radius: 9,
                                   audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
-                                  bgColor: AppColors.speakingBg,
+                                  bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
+                                  dotsColor: style.speakingIndicatorStyle.activeIconColor,
                                 ),
                               ),
                               secondChild: const SizedBox.shrink(),
@@ -326,10 +330,11 @@ Widget buildListItem(CallController controller) {
                                 .isNotEmpty) {
                               return Text(
                                 snapshot.data.checkNull(),
-                                style: const TextStyle(
+                                style: style.nameTextStyle,
+                                /*style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
-                                ),
+                                ),*/
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               );
@@ -366,10 +371,11 @@ Widget buildListItem(CallController controller) {
                           child: Text(
                             getTileCallStatus(controller.callList[index].callStatus?.value,
                                 controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall),
-                            style: const TextStyle(color: Colors.white),
+                            style: style.callStatusTextStyle,
+                            // style: const TextStyle(color: Colors.white),
                           )),
                     )
-                        : const SizedBox.shrink();
+                        : const Offstage();
                   }),
                   /*Obx(() {
                                 return controller.callList.isNotEmpty
@@ -380,17 +386,17 @@ Widget buildListItem(CallController controller) {
                                             getTileCallStatus(controller.callList[index + 1].callStatus?.value),
                                             style: const TextStyle(color: Colors.white),
                                           ))
-                                        : const SizedBox.shrink()
-                                    : const SizedBox.shrink();
+                                        : const Offstage()
+                                    : const Offstage();
                               }),*/
                 ],
               ))
-              : const SizedBox.shrink();
+              : const Offstage();
         }),
   );
 }
 
-Widget buildGridItem(CallController controller) {
+Widget buildGridItem(CallController controller,CallUserTileStyle style) {
   return GestureDetector(
     onTap: () {
       if (controller.callType.value == CallType.video) {
@@ -416,8 +422,8 @@ Widget buildGridItem(CallController controller) {
             MirrorFlyView(
               key: UniqueKey(),
               userJid: controller.callList[index].userJid?.value ?? "",
-              viewBgColor: AppColors.callerTitleBackground,
-              profileSize: 60,
+              viewBgColor: style.backgroundColor,//AppColors.callerTitleBackground,
+              profileSize: style.profileImageSize,
               onClick: (){
                 // if(controller.callType.value==CallType.video) {
                   controller.isVisible(!controller.isVisible.value);
@@ -497,7 +503,7 @@ Widget buildGridItem(CallController controller) {
                           maxLines: 1,
                         );
                       }
-                      return const SizedBox.shrink();
+                      return const Offstage();
                     });
               }),
             ),
@@ -531,12 +537,12 @@ Widget buildGridItem(CallController controller) {
                       )),
                 ),
               )
-                  : const SizedBox.shrink();
+                  : const Offstage();
             }),
             /*Obx(() {
                 return (controller.callList[index].callStatus==CallStatus.ringing) ?
                   Container(color: AppColors.transBlack75, child: Center(
-                  child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const SizedBox.shrink();
+                  child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const Offstage();
               })*/
           ],
         );

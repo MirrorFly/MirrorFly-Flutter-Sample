@@ -57,6 +57,7 @@ class AppStyleConfig{
   static StarredMessageListPageStyle _starredMessageListPageStyle = const StarredMessageListPageStyle();
   static OutgoingCallPageStyle _outgoingCallPageStyle = OutgoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
   static CallAgainPageStyle _callAgainPageStyle = const CallAgainPageStyle();
+  static OngoingCallPageStyle _ongoingCallPageStyle = OngoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -74,6 +75,7 @@ class AppStyleConfig{
   static StarredMessageListPageStyle starredMessageListPageStyle = _starredMessageListPageStyle;
   static OutgoingCallPageStyle outgoingCallPageStyle = _outgoingCallPageStyle;
   static CallAgainPageStyle callAgainPageStyle = _callAgainPageStyle;
+  static OngoingCallPageStyle ongoingCallPageStyle = _ongoingCallPageStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -137,6 +139,10 @@ class AppStyleConfig{
 
   static setCallAgainPageStyle(CallAgainPageStyle callAgainPageStyle){
     _callAgainPageStyle = callAgainPageStyle;
+  }
+
+  static setOngoingCallPageStyle(OngoingCallPageStyle ongoingCallPageStyle){
+    _ongoingCallPageStyle = ongoingCallPageStyle;
   }
 
 

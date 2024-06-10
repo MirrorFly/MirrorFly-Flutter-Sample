@@ -22,6 +22,7 @@ part 'blocked_list_page_style.dart';
 part 'starred_message_list_page_style.dart';
 part 'outgoing_call_page_style.dart';
 part 'call_again_page_style.dart';
+part 'ongoing_call_page_style.dart';
 
 class AppStyle{
 
