@@ -290,6 +290,7 @@ Widget buildListItem(CallController controller,CallUserTileStyle style) {
                                   bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
                                   dotsColor: style.speakingIndicatorStyle.activeIconColor,
                                 )
+                         ],
                         ],
                       ),
                     );
@@ -354,18 +355,6 @@ Widget buildListItem(CallController controller,CallUserTileStyle style) {
                     )
                         : const Offstage();
                   }),
-                  /*Obx(() {
-                                return controller.callList.isNotEmpty
-                                    ? (getTileCallStatus(controller.callList[index + 1].callStatus?.value) != "" &&
-                                            controller.callList[index + 1].userJid != SessionManagement.getUserJID())
-                                        ? Center(
-                                            child: Text(
-                                            getTileCallStatus(controller.callList[index + 1].callStatus?.value),
-                                            style: const TextStyle(color: Colors.white),
-                                          ))
-                                        : const Offstage()
-                                    : const Offstage();
-                              }),*/
                 ],
               ))
               : const Offstage();
@@ -406,7 +395,7 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                   controller.isVisible(!controller.isVisible.value);
                 // }
               }
-            ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
+            ).setBorderRadius(style.borderRadius),
             Obx(() {
               return Positioned(
                 top: 8,
@@ -418,8 +407,8 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                     if (controller.callList[index].isAudioMuted.value) ...[
                       CircleAvatar(
                         radius: 10,
-                        backgroundColor: AppColors.audioMutedIconBgColor,
-                        child: SvgPicture.asset(callMutedIcon),
+                        backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
+                        child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
                       ),
                     ],
                     if (controller.speakingUsers.isNotEmpty &&
@@ -428,7 +417,8 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                       AudioLevelAnimation(
                         radius: 12,
                         audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
-                        bgColor: AppColors.speakingBg,
+                        bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
+                        dotsColor: style.speakingIndicatorStyle.activeIconColor,
                       ),
                     ],
                   ],
@@ -447,10 +437,11 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                       if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
                         return Text(
                           snapshot.data.checkNull(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: style.nameTextStyle,
+                          /*style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),*/
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         );
@@ -482,17 +473,13 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                             child: Text(
                           getTileCallStatus(controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(),
                               controller.isOneToOneCall),
-                          style: const TextStyle(color: Colors.white),
+                              style: style.callStatusTextStyle,
+                              // style: const TextStyle(color: Colors.white),
                         )),
                       ),
                     )
                   : const Offstage();
             }),
-            /*Obx(() {
-                return (controller.callList[index].callStatus==CallStatus.ringing) ?
-                  Container(color: AppColors.transBlack75, child: Center(
-                  child: Text(controller.callList[index].callStatus.toString(),style: const TextStyle(color: Colors.white)),),) : const Offstage();
-              })*/
           ],
         );
       },

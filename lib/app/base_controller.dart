@@ -228,9 +228,10 @@ abstract class BaseController {
             debugPrint("onCallStatusUpdated Inside Get.back");
             NavUtils.back();
           }
-          if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute != Routes.participants) {
+          if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute !=
+              Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            if(NavUtils.currentRoute == Routes.outGoingCallView) {
+            if (NavUtils.currentRoute == Routes.outGoingCallView) {
               NavUtils.offNamed(Routes.onGoingCallView, arguments: {
                 "userJid": [userJid]
               });
