@@ -81,7 +81,7 @@ class RecentChatItemStyle {
         this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),
         this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 14),
         this.spanTextColor = Colors.blue,
-        this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff3276E2),fontSize: 14),
+        this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: AppColor.primaryColor,fontSize: 14),
         this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
         this.unreadCountBgColor = const Color(0xff4879F9),
         this.unreadCountTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.white,fontSize: 8,),

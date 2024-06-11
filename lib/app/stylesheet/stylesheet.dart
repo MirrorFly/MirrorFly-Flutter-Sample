@@ -28,13 +28,49 @@ part 'dialog_style.dart';
 
 class AppStyle{
 
-  final LoginPageStyle loginPageStyle;
-  final OTPPageStyle otpPageStyle;
-  final DashBoardPageStyle dashBoardPageStyle;
-  final ArchivedChatsPageStyle archivedChatsPageStyle;
-  final ChatPageStyle chatPageStyle;
-  final ChatInfoPageStyle chatInfoPageStyle;
-  final ViewAllMediaPageStyle viewAllMediaPageStyle;
+  final LoginPageStyle? loginPageStyle;
+  final ProfileViewStyle? profileViewStyle;
+  final DashBoardPageStyle? dashBoardPageStyle;
+  final ArchivedChatsPageStyle? archivedChatsPageStyle;
+  final ChatPageStyle? chatPageStyle;
+  final CreateGroupPageStyle? createGroupPageStyle;
+  final ChatInfoPageStyle? chatInfoPageStyle;
+  final GroupChatInfoPageStyle? groupChatInfoPageStyle;
+  final ContactListPageStyle? contactListPageStyle;
+  final SettingsPageStyle? settingsPageStyle;
+  final ViewAllMediaPageStyle? viewAllMediaPageStyle;
+  final MessageInfoPageStyle? messageInfoPageStyle;
+  final BlockedListPageStyle? blockedListPageStyle;
+  final StarredMessageListPageStyle? starredMessageListPageStyle;
+  final OutgoingCallPageStyle? outgoingCallPageStyle;
+  final CallAgainPageStyle? callAgainPageStyle;
+  final OngoingCallPageStyle? ongoingCallPageStyle;
+  final AddParticipantsPageStyle? addParticipantsPageStyle;
+  final DialogStyle? dialogStyle;
 
-  const AppStyle({required this.loginPageStyle, required this.otpPageStyle, required this.dashBoardPageStyle, required this.archivedChatsPageStyle, required this.chatPageStyle, required this.chatInfoPageStyle, required this.viewAllMediaPageStyle});
+  AppStyle({
+      this.loginPageStyle,
+      this.profileViewStyle,
+      this.dashBoardPageStyle,
+      this.archivedChatsPageStyle,
+      this.chatPageStyle,
+      this.createGroupPageStyle,
+      this.chatInfoPageStyle,
+      this.groupChatInfoPageStyle,
+      this.contactListPageStyle,
+      this.settingsPageStyle,
+      this.viewAllMediaPageStyle,
+      this.messageInfoPageStyle,
+      this.blockedListPageStyle,
+      this.starredMessageListPageStyle,
+      this.outgoingCallPageStyle,
+      this.callAgainPageStyle,
+      this.ongoingCallPageStyle,
+      this.addParticipantsPageStyle,
+      this.dialogStyle
+  });
+}
+
+class AppColor{
+  static const primaryColor = Color(0xff3276E2);
 }

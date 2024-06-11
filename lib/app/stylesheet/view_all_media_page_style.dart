@@ -9,8 +9,8 @@ class ViewAllMediaPageStyle{
       iconTheme: IconThemeData(color: Color(0xff181818)),
       actionsIconTheme: IconThemeData(color: Color(0xff181818)),),
     this.tabBarTheme = const TabBarTheme(
-        indicatorColor: Color(0xff3276E2),
-        labelColor: Color(0xff3276E2),
+        indicatorColor: AppColor.primaryColor,
+        labelColor: AppColor.primaryColor,
         unselectedLabelColor: Color(0xff181818),indicatorSize: TabBarIndicatorSize.tab),
     this.tabItemStyle = const TabItemStyle(),
     this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff767676),fontSize: 14),

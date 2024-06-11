@@ -10,7 +10,7 @@ class MessageTypingAreaStyle{
     this.textFieldStyle = const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),editTextHintStyle: TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 12)),
     this.dividerColor = const Color(0xff000000),
     this.sentIconColor = const Color(0xff4879F9),
-    this.audioRecordIcon = const IconStyle(iconColor: Colors.white,bgColor:Color(0xff3276E2)),
+    this.audioRecordIcon = const IconStyle(iconColor: Colors.white,bgColor:AppColor.primaryColor),
     this.rippleColor = const Color(0xff4879F9),
     this.attachmentIconColor = const Color(0xff363636),
     this.emojiIconColor = const Color(0xff363636),
@@ -23,7 +23,7 @@ class MessageTypingAreaStyle{
       borderRadius: BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
     ),
     this.replyBgColor = const  Color(0xffE2E8F7),
-    this.audioRecordingViewStyle = const AudioRecordingViewStyle(durationTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff3276E2),fontSize: 12),
+    this.audioRecordingViewStyle = const AudioRecordingViewStyle(durationTextStyle: TextStyle(fontWeight: FontWeight.normal,color: AppColor.primaryColor,fontSize: 12),
     cancelTextStyle: TextStyle(fontWeight: FontWeight.w300,color: Color(0xff363636),fontSize: 12)),
     this.bgColor = Colors.white
   });
@@ -44,7 +44,7 @@ class MessageTypingAreaStyle{
 
 class AudioRecordingViewStyle{
   const AudioRecordingViewStyle({
-    this.durationTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Color(0xff3276E2),fontSize: 12),
+    this.durationTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: AppColor.primaryColor,fontSize: 12),
     this.cancelTextStyle = const TextStyle(fontWeight: FontWeight.w300,color: Color(0xff363636),fontSize: 12)
   });
   final TextStyle durationTextStyle;

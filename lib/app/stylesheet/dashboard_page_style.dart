@@ -10,8 +10,8 @@ class DashBoardPageStyle {
           actionsIconTheme: IconThemeData(color: Color(0xff181818)),
       ),
       this.tabBarTheme = const TabBarTheme(
-          indicatorColor: Color(0xff3276E2),
-          labelColor: Color(0xff3276E2),
+          indicatorColor: AppColor.primaryColor,
+          labelColor: AppColor.primaryColor,
           unselectedLabelColor: Color(0xff181818)),
       this.searchTextFieldStyle = const EditTextFieldStyle(),
       this.tabItemStyle = const TabItemStyle(),
@@ -33,7 +33,7 @@ class DashBoardPageStyle {
             descriptionStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 12),
             dividerColor: Color(0xffEBEBEB)
         ),
-        this.floatingActionButtonThemeData = const FloatingActionButtonThemeData(backgroundColor: Color(0xff3276E2),foregroundColor: Colors.white,elevation: 12,iconSize: 21,shape: CircleBorder())
+        this.floatingActionButtonThemeData = const FloatingActionButtonThemeData(backgroundColor: AppColor.primaryColor,foregroundColor: Colors.white,elevation: 12,iconSize: 21,shape: CircleBorder())
       });
   final AppBarTheme appBarTheme;
   final TabBarTheme tabBarTheme;

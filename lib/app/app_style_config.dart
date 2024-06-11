@@ -11,7 +11,7 @@ class AppStyleConfig{
         if (states.contains(WidgetState.disabled)) {
           return Colors.grey; // Color when the button is disabled
         }
-        return const Color(0xff3276E2); // Default color
+        return AppColor.primaryColor; // Default color
       }),
       foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
@@ -90,6 +90,28 @@ class AppStyleConfig{
   static OngoingCallPageStyle ongoingCallPageStyle = _ongoingCallPageStyle;
   static AddParticipantsPageStyle addParticipantsPageStyle = _addParticipantsPageStyle;
   static DialogStyle dialogStyle = _dialogStyle;
+
+  static setAppStyle({required AppStyle appStyle}){
+    loginPageStyle = appStyle.loginPageStyle ?? _loginPageStyle;
+    profileViewStyle = appStyle.profileViewStyle ?? _profileViewStyle;
+    dashBoardPageStyle = appStyle.dashBoardPageStyle ?? _dashBoardPageStyle;
+    archivedChatsPageStyle = appStyle.archivedChatsPageStyle ?? _archivedChatsPageStyle;
+    chatPageStyle = appStyle.chatPageStyle ?? _chatPageStyle;
+    createGroupPageStyle = appStyle.createGroupPageStyle ?? _createGroupPageStyle;
+    chatInfoPageStyle = appStyle.chatInfoPageStyle ?? _chatInfoPageStyle;
+    groupChatInfoPageStyle = appStyle.groupChatInfoPageStyle ?? _groupChatInfoPageStyle;
+    contactListPageStyle = appStyle.contactListPageStyle ?? _contactListPageStyle;
+    settingsPageStyle = appStyle.settingsPageStyle ?? _settingsPageStyle;
+    viewAllMediaPageStyle = appStyle.viewAllMediaPageStyle ?? _viewAllMediaPageStyle;
+    messageInfoPageStyle = appStyle.messageInfoPageStyle ?? _messageInfoPageStyle;
+    blockedListPageStyle = appStyle.blockedListPageStyle ?? _blockedListPageStyle;
+    starredMessageListPageStyle = appStyle.starredMessageListPageStyle ?? _starredMessageListPageStyle;
+    outgoingCallPageStyle = appStyle.outgoingCallPageStyle ?? _outgoingCallPageStyle;
+    callAgainPageStyle = appStyle.callAgainPageStyle ?? _callAgainPageStyle;
+    ongoingCallPageStyle = appStyle.ongoingCallPageStyle ?? _ongoingCallPageStyle;
+    addParticipantsPageStyle = appStyle.addParticipantsPageStyle ?? _addParticipantsPageStyle;
+    dialogStyle = appStyle.dialogStyle ?? _dialogStyle;
+  }
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;

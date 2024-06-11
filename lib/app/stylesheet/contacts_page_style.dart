@@ -26,7 +26,7 @@ class ContactListPageStyle{
     ),
     this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff767676),fontSize: 14),
     this.buttonDecoration = const BoxDecoration(
-        color: Color(0xff3276E2),
+        color: AppColor.primaryColor,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(2), topRight: Radius.circular(2))

@@ -22,8 +22,8 @@ class AddParticipantsPageStyle{
       actionsIconTheme: IconThemeData(color: Color(0xff181818)),
     ),
     this.tabBarTheme = const TabBarTheme(
-        indicatorColor: Color(0xff3276E2),
-        labelColor: Color(0xff3276E2),
+        indicatorColor: AppColor.primaryColor,
+        labelColor: AppColor.primaryColor,
         unselectedLabelColor: Color(0xff181818)),
     this.searchTextFieldStyle = const EditTextFieldStyle(),
     this.tabItemStyle = const TabItemStyle(),
@@ -31,7 +31,7 @@ class AddParticipantsPageStyle{
     this.participantItemStyle = const ParticipantItemStyle(),
     this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
     this.buttonDecoration = const BoxDecoration(
-        color: Color(0xff3276E2),
+        color: AppColor.primaryColor,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(2), topRight: Radius.circular(2))
@@ -51,7 +51,7 @@ class ParticipantItemStyle{
   const ParticipantItemStyle({
     this.profileImageSize = const Size(48, 48),
     this.textStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
-    this.actionStyle = const ActionButtonStyle(activeBgColor: Colors.transparent,activeIconColor: Color(0xff3276e2),inactiveBgColor: Color(0xffe3e2e2),inactiveIconColor: Color(0xff969696),),
+    this.actionStyle = const ActionButtonStyle(activeBgColor: Colors.transparent,activeIconColor: AppColor.primaryColor,inactiveBgColor: Color(0xffe3e2e2),inactiveIconColor: Color(0xff969696),),
     this.dividerColor = const Color(0xffEBEBEB),
   });
 }
