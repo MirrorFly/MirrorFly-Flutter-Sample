@@ -14,6 +14,7 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
+import '../../../../app_style_config.dart';
 import '../../../../common/app_localizations.dart';
 import '../../../../data/utils.dart';
 import '../../../../routes/route_settings.dart';
@@ -91,16 +92,16 @@ class AppLockController extends FullLifeCycleController
       }
     } else {
       //enable pin to enable bio alert popup
-      DialogUtils.showAlert(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
           message:
               getTranslated("needToSetPin"),
           actions: [
-            TextButton(
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   fromBio = true;
                   enablePin();
                 },
-                child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("ok").toUpperCase(), )),
           ]);
     }
   }
@@ -159,7 +160,7 @@ class AppLockController extends FullLifeCycleController
         _pinEnabled(true);
         _bioEnabled(fromBio);
         modifyPin(false);
-        Get.back(result: true);
+        NavUtils.back(result: true);
       } else {
         toToast(getTranslated("pinNotMatched"));
       }
@@ -224,7 +225,7 @@ class AppLockController extends FullLifeCycleController
       if (NavUtils.previousRoute.isEmpty || NavUtils.previousRoute == Routes.pin) {
         NavUtils.offNamed(getInitialRoute());
       } else {
-        Get.back(result: true);
+        NavUtils.back(result: true);
       }
     }
   }
@@ -301,7 +302,7 @@ class AppLockController extends FullLifeCycleController
           if (NavUtils.previousRoute.isEmpty || NavUtils.previousRoute == Routes.pin) {
             NavUtils.offNamed(getInitialRoute());
           } else {
-            Get.back(result: true);
+            NavUtils.back(result: true);
           }
         }
       } else {
@@ -326,30 +327,29 @@ class AppLockController extends FullLifeCycleController
   }
 
   void forgetPin({bool fromInvalid = false}) {
-    Get.dialog(AlertDialog(
+    DialogUtils.createDialog(AlertDialog(
       titlePadding: const EdgeInsets.only(top: 20, right: 20, left: 20),
       contentPadding: EdgeInsets.zero,
       title: Text(
         fromInvalid ? getTranslated("invalidPINGenerateOTP") : getTranslated("forgetPinOTPText"),
-        style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        style: AppStyleConfig.dialogStyle.titleTextStyle,
+        // style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       actions: [
-        TextButton(
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
             },
             child: Text(getTranslated("cancel").toUpperCase(),
-              style: const TextStyle(color: buttonBgColor),
             )),
-        TextButton(
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
               sendOtp();
             },
             child: Text(
               getTranslated("generateOTP").toUpperCase(),
-              style: const TextStyle(color: buttonBgColor),
             )),
       ],
     ));
@@ -420,31 +420,30 @@ class AppLockController extends FullLifeCycleController
   }
 
   void showAlertDateDialog(int daysBetween) {
-    Get.dialog(AlertDialog(
+    DialogUtils.createDialog(AlertDialog(
       titlePadding: const EdgeInsets.only(top: 20, right: 20, left: 20),
       contentPadding: EdgeInsets.zero,
       title: Text(getTranslated("pinExpiredIn").replaceFirst("%d", "$daysBetween"),
-        style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+        style: AppStyleConfig.dialogStyle.titleTextStyle,
+        // style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       actions: [
-        TextButton(
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
               changePin();
             },
             child: Text(
               getTranslated("changePin"),
-              style: const TextStyle(color: buttonBgColor),
             )),
-        TextButton(
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
               SessionManagement.setDontShowAlert();
             },
             child: Text(
               getTranslated("ok"),
-              style: const TextStyle(color: buttonBgColor),
             )),
       ],
     ));
@@ -453,8 +452,49 @@ class AppLockController extends FullLifeCycleController
   var disablePin = false;
 
   void showExpiredDialog() {
-    Get.dialog(
-        PopScope(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("plsSetNewPIN"),
+        actions: [
+          Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                    onPressed: () {
+                      toToast(
+                          getTranslated("toDisablePIN"));
+                      disablePin = true;
+                      NavUtils.back();
+                    },
+                    child: Text(
+                      getTranslated("disablePIN"),
+                    )),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                    onPressed: () {
+                      NavUtils.back();
+                      changePin();
+                    },
+                    child: Text(
+                      getTranslated("changePin"),
+                    )),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                    onPressed: () {
+                      NavUtils.back();
+                      sendOtp();
+                    },
+                    child: Text(
+                      getTranslated("forgotPin"),
+                    )),
+              ),
+            ],
+          ),
+        ],barrierDismissible: false);
+        /*PopScope(
             canPop: false,
             onPopInvoked: (didPop) {
               if (didPop) {
@@ -465,7 +505,8 @@ class AppLockController extends FullLifeCycleController
             contentPadding: EdgeInsets.zero,
             title: Text(
               getTranslated("plsSetNewPIN"),
-              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+              style: AppStyleConfig.dialogStyle.titleTextStyle,
+              // style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             insetPadding: const EdgeInsets.symmetric(horizontal: 20),
             actionsAlignment: MainAxisAlignment.center,
@@ -474,7 +515,7 @@ class AppLockController extends FullLifeCycleController
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: TextButton(
+                    child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                         onPressed: () {
                           toToast(
                               getTranslated("toDisablePIN"));
@@ -483,40 +524,28 @@ class AppLockController extends FullLifeCycleController
                         },
                         child: Text(
                           getTranslated("disablePIN"),
-                          style: const TextStyle(
-                            color: buttonBgColor,
-                            fontSize: 16,
-                          ),
                         )),
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: TextButton(
+                    child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                         onPressed: () {
                           NavUtils.back();
                           changePin();
                         },
                         child: Text(
                           getTranslated("changePin"),
-                          style: const TextStyle(
-                            color: buttonBgColor,
-                            fontSize: 16,
-                          ),
                         )),
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: TextButton(
+                    child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                         onPressed: () {
                           NavUtils.back();
                           sendOtp();
                         },
                         child: Text(
                           getTranslated("forgotPin"),
-                          style: const TextStyle(
-                            color: Color(0XFFFF0000),
-                            fontSize: 16,
-                          ),
                         )),
                   ),
                 ],
@@ -524,12 +553,12 @@ class AppLockController extends FullLifeCycleController
             ],
           ),
         ),
-        barrierDismissible: false);
+        barrierDismissible: false);*/
   }
 
   Future<void> sendOtp({bool fromInvalid = false}) async {
     if (await AppUtils.isNetConnected()) {
-      DialogUtils.showLoading(message: getTranslated("sentOTP"));
+      DialogUtils.showLoading(message: getTranslated("sentOTP"),dialogStyle: AppStyleConfig.dialogStyle);
       sendVerificationCode();
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -766,7 +795,7 @@ class AppLockController extends FullLifeCycleController
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        DialogUtils.showLoading(message: getTranslated("verifyingOTP"));
+        DialogUtils.showLoading(message: getTranslated("verifyingOTP"),dialogStyle: AppStyleConfig.dialogStyle);
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
         // Sign the user in (or link) with the credential

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
+import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../controllers/country_controller.dart';
 
@@ -67,7 +68,7 @@ CountryController createController() => Get.put(CountryController());
                     style: const TextStyle(color: textHintColor),
                   ),
                   onTap: () {
-                    Get.back(result: item);
+                    NavUtils.back(result: item);
                   },
                 );
               }) : Center(child: Text(getTranslated("noCountryFound")),)

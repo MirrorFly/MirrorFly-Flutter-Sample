@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../main.dart';
+import '../../app_style_config.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
@@ -765,17 +766,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   Future<void> showVideoSwitchPopup() async {
     if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
-      DialogUtils.showAlert(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
           message: getTranslated("videoSwitchMessage"),
           actions: [
-            TextButton(
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   outGoingRequest = false;
                   showingVideoSwitchPopup = false;
                   closeDialog();
                 },
-                child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-            TextButton(
+                child: Text(getTranslated("cancel").toUpperCase(), )),
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   if(callType.value == CallType.audio && isOneToOneCall && NavUtils.currentRoute == Routes.onGoingCallView) {
                     outGoingRequest = true;
@@ -790,7 +791,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     closeDialog();
                   }
                 },
-                child: Text(getTranslated("switchCall"),style: const TextStyle(color: buttonBgColor)))
+                child: Text(getTranslated("switchCall"), ))
           ],
           barrierDismissible: false);
     }else{
@@ -825,18 +826,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("videoSwitchRequestedMessage").replaceFirst("%d", profile.getName()),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 isVideoCallRequested = false;
                 inComingRequest = false;
                 closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest();
               },
-              child: Text(getTranslated("declineRequest").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("declineRequest").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 closeDialog();
                 if (await AppPermission.askVideoCallPermissions()) {
@@ -853,7 +854,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
-              child: Text(getTranslated("acceptRequest"),style: const TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("acceptRequest"), ))
         ],
         barrierDismissible: false);
   }
@@ -862,17 +863,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isWaitingCanceled = false;
     waitingCompleter = Completer<void>();
 
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("videoSwitchRequestMessage"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 isWaitingCanceled = true;
                 outGoingRequest = false;
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("cancel").toUpperCase(), ))
         ],
         barrierDismissible: false);
 

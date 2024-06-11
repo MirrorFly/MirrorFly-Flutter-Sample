@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../data/utils.dart';
@@ -121,11 +122,11 @@ class ChatInfoController extends GetxController {
 
   reportChatOrUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      DialogUtils.showAlert(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
           title: getTranslated("reportUser").replaceFirst("%d", profile.getName()),
           message:getTranslated("last5Message"),
           actions: [
-            TextButton(
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   // DialogUtils.showLoading(message: "Reporting User");
@@ -138,12 +139,12 @@ class ChatInfoController extends GetxController {
                     }
                   });
                 },
-                child: Text(getTranslated("report").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-            TextButton(
+                child: Text(getTranslated("report").toUpperCase(), )),
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                 },
-                child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cancel").toUpperCase(), )),
           ]);
     });
   }

@@ -102,7 +102,7 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                     child: TextButton(
                       onPressed: () {
                         if(controller.nameController.text.trim().isNotEmpty) {
-                          Get.back(result: controller.nameController.text
+                          NavUtils.back(result: controller.nameController.text
                               .trim().toString());
                         }else{
                           toToast(getTranslated("nameCantEmpty"));

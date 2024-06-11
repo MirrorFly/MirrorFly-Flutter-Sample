@@ -23,11 +23,12 @@ class DialogUtils {
   // Method to show a loading dialog
   static void showLoading(
       {String? message,
-      bool dismiss = false}) {
+      bool dismiss = false,required DialogStyle dialogStyle}) {
     showDialog(
       context: buildContext,
       builder: (_) {
         return Dialog(
+          backgroundColor: dialogStyle.backgroundColor,
           child: PopScope(
             canPop: dismiss,
             onPopInvoked: (didPop) {
@@ -40,11 +41,9 @@ class DialogUtils {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircularProgressIndicator(
-                    color: buttonBgColor,
-                  ),
+                  const CircularProgressIndicator(),
                   const SizedBox(width: 16),
-                  Text(message ?? getTranslated("loading")),
+                  Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,),
                 ],
               ),
             ),
@@ -91,16 +90,17 @@ class DialogUtils {
       required String message,
       List<Widget>? actions,
       Widget? content,
-      bool? barrierDismissible}) {
+      bool? barrierDismissible,required DialogStyle dialogStyle}) {
     showDialog(
         context: buildContext,
         builder: (_) {
           return AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: dialogStyle.backgroundColor,//Colors.white,
             title: title != null
                 ? Text(
                     title,
-                    style: const TextStyle(fontSize: 17),
+                    style: dialogStyle.titleTextStyle,
+                    // style: const TextStyle(fontSize: 17),
                   )
                 : const Offstage(),
             contentPadding: title != null
@@ -116,14 +116,15 @@ class DialogUtils {
               child: content ??
                   Text(
                     message,
-                    style: const TextStyle(
+                    style: dialogStyle.contentTextStyle,
+                    /*style: const TextStyle(
                         color: textHintColor,
                         fontWeight: FontWeight.normal,
-                        fontSize: 18),
+                        fontSize: 18),*/
                   ),
             ),
-            contentTextStyle: const TextStyle(
-                color: textHintColor, fontWeight: FontWeight.w500),
+            contentTextStyle: dialogStyle.contentTextStyle,
+            // contentTextStyle: const TextStyle(color: textHintColor, fontWeight: FontWeight.w500),
             actions: actions,
           );
         },
@@ -178,10 +179,11 @@ class DialogUtils {
 
   // Method to show a feature unavailable alert
   static void showFeatureUnavailable() {
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("featureNotAvailableForYourPlan"),
         actions: [
           TextButton(
+        style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 Navigator.of(buildContext).pop();
               },

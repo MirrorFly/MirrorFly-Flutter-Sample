@@ -9,6 +9,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../data/permissions.dart';
@@ -439,13 +440,13 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   }
 
   unBlock(ProfileDetails item) {
-    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
@@ -463,7 +464,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               }
             });
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -659,7 +660,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
                 "callType": CallType.audio
               });
             }else{
-              DialogUtils.showAlert(message: getErrorDetails(response));
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         } else {

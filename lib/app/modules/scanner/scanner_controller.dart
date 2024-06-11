@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../app_style_config.dart';
 import '../../common/app_localizations.dart';
 import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
@@ -136,18 +137,18 @@ class ScannerController extends GetxController {
   }
 
   logoutWeb() {
-    DialogUtils.showAlert(message: getTranslated("logoutConfirmation"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("logoutConfirmation"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             logoutWebUser();
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 }

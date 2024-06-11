@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../app_style_config.dart';
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
@@ -174,13 +175,13 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   unBlock(ProfileDetails item) {
-    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
               NavUtils.back();

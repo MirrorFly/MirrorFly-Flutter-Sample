@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'stylesheet/stylesheet.dart';
@@ -22,6 +21,17 @@ class AppStyleConfig{
       }),
       textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
         return const TextStyle(fontSize: 14, fontWeight: FontWeight.w500); // Default text style
+      }));
+
+  static final ButtonStyle _defaultDialogButtonStyle = ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        return Colors.transparent; // Default color
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        return const Color(0xff3276E2); // Default text color
+      }),
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        return const TextStyle(fontSize: 14,color: Color(0xff3276E2), fontWeight: FontWeight.w600); // Default text style
       }));
 
   static final ButtonStyle _disconnectButtonStyle = ButtonStyle(
@@ -59,6 +69,7 @@ class AppStyleConfig{
   static CallAgainPageStyle _callAgainPageStyle = const CallAgainPageStyle();
   static OngoingCallPageStyle _ongoingCallPageStyle = OngoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
   static AddParticipantsPageStyle _addParticipantsPageStyle = const AddParticipantsPageStyle();
+  static DialogStyle _dialogStyle = DialogStyle(buttonStyle: _defaultDialogButtonStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -78,6 +89,7 @@ class AppStyleConfig{
   static CallAgainPageStyle callAgainPageStyle = _callAgainPageStyle;
   static OngoingCallPageStyle ongoingCallPageStyle = _ongoingCallPageStyle;
   static AddParticipantsPageStyle addParticipantsPageStyle = _addParticipantsPageStyle;
+  static DialogStyle dialogStyle = _dialogStyle;
 
   static setLoginPageStyle(LoginPageStyle loginPageStyle){
     _loginPageStyle = loginPageStyle;
@@ -149,6 +161,10 @@ class AppStyleConfig{
 
   static setAddParticipantsPageStyle(AddParticipantsPageStyle addParticipantsPageStyle){
     _addParticipantsPageStyle = addParticipantsPageStyle;
+  }
+
+  static setDialogStyle(DialogStyle dialogStyle){
+    _dialogStyle = dialogStyle;
   }
 
 

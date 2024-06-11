@@ -62,20 +62,20 @@ class SettingsView extends NavView<SettingsController> {
               }),
               SettingListItem(title:
                   getTranslated("logout"), leading: logoutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
-                DialogUtils.showAlert(
+                DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
                     message:
                     getTranslated("logoutMessage"),
                     actions: [
-                      TextButton(
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             NavUtils.back();
                           },
-                          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-                      TextButton(
+                          child: Text(getTranslated("no").toUpperCase(), )),
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             controller.logout();
                           },
-                          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
+                          child: Text(getTranslated("yes").toUpperCase(), ))
                     ]);
               }),
               Padding(

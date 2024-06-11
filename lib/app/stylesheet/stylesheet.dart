@@ -24,6 +24,7 @@ part 'outgoing_call_page_style.dart';
 part 'call_again_page_style.dart';
 part 'ongoing_call_page_style.dart';
 part 'add_participants_page_style.dart';
+part 'dialog_style.dart';
 
 class AppStyle{
 

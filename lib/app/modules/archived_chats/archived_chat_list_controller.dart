@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../app_style_config.dart';
 import '../../common/app_localizations.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
@@ -314,16 +315,16 @@ class ArchivedChatListController extends GetxController {
   deleteChats() {
     String? profile = '';
     profile = archivedChats.firstWhere((element) => selectedChats.first == element.jid).profileName;
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         title:
             selectedChats.length == 1 ? getTranslated("deleteChatWith").replaceFirst("%d", "$profile") : getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChats.length}"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("no").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
                 if (selectedChats.length == 1) {
@@ -332,7 +333,7 @@ class ArchivedChatListController extends GetxController {
                   itemsDelete();
                 }
               },
-              child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("yes").toUpperCase(), )),
         ],
         message: '');
   }

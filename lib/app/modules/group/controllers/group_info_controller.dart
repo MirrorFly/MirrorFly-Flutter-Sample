@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/session_management.dart';
@@ -211,13 +212,13 @@ class GroupInfoController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    DialogUtils.showAlert(title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,title: getTranslated("reportThisGroup"),message: getTranslated("reportThisGroupContent"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             DialogUtils.progressLoading();
@@ -230,7 +231,7 @@ class GroupInfoController extends GetxController {
               }
             });
           },
-          child: Text(getTranslated("report").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("report").toUpperCase(), )),
     ]);
   }
   exitOrDeleteGroup(){
@@ -247,18 +248,18 @@ class GroupInfoController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    DialogUtils.showAlert(message: getTranslated("areYouLeaveGroup"),actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouLeaveGroup"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             exitFromGroup();
           },
-          child: Text(getTranslated("leave").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("leave").toUpperCase(), )),
     ]);
   }
   var leavedGroup = false.obs;
@@ -287,13 +288,13 @@ class GroupInfoController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    DialogUtils.showAlert(message: getTranslated("areYouDeleteGroup"),actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouDeleteGroup"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
               NavUtils.back();
@@ -315,7 +316,7 @@ class GroupInfoController extends GetxController {
             }
 
           },
-          child: Text(getTranslated("delete").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("delete").toUpperCase(), )),
     ]);
   }
 
@@ -403,18 +404,18 @@ class GroupInfoController extends GetxController {
   }
 
   removeProfileImage() {
-    DialogUtils.showAlert(message: getTranslated("areYouRemoveGroupPhoto"),actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouRemoveGroupPhoto"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             revokeAccessForProfileImage();
           },
-          child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("remove").toUpperCase(), )),
     ]);
   }
 

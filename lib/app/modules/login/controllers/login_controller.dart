@@ -14,6 +14,7 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -53,7 +54,7 @@ class LoginController extends GetxController {
   // void registerUser(BuildContext context) {
 
   showLoading() {
-    DialogUtils.showLoading(message: getTranslated("pleaseWait"));
+    DialogUtils.showLoading(message: getTranslated("pleaseWait"),dialogStyle: AppStyleConfig.dialogStyle);
   }
 
   hideLoading() {
@@ -398,19 +399,19 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    DialogUtils.showAlert(message: getTranslated("deviceConfirmation"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deviceConfirmation"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             gotoLogin();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             registerAccount();
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -420,20 +421,20 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("sessionExpiredDialogShow", "Already Login");
     //PlatformRepo.logout();
-    DialogUtils.showAlert(message: message.toString(), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: message.toString(), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             isForceRegister = false;
           },
-          child: Text(getTranslated("cancel"),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             isForceRegister = true;
             registerUser();
           },
-          child: Text(getTranslated("continue"),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("continue"), )),
     ]);
   }
 

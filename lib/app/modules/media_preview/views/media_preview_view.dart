@@ -92,7 +92,7 @@ MediaPreviewController createController() => Get.put(MediaPreviewController());
             if (didPop) {
               return;
             }
-            Get.back(result: "back");
+            NavUtils.back(result: "back");
           },
           child: GestureDetector(
             onTap: () => controller.hideKeyBoard(),

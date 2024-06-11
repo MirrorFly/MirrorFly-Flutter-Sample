@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
+import '../app_style_config.dart';
 import '../data/utils.dart';
 class CropImage extends StatefulWidget {
   const CropImage({Key? key, required this.imageFile}) : super(key: key);
@@ -63,7 +63,7 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: ()=>NavUtils.back(),
-                    style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
@@ -79,14 +79,14 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      DialogUtils.showLoading(message: getTranslated("imageCropping"));
+                      DialogUtils.showLoading(message: getTranslated("imageCropping"),dialogStyle: AppStyleConfig.dialogStyle);
                       await controller.onCropImage().then((image){
                         DialogUtils.hideLoading();
-                        Get.back(result: image);
+                        NavUtils.back(result: image);
                       });
 
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                     child: Text(getTranslated("save").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),

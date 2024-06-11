@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
+import '../../../../app_style_config.dart';
 import '../../../../common/app_localizations.dart';
 import '../../../../data/utils.dart';
 import '../../../../data/permissions.dart';
@@ -93,18 +94,18 @@ class ChatSettingsController extends GetxController {
   }
 
   void clearAllConversation(){
-    DialogUtils.showAlert(message: getTranslated("areYouClearAllChat"),actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouClearAllChat"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             clearAllConv();
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 

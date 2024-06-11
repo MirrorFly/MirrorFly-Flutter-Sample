@@ -5,6 +5,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -183,18 +184,18 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
   }
 
   void busyDeleteConfirmation(StatusData item, BuildContext context) {
-    DialogUtils.showAlert(message: getTranslated("deleteStatus"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deleteStatus"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             Navigator.pop(context);
           },
-          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no") )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
                 Navigator.pop(context);
-                DialogUtils.showLoading(message: "Deleting Busy Status");
+                DialogUtils.showLoading(message: "Deleting Busy Status",dialogStyle: AppStyleConfig.dialogStyle);
                 Mirrorfly.deleteBusyStatus(id:
                 item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                     .then((value) {
@@ -209,7 +210,7 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
               }
             });
           },
-          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), )),
     ]);
   }
 

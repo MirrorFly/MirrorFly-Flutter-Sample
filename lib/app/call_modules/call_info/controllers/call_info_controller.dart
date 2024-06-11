@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
@@ -61,26 +62,26 @@ class CallInfoController extends GetxController{
   }
 
   itemDeleteCallLog(List<String> selectedCallLogs) {
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("deleteCallLogConfirmation"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("cancel").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
                   if (response.isSuccess) {
-                    Get.back(result: true);
+                    NavUtils.back(result: true);
                   } else {
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(), )),
         ],
         barrierDismissible: true);
   }

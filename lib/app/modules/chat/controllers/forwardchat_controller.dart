@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../../../app_style_config.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -334,13 +335,13 @@ class ForwardChatController extends GetxController {
   }
 
   unBlock(String jid, String name,){
-    DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
@@ -356,7 +357,7 @@ class ForwardChatController extends GetxController {
               }
             });
           },
-          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -416,7 +417,7 @@ class ForwardChatController extends GetxController {
         Mirrorfly.isBusyStatusEnabled().then((isSuccess) {
           if (isSuccess){
             if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
-          DialogUtils.showLoading(message: getTranslated("forwardMessage"));
+          DialogUtils.showLoading(message: getTranslated("forwardMessage"),dialogStyle: AppStyleConfig.dialogStyle);
               Future.delayed(const Duration(milliseconds: 1000), () async {
                 await Mirrorfly.forwardMessagesToMultipleUsers(
                     messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
@@ -440,7 +441,7 @@ class ForwardChatController extends GetxController {
                     } else {
                       if (response.hasError) {
                         toToast(response.errorMessage);
-                        // Get.back(result: null);
+                        // NavUtils.back(result: null);
                         Navigator.pop(buildContext, null);
                       }
                     }

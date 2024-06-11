@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../../app_style_config.dart';
 import '../../../../common/app_localizations.dart';
 import '../../../../data/utils.dart';
 
@@ -53,13 +54,13 @@ class BlockedListController extends GetxController {
 
   }
   unBlock(ProfileDetails item){
-    DialogUtils.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: "Unblock ${getMemberName(item)}?", actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: const Text("NO", )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
               NavUtils.back();
@@ -76,7 +77,7 @@ class BlockedListController extends GetxController {
             }
 
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: const Text("YES", )),
     ]);
   }
 

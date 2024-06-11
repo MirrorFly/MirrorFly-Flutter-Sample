@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
@@ -157,7 +158,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   Future<void> sendMedia() async {
     debugPrint("send media");
     var previousRoute = NavUtils.previousRoute;
-    Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingFiles")) : DialogUtils.progressLoading();
+    Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingFiles"),dialogStyle: AppStyleConfig.dialogStyle) : DialogUtils.progressLoading();
     var featureNotAvailable = false;
     try {
       int i = 0;

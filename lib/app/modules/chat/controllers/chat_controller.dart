@@ -423,13 +423,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   showBusyStatusAlert(Function? function) {
-    DialogUtils.showAlert(message: getTranslated("disableBusy"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("disableBusy"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no"), style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no"))),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             NavUtils.back();
             await Mirrorfly.enableDisableBusyStatus(
@@ -442,18 +442,18 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   }
                 });
           },
-          child: Text(getTranslated("yes"), style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"))),
     ]);
   }
 
   showBlockStatusAlert(Function? function) {
-    DialogUtils.showAlert(message: getTranslated("unBlockToSendMsg"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             NavUtils.back();
             Mirrorfly.unblockUser(
@@ -471,7 +471,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   }
                 });
           },
-          child: Text(getTranslated("unblock").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("unblock").toUpperCase(), )),
     ]);
   }
 
@@ -756,7 +756,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         replyMessageID = replyChatMessage.messageId;
       }
       isReplying(false);
-      Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingVideo")) : null;
+      Platform.isIOS ? DialogUtils.showLoading(message: getTranslated("compressingVideo"),dialogStyle: AppStyleConfig.dialogStyle) : null;
       //old method is deprecated Instead of use below new method
       /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
@@ -1116,12 +1116,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   reportChatOrUser() {
     Future.delayed(const Duration(milliseconds: 100), () async {
       var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
-      DialogUtils.showAlert(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
           title: getTranslated("report").replaceFirst("%d", getName(profile)),
           message:
               "${selectedChatList.isNotEmpty ? getTranslated("thisMessageForwardToAdmin") : getTranslated("last5MessageForwardToAdmin")} ${getTranslated("contactWillBeNotified")}",
           actions: [
-            TextButton(
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () async {
                   NavUtils.back();
                   if (await AppUtils.isNetConnected()) {
@@ -1141,12 +1141,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     toToast(getTranslated("noInternetConnection"));
                   }
                 },
-                child: Text(getTranslated("report").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
-            TextButton(
+                child: Text(getTranslated("report").toUpperCase(), )),
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                 },
-                child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cancel").toUpperCase(), )),
           ]);
     });
   }
@@ -1190,7 +1190,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
     var isMediaDelete = false.obs;
     var chatType = profile.isGroupProfile ?? false ? "groupchat" : "chat";
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1230,12 +1230,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         ),
         message: "",
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("cancel").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
                 if (!availableFeatures.value.isDeleteMessageAvailable.checkNull()) {
@@ -1257,9 +1257,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 isSelected(false);
                 selectedChatList.clear();
               },
-              child: Text(getTranslated("deleteForMe").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("deleteForMe").toUpperCase(), )),
           isRecallAvailable
-              ? TextButton(
+              ? TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                   onPressed: () {
                     NavUtils.back();
                     if (!availableFeatures.value.isDeleteMessageAvailable.checkNull()) {
@@ -1290,7 +1290,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                           selectedChatList.clear();
                         });
                   },
-                  child: Text(getTranslated("deleteForEveryone").toUpperCase(), style: const TextStyle(color: buttonBgColor)))
+                  child: Text(getTranslated("deleteForEveryone").toUpperCase(), ))
               : const SizedBox.shrink(),
         ]);
   }
@@ -1335,18 +1335,18 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   blockUser() {
     Future.delayed(const Duration(milliseconds: 100), () async {
-      DialogUtils.showAlert(message: "${getTranslated("youWantToBlock")} ${getName(profile)}?", actions: [
-        TextButton(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: "${getTranslated("youWantToBlock")} ${getName(profile)}?", actions: [
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
             },
-            child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
-        TextButton(
+            child: Text(getTranslated("cancel").toUpperCase(), )),
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () async {
               await AppUtils.isNetConnected().then((isConnected) {
                 if (isConnected) {
                   NavUtils.back();
-                  DialogUtils.showLoading(message: getTranslated("blockingUser"));
+                  DialogUtils.showLoading(message: getTranslated("blockingUser"),dialogStyle: AppStyleConfig.dialogStyle);
                   Mirrorfly.blockUser(
                       userJid: profile.jid!,
                       flyCallBack: (FlyResponse response) {
@@ -1363,7 +1363,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 }
               });
             },
-            child: Text(getTranslated("block").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("block").toUpperCase(), )),
       ]);
     });
   }
@@ -1376,38 +1376,38 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (chatList.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 100), () {
         var starred = chatList.indexWhere((element) => element.isMessageStarred.value);
-        DialogUtils.showAlert(message: getTranslated("youWantToClearChat"), actions: [
+        DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("youWantToClearChat"), actions: [
           Visibility(
             visible: !starred.isNegative,
-            child: TextButton(
+            child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   clearChatHistory(false);
                 },
-                child: Text(getTranslated("cleatAll").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("cleatAll").toUpperCase(), )),
           ),
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("cancel").toUpperCase(), )),
           Visibility(
             visible: starred.isNegative,
-            child: TextButton(
+            child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   clearChatHistory(false);
                 },
-                child: Text(getTranslated("clear").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("clear").toUpperCase(), )),
           ),
           Visibility(
             visible: !starred.isNegative,
-            child: TextButton(
+            child: TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   clearChatHistory(true);
                 },
-                child: Text(getTranslated("clearExceptStarred"), style: const TextStyle(color: buttonBgColor))),
+                child: Text(getTranslated("clearExceptStarred"), )),
           ),
         ]);
       });
@@ -1418,13 +1418,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   unBlockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      DialogUtils.showAlert(message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
-        TextButton(
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () {
               NavUtils.back();
             },
-            child: Text(getTranslated("cancel").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
-        TextButton(
+            child: Text(getTranslated("cancel").toUpperCase(), )),
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
             onPressed: () async {
               await AppUtils.isNetConnected().then((isConnected) {
                 if (isConnected) {
@@ -1445,7 +1445,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 }
               });
             },
-            child: Text(getTranslated("unblock").toUpperCase(), style: const TextStyle(color: buttonBgColor))),
+            child: Text(getTranslated("unblock").toUpperCase(), )),
       ]);
     });
   }
@@ -2683,7 +2683,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     "callType": CallType.audio
                   })?.then((value) => setOnGoingUserAvail());
                 } else {
-                  DialogUtils.showAlert(message: getErrorDetails(response));
+                  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
                 }
               });
         }

@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/utils.dart';
@@ -915,13 +916,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
     var chatIndex =
         recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    DialogUtils.showAlert(message:getTranslated("deleteChatWith").replaceFirst("%d", recentChats[chatIndex].getName()), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message:getTranslated("deleteChatWith").replaceFirst("%d", recentChats[chatIndex].getName()), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
             if (!availableFeatures.value.isDeleteChatAvailable.checkNull()) {
@@ -934,18 +935,18 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               updateUnReadChatCount();
             });
           },
-          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), )),
     ]);
   }
 
   itemsDelete() {
-    DialogUtils.showAlert(message:getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChatsPosition.length}"), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message:getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChatsPosition.length}"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             NavUtils.back();
           },
-          child: Text(getTranslated("no"),style: const TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             NavUtils.back();
             Mirrorfly.deleteRecentChats(jidList: selectedChats, flyCallBack: (FlyResponse response) {
@@ -959,7 +960,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               }
             });
           },
-          child: Text(getTranslated("yes"),style: const TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), )),
     ]);
   }
 
@@ -1922,15 +1923,15 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   _itemDeleteCallLog(int index) {
     var logIndex =
         callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId); //selectedChatsPosition[index];
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("deleteCallLogConfirmation"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("cancel").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
@@ -1944,21 +1945,21 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(), )),
         ],
         barrierDismissible: true);
   }
 
   itemsDeleteCallLog() {
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("deleteSelectedCallLog"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("cancel").toUpperCase(),)),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
@@ -1976,21 +1977,21 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(), )),
         ],
         barrierDismissible: true);
   }
 
   clearCallLog() {
-    DialogUtils.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("deleteAllCallLog"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("cancel").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: true, flyCallBack: (FlyResponse response) {
@@ -2001,7 +2002,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
                   }
                 });
               },
-              child: Text(getTranslated("ok").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok").toUpperCase(), )),
         ],
         barrierDismissible: true);
   }

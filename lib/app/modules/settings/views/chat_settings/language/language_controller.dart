@@ -70,6 +70,6 @@ class LanguageController extends GetxController{
     translationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguageCode(item.languageCode);
-    Get.back(result: item.languageName);
+    NavUtils.back(result: item.languageName);
   }
 }

@@ -282,7 +282,7 @@ GroupInfoController createController() => Get.put(GroupInfoController());
               // NavUtils.toNamed(Routes.CHAT, arguments: item);
               /*NavUtils.back();
               Future.delayed(const Duration(milliseconds: 300), () {
-                Get.back(result: item);
+                NavUtils.back(result: item);
               });*/
             },
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
@@ -310,18 +310,18 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                       DialogUtils.showFeatureUnavailable();
                       return;
                     }
-                    DialogUtils.showAlert(message: getTranslated("areYouSureToRemove").replaceAll("%d", getName(item)), actions: [
-                      TextButton(
+                    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouSureToRemove").replaceAll("%d", getName(item)), actions: [
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             NavUtils.back();
                           },
-                          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-                      TextButton(
+                          child: Text(getTranslated("no").toUpperCase(), )),
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             NavUtils.back();
                             controller.removeUser(item.jid.checkNull());
                           },
-                          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("yes").toUpperCase(), )),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));
@@ -340,18 +340,18 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                       DialogUtils.showFeatureUnavailable();
                       return;
                     }
-                    DialogUtils.showAlert(message:getTranslated("areYouSureMakeAdmin").replaceAll("%d", getName(item)), actions: [
-                      TextButton(
+                    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message:getTranslated("areYouSureMakeAdmin").replaceAll("%d", getName(item)), actions: [
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             NavUtils.back();
                           },
-                          child: Text(getTranslated("no").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-                      TextButton(
+                          child: Text(getTranslated("no").toUpperCase(), )),
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
                             NavUtils.back();
                             controller.makeAdmin(item.jid.checkNull());
                           },
-                          child: Text(getTranslated("yes").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
+                          child: Text(getTranslated("yes").toUpperCase(), )),
                     ]);
                   },
                   visualDensity: const VisualDensity(horizontal: 0, vertical: -3)));

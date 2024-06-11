@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../data/utils.dart';
 
@@ -184,7 +185,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   Future<void> takePhoto(context) async {
     if(cameraInitialized.value) {
-      DialogUtils.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
         file = await cameraController?.takePicture();
@@ -195,7 +196,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       }finally{
         debugPrint("file : ${file?.path}");
         DialogUtils.hideLoading();
-        Get.back(result: file);
+        NavUtils.back(result: file);
       }
     }
   }
@@ -203,7 +204,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   stopRecord()async{
     if(cameraInitialized.value) {
       //DialogUtils.showLoading();
-      DialogUtils.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
        file = await stopVideoRecording();
@@ -214,7 +215,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       }finally{
         // debugPrint("file : ${file?.path}, ${file?.length()},");
         DialogUtils.hideLoading();
-        Get.back(result: file);
+        NavUtils.back(result: file);
         isRecording(false);
       }
 

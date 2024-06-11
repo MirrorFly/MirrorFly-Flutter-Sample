@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -20,12 +21,12 @@ class DeleteAccountController extends GetxController {
   deleteAccount() async {
     if(await AppUtils.isNetConnected()) {
       if(mobileNumber.text.isEmpty){
-        DialogUtils.showAlert(message: getTranslated("enterYourMobileNumber"), actions: [
-          TextButton(
+        DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("enterYourMobileNumber"), actions: [
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
               },
-              child: Text(getTranslated("ok"),style: const TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("ok"), )),
         ]);
         return;
       }
@@ -39,24 +40,24 @@ class DeleteAccountController extends GetxController {
         if ((mobileNumber.text.trim() != SessionManagement.getMobileNumber() && mobileNumberWithCountryCode != SessionManagement.getMobileNumber()) ||
             SessionManagement.getCountryCode()?.replaceAll('+', '') !=
                 countryCode?.replaceAll('+', '')) {
-          DialogUtils.showAlert(
+          DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
               message: getTranslated("mobileNumberNotMatch"),
               actions: [
-                TextButton(
+                TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                     onPressed: () {
                       NavUtils.back();
                     },
-                    child: Text(getTranslated("ok"),style: const TextStyle(color: buttonBgColor))),
+                    child: Text(getTranslated("ok"), )),
               ]);
           return;
         }
       }else{
         var mob = '${countryCode?.replaceAll('+', '').toString().checkNull()}${mobileNumber.text.trim()}';
         if (mob != SessionManagement.getMobileNumber()) {
-          DialogUtils.showAlert(
+          DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
               message: getTranslated("mobileNumberNotMatch"),
               actions: [
-                TextButton(
+                TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                     onPressed: () {
                       NavUtils.back();
                     },

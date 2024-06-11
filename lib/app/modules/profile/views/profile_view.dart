@@ -343,18 +343,18 @@ ProfileController createController() => Get.put(ProfileController());
                                 contentPadding: EdgeInsets.zero,
                                 onTap: () {
                                   NavUtils.back();
-                                  DialogUtils.showAlert(message: getTranslated("areYouSureToRemovePhoto"), actions: [
-                                    TextButton(
+                                  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouSureToRemovePhoto"), actions: [
+                                    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                                         onPressed: () {
                                           NavUtils.back();
                                         },
-                                        child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: buttonBgColor))),
-                                    TextButton(
+                                        child: Text(getTranslated("cancel").toUpperCase(), )),
+                                    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                                         onPressed: () {
                                           NavUtils.back();
                                           controller.removeProfileImage();
                                         },
-                                        child: Text(getTranslated("remove").toUpperCase(),style: const TextStyle(color: buttonBgColor)))
+                                        child: Text(getTranslated("remove").toUpperCase(), ))
                                   ]);
                                 },
                                 title: Text(
