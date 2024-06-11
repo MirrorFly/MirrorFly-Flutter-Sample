@@ -123,7 +123,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.chatInfo();
                                                 },
-                                                icon: SvgPicture.asset(infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Info',
                                               ),
                                               overflowWidget: Text(getTranslated("info"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -138,7 +138,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.currentTab.value == 0 ? controller.deleteChats() : controller.deleteCallLog();
                                                 },
-                                                icon: SvgPicture.asset(delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Delete',
                                               ),
                                               overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -157,7 +157,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.pinChats();
                                                 },
-                                                icon: SvgPicture.asset(pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Pin',
                                               ),
                                               overflowWidget: Text(getTranslated("pin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -172,7 +172,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.unPinChats();
                                                 },
-                                                icon: SvgPicture.asset(unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnPin',
                                               ),
                                               overflowWidget: Text(getTranslated("unPin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -187,7 +187,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.muteChats();
                                                 },
-                                                icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Mute',
                                               ),
                                               overflowWidget: Text(getTranslated("mute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -202,7 +202,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.unMuteChats();
                                                 },
-                                                icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnMute',
                                               ),
                                               overflowWidget: Text(getTranslated("unMute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -217,7 +217,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                 onPressed: () {
                                                   controller.archiveChats();
                                                 },
-                                                icon: SvgPicture.asset(archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),
+                                                icon: SvgPicture.asset(archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Archive',
                                               ),
                                               overflowWidget: Text(getTranslated("archived"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -255,7 +255,7 @@ DashboardController createController() => Get.put(DashboardController());
                                                   width: 18,
                                                   height: 18,
                                                   fit: BoxFit.contain,
-                                                    colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)
+                                                    colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)
                                                 ),
                                                 tooltip: 'Search',
                                               ),

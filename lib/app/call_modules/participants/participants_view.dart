@@ -7,11 +7,13 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 
+import '../../app_style_config.dart';
 import '../../common/app_theme.dart';
 import '../../common/constants.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
 import '../../modules/dashboard/dashboard_widgets/contact_item.dart';
+import '../../stylesheet/stylesheet.dart';
 import '../call_utils.dart';
 import '../call_widgets.dart';
 
@@ -23,79 +25,83 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
 
   @override
   Widget build(BuildContext context) {
-    return CustomSafeArea(
-      child: DefaultTabController(
-        length: 2,
-        child: Builder(builder: (ctx) {
-          return Scaffold(
-              body: NestedScrollView(
-                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                    return [
-                      Obx(() {
-                        return SliverAppBar(
-                          snap: false,
-                          pinned: true,
-                          leading:IconButton(
-                            icon: const Icon(Icons.arrow_back, color: iconColor),
-                            onPressed: () {
-                              if(controller.isSearching.value) {
-                                controller.getBackFromSearch();
-                              }else{
-                                NavUtils.back();
-                              }
-                            },
-                          ),
-                          title: controller.isSearching.value
-                              ? TextField(
-                            focusNode: controller.searchFocusNode,
-                            onChanged: (text) => controller.searchListener(text),
-                            controller: controller.searchQuery,
-                            autofocus: true,
-                            decoration: InputDecoration(hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
-                          )
-                              : null,
-                          bottom: TabBar(
-                              controller: controller.tabController,
-                              indicatorColor: buttonBgColor,
-                              labelColor: buttonBgColor,
-                              unselectedLabelColor: appbarTextColor,
-                              tabs: [
-                                tabItem(title: getTranslated("participants").toUpperCase(), count: "0"),
-                                tabItem(title: getTranslated("addParticipants").toUpperCase(), count: "0")
-                              ]),
-                          actions: [
-                            Visibility(
-                              visible:controller.currentTab.value==1,
-                              child: IconButton(
-                                onPressed: () {
-                                  if(controller.isSearching.value){
-                                    controller.clearSearch();
-                                  }else {
-                                    controller.onSearchPressed();
-                                  }
-                                },
-                                icon: !controller.isSearching.value ?SvgPicture.asset(
-                                  searchIcon,
-                                  width: 18,
-                                  height: 18,
-                                  fit: BoxFit.contain,
-                                ) : const Icon(Icons.clear),
-                                tooltip: 'Search',
-                              ),
+    return Theme(
+      data: Theme.of(context).copyWith(tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarTheme,
+          appBarTheme: AppStyleConfig.addParticipantsPageStyle.appBarTheme,),
+      child: CustomSafeArea(
+        child: DefaultTabController(
+          length: 2,
+          child: Builder(builder: (ctx) {
+            return Scaffold(
+                body: NestedScrollView(
+                    headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                      return [
+                        Obx(() {
+                          return SliverAppBar(
+                            snap: false,
+                            pinned: true,
+                            leading:IconButton(
+                              icon: const Icon(Icons.arrow_back, color: iconColor),
+                              onPressed: () {
+                                if(controller.isSearching.value) {
+                                  controller.getBackFromSearch();
+                                }else{
+                                  NavUtils.back();
+                                }
+                              },
                             ),
-                          ],
-                        );
-                      }),
-                    ];
-                  },
-                  body: TabBarView(controller: controller.tabController,
-                      children: [callParticipantsView(context), addParticipants(context)])));
-        }),
+                            title: controller.isSearching.value
+                                ? TextField(
+                              focusNode: controller.searchFocusNode,
+                              onChanged: (text) => controller.searchListener(text),
+                              controller: controller.searchQuery,
+                              autofocus: true,
+                              style: AppStyleConfig.addParticipantsPageStyle.searchTextFieldStyle.editTextStyle,
+                              decoration: InputDecoration(hintText: getTranslated("searchPlaceholder"), border: InputBorder.none,
+                              hintStyle: AppStyleConfig.addParticipantsPageStyle.searchTextFieldStyle.editTextHintStyle),
+                            )
+                                : null,
+                            bottom: TabBar(
+                                controller: controller.tabController,
+                                tabs: [
+                                  tabItem(title: getTranslated("participants").toUpperCase(), count: "0",style: AppStyleConfig.addParticipantsPageStyle.tabItemStyle),
+                                  tabItem(title: getTranslated("addParticipants").toUpperCase(), count: "0",style: AppStyleConfig.addParticipantsPageStyle.tabItemStyle)
+                                ]),
+                            actions: [
+                              Visibility(
+                                visible:controller.currentTab.value==1,
+                                child: IconButton(
+                                  onPressed: () {
+                                    if(controller.isSearching.value){
+                                      controller.clearSearch();
+                                    }else {
+                                      controller.onSearchPressed();
+                                    }
+                                  },
+                                  icon: !controller.isSearching.value ?SvgPicture.asset(
+                                    searchIcon,
+                                    width: 18,
+                                    height: 18,
+                                    fit: BoxFit.contain,
+                                    colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),
+                                  ) : Icon(Icons.clear,color: Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black,),
+                                  tooltip: 'Search',
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      ];
+                    },
+                    body: TabBarView(controller: controller.tabController,
+                        children: [callParticipantsView(context,AppStyleConfig.addParticipantsPageStyle.participantItemStyle), addParticipants(context,AppStyleConfig.addParticipantsPageStyle.contactItemStyle,AppStyleConfig.addParticipantsPageStyle.noDataTextStyle)])));
+          }),
+        ),
       ),
     );
   }
 
-  Widget tabItem({required String title, required String count}) {
+  Widget tabItem({required String title, required String count,TabItemStyle style = const TabItemStyle()}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -103,26 +109,29 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w700),
+            style: style.textStyle,
+            // style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           count != "0"
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
                     radius: 9,
+                    backgroundColor: style.countIndicatorStyle.bgColor,
                     child: Text(
                       count.toString(),
-                      style: const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
+                      style: style.countIndicatorStyle.textStyle,
+                      // style: const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
                     ),
                   ),
                 )
-              : const SizedBox.shrink()
+              : const Offstage()
         ],
       ),
     );
   }
 
-  Widget callParticipantsView(BuildContext context) {
+  Widget callParticipantsView(BuildContext context,ParticipantItemStyle style) {
     return Obx(() {
       return ListView.builder(
           shrinkWrap: true,
@@ -131,7 +140,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
           itemBuilder: (context, index) {
             debugPrint("call list length ${controller.callList.length}");
             return SessionManagement.getUserJID() == controller.callList[index].userJid!.value.checkNull()
-                ? const SizedBox.shrink()
+                ? const Offstage()
                 : Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
@@ -140,8 +149,8 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                             future: getProfileDetails(controller.callList[index].userJid!.value.checkNull()),
                             builder: (ctx, snap) {
                         return snap.hasData && snap.data != null
-                            ? buildProfileImage(snap.data!, size: 48)
-                            : const SizedBox.shrink();
+                            ? buildProfileImage(snap.data!, size: style.profileImageSize.width)
+                            : const Offstage();
                             }),
                         const SizedBox(
                           width: 10,
@@ -157,10 +166,11 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                                         ? Text(
                                             snap.data!,
                                             maxLines: 1,
-                                            style: Theme.of(context).textTheme.titleMedium,
+                                            style: style.textStyle,
+                                            // style: Theme.of(context).textTheme.titleMedium,
                                             overflow: TextOverflow.ellipsis,
                                           )
-                                        : const SizedBox.shrink();
+                                        : const Offstage();
                                   }),
                             ],
                           ),
@@ -169,20 +179,23 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Obx(() {
                             return controller.callList[index].isAudioMuted.value
-                                ? CircleAvatar(backgroundColor: AppColors.participantUnMuteColor, child: SvgPicture.asset(participantMute))
-                                : CircleAvatar(backgroundColor: Colors.transparent, child: SvgPicture.asset(participantUnMute));
+                                ? CircleAvatar(backgroundColor: style.actionStyle.inactiveIconColor,//AppColors.participantUnMuteColor,
+                                child: SvgPicture.asset(participantMute,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),))
+                                : CircleAvatar(backgroundColor: style.actionStyle.activeBgColor,//Colors.transparent,
+                                child: SvgPicture.asset(participantUnMute,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),));
                           }),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Obx(() {
                             return CircleAvatar(
-                          backgroundColor: controller.callList[index].isVideoMuted.value ? AppColors
-                              .participantUnMuteColor : Colors.transparent,
-                                child: SvgPicture.asset(
-                              controller.callList[index].isVideoMuted.value
-                                  ? participantVideoDisabled
-                                  : participantVideoEnabled));
+                          backgroundColor: controller.callList[index].isVideoMuted.value
+                              ? style.actionStyle.inactiveBgColor//AppColors.participantUnMuteColor
+                              : style.actionStyle.activeBgColor,//Colors.transparent,
+                                child: controller.callList[index].isVideoMuted.value
+                                    ? SvgPicture.asset(participantVideoDisabled,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),)
+                                : SvgPicture.asset(participantVideoEnabled,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),)
+                            );
                           }),
                         ),
                       ],
@@ -192,7 +205,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
     });
   }
 
-  Widget addParticipants(BuildContext context) {
+  Widget addParticipants(BuildContext context,ContactItemStyle style,TextStyle noData) {
     return Obx(() {
       return Stack(
         children: [
@@ -200,14 +213,14 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
               visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
               child: Center(child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Text(getTranslated("noContactsFound")),
+                child: Text(getTranslated("noContactsFound"),style: noData,),
               ),)),
           controller.isPageLoading.value
               ? const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: CircularProgressIndicator(),
-              )) : const SizedBox.shrink(),
+              )) : const Offstage(),
           Column(
             children: [
               controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
@@ -234,7 +247,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                             controller.onListItemPressed(item);
                           },onListItemPressed: (){
                             controller.onListItemPressed(item);
-                          },);
+                          },contactItemStyle: style,);
                       } else {
                         return const SizedBox();
                       }
@@ -247,12 +260,13 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                   },
                   child: Container(
                       height: 50,
-                      decoration: const BoxDecoration(
+                      decoration: AppStyleConfig.addParticipantsPageStyle.buttonDecoration,
+                      /*decoration: const BoxDecoration(
                           color: buttonBgColor,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(2), topRight: Radius.circular(2))
-                      ),
+                      ),*/
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -260,16 +274,17 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                           children: [
                             SvgPicture.asset(
                               addParticipantsInCall,
+                              colorFilter: ColorFilter.mode(AppStyleConfig.addParticipantsPageStyle.buttonIconColor, BlendMode.srcIn),
                             ),
                             const SizedBox(width: 8,),
                             Text(getTranslated("selectedParticipantsToCall").replaceFirst("%d", "${(controller.groupCallMembersCount.value)}"),
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500,
-                                  fontFamily: 'sf_ui'),)
+                              style: AppStyleConfig.addParticipantsPageStyle.buttonTextStyle,
+                              // style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'sf_ui'),
+                            )
                           ],
                         ),
                       )),
-                ) : const SizedBox.shrink();
+                ) : const Offstage();
               })
             ],
           )
