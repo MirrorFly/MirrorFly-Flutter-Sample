@@ -193,12 +193,7 @@ ContactController createController() => Get.put(ContactController());
                                   },
                                   child: Container(
                                       height: 50,
-                                      decoration: const BoxDecoration(
-                                          color: buttonBgColor,
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(2), topRight: Radius.circular(2))
-                                      ),
+                                      decoration: AppStyleConfig.contactListPageStyle.buttonDecoration,
                                       child: Center(
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -208,6 +203,7 @@ ContactController createController() => Get.put(ContactController());
                                               arg.callType == CallType.audio
                                                   ? audioCallSmallIcon
                                                   : videoCallSmallIcon,
+                                              colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.buttonIconColor, BlendMode.srcIn),
                                             ),
                                             const SizedBox(width: 8,),
                                             Text(getTranslated("callNowWithCount").replaceAll("%d", (controller.groupCallMembersCount.value -1).toString()),

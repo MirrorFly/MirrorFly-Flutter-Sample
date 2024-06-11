@@ -7,6 +7,9 @@ class ContactListPageStyle{
   final EditTextFieldStyle searchTextFieldStyle;
   final TextStyle actionTextStyle;
   final TextStyle noDataTextStyle;
+  final Decoration buttonDecoration;
+  final TextStyle buttonTextStyle;
+  final Color buttonIconColor;
 
   const ContactListPageStyle({
     this.appBarTheme = const AppBarTheme(backgroundColor: Colors.white,shadowColor: Colors.white,surfaceTintColor: Colors.white,
@@ -22,6 +25,14 @@ class ContactListPageStyle{
       dividerColor: Color(0xffEBEBEB)
     ),
     this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff767676),fontSize: 14),
+    this.buttonDecoration = const BoxDecoration(
+        color: Color(0xff3276E2),
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(2), topRight: Radius.circular(2))
+    ),
+    this.buttonTextStyle = const TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 14, ),
+    this.buttonIconColor = Colors.white
   });
 
 }
