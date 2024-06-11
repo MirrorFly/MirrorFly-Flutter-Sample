@@ -166,7 +166,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     //fetchUsers(true);
     //}
     usersList(mainUsersList);
-    scrollable(!Constants.enableContactSync);
+    scrollable(!Constants.enableContactSync && mainUsersList.length == 20);
   }
 
   fetchUsers(bool fromSearch, {bool server = false}) async {
@@ -202,7 +202,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               if (!Constants.enableContactSync) {
                 usersList(list);
                 // if(usersList.length==20) pageNum += 1;
-                scrollable.value = list.length == 20;
+                scrollable(list.length == 20);
               } else {
                 var userlist = mainUsersList
                     .where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
@@ -218,7 +218,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               if (!Constants.enableContactSync) {
                 usersList.addAll(list);
                 // if(usersList.length==20) pageNum += 1;
-                scrollable.value = list.length == 20;
+                scrollable(list.length == 20);
               } else {
                 usersList(list);
                 scrollable(false);
@@ -246,7 +246,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               if (!Constants.enableContactSync) {
                 usersList(list);
                 // if(usersList.length==20) pageNum += 1;
-                scrollable.value = list.length == 20;
+                scrollable(list.length == 20);
               } else {
                 var userlist = mainUsersList
                     .where((p0) => getName(p0).toString().toLowerCase().contains(_searchText.trim().toLowerCase()));
@@ -262,7 +262,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
               if (!Constants.enableContactSync) {
                 usersList.addAll(list);
                 // if(usersList.length==20) pageNum += 1;
-                scrollable.value = list.length == 20;
+                scrollable(list.length == 20);
               } else {
                 usersList(list);
                 scrollable(false);
@@ -278,7 +278,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
       (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
-          /*metaDataUserList: MetaDataUserList(key: "platform", value: ["flutter"]),*/ //#metaData
+          metaDataUserList: Constants.metaDataUserList, //#metaData
           flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {

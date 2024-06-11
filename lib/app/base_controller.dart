@@ -35,6 +35,7 @@ import 'modules/dashboard/controllers/dashboard_controller.dart';
 // import 'modules/dashboard/controllers/recent_chat_search_controller.dart';
 import 'modules/message_info/controllers/message_info_controller.dart';
 import 'modules/notification/notification_builder.dart';
+import 'modules/profile/controllers/profile_controller.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
@@ -229,9 +230,15 @@ abstract class BaseController {
           }
           if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute != Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            NavUtils.toNamed(Routes.onGoingCallView, arguments: {
-              "userJid": [userJid]
-            });
+            if(NavUtils.currentRoute == Routes.outGoingCallView) {
+              NavUtils.offNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }else{
+              NavUtils.toNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }
           }
           break;
 
@@ -300,6 +307,10 @@ abstract class BaseController {
           } else {
             debugPrint("#Mirrorfly call call controller not registered for timeout event");
           }
+          break;
+        case CallStatus.callFailed:
+            // Helper.showAlert(message: callStatus);
+          toToast(callStatus);
           break;
 
         default:
@@ -591,6 +602,12 @@ abstract class BaseController {
     }
   }
 
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated",chatMessageModel.toJson());
@@ -724,7 +741,7 @@ abstract class BaseController {
   }
 
   Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
-    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull() && chatMessage.isMessageEdited.value.checkNull()) {
+    if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull() || chatMessage.isMessageEdited.value.checkNull()) {
       return;
     }
     var profileDetails = await getProfileDetails(jid);
@@ -934,7 +951,11 @@ abstract class BaseController {
 
   void usersWhoBlockedMeListFetched(result) {}
 
-  void onConnected(result) {}
+  void onConnected(result) {
+    if(Get.isRegistered<ProfileController>()){
+      Get.find<ProfileController>().onConnected();
+    }
+  }
 
   void onDisconnected(result) {
     LogMessage.d('onDisconnected', result.toString());

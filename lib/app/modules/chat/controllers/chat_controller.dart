@@ -1838,7 +1838,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       final index = chatList.indexWhere((message) => message.messageId == chatMessageModel.messageId);
       debugPrint("message received index $index");
       if (index.isNegative) {
-        chatList.insert(0, chatMessageModel);
+        // chatList.insert(0, chatMessageModel);
+        loadLastMessages(chatMessageModel);
         unreadCount.value++;
         //scrollToBottom();
         if (SessionManagement.getCurrentChatJID() != Constants.emptyString) {

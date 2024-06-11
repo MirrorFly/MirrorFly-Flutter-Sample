@@ -1240,7 +1240,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
 
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(), flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: true, flyCallback: callback);
       /*future.then((value) {
         // Mirrorfly.getUserList(pageNum, search.text.trim().toString()).then((value) {
@@ -1364,7 +1366,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (await AppUtils.isNetConnected()) {
       searching = true;
 
-      Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(), flyCallback: (FlyResponse response) {
+      Mirrorfly.getUserList(page: pageNum, search: search.text.trim().toString(),
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: (FlyResponse response) {
         if (response.isSuccess) {
           if (response.hasData) {
             var list = userListFromJson(response.data);
@@ -1445,11 +1449,20 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   @override
   void onInactive() {}
 
+  var hasPaused = false;
   @override
-  void onPaused() {}
+  void onPaused() {
+    hasPaused = true;
+  }
 
   @override
   void onResumed() {
+    if (hasPaused) {
+      hasPaused = false;
+      LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
+      getRecentChatList();
+      fetchCallLogList();
+    }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
       if (searchFocusNode.hasFocus) {
@@ -2021,9 +2034,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (!index.isNegative) {
       recentChats[index].lastMessageContent = editedChatMessage.messageTextContent;
       recentChats.refresh();
-    } else {
-      updateRecentChat(jid: editedChatMessage.chatUserJid);
     }
+    // else {
+    //   updateRecentChat(jid: editedChatMessage.chatUserJid);
+    // }
   }
 }
 

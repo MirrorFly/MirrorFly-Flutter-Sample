@@ -73,6 +73,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> save({bool frmImage=false}) async {
+    var valid = await validMobileNumber(profileMobile.text.removeAllWhitespace.replaceAll("+", ""));
     // var permission = await AppPermission.getStoragePermission();
     // if (permission) {
       if (profileName.text
@@ -91,7 +92,10 @@ class ProfileController extends GetxController {
         toToast(getTranslated("pleaseEnterValidMail"));
       } else if (profileStatus.value.isEmpty) {
         toToast(getTranslated("pleaseEnterProfileStatus"));
-      } else {
+      } else if(!valid){
+        toToast(getTranslated("pleaseEnterValidMobile"));
+      }
+      else {
         loading.value = true;
         showLoader();
         if (imagePath.value.isNotEmpty) {
@@ -126,7 +130,7 @@ class ProfileController extends GetxController {
                           name: profileName.text,
                           status: profileStatus.value);
                       SessionManagement.setCurrentUser(userProfileData);
-                      if (from == Routes.login) {
+                      if (from == Routes.login || from.isEmpty) {
                         // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
                           NavUtils.offNamed(Routes.dashboard);
@@ -283,6 +287,7 @@ class ProfileController extends GetxController {
         LogMessage.d("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         Mirrorfly.getUserProfile(jid: jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
+          LogMessage.d("getUserProfile", response.toString());
           if(response.isSuccess) {
             insertDefaultStatusToUser();
             loading.value = false;
@@ -333,58 +338,6 @@ class ProfileController extends GetxController {
             toToast(getTranslated("unableToLoadProfileData"));
           }
         });
-            /*.then((value) {
-          debugPrint("profile--> $value");
-          if(value!=null) {
-            insertDefaultStatusToUser();
-            loading.value = false;
-            var data = profileDataFromJson(value);
-            if (data.status != null && data.status!) {
-              if (data.data != null) {
-                profileName.text = data.data!.name ?? "";
-                if (data.data!
-                    .mobileNumber
-                    .checkNull()
-                    .isNotEmpty) {
-                  //if (from.value != Routes.login) {
-                  validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
-                    // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
-                    mobileEditAccess(!valid);
-                  });
-                } else {
-                  var userIdentifier = SessionManagement.getUserIdentifier();
-                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
-                  // mobileEditAccess(true);
-                }
-
-                profileEmail.text = data.data!.email ?? "";
-                profileStatus.value = data.data!
-                    .status
-                    .checkNull()
-                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
-                userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
-                SessionManagement.setUserImage(Constants.emptyString);
-                changed((from == Routes.login));
-                name(data.data!.name.toString());
-                var userProfileData = ProData(
-                    email: profileEmail.text.toString(),
-                    image: userImgUrl.value,
-                    mobileNumber: data.data!.mobileNumber.checkNull(),
-                    nickName: profileName.text,
-                    name: profileName.text,
-                    status: profileStatus.value);
-                SessionManagement.setCurrentUser(userProfileData);
-                update();
-              }
-            } else {
-              debugPrint("Unable to load Profile data");
-              toToast("Unable to Connect to Server. Please login Again");
-            }
-          }
-        }).catchError((onError) {
-          loading.value = false;
-          toToast("Unable to load profile data, please login again");
-        });*/
       }
    /* }else{
       toToast(getTranslated("noInternetConnection"));
@@ -539,9 +492,9 @@ class ProfileController extends GetxController {
       coded = SessionManagement.getCountryCode().checkNull()+text;
     }
     var m = coded.contains("+") ? coded : "+$coded";
-    libphonenumber.init();
-    var formatNumberSync = libphonenumber.formatNumberSync(m);
+    await libphonenumber.init();
     try {
+      var formatNumberSync = libphonenumber.formatNumberSync(m);
       var parse = await libphonenumber.parse(formatNumberSync);
       debugPrint("parse-----> $parse");
       //{country_code: 91, e164: +91xxxxxxxxxx, national: 0xxxxx xxxxx, type: mobile, international: +91 xxxxx xxxxx, national_number: xxxxxxxxxx, region_code: IN}
@@ -601,5 +554,9 @@ class ProfileController extends GetxController {
     /*Mirrorfly.updateMetaData(identifierMetaDataList: [IdentifierMetaData(key: "platform", value: "flutter")],flyCallback: (FlyResponse response){
       LogMessage.d("updateMetaData", response.toString());
     });*/
+  }
+
+  void onConnected(){
+    getProfile();
   }
 }

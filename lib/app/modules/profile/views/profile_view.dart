@@ -267,7 +267,7 @@ ProfileController createController() => Get.put(ProfileController());
                                       }
                                     : null,
                             child: Text(
-                              controller.from == Routes.login
+                              controller.from == Routes.login || controller.from.isEmpty
                                   ? getTranslated("save")
                                   : controller.changed.value
                                       ? getTranslated("updateAndContinue")

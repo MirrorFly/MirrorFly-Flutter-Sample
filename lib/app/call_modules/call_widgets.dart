@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/AudioLevelAnimation.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
@@ -267,52 +268,28 @@ Widget buildListItem(CallController controller,CallUserTileStyle style) {
                   ).setBorderRadius(style.borderRadius),
                   Obx(() {
                     return Positioned(
-                      top: 0,
+                          top: 8,
                       right: 8,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // SizedBox(
-                          //   width: 20,
-                          //   child: CircleAvatar(
-                          //     backgroundColor: AppColors.audioMutedIconBgColor,
-                          //     child: SvgPicture.asset(unpinUser),
-                          //   ),
-                          // ),
                           if (controller.callList[index].isAudioMuted.value) ...[
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: SizedBox(
-                                width: 20,
-                                child: CircleAvatar(
-                                  backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
-                                  child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
-                                ),
-                              ),
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
+                              child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
                             ),
                           ],
-                          AnimatedCrossFade(
-                              firstCurve: Curves.fastOutSlowIn,
-                              alignment: Alignment.center,
-                              duration: const Duration(milliseconds: 300),
-                              firstChild: Padding(
-                                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                                child: SpeakingDots(
+                          if (controller.speakingUsers.isNotEmpty &&
+                                !controller.callList[index].isAudioMuted.value &&
+                                !controller.audioLevel(controller.callList[index].userJid!.value).isNegative) ...[
+                                AudioLevelAnimation(
                                   radius: 9,
                                   audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
                                   bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
                                   dotsColor: style.speakingIndicatorStyle.activeIconColor,
-                                ),
-                              ),
-                              secondChild: const SizedBox.shrink(),
-                              crossFadeState: (controller.speakingUsers.isNotEmpty &&
-                                  !controller.callList[index].isAudioMuted.value &&
-                                  !controller
-                                      .audioLevel(controller.callList[index].userJid!.value)
-                                      .isNegative)
-                                  ? CrossFadeState.showFirst
-                                  : CrossFadeState.showSecond)
+                                )
                         ],
                       ),
                     );
@@ -432,51 +409,28 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
             ).setBorderRadius(const BorderRadius.all(Radius.circular(10))),
             Obx(() {
               return Positioned(
-                top: 0,
+                top: 8,
                 right: 8,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // SizedBox(
-                    //   width: 20,
-                    //   child: CircleAvatar(
-                    //     backgroundColor: AppColors.audioMutedIconBgColor,
-                    //     child: SvgPicture.asset(unpinUser),
-                    //   ),
-                    // ),
                     if (controller.callList[index].isAudioMuted.value) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: SizedBox(
-                          width: 20,
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.audioMutedIconBgColor,
-                            child: SvgPicture.asset(callMutedIcon),
-                          ),
-                        ),
+                      CircleAvatar(
+                        radius: 10,
+                        backgroundColor: AppColors.audioMutedIconBgColor,
+                        child: SvgPicture.asset(callMutedIcon),
                       ),
                     ],
-                    AnimatedCrossFade(
-                        firstCurve: Curves.fastOutSlowIn,
-                        alignment: Alignment.center,
-                        duration: const Duration(milliseconds: 300),
-                        firstChild: Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 4.0),
-                          child: SpeakingDots(
-                            radius: 9,
-                            audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
-                            bgColor: AppColors.speakingBg,
-                          ),
-                        ),
-                        secondChild: const SizedBox.shrink(),
-                        crossFadeState: (controller.speakingUsers.isNotEmpty && !controller.callList[index].isAudioMuted
-                            .value &&
-                            !controller
-                                .audioLevel(controller.callList[index].userJid!.value)
-                                .isNegative)
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond)
+                    if (controller.speakingUsers.isNotEmpty &&
+                        !controller.callList[index].isAudioMuted.value &&
+                        !controller.audioLevel(controller.callList[index].userJid!.value).isNegative) ...[
+                      AudioLevelAnimation(
+                        radius: 12,
+                        audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
+                        bgColor: AppColors.speakingBg,
+                      ),
+                    ],
                   ],
                 ),
               );
@@ -490,9 +444,7 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                 return FutureBuilder<String>(
                     future: CallUtils.getNameOfJid(controller.callList[index].userJid!.value.checkNull()),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasError && snapshot.data
-                          .checkNull()
-                          .isNotEmpty) {
+                      if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
                         return Text(
                           snapshot.data.checkNull(),
                           style: const TextStyle(
@@ -509,34 +461,31 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
             ),
             Obx(() {
               debugPrint(
-                  "getUserJID ${controller.callList[index].userJid} ${controller.callList[index]
-                      .callStatus} current user ${controller.callList[index].userJid!.value ==
-                      SessionManagement.getUserJID()}");
-              return (getTileCallStatus(
-                  controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall)
-                  .isNotEmpty)
+                  "getUserJID ${controller.callList[index].userJid} ${controller.callList[index].callStatus} current user ${controller.callList[index].userJid!.value == SessionManagement.getUserJID()}");
+              return (getTileCallStatus(controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(),
+                          controller.isOneToOneCall)
+                      .isNotEmpty)
                   ? Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color:
-                    Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                            child: Text(
+                          getTileCallStatus(controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(),
+                              controller.isOneToOneCall),
+                          style: const TextStyle(color: Colors.white),
+                        )),
                       ),
-                    ],
-                  ),
-                  child: Center(
-                      child: Text(
-                        getTileCallStatus(controller.callList[index].callStatus?.value,
-                            controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall),
-                        style: const TextStyle(color: Colors.white),
-                      )),
-                ),
-              )
+                    )
                   : const Offstage();
             }),
             /*Obx(() {
