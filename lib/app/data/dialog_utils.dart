@@ -5,13 +5,14 @@ class DialogUtils {
   DialogUtils._();
   // DialogUtils(this.buildContext);
 
+  static const RouteSettings _routeSettings = RouteSettings(name: '/dialog');
   // final BuildContext buildContext;
   static BuildContext get buildContext => NavUtils.currentContext;
 
   static createDialog(Widget builder){
     return showDialog(context: buildContext, builder: (_){
       return builder;
-    });
+    },routeSettings: _routeSettings);
   }
 
   static bottomSheet(Widget builder,{bool ignoreSafeArea = false }){
@@ -25,7 +26,7 @@ class DialogUtils {
       {String? message,
       bool dismiss = false,required DialogStyle dialogStyle}) {
     showDialog(
-      context: buildContext,
+      context: buildContext,routeSettings: _routeSettings,
       builder: (_) {
         return Dialog(
           backgroundColor: dialogStyle.backgroundColor,
@@ -58,7 +59,7 @@ class DialogUtils {
   static void progressLoading(
       {bool dismiss = false}) {
     showDialog(
-        context: buildContext,
+        context: buildContext,routeSettings: _routeSettings,
         builder: (_) {
           return AlertDialog(
             elevation: 0,
@@ -92,7 +93,7 @@ class DialogUtils {
       Widget? content,
       bool? barrierDismissible,required DialogStyle dialogStyle}) {
     showDialog(
-        context: buildContext,
+        context: buildContext,routeSettings: _routeSettings,
         builder: (_) {
           return AlertDialog(
             backgroundColor: dialogStyle.backgroundColor,//Colors.white,
@@ -135,7 +136,7 @@ class DialogUtils {
   static void showVerticalButtonAlert(
       {required List<Widget> actions}) {
     showDialog(
-        context: buildContext,
+        context: buildContext,routeSettings: _routeSettings,
         builder: (_) {
           return Dialog(
             child: Column(
@@ -151,7 +152,7 @@ class DialogUtils {
   static void showButtonAlert(
       {required List<Widget> actions}) {
     showDialog(
-        context: buildContext,
+        context: buildContext,routeSettings: _routeSettings,
         builder: (_) {
           return Dialog(
             child: Padding(
