@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/app_localizations.dart';
@@ -133,7 +134,7 @@ class ProfileController extends GetxController {
                       if (from == Routes.login || from.isEmpty) {
                         // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          NavUtils.offNamed(Routes.dashboard);
+                          NavUtils.offNamed(Routes.dashboard,arguments: DashboardViewArguments());
                         }else{
                           NavUtils.offNamed(Routes.contactSync);
                         }
