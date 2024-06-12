@@ -8,7 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 class AppLocalizations {
 
   Locale locale = defaultLocale;
-  static Map<String, String> _localizedStrings = {};
+  static Map<String, dynamic> _localizedStrings = {};
 
   AppLocalizations(this.locale);
 
@@ -22,17 +22,13 @@ class AppLocalizations {
           'assets/locales/${locale.languageCode}.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
 
-      _localizedStrings = jsonMap.map((key, value) {
-        return MapEntry(key, value.toString());
-      });
+      _localizedStrings = jsonMap;
     }catch(e){
       String jsonString = await rootBundle.loadString(
           'assets/locales/en.json');
       Map<String, dynamic> jsonMap = json.decode(jsonString);
 
-      _localizedStrings = jsonMap.map((key, value) {
-        return MapEntry(key, value.toString());
-      });
+      _localizedStrings = jsonMap;
     }
 
     return true;
@@ -43,7 +39,7 @@ class AppLocalizations {
   }
 
   static dynamic translateList(String key) {
-    return _localizedStrings.containsKey(key) ?  List<String>.from(json.decode(_localizedStrings[key] ?? '')) : [];
+    return _localizedStrings.containsKey(key) ?  List<String>.from(_localizedStrings[key] ?? '') : [];
   }
 
   // Default language
