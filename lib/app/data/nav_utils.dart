@@ -46,7 +46,7 @@ class NavUtils{
       final uri = Uri(path: page, queryParameters: parameters);
       page = uri.toString();
     }
-    return Navigator.pushReplacementNamed(currentContext, page,
+    return Navigator.popAndPushNamed(currentContext, page,
       arguments: arguments);
   }
 
