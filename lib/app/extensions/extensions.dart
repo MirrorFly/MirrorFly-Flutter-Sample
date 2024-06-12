@@ -91,13 +91,15 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     // Get.put<T>(controller);
     super.initState();
     widget.onInit();
+    LogMessage.d("NavViewState : initState", T.toString());
   }
 
   @override
   void dispose() {
-    widget.onDispose();
     Get.delete<T>();
+    widget.onDispose();
     super.dispose();
+    LogMessage.d("NavViewState :  dispose", T.toString());
   }
 
   @override
