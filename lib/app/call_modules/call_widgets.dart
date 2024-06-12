@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/AudioLevelAnimation.dart';
+import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
