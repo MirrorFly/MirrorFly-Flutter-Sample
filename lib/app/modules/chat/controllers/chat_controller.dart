@@ -984,7 +984,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         replyMessageId = replyChatMessage.messageId;
       }
 
-      isUserTyping(false);
+      isUserTyping(messageController.text.trim().isNotEmpty);
       isReplying(false);
       //old method is deprecated Instead of use below new method
       /*Mirrorfly.sendAudioMessage(
@@ -1694,8 +1694,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     record.dispose();
     _audioTimer = null;
     isAudioRecording(Constants.audioRecordDelete);
-
-    Future.delayed(const Duration(milliseconds: 1500), () => isAudioRecording(Constants.audioRecordInitial));
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      isAudioRecording(Constants.audioRecordInitial);
+      isUserTyping(messageController.text.trim().isNotEmpty);
+    });
   }
 
   startRecording() async {
@@ -2684,7 +2686,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     "callType": CallType.audio
                   })?.then((value) => setOnGoingUserAvail());
                 } else {
-                  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
+                  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response),
+                      actions: [TextButton(onPressed: ()=>NavUtils.back(), child: Text(getTranslated("ok").toUpperCase()))]);
                 }
               });
         }
