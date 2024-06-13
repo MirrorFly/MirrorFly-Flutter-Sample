@@ -91,13 +91,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   String get unreadCallCountString => returnFormattedCount(unreadCallCount.value);
 
-  late DashboardViewArguments arguments;
+  late DashboardViewArguments? arguments;
 
   @override
   void onInit() {
-    arguments = NavUtils.arguments as DashboardViewArguments;
+    arguments = NavUtils.arguments as DashboardViewArguments?;
     tabController = TabController(length: 2, vsync: this);
-    if (arguments.didMissedCallNotificationLaunchApp) {
+    if ((arguments?.didMissedCallNotificationLaunchApp).checkNull()) {
       tabController?.animateTo(1);
     }
     tabController?.animation?.addListener(() {

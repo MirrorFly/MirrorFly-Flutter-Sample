@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 
@@ -313,7 +314,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         if (value != null) {
           debugPrint(
               "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
-          NavUtils.toNamed(Routes.chat, arguments: {"chatJid":value.jid});
+          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: value.jid.checkNull()));
         }
       });
     }
@@ -672,7 +673,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   }
 
   navigateMessage(ChatMessageModel starredChat) {
-    NavUtils.toNamed(Routes.chat,arguments: {'isFromStarred':'true',"chatJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
+    NavUtils.toNamed(Routes.chat,arguments: ChatViewArguments(chatJid: starredChat.chatUserJid,messageId: starredChat.messageId,topicId: starredChat.topicId,));//{'isFromStarred':'true',"chatJid":starredChat.chatUserJid,"messageId":starredChat.messageId,"topicId":starredChat.topicId.checkNull()});
   }
 
   void share() {

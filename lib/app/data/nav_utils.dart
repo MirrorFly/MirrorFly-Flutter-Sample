@@ -32,6 +32,9 @@ class NavUtils{
     return Navigator.pop(currentContext,result);
   }
 
+  static bool get canPop => Navigator.canPop(currentContext);
+  static String get defaultRouteName => Navigator.defaultRouteName;
+
   static offNamed(String page, {
     dynamic arguments,
     int? id,

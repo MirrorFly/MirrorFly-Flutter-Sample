@@ -22,6 +22,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data/utils.dart';
+import '../model/arguments.dart';
 import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import '../routes/route_settings.dart';
 import 'notification_service.dart';
@@ -136,16 +137,17 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           }
           if (NavUtils.currentRoute.contains("from_notification=true")) {
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
+            NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp: true));
+            // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
             if(Get.isOverlaysOpen){
               NavUtils.back();
             }
-            NavUtils.offNamed(Routes.chat, arguments: {"chatJid": chatJid, "topicId": topicId});
+            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
           }
         } else {
           debugPrint("not chat page");
-          NavUtils.toNamed(Routes.chat, arguments: {"chatJid": chatJid, "topicId": topicId});
+          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {

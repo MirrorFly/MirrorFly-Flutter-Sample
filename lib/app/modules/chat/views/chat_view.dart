@@ -59,17 +59,17 @@ class ChatView extends NavViewStateful<ChatController> {
                   if (didPop) {
                     return;
                   }
-                  LogMessage.d("viewInsets", MediaQuery.of(context).viewInsets.bottom.toString());
+                  LogMessage.d("viewInsets", "${NavUtils.defaultRouteName} : ${MediaQuery.of(context).viewInsets.bottom}");
                   if (controller.showEmoji.value) {
                     controller.showEmoji(false);
                   } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
                     //FocusManager.instance.primaryFocus?.unfocus();
                     controller.focusNode.unfocus();
-                  } else if (controller.nJid.isNotEmpty) {
+                  } else if (!NavUtils.canPop) {
                     // controller.saveUnsentMessage();
-                    // NavUtils.offAllNamed(Routes.dashboard);
+                    NavUtils.offAllNamed(NavUtils.defaultRouteName);
                     // Navigator.pop(context);
-                    NavUtils.back();
+                    // NavUtils.back();
                   } else if (controller.isSelected.value) {
                     controller.clearAllChatSelection();
                   } else {
@@ -550,7 +550,7 @@ class ChatView extends NavViewStateful<ChatController> {
           onTap: () {
             if (controller.showEmoji.value) {
               controller.showEmoji(false);
-            } else if (controller.nJid.isNotEmpty) {
+            } else if (NavUtils.previousRoute.isEmpty) {
               NavUtils.offAllNamed(Routes.dashboard);
             } else {
               Navigator.pop(context);

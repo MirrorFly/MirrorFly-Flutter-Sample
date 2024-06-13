@@ -126,7 +126,7 @@ class ArchivedChatListController extends GetxController {
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      NavUtils.toNamed(Routes.chat, arguments: {"chatJid": jid});
+      NavUtils.toNamed(Routes.chat, arguments:ChatViewArguments(chatJid: jid));
       // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
