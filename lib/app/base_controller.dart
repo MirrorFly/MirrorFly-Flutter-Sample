@@ -1097,6 +1097,7 @@ abstract class BaseController {
 
   void onLogout(isLogout) {
     LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
+    DialogUtils.hideLoading();
     if (isLogout && NavUtils.currentRoute != Routes.login && SessionManagement.getLogin()) {
       var token = SessionManagement.getToken().checkNull();
       SessionManagement.clear().then((value) {

@@ -33,7 +33,6 @@ class SettingsController extends GetxController {
   }
 
   logout() {
-    NavUtils.back();
     if (SessionManagement.getEnablePin()) {
       NavUtils.toNamed(Routes.pin)?.then((value){
         if(value!=null && value){
@@ -51,7 +50,7 @@ class SettingsController extends GetxController {
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         DialogUtils.hideLoading();
         if (response.isSuccess) {
-          clearAllPreferences();
+          // clearAllPreferences();
         } else {
           toToast(getTranslated("logoutFailed"));
           // Get.snackbar("Logout", "Logout Failed");

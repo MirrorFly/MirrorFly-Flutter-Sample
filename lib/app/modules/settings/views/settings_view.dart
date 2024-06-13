@@ -73,6 +73,7 @@ class SettingsView extends NavView<SettingsController> {
                           child: Text(getTranslated("no").toUpperCase(), )),
                       TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                           onPressed: () {
+                            NavUtils.back();
                             controller.logout();
                           },
                           child: Text(getTranslated("yes").toUpperCase(), ))
