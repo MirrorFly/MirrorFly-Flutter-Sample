@@ -1789,7 +1789,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }
     if (callType == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
-        NavUtils.back();
+        // NavUtils.back();
         Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull(), toUserJidList: userList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
             NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
@@ -1798,7 +1798,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     } else {
       if (await AppPermission.askAudioCallPermissions()) {
-        NavUtils.back();
+        // NavUtils.back();
         Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull(), toUserJidList: userList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
             NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
