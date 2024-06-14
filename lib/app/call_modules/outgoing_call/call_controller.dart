@@ -412,7 +412,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           Future.delayed(const Duration(seconds: 1), () {
             NavUtils.back();
           });
-        } else {
+        } else if(NavUtils.currentRoute == Routes.outGoingCallView){
           NavUtils.back();
         }
       } else {
