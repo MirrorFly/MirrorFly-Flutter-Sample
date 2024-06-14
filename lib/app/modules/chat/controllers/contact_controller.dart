@@ -655,7 +655,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (isOneToOneCall) {
           Mirrorfly.makeVoiceCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              NavUtils.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.audio
               });
@@ -666,8 +666,10 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         } else {
           Mirrorfly.makeGroupVoiceCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              NavUtils.offNamed(Routes.outGoingCallView,
+              NavUtils.toNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         }
@@ -677,17 +679,21 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (isOneToOneCall) {
           Mirrorfly.makeVideoCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              NavUtils.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.video
               });
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         } else {
           Mirrorfly.makeGroupVideoCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              NavUtils.offNamed(Routes.outGoingCallView,
+              NavUtils.toNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         }
