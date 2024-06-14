@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -194,6 +195,9 @@ abstract class BaseController {
       var callType = statusUpdateReceived["callType"].toString();
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().statusUpdate(userJid, callStatus);
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().statusUpdate(userJid, callStatus);
       }
@@ -295,6 +299,9 @@ abstract class BaseController {
           if (timer == null) {
             startTimer();
           }
+          if (Get.isRegistered<OutgoingCallController>()) {
+            Get.find<OutgoingCallController>().connected(callMode, userJid, callType, callStatus);
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(callMode, userJid, callType, callStatus);
           } else {
@@ -303,6 +310,9 @@ abstract class BaseController {
           break;
 
         case CallStatus.callTimeout:
+          if (Get.isRegistered<OutgoingCallController>()) {
+            Get.find<OutgoingCallController>().timeout(callMode, userJid, callType, callStatus);
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().timeout(callMode, userJid, callType, callStatus);
           } else {
@@ -330,6 +340,10 @@ abstract class BaseController {
         case CallAction.localHangup:
           {
             stopTimer();
+            if (Get.isRegistered<OutgoingCallController>()) {
+              //if user hangup the call from background notification
+              Get.find<OutgoingCallController>().localHangup(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               //if user hangup the call from background notification
               Get.find<CallController>().localHangup(callMode, userJid, callType, callAction);
@@ -347,6 +361,9 @@ abstract class BaseController {
         case CallAction.remoteOtherBusy:
           {
             // for group call users decline the call before attend
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteOtherBusy(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteOtherBusy(callMode, userJid, callType, callAction);
             }
@@ -355,6 +372,9 @@ abstract class BaseController {
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:
           {
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteBusy(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteBusy(callMode, userJid, callType, callAction);
             }
@@ -371,6 +391,9 @@ abstract class BaseController {
         //if we called on user B, the user B is on another call then this will triggered
         case CallAction.remoteEngaged:
           {
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteEngaged(userJid, callMode, callType);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteEngaged(userJid, callMode, callType);
             }
@@ -379,6 +402,9 @@ abstract class BaseController {
         case CallAction.audioDeviceChanged:
           {
             debugPrint("call action audioDeviceChanged");
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().audioDeviceChanged();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().audioDeviceChanged();
             }
@@ -388,6 +414,9 @@ abstract class BaseController {
           {
             debugPrint("call action denyCall");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().denyCall();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().denyCall();
             }
@@ -397,6 +426,9 @@ abstract class BaseController {
           {
             debugPrint("call action switchCamera");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().onCameraSwitch();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().onCameraSwitch();
             }
@@ -406,6 +438,9 @@ abstract class BaseController {
           {
             debugPrint("call action Video Call Switched to Audio Call");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().changedToAudioCall();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().changedToAudioCall();
             }
@@ -454,6 +489,14 @@ abstract class BaseController {
       var muteStatus = jsonDecode(event);
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
+      if (Get.isRegistered<OutgoingCallController>()) {
+        if (muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
+          Get.find<OutgoingCallController>().audioMuteStatusChanged(muteEvent, userJid);
+        }
+        if (muteEvent == MuteStatus.remoteVideoMute || muteEvent == MuteStatus.remoteVideoUnMute) {
+          Get.find<OutgoingCallController>().videoMuteStatusChanged(muteEvent, userJid);
+        }
+      }
       if (Get.isRegistered<CallController>()) {
         if (muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
           Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
@@ -468,12 +511,18 @@ abstract class BaseController {
       var data = json.decode(event.toString());
       var audioLevel = data["audioLevel"];
       var userJid = data["userJid"];
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().onUserSpeaking(userJid, audioLevel);
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().onUserSpeaking(userJid, audioLevel);
       }
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       // LogMessage.d("onUserSpeaking", "$event");
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().onUserStoppedSpeaking(event.toString());
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().onUserStoppedSpeaking(event.toString());
       }
@@ -930,6 +979,9 @@ abstract class BaseController {
     }
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<OutgoingCallController>()) {
+      Get.find<OutgoingCallController>().userUpdatedHisProfile(jid);
     }
     if (Get.isRegistered<CallController>()) {
       Get.find<CallController>().userUpdatedHisProfile(jid);

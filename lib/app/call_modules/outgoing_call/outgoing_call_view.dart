@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -15,11 +15,11 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../common/constants.dart';
 import '../../data/session_management.dart';
 
-class OutGoingCallView extends NavViewStateful<CallController> {
+class OutGoingCallView extends NavViewStateful<OutgoingCallController> {
   const OutGoingCallView({Key? key}) : super(key: key);
 
   @override
-  CallController createController() => Get.put(CallController());
+  OutgoingCallController createController() => Get.put(OutgoingCallController());
 
   @override
   Widget build(BuildContext context) {
