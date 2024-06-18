@@ -109,6 +109,7 @@ ContactController createController() => Get.put(ContactController());
                         availableWidth: NavUtils.width /
                             2, // half the screen width
                         actionWidth: 48,
+                        popupMenuThemeData: AppStyleConfig.contactListPageStyle.popupMenuThemeData,
                         actions: [
                           CustomAction(
                             visibleWidget: IconButton(

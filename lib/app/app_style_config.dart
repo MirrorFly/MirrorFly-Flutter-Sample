@@ -68,6 +68,7 @@ class AppStyleConfig{
   static OutgoingCallPageStyle _outgoingCallPageStyle = OutgoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
   static CallAgainPageStyle _callAgainPageStyle = const CallAgainPageStyle();
   static OngoingCallPageStyle _ongoingCallPageStyle = OngoingCallPageStyle(disconnectButtonStyle: _disconnectButtonStyle);
+  static CallInfoPageStyle _callInfoPageStyle = const CallInfoPageStyle();
   static AddParticipantsPageStyle _addParticipantsPageStyle = const AddParticipantsPageStyle();
   static DialogStyle _dialogStyle = DialogStyle(buttonStyle: _defaultDialogButtonStyle);
 
@@ -88,6 +89,7 @@ class AppStyleConfig{
   static OutgoingCallPageStyle outgoingCallPageStyle = _outgoingCallPageStyle;
   static CallAgainPageStyle callAgainPageStyle = _callAgainPageStyle;
   static OngoingCallPageStyle ongoingCallPageStyle = _ongoingCallPageStyle;
+  static CallInfoPageStyle callInfoPageStyle = _callInfoPageStyle;
   static AddParticipantsPageStyle addParticipantsPageStyle = _addParticipantsPageStyle;
   static DialogStyle dialogStyle = _dialogStyle;
 
@@ -179,6 +181,10 @@ class AppStyleConfig{
 
   static setOngoingCallPageStyle(OngoingCallPageStyle ongoingCallPageStyle){
     _ongoingCallPageStyle = ongoingCallPageStyle;
+  }
+
+  static setCallInfoPageStyle(CallInfoPageStyle callInfoPageStyle){
+    _callInfoPageStyle = callInfoPageStyle;
   }
 
   static setAddParticipantsPageStyle(AddParticipantsPageStyle addParticipantsPageStyle){

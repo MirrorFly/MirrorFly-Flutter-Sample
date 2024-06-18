@@ -79,7 +79,7 @@ class CallHistoryView extends StatelessWidget {
                     errorWidget: snap.data!.getName() //item.nickName
                         .checkNull()
                         .isNotEmpty
-                        ? ProfileTextImage(text: getName(snap.data!))
+                        ? ProfileTextImage(text: getName(snap.data!),radius: callHistoryItemStyle.profileImageSize.height/2,)
                         : const Icon(
                       Icons.person,
                       color: Colors.white,
@@ -88,7 +88,7 @@ class CallHistoryView extends StatelessWidget {
                     blocked: false,
                     unknown: false,
                   )
-                      : const SizedBox.shrink();
+                      : const Offstage();
                 }),
             title: FutureBuilder(
                 future: getProfileDetails(item.callState == 1 ? item.toUser! : item.fromUser!),
@@ -101,7 +101,7 @@ class CallHistoryView extends StatelessWidget {
                     style: callHistoryItemStyle.titleTextStyle,
                     // style: const TextStyle(color: Colors.black),
                   )
-                      : const SizedBox.shrink();
+                      : const Offstage();
                 }),
             subtitle: SizedBox(
               child: callLogTime(

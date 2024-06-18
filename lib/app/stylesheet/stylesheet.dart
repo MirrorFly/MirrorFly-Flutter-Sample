@@ -23,6 +23,7 @@ part 'starred_message_list_page_style.dart';
 part 'outgoing_call_page_style.dart';
 part 'call_again_page_style.dart';
 part 'ongoing_call_page_style.dart';
+part 'call_info_page_style.dart';
 part 'add_participants_page_style.dart';
 part 'dialog_style.dart';
 
