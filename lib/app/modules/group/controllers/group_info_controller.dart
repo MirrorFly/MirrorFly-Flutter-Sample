@@ -315,7 +315,7 @@ class GroupInfoController extends GetxController {
               Mirrorfly.deleteGroup(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();
                 if(response.isSuccess){
-                  NavUtils.offAllNamed(NavUtils.defaultRouteName);
+                  NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
                 }else{
                   toToast(getTranslated("errorTryAgain"));
                 }

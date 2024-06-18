@@ -61,6 +61,10 @@ class NavUtils{
     return Navigator.pushNamedAndRemoveUntil(currentContext,newRouteName,predicate ?? (_) => false, arguments: arguments);
   }
 
+  static popUntil(RoutePredicate predicate){
+    return Navigator.popUntil(currentContext,predicate);
+  }
+
   static toNamed(String page, {
     dynamic arguments,
     int? id,
