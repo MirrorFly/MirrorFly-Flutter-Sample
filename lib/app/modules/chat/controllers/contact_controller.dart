@@ -476,18 +476,18 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
             // Navigator.pop(buildContext, selectedUsersJIDList);
             NavUtils.back();
           } else {
-          toToast(getTranslated("addAtLeastTwoContact"));
+            toToast(getTranslated("addAtLeastTwoContact"));
           }
         } else {
           if (selectedUsersJIDList.isNotEmpty) {
             // Navigator.pop(buildContext, selectedUsersJIDList);
-            NavUtils.back();
+            NavUtils.back(result: selectedUsersJIDList);
           } else {
-          toToast(getTranslated("selectAnyContact"));
+            toToast(getTranslated("selectAnyContact"));
           }
         }
       } else {
-      toToast(getTranslated("noInternetConnection"));
+        toToast(getTranslated("noInternetConnection"));
       }
     });
   }
