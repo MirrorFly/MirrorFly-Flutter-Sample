@@ -117,6 +117,7 @@ class GroupInfoController extends GetxController {
     required String newAdminMemberJid, required String madeByMemberJid}) {
     if (profile.isGroupProfile.checkNull()) {
       debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
+      myProfileChanged(newAdminMemberJid);
       if (groupJid == profile.jid) {
         var index = groupMembers.indexWhere((element) => element.jid == newAdminMemberJid);
         if(!index.isNegative) {
@@ -132,6 +133,7 @@ class GroupInfoController extends GetxController {
     required String removedMemberJid, required String removedByMemberJid}) {
     if (profile.isGroupProfile.checkNull()) {
       debugPrint('onMemberRemovedFromGroup $removedMemberJid');
+      myProfileChanged(removedMemberJid);
       if (groupJid == profile.jid) {
         var index = groupMembers.indexWhere((element) => element.jid == removedMemberJid);
         if(!index.isNegative) {
@@ -148,6 +150,7 @@ class GroupInfoController extends GetxController {
     required String newMemberJid, required String addedByMemberJid}) {
     if (profile.isGroupProfile.checkNull()) {
       debugPrint('onNewMemberAddedToGroup $newMemberJid');
+      myProfileChanged(newMemberJid);
       if (groupJid == profile.jid) {
         var index = groupMembers.indexWhere((element) => element.jid == newMemberJid);
         if(index.isNegative) {
@@ -657,6 +660,19 @@ class GroupInfoController extends GetxController {
     } else {
       nameController.text = profile.nickName.checkNull();
       NavUtils.back();
+    }
+  }
+
+  void myProfileUpdated(){
+    LogMessage.d("myProfileUpdated", "group info");
+    userUpdatedHisProfile(SessionManagement.getUserJID().checkNull());
+    myProfileChanged(SessionManagement.getUserJID().checkNull());
+  }
+
+  void myProfileChanged(String jid){
+    if(jid == SessionManagement.getUserJID().checkNull()) {
+      groupAdmin();
+      memberOfGroup();
     }
   }
 }

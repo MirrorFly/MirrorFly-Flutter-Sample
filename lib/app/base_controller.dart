@@ -818,7 +818,11 @@ abstract class BaseController {
 
   void blockedThisUser(result) {}
 
-  void myProfileUpdated(result) {}
+  void myProfileUpdated(result) {
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().myProfileUpdated();
+    }
+  }
 
   void onAdminBlockedUser(String jid, bool status) {
     Get.find<MainController>().handleAdminBlockedUser(jid, status);
