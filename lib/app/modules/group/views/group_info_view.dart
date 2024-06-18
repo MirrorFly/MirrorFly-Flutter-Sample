@@ -34,21 +34,20 @@ GroupInfoController createController() => Get.put(GroupInfoController());
           controller: controller.scrollController,
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              Obx(() {
-                return SliverAppBar(
+              SliverAppBar(
                   centerTitle: false,
                   snap: false,
                   pinned: true,
                   floating: false,
-                  leading: IconButton(
+                  leading: Obx(()=>IconButton(
                     icon: Icon(Icons.arrow_back,color: controller.isSliverAppBarExpanded
                         ? AppStyleConfig.groupChatInfoPageStyle.silverAppBarIconColor
                         : AppBarTheme.of(context).actionsIconTheme?.color),
                     onPressed: () {
                       NavUtils.back();
                     },
-                  ),
-                  title: Visibility(
+                  )),
+                  title: Obx(()=>Visibility(
                     visible: !controller.isSliverAppBarExpanded,
                     child: Text(controller.profile.nickName.checkNull(),
                       style: AppBarTheme.of(context).titleTextStyle,
@@ -56,8 +55,8 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                           color: Colors.black,
                           fontSize: 18.0,
                         )*/),
-                  ),
-                  flexibleSpace: FlexibleSpaceBar(
+                  )),
+                  flexibleSpace: Obx(()=>FlexibleSpaceBar(
                       titlePadding: const EdgeInsets.only(left: 16),
                       title: Visibility(
                         visible: controller.isSliverAppBarExpanded,
@@ -137,12 +136,12 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                               blocked: controller.profile.isBlockedMe.checkNull() || controller.profile.isAdminBlocked.checkNull(),
                               unknown: (!controller.profile.isItSavedContact.checkNull() || controller.profile.isDeletedContact()),
                             ) //Images.network
-                      ),
+                      )),
                   //FlexibleSpaceBar
                   expandedHeight: NavUtils.height * 0.45,
                   //IconButton
                   actions: <Widget>[
-                    Visibility(
+                    Obx(()=>Visibility(
                       visible: controller.availableFeatures.value.isGroupChatAvailable.checkNull() && controller.isMemberOfGroup,
                       child: IconButton(
                         icon: SvgPicture.asset(
@@ -158,10 +157,9 @@ GroupInfoController createController() => Get.put(GroupInfoController());
                           }
                         },
                       ),
-                    ),
+                    )),
                   ],
-                );
-              })
+                ),
             ];
           },
           body: SafeArea(

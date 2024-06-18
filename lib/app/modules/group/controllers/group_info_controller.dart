@@ -153,8 +153,10 @@ class GroupInfoController extends GetxController {
         if(index.isNegative) {
           if(newMemberJid.checkNull().isNotEmpty) {
             getProfileDetails(newMemberJid).then((value) {
-              groupMembers.add(value);
-              sortGroupMembers(groupMembers);
+              List<ProfileDetails> list = [];//groupMembers;
+              list.addAll(groupMembers);
+              list.add(value);
+              sortGroupMembers(list);
             });
           }
         }
