@@ -475,7 +475,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         if (arguments.groupJid.isEmpty) {
           if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
             // Navigator.pop(buildContext, selectedUsersJIDList);
-            NavUtils.back();
+            NavUtils.back(result: selectedUsersJIDList);
           } else {
             toToast(getTranslated("addAtLeastTwoContact"));
           }
