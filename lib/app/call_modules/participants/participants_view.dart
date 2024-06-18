@@ -226,13 +226,13 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
               controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
                 child: ListView.builder(
                     itemCount: controller.scrollable.value
-                        ? controller.usersList.length + 1
+                        ? controller.usersList.length + (controller.groupId.isEmpty ?  1 : 0)
                         : controller.usersList.length,
                     controller: controller.scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       if (index >= controller.usersList.length &&
-                          controller.usersList.isNotEmpty) {
+                          controller.usersList.isNotEmpty && controller.groupId.isEmpty) {
                         return const Center(
                             child: CircularProgressIndicator());
                       } else if (controller.usersList.isNotEmpty) {
@@ -249,7 +249,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                             controller.onListItemPressed(item);
                           },contactItemStyle: style,);
                       } else {
-                        return const SizedBox();
+                        return const Offstage();
                       }
                     }),
               ),

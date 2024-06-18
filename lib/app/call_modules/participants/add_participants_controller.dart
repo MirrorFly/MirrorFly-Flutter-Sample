@@ -35,6 +35,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   @override
   Future<void> onInit() async {
     super.onInit();
+    groupId(await Mirrorfly.getCallGroupJid());
     tabController = TabController(length: 2, vsync: this);
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     // callList = Get.find<CallController>().callList;
@@ -551,7 +552,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         LogMessage.d("getGroupMembersList", response.toString());
         if (response.isSuccess && response.hasData) {
           var list = profileFromJson(response.data);
-          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
+          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid?.value));
           var filteredList = getFilteredList(callConnectedUserList, list);
           mainUsersList(filteredList);
           usersList(filteredList);
