@@ -469,6 +469,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   }
 
   backToCreateGroup() {
+    searchFocus.unfocus();
     AppUtils.isNetConnected().then((isConnected) {
       if (isConnected) {
         if (arguments.groupJid.isEmpty) {
