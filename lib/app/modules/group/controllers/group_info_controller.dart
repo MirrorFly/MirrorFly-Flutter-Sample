@@ -154,7 +154,7 @@ class GroupInfoController extends GetxController {
           if(newMemberJid.checkNull().isNotEmpty) {
             getProfileDetails(newMemberJid).then((value) {
               groupMembers.add(value);
-              groupMembers.refresh();
+              sortGroupMembers(groupMembers);
             });
           }
         }
@@ -200,11 +200,18 @@ class GroupInfoController extends GetxController {
       LogMessage.d("getGroupMembersList", response.data);
       if(response.isSuccess && response.hasData){
         var list = profileFromJson(response.data);
-        list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
-        groupMembers.value=(list);
-        groupMembers.refresh();
+        sortGroupMembers(list);
+        // list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
+        // groupMembers.value=(list);
+        // groupMembers.refresh();
       }
     });
+  }
+
+  void sortGroupMembers(List<ProfileDetails> list){
+    list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
+    groupMembers.value=(list);
+    groupMembers.refresh();
   }
 
   reportGroup(){
@@ -306,7 +313,7 @@ class GroupInfoController extends GetxController {
               Mirrorfly.deleteGroup(jid: profile.jid.checkNull(), flyCallBack: (FlyResponse response) {
                 DialogUtils.hideLoading();
                 if(response.isSuccess){
-                  NavUtils.offAllNamed(Routes.dashboard);
+                  NavUtils.offAllNamed(NavUtils.defaultRouteName);
                 }else{
                   toToast(getTranslated("errorTryAgain"));
                 }
