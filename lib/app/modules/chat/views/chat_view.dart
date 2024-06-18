@@ -17,6 +17,7 @@ import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
+import '../../../widgets/marquee_text.dart';
 import '../controllers/chat_controller.dart';
 import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
@@ -618,7 +619,7 @@ class ChatView extends NavViewStateful<ChatController> {
                       ? SizedBox(
                           width: NavUtils.width * 0.90,
                           height: 15,
-                          child: Text("${controller.groupParticipantsName}", style: const TextStyle(fontSize: 12,overflow: TextOverflow.ellipsis)))
+                          child: Marquee(text: "${controller.groupParticipantsName}", style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.subtitleTextStyle, blankSpace: 25,))
                       : controller.subtitle.isNotEmpty
                           ? Text(
                               controller.subtitle,
