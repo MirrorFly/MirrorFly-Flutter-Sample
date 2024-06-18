@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
-import '../chat_widgets.dart';
+import '../widgets/chat_widgets.dart';
+import '../widgets/message_content.dart';
+import '../widgets/notification_message_view.dart';
+import '../widgets/reply_message_widgets.dart';
+import '../widgets/sender_header.dart';
 
 class ChatListView extends StatefulWidget {
   final ChatController chatController;
   final List<ChatMessageModel> chatList;
+  final SenderChatBubbleStyle senderChatStyle;
+  final ReceiverChatBubbleStyle receiverChatStyle;
+  final NotificationMessageViewStyle notificationMessageViewStyle;
+  final Color chatSelectedColor;
 
-  const ChatListView({super.key, required this.chatController, required this.chatList});
+  const ChatListView({super.key, required this.chatController, required this.chatList,required this.senderChatStyle,required this.receiverChatStyle, required this.chatSelectedColor, required this.notificationMessageViewStyle});
 
   @override
   State<ChatListView> createState() => _ChatListViewState();
@@ -38,7 +48,7 @@ class _ChatListViewState extends State<ChatListView> {
         child: Obx(() {
           return ScrollablePositionedList.separated(
             separatorBuilder: (context, index) {
-              var string = groupedDateMessage(index, widget.chatList); //Date Labels
+              var string = AppUtils.groupedDateMessage(index, widget.chatList); //Date Labels
               return string != null ? NotificationMessageView(chatMessage: string) : const Offstage();
             },
             itemScrollController: widget.chatController.newScrollController,
@@ -106,7 +116,7 @@ class _ChatListViewState extends State<ChatListView> {
                               LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
-                                color: widget.chatList[index].isSelected.value ? chatReplyContainerColor : Colors.transparent,
+                                color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
                                 margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
                                 child: Align(
                                   alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
@@ -123,14 +133,15 @@ class _ChatListViewState extends State<ChatListView> {
                                             icon: SvgPicture.asset(forwardMedia)),
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(maxWidth: Get.width * 0.75),
-                                        decoration: BoxDecoration(
+                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
+                                        decoration: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.decoration : widget.receiverChatStyle.decoration,
+                                        /*decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
                                                 topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
                                             color: (widget.chatList[index].isMessageSentByMe ? chatSentBgColor : Colors.white),
                                             border: widget.chatList[index].isMessageSentByMe
                                                 ? Border.all(color: chatSentBgColor)
-                                                : Border.all(color: chatBorderColor)),
+                                                : Border.all(color: chatBorderColor)),*/
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
@@ -138,13 +149,13 @@ class _ChatListViewState extends State<ChatListView> {
                                               SenderHeader(
                                                   isGroupProfile: widget.chatController.profile.isGroupProfile,
                                                   chatList: widget.chatList,
-                                                  index: index),
+                                                  index: index,textStyle: widget.receiverChatStyle.participantNameTextStyle,),
                                             ],
                                             widget.chatList[index].isThisAReplyMessage
                                                 ? widget.chatList[index].replyParentChatMessage == null
                                                     ? messageNotAvailableWidget(widget.chatList[index])
-                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index])
-                                                : const SizedBox.shrink(),
+                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
+                                                : const Offstage(),
                                             MessageContent(
                                                 chatList: widget.chatList,
                                                 index: index,
@@ -152,12 +163,15 @@ class _ChatListViewState extends State<ChatListView> {
                                                   if (widget.chatController.isAudioRecording.value == Constants.audioRecording) {
                                                     widget.chatController.stopRecording();
                                                   }
-                                                  widget.chatController.playAudio(widget.chatList[index]);
+                                                  // widget.chatController.playAudio(widget.chatList[index]);
                                                 },
                                                 onSeekbarChange: (double value) {
-                                                  widget.chatController.onSeekbarChange(value, widget.chatList[index]);
+                                                  // widget.chatController.onSeekbarChange(value, widget.chatList[index]);
                                                 },
-                                                isSelected: widget.chatController.isSelected.value)
+                                                isSelected: widget.chatController.isSelected.value,
+                                            senderChatBubbleStyle: widget.senderChatStyle,
+                                                receiverChatBubbleStyle: widget.receiverChatStyle,
+                                            notificationMessageViewStyle: widget.notificationMessageViewStyle,)
                                           ],
                                         ),
                                       ),

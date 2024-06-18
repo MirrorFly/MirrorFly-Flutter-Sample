@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/widgets.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/preview_contact_controller.dart';
 
-class PreviewContactView extends GetView<PreviewContactController> {
+class PreviewContactView extends NavViewStateful<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
+
+  @override
+PreviewContactController createController() => Get.put(PreviewContactController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: controller.from == "contact_pick"
-              ? const Text('Send Contacts')
-              : const Text('Contact Details'),
+              ? Text(getTranslated("sendContacts"))
+              : Text(getTranslated("contactDetails")),
         ),
         body: SafeArea(
           child: Stack(

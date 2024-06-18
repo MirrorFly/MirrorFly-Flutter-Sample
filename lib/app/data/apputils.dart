@@ -1,19 +1,63 @@
-import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:tuple/tuple.dart';
+part of 'utils.dart';
 
 class AppUtils{
   AppUtils._();
   static Future<bool> isNetConnected() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     return isConnected;
+  }
+
+  static String getMapImageUrl(double latitude, double longitude,String googleMapKey) {
+    // var googleMapKey = Get
+    //     .find<MainController>()
+    //     .googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
+    return ("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
+  }
+
+  static openDocument(String path) async {
+    // if (await askStoragePermission()) {
+    if (MediaUtils.isMediaExists(path)) {
+      final result = await OpenFile.open(path);
+      debugPrint(result.message);
+      if (result.message.contains("file does not exist")) {
+        toToast(getTranslated("unableToOpen"));
+      } else if (result.message.contains('No APP found to open this file')) {
+        toToast(getTranslated("youMayNotProperApp"));
+      }
+    } else {
+      toToast(getTranslated("mediaDoesNotExist"));
+      debugPrint("media does not exist");
+    }
+  }
+
+  static Future<void> launchWeb(Uri uri) async {
+    if (await AppUtils.isNetConnected()) {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        throw "Could not launch $uri";
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  static Future<void> launchInWebViewOrVC(String url, String title) async {
+    if (await AppUtils.isNetConnected()) {
+      if (!await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.inAppWebView,
+        webViewConfiguration: WebViewConfiguration(
+            headers: <String, String>{'my_header_key': title}),
+      )) {
+        throw Exception('Could not launch $url');
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
   }
 
   /// * Build initials with given name.
@@ -64,93 +108,39 @@ class AppUtils{
     return value ?? '';
   }
 
-  static bool isMediaFileAvailable(MessageType msgType, ChatMessageModel message) {
-    bool mediaExist = false;
-    if (msgType == MessageType.audio ||
-        msgType == MessageType.video ||
-        msgType == MessageType.image ||
-        msgType == MessageType.document) {
-      final downloadedMediaValue = returnEmptyStringIfNull(
-          message.mediaChatMessage?.mediaDownloadStatus);
-      final uploadedMediaValue = returnEmptyStringIfNull(
-          message.mediaChatMessage?.mediaUploadStatus);
-      if (MediaDownloadStatus.mediaDownloaded.value.toString() == downloadedMediaValue ||
-          MediaUploadStatus.mediaUploaded.value.toString() == uploadedMediaValue) {
-        mediaExist = true;
+  /// Checks the current header id with previous header id
+  /// @param position Position of the current item
+  /// @return boolean True if header changed, else false
+  static bool isDateChanged(int position, List<ChatMessageModel> mChatData) {
+    // try {
+    var prePosition = position + 1;
+    var size = mChatData.length - 1;
+    if (position == size) {
+      return true;
+    } else {
+      if (prePosition <= size && position <= size) {
+        var currentHeaderId = mChatData[position].messageSentTime.toInt();
+        var previousHeaderId = mChatData[prePosition].messageSentTime.toInt();
+        return currentHeaderId != previousHeaderId;
       }
     }
-    return mediaExist;
+    return false;
   }
 
-  static bool isMediaFileNotAvailable(bool isMediaFileAvailable, ChatMessageModel message) {
-    return !isMediaFileAvailable && message.isMediaMessage();
-  }
-
-  static bool isMediaExists(String? filePath) {
-    if(filePath == null || filePath.isEmpty) {
-      return false;
+  static String? groupedDateMessage(int index, List<ChatMessageModel> chatList) {
+    if(index.isNegative){
+      return null;
     }
-    File file = File(filePath);
-    return file.existsSync();
-  }
-
-  /// Get Width and Height from file
-  ///
-  /// @param filePath of the media
-  static Future<Tuple2<int, int>> getImageDimensions(String filePath) async {
-    try {
-      // Open the file
-      File file = File(filePath);
-      if (!file.existsSync()) {
-        return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
-      }
-
-      // Read metadata
-      final bytes = await file.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-
-      // Get dimensions
-      final int width = image.width;
-      final int height = image.height;
-      debugPrint('Image dimensions: $width x $height');
-      return Tuple2(width,height);
-    } catch (e) {
-      debugPrint('Error: $e');
-      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+    if (index == chatList.length - 1) {
+      return DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList.last.messageSentTime);
+    } else {
+      return (isDateChanged(index, chatList) &&
+          (DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index + 1].messageSentTime) !=
+              DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)))
+          ? DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)
+          : null;
     }
   }
 
-  /// Get Width and Height for Mobile
-  ///
-  /// @param originalWidth original width of media
-  /// @param originalHeight original height of media
-  static Tuple2<int, int> getMobileWidthAndHeight(int? originalWidth, int? originalHeight) {
-    if (originalWidth == null || originalHeight == null) {
-      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
-    }
 
-    var newWidth = originalWidth;
-    var newHeight = originalHeight;
-
-    // First check if we need to scale width
-    if (originalWidth > Constants.mobileImageMaxWidth) {
-      //scale width to fit
-      newWidth = Constants.mobileImageMaxWidth;
-      //scale height to maintain aspect ratio
-      newHeight = (newWidth * originalHeight / originalWidth).round();
-    }
-
-    // then check if we need to scale even with the new height
-    if (newHeight > Constants.mobileImageMaxHeight) {
-      //scale height to fit instead
-      newHeight = Constants.mobileImageMaxHeight;
-      //scale width to maintain aspect ratio
-      newWidth = (newHeight * originalWidth / originalHeight).round();
-    }
-
-    return Tuple2(
-      newWidth > Constants.mobileImageMinWidth ? newWidth : Constants.mobileImageMinWidth,
-      newHeight > Constants.mobileImageMinHeight ? newHeight : Constants.mobileImageMinHeight,
-    );
-  }
 }

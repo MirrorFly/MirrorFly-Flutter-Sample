@@ -4,13 +4,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../../extensions/extensions.dart';
 import '../controllers/image_view_controller.dart';
 
-class ImageViewView extends GetView<ImageViewController> {
+class ImageViewView extends NavViewStateful<ImageViewController> {
   const ImageViewView({Key? key}) : super(key: key);
+
+  @override
+ImageViewController createController() => Get.put(ImageViewController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +61,8 @@ class ImageViewView extends GetView<ImageViewController> {
                         child: CircularProgressIndicator(),
                       ),
                     )
-                  : const Center(
-                      child: Text('Unable to Load Image'),
+                  : Center(
+                      child: Text(getTranslated("unableToLoadImage")),
                     );
         }),
       ),

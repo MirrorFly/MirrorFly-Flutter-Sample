@@ -3,21 +3,22 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
-import '../../../common/constants.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
   var chatController = Get.find<ChatController>();
 
-  var messageID = Get.arguments["messageID"];
-  var jid = Get.arguments["jid"];
-  var isGroupProfile = Get.arguments["isGroupProfile"];
-  var chatMessage = [Get.arguments["chatMessage"] as ChatMessageModel].obs;
+  var messageID = NavUtils.arguments["messageID"];
+  var jid = NavUtils.arguments["jid"];
+  var isGroupProfile = NavUtils.arguments["isGroupProfile"];
+  var chatMessage = [NavUtils.arguments["chatMessage"] as ChatMessageModel].obs;
   var readTime = ''.obs;
   var deliveredTime = ''.obs;
 
@@ -71,7 +72,7 @@ class MessageInfoController extends GetxController {
 
 
   downloadMedia(String messageId) async {
-    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
+    var permission = await AppPermission.getStoragePermission(permissionContent: getTranslated("writeStoragePermissionContent"),deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
     if (permission) {
       Mirrorfly.downloadMedia(messageId: messageId);
     }

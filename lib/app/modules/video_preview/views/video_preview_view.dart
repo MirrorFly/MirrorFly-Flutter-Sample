@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/video_preview_controller.dart';
 
-class VideoPreviewView extends GetView<VideoPreviewController> {
+class VideoPreviewView extends NavViewStateful<VideoPreviewController> {
   const VideoPreviewView({Key? key}) : super(key: key);
+
+  @override
+VideoPreviewController createController() => Get.put(VideoPreviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,7 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                 if (controller.isInitialized.value) {
                   return Center(
                     child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
+                        width: NavUtils.size.width,
                         height: controller.videoPlayerController.value.size.height,
                         child: AspectRatio(
                           aspectRatio:
@@ -87,10 +92,10 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                 ),
                                 maxLines: 6,
                                 minLines: 1,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Add Caption....",
-                                  hintStyle: TextStyle(
+                                  hintText: getTranslated("addCaption"),
+                                  hintStyle: const TextStyle(
                                     color: Colors.white,
                                   ),),
                               ),

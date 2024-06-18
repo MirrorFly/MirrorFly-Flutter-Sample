@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
-import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../settings/views/chat_settings/chat_settings_controller.dart';
 
-class BusyStatusController extends FullLifeCycleController with FullLifeCycleMixin {
+class BusyStatusController extends GetxController with WidgetsBindingObserver {
   final busyStatus = "".obs;
   var busyStatusList = List<StatusData>.empty(growable: true).obs;
   var selectedStatus = "".obs;
@@ -21,6 +21,21 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
   FocusNode focusNode = FocusNode();
   var showEmoji = false.obs;
   var count = 139.obs;
+
+  void init(String? status) {
+    WidgetsBinding.instance.addObserver(this);
+    if (status != null) {
+      selectedStatus.value = status;
+      addStatusController.text = selectedStatus.value;
+    }
+    onChanged();
+    getMyBusyStatus();
+    getMyBusyStatusList();
+  }
+
+  void close() {
+    WidgetsBinding.instance.removeObserver(this);
+  }
 
   onChanged() {
     count(139 - addStatusController.text.characters.length);
@@ -78,18 +93,6 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
     count((139 - addStatusController.text.characters.length));
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    if(Get.arguments!=null) {
-      selectedStatus.value = Get.arguments['status'];
-      addStatusController.text = selectedStatus.value;
-    }
-    onChanged();
-    getMyBusyStatus();
-    getMyBusyStatusList();
-  }
-
   void getMyBusyStatus() {
     Mirrorfly.getMyBusyStatus().then((value) {
       var userBusyStatus = json.decode(value);
@@ -126,20 +129,20 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
     setCurrentStatus(status);
   }
 
-  void deleteBusyStatus(StatusData item) {
+  void deleteBusyStatus(StatusData item, BuildContext context) {
 
     if(!item.isCurrentStatus!){
-      Helper.showButtonAlert(actions: [
+      DialogUtils.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
-          title: const Text("Delete",
-              style: TextStyle(
+          title: Text(getTranslated("delete"),
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal)),
 
           onTap: () {
-            Get.back();
-            busyDeleteConfirmation(item);
+            Navigator.pop(context);
+            busyDeleteConfirmation(item, context);
           },
         ),
       ]);
@@ -163,17 +166,11 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
     });
   }
 
-  validateAndFinish() async {
+  validateAndFinish(BuildContext context) async {
     if (addStatusController.text.trim().isNotEmpty) {
-      //FLUTTER-567
-      // if (await AppUtils.isNetConnected()) {
-        Get.back(result: addStatusController.text.trim().toString());
-      // } else {
-      //   toToast(Constants.noInternetConnection);
-      //   Get.back();
-      // }
+      Navigator.pop(context, addStatusController.text.trim().toString());
     } else {
-      toToast("Status cannot be empty");
+      toToast(getTranslated("statusNotEmpty"));
     }
   }
 
@@ -186,57 +183,35 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
     });
   }
 
-  void busyDeleteConfirmation(StatusData item) {
-    Helper.showAlert(message: "Do you want to delete the status?", actions: [
-      TextButton(
+  void busyDeleteConfirmation(StatusData item, BuildContext context) {
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deleteStatus"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            Navigator.pop(context);
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
-      TextButton(
-          onPressed: () async {
-            if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.showLoading(message: "Deleting Busy Status");
-              Mirrorfly.deleteBusyStatus(id:
-                  item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
-                  .then((value) {
-                    busyStatusList.remove(item);
-                Helper.hideLoading();
-              }).catchError((error) {
-                Helper.hideLoading();
-                toToast("Unable to delete the Busy Status");
-              });
-            } else {
-              toToast(Constants.noInternetConnection);
-            }
+          child: Text(getTranslated("no") )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+          onPressed: () {
+            AppUtils.isNetConnected().then((isConnected) {
+              if (isConnected) {
+                Navigator.pop(context);
+                DialogUtils.showLoading(message: "Deleting Busy Status",dialogStyle: AppStyleConfig.dialogStyle);
+                Mirrorfly.deleteBusyStatus(id:
+                item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
+                    .then((value) {
+                  busyStatusList.remove(item);
+                  DialogUtils.hideLoading();
+                }).catchError((error) {
+                  DialogUtils.hideLoading();
+                toToast(getTranslated("unableDeleteBusyStatus"));
+                });
+              } else {
+              toToast(getTranslated("noInternetConnection"));
+              }
+            });
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), )),
     ]);
-  }
-
-  @override
-  void onDetached() {
-  }
-
-  @override
-  void onInactive() {
-  }
-
-  @override
-  void onPaused() {
-  }
-
-  @override
-  void onResumed() {
-    if(!KeyboardVisibilityController().isVisible) {
-      if (focusNode.hasFocus) {
-        focusNode.unfocus();
-        Future.delayed(const Duration(milliseconds: 100), () {
-          focusNode.requestFocus();
-        });
-      }
-    }
   }
 
   void showHideEmoji(BuildContext context) {
@@ -251,8 +226,4 @@ class BusyStatusController extends FullLifeCycleController with FullLifeCycleMix
     });
   }
 
-  @override
-  void onHidden() {
-
-  }
 }

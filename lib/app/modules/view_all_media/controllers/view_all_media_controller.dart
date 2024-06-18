@@ -6,13 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+
 import '../../../common/constants.dart';
+import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 
@@ -29,9 +32,7 @@ class ViewAllMediaController extends GetxController {
   set linklist(Map<String, List<MessageItem>> value) => _linklist.value = value;
   Map<String, List<MessageItem>> get linklistdata => _linklist;
 
-  var name = Get.arguments["name"] as String;
-  var jid = Get.arguments["jid"] as String;
-  var isGroup = Get.arguments["isgroup"] as bool;
+  var name = ''.obs;
 
   var imageCount = 0.obs;
   var audioCount = 0.obs;
@@ -41,6 +42,7 @@ class ViewAllMediaController extends GetxController {
   var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
   var newLinkMessages = List<ChatMessageModel>.empty(growable: true).obs;
 
+  ViewAllMediaArguments get arguments => NavUtils.arguments as ViewAllMediaArguments;
 
   @override
   void onInit() {
@@ -77,7 +79,7 @@ class ViewAllMediaController extends GetxController {
   }
 
   getMediaMessages() {
-    Mirrorfly.getMediaMessages(jid: jid).then((value) async {
+    Mirrorfly.getMediaMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getMediaMessages", value);
         var data = chatMessageModelFromJson(value);
@@ -104,7 +106,7 @@ class ViewAllMediaController extends GetxController {
 
   //getDocsMessages
   getDocsMessages() {
-    Mirrorfly.getDocsMessages(jid: jid).then((value) async {
+    Mirrorfly.getDocsMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getDocsMessages",value);
         var data = chatMessageModelFromJson(value);
@@ -119,7 +121,7 @@ class ViewAllMediaController extends GetxController {
 
   //getLinkMessages
   getLinkMessages() {
-    Mirrorfly.getLinkMessages(jid: jid).then((value) async {
+    Mirrorfly.getLinkMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
         LogMessage.d("getLinkMessages", value);
         var data = chatMessageModelFromJson(value);
@@ -132,9 +134,9 @@ class ViewAllMediaController extends GetxController {
   }
 
   navigateMessage(ChatMessageModel linkChatItem) {
-    // Get.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
-    Get.back();
-    Get.back();
+    // NavUtils.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
+    NavUtils.back();
+    NavUtils.back();
     if (Get.isRegistered<ChatController>()) {
       Get.find<ChatController>().navigateToMessage(linkChatItem);
     }
@@ -282,18 +284,18 @@ class ViewAllMediaController extends GetxController {
       return MapEntry(5, year.toString());
     } else if ((currentMonth - month) == 1) {
       if (day > currentDay) {
-        return const MapEntry(3, "Last Month");
+        return MapEntry(3, getTranslated("lastMonth"));
       } else {
         return MapEntry(4, dateSymbols[month]);
       }
     } else if (currentMonth > month) {
       return MapEntry(4, dateSymbols[month]);
     } else if ((currentDay - day) > 7) {
-      return const MapEntry(2, "Last Month");
+      return MapEntry(2, getTranslated("lastMonth"));
     } else if ((currentDay - day) > 2) {
-      return const MapEntry(1, "Last Week");
+      return MapEntry(1, getTranslated("lastWeek"));
     }
-    return const MapEntry(0, "Recent");
+    return MapEntry(0, getTranslated("recent"));
   }
 
   Image imageFromBase64String(String base64String,
@@ -313,11 +315,11 @@ class ViewAllMediaController extends GetxController {
     if(result.message.contains("file does not exist")){
       toToast("The Selected file Doesn't Exist or Unable to Open");
     }*/
-    openDocument(path);
+    AppUtils.openDocument(path);
   }
 
   openImage(int gridIndex){
-    Get.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
+    NavUtils.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
   }
 
 }

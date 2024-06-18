@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/local_contact_controller.dart';
 
-class LocalContactView extends GetView<LocalContactController> {
+class LocalContactView extends NavViewStateful<LocalContactController> {
   const LocalContactView({Key? key}) : super(key: key);
+
+  @override
+LocalContactController createController() => Get.put(LocalContactController());
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +29,18 @@ class LocalContactView extends GetView<LocalContactController> {
                   controller: controller.searchTextController,
                   onChanged: (text) => controller.onSearchTextChanged(text),
                   autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: "Search...", border: InputBorder.none),
+                  decoration: InputDecoration(
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Contact to send',
-                      style: TextStyle(fontSize: 15),
-                    ),
                     Text(
-                      '${controller.contactsSelected.length} Selected',
+                      getTranslated("contactToSend"),
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    Text(getTranslated("selectedCount").replaceAll("%d",
+                      '${controller.contactsSelected.length}'),
                       style: const TextStyle(fontSize: 12),
                     ),
                   ],
@@ -71,13 +77,13 @@ class LocalContactView extends GetView<LocalContactController> {
               controller.search.value = false;
               return;
             } else {
-              Get.back();
+              NavUtils.back();
             }
           },
           child: SafeArea(
             child: Obx(() => controller.contactList.isEmpty
                 ? const Center(child: CircularProgressIndicator())
-                : contactListView()),
+                : contactListView(context)),
           ),
 
         ),
@@ -137,14 +143,14 @@ class LocalContactView extends GetView<LocalContactController> {
         : const SizedBox.shrink();
   }
 
-  contactListView() {
+  contactListView(BuildContext context) {
     return Obx(() {
       return Column(
         children: [
           selectedListView(controller.contactsSelected),
           controller.searchList.isEmpty &&
                   controller.searchTextController.text.isNotEmpty
-              ? const Center(child: Text("No result found"))
+              ? Center(child: Text(getTranslated("noResultFound")))
               : Expanded(
                   child: ListView.builder(
                       itemCount: controller.searchList.length,

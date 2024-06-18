@@ -1,9 +1,10 @@
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 class NotificationUtils{
-  static var deletedMessage = 'This message was deleted';
+  static var deletedMessage = getTranslated("deletedMessage");
   static var imageEmoji = "📷";
   static var videoEmoji = "📽️";
   static var contactEmoji = "👤";
@@ -43,19 +44,19 @@ class NotificationUtils{
     var contentBuilder = StringBuffer();
     switch(message.messageType){
       case Constants.mAudio:
-        contentBuilder.write("$audioEmoji Audio");
+        contentBuilder.write("$audioEmoji ${getTranslated("notificationAudio")}");
         break;
       case Constants.mContact:
-        contentBuilder.write("$contactEmoji Contact");
+        contentBuilder.write("$contactEmoji ${getTranslated("notificationContact")}");
         break;
       case Constants.mDocument:
-        contentBuilder.write("$fileEmoji File");
+        contentBuilder.write("$fileEmoji ${getTranslated("notificationFile")}");
         break;
       case Constants.mImage:
         contentBuilder.write("$imageEmoji ${getMentionMediaCaptionTextFormat(message)}");
         break;
       case Constants.mLocation:
-        contentBuilder.write("$locationEmoji Location");
+        contentBuilder.write("$locationEmoji ${getTranslated("notificationLocation")}");
         break;
       case Constants.mVideo:
         contentBuilder.write("$videoEmoji ${getMentionMediaCaptionTextFormat(message)}");
@@ -77,13 +78,13 @@ class NotificationUtils{
 
   static String getMessageTypeText(String messageType){
     switch(messageType){
-      case Constants.mImage: return "Image";
-      case Constants.mFile: return "File";
-      case Constants.mAudio: return "Audio";
-      case Constants.mVideo: return "Video";
-      case Constants.mDocument: return "Document";
-      case Constants.mContact: return "Contact";
-      case Constants.mLocation: return "Location";
+      case Constants.mImage: return getTranslated("notificationImage");
+      case Constants.mFile: return getTranslated("notificationFile");
+      case Constants.mAudio: return getTranslated("notificationAudio");
+      case Constants.mVideo: return getTranslated("notificationVideo");
+      case Constants.mDocument: return getTranslated("notificationDocument");
+      case Constants.mContact: return getTranslated("notificationContact");
+      case Constants.mLocation: return getTranslated("notificationLocation");
       default: return messageType;
     }
   }

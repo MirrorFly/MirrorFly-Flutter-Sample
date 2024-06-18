@@ -1,12 +1,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../../data/apputils.dart';
+import '../../../../app_style_config.dart';
+import '../../../../common/app_localizations.dart';
+import '../../../../data/utils.dart';
 
 
 class BlockedListController extends GetxController {
@@ -52,30 +54,30 @@ class BlockedListController extends GetxController {
 
   }
   unBlock(ProfileDetails item){
-    Helper.showAlert(message: "Unblock ${getMemberName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: "Unblock ${getMemberName(item)}?", actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: const Text("NO", )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if(await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.progressLoading();
+              NavUtils.back();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if(response.isSuccess) {
                   toToast("${getMemberName(item)} has been Unblocked");
                   getUsersIBlocked(false);
                 }
               },);
             }else{
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
 
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: const Text("YES", )),
     ]);
   }
 

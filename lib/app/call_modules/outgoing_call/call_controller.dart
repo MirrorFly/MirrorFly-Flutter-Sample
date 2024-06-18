@@ -4,16 +4,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
 
 import '../../../main.dart';
+import '../../app_style_config.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
-import '../../routes/app_pages.dart';
+import '../../data/utils.dart';
+import '../../routes/route_settings.dart';
 
 class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool isVisible = true.obs;
@@ -82,12 +85,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("#Mirrorfly Call Controller onInit");
     groupId(await Mirrorfly.getCallGroupJid());
     isCallTimerEnabled = true;
-    if (Get.arguments != null) {
-      users.value = Get.arguments?["userJid"] as List<String?>;
-      cameraSwitch(Get.arguments?["cameraSwitch"]);
+    if (NavUtils.arguments != null) {
+      users.value = NavUtils.arguments?["userJid"] as List<String?>;
+      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
     }
     // await outGoingUsers();
-    // callType.value = Get.arguments["callType"];
+    // callType.value = NavUtils.arguments["callType"];
     if (users.isNotEmpty) {
       debugPrint("#Mirrorfly Call UserJid $users");
       // var profile = await Mirrorfly.getUserProfile(userJid);
@@ -99,7 +102,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       // }
     }
     audioDeviceChanged();
-    if (Get.currentRoute == Routes.onGoingCallView) {
+    if (NavUtils.currentRoute == Routes.onGoingCallView) {
       //startTimer();
     }
     getAudioDevices();
@@ -111,7 +114,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           debugPrint("#Mirrorfly call get users --> $value");
           final callUserList = callUserListFromJson(value);
           callList(callUserList);
-          if(callUserList.length>1) {
+          if(callUserList.length > 1) {
             // pinnedUserJid(callUserList[0].userJid);
             CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
             pinnedUserJid(firstAttendedCallUser.userJid!.value);
@@ -153,6 +156,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     ever(callList, (callback) {
       debugPrint("#Mirrorfly call list is changed ******");
       debugPrint("#Mirrorfly call list ${callUserListToJson(callList)}");
+      if (pinnedUserJid.isEmpty){
+        CallUserList firstAttendedCallUser = callList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected || callUser.callStatus?.value == CallStatus.ringing, orElse: () => callList[0]);
+        pinnedUserJid(firstAttendedCallUser.userJid!.value);
+      }
     });
   }
 
@@ -192,7 +199,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     debugPrint("availableAudioList.length ${availableAudioList.length}");
     //if connected other audio devices
     // if (availableAudioList.length > 2) {
-    Get.dialog(
+    DialogUtils.createDialog(
       Dialog(
         child: Obx(() {
           return ListView.builder(
@@ -213,7 +220,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                         : const SizedBox.shrink(),
                     onTap: () {
                       if (audioOutputType.value != audioItem.type) {
-                        Get.back();
+                        NavUtils.back();
                         debugPrint("selected audio item ${audioItem.type}");
                         audioOutputType(audioItem.type);
                         Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
@@ -250,7 +257,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       if (callType.value != CallType.audio) {
         Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  });
         videoMuted(!videoMuted.value);
-      } else if (callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
+      } else if (callType.value == CallType.audio && isOneToOneCall && NavUtils.currentRoute == Routes.onGoingCallView) {
         showVideoSwitchPopup();
       } else if (isGroupCall) {
         Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  },);
@@ -293,25 +300,25 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void backCalledFromDisconnect(){
-    if (Get.previousRoute.isNotEmpty) {
+    if (NavUtils.previousRoute.isNotEmpty) {
       debugPrint("#Disconnect previous route is not empty");
-      if (Get.currentRoute == Routes.onGoingCallView) {
+      if (NavUtils.currentRoute == Routes.onGoingCallView) {
         debugPrint("#Disconnect current route is ongoing call view");
         // Future.delayed(const Duration(seconds: 1), () {
         //   debugPrint("#Disconnect call controller back called from Ongoing Screen");
-          Get.back();
+          NavUtils.back();
         // });
-      }else if(Get.currentRoute == Routes.participants){
-        Get.back();
+      }else if(NavUtils.currentRoute == Routes.participants){
+        NavUtils.back();
         // Future.delayed(const Duration(seconds: 1), () {
           debugPrint("#Disconnect call controller back called from Participant Screen");
-          Get.back();
+          NavUtils.back();
         // });
       }else{
-        Get.back();
+        NavUtils.back();
       }
     } else {
-      Get.offNamed(getInitialRoute());
+      NavUtils.offNamed(getInitialRoute());
     }
   }
 
@@ -367,11 +374,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void userDisconnection(String callMode, String userJid, String callType) {
     this.callMode(callMode);
     this.callType(callType);
-    debugPrint("Current Route ${Get.currentRoute}");
-    if(Get.currentRoute == Routes.outGoingCallView){
+    debugPrint("Current Route ${NavUtils.currentRoute}");
+    if(NavUtils.currentRoute == Routes.outGoingCallView){
       // This if condition is added for the group call remote busy - call action
       if(callList.length < 2){
-        Get.back();
+        NavUtils.back();
       }
       return;
     }
@@ -383,7 +390,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
     debugPrint("call list is not empty");
     var index = callList.indexWhere((user) => user.userJid!.value == userJid);
-    debugPrint("#Mirrorfly call disconnected user Index $index ${Get.currentRoute}");
+    debugPrint("#Mirrorfly call disconnected user Index $index ${NavUtils.currentRoute}");
     if (!index.isNegative) {
       // callList.removeAt(index);
       callList.removeWhere((callUser) => callUser.userJid?.value == userJid);
@@ -395,21 +402,21 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("Entering Call Disconnection Loop");
       isCallTimerEnabled = false;
       //if user is in the participants screen all users end the call then we should close call pages
-      if(Get.currentRoute == Routes.participants){
-        Get.back();
+      if(NavUtils.currentRoute == Routes.participants){
+        NavUtils.back();
       }
 
-      if (Get.previousRoute.isNotEmpty) {
-        if (Get.currentRoute == Routes.onGoingCallView) {
+      if (NavUtils.previousRoute.isNotEmpty) {
+        if (NavUtils.currentRoute == Routes.onGoingCallView) {
           callTimer("Disconnected");
           Future.delayed(const Duration(seconds: 1), () {
-            Get.back();
+            NavUtils.back();
           });
-        } else {
-          Get.back();
+        } else if(NavUtils.currentRoute == Routes.outGoingCallView){
+          NavUtils.back();
         }
       } else {
-        Get.offNamed(getInitialRoute());
+        NavUtils.offNamed(getInitialRoute());
       }
     }
   }
@@ -425,9 +432,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
       if (callList.length > 2) {
         var data = await getProfileDetails(userJid);
-        toToast("${data.getName()} is Busy");
+        toToast(getTranslated("usernameIsBusy").replaceFirst("%d", data.getName()));
       } else {
-        toToast("User is Busy");
+        toToast(getTranslated("userIsBusy"));
       }
 
     this.callMode(callMode);
@@ -507,11 +514,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     this.callType(callType);
     // this.callStatus(callStatus);
     // startTimer();
-    if(Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
+    if(NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute != Routes.participants) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        Get.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
+        NavUtils.offNamed(Routes.onGoingCallView, arguments: {"userJid": [userJid], "cameraSwitch": cameraSwitch.value});
       });
-    }else if(Get.currentRoute == Routes.participants){
+    }else if(NavUtils.currentRoute == Routes.participants){
       //commenting this for when user reconnected then toast is displayed so no need to display
       // var data = await getProfileDetails(userJid);
       // toToast("${data.getName()} joined the Call");
@@ -536,10 +543,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void timeout(String callMode, String userJid, String callType, String callStatus) {
     this.callMode(callMode);
     this.callType(callType);
-    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus -- current route ${Get.currentRoute}");
-    if(Get.currentRoute==Routes.outGoingCallView) {
+    debugPrint("#Mirrorfly Call timeout callMode : $callMode -- userJid : $userJid -- callType $callType -- callStatus $callStatus -- current route ${NavUtils.currentRoute}");
+    if(NavUtils.currentRoute==Routes.outGoingCallView) {
       debugPrint("#Mirrorfly Call navigating to Call Timeout");
-      Get.offNamed(Routes.callTimeOutView,
+      NavUtils.offNamed(Routes.callTimeOutView,
           arguments: {"callType": callType, "callMode": callMode, "userJid": users, "calleeName": calleeName.value});
     }else{
       var userJids = userJid.split(",");
@@ -556,7 +563,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if(response.isSuccess) {
         callList.clear();
-        Get.back();
+        NavUtils.back();
       }
     });
   }
@@ -621,7 +628,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("isGroupCall $isGroupCall");
       debugPrint("Status is not updated");
     }
-    if(Routes.onGoingCallView==Get.currentRoute) {
+    if(Routes.onGoingCallView==NavUtils.currentRoute) {
       ///update the status of the user in call user list
       var indexOfItem = callList.indexWhere((element) => element.userJid!.value == userJid);
       /// check the index is valid or not
@@ -643,14 +650,14 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Mirrorfly.getAllAvailableAudioInput().then((value) {
       final availableList = audioDevicesFromJson(value);
       availableAudioList(availableList);
-      debugPrint("${Constants.tag} flutter getAllAvailableAudioInput $availableList");
+      debugPrint("Mirrorfly flutter getAllAvailableAudioInput $availableList");
     });
   }
 
   Future<void> remoteEngaged(String userJid, String callMode, String callType) async {
 
     var data = await getProfileDetails(userJid);
-    toToast(data.getName() + Constants.remoteEngagedToast);
+    toToast(getTranslated("remoteEngagedToast").replaceFirst("%d", data.getName()));
 
     debugPrint("***call list length ${callList.length}");
 //The below condition (<= 2) -> (<2) is changed for Group call, to maintain the call to continue if there is a 2 users in call
@@ -716,15 +723,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 300), () {
       var index = speakingUsers.indexWhere((element) => element.userJid == userJid);
       if (!index.isNegative) {
-        speakingUsers[index].audioLevel(-1);
+        speakingUsers[index].audioLevel(0);
       }
     });
   }
 
   void denyCall() {
-    LogMessage.d("denyCall", Get.currentRoute);
-    if (Get.currentRoute == Routes.outGoingCallView) {
-      Get.back();
+    LogMessage.d("denyCall", NavUtils.currentRoute);
+    if (NavUtils.currentRoute == Routes.outGoingCallView) {
+      NavUtils.back();
     }
   }
 
@@ -734,8 +741,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void changedToAudioCall() {
-    if(Get.isDialogOpen ?? false){
-      Navigator.of(Get.overlayContext!).pop();
+    if(DialogUtils.isDialogOpen()){
+      // Navigator.of(Get.overlayContext!).pop();
+      NavUtils.back();
     }
     callType(CallType.audio);
 
@@ -747,13 +755,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     //
     //   //The below condition is must bcz iOS emit 2 times the delegate. so it navigates back to chat controller.
     //   if(Get.isDialogOpen ?? false) {
-    //     Get.back();
+    //     NavUtils.back();
     //   }
     // }
   }
   void closeDialog(){
-    if (Get.isDialogOpen!) {
-      Get.back();
+    if (DialogUtils.isDialogOpen()) {
+      NavUtils.back();
     }
   }
 
@@ -763,19 +771,19 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   Future<void> showVideoSwitchPopup() async {
     if (await AppPermission.askVideoCallPermissions()) {
       showingVideoSwitchPopup = true;
-      Helper.showAlert(
-          message: Constants.videoSwitchMessage,
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+          message: getTranslated("videoSwitchMessage"),
           actions: [
-            TextButton(
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   outGoingRequest = false;
                   showingVideoSwitchPopup = false;
                   closeDialog();
                 },
-                child: const Text("CANCEL",style: TextStyle(color: buttonBgColor))),
-            TextButton(
+                child: Text(getTranslated("cancel").toUpperCase(), )),
+            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
-                  if(callType.value == CallType.audio && isOneToOneCall && Get.currentRoute == Routes.onGoingCallView) {
+                  if(callType.value == CallType.audio && isOneToOneCall && NavUtils.previousRoute == Routes.onGoingCallView) {//currentRoute is Dialog so checking previousRoute
                     outGoingRequest = true;
                     Mirrorfly.requestVideoCallSwitch().then((value) {
                       if (value) {
@@ -788,11 +796,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                     closeDialog();
                   }
                 },
-                child: const Text("SWITCH",style: TextStyle(color: buttonBgColor)))
+                child: Text(getTranslated("switchCall"), ))
           ],
           barrierDismissible: false);
     }else{
-      toToast("Camera Permission Needed to switch the call");
+      toToast(getTranslated("needCameraPermissionForSwitch"));
     }
   }
 
@@ -823,18 +831,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     }
     var profile = await getProfileDetails(userJid);
     isVideoCallRequested = true;
-    Helper.showAlert(
-        message: "${profile.getName()} ${Constants.videoSwitchRequestedMessage}",
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+        message: getTranslated("videoSwitchRequestedMessage").replaceFirst("%d", profile.getName()),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 isVideoCallRequested = false;
                 inComingRequest = false;
                 closeDialog();
                 Mirrorfly.declineVideoCallSwitchRequest();
               },
-              child: const Text("DECLINE",style: TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("declineRequest").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 closeDialog();
                 if (await AppPermission.askVideoCallPermissions()) {
@@ -846,12 +854,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                   });
                 }else{
                   Future.delayed(const Duration(milliseconds:500 ),(){
-                    toToast("Camera Permission Needed to switch the call");
+                    toToast(getTranslated("needCameraPermissionForSwitch"));
                   });
                   Mirrorfly.declineVideoCallSwitchRequest();
                 }
               },
-              child: const Text("ACCEPT",style: TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("acceptRequest"), ))
         ],
         barrierDismissible: false);
   }
@@ -860,17 +868,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isWaitingCanceled = false;
     waitingCompleter = Completer<void>();
 
-    Helper.showAlert(
-        message: Constants.videoSwitchRequestMessage,
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+        message: getTranslated("videoSwitchRequestMessage"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 isWaitingCanceled = true;
                 outGoingRequest = false;
                 closeDialog();
                 Mirrorfly.cancelVideoCallSwitch();
               },
-              child: const Text("CANCEL",style: TextStyle(color: buttonBgColor)))
+              child: Text(getTranslated("cancel").toUpperCase(), ))
         ],
         barrierDismissible: false);
 
@@ -882,16 +890,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         closeDialog();
         Mirrorfly.cancelVideoCallSwitch();
         waitingCompleter.complete();
-        // Get.back();
+        // NavUtils.back();
         var profile = await getProfileDetails(callList.first.userJid!.value.checkNull());
-        toToast("No response from ${profile.getName()}");
+        toToast(getTranslated("noResponseFrom").replaceFirst("%d", profile.getName()));
       }
     });
   }
 
   void videoCallConversionAccepted() {
-    if(Get.isDialogOpen ?? false){
-      Navigator.of(Get.overlayContext!).pop();
+    if(DialogUtils.isDialogOpen()){
+      // Navigator.of(Get.overlayContext!).pop();
+      NavUtils.back();
     }
     inComingRequest = false;
     outGoingRequest = false;
@@ -906,7 +915,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void videoCallConversionRejected() {
-    toToast("Request Declined");
+    toToast(getTranslated("callSwitchRequestDeclined"));
     inComingRequest = false;
     outGoingRequest = false;
     if (!waitingCompleter.isCompleted) {
@@ -924,7 +933,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void openParticipantScreen() {
-    Get.toNamed(Routes.participants);
+    NavUtils.toNamed(Routes.participants);
   }
 
   void onUserInvite(String callMode, String userJid, String callType) {
@@ -975,7 +984,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
   void onUserLeft(String callMode, String userJid, String callType) {
     if(callList.length>2 && !callList.indexWhere((element) => element.userJid.toString() == userJid.toString()).isNegative) { //#FLUTTER-1300
-      CallUtils.getNameOfJid(userJid).then((value) => toToast("$value Left"));
+      CallUtils.getNameOfJid(userJid).then((value) => toToast(getTranslated("userLeftOnCall").replaceFirst("%d", value)));
     }
     removeUser(callMode, userJid, callType);
   }

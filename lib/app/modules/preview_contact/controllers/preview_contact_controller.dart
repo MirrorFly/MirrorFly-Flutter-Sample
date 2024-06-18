@@ -1,8 +1,10 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/local_contact_model.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -16,14 +18,14 @@ class PreviewContactController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    from = Get.arguments['from'];
+    from = NavUtils.arguments['from'];
   }
   @override
   void onReady() {
     super.onReady();
     if (from == "chat") {
-      previewContactList = Get.arguments['previewContactList'];
-      previewContactName = Get.arguments['contactName'];
+      previewContactList = NavUtils.arguments['previewContactList'];
+      previewContactName = NavUtils.arguments['contactName'];
 
       var newContactList = <ContactDetail>[];
       for (var phone in previewContactList) {
@@ -35,7 +37,7 @@ class PreviewContactController extends GetxController {
           contactNo: newContactList, userName: previewContactName);
       contactList.add(localContactPhone);
     } else {
-      argContactList = Get.arguments['contactList'];
+      argContactList = NavUtils.arguments['contactList'];
       for (var contact in argContactList) {
         var newContactList = <ContactDetail>[];
         for (var phone in contact.contact.phones!) {
@@ -68,14 +70,14 @@ class PreviewContactController extends GetxController {
     //         contactList, contactName);
     //     debugPrint("ContactResponse ==> $response");
     //     if (response != null) {
-    //       Get.back();
-    //       Get.back();
+    //       NavUtils.back();
+    //       NavUtils.back();
     //     }
     //   }else{
     //     toToast("Contact Number is Empty");
     //   }
     // }else{
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
 
     var contactServerSharing = <ShareContactDetails>[];
@@ -91,7 +93,7 @@ class PreviewContactController extends GetxController {
           }
         }
         if (contactSharing.isEmpty) {
-          toToast("Select at least one number");
+          toToast(getTranslated("selectLeastOne"));
           return;
         }
         debugPrint("adding contact list--> ${contactSharing.toString()}");
@@ -111,10 +113,10 @@ class PreviewContactController extends GetxController {
         debugPrint("ContactResponse ==> $response");
       }
 
-      Get.back();
-      Get.back();
+      NavUtils.back();
+      NavUtils.back();
     // } else {
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
   }
 

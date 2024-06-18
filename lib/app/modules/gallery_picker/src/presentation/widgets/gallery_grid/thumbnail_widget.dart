@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../../data/utils.dart';
 import '../../../core/decode_image.dart';
 import '../../pages/gallery_media_picker_controller.dart';
 
@@ -177,5 +177,5 @@ class ThumbnailWidget extends StatelessWidget {
 
 /// parse second to duration
 _parseDuration(int seconds) {
-  return Helper.durationToString(Duration(seconds: seconds));
+  return DateTimeUtils.durationToString(Duration(seconds: seconds));
 }

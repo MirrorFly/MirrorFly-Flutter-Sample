@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+
+import '../app_style_config.dart';
+import '../data/utils.dart';
 class CropImage extends StatefulWidget {
   const CropImage({Key? key, required this.imageFile}) : super(key: key);
   final File imageFile;
@@ -60,9 +62,9 @@ class _CropImageState extends State<CropImage> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: ()=>Get.back(),
-                    style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                    child: const Text("CANCEL",style: TextStyle(color: Colors.black,fontSize:16.0),),
+                    onPressed: ()=>NavUtils.back(),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
                 /*SizedBox(width: 1.0,),
@@ -77,15 +79,15 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      Helper.showLoading(message: "Image Cropping...");
+                      DialogUtils.showLoading(message: getTranslated("imageCropping"),dialogStyle: AppStyleConfig.dialogStyle);
                       await controller.onCropImage().then((image){
-                        Helper.hideLoading();
-                        Get.back(result: image);
+                        DialogUtils.hideLoading();
+                        NavUtils.back(result: image);
                       });
 
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                    child: const Text("SAVE",style: TextStyle(color: Colors.black,fontSize:16.0),),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    child: Text(getTranslated("save").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
               ],

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/country_controller.dart';
 
-class CountryListView extends GetView<CountryController> {
+class CountryListView extends NavViewStateful<CountryController> {
   const CountryListView({Key? key}) : super(key: key);
+
+  @override
+CountryController createController() => Get.put(CountryController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +31,10 @@ class CountryListView extends GetView<CountryController> {
                   onChanged: (text) => controller.countrySearchFilter(text),
                   controller: controller.searchQuery,
                   style: const TextStyle(fontSize: 18),
-                  decoration: const InputDecoration(
-                      hintText: "Search...", border: InputBorder.none),
+                  decoration: InputDecoration(
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
-              : const Text('Select Country'),
+              : Text(getTranslated("selectCountry")),
           actions: [
             controller.search.value
                 ? const SizedBox()
@@ -62,10 +68,10 @@ class CountryListView extends GetView<CountryController> {
                     style: const TextStyle(color: textHintColor),
                   ),
                   onTap: () {
-                    Get.back(result: item);
+                    NavUtils.back(result: item);
                   },
                 );
-              }) : const Center(child: Text("No Country Found"),)
+              }) : Center(child: Text(getTranslated("noCountryFound")),)
       ),
     );
   }

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../extensions/extensions.dart';
 import '../settings_widgets.dart';
 import 'notification_alert_controller.dart';
 
-class NotificationAlertView extends GetView<NotificationAlertController> {
+class NotificationAlertView extends NavViewStateful<NotificationAlertController> {
   const NotificationAlertView({Key? key}) : super(key: key);
+
+  @override
+NotificationAlertController createController() => Get.put(NotificationAlertController());
 
   @override
   Widget build(BuildContext context) {

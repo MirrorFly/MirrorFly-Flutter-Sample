@@ -4,26 +4,29 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
-import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
 import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import 'package:mirror_fly_demo/app/modules/media_preview/controllers/media_preview_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/blocked/blocked_list_controller.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
+import 'data/utils.dart';
 import 'model/chat_message_model.dart';
 import 'model/notification_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
@@ -192,6 +195,9 @@ abstract class BaseController {
       var callType = statusUpdateReceived["callType"].toString();
       var callStatus = statusUpdateReceived["callStatus"].toString();
 
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().statusUpdate(userJid, callStatus);
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().statusUpdate(userJid, callStatus);
       }
@@ -221,16 +227,23 @@ abstract class BaseController {
         case CallStatus.inviteCallTimeout:
           break;
         case CallStatus.attended:
-          debugPrint("onCallStatusUpdated Current Route ${Get.currentRoute}");
-          if (Get.currentRoute == Routes.callTimeOutView) {
+          debugPrint("onCallStatusUpdated Current Route ${NavUtils.currentRoute}");
+          if (NavUtils.currentRoute == Routes.callTimeOutView) {
             debugPrint("onCallStatusUpdated Inside Get.back");
-            Get.back();
+            NavUtils.back();
           }
-          if (Get.currentRoute != Routes.onGoingCallView && Get.currentRoute != Routes.participants) {
+          if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute !=
+              Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            Get.toNamed(Routes.onGoingCallView, arguments: {
-              "userJid": [userJid]
-            });
+            if (NavUtils.currentRoute == Routes.outGoingCallView) {
+              NavUtils.offNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }else{
+              NavUtils.toNamed(Routes.onGoingCallView, arguments: {
+                "userJid": [userJid]
+              });
+            }
           }
           break;
 
@@ -286,6 +299,9 @@ abstract class BaseController {
           if (timer == null) {
             startTimer();
           }
+          if (Get.isRegistered<OutgoingCallController>()) {
+            Get.find<OutgoingCallController>().connected(callMode, userJid, callType, callStatus);
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(callMode, userJid, callType, callStatus);
           } else {
@@ -294,17 +310,19 @@ abstract class BaseController {
           break;
 
         case CallStatus.callTimeout:
+          if (Get.isRegistered<OutgoingCallController>()) {
+            Get.find<OutgoingCallController>().timeout(callMode, userJid, callType, callStatus);
+          }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().timeout(callMode, userJid, callType, callStatus);
           } else {
             debugPrint("#Mirrorfly call call controller not registered for timeout event");
           }
           break;
-
         case CallStatus.callFailed:
-          // Helper.showAlert(message: callStatus);
-        toToast(callStatus);
-        break;
+            // Helper.showAlert(message: callStatus);
+          toToast(callStatus);
+          break;
 
         default:
           debugPrint("onCall status updated error: $callStatus");
@@ -322,6 +340,10 @@ abstract class BaseController {
         case CallAction.localHangup:
           {
             stopTimer();
+            if (Get.isRegistered<OutgoingCallController>()) {
+              //if user hangup the call from background notification
+              Get.find<OutgoingCallController>().localHangup(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               //if user hangup the call from background notification
               Get.find<CallController>().localHangup(callMode, userJid, callType, callAction);
@@ -339,6 +361,9 @@ abstract class BaseController {
         case CallAction.remoteOtherBusy:
           {
             // for group call users decline the call before attend
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteOtherBusy(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteOtherBusy(callMode, userJid, callType, callAction);
             }
@@ -347,6 +372,9 @@ abstract class BaseController {
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:
           {
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteBusy(callMode, userJid, callType, callAction);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteBusy(callMode, userJid, callType, callAction);
             }
@@ -363,6 +391,9 @@ abstract class BaseController {
         //if we called on user B, the user B is on another call then this will triggered
         case CallAction.remoteEngaged:
           {
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().remoteEngaged(userJid, callMode, callType);
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().remoteEngaged(userJid, callMode, callType);
             }
@@ -371,6 +402,9 @@ abstract class BaseController {
         case CallAction.audioDeviceChanged:
           {
             debugPrint("call action audioDeviceChanged");
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().audioDeviceChanged();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().audioDeviceChanged();
             }
@@ -380,6 +414,9 @@ abstract class BaseController {
           {
             debugPrint("call action denyCall");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().denyCall();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().denyCall();
             }
@@ -389,6 +426,9 @@ abstract class BaseController {
           {
             debugPrint("call action switchCamera");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().onCameraSwitch();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().onCameraSwitch();
             }
@@ -398,6 +438,9 @@ abstract class BaseController {
           {
             debugPrint("call action Video Call Switched to Audio Call");
             // local user deny the call
+            if (Get.isRegistered<OutgoingCallController>()) {
+              Get.find<OutgoingCallController>().changedToAudioCall();
+            }
             if (Get.isRegistered<CallController>()) {
               Get.find<CallController>().changedToAudioCall();
             }
@@ -446,6 +489,14 @@ abstract class BaseController {
       var muteStatus = jsonDecode(event);
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
+      if (Get.isRegistered<OutgoingCallController>()) {
+        if (muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
+          Get.find<OutgoingCallController>().audioMuteStatusChanged(muteEvent, userJid);
+        }
+        if (muteEvent == MuteStatus.remoteVideoMute || muteEvent == MuteStatus.remoteVideoUnMute) {
+          Get.find<OutgoingCallController>().videoMuteStatusChanged(muteEvent, userJid);
+        }
+      }
       if (Get.isRegistered<CallController>()) {
         if (muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
           Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
@@ -460,12 +511,18 @@ abstract class BaseController {
       var data = json.decode(event.toString());
       var audioLevel = data["audioLevel"];
       var userJid = data["userJid"];
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().onUserSpeaking(userJid, audioLevel);
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().onUserSpeaking(userJid, audioLevel);
       }
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       // LogMessage.d("onUserSpeaking", "$event");
+      if (Get.isRegistered<OutgoingCallController>()) {
+        Get.find<OutgoingCallController>().onUserStoppedSpeaking(event.toString());
+      }
       if (Get.isRegistered<CallController>()) {
         Get.find<CallController>().onUserStoppedSpeaking(event.toString());
       }
@@ -617,9 +674,9 @@ abstract class BaseController {
       Get.find<ViewAllMediaController>().onMediaStatusUpdated(chatMessageModel);
     }
     if (chatMessageModel.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.mediaUploadedNotAvailable.value) {
-      toToast(Constants.mediaDoesNotExist);
+      toToast(getTranslated("mediaDoesNotExist"));
     } else if (chatMessageModel.mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.storageNotEnough.value) {
-      toToast(Constants.insufficientMemoryError);
+      toToast(getTranslated("insufficientMemoryError"));
     }
   }
 
@@ -761,7 +818,11 @@ abstract class BaseController {
 
   void blockedThisUser(result) {}
 
-  void myProfileUpdated(result) {}
+  void myProfileUpdated(result) {
+    if (Get.isRegistered<GroupInfoController>()) {
+      Get.find<GroupInfoController>().myProfileUpdated();
+    }
+  }
 
   void onAdminBlockedUser(String jid, bool status) {
     Get.find<MainController>().handleAdminBlockedUser(jid, status);
@@ -922,6 +983,9 @@ abstract class BaseController {
     }
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().userUpdatedHisProfile(jid);
+    }
+    if (Get.isRegistered<OutgoingCallController>()) {
+      Get.find<OutgoingCallController>().userUpdatedHisProfile(jid);
     }
     if (Get.isRegistered<CallController>()) {
       Get.find<CallController>().userUpdatedHisProfile(jid);
@@ -1088,30 +1152,31 @@ abstract class BaseController {
   }
 
   void onLogout(isLogout) {
-    LogMessage.d('Get.currentRoute', Get.currentRoute);
-    if (isLogout && Get.currentRoute != Routes.login && SessionManagement.getLogin()) {
+    LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
+    DialogUtils.hideLoading();
+    if (isLogout && NavUtils.currentRoute != Routes.login && SessionManagement.getLogin()) {
       var token = SessionManagement.getToken().checkNull();
       SessionManagement.clear().then((value) {
         SessionManagement.setToken(token);
-        Get.offAllNamed(Routes.login);
+        NavUtils.offAllNamed(Routes.login);
       });
-      // Helper.progressLoading();
+      // DialogUtils.progressLoading();
       // Mirrorfly.logoutOfChatSDK().then((value) {
-      //   Helper.hideLoading();
+      //   DialogUtils.hideLoading();
       //   if(value) {
       //     var token = SessionManagement.getToken().checkNull();
       //     SessionManagement.clear().then((value){
       //       SessionManagement.setToken(token);
-      //       Get.offAllNamed(Routes.login);
+      //       NavUtils.offAllNamed(Routes.login);
       //     });
       //   }else{
       //     Get.snackbar("Logout", "Logout Failed");
       //   }
       // }).catchError((er){
-      //   Helper.hideLoading();
+      //   DialogUtils.hideLoading();
       //   SessionManagement.clear().then((value){
       //     // SessionManagement.setToken(token);
-      //     Get.offAllNamed(Routes.login);
+      //     NavUtils.offAllNamed(Routes.login);
       //   });
       // });
     }

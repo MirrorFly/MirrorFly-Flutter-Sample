@@ -5,26 +5,26 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
- import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-
-import '../../../common/crop_image.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../data/apputils.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/crop_image.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 class ProfileController extends GetxController {
   TextEditingController profileName = TextEditingController();
   TextEditingController profileEmail = TextEditingController();
   TextEditingController profileMobile = TextEditingController();
-  var profileStatus = "I am in Mirror Fly".obs;
+  var profileStatus = getTranslated("defaultStatus").obs;
   var isImageSelected = false.obs;
   var isUserProfileRemoved = false.obs;
   var imagePath = "".obs;
@@ -34,66 +34,67 @@ class ProfileController extends GetxController {
   var changed = false.obs;
 
   dynamic imageBytes;
-  var from = Get.previousRoute;//Routes.login.obs;
+  var from = NavUtils.previousRoute;//Routes.login.obs;
 
   var name = "".obs;
 
-  bool get emailEditAccess => true;//Get.previousRoute!=Routes.settings;
-  RxBool mobileEditAccess = false.obs;//Get.previousRoute!=Routes.settings;
+  bool get emailEditAccess => true;//NavUtils.previousRoute!=Routes.settings;
+  RxBool mobileEditAccess = false.obs;//NavUtils.previousRoute!=Routes.settings;
 
   var userNameFocus= FocusNode();
   var emailFocus= FocusNode();
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    if (NavUtils.previousRoute.isEmpty){
+      from = Routes.login;
+    }
     userImgUrl.value = SessionManagement.getUserImage() ?? "";
     LogMessage.d("auth : ", SessionManagement.getAuthToken().toString());
-    if (Get.arguments != null) {
-      // from(Get.arguments["from"]);
+    if (NavUtils.arguments != null) {
+      // from(NavUtils.arguments["from"]);
       if (from == Routes.login) {
-        profileMobile.text = Get.arguments['mobile'] ?? SessionManagement.getMobileNumber();
+        profileMobile.text = NavUtils.arguments['mobile'] ?? SessionManagement.getMobileNumber();
       }
     } else {
       profileMobile.text = "";
     }
     if (from == Routes.login) {
-      if(await AppUtils.isNetConnected()) {
-        getProfile();
-      }else{
-        toToast(Constants.noInternetConnection);
+      if (!await AppUtils.isNetConnected()) {
+        toToast(getTranslated("noInternetConnection"));
+        return;
       }
-      checkAndEnableNotificationSound();
-    }else{
-      getProfile();
     }
+    checkAndEnableNotificationSound();
+    getProfile();
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
     getMetaData();
   }
 
-
   Future<void> save({bool frmImage=false}) async {
-    var valid = await validMobileNumber(profileMobile.text);
+    var valid = await validMobileNumber(profileMobile.text.removeAllWhitespace.replaceAll("+", ""));
     // var permission = await AppPermission.getStoragePermission();
     // if (permission) {
       if (profileName.text
           .trim()
           .isEmpty) {
-        toToast("Please enter your username");
+        toToast(getTranslated("pleaseEnterUserName"));
       } else if (profileName.text
           .trim()
           .length < 3) {
-        toToast("Username is too short");
+        toToast(getTranslated("userNameTooShort"));
       } else if (profileEmail.text
           .trim()
           .isEmpty) {
-        toToast("Email should not be empty");
+        toToast(getTranslated("emailNotEmpty"));
       } else if (!emailPatternMatch.hasMatch(profileEmail.text.toString())) {
-        toToast("Please enter a valid Mail");
+        toToast(getTranslated("pleaseEnterValidMail"));
       } else if (profileStatus.value.isEmpty) {
-        toToast("Enter Profile Status");
+        toToast(getTranslated("pleaseEnterProfileStatus"));
       } else if(!valid){
-        toToast("Enter Valid Mobile Number");
+        toToast(getTranslated("pleaseEnterValidMobile"));
       }
       else {
         loading.value = true;
@@ -119,7 +120,7 @@ class ProfileController extends GetxController {
                   LogMessage.d("updateMyProfile", response.data.toString());
                   var data = profileUpdateFromJson(response.data);
                   if (data.status != null) {
-                    toToast(frmImage ? 'Removed profile image successfully' : data.message.toString());
+                    toToast(frmImage ? getTranslated("removedProfileImage") : data.message.toString());
                     if (data.status!) {
                       changed(false);
                       var userProfileData = ProData(
@@ -133,16 +134,16 @@ class ProfileController extends GetxController {
                       if (from == Routes.login || from.isEmpty) {
                         // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          Get.offNamed(Routes.dashboard);
+                          NavUtils.offNamed(Routes.dashboard,arguments: DashboardViewArguments());
                         }else{
-                          Get.offNamed(Routes.contactSync);
+                          NavUtils.offNamed(Routes.contactSync);
                         }
                         // });
                       }
                     }
                   }
                 } else {
-                  toToast("Unable to update profile");
+                  toToast(getTranslated("unableToUpdateProfile"));
                 }
               }
             );
@@ -168,9 +169,9 @@ class ProfileController extends GetxController {
                     if (from == Routes.login) {
                       // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          Get.offNamed(Routes.dashboard);
+                          NavUtils.offNamed(Routes.dashboard);
                         }else{
-                          Get.offNamed(Routes.contactSync);
+                          NavUtils.offNamed(Routes.contactSync);
                         }
                       // });
                     }
@@ -188,7 +189,7 @@ class ProfileController extends GetxController {
           } else {
             loading(false);
             hideLoader();
-            toToast(Constants.noInternetConnection);
+            toToast(getTranslated("noInternetConnection"));
           }
         }
       }
@@ -217,7 +218,7 @@ class ProfileController extends GetxController {
               save();
             }
           }else{
-            toToast(Constants.profileImageUpdateFailed);
+            toToast(getTranslated("profileImageUpdateFailed"));
             debugPrint("Profile Update on error--> ${response.exception.toString()}");
             loading.value = false;
             hideLoader();
@@ -243,7 +244,7 @@ class ProfileController extends GetxController {
       //   toToast("Image Size exceeds 10MB");
       // }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
 
   }
@@ -268,11 +269,11 @@ class ProfileController extends GetxController {
             }
             update();
           } else {
-            toToast(Constants.profileImageRemoveFailed);
+            toToast(getTranslated("profileImageRemoveFailed"));
           }
         });
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }else{
       imagePath("");
@@ -314,7 +315,7 @@ class ProfileController extends GetxController {
                 profileStatus.value = data.data!
                     .status
                     .checkNull()
-                    .isNotEmpty ? data.data!.status.checkNull() : "I am in Mirror Fly";
+                    .isNotEmpty ? data.data!.status.checkNull() : getTranslated("defaultStatus");
                 userImgUrl.value = data.data!.image ?? ""; //SessionManagement.getUserImage() ?? "";
                 SessionManagement.setUserImage(Constants.emptyString);
                 changed((from == Routes.login));
@@ -331,17 +332,17 @@ class ProfileController extends GetxController {
               }
             } else {
               debugPrint("Unable to load Profile data");
-              toToast("Unable to Connect to Server. Please login Again");
+              toToast(getTranslated("unableConnectServer"));
             }
           }else{
             loading.value = false;
-            toToast("Unable to load profile data, please login again");
+            toToast(getTranslated("unableToLoadProfileData"));
           }
         });
       }
    /* }else{
-      toToast(Constants.noInternetConnection);
-      Get.back();
+      toToast(getTranslated("noInternetConnection"));
+      NavUtils.back();
     }*/
 
   }
@@ -354,7 +355,7 @@ class ProfileController extends GetxController {
           var profileStatus = statusDataFromJson(value.toString());
           if (profileStatus.isNotEmpty) {
             debugPrint("profile status list is not empty");
-            var defaultStatus = Constants.defaultStatusList;
+            var defaultStatus = getTranslatedList("defaultStatusList");
 
             for (var statusValue in defaultStatus) {
               var isStatusNotExist = true;
@@ -387,10 +388,10 @@ class ProfileController extends GetxController {
         FilePickerResult? result = await FilePicker.platform
             .pickFiles(allowMultiple: false, type: FileType.image);
         if (result != null) {
-          if (checkFileUploadSize(
+          if (MediaUtils.checkFileUploadSize(
               result.files.single.path!, Constants.mImage)) {
             isImageSelected.value = true;
-            Get.to(CropImage(
+            NavUtils.to(CropImage(
               imageFile: File(result.files.single.path!),
             ))?.then((value) {
               value as MemoryImage;
@@ -411,14 +412,14 @@ class ProfileController extends GetxController {
               });
             });
           } else {
-            toToast("Please select Image less than 10MB");
+            toToast(getTranslated("imageLess10mb"));
           }
         } else {
           // User canceled the picker
           isImageSelected.value = false;
         }
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     }
   }
@@ -430,7 +431,7 @@ class ProfileController extends GetxController {
           source: ImageSource.camera);
       if (photo != null) {
         isImageSelected.value = true;
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(photo.path),
         ))?.then((value) {
           debugPrint("Profile Controller Got Image from Crop Image $value");
@@ -455,17 +456,17 @@ class ProfileController extends GetxController {
         isImageSelected.value = false;
       }
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   void showLoader() {
-    Helper.progressLoading();
+    DialogUtils.progressLoading();
   }
 
   /// To hide loader
   void hideLoader() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   nameChanges(String text) {
@@ -513,7 +514,7 @@ class ProfileController extends GetxController {
 
   static void insertStatus() {
     debugPrint("Inserting Status");
-    var defaultStatus = Constants.defaultStatusList;
+    var defaultStatus = getTranslatedList("defaultStatusList");
 
     for (var statusValue in defaultStatus) {
       Mirrorfly.insertDefaultStatus(status: statusValue);

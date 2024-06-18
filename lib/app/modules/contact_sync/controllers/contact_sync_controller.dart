@@ -1,14 +1,15 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/permissions.dart';
 import '../../../data/session_management.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 class ContactSyncController extends GetxController
     with GetTickerProviderStateMixin {
@@ -52,20 +53,20 @@ class ContactSyncController extends GetxController
   Rx<String> textContactSync = ''.obs;
   openContactPermission() async {
     if(!await Mirrorfly.contactSyncStateValue()) {
-      var contactPermissionHandle = await AppPermission.checkPermission(
-          Permission.contacts, contactPermission,
-          Constants.contactPermission);
+      var contactPermissionHandle = await AppPermission.checkAndRequestPermissions(permissions: [Permission.contacts],
+          permissionIcon: contactPermission,
+          permissionContent:getTranslated("contactPermissionContent"),permissionPermanentlyDeniedContent:getTranslated("contactPermissionDeniedContent") );
       if (contactPermissionHandle) {
         syncing(true);
-        textContactSync('Contact sync is in process');
+        textContactSync(getTranslated("contactSyncInProcess"));
         Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  });
         checkContactSync();
       } else {
-        Get.offNamed(Routes.dashboard);
+        NavUtils.offNamed(Routes.dashboard);
       }
     }else{
       syncing(true);
-      textContactSync('Contact sync is in process');
+      textContactSync(getTranslated("contactSyncInProcess"));
     }
   }
   checkContactSync() async {
@@ -80,7 +81,7 @@ class ContactSyncController extends GetxController
   }
 
   void onContactSyncComplete(bool result) {
-    if(Get.currentRoute==Routes.contactSync) {
+    if(NavUtils.currentRoute==Routes.contactSync) {
       Mirrorfly.getRegisteredUsers(fetchFromServer: true,flyCallback: (FlyResponse response){
         LogMessage.d("registeredUsers", response.isSuccess.toString());
         navigateToDashboard();
@@ -94,7 +95,7 @@ class ContactSyncController extends GetxController
 
   void navigateToDashboard() {
     animController.dispose();
-    Get.offNamed(Routes.dashboard);
+    NavUtils.offNamed(Routes.dashboard);
   }
 
   Future<void> networkConnected() async {
@@ -104,12 +105,12 @@ class ContactSyncController extends GetxController
       openContactPermission();
     }else{
       syncing(true);
-      textContactSync('Contact sync is in process');
+      textContactSync(getTranslated("contactSyncInProcess"));
     }
   }
 
   void networkDisconnected() {
     syncing(false);
-    textContactSync(Constants.noInternetConnection);
+    textContactSync(getTranslated("noInternetConnection"));
   }
 }

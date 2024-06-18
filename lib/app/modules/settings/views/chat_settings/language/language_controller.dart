@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../../data/session_management.dart';
+import '../../../../../data/utils.dart';
 import '../../../../../model/language_model.dart';
 
 class LanguageController extends GetxController{
@@ -37,14 +38,14 @@ class LanguageController extends GetxController{
      languageList.refresh();
      isSearching=false;
     }else{
-      Get.back();
+      NavUtils.back();
     }
   }
 
   @override
   void onInit() {
     super.onInit();
-    translationLanguage(Get.arguments as String);
+    translationLanguage(NavUtils.arguments as String);
     loadAsset().then((value){
       mainLanguageList.addAll(value);
       languageList(value);
@@ -69,6 +70,6 @@ class LanguageController extends GetxController{
     translationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguageCode(item.languageCode);
-    Get.back(result: item.languageName);
+    NavUtils.back(result: item.languageName);
   }
 }

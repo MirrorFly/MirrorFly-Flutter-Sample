@@ -6,11 +6,13 @@ import '../common/constants.dart';
 class AnimatedFloatingAction extends StatefulWidget {
   final String tooltip;
   final Widget icon;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
   final Function() audioCallOnPressed;
   final Function() videoCallOnPressed;
   // final List<Widget> icons;
 
-  const AnimatedFloatingAction({super.key, required this.tooltip, required this.icon, required this.audioCallOnPressed, required this.videoCallOnPressed});
+  const AnimatedFloatingAction({super.key, required this.tooltip, required this.icon, required this.audioCallOnPressed, required this.videoCallOnPressed, required this.backgroundColor, required this.foregroundColor});
 
   @override
   AnimatedFloatingActionState createState() => AnimatedFloatingActionState();
@@ -36,8 +38,8 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
     // _animateIcon =
     //     Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _buttonColor = ColorTween(
-      begin: buttonBgColor,
-      end: buttonBgColor,
+      begin: widget.backgroundColor,
+      end: widget.backgroundColor,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: const Interval(
@@ -133,11 +135,11 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
          child: FloatingActionButton.small(heroTag:"videoCall",onPressed: (){
            animate();
            widget.videoCallOnPressed();
-         },backgroundColor:buttonBgColor,child: SvgPicture.asset(
+         },backgroundColor:widget.backgroundColor,child: SvgPicture.asset(
            videoCallSmallIcon,
            width: 18,
            height: 18,
-           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+           colorFilter: ColorFilter.mode(widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
            fit: BoxFit.contain,
          ),),
        ),
@@ -150,58 +152,17 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
          child: FloatingActionButton.small(heroTag:"audioCall",onPressed: (){
            animate();
            widget.audioCallOnPressed();
-         },backgroundColor:buttonBgColor,child: SvgPicture.asset(
+         },backgroundColor:widget.backgroundColor,child: SvgPicture.asset(
            audioCallSmallIcon,
            width: 18,
            height: 18,
-           colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+           colorFilter: ColorFilter.mode(widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
            fit: BoxFit.contain,
          ),),
        ),
-       isOpened ? const SizedBox.shrink() : const SizedBox(height: 8,),
+       isOpened ? const Offstage() : const SizedBox(height: 8,),
        toggleWidget()
      ],
-     /* children: List.generate(widget.icons.length, (index) {
-        if(index<widget.icons.length) {
-          return isOpened ? Transform(
-            transform: Matrix4.translationValues(
-              0.0,
-              _translateButton.value * ((index!=1) ? index.toDouble() : 0.0),
-              0.0,
-            ),
-            child: widget.icons[index],
-          ) : const SizedBox.shrink();
-        }else{
-          return toggleWidget();
-        }
-      }),*/
-      /*children: <Widget>[
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 3.0,
-            0.0,
-          ),
-          child: add(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 2.0,
-            0.0,
-          ),
-          child: image(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value,
-            0.0,
-          ),
-          child: inbox(),
-        ),
-        toggle(),
-      ],*/
     );
   }
 }

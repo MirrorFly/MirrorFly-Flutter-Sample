@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/about/contactus_view.dart';
 
 import '../../../../common/constants.dart';
-import '../../../../data/apputils.dart';
+import '../../../../data/utils.dart';
 import 'about_us_view.dart';
 
 class AboutAndHelpView extends StatelessWidget {
@@ -17,52 +17,52 @@ class AboutAndHelpView extends StatelessWidget {
         fontWeight: FontWeight.w400);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About and Help'),
+        title: Text(getTranslated("aboutAndHelp")),
         automaticallyImplyLeading: true,
       ),
       body: Column(
         children: [
-          ListItem(title: Text("About us", style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
+          ListItem(title: Text(getTranslated("aboutUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top: 8), onTap: () async {
             if(await AppUtils.isNetConnected()){
-              Get.to(const AboutUsView());
+              NavUtils.to(const AboutUsView());
             }else{
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           }),
-          ListItem(title: Text("Contact us", style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>Get.to(ContactusView())),
+          ListItem(title: Text(getTranslated("contactUs"), style: textStyle),trailing: const Icon(Icons.keyboard_arrow_right),dividerPadding: const EdgeInsets.only(top:8), onTap: ()=>NavUtils.to(ContactusView())),
           ListItem(title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Terms and Privacy Policy", style: textStyle),
+              Text(getTranslated("termsAndPolicy"), style: textStyle),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   InkWell(
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        'Terms and Condition,',
-                        style: TextStyle(
+                        "${getTranslated("termsAndCondition")},",
+                        style: const TextStyle(
                             decoration: TextDecoration.underline,
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap:()=>launchWeb(Constants.termsConditions),
+                    onTap:()=>AppUtils.launchWeb(Uri.parse(getTranslated("termsConditionsLink"))),
                   ),
                   const SizedBox(
                     width: 5,
                   ),
                   InkWell(
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        'Privacy Policy.',
-                        style: TextStyle(
+                        '${getTranslated("privacyPolicy")}.',
+                        style: const TextStyle(
                             decoration: TextDecoration.underline,
                             color: buttonBgColor),
                       ),
                     ),
-                    onTap: ()=>launchWeb(Constants.privacyPolicy),
+                    onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("privacyPolicyLink"))),
                   ),
                 ],
               )

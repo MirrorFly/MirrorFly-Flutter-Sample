@@ -1,19 +1,22 @@
 import 'dart:io';
 
-// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../widgets/video_player_widget.dart';
 import '../controllers/media_preview_controller.dart';
-class MediaPreviewView extends GetView<MediaPreviewController> {
+class MediaPreviewView extends NavViewStateful<MediaPreviewController> {
   const MediaPreviewView({Key? key}) : super(key: key);
+
+  @override
+MediaPreviewController createController() => Get.put(MediaPreviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
           leadingWidth: 80,
           leading: InkWell(
             onTap: () {
-              Get.back();
+              NavUtils.back();
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -89,12 +92,12 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
             if (didPop) {
               return;
             }
-            Get.back(result: "back");
+            NavUtils.back(result: "back");
           },
           child: GestureDetector(
             onTap: () => controller.hideKeyBoard(),
             child: Container(
-              height: MediaQuery.of(context).size.height,
+              height: NavUtils.size.height,
               color: Colors.black,
               child: Column(
                 children: [
@@ -120,9 +123,9 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                     ),
                                   ),
                                   const SizedBox(height: 50),
-                                  const Text(
-                                    'No Media selected',
-                                    style: TextStyle(
+                                  Text(
+                                    getTranslated("noMediaSelected"),
+                                    style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white70),
@@ -157,13 +160,13 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return const Text('Error loading image');
+                                              return Text(getTranslated("errorLoadingImage"));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return Center(
                                                 child: imagePreview(snapshot.data!),
                                               );
                                             } else {
-                                              return const Text('No data');
+                                              return Text(getTranslated("noData"));
                                             }
                                           },
                                         );
@@ -176,14 +179,14 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                             if (snapshot.connectionState == ConnectionState.waiting) {
                                               return const Center(child: CircularProgressIndicator());
                                             } else if (snapshot.hasError) {
-                                              return const Text('Error loading image');
+                                              return Text(getTranslated("errorLoadingImage"));
                                             } else if (snapshot.hasData && snapshot.data != null) {
                                               return VideoPlayerWidget(
                                                 videoPath: snapshot.data?.path ?? "",
                                                 videoTitle: data.title ?? "Video",
                                               );
                                             } else {
-                                              return const Text('No data');
+                                              return Text(getTranslated("noData"));
                                             }
                                           },
                                         );
@@ -193,7 +196,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                   else
                                   ...[
                                         () {
-                                      return const Center(child: Text("No data available"));
+                                      return Center(child: Text(getTranslated("noDataAvailable")));
                                     }()
                                   ],
                                 ],
@@ -203,7 +206,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                   ),
                   Container(
                     color: Colors.black38,
-                    width: MediaQuery.of(context).size.width,
+                    width: NavUtils.size.width,
                     child: Column(
                       children: [
                         IntrinsicHeight(
@@ -237,7 +240,7 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                                   controller.showAdd
                                               ? InkWell(
                                                   onTap: () {
-                                                    Get.back();
+                                                    NavUtils.back();
                                                   },
                                                   child: SvgPicture.asset(
                                                       previewAddImg),
@@ -271,10 +274,10 @@ class MediaPreviewView extends GetView<MediaPreviewController> {
                                           ),
                                           maxLines: 6,
                                           minLines: 1,
-                                          decoration: const InputDecoration(
+                                          decoration: InputDecoration(
                                             border: InputBorder.none,
-                                            hintText: "Add Caption...",
-                                            hintStyle: TextStyle(
+                                            hintText: getTranslated("addCaption"),
+                                            hintStyle: const TextStyle(
                                               color: previewTextColor,
                                               fontSize: 15,
                                             ),

@@ -5,11 +5,14 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import '../../data/apputils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../app_style_config.dart';
+import '../../common/app_localizations.dart';
 import '../../data/helper.dart';
+import '../../data/utils.dart';
+import '../../model/arguments.dart';
 import '../../model/chat_message_model.dart';
-import '../../routes/app_pages.dart';
+import '../../routes/route_settings.dart';
 
 class ArchivedChatListController extends GetxController {
   DashboardController dashboardController = Get.find<DashboardController>();
@@ -70,7 +73,7 @@ class ArchivedChatListController extends GetxController {
       var item = archivedChats.firstWhere((element) => selectedChats.first == element.jid);
       // delete(Constants.typeGroupChat != item.getChatType());
       menuValidationForDeleteIcon();
-      if ((Constants.typeBroadcastChat != item.getChatType() && !archiveEnabled.value)) {
+      if ((ChatType.broadcastChat != item.getChatType() && !archiveEnabled.value)) {
         unMute(item.isMuted!);
         mute(!item.isMuted!);
         // shortcut(true);
@@ -123,17 +126,17 @@ class ArchivedChatListController extends GetxController {
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      Get.toNamed(Routes.chat, parameters: {"chatJid": jid});
-      // Helper.progressLoading();
+      NavUtils.toNamed(Routes.chat, arguments:ChatViewArguments(chatJid: jid));
+      // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {
-          Helper.hideLoading();
+          DialogUtils.hideLoading();
           var profile = value;//profiledata(value.toString());
-          Get.toNamed(Routes.chat, arguments: profile);
+          NavUtils.toNamed(Routes.chat, arguments: profile);
         }
       });*/
       // SessionManagement.setChatJid(jid);
-      // Get.toNamed(Routes.chat);
+      // NavUtils.toNamed(Routes.chat);
     }
   }
 
@@ -151,7 +154,7 @@ class ArchivedChatListController extends GetxController {
       if (selectedChats.length == 1) {
         _itemUnArchive(0);
         clearAllChatSelection();
-        toToast("1 chat has been unarchived");
+        toToast(getTranslated("chatHasBeenUnArchived"));
       } else {
         selected(false);
         var count = selectedChats.length;
@@ -159,10 +162,10 @@ class ArchivedChatListController extends GetxController {
           _itemUnArchive(key);
         });
         clearAllChatSelection();
-        toToast("$count chats has been unarchived");
+        toToast("$count ${getTranslated("chatsHasBeenUnArchived")}");
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -236,7 +239,7 @@ class ArchivedChatListController extends GetxController {
     var selected = archivedChats.where((p0) => selectedChats.contains(p0.jid));
     for (var item in selected) {
       var isMember = await Mirrorfly.isMemberOfGroup(groupJid: item.jid.checkNull(), userJid: SessionManagement.getUserJID().checkNull());
-      if ((item.getChatType() == Constants.typeGroupChat) && isMember!) {
+      if ((item.getChatType() == ChatType.groupChat) && isMember!) {
         delete(false);
         return;
         //return false;
@@ -313,25 +316,25 @@ class ArchivedChatListController extends GetxController {
   deleteChats() {
     String? profile = '';
     profile = archivedChats.firstWhere((element) => selectedChats.first == element.jid).profileName;
-    Helper.showAlert(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
         title:
-            selectedChats.length == 1 ? "Delete chat with $profile?" : "Delete ${selectedChats.length} selected chats?",
+            selectedChats.length == 1 ? getTranslated("deleteChatWith").replaceFirst("%d", "$profile") : getTranslated("deleteSelectedChats").replaceFirst("%d", "${selectedChats.length}"),
         actions: [
-          TextButton(
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
-                Get.back();
+                NavUtils.back();
               },
-              child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-          TextButton(
+              child: Text(getTranslated("no").toUpperCase(), )),
+          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
-                Get.back();
+                NavUtils.back();
                 if (selectedChats.length == 1) {
                   _itemDelete(0);
                 } else {
                   itemsDelete();
                 }
               },
-              child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+              child: Text(getTranslated("yes").toUpperCase(), )),
         ],
         message: '');
   }
@@ -384,14 +387,13 @@ class ArchivedChatListController extends GetxController {
       profile_(value);
       debugPrint("dashboard controller profile update received");
       showQuickProfilePopup(
-          context: context,
           // chatItem: chatItem,
           chatTap: () {
-            Get.back();
+            NavUtils.back();
             toChatPage(chatItem.jid.checkNull());
           },
           infoTap: () {
-            Get.back();
+            NavUtils.back();
             infoPage(value);
           },
           profile: profile_,
@@ -410,7 +412,7 @@ class ArchivedChatListController extends GetxController {
 
   infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
-      Get.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
         if (value != null) {
           // profile_(value as Profile);
           // isBlocked(profile.isBlocked);
@@ -422,7 +424,7 @@ class ArchivedChatListController extends GetxController {
         }
       });
     } else {
-      Get.toNamed(Routes.chatInfo, arguments: profile)?.then((value) {});
+      NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.jid.checkNull()))?.then((value) {});
     }
   }
 

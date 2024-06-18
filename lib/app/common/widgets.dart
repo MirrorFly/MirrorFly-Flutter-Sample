@@ -5,25 +5,29 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+import '../data/utils.dart';
+import '../stylesheet/stylesheet.dart';
 import 'constants.dart';
 import 'main_controller.dart';
 
 class AppDivider extends StatelessWidget {
-  const AppDivider({Key? key, this.padding}) : super(key: key);
+  const AppDivider({Key? key, this.padding,this.color}) : super(key: key);
 
   final EdgeInsetsGeometry? padding;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: padding,
       height: 0.29,
-      color: dividerColor,
+      color: color ?? dividerColor,
     );
   }
 }
@@ -42,7 +46,7 @@ class ProfileTextImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return radius == 0
         ? Container(
-            decoration: BoxDecoration(color: bgColor ?? Color(Helper.getColourCode(text))),
+            decoration: BoxDecoration(color: bgColor ?? Color(MessageUtils.getColourCode(text))),
             child: Center(
               child: Text(
                 getString(text),
@@ -52,7 +56,7 @@ class ProfileTextImage extends StatelessWidget {
           )
         : CircleAvatar(
             radius: radius,
-            backgroundColor: bgColor ?? Color(Helper.getColourCode(text)),
+            backgroundColor: bgColor ?? Color(MessageUtils.getColourCode(text)),
             child: Center(
                 child: Text(
               getString(text),
@@ -77,7 +81,7 @@ class ProfileTextImage extends StatelessWidget {
   }
 }
 
-class ImageNetwork extends GetView<MainController> {
+class ImageNetwork extends NavView<MainController> {
   final double? width;
   final double? height;
   final String url;
@@ -100,6 +104,9 @@ class ImageNetwork extends GetView<MainController> {
     required this.blocked,
     required this.unknown,
   }) : super(key: key);
+
+  @override
+MainController createController() => MainController();
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +305,120 @@ class ListItem extends StatelessWidget {
   }
 }
 
-Widget memberItem(
+class MemberItem extends StatelessWidget {
+  const MemberItem({super.key,
+    required this.name,
+    required this.image,
+    required this.status,
+    this.isAdmin,
+    required this.onTap,
+    this.onChange,
+    required this.blocked,
+    required this.unknown,
+    this.itemStyle = const ContactItemStyle(),
+    this.searchTxt = "",
+    this.isCheckBoxVisible = false,
+    this.isChecked = false,
+    this.isGroup = false});
+  final String name;
+  final String image;
+  final String status;
+  final bool? isAdmin;
+  final Function() onTap;
+  final String searchTxt;
+  final bool isCheckBoxVisible;
+  final bool isChecked;
+  final Function(bool? value)? onChange;
+  final bool isGroup;
+  final bool blocked;
+  final bool unknown;
+  final ContactItemStyle itemStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0, left: 16.0, top: 4, bottom: 4),
+              child: Row(
+                children: [
+                  ImageNetwork(
+                    url: image.checkNull(),
+                    width: itemStyle.profileImageSize.width,
+                    height: itemStyle.profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: name.checkNull().isNotEmpty
+                        ? ProfileTextImage(
+                      radius: itemStyle.profileImageSize.width/2,
+                      text: name.checkNull(),
+                    )
+                        : null,
+                    blocked: blocked,
+                    unknown: unknown,
+                    isGroup: isGroup,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          searchTxt.isEmpty
+                              ? Text(
+                            name.checkNull(),
+                            style: itemStyle.titleStyle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, //TextStyle
+                          )
+                              : spannableText(
+                              name.checkNull(),
+                              searchTxt,
+                              itemStyle.titleStyle,itemStyle.spanTextColor
+                          ),
+                          Text(
+                            status.checkNull(),
+                           style: itemStyle.descriptionStyle,
+                           /* style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.0,
+                            ),*/
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis, //T
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  (isAdmin != null && isAdmin!)
+                      ? Text(getTranslated("groupAdmin"),
+                      style: itemStyle.actionTextStyle,)
+                      : const SizedBox(),
+                  Visibility(
+                    visible: isCheckBoxVisible,
+                    child: Checkbox(
+                      value: isChecked,
+                      onChanged: onChange,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AppDivider(padding: const EdgeInsets.only(right: 16, left: 16, top: 4),color: itemStyle.dividerColor,)
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+/*Widget memberItem(
     {required String name,
     required String image,
     required String status,
@@ -355,7 +475,7 @@ Widget memberItem(
                             : spannableText(
                                 name.checkNull(),
                                 spantext,
-                                titlestyle,
+                                titlestyle,Colors.blue
                               ),
                         Text(
                           status.checkNull(),
@@ -371,8 +491,8 @@ Widget memberItem(
                   ),
                 ),
                 (isAdmin != null && isAdmin)
-                    ? const Text("Admin",
-                        style: TextStyle(
+                    ? Text(getTranslated("groupAdmin"),
+                        style: const TextStyle(
                           color: Colors.blue,
                           fontSize: 12.0,
                         ))
@@ -392,7 +512,7 @@ Widget memberItem(
       ),
     ),
   );
-}
+}*/
 
 class EmojiLayout extends StatelessWidget {
   const EmojiLayout({Key? key, required this.textController, this.onEmojiSelected, this.onBackspacePressed}) : super(key: key);

@@ -1,99 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
+import '../../../routes/route_settings.dart';
 import 'about/about_and_help_view.dart';
 
-class SettingsView extends GetView<SettingsController> {
+class SettingsView extends NavView<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
 
   @override
+  SettingsController createController() => SettingsController();
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        automaticallyImplyLeading: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            settingListItem("Profile", profileIcon, rightArrowIcon,
-                    () =>
-                    Get.toNamed(
-                        Routes.profile, arguments: {"from": Routes.settings})),
-            settingListItem("Chats", chatIcon, rightArrowIcon, () {
-              Get.toNamed(Routes.chatSettings);
-            }),
-            settingListItem(
-                "Starred Messages", staredMsgIcon, rightArrowIcon, () {
-              Get.toNamed(Routes.starredMessages);
-            }),
-            settingListItem(
-                "Notifications", notificationIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.notification)),
-            settingListItem(
-                "Blocked Contacts", blockedIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.blockedList)),
-            settingListItem("App Lock", lockIcon, rightArrowIcon, () =>
-                Get.toNamed(Routes.appLock)),
-            settingListItem("About and Help", aboutIcon, rightArrowIcon, () =>
-                Get.to(const AboutAndHelpView())),
-            settingListItem(
-                "Connection Label", connectionIcon, toggleOffIcon, () {}),
-            settingListItem("Delete My Account", delete, rightArrowIcon, () {
-              Get.toNamed(Routes.deleteAccount);
-            }),
-            settingListItem("Logout", logoutIcon, rightArrowIcon, () {
-              Helper.showAlert(
-                  message:
-                  "Are you sure want to logout from the app?",
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-                    TextButton(
-                        onPressed: () {
-                          controller.logout();
-                        },
-                        child: const Text("YES",style: TextStyle(color: buttonBgColor)))
-                  ]);
-            }),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Obx(() {
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                            text: "Released On: ",
-                            style: const TextStyle(color: textColor),
-                            children: [
-                              TextSpan(
-                                  text: controller.releaseDate.value,
-                                  style: const TextStyle(color: textHintColor))
-                            ]),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                            text: "Version ",
-                            style: const TextStyle(color: textColor),
-                            children: [
-                              TextSpan(
-                                  text: controller.version.value,
-                                  style: const TextStyle(color: textHintColor))
-                            ]),
-                      ),
+    return Theme(
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.settingsPageStyle.appBarTheme),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(getTranslated("settings")),
+          automaticallyImplyLeading: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SettingListItem(title:
+                getTranslated("profile"), leading: profileIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle,
+                      onTap: () =>
+                      NavUtils.toNamed(
+                          Routes.profile, arguments: {"from": Routes.settings})),
+              SettingListItem(title:
+                getTranslated("chats"), leading: chatIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
+                NavUtils.toNamed(Routes.chatSettings);
+              }),
+              SettingListItem(title:
+                getTranslated("starredMessages"), leading: staredMsgIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
+                NavUtils.toNamed(Routes.starredMessages);
+              }),
+              SettingListItem(title:
+                  getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+                  NavUtils.toNamed(Routes.notification)),
+              SettingListItem(title:
+                  getTranslated("blockedContacts"), leading: blockedIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+                  NavUtils.toNamed(Routes.blockedList)),
+              SettingListItem(title:
+                  getTranslated("appLock"), leading: lockIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+                  NavUtils.toNamed(Routes.appLock)),
+              SettingListItem(title:
+                  getTranslated("aboutAndHelp"),leading:  aboutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+                  NavUtils.to(const AboutAndHelpView())),
+              SettingListItem(title:
+                  getTranslated("connectionLabel"), leading: connectionIcon, trailing: toggleOffIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {}),
+              SettingListItem(title:
+                  getTranslated("deleteMyAccount"), leading: delete, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
+                NavUtils.toNamed(Routes.deleteAccount);
+              }),
+              SettingListItem(title:
+                  getTranslated("logout"), leading: logoutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
+                DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+                    message:
+                    getTranslated("logoutMessage"),
+                    actions: [
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                          onPressed: () {
+                            NavUtils.back();
+                          },
+                          child: Text(getTranslated("no").toUpperCase(), )),
+                      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                          onPressed: () {
+                            NavUtils.back();
+                            controller.logout();
+                          },
+                          child: Text(getTranslated("yes").toUpperCase(), ))
                     ]);
               }),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Obx(() {
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                              text: "Released On: ",
+                              style: const TextStyle(color: textColor),
+                              children: [
+                                TextSpan(
+                                    text: controller.releaseDate.value,
+                                    style: const TextStyle(color: textHintColor))
+                              ]),
+                        ),
+                        RichText(
+                          text: TextSpan(
+                              text: "Version ",
+                              style: const TextStyle(color: textColor),
+                              children: [
+                                TextSpan(
+                                    text: controller.version.value,
+                                    style: const TextStyle(color: textHintColor))
+                              ]),
+                        ),
+                      ]);
+                }),
+              )
+            ],
+          ),
         ),
       ),
     );

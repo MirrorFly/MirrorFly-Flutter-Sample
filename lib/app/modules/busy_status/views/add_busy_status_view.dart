@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../controllers/busy_status_controller.dart';
 
-class AddBusyStatusView extends GetView<BusyStatusController> {
-  const AddBusyStatusView({Key? key}) : super(key: key);
+class AddBusyStatusView extends NavViewStateful<BusyStatusController> {
+  const AddBusyStatusView(
+      {super.key, required String status, this.enableAppBar = true});
+  final bool enableAppBar;
+
+  @override
+BusyStatusController createController() => Get.put(BusyStatusController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Add Busy Status'),
+        title: Text(getTranslated("addBusyStatus")),
       ),
       body: PopScope(
         canPop: false,
@@ -25,7 +33,7 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
           if (controller.showEmoji.value) {
             controller.showEmoji(false);
           } else {
-            Get.back();
+            NavUtils.back();
           }
         },
         child: SafeArea(
@@ -102,16 +110,16 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                       if (controller.showEmoji.value) {
                         controller.showEmoji(false);
                       }
-                      Get.back();
+                      NavUtils.back();
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: MaterialStateColor.resolveWith(
+                        backgroundColor: WidgetStateColor.resolveWith(
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
-                    child: const Text(
-                      "CANCEL",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    child: Text(
+                      getTranslated("cancel").toUpperCase(),
+                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),
@@ -125,16 +133,16 @@ class AddBusyStatusView extends GetView<BusyStatusController> {
                       if (controller.showEmoji.value) {
                         controller.showEmoji(false);
                       }
-                      controller.validateAndFinish();
+                      controller.validateAndFinish(context);
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: MaterialStateColor.resolveWith(
+                        backgroundColor: WidgetStateColor.resolveWith(
                                 (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
-                    child: const Text(
-                      "OK",
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    child: Text(
+                      getTranslated("ok").toUpperCase(),
+                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),

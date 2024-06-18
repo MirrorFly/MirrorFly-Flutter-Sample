@@ -1,12 +1,17 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../data/utils.dart';
 import '../controllers/camera_pick_controller.dart';
 
-class CameraPickView extends GetView<CameraPickController> {
+class CameraPickView extends NavViewStateful<CameraPickController> {
   const CameraPickView({Key? key}) : super(key: key);
+
+  @override
+CameraPickController createController() => Get.put(CameraPickController());
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,7 @@ class CameraPickView extends GetView<CameraPickController> {
                     icon: const Icon(Icons.clear,
                         color: Colors.white),
                     onPressed: () {
-                      Get.back();
+                      NavUtils.back();
                     },
                   ),
                   Expanded(
@@ -61,7 +66,7 @@ class CameraPickView extends GetView<CameraPickController> {
               Positioned(
                 bottom: 0,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: NavUtils.size.width,
                   color: Colors.transparent,
                   padding: const EdgeInsets.only(top: 5, bottom: 5),
                   child: Column(
@@ -124,9 +129,9 @@ class CameraPickView extends GetView<CameraPickController> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text(
-                        "Hold for Video, tap for photo",
-                        style: TextStyle(color: Colors.white),
+                      Text(
+                        getTranslated("holdToRecord"),
+                        style: const TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(

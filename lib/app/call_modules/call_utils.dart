@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../common/constants.dart';
-import '../data/apputils.dart';
+import '../data/utils.dart';
 
 class CallUtils {
   static Future<String> getCallersName(List<String?> callUsers,[bool addYou = false]) async {
@@ -16,7 +17,7 @@ class CallUtils {
     }
     var membersName = StringBuffer();
     if(addYou) {
-      membersName.write(callUsers.length <= 1 ? "You and " : "You, ");
+      membersName.write(callUsers.length <= 1 ? "${getTranslated("youAndOtherUsersName")} " : "${getTranslated("you")}, ");
     }
     var isMaxMemberNameNotReached = true;
     var spaceAvailable = true;
@@ -59,7 +60,7 @@ class CallUtils {
 
   static Future<String> getNameOfJid(String jid) async {
     if (jid == SessionManagement.getUserJID()) {
-      return "You";
+      return getTranslated("you");
     }
     var profile = await getProfileDetails(jid);
     return profile.getName();

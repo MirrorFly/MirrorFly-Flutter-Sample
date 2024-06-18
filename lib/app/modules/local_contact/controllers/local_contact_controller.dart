@@ -2,7 +2,10 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/local_contact_model.dart';
@@ -61,7 +64,7 @@ class LocalContactController extends GetxController {
     //   contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     // }
 
-    Get.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
+    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
 
   }
 
@@ -80,7 +83,7 @@ class LocalContactController extends GetxController {
       contactsSelected.remove(localContact);
     }else {
       if(contactsSelected.length == 5){
-        toToast("Can't share more than 5 contacts");
+        toToast(getTranslated("cantShare5More"));
         return;
       }
       localContact.isSelected = true;

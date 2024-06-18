@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,11 +14,13 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
 import 'package:otp_text_field/otp_field.dart';
 
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
+import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import '../../../routes/app_pages.dart';
+import '../../../routes/route_settings.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -52,11 +54,11 @@ class LoginController extends GetxController {
   // void registerUser(BuildContext context) {
 
   showLoading() {
-    Helper.showLoading(message: "Please Wait...");
+    DialogUtils.showLoading(message: getTranslated("pleaseWait"),dialogStyle: AppStyleConfig.dialogStyle);
   }
 
   hideLoading() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   void startTimer() {
@@ -93,13 +95,13 @@ class LoginController extends GetxController {
 
   Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
-      toToast("Please Enter Mobile Number");
+      toToast(getTranslated("plsEnterMobileNumber"));
     } else {
       if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
         // phoneAuth();
         registerAccount();
       }else{
-        toToast("Please Enter Valid Mobile Number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
       }
     }
   }
@@ -126,8 +128,8 @@ class LoginController extends GetxController {
     Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
-        Helper.hideLoading();
-        Get.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        DialogUtils.hideLoading();
+        NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -153,7 +155,7 @@ class LoginController extends GetxController {
             LogMessage.d("verificationFailed", e.toString());
             LogMessage.d("verificationFailed", e.message!);
             LogMessage.d("verificationFailed", e.code);
-            toToast("Please Enter Valid Mobile Number");
+            toToast(getTranslated("plsEnterValidMobileNumber"));
             hideLoading();
           },
           codeSent: (String verificationId, int? resendToken) {
@@ -166,12 +168,12 @@ class LoginController extends GetxController {
 
             if (verificationId.isNotEmpty) {
               hideLoading();
-              Get.toNamed(Routes.otp)?.then((value) {
+              NavUtils.toNamed(Routes.otp)?.then((value) {
                 //Change Number
                 if (value != null) {
                   LogMessage.d("change number", "initiated");
                 } else {
-                  Get.back();
+                  NavUtils.back();
                 }
               });
             }
@@ -184,7 +186,7 @@ class LoginController extends GetxController {
         );
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -202,10 +204,10 @@ class LoginController extends GetxController {
         debugPrint("smsCode $smsCode");
         signIn(credential);
       } else {
-        toToast("InValid OTP");
+        toToast(getTranslated("inValidOTP"));
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -237,12 +239,12 @@ class LoginController extends GetxController {
         LogMessage.d("sign in ", value.toString());
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
-        toToast("Invalid OTP");
+        toToast(getTranslated("inValidOTP"));
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
       LogMessage.d("sign in error", e.toString());
-      toToast("Enter Valid Otp");
+      toToast(getTranslated("enterValidOTP"));
       hideLoading();
     }
   }
@@ -278,7 +280,7 @@ class LoginController extends GetxController {
         hideLoading();
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -301,7 +303,7 @@ class LoginController extends GetxController {
         navigateToUserRegisterMethod(deviceToken, firebaseToken);
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // navigateToUserRegisterMethod(deviceToken, firebaseToken);
   }
@@ -318,11 +320,11 @@ class LoginController extends GetxController {
   registerAccount() async {
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
-        toToast("Mobile number too short");
+        toToast(getTranslated("mobileNumberTooShort"));
         return;
       }
       if (mobileNumber.text.length < 10) {
-        toToast("Please enter valid mobile number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
         return;
       }
       if (!(await AppPermission.askNotificationPermission())) {
@@ -362,10 +364,10 @@ class LoginController extends GetxController {
                 hideLoading();
                 if (response.exception?.code == "403") {
                   debugPrint("issue 403 ===> ${response.errorMessage }");
-                  Get.offAllNamed(Routes.adminBlocked);
+                  NavUtils.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
                   debugPrint("issue 405 ===> ${response.errorMessage }");
-                  sessionExpiredDialogShow(Constants.maximumLoginReached);
+                  sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
                   debugPrint("issue else ===> ${response.errorMessage }");
@@ -374,10 +376,10 @@ class LoginController extends GetxController {
               }
             });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // } else {
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
   }
 
@@ -385,7 +387,7 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       Mirrorfly.enableDisableArchivedSettings(enable: true,flyCallBack: (_){});
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -397,19 +399,19 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deviceConfirmation"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             gotoLogin();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             registerAccount();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -419,24 +421,24 @@ class LoginController extends GetxController {
     verifyVisible(false);
     LogMessage.d("sessionExpiredDialogShow", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: message.toString(), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: message.toString(), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("continue"), )),
     ]);
   }
 
   gotoLogin() {
-    Get.offAllNamed(Routes.login);
+    NavUtils.offAllNamed(Routes.login);
   }
 }

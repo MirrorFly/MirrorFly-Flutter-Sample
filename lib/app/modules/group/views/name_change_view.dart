@@ -2,20 +2,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 
-class NameChangeView extends GetView<GroupInfoController> {
+class NameChangeView extends NavViewStateful<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
+
+  @override
+GroupInfoController createController() => Get.put(GroupInfoController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Enter New Name'),
+        title: Text(getTranslated("enterNewName")),
       ),
       body: PopScope(
         canPop: false,
@@ -81,10 +87,10 @@ class NameChangeView extends GetView<GroupInfoController> {
                 child: Row(children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () => Get.back(),
-                      child: const Text(
-                        "CANCEL",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      onPressed: () => NavUtils.back(),
+                      child: Text(
+                        getTranslated("cancel").toUpperCase(),
+                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -96,15 +102,15 @@ class NameChangeView extends GetView<GroupInfoController> {
                     child: TextButton(
                       onPressed: () {
                         if(controller.nameController.text.trim().isNotEmpty) {
-                          Get.back(result: controller.nameController.text
+                          NavUtils.back(result: controller.nameController.text
                               .trim().toString());
                         }else{
-                          toToast("Name cannot be empty");
+                          toToast(getTranslated("nameCantEmpty"));
                         }
                       },
-                      child: const Text(
-                        "OK",
-                        style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      child: Text(
+                        getTranslated("ok").toUpperCase(),
+                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
                       ),
                     ),
                   ),

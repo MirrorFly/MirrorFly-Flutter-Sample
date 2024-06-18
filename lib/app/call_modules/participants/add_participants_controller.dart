@@ -3,15 +3,17 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../app_style_config.dart';
+import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
-import '../../data/apputils.dart';
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
   var callList = Get.find<CallController>().callList; //List<CallUserList>.empty(growable: true).obs;
@@ -33,6 +35,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   @override
   Future<void> onInit() async {
     super.onInit();
+    groupId(await Mirrorfly.getCallGroupJid());
     tabController = TabController(length: 2, vsync: this);
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     // callList = Get.find<CallController>().callList;
@@ -68,7 +71,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         isPageLoading(true);
         fetchUsers(false);
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     } else {
       getGroupMembers();
@@ -173,29 +176,29 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.progressLoading();
+              NavUtils.back();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if (response.isSuccess && response.hasData) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES")),
+          child: Text(getTranslated("yes").toUpperCase())),
     ]);
   }
 
@@ -213,16 +216,16 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             selectedUsersJIDList.add(item.jid!);
             groupCallMembersCount(groupCallMembersCount.value + 1);
           } else {
-            toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+            toToast(getTranslated("youCanSelectForCall").replaceFirst("%d", (groupCallMembersCount.value).toString()));
           }
         } else {
-          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+          toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
         //item.isSelected = true;
       }
       usersList.refresh();
     } else {
-      toToast("User Already Added");
+      toToast(getTranslated("userAlreadyAddedInCall"));
     }
   }
 
@@ -292,24 +295,24 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callList.length != getMaxCallUsersCount) {
       Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList,flyCallback: (FlyResponse response){
         LogMessage.d("inviteUsersToOngoingCall", response.toString());
         if(response.isSuccess){
-          Get.back();
+          NavUtils.back();
         }else{
           toToast(getErrorDetails(response));
         }
       });
     } else {
-      toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+      toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
     }
   }
 
@@ -539,7 +542,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         toToast(error.toString());
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -549,7 +552,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         LogMessage.d("getGroupMembersList", response.toString());
         if (response.isSuccess && response.hasData) {
           var list = profileFromJson(response.data);
-          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
+          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid?.value));
           var filteredList = getFilteredList(callConnectedUserList, list);
           mainUsersList(filteredList);
           usersList(filteredList);

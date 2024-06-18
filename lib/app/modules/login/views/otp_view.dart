@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/modules/login/controllers/login_controller.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
 import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 
-class OtpView extends GetView<LoginController> {
+class OtpView extends NavViewStateful<LoginController> {
   const OtpView({Key? key}) : super(key: key);
+
+  @override
+LoginController createController() => Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,7 @@ class OtpView extends GetView<LoginController> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Verify'),
+          title: Text(getTranslated("verify")),
           centerTitle: true,
           automaticallyImplyLeading: false,
         ),
@@ -30,8 +36,7 @@ class OtpView extends GetView<LoginController> {
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(10.0),
-              height: MediaQuery
-                  .of(context)
+              height: NavUtils
                   .size
                   .height - 80,
               child: Column(
@@ -48,18 +53,18 @@ class OtpView extends GetView<LoginController> {
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           child: SvgPicture.asset(registerIcon),
                         ),
-                        const Text(
-                          'Verify OTP',
+                        Text(
+                          getTranslated("verifyOTP"),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w600),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
                           child: Text(
-                            'We have sent you the SMS. To complete the registration enter the 6 digit verification code below',
+                            getTranslated("otpMessage"),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w300,
                                 color: textColor),
@@ -76,10 +81,7 @@ class OtpView extends GetView<LoginController> {
                           OTPTextField(
                               controller: controller.otpController,
                               length: 6,
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
+                              width: NavUtils.size.width,
                               textFieldAlignment: MainAxisAlignment.center,
                               margin: const EdgeInsets.all(4),
                               fieldWidth: 40,
@@ -108,8 +110,8 @@ class OtpView extends GetView<LoginController> {
                                 onPressed: () {
                                   controller.verifyOTP();
                                 },
-                                child: const Text(
-                                  'Verify OTP',style: TextStyle(color: Colors.white),
+                                child: Text(
+                                  getTranslated("verifyOTP"),style: const TextStyle(color: Colors.white),
                                 ),
                               ),
                             );
@@ -126,11 +128,11 @@ class OtpView extends GetView<LoginController> {
                                   onTap: //controller.timeout.value ? () {
                               (){controller.gotoLogin();},
                                   //} : controller.gotoLogin(),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      'Change Number',
-                                      style: TextStyle(
+                                      getTranslated("changeNumber"),
+                                      style: const TextStyle(
                                           color: Colors.red,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
@@ -151,7 +153,7 @@ class OtpView extends GetView<LoginController> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      controller.timeout.value ? 'Resend OTP' : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
+                                      controller.timeout.value ? getTranslated("resendOTP") : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
                                       style: const TextStyle(
                                           color: textHintColor,
                                           fontSize: 14,

@@ -4,15 +4,18 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
-import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
-import '../../../routes/app_pages.dart';
+import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
+import '../../../routes/route_settings.dart';
 
 class ContactController extends FullLifeCycleController with FullLifeCycleMixin {
   ScrollController scrollController = ScrollController();
@@ -28,40 +31,27 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
   var _searchText = "";
   var _first = true;
 
-  var isForward = false.obs;
-  var isMakeCall = false.obs;
-  var callType = "".obs;
-  var isCreateGroup = false.obs;
-  var groupJid = "".obs;
 
-  var topicId = "";
+
   var getMaxCallUsersCount = 8;
+  ContactListArguments get arguments => NavUtils.arguments as ContactListArguments;
+
+  @override
+  void dispose(){
+    super.dispose();
+    Get.delete<ContactController>();
+  }
 
   @override
   Future<void> onInit() async {
     super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
-    debugPrint("Get.parameters['topicId'] ${Get.parameters['topicId']}");
-    if (Get.parameters['topicId'] != null) {
-      topicId = Get.parameters['topicId'].toString();
-    }
-    isMakeCall(Get.arguments["is_make_call"]);
-    callType(Get.arguments["call_type"]);
-    isForward(Get.arguments["forward"]);
-    if (isForward.value) {
-      isCreateGroup(false);
-      forwardMessageIds.addAll(Get.arguments["messageIds"]);
-    } else {
-      isCreateGroup(Get.arguments["group"]);
-      groupJid(Get.arguments["groupJid"]);
-    }
     scrollController.addListener(_scrollListener);
-    //searchQuery.addListener(_searchListener);
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       isPageLoading(true);
       fetchUsers(false);
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     //Mirrorfly.syncContacts(true);
     //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
@@ -105,16 +95,12 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     }
   }
 
-  bool get isCreateVisible => isCreateGroup.value;
-
   bool get isSearchVisible => !_search.value;
 
   bool get isClearVisible =>
       _search.value && lastInputValue.value.isNotEmpty /*&& !isForward.value && isCreateGroup.value*/;
 
-  bool get isMenuVisible => !_search.value && !isForward.value;
-
-  bool get isCheckBoxVisible => isCreateGroup.value || isForward.value || isMakeCall.value;
+  bool get isMenuVisible => !_search.value /*&& !isForward.value*/;
 
   _scrollListener() {
     if (scrollController.hasClients) {
@@ -199,9 +185,9 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           var item = userListFromJson(data);
           var list = <ProfileDetails>[];
 
-          if (groupJid.value.checkNull().isNotEmpty) {
+          if (arguments.groupJid.isNotEmpty) {
             await Future.forEach(item.data!, (it) async {
-              await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(), userJid: it.jid.checkNull()).then((value) {
+              await Mirrorfly.isMemberOfGroup(groupJid: arguments.groupJid, userJid: it.jid.checkNull()).then((value) {
                 LogMessage.d("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
@@ -389,14 +375,14 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         toToast(error.toString());
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   Future<List<ProfileDetails>> removeGroupMembers(List<ProfileDetails> items) async {
     var list = <ProfileDetails>[];
     for (var it in items) {
-      var value = await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(),userJid: it.jid.checkNull());
+      var value = await Mirrorfly.isMemberOfGroup(groupJid: arguments.groupJid,userJid: it.jid.checkNull());
       LogMessage.d("item", value.toString());
       if (value == null || !value) {
         list.add(it);
@@ -424,22 +410,23 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     if (await AppUtils.isNetConnected()) {
       Mirrorfly.forwardMessagesToMultipleUsers(messageIds: forwardMessageIds,userList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
         debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-        Get.back(result: selectedUsersList[0]);
+        NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: selectedUsersList[0].jid.checkNull()),predicate: (Route<dynamic> route)=>route.settings.name!.startsWith(Routes.dashboard));
       });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   onListItemPressed(ProfileDetails item) {
-    if (isForward.value || isCreateGroup.value) {
+    if (arguments.forGroup) {
       if (item.isBlocked.checkNull()) {
         unBlock(item);
       } else {
         contactSelected(item);
       }
     } else {
-      if (isMakeCall.value) {
+      LogMessage.d("arguments.forMakeCall", arguments.forMakeCall);
+      if (arguments.forMakeCall) {
         if (item.isBlocked.checkNull()) {
           unBlock(item);
         } else {
@@ -447,74 +434,63 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         }
       } else {
         LogMessage.d("Contact Profile", item.toJson().toString());
-        Get.toNamed(Routes.chat, arguments: item, parameters: {"topicId": topicId});
+        NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: item.jid.checkNull(),topicId: arguments.topicId));
       }
     }
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
-            if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.progressLoading();
-              Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
-                if (response.isSuccess) {
-                  toToast("${getName(item)} has been Unblocked");
-                  userUpdatedHisProfile(item.jid.checkNull());
-                }
-              });
-            } else {
-              toToast(Constants.noInternetConnection);
-            }
+            AppUtils.isNetConnected().then((isConnected) {
+              if (isConnected) {
+                NavUtils.back();
+                DialogUtils.progressLoading();
+                Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
+                  DialogUtils.hideLoading();
+                  if (response.isSuccess) {
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
+                    userUpdatedHisProfile(item.jid.checkNull());
+                  }
+                });
+              } else {
+              toToast(getTranslated("noInternetConnection"));
+              }
+            });
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
-  backToCreateGroup() async {
-    if (await AppUtils.isNetConnected()) {
-      /*if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
-        Get.back(result: selectedUsersJIDList);
-      } else {
-        toToast("Add at least two contacts");
-      }*/
-      if (groupJid.value.isEmpty) {
-        if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
-          Get.back(result: selectedUsersJIDList);
+  backToCreateGroup() {
+    searchFocus.unfocus();
+    AppUtils.isNetConnected().then((isConnected) {
+      if (isConnected) {
+        if (arguments.groupJid.isEmpty) {
+          if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
+            // Navigator.pop(buildContext, selectedUsersJIDList);
+            NavUtils.back(result: selectedUsersJIDList);
+          } else {
+            toToast(getTranslated("addAtLeastTwoContact"));
+          }
         } else {
-          toToast("Add at least two contacts");
+          if (selectedUsersJIDList.isNotEmpty) {
+            // Navigator.pop(buildContext, selectedUsersJIDList);
+            NavUtils.back(result: selectedUsersJIDList);
+          } else {
+            toToast(getTranslated("selectAnyContact"));
+          }
         }
       } else {
-        if (selectedUsersJIDList.isNotEmpty) {
-          Get.back(result: selectedUsersJIDList);
-        } else {
-          toToast("Select any contacts");
-        }
+        toToast(getTranslated("noInternetConnection"));
       }
-    } else {
-      toToast(Constants.noInternetConnection);
-    }
-    /*if(groupJid.value.isEmpty) {
-      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
-        Get.back(result: selectedUsersJIDList);
-      } else {
-        toToast("Add at least two contacts");
-      }
-    }else{
-      if (selectedUsersJIDList.length >= Constants.minGroupMembers) {
-        Get.back(result: selectedUsersJIDList);
-      } else {
-        toToast("Add at least two contacts");
-      }
-    }*/
+    });
   }
 
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -526,7 +502,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
       if (await AppUtils.isNetConnected()) {
         if (!await Mirrorfly.contactSyncStateValue()) {
           var contactPermissionHandle = await AppPermission.checkPermission(
-              Permission.contacts, contactPermission, Constants.contactSyncPermission);
+              Permission.contacts, contactPermission, getTranslated("contactSyncPermissionContent"));
           if (contactPermissionHandle) {
             progressSpinner(true);
             Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  }).then((value) {
@@ -552,7 +528,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
         }
       } else {
         if (isNetworkToastNeeded) {
-          toToast(Constants.noInternetConnection);
+          toToast(getTranslated("noInternetConnection"));
         }
         // viewModel.onContactSyncFinished(false);
       }
@@ -605,18 +581,17 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
-        context: Get.context,
         // chatItem: chatItem,
         chatTap: () {
-          Get.back();
+          NavUtils.back();
           onListItemPressed(profile.value);
         },
         infoTap: () {
-          Get.back();
+          NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
-            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value);
           } else {
-            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.chatInfo, arguments:ChatInfoArguments(chatJid:(profile.value.jid.checkNull())));
           }
         },
         profile: profile,
@@ -636,7 +611,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
   var groupCallMembersCount = 1.obs; //initially its 1 because me also added into call
   void validateForCall(ProfileDetails item) {
-    if (isMakeCall.value) {
+    if (arguments.forMakeCall) {
       if (selectedUsersJIDList.contains(item.jid)) {
         selectedUsersList.remove(item);
         selectedUsersJIDList.remove(item.jid);
@@ -648,7 +623,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
           selectedUsersJIDList.add(item.jid!);
           groupCallMembersCount(groupCallMembersCount.value + 1);
         } else {
-          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+          toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
         //item.isSelected = true;
       }
@@ -664,54 +639,62 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     var isGroupCall = selectedUsersJIDList.length > 1;
     if ((isGroupCall && !availableFeatures.value.isGroupCallAvailable.checkNull()) ||
         (isOneToOneCall && !availableFeatures.value.isOneToOneCallAvailable.checkNull())) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
-    if (callType.value == CallType.audio) {
+    if (arguments.callType == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (isOneToOneCall) {
           Mirrorfly.makeVoiceCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.audio
               });
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         } else {
           Mirrorfly.makeGroupVoiceCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView,
+              NavUtils.toNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         }
       }
-    } else if (callType.value == CallType.video) {
+    } else if (arguments.callType == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (isOneToOneCall) {
           Mirrorfly.makeVideoCall(toUserJid: selectedUsersJIDList[0], flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [selectedUsersJIDList[0]],
                 "callType": CallType.video
               });
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         } else {
           Mirrorfly.makeGroupVideoCall(toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
             if (response.isSuccess) {
-              Get.offNamed(Routes.outGoingCallView,
+              NavUtils.toNamed(Routes.outGoingCallView,
                   arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
+            }else{
+              DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getErrorDetails(response));
             }
           });
         }

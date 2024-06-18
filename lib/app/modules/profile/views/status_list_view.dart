@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import 'add_status_view.dart';
 
-class StatusListView extends GetView<StatusListController> {
+class StatusListView extends NavViewStateful<StatusListController> {
   const StatusListView({Key? key}) : super(key: key);
+
+  @override
+StatusListController createController() => Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Status'),
+        title: Text(getTranslated("status")),
       ),
       body: PopScope(
         canPop: false,
@@ -33,9 +38,9 @@ class StatusListView extends GetView<StatusListController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Your current status',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              Text(
+                getTranslated("yourCurrentStatus"),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(
                 () => ListTile(
@@ -51,7 +56,7 @@ class StatusListView extends GetView<StatusListController> {
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    Get.to(const AddStatusView(), arguments: {
+                    NavUtils.to(const AddStatusView(), arguments: {
                       "status": controller.selectedStatus.value
                     })?.then((value) {
                       if (value != null) {
@@ -65,9 +70,9 @@ class StatusListView extends GetView<StatusListController> {
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                'Select Your new status',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              Text(
+                getTranslated("selectNewStatus"),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(() => controller.statusList.isNotEmpty
                   ? Expanded(

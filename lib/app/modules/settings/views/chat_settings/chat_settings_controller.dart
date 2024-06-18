@@ -7,10 +7,11 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 
-import '../../../../data/apputils.dart';
-import '../../../../data/helper.dart';
+import '../../../../app_style_config.dart';
+import '../../../../common/app_localizations.dart';
+import '../../../../data/utils.dart';
 import '../../../../data/permissions.dart';
-import '../../../../routes/app_pages.dart';
+import '../../../../routes/route_settings.dart';
 
 class ChatSettingsController extends GetxController {
 
@@ -60,7 +61,7 @@ class ChatSettingsController extends GetxController {
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -79,12 +80,12 @@ class ChatSettingsController extends GetxController {
       SessionManagement.setGoogleTranslationEnable(enable);
       _translationEnabled(enable);
     /*}else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }*/
   }
 
   void chooseLanguage(){
-    Get.toNamed(Routes.languages,arguments: translationLanguage)?.then((value){
+    NavUtils.toNamed(Routes.languages,arguments: translationLanguage)?.then((value){
       if(value!=null){
         var language = value as String;
         _translationLanguage(language);
@@ -93,18 +94,18 @@ class ChatSettingsController extends GetxController {
   }
 
   void clearAllConversation(){
-    Helper.showAlert(message: 'Are you sure want to clear your conversation history?',actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouClearAllChat"),actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             clearAllConv();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -113,13 +114,13 @@ class ChatSettingsController extends GetxController {
      Mirrorfly.clearAllConversation(flyCallBack: (FlyResponse response) {
         if(response.isSuccess){
           clearAllConvRecentChatUI();
-          toToast('All your conversation are cleared');
+          toToast(getTranslated("allChatsCleared"));
         }else{
-          toToast('Server error, kindly try again later');
+          toToast(getTranslated("serverError"));
         }
      });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -132,7 +133,7 @@ class ChatSettingsController extends GetxController {
         }
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

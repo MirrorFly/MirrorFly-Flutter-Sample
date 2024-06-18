@@ -1,11 +1,10 @@
 import 'dart:io';
 
-// import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -13,8 +12,11 @@ import '../../../common/constants.dart';
 import '../../../widgets/video_player_widget.dart';
 import '../controllers/view_all_media_preview_controller.dart';
 
-class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
+class ViewAllMediaPreviewView extends NavViewStateful<ViewAllMediaPreviewController> {
   const ViewAllMediaPreviewView({Key? key}) : super(key: key);
+
+  @override
+ViewAllMediaPreviewController createController() => Get.put(ViewAllMediaPreviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
           controller: controller.pageViewController,
           onPageChanged: controller.onMediaPreviewPageChanged,
           children: [
-            ...controller.previewMediaList.where((p0) => p0.isMediaMessage() && checkFile(p0.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())).map((data) {
+            ...controller.previewMediaList.where((p0) => p0.isMediaMessage() && MediaUtils.isMediaExists(p0.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())).map((data) {
               /// show image
               if (data.messageType.toLowerCase() == 'image') {
                 return Center(
@@ -94,7 +96,7 @@ class ViewAllMediaPreviewView extends GetView<ViewAllMediaPreviewController> {
                       SvgPicture.asset(data.mediaChatMessage!.isAudioRecorded.checkNull() ? audioMic1 : headsetImg,height: 150,width: 150,),
                       FloatingActionButton.small(
                         onPressed: (){
-                          openDocument(data.mediaChatMessage!.mediaLocalStoragePath.value.checkNull());
+                          AppUtils.openDocument(data.mediaChatMessage!.mediaLocalStoragePath.value.checkNull());
                         },
                         backgroundColor: Colors.white,
                         child: const Icon(

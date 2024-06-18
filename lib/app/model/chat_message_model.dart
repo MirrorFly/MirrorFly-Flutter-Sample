@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
 
 List<ChatMessageModel> chatMessageModelFromJson(String str) =>
