@@ -41,7 +41,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                             snap: false,
                             pinned: true,
                             leading:IconButton(
-                              icon: const Icon(Icons.arrow_back, color: iconColor),
+                              icon:  Icon(Icons.arrow_back, color: AppStyleConfig.addParticipantsPageStyle.appBarTheme.iconTheme?.color),
                               onPressed: () {
                                 if(controller.isSearching.value) {
                                   controller.getBackFromSearch();
@@ -179,7 +179,7 @@ AddParticipantsController createController() => Get.put(AddParticipantsControlle
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Obx(() {
                             return controller.callList[index].isAudioMuted.value
-                                ? CircleAvatar(backgroundColor: style.actionStyle.inactiveIconColor,//AppColors.participantUnMuteColor,
+                                ? CircleAvatar(backgroundColor: style.actionStyle.inactiveBgColor,//AppColors.participantUnMuteColor,
                                 child: SvgPicture.asset(participantMute,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),))
                                 : CircleAvatar(backgroundColor: style.actionStyle.activeBgColor,//Colors.transparent,
                                 child: SvgPicture.asset(participantUnMute,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),));

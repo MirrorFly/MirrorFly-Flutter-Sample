@@ -23,9 +23,9 @@ class OutGoingCallView extends NavViewStateful<OutgoingCallController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        decoration: AppStyleConfig.outgoingCallPageStyle.backgroundDecoration,
+    return Container(
+      decoration: AppStyleConfig.outgoingCallPageStyle.backgroundDecoration,
+      child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,//AppStyleConfig.outgoingCallPageStyle.scaffoldBackgroundColor,//AppColors.callerBackground,
           body: InkWell(

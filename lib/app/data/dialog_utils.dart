@@ -168,13 +168,13 @@ class DialogUtils {
 
   // Method to hide loading dialog
   static void hideLoading() {
-    if (isDialogOpen(buildContext)) {
+    if (isDialogOpen()) {
       Navigator.pop(buildContext);
     }
   }
 
   // Method to check if any dialog is open
-  static bool isDialogOpen(BuildContext context) {
+  static bool isDialogOpen() {
     return NavUtils.currentRoute == '/dialog';
   }
 

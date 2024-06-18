@@ -741,8 +741,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void changedToAudioCall() {
-    if(Get.isDialogOpen ?? false){
-      Navigator.of(Get.overlayContext!).pop();
+    if(DialogUtils.isDialogOpen()){
+      // Navigator.of(Get.overlayContext!).pop();
+      NavUtils.back();
     }
     callType(CallType.audio);
 
@@ -759,7 +760,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // }
   }
   void closeDialog(){
-    if (Get.isDialogOpen!) {
+    if (DialogUtils.isDialogOpen()) {
       NavUtils.back();
     }
   }
@@ -782,7 +783,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 child: Text(getTranslated("cancel").toUpperCase(), )),
             TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
-                  if(callType.value == CallType.audio && isOneToOneCall && NavUtils.currentRoute == Routes.onGoingCallView) {
+                  if(callType.value == CallType.audio && isOneToOneCall && NavUtils.previousRoute == Routes.onGoingCallView) {//currentRoute is Dialog so checking previousRoute
                     outGoingRequest = true;
                     Mirrorfly.requestVideoCallSwitch().then((value) {
                       if (value) {
@@ -897,8 +898,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void videoCallConversionAccepted() {
-    if(Get.isDialogOpen ?? false){
-      Navigator.of(Get.overlayContext!).pop();
+    if(DialogUtils.isDialogOpen()){
+      // Navigator.of(Get.overlayContext!).pop();
+      NavUtils.back();
     }
     inComingRequest = false;
     outGoingRequest = false;
