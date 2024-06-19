@@ -54,8 +54,9 @@ class SettingsView extends NavView<SettingsController> {
               SettingListItem(title:
                   getTranslated("aboutAndHelp"),leading:  aboutIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.to(const AboutAndHelpView())),
-              SettingListItem(title:
-                  getTranslated("connectionLabel"), leading: connectionIcon, trailing: toggleOffIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {}),
+              /*Commented out, because this feature is NA*/
+              // SettingListItem(title:
+              //     getTranslated("connectionLabel"), leading: connectionIcon, trailing: toggleOffIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {}),
               SettingListItem(title:
                   getTranslated("deleteMyAccount"), leading: delete, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.deleteAccount);
