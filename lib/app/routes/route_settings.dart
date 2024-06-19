@@ -9,6 +9,7 @@ import '../call_modules/outgoing_call/outgoing_call_view.dart';
 import '../call_modules/participants/participants_view.dart';
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/busy_status/views/add_busy_status_view.dart';
 import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/views/chat_search_view.dart';
@@ -146,6 +147,9 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const ContactSyncPage(),settings: settings);
     case Routes.viewAllMediaPreview:
       return MaterialPageRoute(builder: (_) => const ViewAllMediaPreviewView(),settings: settings);
+    case Routes.addBusyStatus:
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
 
     //calls
     case Routes.outGoingCallView:

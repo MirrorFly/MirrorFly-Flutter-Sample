@@ -11,12 +11,18 @@ import '../controllers/busy_status_controller.dart';
 
 class AddBusyStatusView extends NavViewStateful<BusyStatusController> {
   const AddBusyStatusView(
-      {super.key, required String status, this.enableAppBar = true});
+      {super.key, required this.status, this.enableAppBar = true});
   final bool enableAppBar;
+  final String? status;
 
   @override
 BusyStatusController createController() => Get.put(BusyStatusController());
 
+  @override
+  void onInit() {
+    controller.addStatusController.text = status ?? "";
+    super.onInit();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

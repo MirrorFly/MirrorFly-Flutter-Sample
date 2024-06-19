@@ -6,8 +6,8 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 import '../controllers/busy_status_controller.dart';
-import 'add_busy_status_view.dart';
 
 class BusyStatusView extends StatefulWidget {
   const BusyStatusView({super.key, this.status, this.enableAppBar = true});
@@ -40,6 +40,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(getTranslated("editBusyStatus")),
+          titleSpacing: 0.0,
         ),
         body: SafeArea(
           child: Padding(
@@ -74,7 +75,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                         onTap: () {
                           controller.addStatusController.text = controller.busyStatus.value;
                           controller.onChanged();
-                          NavUtils.to(AddBusyStatusView(status: controller.selectedStatus.value,),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                          NavUtils.toNamed(Routes.addBusyStatus,arguments: {"status":controller.busyStatus.value})?.then((value){
                             if(value!=null){
                               controller.insertBusyStatus(value);
                             }
