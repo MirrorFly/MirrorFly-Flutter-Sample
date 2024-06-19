@@ -89,4 +89,18 @@ class NavUtils{
     return Navigator.push(currentContext, page);
   }
 
+  static isOverlayOpen(){
+    return _isDialogOpen() || isModalBottomSheetOpen();
+  }
+
+
+  static bool _isDialogOpen() {
+  return ModalRoute.of(currentContext) != null;
+  }
+
+  static bool isModalBottomSheetOpen() {
+    var currentRoute = ModalRoute.of(currentContext);
+    return currentRoute is ModalBottomSheetRoute;
+  }
+
 }
