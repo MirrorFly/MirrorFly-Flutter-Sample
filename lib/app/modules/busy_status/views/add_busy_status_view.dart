@@ -21,6 +21,7 @@ BusyStatusController createController() => Get.put(BusyStatusController());
   @override
   void onInit() {
     controller.addStatusController.text = status ?? "";
+    controller.count(139 - controller.addStatusController.text.characters.length);
     super.onInit();
   }
   @override
