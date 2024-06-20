@@ -87,7 +87,9 @@ class NavUtils{
     dynamic arguments,
     int? id,
   }){
-    return Navigator.push(currentContext, page);
+    return Navigator.push(currentContext, MaterialPageRoute<void>(
+      builder: (BuildContext context) => page,
+    ),);
   }
 
   static bool get isOverlayOpen => DialogUtils.isDialogOpen() || isModalBottomSheetOpen();

@@ -435,21 +435,25 @@ class ProfileController extends GetxController {
           imageFile: File(photo.path),
         ))?.then((value) {
           debugPrint("Profile Controller Got Image from Crop Image $value");
-          value as MemoryImage;
-          imageBytes = value.bytes;
-          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            if (from == Routes.login) {
-              debugPrint("Profile Controller from login");
-              imagePath(value.path);
-              changed(true);
-            } else {
-              debugPrint("Profile Controller not from login");
-              imagePath(value.path);
-              // changed(true);
-              updateProfileImage(value.path, update: false);
-            }
-          });
+          if (value != null) {
+            value as MemoryImage;
+            imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            writeImageTemp(value.bytes, name).then((value) {
+              if (from == Routes.login) {
+                debugPrint("Profile Controller from login");
+                imagePath(value.path);
+                changed(true);
+              } else {
+                debugPrint("Profile Controller not from login");
+                imagePath(value.path);
+                // changed(true);
+                updateProfileImage(value.path, update: false);
+              }
+            });
+          }
         });
       } else {
         // User canceled the Camera
