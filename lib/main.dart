@@ -234,7 +234,17 @@ String getInitialRoute() {
           return Routes.dashboard;
         }
       } else {
-        return Routes.profile;
+        // This condition handles the case where a new number logs in and is redirected to the Profile Page.
+        // If the app is closed before saving the profile, reopening the app would cause an error.
+        // This condition prevents that error from occurring.
+        if (SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
+          return Routes.profile;
+        }else{
+          SessionManagement.clear().then((value) {
+
+          });
+          return Routes.login;
+        }
       }
     } else {
       return Routes.login;
