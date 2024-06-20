@@ -13,7 +13,7 @@ class SetPinView extends NavViewStateful<AppLockController> {
   const SetPinView({Key? key}) : super(key: key);
 
   @override
-AppLockController createController() => Get.put(AppLockController());
+AppLockController createController({String? tag}) => Get.put(AppLockController());
 
   @override
   Widget build(BuildContext context) {

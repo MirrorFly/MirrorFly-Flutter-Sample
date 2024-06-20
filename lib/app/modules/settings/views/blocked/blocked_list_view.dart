@@ -12,7 +12,7 @@ class BlockedListView extends NavViewStateful<BlockedListController> {
   const BlockedListView({Key? key}) : super(key: key);
 
   @override
-BlockedListController createController() => Get.put(BlockedListController());
+BlockedListController createController({String? tag}) => Get.put(BlockedListController());
 
   @override
   Widget build(BuildContext context) {

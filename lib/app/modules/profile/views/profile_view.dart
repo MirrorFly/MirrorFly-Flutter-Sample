@@ -18,7 +18,7 @@ import '../controllers/profile_controller.dart';
 class ProfileView extends NavViewStateful<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
   @override
-ProfileController createController() => Get.put(ProfileController());
+ProfileController createController({String? tag}) => Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {

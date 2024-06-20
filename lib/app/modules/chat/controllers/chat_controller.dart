@@ -75,6 +75,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   var calendar = DateTime.now();
   var profile_ = ProfileDetails().obs;
 
+  ChatController(this.arguments);
+
   ProfileDetails get profile => profile_.value;
   var base64img = ''.obs;
   var imagePath = ''.obs;
@@ -128,30 +130,30 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   //#metaData
   List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
-  late ChatViewArguments arguments;
+  final ChatViewArguments? arguments;
   @override
   Future<void> onInit() async {
-    arguments = NavUtils.arguments as ChatViewArguments;
+    // arguments = NavUtils.arguments as ChatViewArguments;
     // buildContext = context;
-    showChatDeliveryIndicator = arguments.showChatDeliveryIndicator;
+    showChatDeliveryIndicator = arguments!.showChatDeliveryIndicator;
 
     getAvailableFeatures();
 
-    if (arguments.topicId.isNotEmpty) {
-      topicId = arguments.topicId;
+    if (arguments!.topicId.isNotEmpty) {
+      topicId = arguments!.topicId;
       getTopicDetail();
     }
 
-    if (arguments.chatJid.isNotEmpty) {
-      nJid = arguments.chatJid;
-      debugPrint("parameter :${arguments.chatJid}");
+    if (arguments!.chatJid.isNotEmpty) {
+      nJid = arguments!.chatJid;
+      debugPrint("parameter :${arguments!.chatJid}");
     }
 
-    if (arguments.isFromStarred && arguments.messageId != null) {
+    if (arguments!.isFromStarred && arguments!.messageId != null) {
       // if (jid != null) {
       //   userJid = Get.parameters['userJid'] as String;
       // }
-      starredChatMessageId = arguments.messageId;
+      starredChatMessageId = arguments!.messageId;
     }
 
     await getProfileDetails(nJid).then((value) {
@@ -2996,7 +2998,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
     DialogUtils.bottomSheet(
       EditMessageScreen(chatItem: chatItem, chatController: this),
-      ignoreSafeArea: false,
+      ignoreSafeArea: true,
       isScrollControlled: true,
       enableDrag: false,
     );

@@ -16,7 +16,7 @@ class ViewAllMediaPreviewView extends NavViewStateful<ViewAllMediaPreviewControl
   const ViewAllMediaPreviewView({Key? key}) : super(key: key);
 
   @override
-ViewAllMediaPreviewController createController() => Get.put(ViewAllMediaPreviewController());
+ViewAllMediaPreviewController createController({String? tag}) => Get.put(ViewAllMediaPreviewController());
 
   @override
   Widget build(BuildContext context) {

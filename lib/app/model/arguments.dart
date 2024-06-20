@@ -13,7 +13,7 @@ class ChatViewArguments{
     this.messageId,
     this.isFromStarred = false,
     this.enableCalls = false,
-    this.showChatDeliveryIndicator = true});
+    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
 
   final String chatJid;
   final String topicId;
@@ -23,6 +23,7 @@ class ChatViewArguments{
   final bool enableCalls;
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;
+  final bool disableAppBar;
 }
 
 class ContactListArguments{

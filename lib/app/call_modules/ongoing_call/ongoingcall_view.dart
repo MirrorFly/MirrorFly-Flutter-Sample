@@ -18,7 +18,7 @@ class OnGoingCallView extends NavViewStateful<CallController> {
   const OnGoingCallView({super.key});
 
   @override
-CallController createController() => Get.put(CallController());
+CallController createController({String? tag}) => Get.put(CallController());
 
   @override
   Widget build(BuildContext context) {

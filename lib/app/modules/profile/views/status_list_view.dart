@@ -14,7 +14,7 @@ class StatusListView extends NavViewStateful<StatusListController> {
   const StatusListView({Key? key}) : super(key: key);
 
   @override
-StatusListController createController() => Get.put(StatusListController());
+StatusListController createController({String? tag}) => Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {

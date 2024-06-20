@@ -18,7 +18,7 @@ class ChatInfoView extends NavViewStateful<ChatInfoController> {
   const ChatInfoView({super.key});
 
   @override
-ChatInfoController createController() => Get.put(ChatInfoController());
+ChatInfoController createController({String? tag}) => Get.put(ChatInfoController());
 
 
   @override

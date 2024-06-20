@@ -14,7 +14,7 @@ class ChatSettingsView extends NavViewStateful<ChatSettingsController> {
   const ChatSettingsView({Key? key}) : super(key: key);
 
   @override
-ChatSettingsController createController() => Get.put(ChatSettingsController());
+ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsController());
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ class CameraPickView extends NavViewStateful<CameraPickController> {
   const CameraPickView({Key? key}) : super(key: key);
 
   @override
-CameraPickController createController() => Get.put(CameraPickController());
+CameraPickController createController({String? tag}) => Get.put(CameraPickController());
 
   @override
   Widget build(BuildContext context) {

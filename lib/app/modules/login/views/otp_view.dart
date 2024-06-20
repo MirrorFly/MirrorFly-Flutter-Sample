@@ -15,7 +15,7 @@ class OtpView extends NavViewStateful<LoginController> {
   const OtpView({Key? key}) : super(key: key);
 
   @override
-LoginController createController() => Get.put(LoginController());
+LoginController createController({String? tag}) => Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {

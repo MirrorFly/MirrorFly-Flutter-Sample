@@ -11,7 +11,7 @@ class DeleteAccountReasonView extends NavViewStateful<DeleteAccountReasonControl
   const DeleteAccountReasonView({Key? key}) : super(key: key);
 
   @override
-DeleteAccountReasonController createController() => Get.put(DeleteAccountReasonController());
+DeleteAccountReasonController createController({String? tag}) => Get.put(DeleteAccountReasonController());
 
   @override
   Widget build(BuildContext context) {

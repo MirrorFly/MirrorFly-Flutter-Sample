@@ -16,7 +16,7 @@ class AddBusyStatusView extends NavViewStateful<BusyStatusController> {
   final String? status;
 
   @override
-BusyStatusController createController() => Get.put(BusyStatusController());
+BusyStatusController createController({String? tag}) => Get.put(BusyStatusController());
 
   @override
   void onInit() {

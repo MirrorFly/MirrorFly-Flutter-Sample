@@ -10,7 +10,7 @@ class VideoPlayerView extends NavViewStateful<VideoPlayController> {
   const VideoPlayerView({Key? key}) : super(key: key);
 
   @override
-  VideoPlayController createController() => Get.put(VideoPlayController());
+  VideoPlayController createController({String? tag}) => Get.put(VideoPlayController());
 
   @override
   Widget build(BuildContext context) {

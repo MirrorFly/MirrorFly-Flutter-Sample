@@ -14,7 +14,7 @@ class NameChangeView extends NavViewStateful<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
 
   @override
-GroupInfoController createController() => Get.put(GroupInfoController());
+GroupInfoController createController({String? tag}) => Get.put(GroupInfoController());
 
   @override
   Widget build(BuildContext context) {

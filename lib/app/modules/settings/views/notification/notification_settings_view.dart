@@ -14,7 +14,7 @@ class NotificationSettingsView extends NavViewStateful<NotificationAlertControll
   const NotificationSettingsView({Key? key}) : super(key: key);
 
   @override
-NotificationAlertController createController() => Get.put(NotificationAlertController());
+NotificationAlertController createController({String? tag}) => Get.put(NotificationAlertController());
 
   @override
   Widget build(BuildContext context) {

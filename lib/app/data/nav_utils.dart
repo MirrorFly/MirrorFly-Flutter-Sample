@@ -42,6 +42,7 @@ class NavUtils{
     Map<String, String>? parameters,
   }){
     if (preventDuplicates && page == MirrorFlyNavigationObserver.current?.settings.name) {
+      debugPrint("offNamed: $page return null");
       return null;
     }
 

@@ -21,7 +21,7 @@ class DialogUtils {
         routeSettings: _routeSettings,
         builder: (_){
       return builder;
-    },useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent,isScrollControlled: isScrollControlled,enableDrag: enableDrag);
+    },useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent,isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: Colors.transparent);
   }
 
   // Method to show a loading dialog
