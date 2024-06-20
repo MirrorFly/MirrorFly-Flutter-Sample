@@ -127,7 +127,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
-        if (Get.isRegistered<ChatController>()) {
+        if (NavUtils.isOverlayOpen || NavUtils.currentRoute == Routes.chat) {
           LogMessage.d("#Mirrorfly Notification ->","already chat page");
           if (NavUtils.currentRoute == Routes.forwardChat ||
               NavUtils.currentRoute == Routes.chatInfo ||
@@ -140,7 +140,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp: true));
             // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
-            if(NavUtils.isOverlayOpen()){
+            if(NavUtils.isOverlayOpen){
               NavUtils.back();
             }
             // NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
