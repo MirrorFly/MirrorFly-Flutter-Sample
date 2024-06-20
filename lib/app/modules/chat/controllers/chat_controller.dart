@@ -1799,7 +1799,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           profile_(value as ProfileDetails);
           isBlocked(profile.isBlocked);
           debugPrint("value--> ${profile.isGroupProfile}");
-          // _loadNextMessages(showLoading: false);
           chatList.clear();
           _loadMessages();
         }
