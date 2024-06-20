@@ -56,7 +56,7 @@ StatusListController createController() => Get.put(StatusListController());
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    NavUtils.to(const AddStatusView(), arguments: {
+                    NavUtils.toNamed(Routes.addProfileStatus, arguments: {
                       "status": controller.selectedStatus.value
                     })?.then((value) {
                       if (value != null) {

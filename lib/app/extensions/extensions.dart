@@ -8,12 +8,14 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/app_localizations.dart';
 import '../data/utils.dart';
+import '../routes/route_settings.dart';
 
 part 'recent_chat_extension.dart';
 part 'profile_parsing_extension.dart';

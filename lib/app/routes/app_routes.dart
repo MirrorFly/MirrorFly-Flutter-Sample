@@ -49,6 +49,7 @@ abstract class Routes {
   static const contactSync = _Paths.contactSync;
   static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
   static const addBusyStatus = _Paths.addBusyStatus;
+  static const addProfileStatus = _Paths.addProfileStatus;
 
   //call
   static const outGoingCallView = _Paths.outGoingCallView;
@@ -108,6 +109,7 @@ abstract class _Paths {
   static const contactSync = '/contact_sync';
   static const viewAllMediaPreview = '/view-all-media-preview';
   static const addBusyStatus = '/add_busy_status';
+  static const addProfileStatus = '/add_profile_status';
 
   //call
   static const outGoingCallView = '/outGoingCallView';

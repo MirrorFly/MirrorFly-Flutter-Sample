@@ -33,6 +33,7 @@ import '../modules/login/views/otp_view.dart';
 import '../modules/media_preview/views/media_preview_view.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
+import '../modules/profile/views/add_status_view.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/status_list_view.dart';
 import '../modules/scanner/scanner_view.dart';
@@ -150,6 +151,9 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.addBusyStatus:
       final arguments = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
+    case Routes.addProfileStatus:
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
 
     //calls
     case Routes.outGoingCallView:
