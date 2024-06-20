@@ -85,8 +85,14 @@ Future<void> main() async {
         } else {
           LogMessage.d("onFailure", response.errorMessage.toString());
         }
-        //check is on going call
-        isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+        //check is on going call,
+        // On iOS, this is set to false by default. When a call is received and disconnected before being attended,
+        // the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+        // This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+        // This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+        // However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+        isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
         ///
         /// This method will give response from Native Android, iOS will return empty by default.
