@@ -11,7 +11,7 @@ class PreviewContactView extends NavViewStateful<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
 
   @override
-PreviewContactController createController() => Get.put(PreviewContactController());
+PreviewContactController createController({String? tag}) => Get.put(PreviewContactController());
 
   @override
   Widget build(BuildContext context) {

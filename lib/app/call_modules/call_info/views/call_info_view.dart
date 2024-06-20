@@ -20,7 +20,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
   const CallInfoView({super.key});
 
   @override
-CallInfoController createController() => Get.put(CallInfoController());
+CallInfoController createController({String? tag}) => Get.put(CallInfoController());
 
   @override
   Widget build(BuildContext context) {

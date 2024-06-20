@@ -141,15 +141,20 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
             if(NavUtils.isOverlayOpen){
+              LogMessage.d("#Mirrorfly Notification ->" , "isOverlayOpen dismissing");
+
               NavUtils.back();
             }
-            // NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
-            NavUtils.back();
+            LogMessage.d("#Mirrorfly Notification ->" , "Calling off named");
+
+
+            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
+            // NavUtils.back();
             /*Below 400 milliseconds the controller is not deleted and creating the issue in the Scrolled Positioned list issue,
              so we are waiting for 500 considering Android Platform*/
-            Future.delayed(const Duration(milliseconds: 500),(){
+           /* Future.delayed(const Duration(milliseconds: 500),(){
               NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
-            });
+            });*/
           }
         } else {
           debugPrint("not chat page");

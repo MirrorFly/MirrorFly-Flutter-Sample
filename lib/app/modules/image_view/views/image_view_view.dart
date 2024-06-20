@@ -15,7 +15,7 @@ class ImageViewView extends NavViewStateful<ImageViewController> {
   const ImageViewView({Key? key}) : super(key: key);
 
   @override
-ImageViewController createController() => Get.put(ImageViewController());
+ImageViewController createController({String? tag}) => Get.put(ImageViewController());
 
   @override
   Widget build(BuildContext context) {

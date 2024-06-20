@@ -11,7 +11,7 @@ class LanguageListView extends NavViewStateful<LanguageController> {
   const LanguageListView({Key? key}) : super(key: key);
 
   @override
-LanguageController createController() => Get.put(LanguageController());
+LanguageController createController({String? tag}) => Get.put(LanguageController());
 
   @override
   Widget build(BuildContext context) {

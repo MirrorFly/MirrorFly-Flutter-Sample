@@ -14,6 +14,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../call_modules/ripple_animation_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
@@ -23,12 +24,15 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
-  ChatView({Key? key,this.disableAppBar = false}) : super(key: key ?? UniqueKey());
-  final bool disableAppBar;
+  ChatView({Key? key, this.chatViewArguments}) : super(key: key ?? ValueKey(chatViewArguments?.chatJid.toString()));
+  final ChatViewArguments? chatViewArguments;
 
-   @override
-   ChatController createController() => Get.put(ChatController(), tag: key?.hashCode.toString());
-   // final ChatController controller = Get.put(ChatController());
+  @override
+  ChatController createController({String? tag}) {
+    debugPrint("ChatView createController");
+    final arguments = chatViewArguments ?? NavUtils.arguments as ChatViewArguments;
+    return Get.put(ChatController(arguments), tag: tag);
+  }
 
    /*@override
     void dispose() {
@@ -43,7 +47,7 @@ class ChatView extends NavViewStateful<ChatController> {
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
       child: Scaffold(
-          appBar: !disableAppBar ? getAppBar(context) : null,
+          appBar: !((controller.arguments?.disableAppBar).checkNull()) ? getAppBar(context) : null,
           body: SafeArea(
             child: Container(
               width: NavUtils.width,

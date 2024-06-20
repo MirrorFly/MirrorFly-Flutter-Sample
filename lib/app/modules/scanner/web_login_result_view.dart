@@ -10,7 +10,7 @@ class WebLoginResultView extends NavViewStateful<ScannerController> {
   const WebLoginResultView({Key? key}) : super(key: key);
 
   @override
-ScannerController createController() => Get.put(ScannerController());
+ScannerController createController({String? tag}) => Get.put(ScannerController());
 
   @override
   Widget build(BuildContext context) {

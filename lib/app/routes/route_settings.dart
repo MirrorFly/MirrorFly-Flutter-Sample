@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';
@@ -84,7 +85,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.statusList:
       return MaterialPageRoute(builder: (_) => const StatusListView(),settings: settings);
     case Routes.chat:
-      return MaterialPageRoute(builder: (_) => ChatView(),settings: settings);
+      final arguments = settings.arguments as ChatViewArguments;
+      return MaterialPageRoute(builder: (_) => ChatView(chatViewArguments: arguments),settings: settings);
     case Routes.forwardChat:
       final arguments = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['forwardMessageIds']),settings: settings);

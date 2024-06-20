@@ -22,7 +22,7 @@ class ArchivedChatListView extends NavViewStateful<ArchivedChatListController> {
   final bool showChatDeliveryIndicator;
 
   @override
-ArchivedChatListController createController() => Get.put(ArchivedChatListController());
+ArchivedChatListController createController({String? tag}) => Get.put(ArchivedChatListController());
 
   @override
   Widget build(BuildContext context) {

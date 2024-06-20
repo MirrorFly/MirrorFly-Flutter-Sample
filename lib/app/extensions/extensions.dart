@@ -57,7 +57,7 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
   T get controller => createController().get();
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   Widget build(BuildContext context);
@@ -71,7 +71,7 @@ abstract class NavViewStateful<T extends GetxController> extends StatefulWidget 
   T get controller => Get.find<T>(tag:key?.hashCode.toString());
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   NavViewState<T> createState() {
@@ -89,7 +89,14 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void initState() {
-    widget.createController();
+    debugPrint("NavViewState previous init ${NavUtils.previousRoute != Routes.chat}");
+    debugPrint("NavViewState current init ${NavUtils.currentRoute != Routes.chat}");
+    debugPrint("NavViewState init ${T != ChatController}");
+    debugPrint("NavViewState key ${widget.key?.hashCode.toString()}");
+    // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
+      widget.createController(tag: widget.key?.hashCode.toString());
+    // }
+
     // Get.put<T>(controller);
     super.initState();
     widget.onInit();
@@ -118,10 +125,10 @@ abstract class NavViewStateful<T extends GetxController> extends StatefulWidget 
 
   final String? tag = null;
 
-  T get controller => createController().get();
+  T get controller => createController({String? tag}).get();
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   NavViewState<NavViewStateful<T>, T> createState();
@@ -133,7 +140,7 @@ abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxControll
   @override
   void initState() {
     super.initState();
-    controller = widget.createController();
+    controller = widget.createController({String? tag});
     // Initialize the controller
     if (widget.tag == null) {
       Get.put<T>(controller);

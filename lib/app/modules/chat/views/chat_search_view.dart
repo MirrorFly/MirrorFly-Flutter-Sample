@@ -19,7 +19,8 @@ import '../widgets/sender_header.dart';
 
 class ChatSearchView extends StatelessWidget {
   ChatSearchView({super.key});
-  final ChatController controller = ChatController().get();
+
+  final ChatController controller = ChatController(null).get();
 
   @override
   Widget build(BuildContext context) {

@@ -16,7 +16,7 @@ class LoginView extends NavViewStateful<LoginController> {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-LoginController createController() => Get.put(LoginController());
+LoginController createController({String? tag}) => Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {

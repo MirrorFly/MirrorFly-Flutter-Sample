@@ -13,7 +13,7 @@ class GalleryPickerView extends NavViewStateful<GalleryPickerController> {
   const GalleryPickerView({Key? key}) : super(key: key);
 
   @override
-GalleryPickerController createController() => Get.put(GalleryPickerController());
+GalleryPickerController createController({String? tag}) => Get.put(GalleryPickerController());
 
   @override
   Widget build(BuildContext context) {

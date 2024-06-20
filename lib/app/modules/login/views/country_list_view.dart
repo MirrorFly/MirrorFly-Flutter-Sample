@@ -12,7 +12,7 @@ class CountryListView extends NavViewStateful<CountryController> {
   const CountryListView({Key? key}) : super(key: key);
 
   @override
-CountryController createController() => Get.put(CountryController());
+CountryController createController({String? tag}) => Get.put(CountryController());
 
   @override
   Widget build(BuildContext context) {

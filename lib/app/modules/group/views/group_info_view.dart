@@ -23,7 +23,7 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
   const GroupInfoView({Key? key}) : super(key: key);
 
   @override
-GroupInfoController createController() => Get.put(GroupInfoController());
+GroupInfoController createController({String? tag}) => Get.put(GroupInfoController());
 
   @override
   Widget build(BuildContext context) {

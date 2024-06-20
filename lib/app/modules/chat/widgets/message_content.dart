@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
@@ -36,7 +35,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
+    // LogMessage.d("MessageContent", "build ${chatList[index].messageId}");
     var chatMessage = chatList[index];
     //LogMessage.d("message==>", json.encode(chatMessage));
     // debugPrint("Message Type===> ${chatMessage.messageType}");

@@ -21,7 +21,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-DashboardController createController() => Get.put(DashboardController(),tag: key?.hashCode.toString());
+DashboardController createController({String? tag}) => Get.put(DashboardController(),tag: key?.hashCode.toString());
 
   @override
   Widget build(BuildContext context) {

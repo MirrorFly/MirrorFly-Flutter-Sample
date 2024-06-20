@@ -18,7 +18,7 @@ class ContactListView extends NavViewStateful<ContactController> {
 
 
   @override
-ContactController createController() => Get.put(ContactController());
+ContactController createController({String? tag}) => Get.put(ContactController());
 
   @override
   Widget build(BuildContext context) {

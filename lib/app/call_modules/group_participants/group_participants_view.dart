@@ -14,7 +14,7 @@ class GroupParticipantsView extends NavViewStateful<GroupParticipantsController>
   const GroupParticipantsView({Key? key}) : super(key: key);
 
   @override
-GroupParticipantsController createController() => Get.put(GroupParticipantsController());
+GroupParticipantsController createController({String? tag}) => Get.put(GroupParticipantsController());
 
   @override
   Widget build(BuildContext context) {

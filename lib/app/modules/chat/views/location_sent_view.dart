@@ -13,7 +13,7 @@ class LocationSentView extends NavViewStateful<LocationController>{
   final bool enableAppBar;
 
   @override
-LocationController createController() => Get.put(LocationController());
+LocationController createController({String? tag}) => Get.put(LocationController());
 
   @override
   Widget build(BuildContext context) {

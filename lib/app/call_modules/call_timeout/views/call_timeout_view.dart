@@ -19,7 +19,7 @@ class CallTimeoutView extends NavViewStateful<CallTimeoutController> {
   const CallTimeoutView({Key? key}) : super(key: key);
 
   @override
-CallTimeoutController createController() => Get.put(CallTimeoutController());
+CallTimeoutController createController({String? tag}) => Get.put(CallTimeoutController());
 
   @override
   Widget build(BuildContext context) {

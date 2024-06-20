@@ -15,7 +15,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
   const LocalContactView({Key? key}) : super(key: key);
 
   @override
-LocalContactController createController() => Get.put(LocalContactController());
+LocalContactController createController({String? tag}) => Get.put(LocalContactController());
 
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ class DataUsageListView extends NavViewStateful<DataUsageController> {
   const DataUsageListView({Key? key}) : super(key: key);
 
   @override
-DataUsageController createController() => Get.put(DataUsageController());
+DataUsageController createController({String? tag}) => Get.put(DataUsageController());
 
   @override
   Widget build(BuildContext context) {
