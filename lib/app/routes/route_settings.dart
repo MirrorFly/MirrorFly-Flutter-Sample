@@ -152,7 +152,6 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       final arguments = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
     case Routes.addProfileStatus:
-      final arguments = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
 
     //calls
