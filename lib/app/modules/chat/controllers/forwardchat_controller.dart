@@ -431,7 +431,6 @@ class ForwardChatController extends GetxController {
                   updateLastMessage(selectedJids);
                   getProfileDetails(selectedJids.last)
                       .then((value) {
-                        debugPrint("getprofile details of last ${value.jid}");
                     if (value.jid != null) {
                       // NavUtils.offNamedUntil(Routes.chat, arguments: value, (route) {
                       //   LogMessage.d("offNamedUntil", route.settings.name);
@@ -444,8 +443,6 @@ class ForwardChatController extends GetxController {
                         arguments: value,
                       );*/
                       NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: value.jid.checkNull()),predicate: (Route<dynamic> route)=>route.settings.name!.startsWith(Routes.dashboard));
-
-
 
                     } else {
                       if (response.hasError) {
