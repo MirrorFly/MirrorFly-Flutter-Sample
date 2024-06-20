@@ -85,7 +85,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                       visible: controller.isSearchVisible,
                       child: IconButton(
                           onPressed: () => controller.onSearchPressed(),
-                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn),)),
+                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
                     ),
                     Visibility(
                       visible: controller.isClearVisible,
