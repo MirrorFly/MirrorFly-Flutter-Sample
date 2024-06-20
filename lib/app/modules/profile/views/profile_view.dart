@@ -25,7 +25,8 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
     return FocusDetector(
       onFocusGained: () {
         if (!KeyboardVisibilityController().isVisible) {
-          if (controller.userNameFocus.hasFocus) {
+          ///Hidden this code, inorder to rectify the keyboard is displayed, then dismissed and then shown again. This type of checking is not needed.
+          /*if (controller.userNameFocus.hasFocus) {
             controller.userNameFocus.unfocus();
             Future.delayed(const Duration(milliseconds: 100), () {
               controller.userNameFocus.requestFocus();
@@ -35,7 +36,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
             Future.delayed(const Duration(milliseconds: 100), () {
               controller.emailFocus.requestFocus();
             });
-          }
+          }*/
         }
       },
       child: Theme(
@@ -242,6 +243,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                             minLeadingWidth: 10,
                             leading: SvgPicture.asset('assets/logos/status.svg'),
                             onTap: () {
+                              FocusScope.of(context).unfocus();
                               NavUtils.toNamed(Routes.statusList, arguments: {'status': controller.profileStatus.value})?.then((value) {
                                 if (value != null) {
                                   controller.profileStatus.value = value;
