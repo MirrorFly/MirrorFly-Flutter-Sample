@@ -2994,7 +2994,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
     DialogUtils.bottomSheet(
       EditMessageScreen(chatItem: chatItem, chatController: this),
-      ignoreSafeArea: false,
+      ignoreSafeArea: true,
       isScrollControlled: true,
       enableDrag: false,
     );

@@ -113,7 +113,7 @@ class _ChatListViewState extends State<ChatListView> {
                               widget.chatController.translateMessage(index);
                             },
                             child: Obx(() {
-                              LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
+                              // LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
                                 color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
