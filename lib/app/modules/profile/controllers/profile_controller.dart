@@ -394,22 +394,24 @@ class ProfileController extends GetxController {
             NavUtils.to(CropImage(
               imageFile: File(result.files.single.path!),
             ))?.then((value) {
-              value as MemoryImage;
-              imageBytes = value.bytes;
-              var name = "${DateTime
-                  .now()
-                  .millisecondsSinceEpoch}.jpg";
-              writeImageTemp(value.bytes, name).then((value) {
-                if (from == Routes.login) {
-                  imagePath(value.path);
-                  changed(true);
-                  update();
-                } else {
-                  imagePath(value.path);
-                  // changed(true);
-                  updateProfileImage(value.path, update: false);
-                }
-              });
+              if (value != null) {
+                value as MemoryImage;
+                imageBytes = value.bytes;
+                var name = "${DateTime
+                    .now()
+                    .millisecondsSinceEpoch}.jpg";
+                writeImageTemp(value.bytes, name).then((value) {
+                  if (from == Routes.login) {
+                    imagePath(value.path);
+                    changed(true);
+                    update();
+                  } else {
+                    imagePath(value.path);
+                    // changed(true);
+                    updateProfileImage(value.path, update: false);
+                  }
+                });
+              }
             });
           } else {
             toToast(getTranslated("imageLess10mb"));
