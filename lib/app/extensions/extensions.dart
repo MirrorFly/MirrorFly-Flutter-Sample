@@ -47,6 +47,7 @@ extension GetHelper on GetxController {
   }
 }
 
+// Abstract class for StatelessWidget
 abstract class NavView<T extends GetxController> extends StatelessWidget {
   const NavView({super.key});
 
@@ -90,9 +91,6 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void initState() {
-    debugPrint("NavViewState previous init ${NavUtils.previousRoute != Routes.chat}");
-    debugPrint("NavViewState current init ${NavUtils.currentRoute != Routes.chat}");
-    debugPrint("NavViewState init ${T != ChatController}");
     debugPrint("NavViewState key ${widget.key?.hashCode.toString()}");
     // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
       widget.createController(tag: widget.key?.hashCode.toString());

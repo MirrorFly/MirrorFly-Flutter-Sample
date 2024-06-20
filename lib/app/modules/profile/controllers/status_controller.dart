@@ -113,6 +113,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           LogMessage.d("setMyProfileStatus flutter", response.toString());
           selectedStatus.value = statusText;
           addStatusController.text = statusText;
+          onChanged();
           var data = json.decode(response.data);
           toToast(getTranslated("statusUpdated"));
           if(data['status']) {
