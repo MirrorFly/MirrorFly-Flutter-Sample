@@ -68,7 +68,7 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
   const NavViewStateful({Key? key}) : super(key: key);
 
-  T get controller => Get.find<T>();
+  T get controller => Get.find<T>(tag:key?.hashCode.toString());
   dynamic get arguments => NavUtils.arguments;
 
   T createController();
@@ -98,10 +98,10 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void dispose() {
-    Get.delete<T>();
+    Get.delete<T>(tag: widget.key?.hashCode.toString());
     widget.onDispose();
     super.dispose();
-    LogMessage.d("NavViewState :  dispose", T.toString());
+    LogMessage.d("NavViewState : dispose key: ${widget.key?.hashCode.toString()}", T.toString());
   }
 
   @override

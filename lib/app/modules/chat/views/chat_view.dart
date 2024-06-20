@@ -23,11 +23,11 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
-   const ChatView({super.key,this.disableAppBar = false});
+  ChatView({Key? key,this.disableAppBar = false}) : super(key: key ?? UniqueKey());
   final bool disableAppBar;
 
    @override
-   ChatController createController() => Get.put(ChatController());
+   ChatController createController() => Get.put(ChatController(), tag: key?.hashCode.toString());
    // final ChatController controller = Get.put(ChatController());
 
    /*@override
