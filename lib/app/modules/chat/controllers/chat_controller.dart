@@ -273,7 +273,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   clearMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
-      messageController.text = "";
+      // messageController.text = "";
       Mirrorfly.saveUnsentMessage(jid: profile.jid.checkNull(), message: '');
       ReplyHashMap.saveReplyId(profile.jid.checkNull(), '');
     }
@@ -683,6 +683,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               if (response.isSuccess) {
                 LogMessage.d("image message", response.data.toString());
                 // clearMessage();
+                messageController.text = "";
                 ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
                 // chatList.insert(0, chatMessageModel);
                 scrollToBottom();
@@ -780,6 +781,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             if (response.isSuccess) {
               LogMessage.d("video message", response.data.toString());
               // clearMessage();
+              messageController.text = "";
               Platform.isIOS ? DialogUtils.hideLoading() : null;
               ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
               // chatList.insert(0, chatMessageModel);

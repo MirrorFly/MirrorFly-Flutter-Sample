@@ -8,14 +8,12 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/app_localizations.dart';
 import '../data/utils.dart';
-import '../routes/route_settings.dart';
 
 part 'recent_chat_extension.dart';
 part 'profile_parsing_extension.dart';
@@ -68,7 +66,10 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
   const NavViewStateful({Key? key}) : super(key: key);
 
-  T get controller => Get.find<T>(tag:key?.hashCode.toString());
+  T get controller => Get.find<T>(tag: key?.hashCode.toString());
+  T controllerWithTag(String tag){
+    return Get.find<T>(tag:tag);
+  }
   dynamic get arguments => NavUtils.arguments;
 
   T createController();

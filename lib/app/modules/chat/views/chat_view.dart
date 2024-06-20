@@ -23,7 +23,7 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
-  ChatView({Key? key,this.disableAppBar = false}) : super(key: key ?? UniqueKey());
+  const ChatView({Key? key, this.disableAppBar = false}) : super(key: key);
   final bool disableAppBar;
 
    @override
@@ -159,7 +159,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                     ),
                                                   ),
                                                   Obx(() {
-                                                    return controller.isUserTyping.value
+                                                    return controller.isUserTyping.value || controller.isAudioRecording.value == Constants.audioRecordDone
                                                         ? InkWell(
                                                             onTap: () {
                                                               controller.isAudioRecording.value == Constants.audioRecordDone

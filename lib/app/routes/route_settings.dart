@@ -84,7 +84,7 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.statusList:
       return MaterialPageRoute(builder: (_) => const StatusListView(),settings: settings);
     case Routes.chat:
-      return MaterialPageRoute(builder: (_) => ChatView(),settings: settings);
+      return MaterialPageRoute(builder: (_) => const ChatView(),settings: settings);
     case Routes.forwardChat:
       final arguments = settings.arguments as Map<String, dynamic>;
       return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['forwardMessageIds']),settings: settings);

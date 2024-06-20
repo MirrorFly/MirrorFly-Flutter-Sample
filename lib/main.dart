@@ -151,7 +151,7 @@ class _MyAppState extends State<MyApp> {
                 name: Routes.chat,
                 arguments: chatViewArg,
               ),
-              builder: (context) => ChatView(),
+              builder: (context) => const ChatView(),
             )];
           case Routes.dashboard:
             return [
