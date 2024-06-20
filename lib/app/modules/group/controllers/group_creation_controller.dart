@@ -135,14 +135,16 @@ class GroupCreationController extends GetxController {
         NavUtils.to(CropImage(
           imageFile: File(result.files.single.path!),
         ))?.then((value) {
-          value as MemoryImage;
-          // imageBytes = value.bytes;
-          var name = "${DateTime
-              .now()
-              .millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            imagePath(value.path);
-          });
+          if (value != null) {
+            value as MemoryImage;
+            // imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            writeImageTemp(value.bytes, name).then((value) {
+              imagePath(value.path);
+            });
+          }
         });
       } else {
         // User canceled the picker
