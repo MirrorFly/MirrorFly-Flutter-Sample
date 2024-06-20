@@ -89,7 +89,7 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => ChatView(chatViewArguments: arguments),settings: settings);
     case Routes.forwardChat:
       final arguments = settings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['forwardMessageIds']),settings: settings);
+      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['messageIds']),settings: settings);
     case Routes.chatSearch:
       return MaterialPageRoute(builder: (_) => ChatSearchView(),settings: settings);
     case Routes.locationSent:
