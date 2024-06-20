@@ -276,7 +276,13 @@ GroupInfoController createController() => Get.put(GroupInfoController());
               style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
             ),
             onTap: () {
-              NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: item.jid.checkNull()),predicate: (Route<dynamic> route)=>route.settings.name!.startsWith(Routes.dashboard));
+              /*NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+              Future.delayed(const Duration(milliseconds: 300), () {
+                NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(
+                    chatJid: item.jid.checkNull()));
+              });*/
+              NavUtils.back();
+              NavUtils.back(result : item);
               // NavUtils.toNamed(Routes.CHAT, arguments: item);
               /*NavUtils.back();
               Future.delayed(const Duration(milliseconds: 300), () {
