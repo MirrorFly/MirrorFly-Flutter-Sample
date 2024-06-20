@@ -2991,12 +2991,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     //   enableDrag: false,
     //   isScrollControlled: true, // Important for full screen
     // );
-    showModalBottomSheet(
-      context: NavUtils.currentContext,
-      useSafeArea: false,
-      builder: (BuildContext context) {
-        return EditMessageScreen(chatItem: chatItem, chatController: this);
-      },
+
+    DialogUtils.bottomSheet(
+      EditMessageScreen(chatItem: chatItem, chatController: this),
+      ignoreSafeArea: false,
       isScrollControlled: true,
       enableDrag: false,
     );

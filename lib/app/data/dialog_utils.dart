@@ -15,10 +15,13 @@ class DialogUtils {
     },routeSettings: _routeSettings);
   }
 
-  static bottomSheet(Widget builder,{bool ignoreSafeArea = false }){
-    return showModalBottomSheet(context: buildContext, builder: (_){
+  static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
+    bool enableDrag = true,}){
+    return showModalBottomSheet(context: buildContext,
+        routeSettings: _routeSettings,
+        builder: (_){
       return builder;
-    },useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent);
+    },useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent,isScrollControlled: isScrollControlled,enableDrag: enableDrag);
   }
 
   // Method to show a loading dialog
