@@ -69,12 +69,14 @@ GalleryPickerController createController({String? tag}) => Get.put(GalleryPicker
                               // }).toString();
                               if (controller.pickedFile.isNotEmpty) {
                                 // await Share.shareFiles(mediaPath);
+                                //
                                 NavUtils.toNamed(Routes.mediaPreview, arguments: {
                                   "filePath": controller.pickedFile,
                                   "userName": controller.userName,
                                   'profile': controller.profile,
                                   'caption': controller.textMessage,
-                                  'from': 'gallery_pick'
+                                  'from': 'gallery_pick',
+                                  'userJid': controller.userJid
                                 })?.then((value) {
                                   value != null ? NavUtils.back() : null;
 

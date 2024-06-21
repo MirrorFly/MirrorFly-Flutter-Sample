@@ -2057,7 +2057,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             'profile': profile,
             'caption': messageController.text.trim(),
             'showAdd': false,
-            'from': 'camera_pick'
+            'from': 'camera_pick',
+            'userJid': profile.jid
           })?.then((value) => setOnGoingUserAvail());
         } else {
           setOnGoingUserAvail();
@@ -2091,7 +2092,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (permission) {
       try {
         setOnGoingUserGone();
-        NavUtils.toNamed(Routes.galleryPicker, arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text.trim()})
+        NavUtils.toNamed(Routes.galleryPicker, arguments: {"userName": getName(profile), 'profile': profile, 'caption': messageController.text.trim(), 'userJid': profile.jid})
             ?.then((value) => setOnGoingUserAvail());
       } catch (e) {
         debugPrint(e.toString());
@@ -2111,7 +2112,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         permissionPermanentlyDeniedContent: getTranslated("contactPermissionDeniedContent"));
     if (permission) {
       setOnGoingUserGone();
-      NavUtils.toNamed(Routes.localContact)?.then((value) => setOnGoingUserAvail());
+      NavUtils.toNamed(Routes.localContact, arguments: {"userJid": profile.jid })?.then((value) => setOnGoingUserAvail());
     }
   }
 

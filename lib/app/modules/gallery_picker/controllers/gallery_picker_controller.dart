@@ -12,6 +12,7 @@ class GalleryPickerController extends GetxController {
   var userName = NavUtils.arguments['userName'];
   var textMessage = NavUtils.arguments['caption'];
   var profile = NavUtils.arguments['profile'] as ProfileDetails;
+  var userJid = NavUtils.arguments['userJid'];
   var maxPickImages = 10;
 
   @override
