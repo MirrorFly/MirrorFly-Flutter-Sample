@@ -65,9 +65,10 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 
 // Abstract class for StatefulWidget
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
-  const NavViewStateful({Key? key}) : super(key: key);
+  final String? jid;
+  const NavViewStateful({Key? key, this.jid}) : super(key: key);
 
-  T get controller => Get.find<T>(tag: key?.hashCode.toString());
+  T get controller => Get.find<T>(tag: jid);
   T controllerWithTag(String tag){
     return Get.find<T>(tag:tag);
   }
@@ -91,9 +92,9 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void initState() {
-    debugPrint("NavViewState key ${widget.key?.hashCode.toString()}");
+    debugPrint("NavViewState key ${widget.jid}");
     // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
-      widget.createController(tag: widget.key?.hashCode.toString());
+      widget.createController(tag: widget.jid);
     // }
 
     // Get.put<T>(controller);
@@ -104,7 +105,7 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void dispose() {
-    Get.delete<T>(tag: widget.key?.hashCode.toString());
+    Get.delete<T>(tag: widget.jid);
     widget.onDispose();
     super.dispose();
     LogMessage.d("NavViewState : dispose key: ${widget.key?.hashCode.toString()}", T.toString());

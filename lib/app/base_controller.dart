@@ -551,8 +551,8 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onAvailableFeaturesUpdated(features);
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onAvailableFeaturesUpdated(features);
+    if (Get.isRegistered<ChatController>(tag: controllerTag )) {
+      Get.find<ChatController>(tag: controllerTag).onAvailableFeaturesUpdated(features);
     }
     if (Get.isRegistered<MediaPreviewController>()) {
       Get.find<MediaPreviewController>().onAvailableFeaturesUpdated(features);
@@ -580,9 +580,9 @@ abstract class BaseController {
   void onMessageReceived(chatMessage) {
     LogMessage.d("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
-    if (Get.isRegistered<ChatController>()) {
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       // debugPrint("basecontroller ChatController registered");
-      Get.find<ChatController>().onMessageReceived(chatMessageModel);
+      Get.find<ChatController>(tag: controllerTag).onMessageReceived(chatMessageModel);
     }
     if (Get.isRegistered<DashboardController>()) {
       // debugPrint("basecontroller DashboardController registered");
@@ -614,8 +614,8 @@ abstract class BaseController {
 
   void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onMessageStatusUpdated(chatMessageModel);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onMessageStatusUpdated(chatMessageModel);
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().onMessageStatusUpdated(chatMessageModel);
@@ -661,8 +661,8 @@ abstract class BaseController {
   void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated",chatMessageModel.toJson());
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onMediaStatusUpdated(chatMessageModel);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onMediaStatusUpdated(chatMessageModel);
     }
     if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onMediaStatusUpdated(chatMessageModel);
@@ -681,8 +681,8 @@ abstract class BaseController {
   }
 
   void onUploadDownloadProgressChanged(String messageId, String progressPercentage) {
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onUploadDownloadProgressChanged(messageId, progressPercentage);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onUploadDownloadProgressChanged(messageId, progressPercentage);
     }
     if (Get.isRegistered<StarredMessagesController>()) {
       Get.find<StarredMessagesController>().onUploadDownloadProgressChanged(messageId, progressPercentage);
@@ -695,8 +695,8 @@ abstract class BaseController {
 
   void onGroupProfileUpdated(groupJid) {
     LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onGroupProfileUpdated(groupJid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onGroupProfileUpdated(groupJid);
     }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onGroupProfileUpdated(groupJid);
@@ -713,8 +713,8 @@ abstract class BaseController {
       Get.find<GroupInfoController>()
           .onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>()
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag)
           .onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
     }
   }
@@ -726,8 +726,8 @@ abstract class BaseController {
       Get.find<GroupInfoController>().onMemberRemovedFromGroup(
           groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onMemberRemovedFromGroup(
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onMemberRemovedFromGroup(
           groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
     }
   }
@@ -757,8 +757,8 @@ abstract class BaseController {
 
   void onLeftFromGroup({required String groupJid, required String userJid}) {
     debugPrint('onLeftFromGroup $groupJid $userJid');
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onLeftFromGroup(groupJid: groupJid, userJid: userJid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onLeftFromGroup(groupJid: groupJid, userJid: userJid);
     }
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().onLeftFromGroup(groupJid: groupJid, userJid: userJid);
@@ -785,8 +785,8 @@ abstract class BaseController {
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onMessageReceived(chatMessageModel);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onMessageReceived(chatMessageModel);
     }
   }
 
@@ -850,8 +850,8 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onContactSyncComplete(result);
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onContactSyncComplete(result);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onContactSyncComplete(result);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().onContactSyncComplete(result);
@@ -861,8 +861,8 @@ abstract class BaseController {
 
   void unblockedThisUser(String jid) {
     LogMessage.d("unblockedThisUser", jid.toString());
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().unblockedThisUser(jid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).unblockedThisUser(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().unblockedThisUser(jid);
@@ -880,8 +880,8 @@ abstract class BaseController {
 
   void userBlockedMe(String jid) {
     LogMessage.d('userBlockedMe', jid.toString());
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userBlockedMe(jid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().userBlockedMe(jid);
@@ -898,8 +898,8 @@ abstract class BaseController {
   }
 
   void userCameOnline(String jid) {
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userCameOnline(jid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).userCameOnline(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().userCameOnline(jid);
@@ -910,8 +910,8 @@ abstract class BaseController {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().userDeletedHisProfile(jid.toString());
     }
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userDeletedHisProfile(jid.toString());
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).userDeletedHisProfile(jid.toString());
     }
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().userDeletedHisProfile(jid.toString());
@@ -951,8 +951,8 @@ abstract class BaseController {
   void userUpdatedHisProfile(String jid) {
     LogMessage.d("userUpdatedHisProfile", jid.toString());
 
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userUpdatedHisProfile(jid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).userUpdatedHisProfile(jid);
     }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().userUpdatedHisProfile(jid);
@@ -996,8 +996,8 @@ abstract class BaseController {
   }
 
   void userWentOffline(String jid) {
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().userWentOffline(jid);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).userWentOffline(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().userWentOffline(jid);
@@ -1028,8 +1028,8 @@ abstract class BaseController {
   void onWebChatPasswordChanged(result) {}
 
   void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().setTypingStatus(singleOrgroupJid, userId, typingStatus);
@@ -1222,8 +1222,8 @@ abstract class BaseController {
   //#editMessage
   void onMessageEdited(editedChatMessage) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(editedChatMessage);
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().onMessageEdited(chatMessageModel);
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      Get.find<ChatController>(tag: controllerTag).onMessageEdited(chatMessageModel);
     }
     if (Get.isRegistered<MessageInfoController>()) {
       Get.find<MessageInfoController>().onMessageEdited(chatMessageModel);
@@ -1238,4 +1238,6 @@ abstract class BaseController {
       Get.find<StarredMessagesController>().onMessageEdited(chatMessageModel);
     }
   }
+
+  String get controllerTag => SessionManagement.getCurrentChatJID();
 }
