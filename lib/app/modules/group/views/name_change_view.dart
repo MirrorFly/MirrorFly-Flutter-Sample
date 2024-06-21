@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -10,11 +9,11 @@ import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 
-class NameChangeView extends NavViewStateful<GroupInfoController> {
+class NameChangeView extends NavView<GroupInfoController> {
   const NameChangeView({Key? key}) : super(key: key);
 
   @override
-GroupInfoController createController({String? tag}) => Get.put(GroupInfoController());
+  GroupInfoController createController({String? tag}) => GroupInfoController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop){
+        onPopInvoked: (didPop) {
           if (didPop) {
             return;
           }
@@ -46,36 +45,48 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
                         children: [
                           Expanded(
                             child: TextField(
+                              focusNode: controller.focusNode,
                               style:
-                                  const TextStyle(fontSize: 20, fontWeight: FontWeight.normal,overflow: TextOverflow.visible),
+                              const TextStyle(fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  overflow: TextOverflow.visible),
                               onChanged: (_) => controller.onChanged(),
                               maxLength: 25,
                               maxLines: 1,
                               controller: controller.nameController,
-                              decoration: const InputDecoration(border: InputBorder.none,counterText:"" ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none, counterText: ""),
                             ),
                           ),
                           Container(
-                            height: 50,
-                            padding: const EdgeInsets.all(4.0),
+                              height: 50,
+                              padding: const EdgeInsets.all(4.0),
                               child: Center(
                                 child: Obx(
-                                  ()=> Text(
-                            controller.count.toString(),
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                          ),
+                                      () =>
+                                      Text(
+                                        controller.count.toString(),
+                                        style: const TextStyle(fontSize: 20,
+                                            fontWeight: FontWeight.normal),
+                                      ),
                                 ),
                               )),
-                          IconButton(
-                              onPressed: () {
-                                controller.showHideEmoji(context);
-                              },
-                              icon: controller.showEmoji.value ? const Icon(
-                                Icons.keyboard, color: iconColor,) : SvgPicture.asset(
-                                smileIcon, width: 18, height: 18,))
+                          Obx(() {
+                            return IconButton(
+                                onPressed: () {
+                                  debugPrint("showHideEmoji icon pressed");
+                                  controller.showHideEmoji(context);
+                                },
+                                icon: controller.showEmoji.value
+                                    ? const Icon(
+                                  Icons.keyboard, color: iconColor,)
+                                    : SvgPicture.asset(
+                                  smileIcon, width: 18, height: 18,));
+                          })
                         ],
                       ),
-                      const Divider(height: 1, color: dividerColor, thickness: 1,),
+                      const Divider(
+                        height: 1, color: dividerColor, thickness: 1,),
                     ],
                   ),
                 ),
@@ -90,7 +101,8 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
                       onPressed: () => NavUtils.back(),
                       child: Text(
                         getTranslated("cancel").toUpperCase(),
-                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                        style: const TextStyle(color: Colors.black,
+                            fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -101,16 +113,19 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        if(controller.nameController.text.trim().isNotEmpty) {
+                        if (controller.nameController.text
+                            .trim()
+                            .isNotEmpty) {
                           NavUtils.back(result: controller.nameController.text
                               .trim().toString());
-                        }else{
+                        } else {
                           toToast(getTranslated("nameCantEmpty"));
                         }
                       },
                       child: Text(
                         getTranslated("ok").toUpperCase(),
-                        style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                        style: const TextStyle(color: Colors.black,
+                            fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -129,7 +144,7 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
       if (controller.showEmoji.value) {
         return EmojiLayout(
           textController: TextEditingController(),
-          onEmojiSelected : (cat, emoji)=>controller.onEmojiSelected(emoji),
+          onEmojiSelected: (cat, emoji) => controller.onEmojiSelected(emoji),
           onBackspacePressed: () => controller.onEmojiBackPressed(),
         );
       } else {

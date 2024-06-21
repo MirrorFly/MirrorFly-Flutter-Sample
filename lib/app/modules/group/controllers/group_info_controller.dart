@@ -59,6 +59,13 @@ class GroupInfoController extends GetxController {
     memberOfGroup();
     muteAble();
     nameController.text=profile.nickName.checkNull();
+    onChanged();
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
   }
   muteAble() async {
     muteable(await Mirrorfly.isChatUnArchived(jid: profile.jid.checkNull()));
@@ -559,7 +566,7 @@ class GroupInfoController extends GetxController {
   var count= 25.obs;
 
   onChanged(){
-    count.value = (25 - nameController.text.length);
+    count.value = (25 - nameController.text.characters.length);
   }
 
   onEmojiBackPressed(){
@@ -598,6 +605,7 @@ class GroupInfoController extends GetxController {
       if (cursorPosition < 0) {
         controller.text += emoji.emoji;
         // widget.onEmojiSelected?.call(category, emoji);
+        count((25 - nameController.text.characters.length));
         return;
       }
 
@@ -617,13 +625,14 @@ class GroupInfoController extends GetxController {
   showHideEmoji(BuildContext context){
     if (!showEmoji.value) {
       focusNode.unfocus();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        showEmoji(!showEmoji.value);
+      });
     }else{
-      focusNode.requestFocus();
-      return;
-    }
-    Future.delayed(const Duration(milliseconds: 500), () {
       showEmoji(!showEmoji.value);
-    });
+      focusNode.requestFocus();
+    }
+
   }
 
   void userDeletedHisProfile(String jid) {
@@ -659,6 +668,7 @@ class GroupInfoController extends GetxController {
       showEmoji(false);
     } else {
       nameController.text = profile.nickName.checkNull();
+      onChanged();
       NavUtils.back();
     }
   }
