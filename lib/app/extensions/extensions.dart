@@ -108,7 +108,7 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     Get.delete<T>(tag: widget.jid);
     widget.onDispose();
     super.dispose();
-    LogMessage.d("NavViewState : dispose key: ${widget.key?.hashCode.toString()}", T.toString());
+    LogMessage.d("NavViewState : dispose key: ${widget.jid}", T.toString());
   }
 
   @override

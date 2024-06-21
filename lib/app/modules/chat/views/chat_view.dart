@@ -24,7 +24,7 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
-  ChatView({Key? key, this.chatViewArguments}) : super(key: key ?? ValueKey(chatViewArguments?.chatJid.toString()));
+  ChatView({Key? key, this.chatViewArguments}) : super(key: key, jid: chatViewArguments?.chatJid);
   final ChatViewArguments? chatViewArguments;
 
   @override

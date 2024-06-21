@@ -636,7 +636,7 @@ abstract class BaseController {
       Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
     }
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: chatJid);
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, newInsertable: true);
     }
   }
 
