@@ -29,6 +29,7 @@ part 'dialog_style.dart';
 part 'gallery_page_style.dart';
 part 'local_contact_page_style.dart';
 part 'local_contact_preview_page_style.dart';
+part 'location_sent_page_style.dart';
 
 class AppStyle{
 
