@@ -4,7 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
@@ -15,54 +17,72 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
   const LocalContactView({Key? key}) : super(key: key);
 
   @override
-LocalContactController createController({String? tag}) => Get.put(LocalContactController());
+  LocalContactController createController({String? tag}) =>
+      Get.put(LocalContactController());
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Scaffold(
+    return Theme(
+      data: Theme.of(context).copyWith(
+          appBarTheme: AppStyleConfig.localContactPageStyle.appBarTheme,
+          floatingActionButtonTheme: AppStyleConfig.localContactPageStyle
+              .floatingActionButtonThemeData),
+      child: Scaffold(
         appBar: AppBar(
-          centerTitle: false,
           titleSpacing: 0.0,
-          title: controller.search.value
-              ? TextField(
-                  controller: controller.searchTextController,
-                  onChanged: (text) => controller.onSearchTextChanged(text),
-                  autofocus: true,
-                  decoration: InputDecoration(
-                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      getTranslated("contactToSend"),
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    Text(getTranslated("selectedCount").replaceAll("%d",
-                      '${controller.contactsSelected.length}'),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ],
+          title: Obx(() {
+            return controller.search.value
+                ? TextField(
+              controller: controller.searchTextController,
+              onChanged: (text) => controller.onSearchTextChanged(text),
+              autofocus: true,
+              style: AppStyleConfig.localContactPageStyle.searchTextFieldStyle
+                  .editTextStyle,
+              decoration: InputDecoration(
+                  hintText: getTranslated("searchPlaceholder"),
+                  border: InputBorder.none,
+                  hintStyle: AppStyleConfig.localContactPageStyle
+                      .searchTextFieldStyle.editTextHintStyle),
+            ) : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  getTranslated("contactToSend"),
+                  style: AppStyleConfig.localContactPageStyle.appBarTheme
+                      .titleTextStyle,
                 ),
+                Text(getTranslated("selectedCount").replaceAll("%d",
+                    '${controller.contactsSelected.length}'),
+                  style: AppStyleConfig.localContactPageStyle.appBarTheme
+                      .toolbarTextStyle,
+                ),
+              ],
+            );
+          }),
           actions: [
+            Obx(() =>
             controller.search.value
-                ? const SizedBox()
+                ? const Offstage()
                 : IconButton(
-                    icon: SvgPicture.asset(
-                      searchIcon,
-                      width: 18,
-                      height: 18,
-                      fit: BoxFit.contain,
-                    ),
-                    onPressed: () {
-                      if (controller.search.value) {
-                        controller.search.value = false;
-                      } else {
-                        controller.search.value = true;
-                      }
-                    },
-                  ),
+              icon: SvgPicture.asset(
+                searchIcon,
+                width: 18,
+                height: 18,
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(AppBarTheme
+                    .of(context)
+                    .iconTheme
+                    ?.color ?? Colors.black, BlendMode.srcIn),
+              ),
+              onPressed: () {
+                if (controller.search.value) {
+                  controller.search.value = false;
+                } else {
+                  controller.search.value = true;
+                }
+              },
+            )
+            ),
           ],
         ),
         body: PopScope(
@@ -81,124 +101,142 @@ LocalContactController createController({String? tag}) => Get.put(LocalContactCo
             }
           },
           child: SafeArea(
-            child: Obx(() => controller.contactList.isEmpty
+            child: Obx(() =>
+            controller.contactList.isEmpty
                 ? const Center(child: CircularProgressIndicator())
-                : contactListView(context)),
+                : contactListView(context,
+                AppStyleConfig.localContactPageStyle.selectedContactItemStyle,
+                AppStyleConfig.localContactPageStyle.contactItemStyle)),
           ),
 
         ),
-        floatingActionButton: Visibility(
-          visible: controller.contactsSelected.isNotEmpty,
-          child: FloatingActionButton(onPressed: () {
-            controller.shareContact();
-          },
-            child:  SvgPicture.asset(
-              rightArrowProceed,
-              width: 18,
+        floatingActionButton: Obx(() {
+          return Visibility(
+            visible: controller.contactsSelected.isNotEmpty,
+            child: FloatingActionButton(
+              onPressed: () {
+                controller.shareContact();
+              },
+              child: Icon(
+                  Icons.arrow_forward,
+                  size: Theme.of(context).floatingActionButtonTheme.iconSize,
+                  color: Theme
+                      .of(context)
+                      .floatingActionButtonTheme
+                      .foregroundColor
+              ),
             ),
-          ),
-        ),
-      );
-    });
+          );
+        }),
+      ),
+    );
   }
 
-  selectedListView(RxList<LocalContact> contactsSelected) {
+  selectedListView(RxList<LocalContact> contactsSelected,
+      LocalContactItem selectedContactItemStyle) {
     return contactsSelected.isNotEmpty
         ? SizedBox(
-            height: 70,
+      height: 70,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: contactsSelected.length,
+          itemBuilder: (context, index) {
+            var item = contactsSelected.elementAt(index);
+            return InkWell(
+              onTap: () {
+                controller.contactSelected(item);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    Stack(
+                      children: [
+                        ProfileTextImage(
+                          text: controller.name(item.contact),
+                          radius: selectedContactItemStyle.profileImageSize
+                              .width / 2,
+                        ),
+                        Positioned(
+                            right: 2,
+                            bottom: 2,
+                            child: SvgPicture.asset(
+                              closeContactIcon,
+                              width: 15,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+    )
+        : const SizedBox.shrink();
+  }
+
+  contactListView(BuildContext context,
+      LocalContactItem selectedContactItemStyle,
+      LocalContactItem contactItemStyle) {
+    return Obx(() {
+      return Column(
+        children: [
+          selectedListView(
+              controller.contactsSelected, selectedContactItemStyle),
+          controller.searchList.isEmpty &&
+              controller.searchTextController.text.isNotEmpty
+              ? Center(child: Text(getTranslated("noResultFound"),
+            style: AppStyleConfig.localContactPageStyle.noDataTextStyle,))
+              : Expanded(
             child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: contactsSelected.length,
+                itemCount: controller.searchList.length,
                 itemBuilder: (context, index) {
-                  var item = contactsSelected.elementAt(index);
+                  var item = controller.searchList.elementAt(index);
                   return InkWell(
                     onTap: () {
-                      controller.contactSelected(item);
+                      controller.contactSelected(
+                          controller.searchList.elementAt(index));
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 15),
                       child: Row(
                         children: [
                           Stack(
                             children: [
                               ProfileTextImage(
                                 text: controller.name(item.contact),
-                                radius: 22,
+                                radius: contactItemStyle.profileImageSize
+                                    .width / 2,
                               ),
-                              Positioned(
-                                  right: 0,
-                                  bottom: 0,
-                                  child: SvgPicture.asset(
-                                    closeContactIcon,
-                                    width: 18,
-                                  )),
+                              Visibility(
+                                visible: item.isSelected,
+                                child: Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: SvgPicture.asset(
+                                      contactSelectTick,
+                                      width: 12,
+                                    )),
+                              ),
                             ],
                           ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                              child: Text(
+                                controller.name(item.contact),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: contactItemStyle.titleStyle,
+                              )),
                         ],
                       ),
                     ),
                   );
                 }),
-          )
-        : const SizedBox.shrink();
-  }
-
-  contactListView(BuildContext context) {
-    return Obx(() {
-      return Column(
-        children: [
-          selectedListView(controller.contactsSelected),
-          controller.searchList.isEmpty &&
-                  controller.searchTextController.text.isNotEmpty
-              ? Center(child: Text(getTranslated("noResultFound")))
-              : Expanded(
-                  child: ListView.builder(
-                      itemCount: controller.searchList.length,
-                      itemBuilder: (context, index) {
-                        var item = controller.searchList.elementAt(index);
-                        return InkWell(
-                          onTap: () {
-                            controller.contactSelected(
-                                controller.searchList.elementAt(index));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 15),
-                            child: Row(
-                              children: [
-                                Stack(
-                                  children: [
-                                    ProfileTextImage(
-                                      text: controller.name(item.contact),
-                                      radius: 17.5,
-                                    ),
-                                    Visibility(
-                                      visible: item.isSelected,
-                                      child: Positioned(
-                                          right: 0,
-                                          bottom: 0,
-                                          child: SvgPicture.asset(
-                                            contactSelectTick,
-                                            width: 12,
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Flexible(
-                                    child: Text(
-                                  controller.name(item.contact),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                )),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-                ),
+          ),
         ],
       );
     });

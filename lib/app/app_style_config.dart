@@ -71,6 +71,9 @@ class AppStyleConfig{
   static CallInfoPageStyle _callInfoPageStyle = const CallInfoPageStyle();
   static AddParticipantsPageStyle _addParticipantsPageStyle = const AddParticipantsPageStyle();
   static DialogStyle _dialogStyle = DialogStyle(buttonStyle: _defaultDialogButtonStyle);
+  static GalleryPageStyle _galleryPageStyle = const GalleryPageStyle();
+  static LocalContactPageStyle _localContactPageStyle = const LocalContactPageStyle();
+  static LocalContactPreviewPageStyle _localContactPreviewPageStyle = const LocalContactPreviewPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -92,6 +95,9 @@ class AppStyleConfig{
   static CallInfoPageStyle callInfoPageStyle = _callInfoPageStyle;
   static AddParticipantsPageStyle addParticipantsPageStyle = _addParticipantsPageStyle;
   static DialogStyle dialogStyle = _dialogStyle;
+  static GalleryPageStyle galleryPageStyle = _galleryPageStyle;
+  static LocalContactPageStyle localContactPageStyle = _localContactPageStyle;
+  static LocalContactPreviewPageStyle localContactPreviewPageStyle = _localContactPreviewPageStyle;
 
   static setAppStyle({required AppStyle appStyle}){
     loginPageStyle = appStyle.loginPageStyle ?? _loginPageStyle;
@@ -195,5 +201,15 @@ class AppStyleConfig{
     _dialogStyle = dialogStyle;
   }
 
+  static setGalleryPageStyle(GalleryPageStyle galleryPageStyle){
+    _galleryPageStyle = galleryPageStyle;
+  }
 
+  static setLocalContactPageStyle(LocalContactPageStyle localContactPageStyle){
+    _localContactPageStyle = localContactPageStyle;
+  }
+
+  static setLocalContactPreviewPageStyle(LocalContactPreviewPageStyle localContactPreviewPageStyle){
+    _localContactPreviewPageStyle = localContactPreviewPageStyle;
+  }
 }
