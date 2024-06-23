@@ -129,10 +129,8 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                             onPressed: () {
                               controller.shareContact();
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.send,
-                              color: Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white,
-                              size: Theme.of(context).floatingActionButtonTheme.iconSize,
                             )))
                     : const Offstage()
               ],

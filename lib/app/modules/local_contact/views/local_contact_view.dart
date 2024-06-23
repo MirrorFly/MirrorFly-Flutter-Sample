@@ -69,9 +69,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
                 width: 18,
                 height: 18,
                 fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(AppBarTheme
-                    .of(context)
-                    .iconTheme
+                colorFilter: ColorFilter.mode(AppStyleConfig.localContactPageStyle.appBarTheme.actionsIconTheme
                     ?.color ?? Colors.black, BlendMode.srcIn),
               ),
               onPressed: () {
@@ -117,13 +115,8 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
               onPressed: () {
                 controller.shareContact();
               },
-              child: Icon(
+              child: const Icon(
                   Icons.arrow_forward,
-                  size: Theme.of(context).floatingActionButtonTheme.iconSize,
-                  color: Theme
-                      .of(context)
-                      .floatingActionButtonTheme
-                      .foregroundColor
               ),
             ),
           );

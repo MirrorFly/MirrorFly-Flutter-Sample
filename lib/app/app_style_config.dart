@@ -75,6 +75,7 @@ class AppStyleConfig{
   static LocalContactPageStyle _localContactPageStyle = const LocalContactPageStyle();
   static LocalContactPreviewPageStyle _localContactPreviewPageStyle = const LocalContactPreviewPageStyle();
   static LocationSentPageStyle _locationSentPageStyle = const LocationSentPageStyle();
+  static MediaSentPreviewPageStyle _mediaSentPreviewPageStyle = const MediaSentPreviewPageStyle();
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -100,6 +101,7 @@ class AppStyleConfig{
   static LocalContactPageStyle localContactPageStyle = _localContactPageStyle;
   static LocalContactPreviewPageStyle localContactPreviewPageStyle = _localContactPreviewPageStyle;
   static LocationSentPageStyle locationSentPageStyle = _locationSentPageStyle;
+  static MediaSentPreviewPageStyle mediaSentPreviewPageStyle = _mediaSentPreviewPageStyle;
 
   static setAppStyle({required AppStyle appStyle}){
     loginPageStyle = appStyle.loginPageStyle ?? _loginPageStyle;
@@ -217,5 +219,9 @@ class AppStyleConfig{
 
   static setLocationSentPageStyle(LocationSentPageStyle locationSentPageStyle){
     _locationSentPageStyle = locationSentPageStyle;
+  }
+
+  static setMediaSentPreviewPageStyle(MediaSentPreviewPageStyle mediaSentPreviewPageStyle){
+    _mediaSentPreviewPageStyle = mediaSentPreviewPageStyle;
   }
 }
