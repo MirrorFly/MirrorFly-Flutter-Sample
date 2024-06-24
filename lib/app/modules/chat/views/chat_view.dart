@@ -881,7 +881,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("unBlock"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
+                overflowWidget: Text(getTranslated("unblock"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Unblock',
                 onItemClick: () {
