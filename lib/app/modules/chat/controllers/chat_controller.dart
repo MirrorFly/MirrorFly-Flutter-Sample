@@ -1656,19 +1656,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint(selectedChatList.length.toString());
     }
     if (messageIds.length == selectedChatList.length) {
-      setOnGoingUserGone();
       clearAllChatSelection();
-      NavUtils.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
-        if (value != null) {
-          debugPrint("result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
-          profile_.value = value;
-          isBlocked(profile.isBlocked);
-        }
-        setChatStatus();
-        checkAdminBlocked();
-        memberOfGroup();
-        setOnGoingUserAvail();
-      });
+      goToForwardMessage(messageIds);
     }
   }
 
@@ -2199,17 +2188,17 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   forwardSingleMessage(String messageId) {
+    goToForwardMessage([messageId]);
+  }
+
+  //Forward Message
+  void goToForwardMessage(List<String> messageIds){
     setOnGoingUserGone();
-    var messageIds = <String>[];
-    messageIds.add(messageId);
     NavUtils.toNamed(Routes.forwardChat, arguments: {"forward": true, "group": false, "groupJid": "", "messageIds": messageIds})?.then((value) {
-      if (value != null) {
-        debugPrint("result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
-        profile_.value = value;
-        isBlocked(profile.isBlocked);
-      }
+      _loadNextMessages(showLoading: false);
       checkAdminBlocked();
       memberOfGroup();
+      setChatStatus();
       setOnGoingUserAvail();
     });
   }
