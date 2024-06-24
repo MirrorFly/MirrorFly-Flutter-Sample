@@ -110,13 +110,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                                 unknown: false,
                                               ),
                                     onTap: () {
-                                      if (controller.imagePath.value.checkNull().isNotEmpty) {
-                                        NavUtils.toNamed(Routes.imageView,
-                                            arguments: {'imageName': controller.profileName.text, 'imagePath': controller.imagePath.value.checkNull()});
-                                      } else if (controller.userImgUrl.value.checkNull().isNotEmpty) {
-                                        NavUtils.toNamed(Routes.imageView,
-                                            arguments: {'imageName': controller.profileName.text, 'imageUrl': controller.userImgUrl.value.checkNull()});
-                                      }
+                                      controller.goToImagePreview();
                                     },
                                   );
                                 }),
@@ -137,6 +131,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                     onTap: controller.loading.value
                                         ? null
                                         : () {
+                                            controller.unFocusAll();
                                             bottomSheetView(context);
                                           },
                                     child: SvgPicture.asset(
@@ -243,12 +238,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                             minLeadingWidth: 10,
                             leading: SvgPicture.asset('assets/logos/status.svg'),
                             onTap: () {
-                              FocusScope.of(context).unfocus();
-                              NavUtils.toNamed(Routes.statusList, arguments: {'status': controller.profileStatus.value})?.then((value) {
-                                if (value != null) {
-                                  controller.profileStatus.value = value;
-                                }
-                              });
+                              controller.goToStatus();
                             },
                           )),
                       const AppDivider(

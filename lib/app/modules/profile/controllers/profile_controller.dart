@@ -551,6 +551,34 @@ class ProfileController extends GetxController {
     });*/
   }
 
+  //Unfocused all text fields
+  void unFocusAll(){
+    userNameFocus.unfocus();
+    emailFocus.unfocus();
+  }
+
+  //Navigate to status list
+  void goToStatus(){
+    unFocusAll();
+    NavUtils.toNamed(Routes.statusList, arguments: {'status': profileStatus.value})?.then((value) {
+      if (value != null) {
+        profileStatus.value = value;
+      }
+    });
+  }
+
+  //Navigate to image preview
+  void goToImagePreview(){
+    unFocusAll();
+    if (imagePath.value.checkNull().isNotEmpty) {
+      NavUtils.toNamed(Routes.imageView,
+          arguments: {'imageName': profileName.text, 'imagePath': imagePath.value.checkNull()});
+    } else if (userImgUrl.value.checkNull().isNotEmpty) {
+      NavUtils.toNamed(Routes.imageView,
+          arguments: {'imageName': profileName.text, 'imageUrl': userImgUrl.value.checkNull()});
+    }
+  }
+
   //#metaData
   void getMetaData(){
     Mirrorfly.getMetaData(flyCallback: (FlyResponse response){
