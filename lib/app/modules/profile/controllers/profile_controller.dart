@@ -592,6 +592,9 @@ class ProfileController extends GetxController {
   }
 
   void onConnected(){
+    if(changed.value){
+      return;
+    }
     getProfile();
   }
 }
