@@ -793,6 +793,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   archiveChats() async {
     if (await AppUtils.isNetConnected()) {
+      var allChats = selectedChats.length == recentChats.length;
       if (selectedChats.length == 1) {
         _itemArchive(0);
         clearAllChatSelection();
@@ -805,6 +806,9 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         });
         clearAllChatSelection();
         toToast('$count ${getTranslated("chatsArchived")}');
+      }
+      if (allChats) {
+        loadNextRecentChat();
       }
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -1600,37 +1604,38 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       debugPrint("load next set of data");
       debugPrint("isRecentHistoryLoading $isRecentHistoryLoading");
       if (!isRecentHistoryLoading.value) {
-        recentChatPage++;
-        isRecentHistoryLoading(true);
-        debugPrint("calling page no $recentChatPage");
-        callback(FlyResponse response) {
-          if (response.isSuccess && response.hasData) {
-            debugPrint("getRecentChatListHistory next data ${response.data}");
-            var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
-            LogMessage.d("getRecentChatListHistory", data.toJson());
-            recentChats.addAll(data.data!);
-            recentChats.refresh();
-            isRecentHistoryLoading(false);
-            getArchivedChatsList();
-          } else {
-            debugPrint("recent chat issue===> ${response.exception}");
-            isRecentHistoryLoading(false);
-          }
-        }
-
-        Constants.enableTopic
-            ? Mirrorfly.getRecentChatListHistoryByTopic(
-                firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value, flyCallback: callback)
-            : Mirrorfly.getRecentChatListHistory(
-                firstSet: recentChatPage == 1, limit: chatLimit, flyCallback: callback);
+        loadNextRecentChat();
       }
     }
     if (historyScrollController.position.pixels == historyScrollController.position.minScrollExtent) {
       debugPrint("historyScrollController reached top");
     }
+  }
 
+  void loadNextRecentChat(){
+    recentChatPage++;
+    isRecentHistoryLoading(true);
+    debugPrint("calling page no $recentChatPage");
+    callback(FlyResponse response) {
+      if (response.isSuccess && response.hasData) {
+        debugPrint("getRecentChatListHistory next data ${response.data}");
+        var data = recentChatFromJson(response.data); //await compute(recentChatFromJson, value.toString());
+        LogMessage.d("getRecentChatListHistory", data.toJson());
+        recentChats.addAll(data.data!);
+        recentChats.refresh();
+        isRecentHistoryLoading(false);
+        getArchivedChatsList();
+      } else {
+        debugPrint("recent chat issue===> ${response.exception}");
+        isRecentHistoryLoading(false);
+      }
+    }
 
-
+    Constants.enableTopic
+        ? Mirrorfly.getRecentChatListHistoryByTopic(
+        firstSet: recentChatPage == 1, limit: chatLimit, topicId: topicId.value, flyCallback: callback)
+        : Mirrorfly.getRecentChatListHistory(
+        firstSet: recentChatPage == 1, limit: chatLimit, flyCallback: callback);
   }
 
   var topicId = Constants.topicId.obs;
