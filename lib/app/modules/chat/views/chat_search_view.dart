@@ -84,7 +84,7 @@ class ChatSearchView extends StatelessWidget {
       },
       itemCount: chatList.length,
       itemScrollController: controller.searchScrollController,
-      itemPositionsListener: controller.itemPositionsListener,
+      itemPositionsListener: controller.newItemPositionsListener,
       reverse: true,
       itemBuilder: (context, index) {
         return Column(

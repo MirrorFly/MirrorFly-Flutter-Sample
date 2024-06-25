@@ -149,10 +149,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint("parameter :${arguments!.chatJid}");
     }
 
-    if (arguments!.isFromStarred && arguments!.messageId != null) {
-      // if (jid != null) {
-      //   userJid = Get.parameters['userJid'] as String;
-      // }
+    if (arguments?.messageId != null) {
       starredChatMessageId = arguments!.messageId;
     }
 
@@ -208,10 +205,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       if (focusNode.hasFocus) {
         showEmoji(false);
       }
-    });
-    itemPositionsListener.itemPositions.addListener(() {
-      debugPrint('scrolled : ${findTopFirstVisibleItemPosition()}');
-      // j=findLastVisibleItemPosition();
     });
     newItemPositionsListener.itemPositions.addListener(() {
       var pos = lastVisiblePosition();
@@ -563,10 +556,11 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // getChatHistory();
     Mirrorfly.initializeMessageList(
       userJid: profile.jid.checkNull(),
-      limit: 25,
+      limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
       exclude: starredChatMessageId == null,
+      ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
       if (value) {
@@ -580,7 +574,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             chatList(chatMessageModel.reversed.toList());
             showStarredMessage();
             sendReadReceipt(removeUnreadFromList: false);
-            // loadPrevORNextMessagesLoad();
+            loadPrevORNextMessagesLoad();
           }
           chatLoading(false);
         });
@@ -592,8 +586,13 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     });
   }
 
-  Future<void> _loadPreviousMessages() async {
-    showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
+  Future<void> _loadPreviousMessages({bool showLoading = true}) async {
+    if(showLoading) {
+      showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
+    }else{
+      showLoadingPrevious(showLoading);
+    }
+    // showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages(flyCallback: (FlyResponse response) {
       if (response.isSuccess && response.hasData) {
         var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
@@ -640,7 +639,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         var chat = chatList.indexWhere((element) => element.messageId == starredChatMessageId);
         debugPrint('chat $chat');
         if (!chat.isNegative) {
-          navigateToMessage(chatList[chat]);
+          navigateToMessage(chatList[chat],index: chat);
           starredChatMessageId = null;
         } else {
           toToast(getTranslated("messageNotFound"));
@@ -1596,18 +1595,20 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     return findBetweenOrAbove;
   }
 
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  // final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
-  int findTopFirstVisibleItemPosition() {
-    var r = itemPositionsListener.itemPositions.value
-        .where((ItemPosition position) => position.itemTrailingEdge < 1)
-        .reduce((ItemPosition min, ItemPosition position) => position.itemTrailingEdge > min.itemTrailingEdge ? position : min)
+  int findTopFirstVisibleItemPosition({ItemPositionsListener? listener}) {
+    var listen = listener ?? newItemPositionsListener;
+    var r = listen.itemPositions.value
+        .where((ItemPosition position) => position.itemLeadingEdge < 1)
+        .reduce((ItemPosition min, ItemPosition position) => position.itemLeadingEdge > min.itemLeadingEdge ? position : min)
         .index;
     return r; //< chatList.length ? r + 1 : r;
   }
 
-  int findBottomLastVisibleItemPosition() {
-    var r = itemPositionsListener.itemPositions.value
+  int findBottomLastVisibleItemPosition({ItemPositionsListener? listener}) {
+    var listen = listener ?? newItemPositionsListener;
+    var r = listen.itemPositions.value
         .where((ItemPosition position) => position.itemTrailingEdge < 1)
         .reduce((ItemPosition min, ItemPosition position) => position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
         .index;
@@ -2380,20 +2381,26 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     var messageID = chatMessage.messageId;
     var chatIndex = index ?? chatList.indexWhere((element) => element.messageId == messageID);
     if (!chatIndex.isNegative) {
-      LogMessage.d("newScrollController", "navigateToMessage");
-      newScrollController.scrollTo(index: chatIndex, duration: const Duration(milliseconds: 10));
-      Future.delayed(const Duration(milliseconds: 15), () {
-        chatList[chatIndex].isSelected(true);
-        chatList.refresh();
-      });
+      // newScrollController.scrollTo(index: chatIndex+5, duration: const Duration(milliseconds: 1));
+      if(!checkIndexVisibleInViewPort(chatIndex)) {
+        newScrollController.jumpTo(index: chatIndex);
+      }
+      LogMessage.d("newScrollController", "selected $chatIndex");
+      chatList[chatIndex].isSelected(true);
+      chatList.refresh();
 
-      Future.delayed(const Duration(milliseconds: 800), () {
+      Future.delayed(const Duration(seconds: 1), () {
+        LogMessage.d("newScrollController", "unselected $chatIndex");
         chatList[chatIndex].isSelected(false);
         chatList.refresh();
       });
     } else {
       getMessageFromServerAndNavigateToMessage(chatMessage, index);
     }
+  }
+
+  bool checkIndexVisibleInViewPort(int index){
+    return (findTopFirstVisibleItemPosition(listener: newItemPositionsListener) >= index && findBottomLastVisibleItemPosition(listener: newItemPositionsListener) <= index);
   }
 
   void getMessageFromServerAndNavigateToMessage(ChatMessageModel chatMessage, int? index) {
@@ -2413,8 +2420,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     });
   }
 
-  int findLastVisibleItemPositionForChat() {
-    return newItemPositionsListener.itemPositions.value.first.index - 1;
+  int findLastVisibleItemPositionForChat({ItemPositionsListener? listener}) {
+    var listen = listener ?? newItemPositionsListener;
+    return listen.itemPositions.value.first.index - 1;
   }
 
   void share() {
@@ -2838,8 +2846,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   Future<void> loadPrevORNextMessagesLoad({bool? isReplyMessage}) async {
-    if (await Mirrorfly.hasNextMessages()) {
-      _loadNextMessages(showLoading: false, removeUnreadFromList: false);
+    if (await Mirrorfly.hasPreviousMessages()) {
+      _loadPreviousMessages(showLoading: false);
     }
   }
 
