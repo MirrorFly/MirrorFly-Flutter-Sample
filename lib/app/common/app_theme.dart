@@ -8,12 +8,14 @@ class MirrorFlyAppTheme {
     brightness: Brightness.light,
     floatingActionButtonTheme: const FloatingActionButtonThemeData(shape: CircleBorder(),),
     appBarTheme: const AppBarTheme(
-      // color: appBarColor,
-        iconTheme: IconThemeData(color: iconColor),
+        backgroundColor: Color(0xffF2F2F2),
+        shadowColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        iconTheme: IconThemeData(color: Color(0xff181818)),
         titleTextStyle: TextStyle(
-            color: appbarTextColor,
+            color: Color(0xff181818),
             fontSize: 20,
-            fontWeight: FontWeight.w700)),
+            fontWeight: FontWeight.bold)),
     hintColor: Colors.black26,
     fontFamily: 'sf_ui',
     progressIndicatorTheme: const ProgressIndicatorThemeData(color: buttonBgColor),
