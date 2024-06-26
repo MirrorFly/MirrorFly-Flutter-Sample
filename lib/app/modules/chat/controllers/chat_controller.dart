@@ -2643,7 +2643,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     updateProfile(jid);
   }
 
-  void showHideEmoji(BuildContext context) {
+  void showHideEmoji() {
     if (!showEmoji.value) {
       focusNode.unfocus();
     } else {

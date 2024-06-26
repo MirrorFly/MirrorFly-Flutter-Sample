@@ -141,7 +141,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                         return InkWell(
                                             onTap: () {
                                               textFocusNode.unfocus();
-                                              widget.chatController.showHideEmoji(Get.context!);
+                                              widget.chatController.showHideEmoji();
                                             },
                                             child: widget.chatController.showEmoji.value
                                                 ? Icon(
