@@ -314,7 +314,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           debugPrint("#Disconnect call controller back called from Participant Screen");
           NavUtils.back();
         // });
-      }else{
+      }else if(NavUtils.currentRoute == Routes.outGoingCallView){
         NavUtils.back();
       }
     } else {
