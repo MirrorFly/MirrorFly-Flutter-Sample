@@ -47,6 +47,7 @@ extension GetHelper on GetxController {
   }
 }
 
+// Abstract class for StatelessWidget
 abstract class NavView<T extends GetxController> extends StatelessWidget {
   const NavView({super.key});
 
@@ -55,7 +56,7 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
   T get controller => createController().get();
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   Widget build(BuildContext context);
@@ -64,12 +65,16 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 
 // Abstract class for StatefulWidget
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
-  const NavViewStateful({Key? key}) : super(key: key);
+  final String? jid;
+  const NavViewStateful({Key? key, this.jid}) : super(key: key);
 
-  T get controller => Get.find<T>();
+  T get controller => Get.find<T>(tag: jid);
+  T controllerWithTag(String tag){
+    return Get.find<T>(tag:tag);
+  }
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   NavViewState<T> createState() {
@@ -87,7 +92,11 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void initState() {
-    widget.createController();
+    debugPrint("NavViewState key ${widget.jid}");
+    // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
+      widget.createController(tag: widget.jid);
+    // }
+
     // Get.put<T>(controller);
     super.initState();
     widget.onInit();
@@ -96,10 +105,10 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void dispose() {
-    Get.delete<T>();
+    Get.delete<T>(tag: widget.jid);
     widget.onDispose();
     super.dispose();
-    LogMessage.d("NavViewState :  dispose", T.toString());
+    LogMessage.d("NavViewState : dispose key: ${widget.jid}", T.toString());
   }
 
   @override
@@ -116,10 +125,10 @@ abstract class NavViewStateful<T extends GetxController> extends StatefulWidget 
 
   final String? tag = null;
 
-  T get controller => createController().get();
+  T get controller => createController({String? tag}).get();
   dynamic get arguments => NavUtils.arguments;
 
-  T createController();
+  T createController({String? tag});
 
   @override
   NavViewState<NavViewStateful<T>, T> createState();
@@ -131,7 +140,7 @@ abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxControll
   @override
   void initState() {
     super.initState();
-    controller = widget.createController();
+    controller = widget.createController({String? tag});
     // Initialize the controller
     if (widget.tag == null) {
       Get.put<T>(controller);

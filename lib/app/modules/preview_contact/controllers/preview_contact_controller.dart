@@ -15,6 +15,8 @@ class PreviewContactController extends GetxController {
   var previewContactName = "";
   var from = "";
 
+  var userJid = NavUtils.arguments['userJid'];
+
   @override
   void onInit() {
     super.onInit();
@@ -108,7 +110,7 @@ class PreviewContactController extends GetxController {
         debugPrint("sending contact--> ${contactItem.userName}");
         debugPrint("sending contact--> ${contactItem.contactNo}");
 
-        var response = await Get.find<ChatController>()
+        var response = await Get.find<ChatController>(tag: userJid)
             .sendContactMessage(contactItem.contactNo, contactItem.userName);
         debugPrint("ContactResponse ==> $response");
       }

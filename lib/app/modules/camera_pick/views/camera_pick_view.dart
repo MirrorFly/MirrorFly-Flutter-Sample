@@ -11,7 +11,7 @@ class CameraPickView extends NavViewStateful<CameraPickController> {
   const CameraPickView({Key? key}) : super(key: key);
 
   @override
-CameraPickController createController() => Get.put(CameraPickController());
+CameraPickController createController({String? tag}) => Get.put(CameraPickController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +22,25 @@ CameraPickController createController() => Get.put(CameraPickController());
           return controller.cameraInitialized.value ? Stack(
             alignment: Alignment.topCenter,
             children: [
-              Listener(
-                onPointerDown: (_) => controller.pointers++,
-                onPointerUp: (_) => controller.pointers--,
-                child: CameraPreview(
-                  controller.cameraController!, child: LayoutBuilder(
-                    builder: (BuildContext context,
-                        BoxConstraints constraints) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onScaleStart: controller.handleScaleStart,
-                        onScaleUpdate: controller.handleScaleUpdate,
-                        onTapDown: (TapDownDetails details) =>
-                            controller.onViewFinderTap(
-                                details, constraints),
-                      );
-                    }),),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Listener(
+                  onPointerDown: (_) => controller.pointers++,
+                  onPointerUp: (_) => controller.pointers--,
+                  child: CameraPreview(
+                    controller.cameraController!, child: LayoutBuilder(
+                      builder: (BuildContext context,
+                          BoxConstraints constraints) {
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onScaleStart: controller.handleScaleStart,
+                          onScaleUpdate: controller.handleScaleUpdate,
+                          onTapDown: (TapDownDetails details) =>
+                              controller.onViewFinderTap(
+                                  details, constraints),
+                        );
+                      }),),
+                ),
               ),
               Row(
           mainAxisSize : MainAxisSize.max,

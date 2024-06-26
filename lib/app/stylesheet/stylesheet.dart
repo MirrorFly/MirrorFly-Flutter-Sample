@@ -26,6 +26,11 @@ part 'ongoing_call_page_style.dart';
 part 'call_info_page_style.dart';
 part 'add_participants_page_style.dart';
 part 'dialog_style.dart';
+part 'gallery_page_style.dart';
+part 'local_contact_page_style.dart';
+part 'local_contact_preview_page_style.dart';
+part 'location_sent_page_style.dart';
+part 'media_sent_preview_page_style.dart';
 
 class AppStyle{
 

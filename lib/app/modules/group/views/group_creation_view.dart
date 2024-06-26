@@ -17,7 +17,7 @@ class GroupCreationView extends NavViewStateful<GroupCreationController> {
   const GroupCreationView({Key? key}) : super(key: key);
 
   @override
-GroupCreationController createController() => Get.put(GroupCreationController());
+GroupCreationController createController({String? tag}) => Get.put(GroupCreationController());
 
   @override
   Widget build(BuildContext context) {

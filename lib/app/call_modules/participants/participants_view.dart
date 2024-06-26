@@ -21,7 +21,7 @@ class ParticipantsView extends NavViewStateful<AddParticipantsController> {
   const ParticipantsView({Key? key}) : super(key: key);
 
   @override
-AddParticipantsController createController() => Get.put(AddParticipantsController());
+AddParticipantsController createController({String? tag}) => Get.put(AddParticipantsController());
 
   @override
   Widget build(BuildContext context) {

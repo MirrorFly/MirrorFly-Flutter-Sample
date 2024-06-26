@@ -127,7 +127,11 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
-        if (Get.isRegistered<ChatController>()) {
+        if(SessionManagement.getCurrentChatJID().checkNull() == chatJid){
+          NotificationBuilder.cancelNotifications();
+         return;
+        }
+        if (NavUtils.isOverlayOpen || NavUtils.currentRoute == Routes.chat) {
           LogMessage.d("#Mirrorfly Notification ->","already chat page");
           if (NavUtils.currentRoute == Routes.forwardChat ||
               NavUtils.currentRoute == Routes.chatInfo ||
@@ -140,10 +144,21 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
             NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp: true));
             // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
-            if(Get.isOverlaysOpen){
+            if(NavUtils.isOverlayOpen){
+              LogMessage.d("#Mirrorfly Notification ->" , "isOverlayOpen dismissing");
+
               NavUtils.back();
             }
-            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            LogMessage.d("#Mirrorfly Notification ->" , "Calling off named");
+
+
+            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
+            // NavUtils.back();
+            /*Below 400 milliseconds the controller is not deleted and creating the issue in the Scrolled Positioned list issue,
+             so we are waiting for 500 considering Android Platform*/
+           /* Future.delayed(const Duration(milliseconds: 500),(){
+              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            });*/
           }
         } else {
           debugPrint("not chat page");

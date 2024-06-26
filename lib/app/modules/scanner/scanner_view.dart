@@ -9,7 +9,7 @@ class ScannerView extends NavView<ScannerController> {
   const ScannerView({Key? key}) : super(key: key);
 
   @override
- ScannerController createController() => ScannerController();
+ ScannerController createController({String? tag}) => ScannerController();
 
   @override
   Widget build(BuildContext context) {

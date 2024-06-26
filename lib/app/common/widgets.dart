@@ -106,7 +106,7 @@ class ImageNetwork extends NavView<MainController> {
   }) : super(key: key);
 
   @override
-MainController createController() => MainController();
+MainController createController({String? tag}) => MainController();
 
   @override
   Widget build(BuildContext context) {

@@ -77,6 +77,7 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
       if (cursorPosition < 0) {
         controller.text += emoji.emoji;
         // widget.onEmojiSelected?.call(category, emoji);
+        count((139 - addStatusController.text.characters.length));
         return;
       }
 
@@ -214,16 +215,17 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
     ]);
   }
 
-  void showHideEmoji(BuildContext context) {
+  showHideEmoji(BuildContext context){
     if (!showEmoji.value) {
       focusNode.unfocus();
+      Future.delayed(const Duration(milliseconds: 500), () {
+        showEmoji(!showEmoji.value);
+      });
     }else{
-      focusNode.requestFocus();
-      return;
-    }
-    Future.delayed(const Duration(milliseconds: 100), () {
       showEmoji(!showEmoji.value);
-    });
+      focusNode.requestFocus();
+    }
+
   }
 
 }

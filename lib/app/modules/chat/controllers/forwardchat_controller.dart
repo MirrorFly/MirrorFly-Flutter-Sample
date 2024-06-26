@@ -6,7 +6,6 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import '../../../app_style_config.dart';
 import '../../../data/utils.dart';
-import '../../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -418,45 +417,24 @@ class ForwardChatController extends GetxController {
   forwardMessages() {
     AppUtils.isNetConnected().then((isConnected) {
       if (isConnected) {
-        Mirrorfly.isBusyStatusEnabled().then((isSuccess) {
-          if (isSuccess){
+        Mirrorfly.isBusyStatusEnabled().then((isSuccess) async {
+          if (!isSuccess){
             if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
           DialogUtils.showLoading(message: getTranslated("forwardMessage"),dialogStyle: AppStyleConfig.dialogStyle);
-              Future.delayed(const Duration(milliseconds: 1000), () async {
+              // Future.delayed(const Duration(milliseconds: 1000), () async {
                 await Mirrorfly.forwardMessagesToMultipleUsers(
                     messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
                   // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-                  DialogUtils.hideLoading();
                   updateLastMessage(selectedJids);
-                  getProfileDetails(selectedJids.last)
-                      .then((value) {
-                    if (value.jid != null) {
-                      // NavUtils.offNamedUntil(Routes.chat, arguments: value, (route) {
-                      //   LogMessage.d("offNamedUntil", route.settings.name);
-                      //   return route.settings.name.toString().startsWith(Routes.dashboard);
-                      // });
-                      Navigator.pushNamedAndRemoveUntil(
-                        buildContext,
-                        Routes.chat,
-                        ModalRoute.withName(Routes.dashboard),
-                        arguments: value,
-                      );
-
-                    } else {
-                      if (response.hasError) {
-                        toToast(response.errorMessage);
-                        // NavUtils.back(result: null);
-                        Navigator.pop(buildContext, null);
-                      }
-                    }
-                  });
+                  DialogUtils.hideLoading();
+                  NavUtils.back();
                 });
-              });
+              // });
             }
           }else{
             //show busy status popup
             // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
-            //showBusyStatusAlert(disableBusyChatAndSend());
+            // showBusyStatusAlert(disableBusyChatAndSend());
           }
         });
       } else {

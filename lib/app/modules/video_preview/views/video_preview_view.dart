@@ -12,7 +12,7 @@ class VideoPreviewView extends NavViewStateful<VideoPreviewController> {
   const VideoPreviewView({Key? key}) : super(key: key);
 
   @override
-VideoPreviewController createController() => Get.put(VideoPreviewController());
+VideoPreviewController createController({String? tag}) => Get.put(VideoPreviewController());
 
   @override
   Widget build(BuildContext context) {

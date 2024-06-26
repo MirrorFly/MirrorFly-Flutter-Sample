@@ -394,22 +394,24 @@ class ProfileController extends GetxController {
             NavUtils.to(CropImage(
               imageFile: File(result.files.single.path!),
             ))?.then((value) {
-              value as MemoryImage;
-              imageBytes = value.bytes;
-              var name = "${DateTime
-                  .now()
-                  .millisecondsSinceEpoch}.jpg";
-              writeImageTemp(value.bytes, name).then((value) {
-                if (from == Routes.login) {
-                  imagePath(value.path);
-                  changed(true);
-                  update();
-                } else {
-                  imagePath(value.path);
-                  // changed(true);
-                  updateProfileImage(value.path, update: false);
-                }
-              });
+              if (value != null) {
+                value as MemoryImage;
+                imageBytes = value.bytes;
+                var name = "${DateTime
+                    .now()
+                    .millisecondsSinceEpoch}.jpg";
+                writeImageTemp(value.bytes, name).then((value) {
+                  if (from == Routes.login) {
+                    imagePath(value.path);
+                    changed(true);
+                    update();
+                  } else {
+                    imagePath(value.path);
+                    // changed(true);
+                    updateProfileImage(value.path, update: false);
+                  }
+                });
+              }
             });
           } else {
             toToast(getTranslated("imageLess10mb"));
@@ -435,21 +437,25 @@ class ProfileController extends GetxController {
           imageFile: File(photo.path),
         ))?.then((value) {
           debugPrint("Profile Controller Got Image from Crop Image $value");
-          value as MemoryImage;
-          imageBytes = value.bytes;
-          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            if (from == Routes.login) {
-              debugPrint("Profile Controller from login");
-              imagePath(value.path);
-              changed(true);
-            } else {
-              debugPrint("Profile Controller not from login");
-              imagePath(value.path);
-              // changed(true);
-              updateProfileImage(value.path, update: false);
-            }
-          });
+          if (value != null) {
+            value as MemoryImage;
+            imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            writeImageTemp(value.bytes, name).then((value) {
+              if (from == Routes.login) {
+                debugPrint("Profile Controller from login");
+                imagePath(value.path);
+                changed(true);
+              } else {
+                debugPrint("Profile Controller not from login");
+                imagePath(value.path);
+                // changed(true);
+                updateProfileImage(value.path, update: false);
+              }
+            });
+          }
         });
       } else {
         // User canceled the Camera
@@ -545,6 +551,34 @@ class ProfileController extends GetxController {
     });*/
   }
 
+  //Unfocused all text fields
+  void unFocusAll(){
+    userNameFocus.unfocus();
+    emailFocus.unfocus();
+  }
+
+  //Navigate to status list
+  void goToStatus(){
+    unFocusAll();
+    NavUtils.toNamed(Routes.statusList, arguments: {'status': profileStatus.value})?.then((value) {
+      if (value != null) {
+        profileStatus.value = value;
+      }
+    });
+  }
+
+  //Navigate to image preview
+  void goToImagePreview(){
+    unFocusAll();
+    if (imagePath.value.checkNull().isNotEmpty) {
+      NavUtils.toNamed(Routes.imageView,
+          arguments: {'imageName': profileName.text, 'imagePath': imagePath.value.checkNull()});
+    } else if (userImgUrl.value.checkNull().isNotEmpty) {
+      NavUtils.toNamed(Routes.imageView,
+          arguments: {'imageName': profileName.text, 'imageUrl': userImgUrl.value.checkNull()});
+    }
+  }
+
   //#metaData
   void getMetaData(){
     Mirrorfly.getMetaData(flyCallback: (FlyResponse response){
@@ -558,6 +592,9 @@ class ProfileController extends GetxController {
   }
 
   void onConnected(){
+    if(changed.value){
+      return;
+    }
     getProfile();
   }
 }

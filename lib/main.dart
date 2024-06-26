@@ -12,6 +12,8 @@ import 'package:mirror_fly_demo/app/modules/chat/views/chat_view.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart';
 import 'package:mirror_fly_demo/app/modules/login/views/login_view.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirror_fly_demo/app/modules/profile/views/profile_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/app_lock/pin_view.dart';
 import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -46,12 +48,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-//check app opened from notification
+/// check app opened from notification
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
 MirrorflyNotificationAppLaunchDetails? appLaunchDetails;
 
-//check is on going call
+/// check is on going call
 bool isOnGoingCall = false;
 final navigatorKey = GlobalKey<NavigatorState>();
 late ChatViewArguments chatViewArg;
@@ -85,8 +87,14 @@ Future<void> main() async {
         } else {
           LogMessage.d("onFailure", response.errorMessage.toString());
         }
-        //check is on going call
-        isOnGoingCall = (await Mirrorfly.isOnGoingCall()).checkNull();
+        /// check is on going call,
+        /// On iOS, this is set to false by default. When a call is received and disconnected before being attended,
+        /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+        /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+        /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+        /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+        isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
         ///
         /// This method will give response from Native Android, iOS will return empty by default.
@@ -145,13 +153,27 @@ class _MyAppState extends State<MyApp> {
               ),
               builder: (context) => const LoginView(),
             )];
+          case Routes.pin:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.pin,
+              ),
+              builder: (context) => const PinView(),
+            )];
+          case Routes.profile:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.profile,
+              ),
+              builder: (context) => const ProfileView(),
+            )];
           case Routes.chat:
             return [MaterialPageRoute(
               settings: RouteSettings(
                 name: Routes.chat,
                 arguments: chatViewArg,
               ),
-              builder: (context) => const ChatView(),
+              builder: (context) => ChatView(),
             )];
           case Routes.dashboard:
             return [
@@ -228,7 +250,17 @@ String getInitialRoute() {
           return Routes.dashboard;
         }
       } else {
-        return Routes.profile;
+        /// This condition handles the case where a new number logs in and is redirected to the Profile Page.
+        /// If the app is closed before saving the profile, reopening the app would cause an error.
+        /// This condition prevents that error from occurring.
+        if (SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
+          return Routes.profile;
+        }else{
+          SessionManagement.clear().then((value) {
+
+          });
+          return Routes.login;
+        }
       }
     } else {
       return Routes.login;

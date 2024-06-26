@@ -19,7 +19,7 @@ class OutGoingCallView extends NavViewStateful<OutgoingCallController> {
   const OutGoingCallView({Key? key}) : super(key: key);
 
   @override
-  OutgoingCallController createController() => Get.put(OutgoingCallController());
+  OutgoingCallController createController({String? tag}) => Get.put(OutgoingCallController());
 
   @override
   Widget build(BuildContext context) {

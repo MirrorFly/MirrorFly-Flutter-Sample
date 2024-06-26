@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../data/permissions.dart';
@@ -13,7 +12,6 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
-  var chatController = Get.find<ChatController>();
 
   var messageID = NavUtils.arguments["messageID"];
   var jid = NavUtils.arguments["jid"];

@@ -8,13 +8,13 @@ import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controlle
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
-import 'add_status_view.dart';
+import '../../../routes/route_settings.dart';
 
 class StatusListView extends NavViewStateful<StatusListController> {
   const StatusListView({Key? key}) : super(key: key);
 
   @override
-StatusListController createController() => Get.put(StatusListController());
+StatusListController createController({String? tag}) => Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ StatusListController createController() => Get.put(StatusListController());
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
-                    NavUtils.to(const AddStatusView(), arguments: {
+                    NavUtils.toNamed(Routes.addProfileStatus, arguments: {
                       "status": controller.selectedStatus.value
                     })?.then((value) {
                       if (value != null) {

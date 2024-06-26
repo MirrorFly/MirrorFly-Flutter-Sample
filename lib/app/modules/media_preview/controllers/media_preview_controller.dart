@@ -32,6 +32,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   var captionMessage = <String>[].obs;
   var textMessage = NavUtils.arguments['caption'];
   var from = NavUtils.arguments['from'];
+  var userJid = NavUtils.arguments['userJid'];
   var showAdd = NavUtils.arguments['showAdd'] ?? true;
   var currentPageIndex = 0.obs;
   var isFocused = false.obs;
@@ -171,7 +172,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
             return false;
           }
           debugPrint("sending image");
-          await Get.find<ChatController>().sendImageMessage(
+          await Get.find<ChatController>(tag: userJid).sendImageMessage(
               imageCache[i]?.path, captionMessage[i], "");
         } else if (data.type == 'video') {
           if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
@@ -179,7 +180,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
             return false;
           }
           debugPrint("sending video");
-          await Get.find<ChatController>().sendVideoMessage(
+          await Get.find<ChatController>(tag: userJid).sendVideoMessage(
               imageCache[i]!.path, captionMessage[i], "");
         }
         i++;

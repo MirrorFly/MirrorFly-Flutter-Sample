@@ -63,7 +63,7 @@ class _CropImageState extends State<CropImage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: ()=>NavUtils.back(),
-                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),padding: EdgeInsets.zero),
                     child: Text(getTranslated("cancel").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),
@@ -86,7 +86,7 @@ class _CropImageState extends State<CropImage> {
                       });
 
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                    style: ElevatedButton.styleFrom(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.white),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),padding: EdgeInsets.zero),
                     child: Text(getTranslated("save").toUpperCase(),style: const TextStyle(color: Colors.black,fontSize:16.0),),
                   ),
                 ),

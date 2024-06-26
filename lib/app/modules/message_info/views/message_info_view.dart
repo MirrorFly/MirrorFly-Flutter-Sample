@@ -19,7 +19,7 @@ class MessageInfoView extends NavViewStateful<MessageInfoController> {
   final PreferredSizeWidget? appbar;
 
   @override
-MessageInfoController createController() => Get.put(MessageInfoController());
+MessageInfoController createController({String? tag}) => Get.put(MessageInfoController());
 
   @override
   Widget build(BuildContext context) {

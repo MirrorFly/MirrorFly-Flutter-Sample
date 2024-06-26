@@ -63,6 +63,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
       if (cursorPosition < 0) {
         controller.text += emoji.emoji;
         // widget.onEmojiSelected?.call(category, emoji);
+        count((139 - addStatusController.text.characters.length));
         return;
       }
 
@@ -87,6 +88,12 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     // onChanged();
     getStatusList();
     onChanged();
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
   }
   getStatusList(){
     loading.value=true;
@@ -113,6 +120,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           LogMessage.d("setMyProfileStatus flutter", response.toString());
           selectedStatus.value = statusText;
           addStatusController.text = statusText;
+          onChanged();
           var data = json.decode(response.data);
           toToast(getTranslated("statusUpdated"));
           if(data['status']) {

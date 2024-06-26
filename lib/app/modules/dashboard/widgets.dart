@@ -63,16 +63,16 @@ class RecentChatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LogMessage.d("RecentChatItem", "build ${item.jid}");
-    return Container(
-      key: ValueKey(item.jid),
-      color: isSelected ? Colors.black12 : Colors.transparent,
-      child: Row(
-        children: [
-          buildProfileImage(recentChatItemStyle),
-          Expanded(
-            child: InkWell(
-              onLongPress: ()=> onLongPress != null ?  onLongPress!(item) : null,
-              onTap: ()=>onTap(item),
+    return InkWell(
+      onLongPress: ()=> onLongPress != null ?  onLongPress!(item) : null,
+      onTap: ()=>onTap(item),
+      child: Container(
+        key: ValueKey(item.jid),
+        color: isSelected ? Colors.black12 : Colors.transparent,
+        child: Row(
+          children: [
+            buildProfileImage(recentChatItemStyle),
+            Expanded(
               child: Container(
                 padding: const EdgeInsets.only(top: 8),
                 child: Column(
@@ -89,9 +89,9 @@ class RecentChatItem extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -121,8 +121,8 @@ class RecentChatItem extends StatelessWidget {
                               item.lastMessageType != MessageType.isText) &&
                           typingUserid.isEmpty
                       ? buildMessageIndicator()
-                      : const SizedBox()
-                  : const SizedBox(),
+                      : const Offstage()
+                  : const Offstage(),
               isForwardMessage
                   ? item.isGroup!
                       ? buildGroupMembers()

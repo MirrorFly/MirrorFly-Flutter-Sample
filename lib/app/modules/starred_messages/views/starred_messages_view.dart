@@ -21,7 +21,7 @@ class StarredMessagesView extends NavViewStateful<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
 
   @override
-StarredMessagesController createController() => Get.put(StarredMessagesController());
+StarredMessagesController createController({String? tag}) => Get.put(StarredMessagesController());
 
   @override
   Widget build(BuildContext context) {

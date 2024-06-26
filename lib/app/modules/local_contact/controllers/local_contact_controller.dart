@@ -20,6 +20,8 @@ class LocalContactController extends GetxController {
   var contactsSelected = List<LocalContact>.empty(growable: true).obs;
   TextEditingController searchTextController = TextEditingController();
 
+  var userJid = NavUtils.arguments['userJid'];
+
   @override
   void onInit() {
     super.onInit();
@@ -64,7 +66,7 @@ class LocalContactController extends GetxController {
     //   contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     // }
 
-    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
+    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick", "userJid" : userJid});
 
   }
 

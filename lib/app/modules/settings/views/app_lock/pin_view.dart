@@ -13,7 +13,7 @@ class PinView extends NavViewStateful<AppLockController> {
   static const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, 10];
 
   @override
-AppLockController createController() => Get.put(AppLockController());
+AppLockController createController({String? tag}) => Get.put(AppLockController());
 
   @override
   Widget build(BuildContext context) {

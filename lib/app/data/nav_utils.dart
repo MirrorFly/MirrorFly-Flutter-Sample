@@ -42,6 +42,7 @@ class NavUtils{
     Map<String, String>? parameters,
   }){
     if (preventDuplicates && page == MirrorFlyNavigationObserver.current?.settings.name) {
+      debugPrint("offNamed: $page return null");
       return null;
     }
 
@@ -49,7 +50,7 @@ class NavUtils{
       final uri = Uri(path: page, queryParameters: parameters);
       page = uri.toString();
     }
-    return Navigator.popAndPushNamed(currentContext, page,
+    return Navigator.pushReplacementNamed(currentContext, page,
       arguments: arguments);
   }
 
@@ -86,7 +87,16 @@ class NavUtils{
     dynamic arguments,
     int? id,
   }){
-    return Navigator.push(currentContext, page);
+    return Navigator.push(currentContext, MaterialPageRoute<void>(
+      builder: (BuildContext context) => page,
+    ),);
+  }
+
+  static bool get isOverlayOpen => DialogUtils.isDialogOpen() || isModalBottomSheetOpen();
+
+  static bool isModalBottomSheetOpen() {
+    var currentRoute = ModalRoute.of(currentContext);
+    return currentRoute is ModalBottomSheetRoute;
   }
 
 }

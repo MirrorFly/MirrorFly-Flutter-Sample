@@ -21,7 +21,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-DashboardController createController() => Get.put(DashboardController());
+DashboardController createController({String? tag}) => Get.put(DashboardController(),tag: key?.hashCode.toString());
 
   @override
   Widget build(BuildContext context) {
@@ -313,14 +313,14 @@ DashboardController createController() => Get.put(DashboardController());
                                                 controller.gotoSettings();
                                               },
                                             ),
-                                            CustomAction(
+                                            /*CustomAction(
                                               visibleWidget: const Icon(Icons.web),
                                               overflowWidget: Text(getTranslated("web"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                               keyValue: 'Web',
                                               onItemClick: () => controller.webLogin(),
-                                            ),
+                                            ),*/
                                           ]),
                                     ],
                                   );

@@ -11,22 +11,21 @@ class LanguageListView extends NavViewStateful<LanguageController> {
   const LanguageListView({Key? key}) : super(key: key);
 
   @override
-LanguageController createController() => Get.put(LanguageController());
+  LanguageController createController({String? tag}) =>
+      Get.put(LanguageController());
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Obx(
-            () =>
-            Scaffold(
-                appBar: AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: iconColor),
-                    onPressed: () {
-                      controller.backFromSearch();
-                    },
-                  ),
-                  title: controller.search.value
+    return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: iconColor),
+                  onPressed: () {
+                    controller.backFromSearch();
+                  },
+                ),
+                title: Obx(() {
+                  return controller.search.value
                       ? TextField(
                     focusNode: controller.focusNode,
                     onChanged: (text) => controller.languageSearchFilter(text),
@@ -34,12 +33,12 @@ LanguageController createController() => Get.put(LanguageController());
                     style: const TextStyle(fontSize: 18),
                     decoration: const InputDecoration(
                         hintText: "Search...", border: InputBorder.none),
-                  )
-                      : const Text('Choose Language'),
-                  actions: [
-                    controller.search.value
-                        ? const SizedBox()
-                        : IconButton(
+                  ) : const Text('Choose Language');
+                }),
+                actions: [
+                  Obx(() {
+                    return controller.search.value
+                        ? const Offstage() : IconButton(
                       icon: SvgPicture.asset(
                         searchIcon,
                         width: 18,
@@ -50,14 +49,17 @@ LanguageController createController() => Get.put(LanguageController());
                         controller.focusNode.requestFocus();
                         controller.search.value = true;
                       },
-                    ),
-                  ],
-                ),
-                body: ListView.builder(
-                    itemCount: controller.languageList.length,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      var item = controller.languageList[index];
+                    );
+                  }),
+                ],
+              ),
+              body: SafeArea(
+                child: Obx(() {
+                  return ListView.builder(
+                      itemCount: controller.languageList.length,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        var item = controller.languageList[index];
                         return ListTile(
                           title: Text(item.languageName,
                               style: const TextStyle(
@@ -71,9 +73,9 @@ LanguageController createController() => Get.put(LanguageController());
                             controller.selectLanguage(item);
                           },
                         );
-                    })
-            ),
-      ),
-    );
+                      });
+                }),
+              )
+          );
   }
 }

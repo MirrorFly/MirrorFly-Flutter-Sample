@@ -5,7 +5,6 @@ import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -58,7 +57,7 @@ class _ChatListViewState extends State<ChatListView> {
             reverse: true,
             itemBuilder: (context, pos) {
               final index = pos;
-              LogMessage.d("ScrollablePositionedList", "build $index ${widget.chatList[index].messageId}");
+              // LogMessage.d("ScrollablePositionedList", "build $index ${widget.chatList[index].messageId}");
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -113,7 +112,7 @@ class _ChatListViewState extends State<ChatListView> {
                               widget.chatController.translateMessage(index);
                             },
                             child: Obx(() {
-                              LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
+                              // LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
                                 color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,

@@ -57,22 +57,22 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
       data: Theme.of(context).copyWith(
           appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
-      child: SafeArea(
-        child: Container(
-          color: Colors.black.withOpacity(0.6),
+      child: Scaffold(
+        backgroundColor: Colors.black.withOpacity(0.7),
+        appBar: AppBar(
+          title: Text(getTranslated("editMessage")),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              widget.chatController.closeKeyBoard();
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: SafeArea(
           child: Column(
             children: [
-              AppBar(
-                title: Text(getTranslated("editMessage")),
-                centerTitle: true,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    widget.chatController.closeKeyBoard();
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
               Expanded(
                 child: InkWell(
                   splashColor: Colors.transparent,
@@ -141,7 +141,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                         return InkWell(
                                             onTap: () {
                                               textFocusNode.unfocus();
-                                              widget.chatController.showHideEmoji(Get.context!);
+                                              widget.chatController.showHideEmoji();
                                             },
                                             child: widget.chatController.showEmoji.value
                                                 ? Icon(

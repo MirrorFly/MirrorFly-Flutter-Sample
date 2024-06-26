@@ -14,6 +14,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../call_modules/ripple_animation_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/lottie_animation.dart';
@@ -23,12 +24,15 @@ import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
-   const ChatView({super.key,this.disableAppBar = false});
-  final bool disableAppBar;
+  ChatView({Key? key, this.chatViewArguments}) : super(key: key, jid: chatViewArguments?.chatJid);
+  final ChatViewArguments? chatViewArguments;
 
-   @override
-   ChatController createController() => Get.put(ChatController());
-   // final ChatController controller = Get.put(ChatController());
+  @override
+  ChatController createController({String? tag}) {
+    debugPrint("ChatView createController");
+    final arguments = chatViewArguments ?? NavUtils.arguments as ChatViewArguments;
+    return Get.put(ChatController(arguments), tag: tag);
+  }
 
    /*@override
     void dispose() {
@@ -43,7 +47,7 @@ class ChatView extends NavViewStateful<ChatController> {
         appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
       ),
       child: Scaffold(
-          appBar: !disableAppBar ? getAppBar(context) : null,
+          appBar: !((controller.arguments?.disableAppBar).checkNull()) ? getAppBar(context) : null,
           body: SafeArea(
             child: Container(
               width: NavUtils.width,
@@ -159,7 +163,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                     ),
                                                   ),
                                                   Obx(() {
-                                                    return controller.isUserTyping.value
+                                                    return controller.isUserTyping.value || controller.isAudioRecording.value == Constants.audioRecordDone
                                                         ? InkWell(
                                                             onTap: () {
                                                               controller.isAudioRecording.value == Constants.audioRecordDone
@@ -316,7 +320,7 @@ class ChatView extends NavViewStateful<ChatController> {
         ],
         if(controller.isAudioRecording.value == Constants.audioRecordInitial)...[
             IconButton(onPressed: (){
-          controller.showHideEmoji(context);
+          controller.showHideEmoji();
         }, icon: controller.showEmoji.value
             ? Icon(
           Icons.keyboard,
@@ -746,7 +750,7 @@ class ChatView extends NavViewStateful<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
               onPressed: () {
-                controller.reportChatOrUser();
+                controller.reportChatOrMessage();
               },
               icon: const Icon(Icons.report_problem_rounded)),
           overflowWidget: Text(getTranslated("report"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -756,7 +760,7 @@ class ChatView extends NavViewStateful<ChatController> {
           keyValue: 'Report',
           onItemClick: () {
             controller.closeKeyBoard();
-            controller.reportChatOrUser();
+            controller.reportChatOrMessage();
           },
         ),
         CustomAction(
@@ -857,7 +861,7 @@ class ChatView extends NavViewStateful<ChatController> {
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
-                    controller.reportChatOrUser();
+                    controller.reportChatOrMessage();
                   },
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
@@ -866,7 +870,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 keyValue: 'Report',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  controller.reportChatOrUser();
+                  controller.reportChatOrMessage();
                 },
               ),
               controller.isBlocked.value
@@ -877,7 +881,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   },
                   icon: const Icon(Icons.block),
                 ),
-                overflowWidget: Text(getTranslated("unBlock"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
+                overflowWidget: Text(getTranslated("unblock"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: ShowAsAction.never,
                 keyValue: 'Unblock',
                 onItemClick: () {
@@ -946,31 +950,31 @@ class ChatView extends NavViewStateful<ChatController> {
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                  onPressed: () {
+                  onPressed: controller.ableToCall ? () {
                     controller.makeVideoCall();
-                  },
+                  } : null,
                   icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("videoCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
-                onItemClick: () {
+                onItemClick: controller.ableToCall ? () {
                   controller.makeVideoCall();
-                },
+                } : null,
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                  onPressed: () {
+                  onPressed: controller.ableToCall ? () {
                     controller.makeVoiceCall();
-                  },
+                  } : null,
                   icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("audioCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
-                onItemClick: () {
+                onItemClick: controller.ableToCall ? () {
                   controller.makeVoiceCall();
-                },
+                } : null,
               ),
             ],
           ),

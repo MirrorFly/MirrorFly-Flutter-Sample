@@ -18,14 +18,15 @@ import '../controllers/profile_controller.dart';
 class ProfileView extends NavViewStateful<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
   @override
-ProfileController createController() => Get.put(ProfileController());
+ProfileController createController({String? tag}) => Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
     return FocusDetector(
       onFocusGained: () {
         if (!KeyboardVisibilityController().isVisible) {
-          if (controller.userNameFocus.hasFocus) {
+          ///Hidden this code, inorder to rectify the keyboard is displayed, then dismissed and then shown again. This type of checking is not needed.
+          /*if (controller.userNameFocus.hasFocus) {
             controller.userNameFocus.unfocus();
             Future.delayed(const Duration(milliseconds: 100), () {
               controller.userNameFocus.requestFocus();
@@ -35,7 +36,7 @@ ProfileController createController() => Get.put(ProfileController());
             Future.delayed(const Duration(milliseconds: 100), () {
               controller.emailFocus.requestFocus();
             });
-          }
+          }*/
         }
       },
       child: Theme(
@@ -109,13 +110,7 @@ ProfileController createController() => Get.put(ProfileController());
                                                 unknown: false,
                                               ),
                                     onTap: () {
-                                      if (controller.imagePath.value.checkNull().isNotEmpty) {
-                                        NavUtils.toNamed(Routes.imageView,
-                                            arguments: {'imageName': controller.profileName.text, 'imagePath': controller.imagePath.value.checkNull()});
-                                      } else if (controller.userImgUrl.value.checkNull().isNotEmpty) {
-                                        NavUtils.toNamed(Routes.imageView,
-                                            arguments: {'imageName': controller.profileName.text, 'imageUrl': controller.userImgUrl.value.checkNull()});
-                                      }
+                                      controller.goToImagePreview();
                                     },
                                   );
                                 }),
@@ -136,6 +131,7 @@ ProfileController createController() => Get.put(ProfileController());
                                     onTap: controller.loading.value
                                         ? null
                                         : () {
+                                            controller.unFocusAll();
                                             bottomSheetView(context);
                                           },
                                     child: SvgPicture.asset(
@@ -242,11 +238,7 @@ ProfileController createController() => Get.put(ProfileController());
                             minLeadingWidth: 10,
                             leading: SvgPicture.asset('assets/logos/status.svg'),
                             onTap: () {
-                              NavUtils.toNamed(Routes.statusList, arguments: {'status': controller.profileStatus.value})?.then((value) {
-                                if (value != null) {
-                                  controller.profileStatus.value = value;
-                                }
-                              });
+                              controller.goToStatus();
                             },
                           )),
                       const AppDivider(

@@ -314,7 +314,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
         if (value != null) {
           debugPrint(
               "result of forward ==> ${(value as ProfileDetails).toJson().toString()}");
-          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: value.jid.checkNull()));
+          // NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: value.jid.checkNull()));
         }
       });
     }

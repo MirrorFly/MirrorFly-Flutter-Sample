@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';
@@ -9,6 +10,7 @@ import '../call_modules/outgoing_call/outgoing_call_view.dart';
 import '../call_modules/participants/participants_view.dart';
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/busy_status/views/add_busy_status_view.dart';
 import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
 import '../modules/chat/views/chat_search_view.dart';
@@ -32,6 +34,7 @@ import '../modules/login/views/otp_view.dart';
 import '../modules/media_preview/views/media_preview_view.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
+import '../modules/profile/views/add_status_view.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/status_list_view.dart';
 import '../modules/scanner/scanner_view.dart';
@@ -82,10 +85,11 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.statusList:
       return MaterialPageRoute(builder: (_) => const StatusListView(),settings: settings);
     case Routes.chat:
-      return MaterialPageRoute(builder: (_) => const ChatView(),settings: settings);
+      final arguments = settings.arguments as ChatViewArguments;
+      return MaterialPageRoute(builder: (_) => ChatView(chatViewArguments: arguments),settings: settings);
     case Routes.forwardChat:
       final arguments = settings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['forwardMessageIds']),settings: settings);
+      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['messageIds']),settings: settings);
     case Routes.chatSearch:
       return MaterialPageRoute(builder: (_) => ChatSearchView(),settings: settings);
     case Routes.locationSent:
@@ -146,6 +150,11 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const ContactSyncPage(),settings: settings);
     case Routes.viewAllMediaPreview:
       return MaterialPageRoute(builder: (_) => const ViewAllMediaPreviewView(),settings: settings);
+    case Routes.addBusyStatus:
+      final arguments = settings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
+    case Routes.addProfileStatus:
+      return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
 
     //calls
     case Routes.outGoingCallView:

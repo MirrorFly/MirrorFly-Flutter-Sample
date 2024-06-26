@@ -22,7 +22,7 @@ class ArchivedChatListView extends NavViewStateful<ArchivedChatListController> {
   final bool showChatDeliveryIndicator;
 
   @override
-ArchivedChatListController createController() => Get.put(ArchivedChatListController());
+ArchivedChatListController createController({String? tag}) => Get.put(ArchivedChatListController());
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ ArchivedChatListController createController() => Get.put(ArchivedChatListControl
                               onPressed: () {
                                 controller.muteChats();
                               },
-                              icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),tooltip: 'Mute',),
+                              icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Mute',),
                             overflowWidget: Text(getTranslated("mute")),
                             showAsAction: controller.mute.value
                                 ? ShowAsAction.always
@@ -99,7 +99,7 @@ ArchivedChatListController createController() => Get.put(ArchivedChatListControl
                               onPressed: () {
                                 controller.unMuteChats();
                               },
-                              icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),tooltip: 'UnMute',),
+                              icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnMute',),
                             overflowWidget: Text(getTranslated("unMute")),
                             showAsAction: controller.unMute.value
                                 ? ShowAsAction.always
@@ -114,7 +114,7 @@ ArchivedChatListController createController() => Get.put(ArchivedChatListControl
                                 onPressed: () {
                                   controller.unArchiveSelectedChats();
                                 },
-                                icon: SvgPicture.asset(unarchive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn)),tooltip: 'UnArchive',),
+                                icon: SvgPicture.asset(unarchive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnArchive',),
                             overflowWidget: Text(getTranslated("unArchive")),
                             showAsAction: ShowAsAction.always,
                             keyValue: 'UnArchive',

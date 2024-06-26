@@ -18,7 +18,7 @@ class ContactListView extends NavViewStateful<ContactController> {
 
 
   @override
-ContactController createController() => Get.put(ContactController());
+ContactController createController({String? tag}) => Get.put(ContactController());
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ ContactController createController() => Get.put(ContactController());
                       visible: controller.isSearchVisible,
                       child: IconButton(
                           onPressed: () => controller.onSearchPressed(),
-                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme!.color!, BlendMode.srcIn),)),
+                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
                     ),
                     Visibility(
                       visible: controller.isClearVisible,

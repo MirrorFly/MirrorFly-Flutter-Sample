@@ -19,7 +19,8 @@ import '../widgets/sender_header.dart';
 
 class ChatSearchView extends StatelessWidget {
   ChatSearchView({super.key});
-  final ChatController controller = ChatController().get();
+
+  final ChatController controller = ChatController(null).get();
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +84,7 @@ class ChatSearchView extends StatelessWidget {
       },
       itemCount: chatList.length,
       itemScrollController: controller.searchScrollController,
-      itemPositionsListener: controller.itemPositionsListener,
+      itemPositionsListener: controller.newItemPositionsListener,
       reverse: true,
       itemBuilder: (context, index) {
         return Column(
