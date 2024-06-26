@@ -320,7 +320,7 @@ class ChatView extends NavViewStateful<ChatController> {
         ],
         if(controller.isAudioRecording.value == Constants.audioRecordInitial)...[
             IconButton(onPressed: (){
-          controller.showHideEmoji(context);
+          controller.showHideEmoji();
         }, icon: controller.showEmoji.value
             ? Icon(
           Icons.keyboard,
