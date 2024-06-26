@@ -22,9 +22,9 @@ class LanguageController extends GetxController{
     languageList.clear();
     if(text.isNotEmpty) {
       var filter = mainLanguageList.where((item) => item.languageName.toLowerCase().contains(text.toLowerCase()));
-      languageList(filter.toList());
+      languageList.addAll(filter.toList());
     }else{
-      languageList(mainLanguageList);
+      languageList.addAll(mainLanguageList);
     }
     languageList.refresh();
   }
@@ -34,7 +34,7 @@ class LanguageController extends GetxController{
     search.value=false;
     if(isSearching){
      languageList.clear();
-     languageList(mainLanguageList);
+     languageList.addAll(mainLanguageList);
      languageList.refresh();
      isSearching=false;
     }else{
@@ -48,7 +48,7 @@ class LanguageController extends GetxController{
     translationLanguage(NavUtils.arguments as String);
     loadAsset().then((value){
       mainLanguageList.addAll(value);
-      languageList(value);
+      languageList.addAll(value);
     });
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
