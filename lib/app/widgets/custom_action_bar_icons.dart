@@ -137,10 +137,10 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
                     for (CustomAction customAction in overflow)
                       PopupMenuItem(
                         value: customAction.keyValue,
-                        onTap: () {
+                        onTap: customAction.onItemClick != null ? () {
                           _context=null;
-                          customAction.onItemClick();
-                        },
+                          customAction.onItemClick!();
+                        } : null,
                         child: customAction.overflowWidget,
                       )
                   ];
@@ -166,7 +166,7 @@ class CustomAction implements Comparable<CustomAction> {
   final Widget overflowWidget;
   final String keyValue;
   final ShowAsAction showAsAction;
-  final VoidCallback onItemClick;
+  final VoidCallback? onItemClick;
   final RxBool? recreate;
 
   CustomAction({

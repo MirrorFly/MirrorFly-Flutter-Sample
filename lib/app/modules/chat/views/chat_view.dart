@@ -950,31 +950,31 @@ class ChatView extends NavViewStateful<ChatController> {
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                  onPressed: () {
+                  onPressed: controller.ableToCall ? () {
                     controller.makeVideoCall();
-                  },
+                  } : null,
                   icon: SvgPicture.asset(videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("videoCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
-                onItemClick: () {
+                onItemClick: controller.ableToCall ? () {
                   controller.makeVideoCall();
-                },
+                } : null,
               ),
               CustomAction(
                 visibleWidget: IconButton(
-                  onPressed: () {
+                  onPressed: controller.ableToCall ? () {
                     controller.makeVoiceCall();
-                  },
+                  } : null,
                   icon: SvgPicture.asset(audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("audioCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
-                onItemClick: () {
+                onItemClick: controller.ableToCall ? () {
                   controller.makeVoiceCall();
-                },
+                } : null,
               ),
             ],
           ),

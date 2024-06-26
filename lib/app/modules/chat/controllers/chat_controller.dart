@@ -101,6 +101,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   bool get isMemberOfGroup =>
       profile.isGroupProfile ?? false ? availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value : true;
 
+  bool get ableToCall => profile.isGroupProfile.checkNull() ? isMemberOfGroup : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
+
   // var profileDetail = Profile();
 
   String nJid = "";
@@ -2681,7 +2683,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          NavUtils.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.audio});
+          if(isMemberOfGroup) {
+            NavUtils.toNamed(Routes.groupParticipants, arguments: {
+              "groupId": profile.jid,
+              "callType": CallType.audio
+            });
+          }
         } else {
           Mirrorfly.makeVoiceCall(
               toUserJid: profile.jid.checkNull(),
