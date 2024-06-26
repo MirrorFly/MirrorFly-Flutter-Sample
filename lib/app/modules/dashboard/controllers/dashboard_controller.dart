@@ -1625,6 +1625,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         recentChats.refresh();
         isRecentHistoryLoading(false);
         getArchivedChatsList();
+        chatLimit += chatLimit;
       } else {
         debugPrint("recent chat issue===> ${response.exception}");
         isRecentHistoryLoading(false);
