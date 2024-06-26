@@ -750,7 +750,7 @@ class ChatView extends NavViewStateful<ChatController> {
         CustomAction(
           visibleWidget: IconButton(
               onPressed: () {
-                controller.reportChatOrUser();
+                controller.reportChatOrMessage();
               },
               icon: const Icon(Icons.report_problem_rounded)),
           overflowWidget: Text(getTranslated("report"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
@@ -760,7 +760,7 @@ class ChatView extends NavViewStateful<ChatController> {
           keyValue: 'Report',
           onItemClick: () {
             controller.closeKeyBoard();
-            controller.reportChatOrUser();
+            controller.reportChatOrMessage();
           },
         ),
         CustomAction(
@@ -861,7 +861,7 @@ class ChatView extends NavViewStateful<ChatController> {
               CustomAction(
                 visibleWidget: IconButton(
                   onPressed: () {
-                    controller.reportChatOrUser();
+                    controller.reportChatOrMessage();
                   },
                   icon: const Icon(Icons.report_problem_rounded),
                 ),
@@ -870,7 +870,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 keyValue: 'Report',
                 onItemClick: () {
                   controller.closeKeyBoard();
-                  controller.reportChatOrUser();
+                  controller.reportChatOrMessage();
                 },
               ),
               controller.isBlocked.value
