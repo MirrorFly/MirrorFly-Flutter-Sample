@@ -573,8 +573,8 @@ class AppLockController extends FullLifeCycleController
   RxBool timeout = false.obs;
 
   showOtpView() {
-    if(!Get.isBottomSheetOpen.checkNull()) {
-      Get.bottomSheet(
+    if(!NavUtils.isOverlayOpen.checkNull()) {
+      DialogUtils.bottomSheet(
         isDismissible: false,
         isScrollControlled: true,
         BottomSheet(
@@ -599,7 +599,7 @@ class AppLockController extends FullLifeCycleController
                         left: 16.0,
                         right: 16.0,
                         bottom: MediaQuery
-                            .of(Get.context!)
+                            .of(NavUtils.currentContext)
                             .viewInsets
                             .bottom),
                     child: Column(
@@ -628,7 +628,7 @@ class AppLockController extends FullLifeCycleController
                         ),
                         OTPTextField(
                             width: MediaQuery
-                                .of(Get.context!)
+                                .of(NavUtils.currentContext)
                                 .size
                                 .width,
                             controller: otpController,
