@@ -51,7 +51,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   var info = false.obs;
   var shortcut = false.obs;
 
-  var archiveSettingEnabled = false.obs;
+  var archiveSettingEnabled = true.obs;
 
   ScrollController historyScrollController = ScrollController();
 
