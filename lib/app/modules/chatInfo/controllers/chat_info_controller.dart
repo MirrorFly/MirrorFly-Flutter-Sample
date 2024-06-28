@@ -91,11 +91,12 @@ class ChatInfoController extends GetxController {
 
   void userCameOnline(jid) {
     debugPrint("userCameOnline : $jid");
-    if(jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
-      debugPrint("userCameOnline jid match: $jid");
-      Future.delayed(const Duration(milliseconds: 3000),(){
-        getUserLastSeen();
-      });
+    if (jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull() && (!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull())) {
+      debugPrint("userCameOnline : $jid");
+      /*Future.delayed(const Duration(milliseconds: 3000), () {
+        setChatStatus();
+      });*/
+      userPresenceStatus(getTranslated("online"));
     }
   }
 
