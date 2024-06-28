@@ -30,7 +30,9 @@ class MediaMessageOverlay extends StatelessWidget {
     debugPrint("#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
     debugPrint("#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
 
-    if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !chatMessage.isUploadFailed())) {
+    debugPrint("#Media if condition ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !(chatMessage.isMessageSentByMe && !chatMessage.isUploadFailed()))}");
+
+    if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !(chatMessage.isMessageSentByMe && chatMessage.isUploadFailed()))) {
       if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
         return FloatingActionButton.small(
           heroTag: chatMessage.messageId,
