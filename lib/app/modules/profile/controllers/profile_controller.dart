@@ -27,6 +27,7 @@ class ProfileController extends GetxController {
   var profileStatus = getTranslated("defaultStatus").obs;
   var isImageSelected = false.obs;
   var isUserProfileRemoved = false.obs;
+  var imagePathNew = "".obs;
   var imagePath = "".obs;
   var userImgUrl = "".obs;
   var emailPatternMatch = RegExp(Constants.emailPattern,multiLine: false);
@@ -210,6 +211,7 @@ class ProfileController extends GetxController {
             LogMessage.d("updateMyProfileImage", response.data);
             loading.value = false;
             var data = json.decode(response.data);
+            imagePathNew(imagePath.value);
             imagePath.value = Constants.emptyString;
             userImgUrl.value = data['data']['image'];
             SessionManagement.setUserImage(data['data']['image'].toString());
