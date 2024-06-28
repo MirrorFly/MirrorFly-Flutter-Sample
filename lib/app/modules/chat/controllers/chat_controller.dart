@@ -1963,7 +1963,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   var typingList = <String>[].obs;
 
   setChatStatus() async {
-    if (await AppUtils.isNetConnected()) {
       if (profile.isGroupProfile.checkNull()) {
         debugPrint("value--> show group list");
         if (typingList.isNotEmpty) {
@@ -1992,9 +1991,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           userPresenceStatus("");
         }
       }
-    } else {
-      userPresenceStatus("");
-    }
+      if (!await AppUtils.isNetConnected()) {
+        debugPrint("setChatStatus method network not connected");
+        userPresenceStatus("");
+      }
   }
 
   var groupParticipantsName = ''.obs;
@@ -2021,12 +2021,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         }).then((value) {});
   }
 
-  String get subtitle => userPresenceStatus.isEmpty
+  String get subtitle => userPresenceStatus.value.isEmpty
       ? /*groupParticipantsName.isNotEmpty
           ? groupParticipantsName.toString()
           :*/
       Constants.emptyString
-      : userPresenceStatus.toString();
+      : userPresenceStatus.value.toString();
 
   // final ImagePicker _picker = ImagePicker();
 
@@ -2537,11 +2537,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   void userCameOnline(jid) {
-    if (jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull()) {
+    if (jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull() && (!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull())) {
       debugPrint("userCameOnline : $jid");
-      Future.delayed(const Duration(milliseconds: 3000), () {
+      /*Future.delayed(const Duration(milliseconds: 3000), () {
         setChatStatus();
-      });
+      });*/
+      userPresenceStatus(getTranslated("online"));
     }
   }
 
