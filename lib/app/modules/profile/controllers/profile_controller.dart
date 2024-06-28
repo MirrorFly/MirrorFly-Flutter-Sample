@@ -263,6 +263,7 @@ class ProfileController extends GetxController {
             SessionManagement.setUserImage(Constants.emptyString);
             isImageSelected.value = false;
             isUserProfileRemoved.value = true;
+            imagePathNew("");
             userImgUrl(Constants.emptyString);
             if (from == Routes.login) {
               changed(true);
