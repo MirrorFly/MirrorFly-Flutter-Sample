@@ -42,6 +42,7 @@ class RecentChatView extends StatelessWidget {
                 height: 40,
                 child: Obx(() {
                   return ListView.builder(
+                    key: const PageStorageKey("list"),
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.topics.length,
                     itemBuilder: (BuildContext context, int index) {

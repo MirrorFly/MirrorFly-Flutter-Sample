@@ -127,6 +127,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
+        if(SessionManagement.getCurrentChatJID().checkNull() == chatJid){
+          NotificationBuilder.cancelNotifications();
+         return;
+        }
         if (NavUtils.isOverlayOpen || NavUtils.currentRoute == Routes.chat) {
           LogMessage.d("#Mirrorfly Notification ->","already chat page");
           if (NavUtils.currentRoute == Routes.forwardChat ||

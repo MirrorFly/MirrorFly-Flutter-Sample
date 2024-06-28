@@ -88,7 +88,8 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                   ),
                   rightArrowIcon, () => {NavUtils.toNamed(Routes.dataUsageSetting)},
                 )),
-                notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
+                /*Commented out, because this feature is NI*/
+                /* notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
                 Visibility(
                     visible: controller.translationEnabled,
                     child: chatListItem(Column(
@@ -113,7 +114,7 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400))
                       ],
-                    ), rightArrowIcon, () => controller.chooseLanguage())),
+                    ), rightArrowIcon, () => controller.chooseLanguage())),*/
 
                 ListItem(
                     title: Text(getTranslated("clearAllConversation"),

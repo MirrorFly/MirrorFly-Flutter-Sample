@@ -13,6 +13,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart'
 import 'package:mirror_fly_demo/app/modules/login/views/login_view.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirror_fly_demo/app/modules/profile/views/profile_view.dart';
+import 'package:mirror_fly_demo/app/modules/settings/views/app_lock/pin_view.dart';
 import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -151,6 +152,13 @@ class _MyAppState extends State<MyApp> {
                 name: Routes.login,
               ),
               builder: (context) => const LoginView(),
+            )];
+          case Routes.pin:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.pin,
+              ),
+              builder: (context) => const PinView(),
             )];
           case Routes.profile:
             return [MaterialPageRoute(

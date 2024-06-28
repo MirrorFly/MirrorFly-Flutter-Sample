@@ -101,6 +101,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   bool get isMemberOfGroup =>
       profile.isGroupProfile ?? false ? availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value : true;
 
+  bool get ableToCall => profile.isGroupProfile.checkNull() ? isMemberOfGroup : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
+
   // var profileDetail = Profile();
 
   String nJid = "";
@@ -1116,7 +1118,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     getMessageActions();
   }
 
-  reportChatOrUser() {
+  //Report Chat or User
+  reportChatOrMessage() {
     Future.delayed(const Duration(milliseconds: 100), () async {
       var chatMessage = selectedChatList.isNotEmpty ? selectedChatList[0] : null;
       DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
@@ -1128,18 +1131,24 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                 onPressed: () async {
                   NavUtils.back();
                   if (await AppUtils.isNetConnected()) {
-                    Mirrorfly.reportUserOrMessages(
-                        jid: profile.jid!,
-                        type: chatMessage?.messageChatType ?? "chat",
-                        messageId: chatMessage?.messageId ?? "",
-                        flyCallBack: (FlyResponse response) {
-                          debugPrint(response.toString());
-                          if (response.isSuccess) {
-                            toToast(getTranslated("reportSentSuccess"));
-                          } else {
-                            toToast(getTranslated("thereNoMessagesAvailable"));
-                          }
-                        });
+                    var valid = chatList.where((element) => element.messageType != MessageType.isNotification).toList();
+                    if(valid.isNotEmpty) {
+                      Mirrorfly.reportUserOrMessages(
+                          jid: profile.jid!,
+                          type: chatMessage?.messageChatType ?? "chat",
+                          messageId: chatMessage?.messageId ?? "",
+                          flyCallBack: (FlyResponse response) {
+                            debugPrint(response.toString());
+                            if (response.isSuccess) {
+                              toToast(getTranslated("reportSentSuccess"));
+                            } else {
+                              toToast(getTranslated(
+                                  "thereNoMessagesAvailable"));
+                            }
+                          });
+                    }else{
+                      toToast(getTranslated("thereNoMessagesAvailable"));
+                    }
                   } else {
                     toToast(getTranslated("noInternetConnection"));
                   }
@@ -2674,7 +2683,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          NavUtils.toNamed(Routes.groupParticipants, arguments: {"groupId": profile.jid, "callType": CallType.audio});
+          if(isMemberOfGroup) {
+            NavUtils.toNamed(Routes.groupParticipants, arguments: {
+              "groupId": profile.jid,
+              "callType": CallType.audio
+            });
+          }
         } else {
           Mirrorfly.makeVoiceCall(
               toUserJid: profile.jid.checkNull(),
