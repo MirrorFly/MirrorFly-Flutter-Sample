@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mirror_fly_demo/app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/chat_view.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart';
@@ -183,6 +184,15 @@ class _MyAppState extends State<MyApp> {
                   arguments: dashboardViewArg,
                 ),
                 builder: (context) => const DashboardView(),
+              )
+            ];
+          case Routes.onGoingCallView:
+            return [
+              MaterialPageRoute(
+                settings: const RouteSettings(
+                  name: Routes.onGoingCallView,
+                ),
+                builder: (context) => const OnGoingCallView(),
               )
             ];
           default:
