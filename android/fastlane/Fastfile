@@ -15,7 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "#FLUTTER-1552,#FLUTTER-1553,#FLUTTER-1554,#FLUTTER-1556,#FLUTTER-1557,#FLUTTER-1558,#FLUTTER-1559,#FLUTTER-1560,#FLUTTER-1561,#FLUTTER-1562,#FLUTTER-1563,#FLUTTER-1564,#FLUTTER-1566,#FLUTTER-1567,#FLUTTER-1568"
+  change_Log = "#FLUTTER-1596"
 
 
   desc "Upload dev version to distributes in firebase"
