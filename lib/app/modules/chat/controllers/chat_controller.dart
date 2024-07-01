@@ -1365,6 +1365,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                         debugPrint("$response");
                         profile.isBlocked = true;
                         isBlocked(true);
+                        setChatStatus();
                         profile_.refresh();
                         saveUnsentMessage();
                         DialogUtils.hideLoading();
@@ -1449,6 +1450,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                         profile.isBlocked = false;
                         isBlocked(false);
                         getUnsentMessageOfAJid();
+                        setChatStatus();
                         DialogUtils.hideLoading();
                       toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
                       });
