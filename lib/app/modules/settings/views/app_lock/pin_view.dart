@@ -8,7 +8,7 @@ import '../../../../common/constants.dart';
 import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
-class PinView extends NavViewStateful<AppLockController> {
+class PinView extends NavView<AppLockController> {
   const PinView({Key? key}) : super(key: key);
   static const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, -1, 0, 10];
 

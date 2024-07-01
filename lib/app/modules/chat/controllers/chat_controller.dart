@@ -1674,7 +1674,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   void closeKeyBoard() {
-    FocusManager.instance.primaryFocus!.unfocus();
+    // FocusManager.instance.primaryFocus!.unfocus();
+    focusNode.unfocus();
   }
 
   void startTimer() {
