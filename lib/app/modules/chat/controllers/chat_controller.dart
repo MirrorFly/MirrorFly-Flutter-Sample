@@ -165,7 +165,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(value.jid.checkNull())}";
       }
       checkAdminBlocked();
-      ready();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ready();
+      });
       // initListeners();
     });
 
@@ -558,7 +560,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // getChatHistory();
     Mirrorfly.initializeMessageList(
       userJid: profile.jid.checkNull(),
-      limit: 20,
+      limit: 50,
       topicId: topicId,
       messageId: starredChatMessageId,
       exclude: starredChatMessageId == null,
