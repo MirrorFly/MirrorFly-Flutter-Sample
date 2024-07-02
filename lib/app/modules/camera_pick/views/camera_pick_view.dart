@@ -14,9 +14,14 @@ class CameraPickView extends NavViewStateful<CameraPickController> {
 CameraPickController createController({String? tag}) => Get.put(CameraPickController());
 
   @override
+  void onDispose(){
+    controller.cameraController?.dispose();
+    debugPrint("cameraController disposed onView");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Obx(() {
           return controller.cameraInitialized.value ? Stack(
@@ -27,19 +32,22 @@ CameraPickController createController({String? tag}) => Get.put(CameraPickContro
                 child: Listener(
                   onPointerDown: (_) => controller.pointers++,
                   onPointerUp: (_) => controller.pointers--,
-                  child: CameraPreview(
-                    controller.cameraController!, child: LayoutBuilder(
-                      builder: (BuildContext context,
-                          BoxConstraints constraints) {
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onScaleStart: controller.handleScaleStart,
-                          onScaleUpdate: controller.handleScaleUpdate,
-                          onTapDown: (TapDownDetails details) =>
-                              controller.onViewFinderTap(
-                                  details, constraints),
-                        );
-                      }),),
+                  child: AspectRatio(
+                    aspectRatio: NavUtils.width/(NavUtils.height-MediaQuery.of(context).viewPadding.top),
+                    child: CameraPreview(
+                      controller.cameraController!, child: LayoutBuilder(
+                        builder: (BuildContext context,
+                            BoxConstraints constraints) {
+                          return GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onScaleStart: controller.handleScaleStart,
+                            onScaleUpdate: controller.handleScaleUpdate,
+                            onTapDown: (TapDownDetails details) =>
+                                controller.onViewFinderTap(
+                                    details, constraints),
+                          );
+                        }),),
+                  ),
                 ),
               ),
               Row(
@@ -136,9 +144,6 @@ CameraPickController createController({String? tag}) => Get.put(CameraPickContro
                         getTranslated("holdToRecord"),
                         style: const TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 10,
                       ),
                     ],
                   ),
