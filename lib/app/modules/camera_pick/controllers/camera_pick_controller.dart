@@ -45,7 +45,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   @override
   void dispose() {
-    cameraController?.dispose();
+    debugPrint("cameraController disposed");
     super.dispose();
   }
   var min = 1.0;
@@ -224,11 +224,15 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   void toggleCamera() {
     cameraInitialized(false);
+    flash(false);
     isFrontCamera.value = !isFrontCamera.value;
     transform = transform * pi;
     int cameraPos = isFrontCamera.value ? 0 : 1;
     cameraController = CameraController(cameras[cameraPos], ResolutionPreset.high);
-    cameraController?.initialize().then((value) => cameraInitialized(true));
+    cameraController?.initialize().then((value){
+      cameraInitialized(true);
+    });
+
   }
 
 

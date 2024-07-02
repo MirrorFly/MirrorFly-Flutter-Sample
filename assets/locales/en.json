@@ -94,6 +94,7 @@
     "yes": "Yes",
     "ok": "Ok",
     "done": "Done",
+    "adminBlockedUser": "This User Blocked by Admin.",
     "adminBlockedMessage": "This application is no longer available for you.",
     "adminBlockedMessageLabel": "Please contact admin if you have any query.",
     "supportMail": "contussupport@gmail.com",

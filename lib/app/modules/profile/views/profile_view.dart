@@ -77,13 +77,13 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                   debugPrint("controller.profile name ${controller.profileName.text}");
 
                                   return InkWell(
-                                    child: controller.imagePath.value.isNotEmpty
+                                    child: controller.imagePath.value.isNotEmpty || controller.imagePathNew.value.isNotEmpty
                                         ? SizedBox(
                                             width: AppStyleConfig.profileViewStyle.profileImageSize.width,
                                             height: AppStyleConfig.profileViewStyle.profileImageSize.height,
                                             child: ClipOval(
                                               child: Image.file(
-                                                File(controller.imagePath.value),
+                                                File(controller.imagePath.value.isEmpty ? controller.imagePathNew.value : controller.imagePath.value),
                                                 fit: BoxFit.fill,
                                               ),
                                             ))

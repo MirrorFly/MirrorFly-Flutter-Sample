@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../app_style_config.dart';
 import '../common/app_localizations.dart';
 import '../common/widgets.dart';
 import '../model/chat_message_model.dart';
@@ -443,8 +444,9 @@ void showQuickProfilePopup(
                         ? Expanded(
                             child: InkWell(
                               onTap: () {
-                                NavUtils.back();
-                                makeVoiceCall(profile.value.jid.checkNull(), availableFeatures);
+                                  NavUtils.back();
+                                  makeVoiceCall(profile,
+                                      availableFeatures);
                               },
                               child: SvgPicture.asset(
                                 quickCall,
@@ -458,7 +460,7 @@ void showQuickProfilePopup(
                             child: InkWell(
                               onTap: () {
                                 NavUtils.back();
-                                makeVideoCall(profile.value.jid.checkNull(), availableFeatures);
+                                makeVideoCall(profile, availableFeatures);
                               },
                               child: SvgPicture.asset(
                                 quickVideo,
@@ -487,7 +489,41 @@ void showQuickProfilePopup(
   );
 }
 
-makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
+showBlockStatusAlert(Function? function,Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) {
+  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
+    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+        onPressed: () {
+          NavUtils.back();
+        },
+        child: Text(getTranslated("cancel").toUpperCase(), )),
+    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+        onPressed: () async {
+          NavUtils.back();
+          Mirrorfly.unblockUser(
+              userJid: profile.value.jid.checkNull(),
+              flyCallBack: (FlyResponse response) {
+                if (response.isSuccess) {
+                  debugPrint(response.toString());
+                  profile.value.isBlocked = false;
+                  if (function != null) {
+                    function.call(profile,availableFeatures);
+                  }
+                }
+              });
+        },
+        child: Text(getTranslated("unblock").toUpperCase(), )),
+  ]);
+}
+
+makeVoiceCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
+  if(profile.value.isAdminBlocked.checkNull()){
+    toToast(getTranslated("adminBlockedUser"));
+    return;
+  }
+  if(profile.value.isBlocked.checkNull()) {
+    showBlockStatusAlert(makeVoiceCall, profile,availableFeatures);
+    return;
+  }
   if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
     DialogUtils.showFeatureUnavailable();
     return;
@@ -502,10 +538,10 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
-    Mirrorfly.makeVoiceCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+    Mirrorfly.makeVoiceCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
       if (response.isSuccess) {
         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-          "userJid": [toUser],
+          "userJid": [profile.value.jid],
           "callType": CallType.audio
         });
       }
@@ -515,28 +551,49 @@ makeVoiceCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
   }
 }
 
-makeVideoCall(String toUser, Rx<AvailableFeatures> availableFeatures) async {
-  if (await AppUtils.isNetConnected()) {
+makeVideoCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
+  if(profile.value.isAdminBlocked.checkNull()){
+    toToast(getTranslated("adminBlockedUser"));
+    return;
+  }
+  if(profile.value.isBlocked.checkNull()) {
+    showBlockStatusAlert(makeVideoCall, profile, availableFeatures);
+    return;
+  }
+  if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
+    DialogUtils.showFeatureUnavailable();
+    return;
+  }
+  if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    debugPrint("#Mirrorfly Call You are on another call");
+    toToast(getTranslated("msgOngoingCallAlert"));
+    return;
+  }
+  if (!(await AppUtils.isNetConnected())) {
+    toToast(getTranslated("noInternetConnection"));
+    return;
+  }
+  // if (await AppUtils.isNetConnected()) {
     if (await AppPermission.askVideoCallPermissions()) {
-      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-        debugPrint("#Mirrorfly Call You are on another call");
-        toToast(getTranslated("msgOngoingCallAlert"));
-      } else {
-        Mirrorfly.makeVideoCall(toUserJid: toUser.checkNull(), flyCallBack: (FlyResponse response) {
+      // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      //   debugPrint("#Mirrorfly Call You are on another call");
+      //   toToast(getTranslated("msgOngoingCallAlert"));
+      // } else {
+        Mirrorfly.makeVideoCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
             NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [toUser],
+              "userJid": [profile.value.jid],
               "callType": CallType.video
             });
           }
         });
-      }
+      // }
     } else {
       LogMessage.d("askVideoCallPermissions", "false");
     }
-  } else {
-    toToast(getTranslated("noInternetConnection"));
-  }
+  // } else {
+  //   toToast(getTranslated("noInternetConnection"));
+  // }
 }
 
 String getCallLogDuration(int startTime, int endTime) {

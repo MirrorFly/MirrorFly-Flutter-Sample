@@ -141,12 +141,13 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemUnArchive(int index) {
-    Mirrorfly.setChatArchived(jid: selectedChats[index], isArchived: false, flyCallBack: (_) {  });
+    Mirrorfly.setChatArchived(jid: selectedChats[index], isArchived: false, flyCallBack: (_) {
+      updateRecentChatListHistory();
+    });
     var chatIndex =
         archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
     archivedChats[chatIndex].isChatArchived = (false);
     archivedChats.removeAt(chatIndex);
-    updateRecentChatListHistory();
   }
 
   Future<void> unArchiveSelectedChats() async {

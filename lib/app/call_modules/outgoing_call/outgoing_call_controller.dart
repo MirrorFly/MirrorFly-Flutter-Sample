@@ -73,31 +73,45 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     enterFullScreen();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
-    groupId(await Mirrorfly.getCallGroupJid());
+
     isCallTimerEnabled = true;
     if (NavUtils.arguments != null) {
       users.value = NavUtils.arguments?["userJid"] as List<String?>;
       cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
     }
-    audioDeviceChanged();
-    getAudioDevices();
-    await Mirrorfly.getCallType().then((value) => callType(value));
-    await Mirrorfly.getCallUsersList().then((value) {
-      // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
-      debugPrint("#Mirrorfly call get users --> $value");
-      final callUserList = callUserListFromJson(value);
-      callList(callUserList);
-      callStatus(callUserList.first.callStatus?.value);
+
+
+
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+      await Mirrorfly.getCallUsersList().then((value) {
+        // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
+        debugPrint("#Mirrorfly call get users --> $value");
+        final callUserList = callUserListFromJson(value);
+        callList(callUserList);
+        callStatus(callUserList.first.callStatus?.value);
+      });
+      debugPrint("#Mirrorfly call type ${callType.value}");
+
+      groupId(await Mirrorfly.getCallGroupJid());
+
+      audioDeviceChanged();
+      getAudioDevices();
+
+      if (callType.value == CallType.audio) {
+        Mirrorfly.isUserAudioMuted().then((value) => muted(value));
+        videoMuted(true);
+      } else {
+        Mirrorfly.isUserAudioMuted().then((value) => muted(value));
+        Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
+        // videoMuted(false);
+      }
     });
-    debugPrint("#Mirrorfly call type ${callType.value}");
-    if (callType.value == CallType.audio) {
-      Mirrorfly.isUserAudioMuted().then((value) => muted(value));
-      videoMuted(true);
-    } else {
-      Mirrorfly.isUserAudioMuted().then((value) => muted(value));
-      Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
-      // videoMuted(false);
-    }
+
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      await Mirrorfly.getCallType().then((value) => callType(value));
+    });
 
   }
 
@@ -214,7 +228,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     this.callMode(callMode);
     this.callType(callType);
     debugPrint("Current Route ${NavUtils.currentRoute}");
-    if(NavUtils.currentRoute == Routes.outGoingCallView){
+    if(NavUtils.currentRoute == Routes.outGoingCallView && callList.length < 2){
       NavUtils.back();
     }
   }
