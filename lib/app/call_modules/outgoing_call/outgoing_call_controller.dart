@@ -228,7 +228,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     this.callMode(callMode);
     this.callType(callType);
     debugPrint("Current Route ${NavUtils.currentRoute}");
-    if(NavUtils.currentRoute == Routes.outGoingCallView){
+    if(NavUtils.currentRoute == Routes.outGoingCallView && callList.length < 2){
       NavUtils.back();
     }
   }
