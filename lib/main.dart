@@ -82,9 +82,14 @@ Future<void> main() async {
       iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
+      enablePrivateStorage: false,
       flyCallback: (response) async {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
+          LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
+          Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
+            LogMessage.d("Mirrorfly.isPrivateStorageEnabledOrNot", value.toString());
+          });
         } else {
           LogMessage.d("onFailure", response.errorMessage.toString());
         }
