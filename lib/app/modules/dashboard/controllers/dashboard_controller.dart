@@ -266,7 +266,10 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
 
   toChatPage(String jid) {
     if (jid.isNotEmpty) {
-      NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: jid,topicId: topicId.value));
+      ///Future delayed is added here, as the chat page is opened and closed by QA team rapidly and repeatedly.
+      ///So to avoid the controller delete after new controller created with same jid, added this delay.
+      Future.delayed(const Duration(milliseconds: 200), () => NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid:jid,topicId: topicId.value)));
+      // NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: jid,topicId: topicId.value));
       // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {
         if (value.jid != null) {

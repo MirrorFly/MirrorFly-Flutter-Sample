@@ -242,7 +242,7 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         ))
         : Container(
         height: 31,
-        width: 72,
+        width: 80,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: BoxDecoration(
           border: Border.all(
