@@ -51,6 +51,23 @@ class AppStyleConfig{
     }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50))
   );
 
+  static final ButtonStyle _joinCallButtonStyle = ButtonStyle(
+        shape: WidgetStateProperty.resolveWith((states) => const StadiumBorder()),
+    padding: WidgetStateProperty.resolveWith((states) => EdgeInsets.zero),
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Color when the button is disabled
+      }
+      return const Color(0xff3276E2); // Default color
+    }),
+    iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+      }
+      return Colors.white; // Default color
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50))
+  );
+
   static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);
   static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
   static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
@@ -76,6 +93,7 @@ class AppStyleConfig{
   static LocalContactPreviewPageStyle _localContactPreviewPageStyle = const LocalContactPreviewPageStyle();
   static LocationSentPageStyle _locationSentPageStyle = const LocationSentPageStyle();
   static MediaSentPreviewPageStyle _mediaSentPreviewPageStyle = const MediaSentPreviewPageStyle();
+  static JoinCallPreviewPageStyle _joinCallPreviewPageStyle = JoinCallPreviewPageStyle(joinCallButtonStyle: _joinCallButtonStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -102,6 +120,7 @@ class AppStyleConfig{
   static LocalContactPreviewPageStyle localContactPreviewPageStyle = _localContactPreviewPageStyle;
   static LocationSentPageStyle locationSentPageStyle = _locationSentPageStyle;
   static MediaSentPreviewPageStyle mediaSentPreviewPageStyle = _mediaSentPreviewPageStyle;
+  static JoinCallPreviewPageStyle joinCallPreviewPageStyle = _joinCallPreviewPageStyle;
 
   static setAppStyle({required AppStyle appStyle}){
     loginPageStyle = appStyle.loginPageStyle ?? _loginPageStyle;
@@ -223,5 +242,9 @@ class AppStyleConfig{
 
   static setMediaSentPreviewPageStyle(MediaSentPreviewPageStyle mediaSentPreviewPageStyle){
     _mediaSentPreviewPageStyle = mediaSentPreviewPageStyle;
+  }
+
+  static setJoinCallPreviewPageStyle(JoinCallPreviewPageStyle joinCallPreviewPageStyle){
+    _joinCallPreviewPageStyle = joinCallPreviewPageStyle;
   }
 }

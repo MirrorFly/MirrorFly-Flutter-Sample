@@ -31,6 +31,7 @@ part 'local_contact_page_style.dart';
 part 'local_contact_preview_page_style.dart';
 part 'location_sent_page_style.dart';
 part 'media_sent_preview_page_style.dart';
+part 'join_call_preview_page_style.dart';
 
 class AppStyle{
 

@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/model/arguments.dart';
 import '../call_modules/call_info/views/call_info_view.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';
 import '../call_modules/group_participants/group_participants_view.dart';
+import '../call_modules/join_call_preview/join_call_preview_view.dart';
 import '../call_modules/ongoing_call/ongoingcall_view.dart';
 import '../call_modules/outgoing_call/outgoing_call_view.dart';
 import '../call_modules/participants/participants_view.dart';
@@ -157,6 +158,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
 
     //calls
+    case Routes.joinCallPreview:
+      return MaterialPageRoute(builder: (_) => const JoinCallPreviewView(),settings: settings);
     case Routes.outGoingCallView:
       return MaterialPageRoute(builder: (_) => const OutGoingCallView(),settings: settings);
     case Routes.onGoingCallView:

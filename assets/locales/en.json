@@ -504,5 +504,6 @@
     "attachment_Gallery" : "Gallery",
     "attachment_Audio" : "Audio",
     "attachment_Contact" : "Contact",
-    "attachment_Location" : "Location"
+    "attachment_Location" : "Location",
+    "join_now" : "Join Now"
   }
