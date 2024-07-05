@@ -13,6 +13,9 @@ class NavUtils{
   // Returns the height of the current media query.
   static double get height => size.height;
 
+  // Returns the safe area padding of the current media query.
+  static double get safeAreaPadding => (MediaQuery.of(navigatorKey.currentContext!).viewPadding.top+MediaQuery.of(navigatorKey.currentContext!).viewPadding.bottom);
+
   // Returns the current BuildContext using the navigator key.
   static BuildContext get currentContext => navigatorKey.currentContext!;
 

@@ -84,7 +84,7 @@ Future<void> main() async {
       enableDebugLog: true,
       enablePrivateStorage: false,
       flyCallback: (response) async {
-        if (response.isSuccess) {
+        if (response.isSuccess) {//8825508012
           LogMessage.d("onSuccess", response.message);
           LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
           Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
