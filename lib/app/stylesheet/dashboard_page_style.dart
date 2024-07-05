@@ -16,8 +16,10 @@ class DashBoardPageStyle {
       this.searchTextFieldStyle = const EditTextFieldStyle(),
       this.tabItemStyle = const TabItemStyle(),
       this.archivedTileStyle = const ArchivedTileStyle(),
+      this.titlesTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
       this.recentChatItemStyle = const RecentChatItemStyle(),
       this.callHistoryItemStyle = const CallHistoryItemStyle(),
+      this.createMeetLinkStyle = const CreateMeetLinkStyle(),
         this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
         this.popupMenuThemeData = const PopupMenuThemeData(
           color: Colors.white,
@@ -40,8 +42,10 @@ class DashBoardPageStyle {
   final EditTextFieldStyle searchTextFieldStyle;
   final TabItemStyle tabItemStyle;
   final ArchivedTileStyle archivedTileStyle;
+  final TextStyle titlesTextStyle;
   final RecentChatItemStyle recentChatItemStyle;
   final CallHistoryItemStyle callHistoryItemStyle;
+  final CreateMeetLinkStyle createMeetLinkStyle;
   final TextStyle noDataTextStyle;
   final PopupMenuThemeData popupMenuThemeData;
   final ContactItemStyle contactItemStyle;

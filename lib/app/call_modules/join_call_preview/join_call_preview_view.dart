@@ -30,14 +30,19 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
           decoration: AppStyleConfig.joinCallPreviewPageStyle.backgroundDecoration,
           child: Column(
             children: [
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: FutureBuilder(future:CallUtils.getCallersName(controller.users,controller.users==1),builder: (ctx,snap) {
-                    return snap.hasData && snap.data!=null ? Text(
-                      snap.data!,
-                      style: AppStyleConfig.joinCallPreviewPageStyle.callerNameTextStyle,
-                      overflow: TextOverflow.ellipsis,) : const Offstage();
-                  })),
+              Row(
+                children: [
+                  IconButton(onPressed: (){}, icon: const Icon(Icons.arrow_back,color: Colors.white)),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: FutureBuilder(future:CallUtils.getCallersName(controller.users,controller.users==1),builder: (ctx,snap) {
+                        return snap.hasData && snap.data!=null ? Text(
+                          snap.data!,
+                          style: AppStyleConfig.joinCallPreviewPageStyle.callerNameTextStyle,
+                          overflow: TextOverflow.ellipsis,) : const Offstage();
+                      })),
+                ],
+              ),
               const SizedBox(
                 height: 16,
               ),
@@ -57,7 +62,7 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                       text: "+${(controller.users.length) - 3}",
                       radius: 45 / 2,
                       bgColor: Colors.white,
-                      fontColor: Colors.grey,
+                      fontColor: const Color(0xff12233E),
                     ),
                   ) : FutureBuilder(future: getProfileDetails(controller.users[index]!), builder: (ctx, snap) {
                     return snap.hasData && snap.data != null ? Padding(
@@ -68,20 +73,22 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                 );
               }),
               const Spacer(),
-              SizedBox(
+              Container(
                 height: 170,
+                width: 150,
+                margin: const EdgeInsets.all(40),
                 child: MirrorFlyView(
                   userJid: SessionManagement.getUserJID().checkNull(),
                   viewBgColor: AppColors.callerBackground,
                   hideProfileView: true,
-                ),
+                ).setBorderRadius(const BorderRadius.all(Radius.circular(15))),
               ),
               Obx(() {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       controller.muted.value
                           ? FloatingActionButton(
@@ -119,6 +126,7 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                               : SvgPicture.asset(cameraSwitchInactive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.inactiveIconColor, BlendMode.srcIn),),
                         ),
                       ],*/
+                      const SizedBox(width: 15,),
                       FloatingActionButton(
                         shape: AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.shape,
                         heroTag: "video",

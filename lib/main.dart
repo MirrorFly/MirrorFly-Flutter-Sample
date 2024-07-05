@@ -82,7 +82,6 @@ Future<void> main() async {
       iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
-      enablePrivateStorage: false,
       flyCallback: (response) async {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);

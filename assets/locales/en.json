@@ -505,5 +505,8 @@
     "attachment_Audio" : "Audio",
     "attachment_Contact" : "Contact",
     "attachment_Location" : "Location",
-    "join_now" : "Join Now"
+    "join_now" : "Join Now",
+    "createNewMeeting" : "Create new meeting",
+    "createNewMeetingSubtitle" : "Share a link for your Mirrorfly meet",
+    "recentCalls" : "Recent Calls"
   }

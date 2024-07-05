@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 class JoinCallController extends GetxController {
 
 
-  get users => [];
+  final _users = <String>[].obs;
+  get users => _users;
 
-  get videoMuted => false;
+  final videoMuted = false.obs;
+  // get videoMuted => _videoMuted.value;
 
-  get muted => false;
+  final muted = false.obs;
+  // get muted => _muted.value;
 
   muteAudio() {}
 

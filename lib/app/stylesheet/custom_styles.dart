@@ -125,3 +125,17 @@ class CallHistoryItemStyle{
     this.dividerColor = const Color(0XffE2E2E2),
   });
 }
+
+class CreateMeetLinkStyle{
+  const CreateMeetLinkStyle({
+  this.textStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
+  this.subTitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+  this.iconDecoration = const BoxDecoration(color: Color(0xffe3e9f9), shape: BoxShape.circle),
+    this.iconColor = const Color(0xff3276e2),
+});
+  final TextStyle textStyle;
+  final TextStyle subTitleTextStyle;
+  final Decoration iconDecoration;
+  final Color iconColor;
+
+}

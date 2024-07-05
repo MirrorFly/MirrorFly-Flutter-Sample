@@ -53,7 +53,7 @@ class AppStyleConfig{
 
   static final ButtonStyle _joinCallButtonStyle = ButtonStyle(
         shape: WidgetStateProperty.resolveWith((states) => const StadiumBorder()),
-    padding: WidgetStateProperty.resolveWith((states) => EdgeInsets.zero),
+      padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
     backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         return Colors.grey; // Color when the button is disabled
@@ -65,7 +65,10 @@ class AppStyleConfig{
         return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
       }
       return Colors.white; // Default color
-    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50))
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50)),
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        return const TextStyle(fontSize: 14, fontWeight: FontWeight.w600); // Default text style
+      })
   );
 
   static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);

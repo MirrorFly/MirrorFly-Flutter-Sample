@@ -17,19 +17,55 @@ import '../../../stylesheet/stylesheet.dart';
 import '../widgets.dart';
 
 class CallHistoryView extends StatelessWidget {
-  const CallHistoryView({super.key,required this.controller, this.callHistoryItemStyle = const CallHistoryItemStyle(), required this.noDataTextStyle});
+  const CallHistoryView({super.key,required this.controller, this.callHistoryItemStyle = const CallHistoryItemStyle(), required this.noDataTextStyle, this.recentCallsTitleStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14), this.createMeetLinkStyle = const CreateMeetLinkStyle(),});
   final DashboardController controller;
+  final CreateMeetLinkStyle createMeetLinkStyle;
+  final TextStyle recentCallsTitleStyle;
   final CallHistoryItemStyle callHistoryItemStyle;
   final TextStyle noDataTextStyle;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Obx(
-              () => controller.callLogList.isEmpty ? emptyCalls(context) : callLogListView(context, controller.callLogList),
-        )
-        // emptyCalls(context)
+        Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                margin: const EdgeInsets.all(10.0),
+                decoration: createMeetLinkStyle.iconDecoration,
+                child: Center(child: Icon(Icons.link,color: createMeetLinkStyle.iconColor,size: 18,),),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(getTranslated("createNewMeeting"),style: createMeetLinkStyle.textStyle,),
+                  Text(getTranslated("createNewMeetingSubtitle"),style: createMeetLinkStyle.subTitleTextStyle,)
+                ],
+              )
+            ],
+          ),
+        ),
+        Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          width: double.infinity,
+          padding: const EdgeInsets.all(8.0),
+          child: Text(getTranslated("recentCalls"),style: recentCallsTitleStyle,)
+        ),
+        Expanded(
+          child: Stack(
+            children: [
+              Obx(
+                    () => controller.callLogList.isEmpty ? emptyCalls(context) : callLogListView(context, controller.callLogList),
+              )
+              // emptyCalls(context)
+            ],
+          ),
+        ),
       ],
     );
   }
