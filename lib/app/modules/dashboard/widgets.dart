@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -678,7 +679,11 @@ onTapForSpanText(String e) {
   var stringType = spannableTextType(e);
   debugPrint("Text span click");
   if (stringType == "website") {
-    launchInBrowser(e);
+    if(e.startsWith(Constants.webChatLogin)){
+      NavUtils.toNamed(Routes.joinCallPreview);
+    }else {
+      launchInBrowser(e);
+    }
     // return;
   } else if (stringType == "mobile") {
     makePhoneCall(e);
