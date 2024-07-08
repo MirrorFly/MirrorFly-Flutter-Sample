@@ -508,5 +508,6 @@
     "join_now" : "Join Now",
     "createNewMeeting" : "Create new meeting",
     "createNewMeetingSubtitle" : "Share a link for your Mirrorfly meet",
-    "recentCalls" : "Recent Calls"
+    "recentCalls" : "Recent Calls",
+    "noOneHere" : "No one else is here"
   }

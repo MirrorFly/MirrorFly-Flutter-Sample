@@ -680,7 +680,7 @@ onTapForSpanText(String e) {
   debugPrint("Text span click");
   if (stringType == "website") {
     if(e.startsWith(Constants.webChatLogin)){
-      NavUtils.toNamed(Routes.joinCallPreview);
+      NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":e.replaceAll(Constants.webChatLogin, "")});
     }else {
       launchInBrowser(e);
     }

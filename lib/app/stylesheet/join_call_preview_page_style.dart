@@ -20,7 +20,7 @@ class JoinCallPreviewPageStyle{
         ],
       ),
     ),
-    this.callerNameTextStyle = const TextStyle(fontWeight: FontWeight.w500,color: Colors.white,fontSize: 18),
+    this.callerNameTextStyle = const TextStyle(fontWeight: FontWeight.w500,color: Colors.white,fontSize: 15),
     this.profileImageSize = const Size(105, 105),
     this.actionButtonsStyle = const ActionButtonStyle(),
     this.joinCallButtonStyle = const ButtonStyle()

@@ -76,6 +76,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   TabController? tabController ;
   var getMaxCallUsersCount = 8;
 
+  var joinViaLink = false;
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -88,6 +89,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     if (NavUtils.arguments != null) {
       users.value = NavUtils.arguments?["userJid"] as List<String?>;
       cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
+      joinViaLink = NavUtils.arguments?["joinViaLink"];
     }
     // await outGoingUsers();
     // callType.value = NavUtils.arguments["callType"];
