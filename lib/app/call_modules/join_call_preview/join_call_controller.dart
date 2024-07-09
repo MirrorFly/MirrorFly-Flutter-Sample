@@ -41,10 +41,11 @@ class JoinCallController extends GetxController with CallLinkEventListeners {
   }
 
   void joinCall() {
+    subscribeSuccess(false);
     Mirrorfly.joinCall(flyCallback: (res){
       LogMessage.d("joinCall", res.toString());
       if(res.isSuccess) {
-        NavUtils.offAllNamed(Routes.onGoingCallView,arguments: {"userJid": users,"joinViaLink": true});
+        NavUtils.offNamed(Routes.onGoingCallView,arguments: {"userJid": users,"joinViaLink": true});
       }else{
         toToast(res.errorMessage);
       }

@@ -237,14 +237,17 @@ CallController createController({String? tag}) => Get.put(CallController());
                 height: 8,
               ),
               Obx(() {
-                return Text(
-                  controller.callTimer.value,
-                  style: AppStyleConfig.ongoingCallPageStyle.callDurationTextStyle,
-                  /*style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12.0,
-                  ),*/
+                return Visibility(
+                  visible: !controller.joinViaLink,
+                  child: Text(
+                    controller.callTimer.value,
+                    style: AppStyleConfig.ongoingCallPageStyle.callDurationTextStyle,
+                    /*style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12.0,
+                    ),*/
+                  ),
                 );
               }),
             ],

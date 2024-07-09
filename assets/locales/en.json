@@ -509,5 +509,6 @@
     "createNewMeeting" : "Create new meeting",
     "createNewMeetingSubtitle" : "Share a link for your Mirrorfly meet",
     "recentCalls" : "Recent Calls",
-    "noOneHere" : "No one else is here"
+    "noOneHere" : "No one else is here",
+    "connectingPleaseWait" : "Connecting, Please wait..."
   }

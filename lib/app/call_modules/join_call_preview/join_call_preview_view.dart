@@ -44,24 +44,22 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                       icon: const Icon(Icons.arrow_back, color: Colors.white)),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 40.0, left: 20,right: 20,bottom: 8),
-                    child: Expanded(
-                      child: Center(
-                        child: Obx(() {
-                          return FutureBuilder(future: CallUtils.getCallersName(
-                              controller.users, false),
-                              builder: (ctx, snap) {
-                                return Text(
-                                  snap.hasData && snap.data != null &&
-                                      snap.data!.isNotEmpty
-                                      ? snap.data!
-                                      : getTranslated("noOneHere"),
-                                  style: AppStyleConfig.joinCallPreviewPageStyle
-                                      .callerNameTextStyle,
-                                  overflow: TextOverflow.ellipsis,);
-                              });
-                        }),
-                      ),
+                        top: 40.0, left: 20, right: 20, bottom: 8),
+                    child: Center(
+                      child: Obx(() {
+                        return FutureBuilder(future: CallUtils.getCallersName(
+                            controller.users, false),
+                            builder: (ctx, snap) {
+                              return Text(
+                                snap.hasData && snap.data != null &&
+                                    snap.data!.isNotEmpty
+                                    ? snap.data!
+                                    : getTranslated("noOneHere"),
+                                style: AppStyleConfig.joinCallPreviewPageStyle
+                                    .callerNameTextStyle,
+                                overflow: TextOverflow.ellipsis,);
+                            });
+                      }),
                     ),
                   ),
                 ],
@@ -88,6 +86,13 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                     ) : const Offstage();
                   })),
                 );
+              }),
+              const Spacer(),
+              Obx(() {
+                return controller.subscribeSuccess.value ? const Offstage() :
+                Text(getTranslated("connectingPleaseWait"),style: AppStyleConfig.joinCallPreviewPageStyle
+                  .callerNameTextStyle,
+                  overflow: TextOverflow.ellipsis,);
               }),
               const Spacer(),
               Container(
