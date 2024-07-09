@@ -502,7 +502,7 @@ class AppPermission {
         return true;
       }
     } else {
-      return askiOSVideoCallPermissions();
+      return _askiOSVideoCallPermissions();
     }
   }
 
@@ -547,7 +547,7 @@ class AppPermission {
     }
   }
 
-  static Future<bool> askiOSVideoCallPermissions() async {
+  static Future<bool> _askiOSVideoCallPermissions() async {
     final microphone = await Permission.microphone.status; //RECORD_AUDIO
     final camera = await Permission.camera.status;
     const newPermission = [

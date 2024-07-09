@@ -945,13 +945,13 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   Future<void> onUserJoined(String callMode, String userJid, String callType,String callStatus) async {
     LogMessage.d("callController", " onUserJoined $userJid from joinViaLink");
+    var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: userJid))
+        .checkNull();
+    var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: userJid))
+        .checkNull();
     var indexValid = callList.indexWhere((element) => element.userJid?.value == userJid);
     LogMessage.d("callController", "indexValid : $indexValid jid : $userJid");
     if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
-      var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: userJid))
-          .checkNull();
-      var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: userJid))
-          .checkNull();
       callList.insert(callList.length - 1, CallUserList(
           userJid: userJid.obs,
           isAudioMuted: isAudioMuted,
@@ -1001,7 +1001,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     speakingUsers.removeWhere((element) => element.userJid == userJid);
     debugPrint("after removeUser ${callList.length}");
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
-    if(callList.length>1 && pinnedUserJid.value == userJid) {
+    if(callList.isNotEmpty && pinnedUserJid.value == userJid) {
       pinnedUserJid(callList[0].userJid!.value);
     }
     ///if user is from joinViaLink then no need to close the screen until user disconnects manually.
