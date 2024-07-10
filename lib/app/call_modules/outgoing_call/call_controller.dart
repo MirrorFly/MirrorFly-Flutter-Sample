@@ -240,7 +240,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   videoMute() async {
     debugPrint("isOneToOneCall : $isOneToOneCall");
     if (await AppPermission.askVideoCallPermissions()) {
-      if (callType.value != CallType.audio) {
+      if (callType.value != CallType.audio || joinViaLink) {
         Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  });
         videoMuted(!videoMuted.value);
       } else if (callType.value == CallType.audio && isOneToOneCall && NavUtils.currentRoute == Routes.onGoingCallView) {
