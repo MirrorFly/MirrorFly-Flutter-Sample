@@ -139,3 +139,20 @@ class CreateMeetLinkStyle{
   final Color iconColor;
 
 }
+class MeetBottomSheetStyle{
+  const MeetBottomSheetStyle({
+  this.titleStyle = const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff181818), fontSize: 18),
+  this.subTitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
+  this.meetLinkDecoration = const BoxDecoration(color: Color(0xffdbdbdb),borderRadius: BorderRadius.all(Radius.circular(15),)),
+    this.copyIconColor = const Color(0xff181818),
+    this.meetLinkTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: AppColor.primaryColor, fontSize: 12),
+
+});
+  final TextStyle titleStyle;
+  final TextStyle meetLinkTextStyle;
+  final TextStyle subTitleTextStyle;
+  final Decoration meetLinkDecoration;
+  final Color copyIconColor;
+
+
+}

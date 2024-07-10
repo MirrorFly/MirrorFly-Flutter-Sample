@@ -20,6 +20,7 @@ class DashBoardPageStyle {
       this.recentChatItemStyle = const RecentChatItemStyle(),
       this.callHistoryItemStyle = const CallHistoryItemStyle(),
       this.createMeetLinkStyle = const CreateMeetLinkStyle(),
+      this.meetBottomSheetStyle = const MeetBottomSheetStyle(),
         this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
         this.popupMenuThemeData = const PopupMenuThemeData(
           color: Colors.white,
@@ -46,6 +47,7 @@ class DashBoardPageStyle {
   final RecentChatItemStyle recentChatItemStyle;
   final CallHistoryItemStyle callHistoryItemStyle;
   final CreateMeetLinkStyle createMeetLinkStyle;
+  final MeetBottomSheetStyle meetBottomSheetStyle;
   final TextStyle noDataTextStyle;
   final PopupMenuThemeData popupMenuThemeData;
   final ContactItemStyle contactItemStyle;

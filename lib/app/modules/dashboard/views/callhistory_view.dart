@@ -17,11 +17,12 @@ import '../../../stylesheet/stylesheet.dart';
 import '../widgets.dart';
 
 class CallHistoryView extends StatelessWidget {
-  const CallHistoryView({super.key,required this.controller, this.callHistoryItemStyle = const CallHistoryItemStyle(), required this.noDataTextStyle, this.recentCallsTitleStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14), this.createMeetLinkStyle = const CreateMeetLinkStyle(),});
+  const CallHistoryView({super.key,required this.controller, this.callHistoryItemStyle = const CallHistoryItemStyle(), required this.noDataTextStyle, this.recentCallsTitleStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14), this.createMeetLinkStyle = const CreateMeetLinkStyle(), this.meetBottomSheetStyle = const MeetBottomSheetStyle()});
   final DashboardController controller;
   final CreateMeetLinkStyle createMeetLinkStyle;
   final TextStyle recentCallsTitleStyle;
   final CallHistoryItemStyle callHistoryItemStyle;
+  final MeetBottomSheetStyle meetBottomSheetStyle;
   final TextStyle noDataTextStyle;
 
   @override
@@ -31,23 +32,28 @@ class CallHistoryView extends StatelessWidget {
       children: [
         Container(
           color: Theme.of(context).scaffoldBackgroundColor,
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                margin: const EdgeInsets.all(10.0),
-                decoration: createMeetLinkStyle.iconDecoration,
-                child: Center(child: Icon(Icons.link,color: createMeetLinkStyle.iconColor,size: 18,),),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(getTranslated("createNewMeeting"),style: createMeetLinkStyle.textStyle,),
-                  Text(getTranslated("createNewMeetingSubtitle"),style: createMeetLinkStyle.subTitleTextStyle,)
-                ],
-              )
-            ],
+          child: InkWell(
+            onTap: () {
+              controller.createMeetLink(meetBottomSheetStyle);
+            },
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  margin: const EdgeInsets.all(10.0),
+                  decoration: createMeetLinkStyle.iconDecoration,
+                  child: Center(child: Icon(Icons.link,color: createMeetLinkStyle.iconColor,size: 18,),),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(getTranslated("createNewMeeting"),style: createMeetLinkStyle.textStyle,),
+                    Text(getTranslated("createNewMeetingSubtitle"),style: createMeetLinkStyle.subTitleTextStyle,)
+                  ],
+                )
+              ],
+            ),
           ),
         ),
         Container(
