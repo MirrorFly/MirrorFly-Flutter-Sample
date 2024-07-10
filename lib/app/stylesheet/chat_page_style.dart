@@ -70,9 +70,13 @@ class ChatUserAppBarStyle{
 
 class SenderChatBubbleStyle{
    const SenderChatBubbleStyle({
-     this.textMessageViewStyle = const TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
+     this.textMessageViewStyle = const TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+       color: Color(0xffD0D8EB),
+     ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7))),
      this.imageMessageViewStyle = const ImageMessageViewStyle(
-         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
+         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+           color: Color(0xffD0D8EB),
+         ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7))),
          timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
        imageBorderRadius: BorderRadius.all(Radius.circular(10)),
        downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -84,7 +88,9 @@ class SenderChatBubbleStyle{
        iconStyle: IconStyle(iconColor: Colors.white))
      ),
      this.videoMessageViewStyle = const VideoMessageViewStyle(
-         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
+         captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+           color: Color(0xffD0D8EB),
+         ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7))),
          timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
          videoBorderRadius: BorderRadius.all(Radius.circular(10)),
          downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -171,9 +177,13 @@ class SenderChatBubbleStyle{
 class ReceiverChatBubbleStyle{
   const ReceiverChatBubbleStyle({
     this.participantNameTextStyle = const TextStyle(fontWeight: FontWeight.w600,fontSize: 12),
-   this.textMessageViewStyle = const TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff959595),fontSize: 11)),
+   this.textMessageViewStyle = const TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff313131),fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff959595),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+     color: Color(0xffEFEFEF),
+   ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Colors.grey)),
     this.imageMessageViewStyle = const ImageMessageViewStyle(
-        captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
+        captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+          color: Color(0xffEFEFEF),
+        ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Colors.grey)),
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
         imageBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(
@@ -183,7 +193,9 @@ class ReceiverChatBubbleStyle{
             progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Colors.white))
     ),
     this.videoMessageViewStyle = const VideoMessageViewStyle(
-        captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11)),
+        captionTextViewStyle: TextMessageViewStyle(textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),callLinkViewStyle: CallLinkViewStyle(decoration: BoxDecoration(
+          color: Color(0xffEFEFEF),
+        ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Colors.grey)),
         timeTextStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white,fontSize: 11 ),
         videoBorderRadius: BorderRadius.all(Radius.circular(10)),
         downloadUploadViewStyle: DownloadUploadViewStyle(decoration: BoxDecoration(

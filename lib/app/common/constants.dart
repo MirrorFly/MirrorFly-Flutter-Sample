@@ -104,6 +104,7 @@ const String addParticipantsInCall = 'assets/calls/add_user_in_call.svg';
 
 
 //Assets
+const String mirrorflySmall = 'assets/logos/ic_notification_small.png';
 const String registerIcon = 'assets/logos/register_logo.svg';
 const String statusIcon = 'assets/logos/status.svg';
 const String searchIcon = 'assets/logos/magnifying_glass.svg';

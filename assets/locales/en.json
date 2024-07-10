@@ -510,5 +510,6 @@
     "createNewMeetingSubtitle" : "Share a link for your Mirrorfly meet",
     "recentCalls" : "Recent Calls",
     "noOneHere" : "No one else is here",
-    "connectingPleaseWait" : "Connecting, Please wait..."
+    "connectingPleaseWait" : "Connecting, Please wait...",
+    "joinVideoCall" : "Join video call"
   }

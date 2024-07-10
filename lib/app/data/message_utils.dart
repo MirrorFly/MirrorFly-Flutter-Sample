@@ -190,4 +190,17 @@ class MessageUtils{
   }
 
 
+  /// split the call link from the message
+  static String getCallLinkFromMessage(String message) {
+    var link = "";
+    var messageArray = message.split(" ");
+    for (var i = 0; i < messageArray.length; i++) {
+      if (messageArray[i].isURL && messageArray[i].startsWith(Constants.webChatLogin)) {
+        link = messageArray[i];
+        break;
+      }
+    }
+    LogMessage.d("getCallLinkFromMessage", link);
+    return link.trim();
+  }
 }

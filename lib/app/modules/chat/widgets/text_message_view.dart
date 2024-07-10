@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
@@ -7,6 +8,7 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../routes/route_settings.dart';
 import '../../dashboard/widgets.dart';
 import 'chat_widgets.dart';
 
@@ -23,13 +25,13 @@ class TextMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
+          child: Row(
             mainAxisSize: chatMessage.replyParentChatMessage == null
                 ? MainAxisSize.min
                 : MainAxisSize.max,
@@ -50,7 +52,16 @@ class TextMessageView extends StatelessWidget {
               const SizedBox(width: 60,),
             ],
           ),
-          Row(
+        ),
+        if(MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull()).isNotEmpty)...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: CallLinkView(message:chatMessage.messageTextContent.checkNull(),callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,),
+          )
+        ],
+        Padding(
+          padding: const EdgeInsets.only(right: 4.0,bottom: 2),
+          child: Row(
             mainAxisSize: chatMessage.replyParentChatMessage == null
                 ? MainAxisSize.min
                 : MainAxisSize.max,
@@ -88,8 +99,41 @@ class TextMessageView extends StatelessWidget {
               ),
             ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+class CallLinkView extends StatelessWidget{
+  const CallLinkView({super.key, required this.message,required this.callLinkViewStyle});
+  final String message;
+  final CallLinkViewStyle callLinkViewStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        var link = MessageUtils.getCallLinkFromMessage(message);
+        if(link.isNotEmpty){
+          NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":link.replaceAll(Constants.webChatLogin, "")});
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: callLinkViewStyle.decoration,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Image.asset(mirrorflySmall,width: 24,),
+            const SizedBox(width: 8,),
+            Expanded(child: Text(getTranslated("joinVideoCall"),style: callLinkViewStyle.textStyle,)),
+            const SizedBox(width: 8,),
+            SvgPicture.asset(videoCamera,width: 18,colorFilter: ColorFilter.mode(callLinkViewStyle.iconColor, BlendMode.srcIn),)
+          ],
+        ),
       ),
     );
   }
+
 }
