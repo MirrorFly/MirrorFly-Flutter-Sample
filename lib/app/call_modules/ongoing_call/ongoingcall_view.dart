@@ -321,7 +321,7 @@ CallController createController({String? tag}) => Get.put(CallController());
                       ),
               ),
               SizedBox(width: rightSideWidth),
-              if((controller.callType.value == CallType.video || controller.isGroupCall) && !controller.videoMuted.value)...[
+              if((controller.callType.value == CallType.video || controller.isGroupCall || controller.joinViaLink) && !controller.videoMuted.value)...[
                   FloatingActionButton(
                       heroTag: "switchCamera",
                       elevation: 0,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
@@ -27,27 +29,65 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   @override
   void onInit(){
     super.onInit();
-    checkPermission();
+    listenMuteEvents();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
     initializeCall();
+    checkPermission();
+    startVideoCapture();
   }
 
+  /// check permission and set Mute Status
   Future<void> checkPermission() async {
     muted(true);
     videoMuted(true);
     if(await AppPermission.askAudioCallPermissions()){
       muted(false);
       if(await AppPermission.askVideoCallPermissions()){
+        startVideoCapture();
+        muted(false);
+        videoMuted(false);
+      }
+    }else{
+      if(await AppPermission.askVideoCallPermissions()){
+        startVideoCapture();
+        muted(false);
         videoMuted(false);
       }
     }
+    Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
+    Mirrorfly.muteVideo(status: videoMuted.value, flyCallBack: (_){});
   }
 
-  // initialize the meet
+  /// listen mute event for Audio and video
+  void listenMuteEvents(){
+    Mirrorfly.onMuteStatusUpdated.listen((event) {
+      LogMessage.d("onMuteStatusUpdated", "$event");
+      var muteStatus = jsonDecode(event);
+      var muteEvent = muteStatus["muteEvent"].toString();
+      // var userJid = muteStatus["userJid"].toString();
+        if (muteEvent == MuteStatus.localAudioMute || muteEvent == MuteStatus.localAudioUnMute) {
+          muted(muteEvent == MuteStatus.localAudioMute);
+        }
+        if (muteEvent == MuteStatus.localVideoMute || muteEvent == MuteStatus.localVideoUnMute) {
+          videoMuted(muteEvent == MuteStatus.localVideoMute);
+        }
+    });
+  }
+
+  // initialize the meet or join via link call
   void initializeCall() {
     Mirrorfly.initializeMeet(callLinkId: callLinkId,userName: SessionManagement.getName().checkNull(),flyCallback: (res){
       LogMessage.d("initializeMeet", res.toString());
+    });
+  }
+
+  /// start video capture
+  Future<void> startVideoCapture() async {
+    Mirrorfly.startVideoCapture(flyCallback: (res) async {
+      if(!res.isSuccess){
+        // await AppPermission.askVideoCallPermissions();
+      }
     });
   }
 
@@ -57,7 +97,7 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
 
   Future<void> joinCall() async {
     if (await AppUtils.isNetConnected()) {
-      if(await AppPermission.askVideoCallPermissions()) {
+      if(await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
           subscribeSuccess(false);
           Mirrorfly.joinCall(flyCallback: (res) {
@@ -77,16 +117,21 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     }
   }
 
-  muteAudio() {
-    Mirrorfly.muteAudio(status: !muted.value, flyCallBack: (res){
-      if(res.isSuccess) {
-        muted(!muted.value);
-      }
-    });
+  muteAudio() async {
+    if(!muted.value || await AppPermission.askAudioCallPermissions()) {
+      Mirrorfly.muteAudio(status: !muted.value, flyCallBack: (res) {
+        if (res.isSuccess) {
+          muted(!muted.value);
+        }
+      });
+    }
   }
 
   videoMute() async {
-    if (await AppPermission.askVideoCallPermissions()) {
+    if (videoMuted.value || await AppPermission.askVideoCallPermissions()) {
+      if(videoMuted.value){
+        startVideoCapture();
+      }
       Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
       videoMuted(!videoMuted.value);
     }

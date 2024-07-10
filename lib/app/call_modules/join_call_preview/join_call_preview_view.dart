@@ -102,7 +102,6 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
                 child: MirrorFlyView(
                   userJid: SessionManagement.getUserJID().checkNull(),
                   viewBgColor: AppColors.callerBackground,
-                  hideProfileView: true,
                 ).setBorderRadius(const BorderRadius.all(Radius.circular(15))),
               ),
               Obx(() {
