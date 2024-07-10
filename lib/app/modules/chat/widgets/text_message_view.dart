@@ -113,10 +113,16 @@ class CallLinkView extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        var link = MessageUtils.getCallLinkFromMessage(message);
-        if(link.isNotEmpty){
-          NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":link.replaceAll(Constants.webChatLogin, "")});
+      onTap: () async {
+        if(await AppUtils.isNetConnected()) {
+          var link = MessageUtils.getCallLinkFromMessage(message);
+          if (link.isNotEmpty) {
+            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+            });
+          }
+        }else{
+          toToast(getTranslated("noInternetConnection"));
         }
       },
       child: Container(

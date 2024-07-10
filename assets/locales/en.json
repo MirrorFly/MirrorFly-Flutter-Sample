@@ -511,5 +511,9 @@
     "recentCalls" : "Recent Calls",
     "noOneHere" : "No one else is here",
     "connectingPleaseWait" : "Connecting, Please wait...",
-    "joinVideoCall" : "Join video call"
+    "joinVideoCall" : "Join video call",
+    "instantMeet" : "Instant Meet",
+    "copyTheLink" : "Copy the link or click to join the meeting",
+    "joinMeeting" : "Join Meeting",
+    "scheduleMeeting" : "Schedule Meeting"
   }

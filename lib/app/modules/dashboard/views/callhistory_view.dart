@@ -34,7 +34,7 @@ class CallHistoryView extends StatelessWidget {
           color: Theme.of(context).scaffoldBackgroundColor,
           child: InkWell(
             onTap: () {
-              controller.createMeetLink(meetBottomSheetStyle);
+              controller.showMeetBottomSheet(meetBottomSheetStyle);
             },
             child: Row(
               children: [

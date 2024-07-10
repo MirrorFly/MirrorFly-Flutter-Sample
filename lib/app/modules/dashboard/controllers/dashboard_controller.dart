@@ -19,7 +19,7 @@ import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../app_style_config.dart';
-import '../../../call_modules/call_widgets.dart';
+import '../../../call_modules/meet_sheet_view.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/utils.dart';
@@ -2051,24 +2051,17 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // }
   }
 
-  void createMeetLink([MeetBottomSheetStyle? meetBottomSheetStyle]) {
-    Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
-      if (response.isSuccess) {
-        var meetLink = response.data;
-        if (meetLink.isNotEmpty) {
-          showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
-        }
-      }
-    });
-  }
-
-  void showMeetBottomSheet(String meetLink, MeetBottomSheetStyle? meetBottomSheetStyle) {
-    DialogUtils.bottomSheet(
-      meetSheet(meetLink: meetLink, meetBottomSheetStyle),
-      ignoreSafeArea: true,
-      backgroundColor: Colors.white,
-      barrierColor : Colors.black.withOpacity(0.5),
-    );
+  Future<void> showMeetBottomSheet(MeetBottomSheetStyle meetBottomSheetStyle) async {
+    if(await AppUtils.isNetConnected()) {
+      DialogUtils.bottomSheet(
+        MeetSheetView(meetBottomSheetStyle: meetBottomSheetStyle,),
+        ignoreSafeArea: true,
+        backgroundColor: Colors.white,
+        barrierColor: Colors.black.withOpacity(0.5),
+      );
+    }else{
+      toToast(getTranslated("noInternetConnection"));
+    }
   }
 }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
@@ -13,8 +12,6 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
-import '../data/utils.dart';
-import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
 
 Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
@@ -518,83 +515,4 @@ String getTileCallStatus(String? callStatus, String userjid, bool isOnetoOneCall
     default:
       return '';
   }
-}
-
-Widget meetSheet(MeetBottomSheetStyle? meetBottomSheetStyle, {required String meetLink}) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 30.0, right: 30),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 5,),
-        Center(
-          child: Container(
-            width: 70,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            margin: const EdgeInsets.symmetric(vertical: 8.0),
-          ),
-        ),
-        const SizedBox(height: 10,),
-        Text("Instant Meet", style: meetBottomSheetStyle?.titleStyle,),
-        const SizedBox(height: 10,),
-        Text("Copy the link or click to join the meeting", style: meetBottomSheetStyle?.subTitleTextStyle,),
-        const SizedBox(height: 15,),
-        Container(
-          padding: const EdgeInsets.all(18.0),
-          decoration: meetBottomSheetStyle?.meetLinkDecoration,
-          child: Row(
-            children: [
-              Expanded(child: Text(meetLink, maxLines: 1, overflow: TextOverflow.ellipsis, style: meetBottomSheetStyle?.meetLinkTextStyle)),
-              const SizedBox(width: 20,),
-              InkWell(
-                onTap: (){
-                  Clipboard.setData(ClipboardData(text: meetLink));
-                  toToast(getTranslated("linkCopied"));
-                },
-                child: SvgPicture.asset(
-                    copyIcon,
-                    fit: BoxFit.contain,
-                    colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 15,),
-        SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(onPressed: (){
-              NavUtils.back();
-              Future.delayed(const Duration(milliseconds: 200), (){
-                NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":meetLink.replaceAll(Constants.webChatLogin, "")});
-              });
-
-            },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40), // Change the radius as needed
-                  ),
-                ),
-                child: const Text("Join Meeting", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15,)))),
-        const SizedBox(height: 10,),
-        Divider(thickness: 1, color: Colors.black.withOpacity(0.1),),
-        const SizedBox(height: 10,),
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            children: [
-              const Expanded(child: Text("Schedule Meeting", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,),)),
-              Switch(value: false, onChanged: (value){}),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20,),
-      ],
-    ),
-  );
 }

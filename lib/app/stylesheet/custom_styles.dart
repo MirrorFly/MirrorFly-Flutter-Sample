@@ -141,11 +141,13 @@ class CreateMeetLinkStyle{
 }
 class MeetBottomSheetStyle{
   const MeetBottomSheetStyle({
-  this.titleStyle = const TextStyle(fontWeight: FontWeight.bold, color: Color(0xff181818), fontSize: 18),
+  this.titleStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818), fontSize: 14),
   this.subTitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
-  this.meetLinkDecoration = const BoxDecoration(color: Color(0xffdbdbdb),borderRadius: BorderRadius.all(Radius.circular(15),)),
-    this.copyIconColor = const Color(0xff181818),
-    this.meetLinkTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: AppColor.primaryColor, fontSize: 12),
+  this.meetLinkDecoration = const BoxDecoration(color: Color(0xffF2F2F2),borderRadius: BorderRadius.all(Radius.circular(6),)),
+    this.copyIconColor = const Color(0xff575757),
+    this.meetLinkTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff6580CB), fontSize: 12),
+    this.scheduleMeetToggleStyle = const ScheduleMeetToggleStyle(),
+    this.joinMeetingButtonStyle = const ButtonStyle(),
 
 });
   final TextStyle titleStyle;
@@ -153,6 +155,48 @@ class MeetBottomSheetStyle{
   final TextStyle subTitleTextStyle;
   final Decoration meetLinkDecoration;
   final Color copyIconColor;
+  final ScheduleMeetToggleStyle scheduleMeetToggleStyle;
+  final ButtonStyle? joinMeetingButtonStyle;
+}
 
+class ScheduleMeetToggleStyle{
+  const ScheduleMeetToggleStyle({
+    this.textStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818), fontSize: 14),
+    this.toggleStyle = const ToggleStyle(
+      activeColor: Colors.white,
+      inactiveColor: Colors.white,
+      activeToggleColor: Colors.blue,
+      inactiveToggleColor: Colors.grey,)
+});
+  final TextStyle textStyle;
+  final ToggleStyle toggleStyle;
+}
+
+class ToggleStyle{
+  const ToggleStyle({this.activeColor = Colors.white,
+    this.inactiveColor = Colors.white,
+    this.activeToggleColor = Colors.blue,
+    this.inactiveToggleColor = Colors.grey,});
+
+  /// The color to use on the toggle of the switch when the given value is true.
+  ///
+  /// If [inactiveToggleColor] is used and this property is null. the value of
+  /// [Colors.white] will be used.
+  final Color activeToggleColor;
+
+  /// The color to use on the toggle of the switch when the given value is false.
+  ///
+  /// If [activeToggleColor] is used and this property is null. the value of
+  /// [Colors.white] will be used.
+  final Color inactiveToggleColor;
+  /// The color to use on the switch when the switch is on.
+  ///
+  /// Defaults to [Colors.blue].
+  final Color activeColor;
+
+  /// The color to use on the switch when the switch is off.
+  ///
+  /// Defaults to [Colors.grey].
+  final Color inactiveColor;
 
 }

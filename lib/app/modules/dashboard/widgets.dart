@@ -680,7 +680,15 @@ onTapForSpanText(String e) {
   debugPrint("Text span click");
   if (stringType == "website") {
     if(e.startsWith(Constants.webChatLogin)){
-      NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":e.replaceAll(Constants.webChatLogin, "")});
+      AppUtils.isNetConnected().then((value){
+        if(value) {
+          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": e.replaceAll(Constants.webChatLogin, "")
+          });
+        }else{
+          toToast(getTranslated("noInternetConnection"));
+        }
+      });
     }else {
       launchInBrowser(e);
     }

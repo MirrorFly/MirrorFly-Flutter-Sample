@@ -71,9 +71,29 @@ class AppStyleConfig{
       })
   );
 
+  static final ButtonStyle _joinMeetButtonStyle = ButtonStyle(
+        shape: WidgetStateProperty.resolveWith((states) => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30)))),
+      padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Color when the button is disabled
+      }
+      return const Color(0xff3276E2); // Default color
+    }),
+    iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+      }
+      return Colors.white; // Default color
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50)),
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        return const TextStyle(fontSize: 14, fontWeight: FontWeight.w600); // Default text style
+      })
+  );
+
   static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);
   static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
-  static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
+  static DashBoardPageStyle _dashBoardPageStyle = DashBoardPageStyle(meetBottomSheetStyle: MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle));
   static ArchivedChatsPageStyle _archivedChatsPageStyle = const ArchivedChatsPageStyle();
   static ChatPageStyle _chatPageStyle = const ChatPageStyle();
   static CreateGroupPageStyle _createGroupPageStyle = const CreateGroupPageStyle();

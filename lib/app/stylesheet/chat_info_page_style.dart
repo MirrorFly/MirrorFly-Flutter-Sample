@@ -9,10 +9,10 @@ class ChatInfoPageStyle{
     this.silverAppBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),
     this.silverAppBarIconColor = Colors.white,
     this.muteNotificationStyle = const MuteNotificationStyle(textStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
-    activeColor: Colors.white,
+    toggleStyle: ToggleStyle(activeColor: Colors.white,
     inactiveColor: Colors.white,
     activeToggleColor: Colors.blue,
-    inactiveToggleColor: Colors.grey,),
+    inactiveToggleColor: Colors.grey,)),
     this.optionsViewStyle = const ListItemStyle(
       leadingIconColor: Color(0xff181818),
         titleTextStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
@@ -43,32 +43,13 @@ class ChatInfoPageStyle{
 class MuteNotificationStyle{
   const MuteNotificationStyle({
     this.textStyle = const TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
-    this.activeColor = Colors.white,
-    this.inactiveColor = Colors.white,
-    this.activeToggleColor = Colors.blue,
-    this.inactiveToggleColor = Colors.grey,
+    this.toggleStyle = const ToggleStyle(
+  activeColor: Colors.white,
+  inactiveColor: Colors.white,
+  activeToggleColor: Colors.blue,
+  inactiveToggleColor: Colors.grey,)
   });
   final TextStyle textStyle;
-
-  /// The color to use on the toggle of the switch when the given value is true.
-  ///
-  /// If [inactiveToggleColor] is used and this property is null. the value of
-  /// [Colors.white] will be used.
-  final Color activeToggleColor;
-
-  /// The color to use on the toggle of the switch when the given value is false.
-  ///
-  /// If [activeToggleColor] is used and this property is null. the value of
-  /// [Colors.white] will be used.
-  final Color inactiveToggleColor;
-  /// The color to use on the switch when the switch is on.
-  ///
-  /// Defaults to [Colors.blue].
-  final Color activeColor;
-
-  /// The color to use on the switch when the switch is off.
-  ///
-  /// Defaults to [Colors.grey].
-  final Color inactiveColor;
+  final ToggleStyle toggleStyle;
 }
 

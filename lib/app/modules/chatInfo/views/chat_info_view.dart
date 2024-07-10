@@ -161,11 +161,11 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
                 height: 20.0,
                 valueFontSize: 12.0,
                 toggleSize: 12.0,
-                activeColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeColor,
-                activeToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeToggleColor,
-                inactiveToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveToggleColor,
-                inactiveColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveColor,
-                switchBorder: Border.all(color: controller.mute.value ? AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.activeToggleColor : AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.inactiveToggleColor, width: 1),
+                activeColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.activeColor,
+                activeToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.activeToggleColor,
+                inactiveToggleColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveToggleColor,
+                inactiveColor: AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveColor,
+                switchBorder: Border.all(color: controller.mute.value ? AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.activeToggleColor : AppStyleConfig.chatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveToggleColor, width: 1),
                 value: controller.mute.value,
                 onToggle: (value) =>
                 {

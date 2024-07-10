@@ -173,11 +173,11 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
                         height: 20.0,
                         valueFontSize: 12.0,
                         toggleSize: 12.0,
-                        activeColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeColor,
-                        activeToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeToggleColor,
-                        inactiveToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveToggleColor,
-                        inactiveColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveColor,
-                        switchBorder: Border.all(color: controller.mute ? AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.activeToggleColor : AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.inactiveToggleColor, width: 1),
+                        activeColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.activeColor,
+                        activeToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.activeToggleColor,
+                        inactiveToggleColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveToggleColor,
+                        inactiveColor: AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveColor,
+                        switchBorder: Border.all(color: controller.mute ? AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.activeToggleColor : AppStyleConfig.groupChatInfoPageStyle.muteNotificationStyle.toggleStyle.inactiveToggleColor, width: 1),
                         value: controller.mute,
                         onToggle: (value) {
                           controller.onToggleChange(value);
