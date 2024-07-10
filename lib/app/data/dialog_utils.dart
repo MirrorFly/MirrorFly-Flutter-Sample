@@ -16,12 +16,12 @@ class DialogUtils {
   }
 
   static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
-    bool enableDrag = true,bool isDismissible = true,}){
+    bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent}){
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
       return builder;
-    },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent,isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: Colors.transparent);
+    },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 
   // Method to show a loading dialog

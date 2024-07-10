@@ -7,6 +7,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -18,6 +19,7 @@ import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../app_style_config.dart';
+import '../../../call_modules/call_widgets.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/utils.dart';
@@ -2047,6 +2049,26 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     // else {
     //   updateRecentChat(jid: editedChatMessage.chatUserJid);
     // }
+  }
+
+  void createMeetLink([MeetBottomSheetStyle? meetBottomSheetStyle]) {
+    Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
+      if (response.isSuccess) {
+        var meetLink = response.data;
+        if (meetLink.isNotEmpty) {
+          showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
+        }
+      }
+    });
+  }
+
+  void showMeetBottomSheet(String meetLink, MeetBottomSheetStyle? meetBottomSheetStyle) {
+    DialogUtils.bottomSheet(
+      meetSheet(meetLink: meetLink, meetBottomSheetStyle),
+      ignoreSafeArea: true,
+      backgroundColor: Colors.white,
+      barrierColor : Colors.black.withOpacity(0.5),
+    );
   }
 }
 
