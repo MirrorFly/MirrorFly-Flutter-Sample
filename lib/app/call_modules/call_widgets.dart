@@ -13,6 +13,8 @@ import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../data/utils.dart';
+import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
 
 Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
@@ -566,7 +568,13 @@ Widget meetSheet(MeetBottomSheetStyle? meetBottomSheetStyle, {required String me
         const SizedBox(height: 15,),
         SizedBox(
             width: double.infinity,
-            child: ElevatedButton(onPressed: (){},
+            child: ElevatedButton(onPressed: (){
+              NavUtils.back();
+              Future.delayed(const Duration(milliseconds: 200), (){
+                NavUtils.toNamed(Routes.joinCallPreview,arguments: {"callLinkId":meetLink.replaceAll(Constants.webChatLogin, "")});
+              });
+
+            },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40), // Change the radius as needed
