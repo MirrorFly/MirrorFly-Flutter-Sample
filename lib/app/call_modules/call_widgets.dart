@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
@@ -548,10 +549,16 @@ Widget meetSheet(MeetBottomSheetStyle? meetBottomSheetStyle, {required String me
             children: [
               Expanded(child: Text(meetLink, maxLines: 1, overflow: TextOverflow.ellipsis, style: meetBottomSheetStyle?.meetLinkTextStyle)),
               const SizedBox(width: 20,),
-              SvgPicture.asset(
-                  copyIcon,
-                  fit: BoxFit.contain,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)
+              InkWell(
+                onTap: (){
+                  Clipboard.setData(ClipboardData(text: meetLink));
+                  toToast(getTranslated("linkCopied"));
+                },
+                child: SvgPicture.asset(
+                    copyIcon,
+                    fit: BoxFit.contain,
+                    colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)
+                ),
               ),
             ],
           ),

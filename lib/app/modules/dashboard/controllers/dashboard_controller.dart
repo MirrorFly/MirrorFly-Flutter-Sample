@@ -2052,8 +2052,19 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   void createMeetLink([MeetBottomSheetStyle? meetBottomSheetStyle]) {
+    Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
+      if (response.isSuccess) {
+        var meetLink = response.data;
+        if (meetLink.isNotEmpty) {
+          showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
+        }
+      }
+    });
+  }
+
+  void showMeetBottomSheet(String meetLink, MeetBottomSheetStyle? meetBottomSheetStyle) {
     DialogUtils.bottomSheet(
-      meetSheet(meetLink: 'https://meet.mirrorfly.com/asdsasad-asdasd-asdasds', meetBottomSheetStyle),
+      meetSheet(meetLink: meetLink, meetBottomSheetStyle),
       ignoreSafeArea: true,
       backgroundColor: Colors.white,
       barrierColor : Colors.black.withOpacity(0.5),
