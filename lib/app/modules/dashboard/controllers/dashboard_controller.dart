@@ -2054,7 +2054,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   Future<void> showMeetBottomSheet(MeetBottomSheetStyle meetBottomSheetStyle) async {
     if(await AppUtils.isNetConnected()) {
       DialogUtils.bottomSheet(
-        MeetSheetView(meetBottomSheetStyle: meetBottomSheetStyle,),
+        MeetSheetView(title: getTranslated("generateMeet"),description: getTranslated("meetDescription"),meetBottomSheetStyle: meetBottomSheetStyle,),
         ignoreSafeArea: true,
         backgroundColor: Colors.white,
         barrierColor: Colors.black.withOpacity(0.5),

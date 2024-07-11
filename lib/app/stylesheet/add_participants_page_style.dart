@@ -6,6 +6,7 @@ class AddParticipantsPageStyle{
   final EditTextFieldStyle searchTextFieldStyle;
   final TabItemStyle tabItemStyle;
   final ContactItemStyle contactItemStyle;
+  final CopyMeetLinkStyle copyMeetLinkStyle;
   final ParticipantItemStyle participantItemStyle;
   final TextStyle noDataTextStyle;
   final Decoration buttonDecoration;
@@ -29,6 +30,7 @@ class AddParticipantsPageStyle{
     this.tabItemStyle = const TabItemStyle(),
     this.contactItemStyle = const ContactItemStyle(),
     this.participantItemStyle = const ParticipantItemStyle(),
+    this.copyMeetLinkStyle = const CopyMeetLinkStyle(),
     this.noDataTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
     this.buttonDecoration = const BoxDecoration(
         color: AppColor.primaryColor,

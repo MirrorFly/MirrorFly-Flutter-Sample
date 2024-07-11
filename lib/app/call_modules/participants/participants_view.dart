@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
@@ -94,7 +96,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                       ];
                     },
                     body: TabBarView(controller: controller.tabController,
-                        children: [callParticipantsView(context,AppStyleConfig.addParticipantsPageStyle.participantItemStyle), addParticipants(context,AppStyleConfig.addParticipantsPageStyle.contactItemStyle,AppStyleConfig.addParticipantsPageStyle.noDataTextStyle)])));
+                        children: [callParticipantsView(context,AppStyleConfig.addParticipantsPageStyle.participantItemStyle), addParticipants(context,AppStyleConfig.addParticipantsPageStyle.contactItemStyle,AppStyleConfig.addParticipantsPageStyle.noDataTextStyle,AppStyleConfig.addParticipantsPageStyle.copyMeetLinkStyle)])));
           }),
         ),
       ),
@@ -205,89 +207,127 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
     });
   }
 
-  Widget addParticipants(BuildContext context,ContactItemStyle style,TextStyle noData) {
+  Widget addParticipants(BuildContext context,ContactItemStyle style,TextStyle noData,CopyMeetLinkStyle copyMeetLinkStyle) {
     return Obx(() {
-      return Stack(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Visibility(
-              visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
-              child: Center(child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Text(getTranslated("noContactsFound"),style: noData,),
-              ),)),
-          controller.isPageLoading.value
-              ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              )) : const Offstage(),
-          Column(
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0,left: 10.0,bottom: 5.0),
+            child: Text(getTranslated("meetLink"),style: copyMeetLinkStyle.titleTextStyle,),
+          ),
+          Row(
             children: [
-              controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
-                child: ListView.builder(
-                    itemCount: controller.scrollable.value
-                        ? controller.usersList.length + (controller.groupId.isEmpty ?  1 : 0)
-                        : controller.usersList.length,
-                    controller: controller.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index >= controller.usersList.length &&
-                          controller.usersList.isNotEmpty && controller.groupId.isEmpty) {
-                        return const Center(
-                            child: CircularProgressIndicator());
-                      } else if (controller.usersList.isNotEmpty) {
-                        var item = controller.usersList[index];
-                        return ContactItem(item: item,onAvatarClick: (){
-                          // controller.showProfilePopup(item.obs);
-                        },
-                          spanTxt: controller.searchQuery.text,
-                          isCheckBoxVisible: controller.isCheckBoxVisible,
-                          checkValue: controller.selectedUsersJIDList.contains(item.jid),
-                          onCheckBoxChange: (value){
-                            controller.onListItemPressed(item);
-                          },onListItemPressed: (){
-                            controller.onListItemPressed(item);
-                          },contactItemStyle: style,);
-                      } else {
-                        return const Offstage();
-                      }
-                    }),
+              Container(
+                width: 50,
+                height: 50,
+                margin: const EdgeInsets.all(10.0),
+                decoration: copyMeetLinkStyle.leadingStyle.iconDecoration,
+                child: Center(child: Icon(Icons.link,color: copyMeetLinkStyle.leadingStyle.iconColor,size: 18,),),
               ),
-              Obx(() {
-                return controller.groupCallMembersCount.value > 0 ? InkWell(
-                  onTap: () {
-                    controller.makeCall();
-                  },
-                  child: Container(
-                      height: 50,
-                      decoration: AppStyleConfig.addParticipantsPageStyle.buttonDecoration,
-                      /*decoration: const BoxDecoration(
-                          color: buttonBgColor,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(2), topRight: Radius.circular(2))
-                      ),*/
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              addParticipantsInCall,
-                              colorFilter: ColorFilter.mode(AppStyleConfig.addParticipantsPageStyle.buttonIconColor, BlendMode.srcIn),
-                            ),
-                            const SizedBox(width: 8,),
-                            Text(getTranslated("selectedParticipantsToCall").replaceFirst("%d", "${(controller.groupCallMembersCount.value)}"),
-                              style: AppStyleConfig.addParticipantsPageStyle.buttonTextStyle,
-                              // style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'sf_ui'),
-                            )
-                          ],
-                        ),
-                      )),
-                ) : const Offstage();
-              })
+              Expanded(child: Text(controller.meetLink.value,style: copyMeetLinkStyle.linkTextStyle,)),
+              IconButton(
+                onPressed: () {
+                  if (controller.meetLink.value.isEmpty) return;
+                  Clipboard.setData(
+                      ClipboardData(text: Constants.webChatLogin + controller.meetLink.value));
+                  toToast(getTranslated("linkCopied"));
+                },
+                icon: SvgPicture.asset(
+                    copyIcon,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                        copyMeetLinkStyle.copyIconColor, BlendMode.srcIn)
+                ),
+              ),
             ],
-          )
+          ),
+          const AppDivider(),
+          Expanded(
+            child: Stack(
+              children: [
+                Visibility(
+                    visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
+                    child: Center(child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                      child: Text(getTranslated("noContactsFound"),style: noData,),
+                    ),)),
+                controller.isPageLoading.value
+                    ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    )) : const Offstage(),
+                Column(
+                  children: [
+                    controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
+                      child: ListView.builder(
+                          itemCount: controller.scrollable.value
+                              ? controller.usersList.length + (controller.groupId.isEmpty ?  1 : 0)
+                              : controller.usersList.length,
+                          controller: controller.scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index >= controller.usersList.length &&
+                                controller.usersList.isNotEmpty && controller.groupId.isEmpty) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (controller.usersList.isNotEmpty) {
+                              var item = controller.usersList[index];
+                              return ContactItem(item: item,onAvatarClick: (){
+                                // controller.showProfilePopup(item.obs);
+                              },
+                                spanTxt: controller.searchQuery.text,
+                                isCheckBoxVisible: controller.isCheckBoxVisible,
+                                checkValue: controller.selectedUsersJIDList.contains(item.jid),
+                                onCheckBoxChange: (value){
+                                  controller.onListItemPressed(item);
+                                },onListItemPressed: (){
+                                  controller.onListItemPressed(item);
+                                },contactItemStyle: style,);
+                            } else {
+                              return const Offstage();
+                            }
+                          }),
+                    ),
+                    Obx(() {
+                      return controller.groupCallMembersCount.value > 0 ? InkWell(
+                        onTap: () {
+                          controller.makeCall();
+                        },
+                        child: Container(
+                            height: 50,
+                            decoration: AppStyleConfig.addParticipantsPageStyle.buttonDecoration,
+                            /*decoration: const BoxDecoration(
+                                color: buttonBgColor,
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(2), topRight: Radius.circular(2))
+                            ),*/
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    addParticipantsInCall,
+                                    colorFilter: ColorFilter.mode(AppStyleConfig.addParticipantsPageStyle.buttonIconColor, BlendMode.srcIn),
+                                  ),
+                                  const SizedBox(width: 8,),
+                                  Text(getTranslated("selectedParticipantsToCall").replaceFirst("%d", "${(controller.groupCallMembersCount.value)}"),
+                                    style: AppStyleConfig.addParticipantsPageStyle.buttonTextStyle,
+                                    // style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'sf_ui'),
+                                  )
+                                ],
+                              ),
+                            )),
+                      ) : const Offstage();
+                    })
+                  ],
+                )
+              ],
+            ),
+          ),
         ],
       );
     });

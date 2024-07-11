@@ -200,3 +200,26 @@ class ToggleStyle{
   final Color inactiveColor;
 
 }
+
+class CopyMeetLinkStyle{
+  const CopyMeetLinkStyle({
+    this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 14),
+    this.linkTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff767676),fontSize: 14),
+    this.leadingStyle = const CustomIconStyle(iconDecoration: BoxDecoration(color: Color(0xffe3e9f9), shape: BoxShape.circle), iconColor: Color(0xff3276e2),),
+    this.copyIconColor = const Color(0xff575757),
+  });
+  final TextStyle titleTextStyle;
+  final TextStyle linkTextStyle;
+  final CustomIconStyle leadingStyle;
+  final Color copyIconColor;
+
+}
+
+class CustomIconStyle{
+  const CustomIconStyle({
+    this.iconDecoration = const BoxDecoration(color: Color(0xffe3e9f9), shape: BoxShape.circle),
+    this.iconColor = const Color(0xff3276e2),
+  });
+  final Decoration iconDecoration;
+  final Color iconColor;
+}

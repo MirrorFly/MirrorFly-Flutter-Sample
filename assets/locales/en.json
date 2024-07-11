@@ -515,5 +515,8 @@
     "instantMeet" : "Instant Meet",
     "copyTheLink" : "Copy the link or click to join the meeting",
     "joinMeeting" : "Join Meeting",
-    "scheduleMeeting" : "Schedule Meeting"
+    "scheduleMeeting" : "Schedule Meeting",
+    "generateMeet" : "Generate Meeting Link",
+    "meetDescription" : "Anyone with Mirror Fly can use this link to join this call. only share it with people you trust",
+    "meetLink" : "Meet Link"
   }

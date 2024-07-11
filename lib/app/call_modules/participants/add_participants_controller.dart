@@ -35,6 +35,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   @override
   Future<void> onInit() async {
     super.onInit();
+    getCallLink();
     groupId(await Mirrorfly.getCallGroupJid());
     tabController = TabController(length: 2, vsync: this);
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
@@ -76,6 +77,14 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     } else {
       getGroupMembers();
     }
+  }
+
+  ///get ongoing call link
+  var meetLink = "".obs;
+  void getCallLink(){
+    Mirrorfly.getCallLink().then((value){
+      meetLink(value);
+    });
   }
 
   void onSearchPressed() {
