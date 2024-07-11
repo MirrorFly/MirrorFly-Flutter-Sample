@@ -16,10 +16,10 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   final _users = <String>[].obs;
   get users => _users;
 
-  final videoMuted = false.obs;
+  final videoMuted = true.obs;
   // get videoMuted => _videoMuted.value;
 
-  final muted = false.obs;
+  final muted = true.obs;
   // get muted => _muted.value;
 
   var callLinkId = "";
@@ -39,22 +39,10 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
 
   /// check permission and set Mute Status
   Future<void> checkPermission() async {
-    muted(true);
-    videoMuted(true);
-    if(await AppPermission.askAudioCallPermissions()){
-      muted(false);
-      if(await AppPermission.askVideoCallPermissions()){
-        startVideoCapture();
-        muted(false);
-        videoMuted(false);
-      }
-    }else{
-      if(await AppPermission.askVideoCallPermissions()){
-        startVideoCapture();
-        muted(false);
-        videoMuted(false);
-      }
-    }
+    var audioPermission = await AppPermission.askAudioCallPermissions();
+    var videoPermission = await AppPermission.askVideoCallPermissions();
+    muted(!audioPermission);
+    videoMuted(!videoPermission);
     Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
     Mirrorfly.muteVideo(status: videoMuted.value, flyCallBack: (_){});
   }
@@ -128,8 +116,8 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   videoMute() async {
-    if (videoMuted.value || await AppPermission.askVideoCallPermissions()) {
-      if(videoMuted.value){
+    if (!videoMuted.value || await AppPermission.askVideoCallPermissions()) {
+      if(!videoMuted.value){
         startVideoCapture();
       }
       Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});

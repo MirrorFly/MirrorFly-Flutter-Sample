@@ -72,7 +72,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     super.onInit();
     enterFullScreen();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    debugPrint("#Mirrorfly Call Controller onInit");
+    debugPrint("#Mirrorfly Call outgoing Controller onInit");
 
     isCallTimerEnabled = true;
     if (NavUtils.arguments != null) {

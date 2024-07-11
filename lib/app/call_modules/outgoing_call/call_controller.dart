@@ -88,8 +88,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isCallTimerEnabled = true;
     if (NavUtils.arguments != null) {
       users.value = NavUtils.arguments?["userJid"] as List<String?>;
-      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
-      joinViaLink = NavUtils.arguments?["joinViaLink"];
+      cameraSwitch(NavUtils.arguments?["cameraSwitch"] ?? false);
+      joinViaLink = NavUtils.arguments?["joinViaLink"] ?? false;
     }
     // await outGoingUsers();
     // callType.value = NavUtils.arguments["callType"];
