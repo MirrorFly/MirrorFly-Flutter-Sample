@@ -116,6 +116,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       debugPrint("#Mirrorfly call get users --> $value");
       final callUserList = callUserListFromJson(value);
       callList(callUserList);
+      users(List.from(callUserList.map((e) => e.userJid!.value)));
       if(callUserList.length > 1) {
         // pinnedUserJid(callUserList[0].userJid);
         CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
@@ -480,6 +481,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
       if(callList.length > 1) {
         callList.insert(callList.length - 1, callUserList);
+        users.insert(users.length - 1 , userJid);
       }else {
         callList.add(callUserList);
       }
@@ -517,6 +519,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
      if(indexValid.isNegative) {
        callList.insert(callList.length - 1, callUserList);
+       users.insert(users.length - 1, userJid);
        // callList.add(callUserList);
        debugPrint("#MirrorflyCall List value updated ${callList.length}");
      }else{
@@ -971,13 +974,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
           var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
           var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
-          LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
+          LogMessage.d("callController", "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : $getMaxCallUsersCount");
           if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid.obs, isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted, callStatus: CallStatus.calling.obs));
+                userJid: jid.obs,
+                isAudioMuted: isAudioMuted,
+                isVideoMuted: isVideoMuted,
+                callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
             // getNames();
             LogMessage.d("callController", "after ${callUserListToJson(callList)}");
+          }else{
+            LogMessage.d("callController", "User already in the list");
           }
         }
       }
