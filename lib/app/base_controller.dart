@@ -228,14 +228,14 @@ abstract class BaseController {
           break;
         case CallStatus.attended:
           debugPrint("onCallStatusUpdated Current Route ${NavUtils.currentRoute}");
-          if (NavUtils.currentRoute == Routes.callTimeOutView) {
+          /*if (NavUtils.currentRoute == Routes.callTimeOutView) {
             debugPrint("onCallStatusUpdated Inside Get.back");
             NavUtils.back();
-          }
+          }*/
           if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute !=
               Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
-            if (NavUtils.currentRoute == Routes.outGoingCallView) {
+            if (NavUtils.currentRoute == Routes.outGoingCallView || NavUtils.currentRoute == Routes.callTimeOutView) {
               NavUtils.offNamed(Routes.onGoingCallView, arguments: {
                 "userJid": [userJid]
               });
