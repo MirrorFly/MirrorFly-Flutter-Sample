@@ -2019,12 +2019,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
               onPressed: () {
                 NavUtils.back();
                 Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: true, flyCallBack: (FlyResponse response) {
-                  if (response.isSuccess) {
-                    callLogList.clear();
-                  } else {
+                  if (!response.isSuccess) {
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 });
+                onCallLogsCleared();
               },
               child: Text(getTranslated("ok").toUpperCase(), )),
         ],
@@ -2062,6 +2061,11 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     }else{
       toToast(getTranslated("noInternetConnection"));
     }
+  }
+
+  void onCallLogsCleared() {
+    callLogList.clear();
+    _callLogList.clear();
   }
 }
 

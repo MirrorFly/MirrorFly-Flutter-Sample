@@ -296,7 +296,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                               visibleWidget: const Icon(Icons.web),
                                               overflowWidget: Text(getTranslated("clearCallLog"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
-                                                  controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
+                                                  controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0 || controller.callLogList.isEmpty
                                                       ? ShowAsAction.gone
                                                       : ShowAsAction.never,
                                               keyValue: 'Clear call log',

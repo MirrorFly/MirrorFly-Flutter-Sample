@@ -532,7 +532,12 @@ abstract class BaseController {
 
     Mirrorfly.onCallLogsUpdated.listen(onCallLogsUpdated);
 
-    Mirrorfly.onCallLogsCleared.listen((event) {});
+    Mirrorfly.onCallLogsCleared.listen((event) {
+      LogMessage.d("onCallLogsCleared", event);
+      if(Get.isRegistered<DashboardController>()){
+        Get.find<DashboardController>().onCallLogsCleared();
+      }
+    });
   }
 
   void onCallLogsUpdated(value) {
