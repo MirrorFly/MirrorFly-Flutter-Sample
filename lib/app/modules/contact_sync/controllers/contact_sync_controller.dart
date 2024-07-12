@@ -98,7 +98,7 @@ class ContactSyncController extends GetxController
     NavUtils.offNamed(Routes.dashboard);
   }
 
-  Future<void> networkConnected() async {
+  Future<void> onConnected() async {
     LogMessage.d('networkConnected', 'contactSync');
     textContactSync('');
     if(!await Mirrorfly.contactSyncStateValue()){
@@ -109,7 +109,7 @@ class ContactSyncController extends GetxController
     }
   }
 
-  void networkDisconnected() {
+  void onDisconnected() {
     syncing(false);
     textContactSync(getTranslated("noInternetConnection"));
   }

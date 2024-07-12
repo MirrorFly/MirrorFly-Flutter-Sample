@@ -90,7 +90,7 @@ class JoinCallPreviewView extends NavViewStateful<JoinCallController> {
               const Spacer(),
               Obx(() {
                 return controller.subscribeSuccess.value ? const Offstage() :
-                Text(getTranslated("connectingPleaseWait"),style: AppStyleConfig.joinCallPreviewPageStyle
+                Text(controller.displayStatus,style: AppStyleConfig.joinCallPreviewPageStyle
                   .callerNameTextStyle,
                   overflow: TextOverflow.ellipsis,);
               }),

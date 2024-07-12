@@ -25,6 +25,7 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   var callLinkId = "";
 
   var subscribeSuccess = false.obs;
+  var displayStatus = getTranslated("connectingPleaseWait");
 
   @override
   void onInit(){
@@ -67,6 +68,9 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   void initializeCall() {
     Mirrorfly.initializeMeet(callLinkId: callLinkId,userName: SessionManagement.getName().checkNull(),flyCallback: (res){
       LogMessage.d("initializeMeet", res.toString());
+      if(!res.isSuccess) {
+        subscribeSuccess(false);
+      }
     });
   }
 
@@ -172,6 +176,17 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
       paused = false;
       checkPermission();
     }
+  }
+
+  void onDisconnected() {
+    displayStatus = getTranslated("noInternetConnection");
+    subscribeSuccess(false);
+  }
+
+  void onConnected() {
+    displayStatus = getTranslated("connectingPleaseWait");
+    //if network connected then reinitialize call
+    initializeCall();
   }
 
 }

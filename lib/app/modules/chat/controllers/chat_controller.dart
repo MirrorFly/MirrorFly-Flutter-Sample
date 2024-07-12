@@ -2565,14 +2565,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
-  void networkConnected() {
+  void onConnected() {
     LogMessage.d("networkConnected", 'true');
     Future.delayed(const Duration(milliseconds: 2000), () {
       setChatStatus();
     });
   }
 
-  void networkDisconnected() {
+  void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
     setChatStatus();
   }

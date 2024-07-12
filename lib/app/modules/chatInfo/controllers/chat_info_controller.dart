@@ -109,14 +109,14 @@ class ChatInfoController extends GetxController {
     }
   }
 
-  void networkConnected() {
+  void onConnected() {
     LogMessage.d("networkConnected", 'true');
     Future.delayed(const Duration(milliseconds: 2000), () {
       getUserLastSeen();
     });
   }
 
-  void networkDisconnected() {
+  void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
     getUserLastSeen();
   }

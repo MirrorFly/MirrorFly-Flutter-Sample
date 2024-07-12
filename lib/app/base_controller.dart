@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/join_call_preview/join_call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
@@ -1014,13 +1015,37 @@ abstract class BaseController {
   void usersWhoBlockedMeListFetched(result) {}
 
   void onConnected(result) {
+    if(Get.isRegistered<ChatController>(tag: controllerTag)){
+      Get.find<ChatController>(tag: controllerTag).onConnected();
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().onConnected();
+    }
+    if (Get.isRegistered<ContactSyncController>()) {
+      Get.find<ContactSyncController>().onConnected();
+    }
     if(Get.isRegistered<ProfileController>()){
       Get.find<ProfileController>().onConnected();
+    }
+    if(Get.isRegistered<JoinCallController>()){
+      Get.find<JoinCallController>().onConnected();
     }
   }
 
   void onDisconnected(result) {
     LogMessage.d('onDisconnected', result.toString());
+    if(Get.isRegistered<ChatController>(tag: controllerTag)){
+      Get.find<ChatController>(tag: controllerTag).onDisconnected();
+    }
+    if (Get.isRegistered<ChatInfoController>()) {
+      Get.find<ChatInfoController>().onDisconnected();
+    }
+    if (Get.isRegistered<ContactSyncController>()) {
+      Get.find<ContactSyncController>().onDisconnected();
+    }
+    if(Get.isRegistered<JoinCallController>()){
+      Get.find<JoinCallController>().onDisconnected();
+    }
   }
 
   // void onConnectionNotAuthorized(result) {}

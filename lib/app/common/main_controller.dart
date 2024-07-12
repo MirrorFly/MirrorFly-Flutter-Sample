@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/join_call_preview/join_call_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -228,28 +229,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
           case InternetConnectionStatus.connected:
             LogMessage.d("network", 'Data connection is available.');
             networkConnected();
-            if (Get.isRegistered<ChatController>()) {
-              Get.find<ChatController>().networkConnected();
-            }
-            if (Get.isRegistered<ChatInfoController>()) {
-              Get.find<ChatInfoController>().networkConnected();
-            }
-            if (Get.isRegistered<ContactSyncController>()) {
-              Get.find<ContactSyncController>().networkConnected();
-            }
             break;
           case InternetConnectionStatus.disconnected:
             LogMessage.d("network", 'You are disconnected from the internet.');
             networkDisconnected();
-            if (Get.isRegistered<ChatController>()) {
-              Get.find<ChatController>().networkDisconnected();
-            }
-            if (Get.isRegistered<ChatInfoController>()) {
-              Get.find<ChatInfoController>().networkDisconnected();
-            }
-            if (Get.isRegistered<ContactSyncController>()) {
-              Get.find<ContactSyncController>().networkDisconnected();
-            }
             break;
         }
       },
@@ -274,8 +257,10 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   bool fromLockScreen = false;
 
+  var hasPaused = false;
   @override
   void onPaused() async {
+    hasPaused = true;
     LogMessage.d('LifeCycle', 'onPaused');
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
@@ -290,10 +275,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
-    if (Constants.enableContactSync) {
-      syncContacts();
+    if(hasPaused) {
+      hasPaused = false;
+      if (Constants.enableContactSync) {
+        syncContacts();
+      }
+      unreadMissedCallCount();
     }
-    unreadMissedCallCount();
   }
 
   void syncContacts() async {
@@ -380,9 +368,13 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   unreadMissedCallCount() async {
-    var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-    unreadCallCount.value = unreadMissedCallCount ?? 0;
-    debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+    try {
+      var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+      unreadCallCount.value = unreadMissedCallCount ?? 0;
+      debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+    }catch(e){
+      debugPrint("unreadMissedCallCount $e");
+    }
   }
 
   void _setBadgeCount(int count) {
