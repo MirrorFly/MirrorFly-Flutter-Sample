@@ -133,6 +133,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   //#metaData
   List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
   final ChatViewArguments? arguments;
+
+  var screenWidth = 0.0.obs;
+  var screenHeight = 0.0.obs;
   @override
   Future<void> onInit() async {
     // arguments = NavUtils.arguments as ChatViewArguments;
