@@ -95,6 +95,10 @@ const String callOptionsUpArrow = 'assets/calls/call_options_up_arrow.svg';
 const String callOptionsBottomBg = 'assets/calls/ic_group_user_info_layout.png';
 const String callOptionsToolbarBg = 'assets/calls/ic_call_header_overlay.png';
 
+//Meeting Assets
+const String meetSchedule = 'assets/calls/schedule_meet.svg';
+
+
 //Call Participant assets
 const String participantMute = 'assets/calls/participant_mute.svg';
 const String participantUnMute = 'assets/calls/participant_unmute.svg';

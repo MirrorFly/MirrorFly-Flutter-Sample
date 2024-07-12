@@ -9,6 +9,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/floating_fab.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../call_modules/ripple_animation_view.dart';
@@ -26,7 +27,6 @@ import 'chat_list_view.dart';
 class ChatView extends NavViewStateful<ChatController> {
   ChatView({Key? key, this.chatViewArguments}) : super(key: key, tag: chatViewArguments?.chatJid);
   final ChatViewArguments? chatViewArguments;
-
   @override
   ChatController createController({String? tag}) {
     debugPrint("ChatView createController");
@@ -100,15 +100,25 @@ class ChatView extends NavViewStateful<ChatController> {
                     }),
                     Expanded(child: Stack(
                       children: [
-                        DraggableFab(),
                         Obx(() {
                           return controller.chatLoading.value
                               ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
-                              : ChatListView(chatController: controller, chatList: controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,
-                          notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle,);
+                              : LayoutBuilder(
+                                builder: (context, constraints) {
+                                  debugPrint("list view constraints $constraints");
+                                  controller.screenWidth(constraints.maxWidth);
+                                  controller.screenHeight(constraints.maxHeight);
+                                  return ChatListView(chatController: controller, chatList: controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,
+                                                            notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle,);
+                                }
+                              );
                         }),
+                        FloatingFab(
+                          parentWidgetWidth: controller.screenWidth,
+                          parentWidgetHeight: controller.screenHeight,
+                        ),
                         Obx(() {
                           return Visibility(
                             visible: controller.showHideRedirectToLatest.value,
@@ -994,76 +1004,6 @@ class ChatView extends NavViewStateful<ChatController> {
           color: AppStyleConfig.chatPageStyle.appBarTheme.backgroundColor,
         );
       }),
-    );
-  }
-}
-
-class DraggableFab extends StatefulWidget {
-  @override
-  _DraggableFabState createState() => _DraggableFabState();
-}
-
-class _DraggableFabState extends State<DraggableFab> {
-  Offset position = Offset(1, 100);
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     setState(() {
-  //       double screenWidth = MediaQuery.of(context).size.width;
-  //       double screenHeight = MediaQuery.of(context).size.height;
-  //       double fabWidth = 56.0; // Width of the FloatingActionButton
-  //       double fabHeight = 56.0; // Height of the FloatingActionButton
-  //
-  //       position = Offset(screenWidth - fabWidth - 16, screenHeight - fabHeight - 16);
-  //     });
-  //   });
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: position.dx,
-      top: position.dy,
-      child: Draggable(
-        feedback: buildFab(),
-        child: buildFab(),
-        childWhenDragging: Container(),
-        onDraggableCanceled: (velocity, offset) {
-          setState(() {
-            double screenWidth = MediaQuery.of(context).size.width;
-            double screenHeight = MediaQuery.of(context).size.height;
-            double fabWidth = 56.0; // Width of the FloatingActionButton
-            double fabHeight = 56.0; // Height of the FloatingActionButton
-
-            debugPrint("screenWidth $screenWidth");
-            debugPrint("screenHeight $screenHeight");
-            // Snap to the closest side
-            // double xPosition = offset.dx < screenWidth / 2 - fabWidth / 2
-            //     ? 0
-            //     : screenWidth - fabWidth;
-            // double yPosition = offset.dy.clamp(0, screenHeight - fabHeight);
-
-            // Snap to the closest side and ensure it stays within the screen bounds
-            double xPosition = offset.dx < screenWidth / 2
-                ? 5
-                : screenWidth - fabWidth;
-            double yPosition =  offset.dy;
-
-            debugPrint("X position $xPosition");
-            debugPrint("Y position $yPosition");
-            position = Offset(xPosition, yPosition);
-          });
-        },
-      ),
-    );
-  }
-
-  Widget buildFab() {
-    return FloatingActionButton(
-      onPressed: () {},
-      child: Icon(Icons.add),
     );
   }
 }
