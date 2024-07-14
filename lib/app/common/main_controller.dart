@@ -10,13 +10,10 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
-import 'package:mirror_fly_demo/app/call_modules/join_call_preview/join_call_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/pushnotification.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -24,7 +21,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../data/utils.dart';
 import '../model/arguments.dart';
-import '../modules/chatInfo/controllers/chat_info_controller.dart';
 import '../routes/route_settings.dart';
 import 'notification_service.dart';
 
