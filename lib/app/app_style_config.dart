@@ -95,7 +95,7 @@ class AppStyleConfig{
   static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
   static DashBoardPageStyle _dashBoardPageStyle = DashBoardPageStyle(meetBottomSheetStyle: MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle));
   static ArchivedChatsPageStyle _archivedChatsPageStyle = const ArchivedChatsPageStyle();
-  static ChatPageStyle _chatPageStyle = const ChatPageStyle();
+  static ChatPageStyle _chatPageStyle =  ChatPageStyle(instantScheduleMeetStyle: InstantScheduleMeetStyle(meetBottomSheetStyle:MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle)));
   static CreateGroupPageStyle _createGroupPageStyle = const CreateGroupPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();
   static GroupChatInfoPageStyle _groupChatInfoPageStyle = const GroupChatInfoPageStyle();

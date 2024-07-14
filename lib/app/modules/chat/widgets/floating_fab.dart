@@ -3,14 +3,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../common/constants.dart';
-import '../../../stylesheet/stylesheet.dart';
 
 class FloatingFab extends StatefulWidget {
   const FloatingFab(
-      {super.key, required this.parentWidgetHeight, required this.parentWidgetWidth});
+      {super.key, required this.parentWidgetHeight, required this.parentWidgetWidth, required this.onFabTap, required this.fabTheme});
 
   final RxDouble parentWidgetHeight;
   final RxDouble parentWidgetWidth;
+  final Function() onFabTap;
+  final FloatingActionButtonThemeData fabTheme;
 
   @override
   State<FloatingFab> createState() => _FloatingFabState();
@@ -87,13 +88,15 @@ class _FloatingFabState extends State<FloatingFab> {
   }
 
   Widget buildFab() {
-    return FloatingActionButton(
-      backgroundColor: AppColor.primaryColor,
-      onPressed: () {},
-      child: SvgPicture.asset(
-        meetSchedule,
-        width: 24,
-        height: 24,
+    return Theme(
+      data: ThemeData(floatingActionButtonTheme: widget.fabTheme),
+      child: FloatingActionButton(
+        onPressed: widget.onFabTap,
+        child: SvgPicture.asset(
+          meetSchedule,
+          width: widget.fabTheme.iconSize,
+          colorFilter: ColorFilter.mode(widget.fabTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),
+        ),
       ),
     );
   }

@@ -20,7 +20,8 @@ class ChatPageStyle {
             textStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
             shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1)),
             iconColor: Color(0xff181818)
-        )
+        ),
+        this.instantScheduleMeetStyle = const InstantScheduleMeetStyle()
       });
   final AppBarTheme appBarTheme;
   final ChatUserAppBarStyle chatUserAppBarStyle;
@@ -32,6 +33,16 @@ class ChatPageStyle {
   final ReceiverChatBubbleStyle receiverChatBubbleStyle;
   final AttachmentViewStyle attachmentViewStyle;
   final PopupMenuThemeData popupMenuThemeData;
+  final InstantScheduleMeetStyle instantScheduleMeetStyle;
+}
+
+class InstantScheduleMeetStyle{
+  const InstantScheduleMeetStyle({
+    this.meetFabStyle = const FloatingActionButtonThemeData(backgroundColor: AppColor.primaryColor,foregroundColor: Colors.white,elevation: 12,iconSize: 24,shape: CircleBorder()),
+    this.meetBottomSheetStyle = const MeetBottomSheetStyle()
+  });
+  final FloatingActionButtonThemeData meetFabStyle;
+  final MeetBottomSheetStyle meetBottomSheetStyle;
 }
 
 class AttachmentViewStyle{

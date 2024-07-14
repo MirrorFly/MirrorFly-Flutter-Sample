@@ -165,8 +165,10 @@ class MeetLinkController extends GetxController {
           // showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
         }
       } else {
-        toToast(response.message.checkNull());
-        NavUtils.back();
+        if(NavUtils.isOverlayOpen) {
+          toToast(response.message.checkNull());
+          NavUtils.back();
+        }
       }
     });
   }

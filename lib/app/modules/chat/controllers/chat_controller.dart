@@ -29,6 +29,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../../app_style_config.dart';
+import '../../../call_modules/meet_sheet_view.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -37,6 +38,7 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/route_settings.dart';
+import '../../../stylesheet/stylesheet.dart';
 import '../../gallery_picker/src/data/models/picked_asset_model.dart';
 import '../widgets/attachment_view.dart';
 import '../widgets/image_cache_manager.dart';
@@ -3105,6 +3107,20 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         selectedChatList.refresh();
         getMessageActions();
       }
+    }
+  }
+
+  //show meet bottom sheet
+  Future<void> showMeetBottomSheet(MeetBottomSheetStyle meetBottomSheetStyle) async {
+    if(await AppUtils.isNetConnected()) {
+      DialogUtils.bottomSheet(
+        MeetSheetView(title: getTranslated("instantMeet"),description: getTranslated("copyTheLink"),meetBottomSheetStyle: meetBottomSheetStyle,),
+        ignoreSafeArea: true,
+        backgroundColor: Colors.white,
+        barrierColor: Colors.black.withOpacity(0.5),
+      );
+    }else{
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 }

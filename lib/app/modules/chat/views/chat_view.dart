@@ -116,8 +116,12 @@ class ChatView extends NavViewStateful<ChatController> {
                               );
                         }),
                         FloatingFab(
+                          fabTheme: AppStyleConfig.chatPageStyle.instantScheduleMeetStyle.meetFabStyle,
                           parentWidgetWidth: controller.screenWidth,
                           parentWidgetHeight: controller.screenHeight,
+                          onFabTap: (){
+                            controller.showMeetBottomSheet(AppStyleConfig.chatPageStyle.instantScheduleMeetStyle.meetBottomSheetStyle);
+                          },
                         ),
                         Obx(() {
                           return Visibility(
