@@ -170,7 +170,7 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
 
   @override
   void onError(FlyException error) {
-
+    showError(error);
   }
 
   @override
