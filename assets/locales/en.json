@@ -295,7 +295,7 @@
     "videoSwitchMessage" : "Are you sure you want to switch to Video Call?",
     "videoSwitchRequestMessage" : "Requesting to switch to Video Call",
     "videoSwitchRequestedMessage" : "%d requesting to switch to video call",
-    "callMembersLimit" : "Maximum 8 members allowed in a call",
+    "callMembersLimit" : "Maximum %d members allowed in a call",
     "youCanSelectForCall" : "You can only select %d participants",
     "selectedParticipantsToCall" : "Add participant to the call ( %d )",
     "usernameIsBusy" : "%d is Busy",
@@ -518,5 +518,9 @@
     "scheduleMeeting" : "Schedule Meeting",
     "generateMeet" : "Generate Meeting Link",
     "meetDescription" : "Anyone with Mirror Fly can use this link to join this call. only share it with people you trust",
-    "meetLink" : "Meet Link"
+    "meetLink" : "Meet Link",
+    "invalidLink" : "Invalid link",
+    "callEnded" : "Call Ended!",
+    "wentWrong" : "Something went wrong. Please try again",
+    "couldNotProcess" : "Couldn't process the link. Please try again."
   }

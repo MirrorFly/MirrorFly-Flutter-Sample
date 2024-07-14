@@ -70,8 +70,47 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
       LogMessage.d("initializeMeet", res.toString());
       if(!res.isSuccess) {
         subscribeSuccess(false);
+        if(res.hasError){
+          showError(res.exception);
+        }
       }
     });
+  }
+
+  // to show error message
+  void showError(FlyException? error){
+    switch(error?.code){
+      case "100601":
+      //Call link is not valid
+        toToast(getTranslated("invalidLink"));
+        break;
+      case "100602":
+      //Api returned ended status for call
+        toToast(getTranslated("noOneHere"));
+        //callEnded
+        break;
+      case "100603":
+      //Maximum participants already in call
+        toToast(getTranslated("callMembersLimit").replaceFirst("%d", "8"));
+        break;
+      case "100605":
+      //Server didn't give success response code
+        toToast(getTranslated("wentWrong"));
+        //callEnded
+        break;
+      case "100620":
+      //Couldn't process the link. Please try again.
+        toToast(getTranslated("couldNotProcess"));
+        break;
+      case "100610":
+      //Couldn't process the link.Please try again.
+        toToast(getTranslated("couldNotProcess"));
+        break;
+      default:
+        toToast(error?.message ?? "Error");
+        break;
+    }
+    NavUtils.back();
   }
 
   /// start video capture
