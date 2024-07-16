@@ -34,8 +34,6 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
     initializeCall();
-    checkPermission();
-    startVideoCapture();
   }
 
   /// check permission and set Mute Status
@@ -73,6 +71,9 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
         if(res.hasError){
           showError(res.exception);
         }
+      }else{
+        checkPermission();
+        startVideoCapture();
       }
     });
   }
@@ -138,7 +139,7 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
                   arguments: {"userJid": users, "joinViaLink": true});
             } else {
               subscribeSuccess(true);
-              toToast(res.errorMessage);
+              showError(res.exception);
             }
           });
         }

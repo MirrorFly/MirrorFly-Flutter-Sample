@@ -105,6 +105,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   bool get ableToCall => profile.isGroupProfile.checkNull() ? isMemberOfGroup : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
 
+  bool get ableToScheduleMeet => profile.isGroupProfile ?? false ? availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value : true;
   // var profileDetail = Profile();
 
   String nJid = "";
