@@ -5,7 +5,7 @@ name: Flutter CI
 on:
   push:
     branches:
-      - master
+      - feature/github_action
 
     # on: push    # Default will running for every branch.
 
