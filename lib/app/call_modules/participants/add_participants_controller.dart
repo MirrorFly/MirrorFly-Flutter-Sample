@@ -301,7 +301,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     }
     if (callList.length != getMaxCallUsersCount) {
       if (await AppUtils.isNetConnected()) {
-        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList);
+        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList, flyCallback: (FlyResponse response) {  });
         Get.back();
       } else {
         toToast(Constants.noInternetConnection);

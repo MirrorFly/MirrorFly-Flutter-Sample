@@ -3340,11 +3340,11 @@ class ChatController extends FullLifeCycleController
 
   void displayUnreadMessageSeparator(int separatorPosition) {
     var shouldNotCount = chatList.sublist(0 , separatorPosition + 1).where((it) => it.isMessageSentByMe).length;
-    LogMessage.e("displayUnreadMessageSeparator", "should not count--->$shouldNotCount");
+    LogMessage.d("displayUnreadMessageSeparator", "should not count--->$shouldNotCount");
 
     var defaultUnreadCountResult = 0 + (separatorPosition);
     var shouldNotCountResult = defaultUnreadCountResult - shouldNotCount;
-    LogMessage.e("displayUnreadMessageSeparator", "should Not Count Result--->$shouldNotCountResult");
+    LogMessage.d("displayUnreadMessageSeparator", "should Not Count Result--->$shouldNotCountResult");
 
     var noOfItemsAfterUnreadMessageSeparator = shouldNotCountResult!=0 ? shouldNotCountResult : chatList.length - separatorPosition - 1;
     if (noOfItemsAfterUnreadMessageSeparator != 0) {
@@ -3385,7 +3385,7 @@ class ChatController extends FullLifeCycleController
         // listChats.scrollToPosition(mainList.size - 1)
       // }
     } catch (e) {
-      LogMessage.e("TAG", e.toString());
+      LogMessage.d("TAG", e.toString());
       return const Tuple3(false, 0, "");
     }
     LogMessage.d("findIndexOfUnreadMessageType", "$isUnreadSeparatorIsAvailable, $position, $message");
@@ -3420,7 +3420,7 @@ class ChatController extends FullLifeCycleController
         scrollToPosition(position + 1);
       }
     } catch(e) {
-      LogMessage.e("TAG",e.toString());
+      LogMessage.d("TAG",e.toString());
     }
   }
 

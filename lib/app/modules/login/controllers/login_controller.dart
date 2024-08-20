@@ -114,7 +114,7 @@ class LoginController extends GetxController {
       LogMessage.d("validMobileNumber", "parse : $parse");;
       return true;
     }catch(e){
-      LogMessage.e("validMobileNumber", "error : $e");
+      LogMessage.d("validMobileNumber", "error : $e");
       return false;
     }
   }

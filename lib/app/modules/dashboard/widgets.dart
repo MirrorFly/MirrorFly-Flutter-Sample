@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirrorfly_plugin/event_handlers.dart';
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
