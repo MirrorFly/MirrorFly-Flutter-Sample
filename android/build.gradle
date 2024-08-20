@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.7.0'
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         mavenCentral()
@@ -21,9 +21,6 @@ allprojects {
         maven {
             name "mirrorflysdk"
             url "https://repo.mirrorfly.com/release"
-        }
-        maven {
-            url "https://repo1.maven.org/maven2"
         }
         //mavenLocal()
     }
