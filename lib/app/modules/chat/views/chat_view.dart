@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 // import 'package:grouped_list/grouped_list.dart';
-import 'package:marquee/marquee.dart';
+// import 'package:marquee/marquee.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/common/extensions.dart';
@@ -1104,8 +1104,7 @@ class ChatView extends GetView<ChatController> {
                       ? SizedBox(
                       width: Get.width * 0.90,
                       height: 15,
-                      child: Marquee(
-                          text:
+                      child: Text(
                           "${controller.groupParticipantsName}       ",
                           style: const TextStyle(fontSize: 12)))
                       : controller.subtitle.isNotEmpty

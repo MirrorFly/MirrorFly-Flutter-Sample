@@ -47,7 +47,7 @@ dependencies:
   firebase_app_installations: ^0.2.3+5 #firebase installations
   firebase_messaging: ^14.6.6 #firebase messaging
   flutter_switch: ^0.3.2 #switchbox
-  marquee: ^2.2.0 # marquee text
+#  marquee: ^2.2.0 # marquee text
   qr_code_scanner: ^1.0.1 #qr scanner
   yaml: ^3.1.1
   path: ^1.8.2
