@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:is_lock_screen/is_lock_screen.dart';
+// import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -262,7 +262,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
     mirrorFlyLog('mainController', 'onPaused');
-    fromLockScreen = await isLockScreen() ?? false;
+    fromLockScreen = /*await isLockScreen() ??*/ false;
     mirrorFlyLog('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
