@@ -3,6 +3,7 @@
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         jcenter()
     }
 
@@ -16,6 +17,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         jcenter()
         maven {
             url "https://repo.mirrorfly.com/release"
