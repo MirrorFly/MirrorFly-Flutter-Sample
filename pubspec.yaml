@@ -67,7 +67,7 @@ dependencies:
 #  is_lock_screen: ^2.0.0
   device_info_plus: ^8.1.0
   http: ^0.13.4 #http
-  flutter_libphonenumber: ^2.1.5
+  flutter_libphonenumber: ^2.3.3
   flutter_app_badger: ^1.5.0
   mirrorfly_plugin: ^1.0.0
 
