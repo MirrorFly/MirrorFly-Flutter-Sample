@@ -90,6 +90,7 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle i
   return InkWell(
     onTap: onTap,
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircleAvatar(
           radius: (50/2),
