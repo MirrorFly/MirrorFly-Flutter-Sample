@@ -465,6 +465,14 @@ class Constants {
   static const video = "Videos";
   static const document = "Documents";
 
+  //Attachment Type
+  static const String attachmentTypeDocument = "document";
+  static const String attachmentTypeCamera = "camera";
+  static const String attachmentTypeGallery = "gallery";
+  static const String attachmentTypeAudio = "audio";
+  static const String attachmentTypeContact = "contact";
+  static const String attachmentTypeLocation = "location";
+
   /*static const String tag = 'Contus Fly';
   static const String googleMapPackageName = "com.google.android.apps.maps";
 

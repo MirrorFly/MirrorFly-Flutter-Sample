@@ -4,6 +4,7 @@ import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';
+import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 
 class AttachmentsSheetView extends StatelessWidget {
@@ -47,12 +48,13 @@ class AttachmentsSheetView extends StatelessWidget {
                 var iconStyle = getIconStyle(attachments[index].text);
                 return iconCreation(
                     attachments[index].iconPath, attachments[index].text,
-                    (attachments[index].text == "Document") ? onDocument :
-                    (attachments[index].text == "Camera") ? onCamera :
-                    (attachments[index].text == "Gallery") ? onGallery :
-                    (attachments[index].text == "Audio") ? onAudio :
-                    (attachments[index].text == "Contact") ? onContact :
-                    (attachments[index].text == "Location") ? onLocation : () {},iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
+                    (attachments[index].attachmentId == Constants.attachmentTypeDocument) ? onDocument :
+                    (attachments[index].attachmentId == Constants.attachmentTypeCamera) ? onCamera :
+                    (attachments[index].attachmentId == Constants.attachmentTypeGallery) ? onGallery :
+                    (attachments[index].attachmentId == Constants.attachmentTypeAudio) ? onAudio :
+                    (attachments[index].attachmentId == Constants.attachmentTypeContact) ? onContact :
+                    (attachments[index].attachmentId == Constants.attachmentTypeLocation) ? onLocation : () {},
+                    iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
               });
         }),
       ),
@@ -80,9 +82,10 @@ class AttachmentsSheetView extends StatelessWidget {
 }
 
 class AttachmentIcon {
+  String attachmentId;
   String iconPath;
   String text;
-  AttachmentIcon(this.iconPath, this.text);
+  AttachmentIcon(this.attachmentId, this.iconPath, this.text);
 }
 
 

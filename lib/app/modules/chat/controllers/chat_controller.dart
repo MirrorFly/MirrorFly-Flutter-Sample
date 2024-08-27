@@ -2821,20 +2821,20 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     availableFeatures(features);
     var availableAttachment = <AttachmentIcon>[];
     if (features.isDocumentAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(documentImg, getTranslated("attachment_Document")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeDocument, documentImg, getTranslated("attachment_Document")));
     }
     if (features.isImageAttachmentAvailable.checkNull() || features.isVideoAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(cameraImg, getTranslated("attachment_Camera")));
-      availableAttachment.add(AttachmentIcon(galleryImg, getTranslated("attachment_Gallery")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeCamera, cameraImg, getTranslated("attachment_Camera")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeGallery, galleryImg, getTranslated("attachment_Gallery")));
     }
     if (features.isAudioAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(audioImg, getTranslated("attachment_Audio")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeAudio, audioImg, getTranslated("attachment_Audio")));
     }
     if (features.isContactAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(contactImg, getTranslated("attachment_Contact")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeContact, contactImg, getTranslated("attachment_Contact")));
     }
     if (features.isLocationAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(locationImg, getTranslated("attachment_Location")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeLocation, locationImg, getTranslated("attachment_Location")));
     }
     availableAttachments(availableAttachment);
   }
