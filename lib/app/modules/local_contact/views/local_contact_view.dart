@@ -85,7 +85,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

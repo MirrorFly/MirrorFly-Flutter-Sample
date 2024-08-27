@@ -831,7 +831,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -913,7 +913,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -970,7 +970,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }

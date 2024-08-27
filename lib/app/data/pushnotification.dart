@@ -155,7 +155,7 @@ class PushNotifications {
     if(Platform.isAndroid) {
       var permission = await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+          AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
       debugPrint("permission :$permission");
     }
     NotificationSettings settings = await messaging.requestPermission(

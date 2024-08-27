@@ -9,6 +9,10 @@ import 'package:path_provider/path_provider.dart';
 
 import '../model/chat_message_model.dart';
 
+// Icon Package Name
+
+String? iconPackageName;
+
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
 const Color iconColor = Color(0xff181818);

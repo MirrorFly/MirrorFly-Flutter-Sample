@@ -1,4 +1,6 @@
 
+import 'chat_message_model.dart';
+
 class DashboardViewArguments{
   final bool didMissedCallNotificationLaunchApp;
 
@@ -23,6 +25,18 @@ class ChatViewArguments{
   final bool enableCalls;
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;
+  final bool disableAppBar;
+}
+
+class ChatSearchViewArguments{
+  const ChatSearchViewArguments({
+    required this.chatJid,
+    required this.chatList,
+    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
+
+  final String chatJid;
+  final List<ChatMessageModel> chatList;
+  final bool showChatDeliveryIndicator;
   final bool disableAppBar;
 }
 

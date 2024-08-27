@@ -66,7 +66,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   late String audioSavePath;
   late String recordedAudioPath;
-  late Record record;
+  late AudioRecorder record;
 
   TextEditingController messageController = TextEditingController();
   TextEditingController editMessageController = TextEditingController();
@@ -142,7 +142,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   Future<void> onInit() async {
     // arguments = NavUtils.arguments as ChatViewArguments;
     // buildContext = context;
-    showChatDeliveryIndicator = arguments!.showChatDeliveryIndicator;
+    showChatDeliveryIndicator = arguments?.showChatDeliveryIndicator ?? true;
 
     getAvailableFeatures();
 
@@ -570,10 +570,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // getChatHistory();
     Mirrorfly.initializeMessageList(
       userJid: profile.jid.checkNull(),
-      limit: 50,
+      limit: 10,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: starredChatMessageId == null,
+      exclude: false/*starredChatMessageId == null*/,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
@@ -1736,16 +1736,11 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint("microPhone Permission Status---> $microPhonePermissionStatus");
       if (microPhonePermissionStatus) {
         isUserTyping(false);
-        record = Record();
+        record = AudioRecorder();
         timerInit("00:00");
         isAudioRecording(Constants.audioRecording);
         startTimer();
-        await record.start(
-          path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
-          encoder: AudioEncoder.AAC,
-          bitRate: 128000,
-          samplingRate: 44100,
-        );
+        await record.start(const RecordConfig(), path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a");
         Future.delayed(const Duration(seconds: 300), () {
           if (isAudioRecording.value == Constants.audioRecording) {
             stopRecording();
@@ -1763,7 +1758,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     isUserTyping(messageController.text.trim().isNotEmpty);
     _audioTimer?.cancel();
     _audioTimer = null;
-    await Record().stop().then((filePath) async {
+    await AudioRecorder().stop().then((filePath) async {
       if (MediaUtils.isMediaExists(filePath)) {
         recordedAudioPath = filePath.checkNull();
       } else {

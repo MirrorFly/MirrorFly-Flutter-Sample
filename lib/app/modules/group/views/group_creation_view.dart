@@ -40,7 +40,7 @@ GroupCreationController createController({String? tag}) => Get.put(GroupCreation
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

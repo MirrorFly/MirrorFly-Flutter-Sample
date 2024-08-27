@@ -24,7 +24,7 @@ CallController createController({String? tag}) => Get.put(CallController());
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           return;
         }

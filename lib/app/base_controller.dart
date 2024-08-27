@@ -41,14 +41,13 @@ import 'modules/profile/controllers/profile_controller.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
-abstract class BaseController {
-  initListeners() {
+class BaseController {
+  static void initListeners() {
     Mirrorfly.onMessageReceived.listen(onMessageReceived);
     Mirrorfly.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     Mirrorfly.onMediaStatusUpdated.listen(onMediaStatusUpdated);
     Mirrorfly.onUploadDownloadProgressChanged.listen((event){
       var data = json.decode(event.toString());
-      debugPrint("Media Status Onprogress changed---> flutter $data");
       var messageId = data["message_id"] ?? "";
       var progressPercentage = data["progress_percentage"] ?? 0;
       onUploadDownloadProgressChanged(messageId,progressPercentage.toString());
@@ -541,14 +540,14 @@ abstract class BaseController {
     });
   }
 
-  void onCallLogsUpdated(value) {
+  static void onCallLogsUpdated(value) {
     LogMessage.d("onCallLogUpdated", value);
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onCallLogUpdate(value);
     }
   }
 
-  void onAvailableFeaturesUpdated(dynamic value) {
+  static void onAvailableFeaturesUpdated(dynamic value) {
     LogMessage.d("onAvailableFeaturesUpdated", value);
     var features = availableFeaturesFromJson(value.toString());
     if (Get.isRegistered<MainController>()) {
@@ -583,7 +582,7 @@ abstract class BaseController {
     }
   }
 
-  void onMessageReceived(chatMessage) {
+  static void onMessageReceived(chatMessage) {
     LogMessage.d("flutter onMessageReceived", chatMessage.toString());
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
@@ -606,19 +605,7 @@ abstract class BaseController {
     }
   }
 
-  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
-    if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
-    }
-  }
-
-  void clearAllConvRecentChatUI() {
-    if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().getRecentChatList();
-    }
-  }
-
-  void onMessageStatusUpdated(event) {
+  static void onMessageStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onMessageStatusUpdated(chatMessageModel);
@@ -637,34 +624,13 @@ abstract class BaseController {
     }
   }
 
-  void onUpdateLastMessageUI(String chatJid){
-    if (Get.isRegistered<ArchivedChatListController>()) {
-      Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
-    }
-    if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: chatJid, newInsertable: true);
-    }
-  }
-
-  void markConversationReadNotifyUI(String jid) {
-    if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
-    }
-  }
-
   void chatMuteChangesNotifyUI(String jid) {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().chatMuteChangesNotifyUI(jid);
     }
   }
 
-  void updateRecentChatListHistory(){
-    if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().getRecentChatList();
-    }
-  }
-
-  void onMediaStatusUpdated(event) {
+  static void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated",chatMessageModel.toJson());
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
@@ -686,7 +652,7 @@ abstract class BaseController {
     }
   }
 
-  void onUploadDownloadProgressChanged(String messageId, String progressPercentage) {
+  static void onUploadDownloadProgressChanged(String messageId, String progressPercentage) {
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onUploadDownloadProgressChanged(messageId, progressPercentage);
     }
@@ -695,11 +661,11 @@ abstract class BaseController {
     }
   }
 
-  void onGroupProfileFetched(groupJid) {}
+  static void onGroupProfileFetched(groupJid) {}
 
-  void onNewGroupCreated(groupJid) {}
+  static void onNewGroupCreated(groupJid) {}
 
-  void onGroupProfileUpdated(groupJid) {
+  static void onGroupProfileUpdated(groupJid) {
     LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onGroupProfileUpdated(groupJid);
@@ -712,7 +678,7 @@ abstract class BaseController {
     }
   }
 
-  void onNewMemberAddedToGroup(
+  static void onNewMemberAddedToGroup(
       {required String groupJid, required String newMemberJid, required String addedByMemberJid}) {
     debugPrint('onNewMemberAddedToGroup $newMemberJid');
     if (Get.isRegistered<GroupInfoController>()) {
@@ -725,7 +691,7 @@ abstract class BaseController {
     }
   }
 
-  void onMemberRemovedFromGroup(
+  static void onMemberRemovedFromGroup(
       {required String groupJid, required String removedMemberJid, required String removedByMemberJid}) {
     debugPrint('onMemberRemovedFromGroup $removedMemberJid');
     if (Get.isRegistered<GroupInfoController>()) {
@@ -738,9 +704,9 @@ abstract class BaseController {
     }
   }
 
-  void onFetchingGroupMembersCompleted(groupJid) {}
+  static void onFetchingGroupMembersCompleted(groupJid) {}
 
-  void onDeleteGroup(groupJid) {
+  static void onDeleteGroup(groupJid) {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onDeleteGroup(groupJid);
     }
@@ -748,7 +714,7 @@ abstract class BaseController {
 
   // void onFetchingGroupListCompleted(noOfGroups) {}
 
-  void onMemberMadeAsAdmin(
+  static void onMemberMadeAsAdmin(
       {required String groupJid, required String newAdminMemberJid, required String madeByMemberJid}) {
     debugPrint('onMemberMadeAsAdmin $newAdminMemberJid');
     if (Get.isRegistered<GroupInfoController>()) {
@@ -757,11 +723,11 @@ abstract class BaseController {
     }
   }
 
-  void onMemberRemovedAsAdmin(event) {
+  static void onMemberRemovedAsAdmin(event) {
     debugPrint('onMemberRemovedAsAdmin $event');
   }
 
-  void onLeftFromGroup({required String groupJid, required String userJid}) {
+  static void onLeftFromGroup({required String groupJid, required String userJid}) {
     debugPrint('onLeftFromGroup $groupJid $userJid');
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onLeftFromGroup(groupJid: groupJid, userJid: userJid);
@@ -771,7 +737,7 @@ abstract class BaseController {
     }
   }
 
-  void onGroupNotificationMessage(event) {
+  static void onGroupNotificationMessage(event) {
     debugPrint('onGroupNotificationMessage $event');
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
     if (SessionManagement.getCurrentChatJID() == chatMessageModel.chatUserJid.checkNull()) {
@@ -796,7 +762,7 @@ abstract class BaseController {
     }
   }
 
-  Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
+  static Future<void> showOrUpdateOrCancelNotification(String jid, ChatMessageModel chatMessage) async {
     if (SessionManagement.getCurrentChatJID() == chatMessage.chatUserJid.checkNull() || chatMessage.isMessageEdited.value.checkNull()) {
       return;
     }
@@ -809,32 +775,32 @@ abstract class BaseController {
     }
   }
 
-  bool notificationMadeByME(ChatMessage data) {
+  static bool notificationMadeByME(ChatMessage data) {
     return data.messageTextContent.checkNull().startsWith("You added") ||
         data.messageTextContent.checkNull().startsWith("You left") ||
         data.messageTextContent.checkNull().startsWith("You removed") ||
         data.messageTextContent.checkNull().startsWith("You created");
   }
 
-  void onGroupDeletedLocally(groupJid) {
+  static void onGroupDeletedLocally(groupJid) {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().onGroupDeletedLocally(groupJid);
     }
   }
 
-  void blockedThisUser(result) {}
+  static void blockedThisUser(result) {}
 
-  void myProfileUpdated(result) {
+  static void myProfileUpdated(result) {
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().myProfileUpdated();
     }
   }
 
-  void onAdminBlockedUser(String jid, bool status) {
+  static void onAdminBlockedUser(String jid, bool status) {
     Get.find<MainController>().handleAdminBlockedUser(jid, status);
   }
 
-  void onContactSyncComplete(dynamic result) {
+  static void onContactSyncComplete(dynamic result) {
     LogMessage.d("onContactSyncComplete", result.toString());
     // Mirrorfly.getRegisteredUsers(true);
     if (result as bool) {
@@ -865,7 +831,7 @@ abstract class BaseController {
     //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
   }
 
-  void unblockedThisUser(String jid) {
+  static void unblockedThisUser(String jid) {
     LogMessage.d("unblockedThisUser", jid.toString());
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).unblockedThisUser(jid);
@@ -884,7 +850,7 @@ abstract class BaseController {
     }
   }
 
-  void userBlockedMe(String jid) {
+  static void userBlockedMe(String jid) {
     LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
@@ -903,7 +869,7 @@ abstract class BaseController {
     }
   }
 
-  void userCameOnline(String jid) {
+  static void userCameOnline(String jid) {
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userCameOnline(jid);
     }
@@ -912,7 +878,7 @@ abstract class BaseController {
     }
   }
 
-  void userDeletedHisProfile(dynamic jid) {
+  static void userDeletedHisProfile(dynamic jid) {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().userDeletedHisProfile(jid.toString());
     }
@@ -945,16 +911,16 @@ abstract class BaseController {
     }
   }
 
-  void userProfileFetched(result) {}
+  static void userProfileFetched(result) {}
 
-  void userUnBlockedMe(result) {
+  static void userUnBlockedMe(result) {
     LogMessage.d("userUnBlockedMe", result);
     var data = json.decode(result.toString());
     var jid = data["jid"];
     unblockedThisUser(jid);
   }
 
-  void userUpdatedHisProfile(String jid) {
+  static void userUpdatedHisProfile(String jid) {
     LogMessage.d("userUpdatedHisProfile", jid.toString());
 
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
@@ -1001,7 +967,7 @@ abstract class BaseController {
     }
   }
 
-  void userWentOffline(String jid) {
+  static void userWentOffline(String jid) {
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userWentOffline(jid);
     }
@@ -1010,11 +976,11 @@ abstract class BaseController {
     }
   }
 
-  void usersIBlockedListFetched(result) {}
+  static void usersIBlockedListFetched(result) {}
 
-  void usersWhoBlockedMeListFetched(result) {}
+  static void usersWhoBlockedMeListFetched(result) {}
 
-  void onConnected(result) {
+  static void onConnected(result) {
     if(Get.isRegistered<ChatController>(tag: controllerTag)){
       Get.find<ChatController>(tag: controllerTag).onConnected();
     }
@@ -1032,7 +998,7 @@ abstract class BaseController {
     }
   }
 
-  void onDisconnected(result) {
+  static void onDisconnected(result) {
     LogMessage.d('onDisconnected', result.toString());
     if(Get.isRegistered<ChatController>(tag: controllerTag)){
       Get.find<ChatController>(tag: controllerTag).onDisconnected();
@@ -1049,15 +1015,15 @@ abstract class BaseController {
   }
 
   // void onConnectionNotAuthorized(result) {}
-  void onConnectionFailed(result) {}
+  static void onConnectionFailed(result) {}
 
-  void connectionFailed(result) {}
+  static void connectionFailed(result) {}
 
-  void connectionSuccess(result) {}
+  static void connectionSuccess(result) {}
 
-  void onWebChatPasswordChanged(result) {}
+  static void onWebChatPasswordChanged(result) {}
 
-  void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+  static void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).setTypingStatus(singleOrgroupJid, userId, typingStatus);
     }
@@ -1124,7 +1090,7 @@ abstract class BaseController {
     }
   }
 
-  Future<void> onMissedCall(
+  static Future<void> onMissedCall(
       bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
     if (SessionManagement.getCurrentChatJID() == userJid.checkNull()) {
       return;
@@ -1136,7 +1102,7 @@ abstract class BaseController {
     NotificationBuilder.createCallNotification(missedCallTitleContent.first, missedCallTitleContent.last);
   }
 
-  Future<List<String>> getMissedCallNotificationContent(
+  static Future<List<String>> getMissedCallNotificationContent(
       bool isOneToOneCall, String userJid, String groupId, String callType, List<String> userList) async {
     String messageContent;
     StringBuffer missedCallTitle = StringBuffer();
@@ -1161,7 +1127,7 @@ abstract class BaseController {
     return [missedCallTitle.toString(), messageContent];
   }
 
-  Future<String> getCallUsersName(List<String> callUsers) async {
+  static Future<String> getCallUsersName(List<String> callUsers) async {
     var name = StringBuffer("");
     for (var i = 0; i < callUsers.length; i++) {
       var displayName = await getDisplayName(callUsers[i]);
@@ -1177,11 +1143,11 @@ abstract class BaseController {
     return name.toString();
   }
 
-  Future<String> getDisplayName(String jid) async {
+  static Future<String> getDisplayName(String jid) async {
     return (await getProfileDetails(jid)).getName();
   }
 
-  void onLogout(isLogout) {
+  static void onLogout(isLogout) {
     LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
     DialogUtils.hideLoading();
     if (isLogout && NavUtils.currentRoute != Routes.login && SessionManagement.getLogin()) {
@@ -1212,8 +1178,8 @@ abstract class BaseController {
     }
   }
 
-  Timer? timer;
-  void startTimer() {
+  static Timer? timer;
+  static void startTimer() {
     // if (timer == null) {
     if (timer != null) {
       timer?.cancel();
@@ -1240,7 +1206,7 @@ abstract class BaseController {
     // }
   }
 
-  void stopTimer() {
+  static void stopTimer() {
     debugPrint("baseController stopTimer");
     if (timer == null) {
       debugPrint("baseController Timer is null");
@@ -1250,7 +1216,7 @@ abstract class BaseController {
   }
 
   //#editMessage
-  void onMessageEdited(editedChatMessage) {
+  static void onMessageEdited(editedChatMessage) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(editedChatMessage);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onMessageEdited(chatMessageModel);
@@ -1269,5 +1235,5 @@ abstract class BaseController {
     }
   }
 
-  String get controllerTag => SessionManagement.getCurrentChatJID();
+  static String get controllerTag => SessionManagement.getCurrentChatJID();
 }

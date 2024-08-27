@@ -34,7 +34,7 @@ ArchivedChatListController createController({String? tag}) => Get.put(ArchivedCh
         },
         child: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

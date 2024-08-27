@@ -26,7 +26,7 @@ class ChatSearchView extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         controller.searchInit();
         if (didPop) {
           return;

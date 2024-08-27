@@ -320,7 +320,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
       Dialog(
         child: PopScope(
           canPop: true,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             isPlaying(false);
             player.stop();
             if (didPop) {

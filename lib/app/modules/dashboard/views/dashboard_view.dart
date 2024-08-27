@@ -36,7 +36,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
         child: Obx(
           () => PopScope(
             canPop: !(controller.selected.value || controller.isSearching.value),
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }

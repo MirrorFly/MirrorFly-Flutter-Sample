@@ -33,7 +33,7 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }

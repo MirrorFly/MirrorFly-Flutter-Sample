@@ -27,7 +27,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
       data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.contactListPageStyle.appBarTheme),
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }

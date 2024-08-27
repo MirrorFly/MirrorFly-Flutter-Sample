@@ -21,7 +21,7 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
       body: SafeArea(
         child: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

@@ -93,7 +93,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
           ),
           body: PopScope(
             canPop: false,
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }

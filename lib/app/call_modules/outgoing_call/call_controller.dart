@@ -11,7 +11,6 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../main.dart';
 import '../../app_style_config.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
@@ -306,7 +305,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       }
     } else {
       debugPrint("#Disconnect previous route is empty");
-      NavUtils.offNamed(getInitialRoute());
+      // NavUtils.offNamed(getInitialRoute());
+      NavUtils.offNamed(NavUtils.defaultRouteName);
     }
   }
 
@@ -404,7 +404,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           NavUtils.back();
         }
       } else {
-        NavUtils.offNamed(getInitialRoute());
+        NavUtils.offNamed(NavUtils.defaultRouteName);
       }
     }
   }

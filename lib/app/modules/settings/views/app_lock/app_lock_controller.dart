@@ -588,7 +588,7 @@ class AppLockController extends FullLifeCycleController
             builder: (builder) {
               return PopScope(
                   canPop: false,
-                  onPopInvoked: (didPop) {
+                onPopInvokedWithResult: (didPop, result) {
                     if (didPop) {
                       return;
                     }},

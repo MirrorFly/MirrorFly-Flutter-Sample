@@ -60,7 +60,7 @@ class ChatView extends NavViewStateful<ChatController> {
               ),
               child: PopScope(
                 canPop: false,
-                onPopInvoked: (didPop) {
+                onPopInvokedWithResult: (didPop, result) {
                   if (didPop) {
                     return;
                   }
@@ -256,7 +256,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                               ? controller.sendRecordedAudioMessage()
                                                               : controller.sendMessage(controller.profile);
                                                         },
-                                                        child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn) ,))
+                                                        child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn), package: iconPackageName,))
                                                     : const Offstage();
                                               }),
                                               Obx(() {

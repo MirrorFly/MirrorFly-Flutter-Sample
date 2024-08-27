@@ -35,7 +35,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
         },
         child: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }

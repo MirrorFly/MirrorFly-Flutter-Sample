@@ -33,7 +33,12 @@ class NavUtils{
   }
 
   static bool get canPop => Navigator.canPop(currentContext);
-  static String get defaultRouteName => Navigator.defaultRouteName;
+  static String _defaultRouteName = Navigator.defaultRouteName;
+  static String get defaultRouteName => _defaultRouteName;
+
+  static void setDefaultRouteName(String defaultRouteName){
+    _defaultRouteName = defaultRouteName;
+  }
 
   static offNamed(String page, {
     dynamic arguments,
