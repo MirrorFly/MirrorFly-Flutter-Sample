@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/image_cache_manager.dart';
@@ -264,7 +263,7 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
                 width: size,
                 color: iconStyle.bgColor,
                 child: Center(
-                  child: SvgPicture.asset(
+                  child: AppUtils.svgIcon(icon:
                     mediaChatMessage!.isAudioRecorded.checkNull() ? mAudioRecordIcon : mAudioIcon,
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),

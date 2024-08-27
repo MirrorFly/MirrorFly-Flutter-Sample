@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../common/constants.dart';
 import '../common/notification_service.dart';

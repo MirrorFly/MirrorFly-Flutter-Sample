@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -103,8 +102,7 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                               controller.showHideEmoji(context);
                             },
                             icon: controller.showEmoji.value ? const Icon(
-                              Icons.keyboard, color: iconColor,) : SvgPicture
-                                .asset(smileIcon));
+                              Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
                       })
                     ],
                   ),

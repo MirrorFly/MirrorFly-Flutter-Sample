@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
@@ -228,7 +227,7 @@ class CallHistoryView extends StatelessWidget {
                     .checkNull()
                     .isEmpty
                     ? ClipOval(
-                  child: Image.asset(
+                  child: AppUtils.assetIcon(assetName:
                     groupImg,
                     width: callHistoryItemStyle.profileImageSize.width,
                     height: callHistoryItemStyle.profileImageSize.height,
@@ -245,7 +244,7 @@ class CallHistoryView extends StatelessWidget {
                         height: callHistoryItemStyle.profileImageSize.height,
                         clipOval: true,
                         errorWidget: ClipOval(
-                          child: Image.asset(
+                          child: AppUtils.assetIcon(assetName:
                             groupImg,
                             width: callHistoryItemStyle.profileImageSize.width,
                             height: callHistoryItemStyle.profileImageSize
@@ -258,7 +257,7 @@ class CallHistoryView extends StatelessWidget {
                         unknown: false,
                       )
                           : ClipOval(
-                        child: Image.asset(
+                        child: AppUtils.assetIcon(assetName:
                           groupImg,
                           width: callHistoryItemStyle.profileImageSize.width,
                           height: callHistoryItemStyle.profileImageSize.height,
@@ -352,7 +351,7 @@ class CallHistoryView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
+          AppUtils.assetIcon(assetName:
             noCallImage,
             width: 150,
           ),
@@ -400,7 +399,7 @@ class CallHistoryView extends StatelessWidget {
             : item.toUser)
             : controller.makeCall(localUserList, callType, item);
       },
-      icon: SvgPicture.asset(
+      icon: AppUtils.svgIcon(icon:
         videoCallIcon,
         colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
       ),
@@ -415,7 +414,7 @@ class CallHistoryView extends StatelessWidget {
               : item.toUser)
               : controller.makeCall(localUserList, callType, item);
         },
-        icon: SvgPicture.asset(
+        icon: AppUtils.svgIcon(icon:
           audioCallIcon,
           colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
         ));

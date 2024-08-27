@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
 
 import '../../common/constants.dart';
+import '../../data/utils.dart';
 
 class WebLoginResultView extends NavViewStateful<ScannerController> {
   const WebLoginResultView({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ ScannerController createController({String? tag}) => Get.put(ScannerController()
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset(icQrScannerWebLogin, fit: BoxFit.cover,),
+            AppUtils.assetIcon(assetName:icQrScannerWebLogin, fit: BoxFit.cover,),
             FutureBuilder(
                 future: controller.getWebLoginDetails(),
                 builder: (c, data) {
@@ -36,7 +37,7 @@ ScannerController createController({String? tag}) => Get.put(ScannerController()
                         itemBuilder: (context, index) {
                           var item = controller.webLogins[index];
                           return ListItem(
-                            leading: Image.asset(
+                            leading: AppUtils.assetIcon(assetName:
                                 controller.getImageForBrowser(item),width: 50,height: 50,),
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

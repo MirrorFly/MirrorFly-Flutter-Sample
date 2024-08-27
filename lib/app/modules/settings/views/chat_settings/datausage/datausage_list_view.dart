@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 
+import '../../../../../data/utils.dart';
 import '../../../../../extensions/extensions.dart';
 import 'datausage_controller.dart';
 
@@ -43,7 +43,7 @@ DataUsageController createController({String? tag}) => Get.put(DataUsageControll
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600),
                     ),
-                    trailing: SvgPicture.asset(
+                    trailing: AppUtils.svgIcon(icon:
                         controller.openMobileData ? arrowUp : arrowDown),
                     onTap: () {
                       controller.openMobile();
@@ -68,7 +68,7 @@ DataUsageController createController({String? tag}) => Get.put(DataUsageControll
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600),
                     ),
-                    trailing: SvgPicture.asset(
+                    trailing: AppUtils.svgIcon(icon:
                         controller.openWifiData ? arrowUp : arrowDown),
                     onTap: () {
                       controller.openWifi();
@@ -110,7 +110,7 @@ DataUsageController createController({String? tag}) => Get.put(DataUsageControll
                     )),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
+                  child: AppUtils.svgIcon(icon:
                     on ? tickRoundBlue : tickRound,
                   ),
                 ),

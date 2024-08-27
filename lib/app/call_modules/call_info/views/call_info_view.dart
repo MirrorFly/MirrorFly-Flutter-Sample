@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
@@ -70,7 +69,7 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                   Obx(() => ListTile(
                         leading: controller.callLogData.groupId.checkNull().isEmpty
                             ? ClipOval(
-                                child: Image.asset(
+                                child: AppUtils.assetIcon(assetName:
                                   groupImg,
                                   height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
                                   width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
@@ -87,7 +86,7 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                                           height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
                                           clipOval: true,
                                           errorWidget: ClipOval(
-                                            child: Image.asset(
+                                            child: AppUtils.assetIcon(assetName:
                                               groupImg,
                                               height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
                                               width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
@@ -99,7 +98,7 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                                           unknown: false,
                                         )
                                       : ClipOval(
-                                          child: Image.asset(
+                                          child: AppUtils.assetIcon(assetName:
                                             groupImg,
                                             height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
                                             width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
@@ -231,7 +230,7 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
             onPressed: () {
               controller.makeCall(localUserList, callType, item);
             },
-            icon: SvgPicture.asset(
+            icon: AppUtils.svgIcon(icon:
               videoCallIcon,
               colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
@@ -240,7 +239,7 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
             onPressed: () {
               controller.makeCall(localUserList, callType, item);
             },
-            icon: SvgPicture.asset(
+            icon: AppUtils.svgIcon(icon:
               audioCallIcon,
               colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ));

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
@@ -105,11 +104,11 @@ VideoPreviewController createController({String? tag}) => Get.put(VideoPreviewCo
                                   controller.sendVideoMessage();
 
                                 },
-                                child: SvgPicture.asset(
+                                child: AppUtils.svgIcon(icon:
                                     'assets/logos/img_send.svg')),
                           ],
                         ),
-                        // SvgPicture.asset(
+                        // AppUtils.svgIcon(icon:
                         //   rightArrow,
                         //   width: 18,
                         //   height: 18,

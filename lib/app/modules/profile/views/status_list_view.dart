@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
@@ -51,7 +50,7 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                           color: textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.normal)),
-                  trailing: SvgPicture.asset(
+                  trailing: AppUtils.svgIcon(icon:
                     pencilEditIcon,
                     fit: BoxFit.contain,
                   ),
@@ -96,7 +95,7 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                                       fontWeight: FontWeight.w500)),
                               trailing:
                                   item.status == controller.selectedStatus.value
-                                      ? SvgPicture.asset(
+                                      ? AppUtils.svgIcon(icon:
                                           tickIcon,
                                           fit: BoxFit.contain,
                                         )

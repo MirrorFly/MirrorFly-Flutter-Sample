@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../../app_style_config.dart';
 import '../../../../common/app_localizations.dart';
-import '../../../../data/utils.dart';
 import '../../../../data/permissions.dart';
+import '../../../../data/utils.dart';
 import '../../../../routes/route_settings.dart';
 
 class ChatSettingsController extends GetxController {

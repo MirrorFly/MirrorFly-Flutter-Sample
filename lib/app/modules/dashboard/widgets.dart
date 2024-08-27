@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -218,7 +217,7 @@ class RecentChatItem extends StatelessWidget {
       clipOval: true,
       errorWidget: item.isGroup!
           ? ClipOval(
-              child: Image.asset(
+              child: AppUtils.assetIcon(assetName:
                 groupImg,
                 height: profileImageSize.width,
                 width: profileImageSize.height,
@@ -253,7 +252,7 @@ class RecentChatItem extends StatelessWidget {
   }
 
   Positioned buildEmailIcon() {
-    return Positioned(right: 0, bottom: 0, child: SvgPicture.asset(emailContactIcon));
+    return Positioned(right: 0, bottom: 0, child: AppUtils.svgIcon(icon:emailContactIcon));
   }
 
   Visibility buildArchivedTextVisibility() {
@@ -266,7 +265,7 @@ class RecentChatItem extends StatelessWidget {
             getTranslated("archived"),
             style: const TextStyle(color: buttonBgColor),
           ),
-        ) /*SvgPicture.asset(
+        ) /*AppUtils.svgIcon(icon:
                                       archive,
                                       width: 18,
                                       height: 18,
@@ -277,7 +276,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildMuteIconVisibility() {
     return Visibility(
         visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           mute,
           width: 13,
           height: 13,
@@ -287,7 +286,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildPinIconVisibility() {
     return Visibility(
         visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           pin,
           width: 18,
           height: 18,
@@ -711,16 +710,16 @@ Widget callLogTime(String time, int? callState,TextStyle? textStyle) {
   return Row(
     children: [
       callState == 0
-          ? SvgPicture.asset(
+          ? AppUtils.svgIcon(icon:
               "assets/calls/ic_arrow_down_red.svg",
               colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
             )
           : callState == 1
-              ? SvgPicture.asset(
+              ? AppUtils.svgIcon(icon:
                   "assets/calls/ic_arrow_up_green.svg",
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 )
-              : SvgPicture.asset(
+              : AppUtils.svgIcon(icon:
                   "assets/calls/ic_arrow_down_green.svg",
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 ),

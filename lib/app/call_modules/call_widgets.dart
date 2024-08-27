@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
@@ -7,8 +6,9 @@ import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.d
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -22,7 +22,7 @@ Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
     clipOval: true,
     errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
-      child: Image.asset(
+      child: AppUtils.assetIcon(assetName:
         groupImg,
         height: size,
         width: size,
@@ -278,7 +278,7 @@ Widget buildListItem(CallController controller,CallUserTileStyle style) {
                             CircleAvatar(
                               radius: 10,
                               backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
-                              child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
+                              child: AppUtils.svgIcon(icon: callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
                             ),
                           ],
                           if (controller.speakingUsers.isNotEmpty &&
@@ -408,7 +408,7 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                       CircleAvatar(
                         radius: 10,
                         backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
-                        child: SvgPicture.asset(callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
+                        child: AppUtils.svgIcon(icon:callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
                       ),
                     ],
                     if (controller.speakingUsers.isNotEmpty &&

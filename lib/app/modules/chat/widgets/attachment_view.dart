@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';
+import '../../../data/utils.dart';
 
 class AttachmentsSheetView extends StatelessWidget {
   const AttachmentsSheetView({Key? key,
@@ -94,7 +94,7 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle i
         CircleAvatar(
           radius: (50/2),
           backgroundColor: iconStyle.bgColor,
-            child: SvgPicture.asset(iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
+            child: AppUtils.svgIcon(icon:iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
         ),
         const SizedBox(
           height: 7,

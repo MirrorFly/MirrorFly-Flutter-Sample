@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
 
 import '../../app_style_config.dart';
 import '../../common/app_theme.dart';
@@ -80,7 +78,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                                       controller.onSearchPressed();
                                     }
                                   },
-                                  icon: !controller.isSearching.value ?SvgPicture.asset(
+                                  icon: !controller.isSearching.value ?AppUtils.svgIcon(icon:
                                     searchIcon,
                                     width: 18,
                                     height: 18,
@@ -182,9 +180,9 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                           child: Obx(() {
                             return controller.callList[index].isAudioMuted.value
                                 ? CircleAvatar(backgroundColor: style.actionStyle.inactiveBgColor,//AppColors.participantUnMuteColor,
-                                child: SvgPicture.asset(participantMute,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),))
+                                child: AppUtils.svgIcon(icon:participantMute,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),))
                                 : CircleAvatar(backgroundColor: style.actionStyle.activeBgColor,//Colors.transparent,
-                                child: SvgPicture.asset(participantUnMute,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),));
+                                child: AppUtils.svgIcon(icon:participantUnMute,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),));
                           }),
                         ),
                         Padding(
@@ -195,8 +193,8 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                               ? style.actionStyle.inactiveBgColor//AppColors.participantUnMuteColor
                               : style.actionStyle.activeBgColor,//Colors.transparent,
                                 child: controller.callList[index].isVideoMuted.value
-                                    ? SvgPicture.asset(participantVideoDisabled,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),)
-                                : SvgPicture.asset(participantVideoEnabled,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),)
+                                    ? AppUtils.svgIcon(icon:participantVideoDisabled,colorFilter: ColorFilter.mode(style.actionStyle.inactiveIconColor, BlendMode.srcIn),)
+                                : AppUtils.svgIcon(icon:participantVideoEnabled,colorFilter: ColorFilter.mode(style.actionStyle.activeIconColor, BlendMode.srcIn),)
                             );
                           }),
                         ),
@@ -233,7 +231,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                       ClipboardData(text: Constants.webChatLogin + controller.meetLink.value));
                   toToast(getTranslated("linkCopied"));
                 },
-                icon: SvgPicture.asset(
+                icon: AppUtils.svgIcon(icon:
                     copyIcon,
                     fit: BoxFit.contain,
                     colorFilter: ColorFilter.mode(
@@ -309,7 +307,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset(
+                                  AppUtils.svgIcon(icon:
                                     addParticipantsInCall,
                                     colorFilter: ColorFilter.mode(AppStyleConfig.addParticipantsPageStyle.buttonIconColor, BlendMode.srcIn),
                                   ),

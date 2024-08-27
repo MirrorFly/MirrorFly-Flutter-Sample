@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
 import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
@@ -29,14 +29,14 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
           },
           child: Stack(
             children: [
-              Image.asset(icBioBackground),
+              AppUtils.assetIcon(assetName:icBioBackground),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Padding(
                     padding:
                     const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
-                    child: Image.asset(icLogo),
+                    child: AppUtils.assetIcon(assetName:icLogo),
                   ),
                   Text(getTranslated("enterYourPIN"),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
                   Obx(() {
@@ -102,7 +102,7 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
               visible: !item.isNegative,
               child: Center(
                   child: item == 10
-                      ? SvgPicture.asset(icDeleteIcon)
+                      ? AppUtils.svgIcon(icon:icDeleteIcon)
                       : Text(
                     item.toString(),
                     style: const TextStyle(

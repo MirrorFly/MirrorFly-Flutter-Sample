@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -56,7 +55,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          widget.chatMessage.isMessageStarred.value ? SvgPicture.asset(starSmallIcon) : const SizedBox.shrink(),
+                          widget.chatMessage.isMessageStarred.value ? AppUtils.svgIcon(icon:starSmallIcon) : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
                           ),
@@ -67,7 +66,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                           ),
                           Stack(
                             children: [
-                              // Image.asset(cornerShadow,width: 40,height: 20,fit: BoxFit.fitHeight,),
+                              // AppUtils.assetIcon(assetName:cornerShadow,width: 40,height: 20,fit: BoxFit.fitHeight,),
                               Text(
                                 getChatTime(context, widget.chatMessage.messageSentTime.toInt()),
                                 style: widget.imageMessageViewStyle.timeTextStyle,

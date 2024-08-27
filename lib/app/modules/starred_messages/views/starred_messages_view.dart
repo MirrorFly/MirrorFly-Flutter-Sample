@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
@@ -173,7 +172,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
             title: Text(getTranslated("starredMessages")),
             actions: [
               IconButton(
-                icon: SvgPicture.asset(
+                icon: AppUtils.svgIcon(icon:
                   searchIcon,
                   width: 18,
                   height: 18,
@@ -239,7 +238,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
                     onPressed: () {
                       controller.checkBusyStatusForForward();
                     },
-                    icon: SvgPicture.asset(forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),tooltip: 'Forward',),
+                    icon: AppUtils.svgIcon(icon:forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),tooltip: 'Forward',),
                 overflowWidget: Text(getTranslated("forward")),
                 showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
@@ -252,7 +251,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
                     onPressed: () {
                       controller.favouriteMessage();
                     },
-                    icon: SvgPicture.asset(unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'unFavourite',),
+                    icon: AppUtils.svgIcon(icon:unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'unFavourite',),
                 overflowWidget: Text(getTranslated("unFavourite")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'unfavoured',
@@ -265,7 +264,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
                     onPressed: () {
                       controller.share();
                     },
-                    icon: SvgPicture.asset(shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Share',),
+                    icon: AppUtils.svgIcon(icon:shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Share',),
                 overflowWidget: Text(getTranslated("share")),
                 showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Share',
@@ -279,7 +278,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
                     onPressed: () {
                       controller.copyTextMessages();
                     },
-                    icon: SvgPicture.asset(
+                    icon: AppUtils.svgIcon(icon:
                         copyIcon,
                         fit: BoxFit.contain,
                         colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)
@@ -304,7 +303,7 @@ StarredMessagesController createController({String? tag}) => Get.put(StarredMess
                     onPressed: () {
                       controller.deleteMessages();
                     },
-                    icon: SvgPicture.asset(deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Delete',),
+                    icon: AppUtils.svgIcon(icon:deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Delete',),
                 overflowWidget: Text(getTranslated("delete")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',

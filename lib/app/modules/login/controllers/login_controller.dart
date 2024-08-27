@@ -3,23 +3,23 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
+as lib_phone_number;
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/main_controller.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
-as lib_phone_number;
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:otp_text_field/otp_field.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class LoginController extends GetxController {

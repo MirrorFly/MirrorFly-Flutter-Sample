@@ -8,13 +8,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+
 import '../../../app_style_config.dart';
+import '../../../common/crop_image.dart';
+import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
-
-import '../../../common/crop_image.dart';
-import '../../../data/permissions.dart';
 
 class GroupCreationController extends GetxController {
   var imagePath = "".obs;

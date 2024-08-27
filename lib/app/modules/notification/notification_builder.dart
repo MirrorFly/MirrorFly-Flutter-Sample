@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
 
 import '../../common/notification_service.dart';
 import '../../data/helper.dart';

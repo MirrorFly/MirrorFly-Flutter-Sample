@@ -142,5 +142,17 @@ class AppUtils{
     }
   }
 
+  static SvgPicture svgIcon({required String icon, BoxFit fit = BoxFit.contain, ColorFilter? colorFilter, double? width, double? height}) {
+    return SvgPicture.asset(icon, fit: fit, colorFilter: colorFilter, width: width, height: height);
+  }
+
+  static Image assetIcon({required String assetName, double? height, double? width, BoxFit fit = BoxFit.cover}) {
+    return Image.asset(
+      assetName,
+      height: height,
+      width: width,
+      fit: fit,
+    );
+  }
 
 }

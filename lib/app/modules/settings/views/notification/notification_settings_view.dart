@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_controller.dart';
@@ -71,7 +70,7 @@ NotificationAlertController createController({String? tag}) => Get.put(Notificat
           ],
         ),
         dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-        trailing: SvgPicture.asset(rightArrowIcon),
+        trailing: AppUtils.svgIcon(icon:rightArrowIcon),
         onTap: onTap);
   }
 }

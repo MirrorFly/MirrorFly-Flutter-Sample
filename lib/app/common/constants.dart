@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../data/utils.dart';
 import '../model/chat_message_model.dart';
 
 // Icon Package Name
@@ -871,38 +871,38 @@ Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage
   // debugPrint("messagetype $messageType");
   switch (messageType.toUpperCase()) {
     case Constants.mImage:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mImageIcon,
         fit: BoxFit.contain,
       );
     case Constants.mAudio:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
         fit: BoxFit.contain,
         colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
       );
     case Constants.mVideo:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mVideoIcon,
         fit: BoxFit.contain,
       );
     case Constants.mDocument:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mDocumentIcon,
         fit: BoxFit.contain,
       );
     case Constants.mFile:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mDocumentIcon,
         fit: BoxFit.contain,
       );
     case Constants.mContact:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mContactIcon,
         fit: BoxFit.contain,
       );
     case Constants.mLocation:
-      return SvgPicture.asset(
+      return AppUtils.svgIcon(icon:
         mLocationIcon,
         fit: BoxFit.contain,
       );

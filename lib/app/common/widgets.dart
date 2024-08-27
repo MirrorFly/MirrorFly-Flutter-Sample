@@ -145,14 +145,14 @@ class ImageNetwork extends NavView<MainController> {
                 }
                 return clipOval
                     ? ClipOval(
-                        child: Image.asset(
+                        child: AppUtils.assetIcon(assetName:
                           getSingleOrGroup(isGroup),
                           height: height,
                           width: width,
                           fit: BoxFit.cover,
                         ),
                       )
-                    : Image.asset(
+                    : AppUtils.assetIcon(assetName:
                         getSingleOrGroup(isGroup),
                         height: height,
                         width: width,
@@ -181,7 +181,7 @@ class ImageNetwork extends NavView<MainController> {
                                 image: provider,
                                 fit: BoxFit.fill,
                               )
-                            : Image.asset(
+                            : AppUtils.assetIcon(assetName:
                                 getSingleOrGroup(isGroup),
                                 height: height,
                                 width: width,
@@ -196,7 +196,7 @@ class ImageNetwork extends NavView<MainController> {
                                 image: provider,
                                 fit: BoxFit.fill,
                               )
-                            : Image.asset(
+                            : AppUtils.assetIcon(assetName:
                                 getSingleOrGroup(isGroup),
                                 height: height,
                                 width: width,
@@ -229,14 +229,14 @@ class ImageNetwork extends NavView<MainController> {
     }
     return clipOval
         ? ClipOval(
-            child: Image.asset(
+            child: AppUtils.assetIcon(assetName:
               getSingleOrGroup(isGroup),
               height: height,
               width: width,
               fit: BoxFit.cover,
             ),
           )
-        : Image.asset(
+        : AppUtils.assetIcon(assetName:
             getSingleOrGroup(isGroup),
             height: height,
             width: width,

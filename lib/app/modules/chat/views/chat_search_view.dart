@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
@@ -113,7 +112,7 @@ class ChatSearchView extends StatelessWidget {
                           onPressed: () {
                             controller.forwardSingleMessage(chatList[index].messageId);
                           },
-                          icon: SvgPicture.asset(forwardMedia)),
+                          icon: AppUtils.svgIcon(icon:forwardMedia)),
                     ),
                     Container(
                       constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
@@ -154,7 +153,7 @@ class ChatSearchView extends StatelessWidget {
                           onPressed: () {
                             controller.forwardSingleMessage(chatList[index].messageId);
                           },
-                          icon: SvgPicture.asset(forwardMedia))
+                          icon: AppUtils.svgIcon(icon:forwardMedia))
                     ],
                         ],
                       ),

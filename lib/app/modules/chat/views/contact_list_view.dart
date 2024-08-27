@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
@@ -85,7 +84,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                       visible: controller.isSearchVisible,
                       child: IconButton(
                           onPressed: () => controller.onSearchPressed(),
-                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
+                          icon: AppUtils.svgIcon(icon:searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
                     ),
                     Visibility(
                       visible: controller.isClearVisible,
@@ -200,7 +199,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           // crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
-                                            SvgPicture.asset(
+                                            AppUtils.svgIcon(icon:
                                               arg.callType == CallType.audio
                                                   ? audioCallSmallIcon
                                                   : videoCallSmallIcon,

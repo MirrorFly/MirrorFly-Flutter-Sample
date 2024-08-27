@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
@@ -71,7 +70,7 @@ ArchivedChatListController createController({String? tag}) => Get.put(ArchivedCh
                                 onPressed: () {
                                   controller.deleteChats();
                                 },
-                                icon: SvgPicture.asset(delete),tooltip: 'Delete',),
+                                icon: AppUtils.svgIcon(icon:delete),tooltip: 'Delete',),
                             overflowWidget: Text(getTranslated("delete")),
                             showAsAction: controller.delete.value ? ShowAsAction.always : ShowAsAction.gone,
                             keyValue: 'Delete',
@@ -84,7 +83,7 @@ ArchivedChatListController createController({String? tag}) => Get.put(ArchivedCh
                               onPressed: () {
                                 controller.muteChats();
                               },
-                              icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Mute',),
+                              icon: AppUtils.svgIcon(icon:mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Mute',),
                             overflowWidget: Text(getTranslated("mute")),
                             showAsAction: controller.mute.value
                                 ? ShowAsAction.always
@@ -99,7 +98,7 @@ ArchivedChatListController createController({String? tag}) => Get.put(ArchivedCh
                               onPressed: () {
                                 controller.unMuteChats();
                               },
-                              icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnMute',),
+                              icon: AppUtils.svgIcon(icon:unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnMute',),
                             overflowWidget: Text(getTranslated("unMute")),
                             showAsAction: controller.unMute.value
                                 ? ShowAsAction.always
@@ -114,7 +113,7 @@ ArchivedChatListController createController({String? tag}) => Get.put(ArchivedCh
                                 onPressed: () {
                                   controller.unArchiveSelectedChats();
                                 },
-                                icon: SvgPicture.asset(unarchive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnArchive',),
+                                icon: AppUtils.svgIcon(icon:unarchive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'UnArchive',),
                             overflowWidget: Text(getTranslated("unArchive")),
                             showAsAction: ShowAsAction.always,
                             keyValue: 'UnArchive',

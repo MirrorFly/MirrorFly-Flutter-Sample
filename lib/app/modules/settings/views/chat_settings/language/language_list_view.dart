@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/language/language_controller.dart';
 
+import '../../../../../data/utils.dart';
 import '../../../../../extensions/extensions.dart';
 
 
@@ -39,7 +39,7 @@ class LanguageListView extends NavViewStateful<LanguageController> {
                   Obx(() {
                     return controller.search.value
                         ? const Offstage() : IconButton(
-                      icon: SvgPicture.asset(
+                      icon: AppUtils.svgIcon(icon:
                         searchIcon,
                         width: 18,
                         height: 18,
@@ -68,7 +68,7 @@ class LanguageListView extends NavViewStateful<LanguageController> {
                                   fontWeight: FontWeight.w500)),
                           trailing: Visibility(visible: item.languageName ==
                               controller.translationLanguage.value,
-                              child: SvgPicture.asset(tickRoundBlue)),
+                              child: AppUtils.svgIcon(icon:tickRoundBlue)),
                           onTap: () {
                             controller.selectLanguage(item);
                           },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -129,7 +128,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: SvgPicture.asset(forwardMedia)),
+                                            icon: AppUtils.svgIcon(icon:forwardMedia)),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
@@ -180,7 +179,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: SvgPicture.asset(forwardMedia))
+                                            icon: AppUtils.svgIcon(icon:forwardMedia))
                                       ],
                                     ],
                                   ),

@@ -53,20 +53,20 @@ class MessageUtils{
     // Determines the appropriate icon based on the media type.
     switch (mediaType.toUpperCase()) {
       case Constants.mImage:
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           mImageIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mAudio:
       // Displays different icons based on whether the audio is recorded or not.
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mVideo:
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           mVideoIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
@@ -74,19 +74,19 @@ class MessageUtils{
       case Constants.mDocument:
       case Constants.mFile:
       // Displays the same icon for both document and file types.
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           mDocumentIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mContact:
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           mContactIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mLocation:
-        return SvgPicture.asset(
+        return AppUtils.svgIcon(icon:
           mLocationIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
@@ -118,13 +118,13 @@ class MessageUtils{
     if (messageType.toUpperCase() != MessageType.isNotification) {
       if (isSender && !isRecalled) {
         if (messageStatus == 'A') {
-          return SvgPicture.asset(acknowledgedIcon);
+          return AppUtils.svgIcon(icon:acknowledgedIcon);
         } else if (messageStatus == 'D') {
-          return SvgPicture.asset(deliveredIcon);
+          return AppUtils.svgIcon(icon:deliveredIcon);
         } else if (messageStatus == 'S') {
-          return SvgPicture.asset(seenIcon);
+          return AppUtils.svgIcon(icon:seenIcon);
         } else if (messageStatus == 'N') {
-          return SvgPicture.asset(unSendIcon);
+          return AppUtils.svgIcon(icon:unSendIcon);
         } else {
           return const Offstage();
         }
@@ -145,7 +145,7 @@ class MessageUtils{
   ///   A Widget displaying the icon for the specified document type.
   static Widget getDocumentTypeIcon(String mediaFileName, double size) {
     debugPrint("mediaFileName--> $mediaFileName");
-    return SvgPicture.asset(getDocAsset(mediaFileName),
+    return AppUtils.svgIcon(icon:getDocAsset(mediaFileName),
         width: size, height: size);
   }
 

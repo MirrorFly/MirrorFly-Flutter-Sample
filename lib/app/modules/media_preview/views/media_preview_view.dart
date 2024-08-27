@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
@@ -55,7 +54,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                     clipOval: true,
                     errorWidget: controller.profile.isGroupProfile ?? false
                         ? ClipOval(
-                            child: Image.asset(
+                            child: AppUtils.assetIcon(assetName:
                               groupImg,
                               width: AppStyleConfig.mediaSentPreviewPageStyle.chatUserAppBarStyle.profileImageSize.width,
                               height: AppStyleConfig.mediaSentPreviewPageStyle.chatUserAppBarStyle.profileImageSize.height,
@@ -86,7 +85,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                         onPressed: () {
                           controller.deleteMedia();
                         },
-                        icon: SvgPicture.asset(deleteBinWhite,colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.white, BlendMode.srcIn),))
+                        icon: AppUtils.svgIcon(icon:deleteBinWhite,colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.white, BlendMode.srcIn),))
                     : const Offstage();
               })
             ],
@@ -238,7 +237,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                         .showEmoji.value);
                                                   });
                                                 },
-                                                child: SvgPicture.asset(
+                                                child: AppUtils.svgIcon(icon:
                                                     'assets/logos/smile.svg', colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.iconColor, BlendMode.srcIn),))
                                             : controller.filePath.length < 10 &&
                                                     controller.showAdd
@@ -246,7 +245,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                     onTap: () {
                                                       NavUtils.back();
                                                     },
-                                                    child: SvgPicture.asset(
+                                                    child: AppUtils.svgIcon(icon:
                                                         previewAddImg,colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.iconColor, BlendMode.srcIn),),
                                                   )
                                                 : const Offstage();
@@ -371,7 +370,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                   : Positioned(
                                                       bottom: 4,
                                                       left: 4,
-                                                      child: SvgPicture.asset(
+                                                      child: AppUtils.svgIcon(icon:
                                                         videoCamera,
                                                         width: 5,
                                                         height: 5,

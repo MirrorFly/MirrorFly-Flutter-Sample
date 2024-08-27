@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/widgets.dart';
 import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 
 class AddStatusView extends NavView<StatusListController> {
@@ -94,7 +94,7 @@ StatusListController createController({String? tag}) => StatusListController();
                               controller.showEmoji(!controller.showEmoji.value);
                             });
                           },
-                          icon: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : SvgPicture.asset(smileIcon));
+                          icon: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
                     })
                   ],
                 ),

@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 
-import '../../../data/utils.dart';
-import '../../../routes/route_settings.dart';
-
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/local_contact_model.dart';
+import '../../../routes/route_settings.dart';
 
 
 class LocalContactController extends GetxController {
