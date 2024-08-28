@@ -51,9 +51,9 @@ class ChatView extends NavViewStateful<ChatController> {
             child: Container(
               width: NavUtils.width,
               height: NavUtils.height,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/logos/chat_bg.png"),
+                  image: AssetImage(chatBgIcon, package: iconPackageName),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -270,7 +270,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                     child: CircleAvatar(
                                                       backgroundColor: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordIcon.bgColor,//const Color(0xff3276E2),
                                                       radius: 48/2,
-                                                      child: AppUtils.svgIcon(icon:"assets/logos/mic.svg",
+                                                      child: AppUtils.svgIcon(icon: audioMic,
                                                         colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.audioRecordIcon.iconColor, BlendMode.srcIn),
                                                       ),),
                                                   ),
@@ -425,7 +425,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 onPressed: () {
                   controller.showAttachmentsView(context);
                 },
-                icon: AppUtils.svgIcon(icon:'assets/logos/attach.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
+                icon: AppUtils.svgIcon(icon: attachIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
         ],
         if(controller.isAudioRecording.value == Constants.audioRecordInitial &&
@@ -434,7 +434,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 onPressed: () {
                   controller.startRecording();
                 },
-                icon: AppUtils.svgIcon(icon:'assets/logos/mic.svg',colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
+                icon: AppUtils.svgIcon(icon: audioMic,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),),
               )
         ],
         /*const SizedBox(
@@ -971,7 +971,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   icon: AppUtils.svgIcon(icon:videoCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("videoCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
-                showAsAction: controller.isVideoCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isVideoCallAvailable  && (controller.arguments?.enableCalls).checkNull() ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Video Call',
                 onItemClick: controller.ableToCall ? () {
                   controller.makeVideoCall();
@@ -985,7 +985,7 @@ class ChatView extends NavViewStateful<ChatController> {
                   icon: AppUtils.svgIcon(icon:audioCallIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                 ),
                 overflowWidget: Text(getTranslated("audioCall"),style:AppStyleConfig.chatPageStyle.popupMenuThemeData.textStyle),
-                showAsAction: controller.isAudioCallAvailable ? ShowAsAction.always : ShowAsAction.gone,
+                showAsAction: controller.isAudioCallAvailable  && (controller.arguments?.enableCalls).checkNull() ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Audio Call',
                 onItemClick: controller.ableToCall ? () {
                   controller.makeVoiceCall();

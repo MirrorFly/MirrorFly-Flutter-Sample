@@ -78,7 +78,7 @@ class _ChatListViewState extends State<ChatListView> {
                           animationDuration: const Duration(milliseconds: 300),
                           offsetDx: 0.2,
                           child: GestureDetector(
-                            onLongPress: () {
+                            onLongPress: (widget.chatController.arguments?.disableAppBar).checkNull() ? null : () {
                               debugPrint("LongPressed");
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (!widget.chatController.isSelected.value) {

@@ -571,10 +571,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // getChatHistory();
     Mirrorfly.initializeMessageList(
       userJid: profile.jid.checkNull(),
-      limit: 10,
+      limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: false/*starredChatMessageId == null*/,
+      exclude: true/*starredChatMessageId == null*/,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {

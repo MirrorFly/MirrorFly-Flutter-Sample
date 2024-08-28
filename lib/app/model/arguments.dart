@@ -14,7 +14,7 @@ class ChatViewArguments{
     this.isUser = false,
     this.messageId,
     // this.isFromStarred = false,
-    this.enableCalls = false,
+    this.enableCalls = true,
     this.showChatDeliveryIndicator = true,this.disableAppBar = false});
 
   final String chatJid;

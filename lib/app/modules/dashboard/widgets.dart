@@ -710,17 +710,14 @@ Widget callLogTime(String time, int? callState,TextStyle? textStyle) {
   return Row(
     children: [
       callState == 0
-          ? AppUtils.svgIcon(icon:
-              "assets/calls/ic_arrow_down_red.svg",
+          ? AppUtils.svgIcon(icon: arrowDropDown,
               colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
             )
           : callState == 1
-              ? AppUtils.svgIcon(icon:
-                  "assets/calls/ic_arrow_up_green.svg",
+              ? AppUtils.svgIcon(icon: arrowUpIcon,
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 )
-              : AppUtils.svgIcon(icon:
-                  "assets/calls/ic_arrow_down_green.svg",
+              : AppUtils.svgIcon(icon: arrowDownIcon,
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 ),
       const SizedBox(

@@ -7,7 +7,7 @@ import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 // Icon Package Name
 
-String? iconPackageName;
+String? iconPackageName; //= 'mirrorfly_uikit_plugin/lib';
 
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
@@ -208,6 +208,12 @@ const String audioWhite = 'assets/logos/audio_white.svg';
 const String videoWhite = 'assets/logos/video_icon.svg';
 const String cornerShadow = 'assets/logos/ic_baloon.png';
 const String disabledIcon = 'assets/logos/disabled.png';
+const String chatBgIcon = 'assets/logos/chat_bg.png';
+const String attachIcon = 'assets/logos/attach.svg';
+
+const String arrowDropDown = 'assets/calls/ic_arrow_down_red.svg';
+const String arrowUpIcon = 'assets/calls/ic_arrow_up_green.svg';
+const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg.svg';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';

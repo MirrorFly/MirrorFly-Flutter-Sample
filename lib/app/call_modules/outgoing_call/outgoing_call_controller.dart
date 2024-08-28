@@ -293,7 +293,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if(response.isSuccess) {
         callList.clear();
-        // NavUtils.back();
+        NavUtils.back();
       }
     });
   }
