@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/routes/route_settings.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../common/app_localizations.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
+import '../../routes/route_settings.dart';
+import '../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';

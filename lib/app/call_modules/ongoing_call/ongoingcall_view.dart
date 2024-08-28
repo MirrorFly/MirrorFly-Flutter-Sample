@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../app_style_config.dart';
+import '../../call_modules/call_utils.dart';
+import '../../call_modules/call_widgets.dart';
+import '../../call_modules/outgoing_call/call_controller.dart';
+import '../../extensions/extensions.dart';
+import '../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 

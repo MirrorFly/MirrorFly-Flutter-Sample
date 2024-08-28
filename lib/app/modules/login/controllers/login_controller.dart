@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/main_controller.dart';
+import '../../../data/helper.dart';
+import '../../../data/permissions.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:otp_text_field/otp_field.dart';
 

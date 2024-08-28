@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/widgets/caption_message_view.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/widgets/caption_message_view.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';

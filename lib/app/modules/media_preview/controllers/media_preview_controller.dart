@@ -5,10 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/gallery_picker/controllers/gallery_picker_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';

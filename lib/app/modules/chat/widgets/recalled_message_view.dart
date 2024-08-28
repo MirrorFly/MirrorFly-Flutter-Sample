@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';

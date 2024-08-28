@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
+import '../../../app_style_config.dart';
+import '../../../call_modules/call_utils.dart';
+import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';

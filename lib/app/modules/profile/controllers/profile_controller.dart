@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
+import '../../../common/constants.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/app_localizations.dart';

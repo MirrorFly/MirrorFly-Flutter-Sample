@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_controller.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_view.dart';
+import '../../../../common/constants.dart';
+import '../../../../modules/settings/views/notification/notification_alert_controller.dart';
+import '../../../../modules/settings/views/notification/notification_alert_view.dart';
 
 import '../../../../common/widgets.dart';
 import '../../../../data/utils.dart';

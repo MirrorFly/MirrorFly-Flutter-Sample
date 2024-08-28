@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../common/widgets.dart';

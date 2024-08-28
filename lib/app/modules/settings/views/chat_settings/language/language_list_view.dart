@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/chat_settings/language/language_controller.dart';
+import '../../../../../common/constants.dart';
+import '../../../../../modules/settings/views/chat_settings/language/language_controller.dart';
 
 import '../../../../../data/utils.dart';
 import '../../../../../extensions/extensions.dart';

@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import '../../common/constants.dart';
+import '../../data/permissions.dart';
+import '../../data/session_management.dart';
+import '../../data/utils.dart';
+import '../../extensions/extensions.dart';
+import '../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../common/app_localizations.dart';

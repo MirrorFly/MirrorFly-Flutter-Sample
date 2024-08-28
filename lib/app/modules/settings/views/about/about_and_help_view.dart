@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/about/contactus_view.dart';
+import '../../../../common/app_localizations.dart';
+import '../../../../common/widgets.dart';
+import '../../../../modules/settings/views/about/contactus_view.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../data/utils.dart';

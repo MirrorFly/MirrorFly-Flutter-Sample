@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 

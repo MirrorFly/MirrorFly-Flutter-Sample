@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../common/app_localizations.dart';
+import '../common/constants.dart';
+import '../data/session_management.dart';
+import '../data/utils.dart';
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 

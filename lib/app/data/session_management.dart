@@ -1,4 +1,4 @@
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

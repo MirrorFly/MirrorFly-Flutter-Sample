@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../common/app_localizations.dart';
+import '../../../model/local_contact_model.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';

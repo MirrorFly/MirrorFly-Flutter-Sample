@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/participants/add_participants_controller.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../call_modules/participants/add_participants_controller.dart';
+import '../../common/app_localizations.dart';
+import '../../common/widgets.dart';
+import '../../data/session_management.dart';
+import '../../extensions/extensions.dart';
 
 import '../../app_style_config.dart';
 import '../../common/app_theme.dart';

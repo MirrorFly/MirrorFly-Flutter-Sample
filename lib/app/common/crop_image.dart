@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import '../common/app_localizations.dart';
 
 import '../app_style_config.dart';
 import '../data/utils.dart';

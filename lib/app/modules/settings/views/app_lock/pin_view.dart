@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import '../../../../common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
 import '../../../../data/utils.dart';

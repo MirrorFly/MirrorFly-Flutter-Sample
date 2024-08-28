@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/widgets/image_cache_manager.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/widgets/image_cache_manager.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../common/app_localizations.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';

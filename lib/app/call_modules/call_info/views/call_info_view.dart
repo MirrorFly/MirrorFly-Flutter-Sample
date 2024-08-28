@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_info/controllers/call_info_controller.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
+import '../../../call_modules/call_info/controllers/call_info_controller.dart';
+import '../../../common/constants.dart';
+import '../../../common/widgets.dart';
+import '../../../data/helper.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 

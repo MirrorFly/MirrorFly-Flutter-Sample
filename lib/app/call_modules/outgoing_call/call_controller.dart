@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/call_user_list.dart';
+import '../../call_modules/call_utils.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
+import '../../model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../app_style_config.dart';

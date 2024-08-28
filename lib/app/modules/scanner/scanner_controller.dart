@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 

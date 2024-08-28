@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:grouped_list/grouped_list.dart';
 // import 'package:marquee/marquee.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/widgets/floating_fab.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/widgets/floating_fab.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../call_modules/ripple_animation_view.dart';

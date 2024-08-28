@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../common/constants.dart';
+import '../data/permissions.dart';
+import '../data/session_management.dart';
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:url_launcher/url_launcher.dart';
 

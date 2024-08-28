@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/callhistory_view.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/recentchat_view.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
-import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
+import '../../../app_style_config.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/views/callhistory_view.dart';
+import '../../../modules/dashboard/views/recentchat_view.dart';
+import '../../../stylesheet/stylesheet.dart';
+import '../../../widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';

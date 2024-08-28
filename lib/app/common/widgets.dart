@@ -5,10 +5,10 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/widgets.dart';
+import '../common/app_localizations.dart';
+import '../data/session_management.dart';
+import '../extensions/extensions.dart';
+import '../modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../data/utils.dart';

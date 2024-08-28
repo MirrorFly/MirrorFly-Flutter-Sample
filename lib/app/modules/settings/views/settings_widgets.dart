@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';

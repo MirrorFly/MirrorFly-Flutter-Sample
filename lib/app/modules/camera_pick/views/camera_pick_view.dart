@@ -1,8 +1,8 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../../data/utils.dart';
 import '../controllers/camera_pick_controller.dart';

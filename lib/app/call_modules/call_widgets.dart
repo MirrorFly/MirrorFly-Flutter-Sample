@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../app/call_modules/audio_level_animation.dart';
+import '../../app/call_modules/call_utils.dart';
+import '../../app/call_modules/outgoing_call/call_controller.dart';
+import '../../app/common/app_localizations.dart';
+import '../../app/common/constants.dart';
+import '../../app/common/widgets.dart';
+import '../../app/data/session_management.dart';
+import '../../app/data/utils.dart';
+import '../../app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 

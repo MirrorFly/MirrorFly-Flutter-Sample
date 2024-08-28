@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:photo_view/photo_view.dart';
 

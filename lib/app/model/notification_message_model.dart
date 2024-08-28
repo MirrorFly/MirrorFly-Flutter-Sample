@@ -5,7 +5,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../extensions/extensions.dart';
 
 NotificationMessageModel notificationModelFromJson(String str) =>
     NotificationMessageModel.fromJson(json.decode(str));

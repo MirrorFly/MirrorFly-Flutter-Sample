@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/recent_chat.dart';
 

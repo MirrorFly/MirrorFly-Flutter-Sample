@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import '../../common/constants.dart';
+import '../../common/main_controller.dart';
+import '../../data/session_management.dart';
+import '../../extensions/extensions.dart';
+import '../../modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../app_style_config.dart';

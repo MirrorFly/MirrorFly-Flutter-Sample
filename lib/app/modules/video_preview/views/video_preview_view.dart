@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import '../../../common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../data/utils.dart';

@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
+import '../model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
 import '../call_modules/call_timeout/views/call_timeout_view.dart';

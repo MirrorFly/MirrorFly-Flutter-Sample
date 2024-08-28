@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
+import '../../../modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/utils.dart';

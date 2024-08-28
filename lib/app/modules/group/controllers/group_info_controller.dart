@@ -5,10 +5,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/constants.dart';
+import '../../../common/main_controller.dart';
+import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';
