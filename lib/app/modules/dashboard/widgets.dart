@@ -330,7 +330,7 @@ class RecentChatItem extends StatelessWidget {
     if (item.isGroup.checkNull()) {
       if (!chat.isMessageSentByMe.checkNull()) {
         return (chat.messageType != Constants.mNotification || chat.messageTextContent == " added you") ||
-            (forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
+            (MessageUtils.forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
       }
     }
     return false;
@@ -357,11 +357,11 @@ class RecentChatItem extends StatelessWidget {
                         ),
                       )
                     : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0
-                      : forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()) != null
+                      : MessageUtils.forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()) != null
                           ? 3.0
                           : 0.0,
                 ),
@@ -370,7 +370,7 @@ class RecentChatItem extends StatelessWidget {
                       ? Text(
                           chat.isMessageRecalled.value
                               ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                              : MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
@@ -379,7 +379,7 @@ class RecentChatItem extends StatelessWidget {
                       : spannableText(
                           chat.isMessageRecalled.value
                               ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                              : MessageUtils.forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           spanTxt,
                       recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor)//Theme.of(context).textTheme.titleSmall),
@@ -545,17 +545,17 @@ class RecentChatMessageItem extends StatelessWidget {
                           ),
                           item.isMessageRecalled.value
                               ? const Offstage()
-                              : forMessageTypeIcon(item.messageType, item.mediaChatMessage),
+                              : MessageUtils.forMessageTypeIcon(item.messageType, item.mediaChatMessage),
                           SizedBox(
                             width:
-                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
+                            MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
                                 null
                                 ? 3.0
                                 : 0.0,
                           ),
                           Expanded(
                             child:
-                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                            MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                 null
                                 ? spannableText(
                               item.messageTextContent.toString(),
@@ -563,7 +563,7 @@ class RecentChatMessageItem extends StatelessWidget {
                               recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor,
                             )
                                 : Text(
-                              forMessageTypeString(item.messageType,
+                              MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.toString(),
                               // style: Theme.of(context).textTheme.titleSmall,

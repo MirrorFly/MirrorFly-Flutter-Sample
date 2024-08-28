@@ -403,7 +403,7 @@ class ProfileController extends GetxController {
                 var name = "${DateTime
                     .now()
                     .millisecondsSinceEpoch}.jpg";
-                writeImageTemp(value.bytes, name).then((value) {
+                MessageUtils.writeImageTemp(value.bytes, name).then((value) {
                   if (from == Routes.login) {
                     imagePath(value.path);
                     changed(true);
@@ -446,7 +446,7 @@ class ProfileController extends GetxController {
             var name = "${DateTime
                 .now()
                 .millisecondsSinceEpoch}.jpg";
-            writeImageTemp(value.bytes, name).then((value) {
+            MessageUtils.writeImageTemp(value.bytes, name).then((value) {
               if (from == Routes.login) {
                 debugPrint("Profile Controller from login");
                 imagePath(value.path);

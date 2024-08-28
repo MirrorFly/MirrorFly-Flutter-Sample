@@ -203,4 +203,78 @@ class MessageUtils{
     LogMessage.d("getCallLinkFromMessage", link);
     return link.trim();
   }
+
+  static Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage]) {
+    // debugPrint("messagetype $messageType");
+    switch (messageType.toUpperCase()) {
+      case Constants.mImage:
+        return AppUtils.svgIcon(icon:
+        mImageIcon,
+          fit: BoxFit.contain,
+        );
+      case Constants.mAudio:
+        return AppUtils.svgIcon(icon:
+        mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
+          fit: BoxFit.contain,
+          colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
+        );
+      case Constants.mVideo:
+        return AppUtils.svgIcon(icon:
+        mVideoIcon,
+          fit: BoxFit.contain,
+        );
+      case Constants.mDocument:
+        return AppUtils.svgIcon(icon:
+        mDocumentIcon,
+          fit: BoxFit.contain,
+        );
+      case Constants.mFile:
+        return AppUtils.svgIcon(icon:
+        mDocumentIcon,
+          fit: BoxFit.contain,
+        );
+      case Constants.mContact:
+        return AppUtils.svgIcon(icon:
+        mContactIcon,
+          fit: BoxFit.contain,
+        );
+      case Constants.mLocation:
+        return AppUtils.svgIcon(icon:
+        mLocationIcon,
+          fit: BoxFit.contain,
+        );
+      default:
+        return const SizedBox();
+    }
+  }
+
+  static String? forMessageTypeString(String messageType, {String? content}) {
+    // LogMessage.d("Recent Chat content", content.toString());
+    switch (messageType.toUpperCase()) {
+      case Constants.mImage:
+        return content.checkNull().isNotEmpty ? content : "Image";
+      case Constants.mAudio:
+        return "Audio";
+      case Constants.mVideo:
+        return content.checkNull().isNotEmpty ? content : "Video";
+      case Constants.mDocument:
+        return "Document";
+      case Constants.mFile:
+        return "Document";
+      case Constants.mContact:
+        return "Contact";
+      case Constants.mLocation:
+        return "Location";
+      default:
+        return null;
+    }
+  }
+
+  static Future<File> writeImageTemp(dynamic bytes, String imageName) async {
+    final dir = await getTemporaryDirectory();
+    await dir.create(recursive: true);
+    final tempFile = File("${dir.path}/$imageName");
+    await tempFile.writeAsBytes(bytes);
+    return tempFile;
+  }
 }

@@ -141,7 +141,7 @@ class GroupCreationController extends GetxController {
             var name = "${DateTime
                 .now()
                 .millisecondsSinceEpoch}.jpg";
-            writeImageTemp(value.bytes, name).then((value) {
+            MessageUtils.writeImageTemp(value.bytes, name).then((value) {
               imagePath(value.path);
             });
           }
@@ -168,7 +168,7 @@ class GroupCreationController extends GetxController {
           var name = "${DateTime
               .now()
               .millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
+          MessageUtils.writeImageTemp(value.bytes, name).then((value) {
             imagePath(value.path);
           });
         }
