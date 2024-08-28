@@ -67,6 +67,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   late String audioSavePath;
   late String recordedAudioPath;
   late AudioRecorder record;
+  bool _isDisposed = false;
 
   TextEditingController messageController = TextEditingController();
   TextEditingController editMessageController = TextEditingController();
@@ -1706,10 +1707,16 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   Future<void> cancelRecording() async {
+    debugPrint("Cancel Recording called");
+    if (_isDisposed){
+      debugPrint("Recording is already cancelled");
+      return;
+    }
     var filePath = await record.stop();
     File(filePath!).delete();
     _audioTimer?.cancel();
     record.dispose();
+    _isDisposed = true ;
     _audioTimer = null;
     isAudioRecording(Constants.audioRecordDelete);
     Future.delayed(const Duration(milliseconds: 1500), () {
@@ -1737,6 +1744,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       if (microPhonePermissionStatus) {
         isUserTyping(false);
         record = AudioRecorder();
+        _isDisposed = false;
         timerInit("00:00");
         isAudioRecording(Constants.audioRecording);
         startTimer();
@@ -1758,9 +1766,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     isUserTyping(messageController.text.trim().isNotEmpty);
     _audioTimer?.cancel();
     _audioTimer = null;
-    await AudioRecorder().stop().then((filePath) async {
+    debugPrint("Audio Recording Stopped");
+    await record.stop().then((filePath) async {
+      debugPrint("Audio saved path---> $filePath");
       if (MediaUtils.isMediaExists(filePath)) {
         recordedAudioPath = filePath.checkNull();
+        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
       } else {
         debugPrint("File Not Found For Audio");
       }
@@ -1769,18 +1780,19 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   Future<void> deleteRecording() async {
-    var filePath = await record.stop();
-    File(filePath!).delete();
+    File(recordedAudioPath).delete();
     isUserTyping(messageController.text.trim().isNotEmpty);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00:00");
     record.dispose();
+    _isDisposed = true;
   }
 
   Future<void> setAudioPath() async {
     Directory? directory = Platform.isAndroid
         ? await getExternalStorageDirectory() //FOR ANDROID
         : await getApplicationSupportDirectory(); //FOR iOS
+    debugPrint("Audio path directory---> $directory");
     if (directory != null) {
       audioSavePath = directory.path;
       debugPrint(audioSavePath);
@@ -1802,6 +1814,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00:00");
     record.dispose();
+    _isDisposed = true;
   }
 
   infoPage() {
