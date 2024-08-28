@@ -4,10 +4,10 @@ import 'chat_message_model.dart';
 class DashboardViewArguments{
   final bool didMissedCallNotificationLaunchApp;
 
-  DashboardViewArguments({this.didMissedCallNotificationLaunchApp = false});
+  const DashboardViewArguments({this.didMissedCallNotificationLaunchApp = false});
 }
 class ChatViewArguments{
-  ChatViewArguments({
+  const ChatViewArguments({
     required this.chatJid,
     this.topicId = '',
     this.didNotificationLaunchApp = false,
@@ -41,7 +41,7 @@ class ChatSearchViewArguments{
 }
 
 class ContactListArguments{
-  ContactListArguments(
+  const ContactListArguments(
       {this.messageIds = const [], this.topicId = "", this.callType = "", this.forMakeCall = false,this.groupJid = "",this.forGroup = false});
   final List<String> messageIds;
   final String groupJid;
@@ -54,10 +54,10 @@ class ContactListArguments{
 class ChatInfoArguments{
   final String chatJid;
   final bool disableAppbar;
-  ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
+  const ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
 }
 
 class ViewAllMediaArguments{
   final String chatJid;
-  ViewAllMediaArguments({required this.chatJid});
+  const ViewAllMediaArguments({required this.chatJid});
 }
