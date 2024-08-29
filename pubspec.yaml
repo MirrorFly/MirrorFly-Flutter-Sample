@@ -29,7 +29,7 @@ dependencies:
   custom_image_crop: ^0.0.13
   photo_view: ^0.15.0
   audioplayers: ^6.1.0
-  contacts_service: ^0.6.3
+  flutter_contacts: ^1.1.9+2
   google_maps_flutter: ^2.9.0
   geolocator: ^13.0.1
   geocoding: ^3.0.0
