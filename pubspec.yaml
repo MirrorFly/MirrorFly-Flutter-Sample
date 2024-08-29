@@ -68,7 +68,7 @@ dependencies:
   firebase_app_installations: ^0.3.0+4
   firebase_messaging: ^15.0.4
   flutter_local_notifications: ^17.2.2
-  is_lock_screen: ^2.0.0
+  is_lock_screen2: ^2.0.1
   flutter_app_badge: ^2.0.2
 
 dependency_overrides:
