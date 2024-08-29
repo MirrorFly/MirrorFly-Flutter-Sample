@@ -89,7 +89,7 @@ GalleryPickerController createController({String? tag}) => Get.put(GalleryPicker
                               },
                               child: Container(
                                   height: 30,
-                                  width: 50,
+                                  padding: const EdgeInsets.only(left: 8, right: 8),
                                   decoration: AppStyleConfig.galleryPageStyle.buttonDecoration,
                                   child: Center(child: Text(getTranslated("done")))
                               ),

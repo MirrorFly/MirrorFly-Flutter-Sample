@@ -45,7 +45,7 @@ class AttachmentsSheetView extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (BuildContext ctx, index) {
                 LogMessage.d("attachments", attachments[index].text);
-                var iconStyle = getIconStyle(attachments[index].text);
+                var iconStyle = getIconStyle(attachments[index].attachmentId);
                 return iconCreation(
                     attachments[index].iconPath, attachments[index].text,
                     (attachments[index].attachmentId == Constants.attachmentTypeDocument) ? onDocument :
@@ -63,17 +63,17 @@ class AttachmentsSheetView extends StatelessWidget {
 
   IconStyle getIconStyle(String attachment){
     switch(attachment){
-      case "Document":
+      case Constants.attachmentTypeDocument:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
-      case "Camera":
+      case Constants.attachmentTypeCamera:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.cameraStyle;
-      case "Gallery":
+      case Constants.attachmentTypeGallery:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.galleryStyle;
-      case "Audio":
+      case Constants.attachmentTypeAudio:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.audioStyle;
-      case "Contact":
+      case Constants.attachmentTypeContact:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.contactStyle;
-      case "Location":
+      case Constants.attachmentTypeLocation:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.locationStyle;
       default :
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;

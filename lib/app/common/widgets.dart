@@ -481,6 +481,7 @@ class EmojiLayout extends StatelessWidget {
         onEmojiSelected: onEmojiSelected,
         textEditingController: textController,
         config: emoji.Config(
+          bottomActionBarConfig: const emoji.BottomActionBarConfig(enabled: false),
           skinToneConfig: const emoji.SkinToneConfig(
             enabled: true,
             indicatorColor: Colors.grey,

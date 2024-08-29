@@ -73,7 +73,6 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
@@ -86,10 +85,8 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
               ?.areNotificationsEnabled() ??
           false;
 
-      // setState(() {
       _notificationsEnabled = granted;
       debugPrint("Notification Enabled--> $_notificationsEnabled");
-      // });
     }
   }
 

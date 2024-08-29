@@ -53,14 +53,16 @@ class CallHistoryView extends StatelessWidget {
                     Icons.link, color: createMeetLinkStyle.iconColor,
                     size: 18,),),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(getTranslated("createNewMeeting"),
-                      style: createMeetLinkStyle.textStyle,),
-                    Text(getTranslated("createNewMeetingSubtitle"),
-                      style: createMeetLinkStyle.subTitleTextStyle,)
-                  ],
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(getTranslated("createNewMeeting"),
+                        style: createMeetLinkStyle.textStyle, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                      Text(getTranslated("createNewMeetingSubtitle"),
+                          style: createMeetLinkStyle.subTitleTextStyle,maxLines: 1, overflow: TextOverflow.ellipsis)
+                    ],
+                  ),
                 )
               ],
             ),

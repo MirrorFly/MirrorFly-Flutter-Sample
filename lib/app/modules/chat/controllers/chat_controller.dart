@@ -147,12 +147,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
     getAvailableFeatures();
 
-    if (arguments!.topicId.isNotEmpty) {
+    if ((arguments?.topicId).checkNull().isNotEmpty) {
       topicId = arguments!.topicId;
       getTopicDetail();
     }
 
-    if (arguments!.chatJid.isNotEmpty) {
+    if ((arguments?.chatJid).checkNull().isNotEmpty) {
       nJid = arguments!.chatJid;
       debugPrint("parameter :${arguments!.chatJid}");
     }

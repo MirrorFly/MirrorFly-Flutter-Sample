@@ -15,7 +15,9 @@ class ChatViewArguments{
     this.messageId,
     // this.isFromStarred = false,
     this.enableCalls = true,
-    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
+    this.showChatDeliveryIndicator = true,
+    this.disableAppBar = false,
+    this.enableSwipeToReply = true});
 
   final String chatJid;
   final String topicId;
@@ -26,6 +28,7 @@ class ChatViewArguments{
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;
   final bool disableAppBar;
+  final bool enableSwipeToReply;
 }
 
 class ChatSearchViewArguments{

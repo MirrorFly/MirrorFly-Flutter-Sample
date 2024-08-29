@@ -198,7 +198,7 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
         ))
         : Container(
         height: 35,
-        width: 80,
+        width: 90,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -241,7 +241,7 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         ))
         : Container(
         height: 31,
-        width: 80,
+        width: 90,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: BoxDecoration(
           border: Border.all(
