@@ -71,7 +71,7 @@ class ProfileController extends GetxController {
     getProfile();
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
-    getMetaData();
+    // getMetaData();
   }
 
   Future<void> save({bool frmImage=false}) async {

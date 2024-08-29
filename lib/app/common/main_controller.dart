@@ -8,7 +8,8 @@ import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:is_lock_screen/is_lock_screen.dart';
+import 'package:is_lock_screen2/is_lock_screen2.dart';
+// import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 

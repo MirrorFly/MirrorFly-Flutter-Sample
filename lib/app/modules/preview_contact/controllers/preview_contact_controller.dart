@@ -1,5 +1,6 @@
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
 import '../../../common/app_localizations.dart';
 
@@ -42,9 +43,9 @@ class PreviewContactController extends GetxController {
       argContactList = NavUtils.arguments['contactList'];
       for (var contact in argContactList) {
         var newContactList = <ContactDetail>[];
-        for (var phone in contact.contact.phones!) {
+        for (var phone in contact.contact.phones) {
           ContactDetail contactDetail = ContactDetail(
-              mobNo: phone.value!, isSelected: true, mobNoType: phone.label!);
+              mobNo: phone.number, isSelected: true, mobNoType: phone.label.name);
           newContactList.add(contactDetail);
         }
         LocalContactPhone localContactPhone = LocalContactPhone(
@@ -57,12 +58,7 @@ class PreviewContactController extends GetxController {
   }
 
   name(Contact item) {
-    return item.displayName ??
-        item.givenName ??
-        item.middleName ??
-        item.androidAccountName ??
-        item.familyName ??
-        "";
+    return item.displayName;
   }
 
   shareContact() async {
