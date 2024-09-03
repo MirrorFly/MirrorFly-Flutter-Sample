@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
+import 'package:mirrorfly_plugin/stream_extensions.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/permissions.dart';
@@ -1410,7 +1412,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   NavUtils.back();
                   clearChatHistory(false);
                 },
-                child: Text(getTranslated("cleatAll").toUpperCase(), )),
+                child: Text(getTranslated("clearAll").toUpperCase(), )),
           ),
           TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
