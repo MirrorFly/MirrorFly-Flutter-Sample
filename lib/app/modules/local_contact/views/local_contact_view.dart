@@ -28,6 +28,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
       child: Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
+          centerTitle: false,
           title: Obx(() {
             return controller.search.value
                 ? TextField(
