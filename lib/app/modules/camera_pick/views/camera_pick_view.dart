@@ -35,7 +35,7 @@ CameraPickController createController({String? tag}) => Get.put(CameraPickContro
                     onPointerDown: (_) => controller.pointers++,
                     onPointerUp: (_) => controller.pointers--,
                     child: AspectRatio(
-                      aspectRatio: NavUtils.width/(NavUtils.height-MediaQuery.of(context).viewPadding.top),
+                      aspectRatio: NavUtils.width/(NavUtils.height-(NavUtils.safeAreaPadding)),
                       child: CameraPreview(
                         controller.cameraController!, child: LayoutBuilder(
                           builder: (BuildContext context,
