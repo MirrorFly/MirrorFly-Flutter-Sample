@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/contact_controller.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
+import '../../../modules/chat/controllers/contact_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/utils.dart';
@@ -27,7 +26,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
       data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.contactListPageStyle.appBarTheme),
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -85,7 +84,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                       visible: controller.isSearchVisible,
                       child: IconButton(
                           onPressed: () => controller.onSearchPressed(),
-                          icon: SvgPicture.asset(searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
+                          icon: AppUtils.svgIcon(icon:searchIcon,colorFilter: ColorFilter.mode(AppStyleConfig.contactListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),)),
                     ),
                     Visibility(
                       visible: controller.isClearVisible,
@@ -200,7 +199,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           // crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
-                                            SvgPicture.asset(
+                                            AppUtils.svgIcon(icon:
                                               arg.callType == CallType.audio
                                                   ? audioCallSmallIcon
                                                   : videoCallSmallIcon,

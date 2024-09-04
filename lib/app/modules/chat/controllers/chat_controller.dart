@@ -11,14 +11,16 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/edit_window.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
+import 'package:mirrorfly_plugin/stream_extensions.dart';
+import '../../../common/de_bouncer.dart';
+import '../../../common/main_controller.dart';
+import '../../../data/permissions.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
+import '../../../modules/chat/views/edit_window.dart';
+import '../../../modules/notification/notification_builder.dart';
 import 'package:mirrorfly_plugin/edit_message_params.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:path_provider/path_provider.dart';
@@ -66,7 +68,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   late String audioSavePath;
   late String recordedAudioPath;
-  late Record record;
+  late AudioRecorder record;
+  bool _isDisposed = false;
 
   TextEditingController messageController = TextEditingController();
   TextEditingController editMessageController = TextEditingController();
@@ -142,16 +145,16 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   Future<void> onInit() async {
     // arguments = NavUtils.arguments as ChatViewArguments;
     // buildContext = context;
-    showChatDeliveryIndicator = arguments!.showChatDeliveryIndicator;
+    showChatDeliveryIndicator = arguments?.showChatDeliveryIndicator ?? true;
 
     getAvailableFeatures();
 
-    if (arguments!.topicId.isNotEmpty) {
+    if ((arguments?.topicId).checkNull().isNotEmpty) {
       topicId = arguments!.topicId;
       getTopicDetail();
     }
 
-    if (arguments!.chatJid.isNotEmpty) {
+    if ((arguments?.chatJid).checkNull().isNotEmpty) {
       nJid = arguments!.chatJid;
       debugPrint("parameter :${arguments!.chatJid}");
     }
@@ -570,10 +573,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     // getChatHistory();
     Mirrorfly.initializeMessageList(
       userJid: profile.jid.checkNull(),
-      limit: 50,
+      limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: starredChatMessageId == null,
+      exclude: true/*starredChatMessageId == null*/,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
@@ -1409,7 +1412,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   NavUtils.back();
                   clearChatHistory(false);
                 },
-                child: Text(getTranslated("cleatAll").toUpperCase(), )),
+                child: Text(getTranslated("clearAll").toUpperCase(), )),
           ),
           TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
@@ -1706,10 +1709,16 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   Future<void> cancelRecording() async {
+    debugPrint("Cancel Recording called");
+    if (_isDisposed){
+      debugPrint("Recording is already cancelled");
+      return;
+    }
     var filePath = await record.stop();
     File(filePath!).delete();
     _audioTimer?.cancel();
     record.dispose();
+    _isDisposed = true ;
     _audioTimer = null;
     isAudioRecording(Constants.audioRecordDelete);
     Future.delayed(const Duration(milliseconds: 1500), () {
@@ -1736,16 +1745,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       debugPrint("microPhone Permission Status---> $microPhonePermissionStatus");
       if (microPhonePermissionStatus) {
         isUserTyping(false);
-        record = Record();
+        record = AudioRecorder();
+        _isDisposed = false;
         timerInit("00:00");
         isAudioRecording(Constants.audioRecording);
         startTimer();
-        await record.start(
-          path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
-          encoder: AudioEncoder.AAC,
-          bitRate: 128000,
-          samplingRate: 44100,
-        );
+        await record.start(const RecordConfig(), path: "$audioSavePath/audio_${DateTime.now().millisecondsSinceEpoch}.m4a");
         Future.delayed(const Duration(seconds: 300), () {
           if (isAudioRecording.value == Constants.audioRecording) {
             stopRecording();
@@ -1763,9 +1768,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     isUserTyping(messageController.text.trim().isNotEmpty);
     _audioTimer?.cancel();
     _audioTimer = null;
-    await Record().stop().then((filePath) async {
+    debugPrint("Audio Recording Stopped");
+    await record.stop().then((filePath) async {
+      debugPrint("Audio saved path---> $filePath");
       if (MediaUtils.isMediaExists(filePath)) {
         recordedAudioPath = filePath.checkNull();
+        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
       } else {
         debugPrint("File Not Found For Audio");
       }
@@ -1774,18 +1782,19 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   Future<void> deleteRecording() async {
-    var filePath = await record.stop();
-    File(filePath!).delete();
+    File(recordedAudioPath).delete();
     isUserTyping(messageController.text.trim().isNotEmpty);
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00:00");
     record.dispose();
+    _isDisposed = true;
   }
 
   Future<void> setAudioPath() async {
     Directory? directory = Platform.isAndroid
         ? await getExternalStorageDirectory() //FOR ANDROID
         : await getApplicationSupportDirectory(); //FOR iOS
+    debugPrint("Audio path directory---> $directory");
     if (directory != null) {
       audioSavePath = directory.path;
       debugPrint(audioSavePath);
@@ -1807,6 +1816,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     isAudioRecording(Constants.audioRecordInitial);
     timerInit("00:00");
     record.dispose();
+    _isDisposed = true;
   }
 
   infoPage() {
@@ -2826,20 +2836,20 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     availableFeatures(features);
     var availableAttachment = <AttachmentIcon>[];
     if (features.isDocumentAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(documentImg, getTranslated("attachment_Document")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeDocument, documentImg, getTranslated("attachment_Document")));
     }
     if (features.isImageAttachmentAvailable.checkNull() || features.isVideoAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(cameraImg, getTranslated("attachment_Camera")));
-      availableAttachment.add(AttachmentIcon(galleryImg, getTranslated("attachment_Gallery")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeCamera, cameraImg, getTranslated("attachment_Camera")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeGallery, galleryImg, getTranslated("attachment_Gallery")));
     }
     if (features.isAudioAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(audioImg, getTranslated("attachment_Audio")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeAudio, audioImg, getTranslated("attachment_Audio")));
     }
     if (features.isContactAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(contactImg, getTranslated("attachment_Contact")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeContact, contactImg, getTranslated("attachment_Contact")));
     }
     if (features.isLocationAttachmentAvailable.checkNull()) {
-      availableAttachment.add(AttachmentIcon(locationImg, getTranslated("attachment_Location")));
+      availableAttachment.add(AttachmentIcon(Constants.attachmentTypeLocation, locationImg, getTranslated("attachment_Location")));
     }
     availableAttachments(availableAttachment);
   }

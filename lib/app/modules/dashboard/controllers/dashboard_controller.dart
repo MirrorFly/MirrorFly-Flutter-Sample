@@ -2,19 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-
 import 'package:intl/intl.dart';
+import '../../../call_modules/call_utils.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../data/helper.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
+import '../../../modules/notification/notification_builder.dart';
+import '../../../stylesheet/stylesheet.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,8 +21,8 @@ import '../../../app_style_config.dart';
 import '../../../call_modules/meet_sheet_view.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
-import '../../../data/utils.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 
@@ -270,7 +269,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     if (jid.isNotEmpty) {
       ///Future delayed is added here, as the chat page is opened and closed by QA team rapidly and repeatedly.
       ///So to avoid the controller delete after new controller created with same jid, added this delay.
-      Future.delayed(const Duration(milliseconds: 200), () => NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid:jid,topicId: topicId.value)));
+      Future.delayed(const Duration(milliseconds: 200), () => NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid:jid,topicId: topicId.value, enableSwipeToReply: true)));
       // NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: jid,topicId: topicId.value));
       // DialogUtils.progressLoading();
       /*getProfileDetails(jid).then((value) {

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/controllers/chat_controller.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
@@ -148,7 +147,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                               Icons.keyboard,
                                               color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor,
                                             )
-                                                : SvgPicture.asset(smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),));
+                                                : AppUtils.svgIcon(icon:smileIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.emojiIconColor, BlendMode.srcIn),));
                                       }),
                                       const SizedBox(
                                         width: 10,
@@ -185,7 +184,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8),
-                                    child: SvgPicture.asset(sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn)),
+                                    child: AppUtils.svgIcon(icon:sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn)),
                                   ))
                                   : const SizedBox.shrink();
                             }),

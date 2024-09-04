@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+
+import '../../../data/permissions.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 

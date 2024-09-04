@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import '../../../common/app_localizations.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/widgets.dart';

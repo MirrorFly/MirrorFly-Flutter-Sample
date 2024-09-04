@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../routes/route_settings.dart';
@@ -36,7 +35,7 @@ LoginController createController({String? tag}) => Get.put(LoginController());
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 30),
-                    child: SvgPicture.asset(registerIcon),
+                    child: AppUtils.svgIcon(icon:registerIcon),
                   ),
                   Text(
                     getTranslated("registerYourNumber"),

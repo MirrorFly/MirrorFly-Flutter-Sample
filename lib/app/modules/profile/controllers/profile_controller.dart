@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
+import '../../../common/constants.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
+import '../../../model/arguments.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../common/app_localizations.dart';
@@ -71,7 +71,7 @@ class ProfileController extends GetxController {
     getProfile();
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
-    getMetaData();
+    // getMetaData();
   }
 
   Future<void> save({bool frmImage=false}) async {
@@ -135,7 +135,7 @@ class ProfileController extends GetxController {
                       if (from == Routes.login || from.isEmpty) {
                         // Mirrorfly.isTrailLicence().then((trail){
                         if(!Constants.enableContactSync) {
-                          NavUtils.offNamed(Routes.dashboard,arguments: DashboardViewArguments());
+                          NavUtils.offNamed(Routes.dashboard,arguments: const DashboardViewArguments());
                         }else{
                           NavUtils.offNamed(Routes.contactSync);
                         }
@@ -403,7 +403,7 @@ class ProfileController extends GetxController {
                 var name = "${DateTime
                     .now()
                     .millisecondsSinceEpoch}.jpg";
-                writeImageTemp(value.bytes, name).then((value) {
+                MessageUtils.writeImageTemp(value.bytes, name).then((value) {
                   if (from == Routes.login) {
                     imagePath(value.path);
                     changed(true);
@@ -446,7 +446,7 @@ class ProfileController extends GetxController {
             var name = "${DateTime
                 .now()
                 .millisecondsSinceEpoch}.jpg";
-            writeImageTemp(value.bytes, name).then((value) {
+            MessageUtils.writeImageTemp(value.bytes, name).then((value) {
               if (from == Routes.login) {
                 debugPrint("Profile Controller from login");
                 imagePath(value.path);

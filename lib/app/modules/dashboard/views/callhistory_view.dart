@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
 
@@ -54,14 +53,16 @@ class CallHistoryView extends StatelessWidget {
                     Icons.link, color: createMeetLinkStyle.iconColor,
                     size: 18,),),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(getTranslated("createNewMeeting"),
-                      style: createMeetLinkStyle.textStyle,),
-                    Text(getTranslated("createNewMeetingSubtitle"),
-                      style: createMeetLinkStyle.subTitleTextStyle,)
-                  ],
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(getTranslated("createNewMeeting"),
+                        style: createMeetLinkStyle.textStyle, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                      Text(getTranslated("createNewMeetingSubtitle"),
+                          style: createMeetLinkStyle.subTitleTextStyle,maxLines: 1, overflow: TextOverflow.ellipsis)
+                    ],
+                  ),
                 )
               ],
             ),
@@ -228,7 +229,7 @@ class CallHistoryView extends StatelessWidget {
                     .checkNull()
                     .isEmpty
                     ? ClipOval(
-                  child: Image.asset(
+                  child: AppUtils.assetIcon(assetName:
                     groupImg,
                     width: callHistoryItemStyle.profileImageSize.width,
                     height: callHistoryItemStyle.profileImageSize.height,
@@ -245,7 +246,7 @@ class CallHistoryView extends StatelessWidget {
                         height: callHistoryItemStyle.profileImageSize.height,
                         clipOval: true,
                         errorWidget: ClipOval(
-                          child: Image.asset(
+                          child: AppUtils.assetIcon(assetName:
                             groupImg,
                             width: callHistoryItemStyle.profileImageSize.width,
                             height: callHistoryItemStyle.profileImageSize
@@ -258,7 +259,7 @@ class CallHistoryView extends StatelessWidget {
                         unknown: false,
                       )
                           : ClipOval(
-                        child: Image.asset(
+                        child: AppUtils.assetIcon(assetName:
                           groupImg,
                           width: callHistoryItemStyle.profileImageSize.width,
                           height: callHistoryItemStyle.profileImageSize.height,
@@ -352,7 +353,7 @@ class CallHistoryView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
+          AppUtils.assetIcon(assetName:
             noCallImage,
             width: 150,
           ),
@@ -400,7 +401,7 @@ class CallHistoryView extends StatelessWidget {
             : item.toUser)
             : controller.makeCall(localUserList, callType, item);
       },
-      icon: SvgPicture.asset(
+      icon: AppUtils.svgIcon(icon:
         videoCallIcon,
         colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
       ),
@@ -415,7 +416,7 @@ class CallHistoryView extends StatelessWidget {
               : item.toUser)
               : controller.makeCall(localUserList, callType, item);
         },
-        icon: SvgPicture.asset(
+        icon: AppUtils.svgIcon(icon:
           audioCallIcon,
           colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
         ));

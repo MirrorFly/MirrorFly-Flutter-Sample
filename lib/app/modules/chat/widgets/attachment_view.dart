@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';
+import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 
 class AttachmentsSheetView extends StatelessWidget {
   const AttachmentsSheetView({Key? key,
@@ -44,15 +45,16 @@ class AttachmentsSheetView extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (BuildContext ctx, index) {
                 LogMessage.d("attachments", attachments[index].text);
-                var iconStyle = getIconStyle(attachments[index].text);
+                var iconStyle = getIconStyle(attachments[index].attachmentId);
                 return iconCreation(
                     attachments[index].iconPath, attachments[index].text,
-                    (attachments[index].text == "Document") ? onDocument :
-                    (attachments[index].text == "Camera") ? onCamera :
-                    (attachments[index].text == "Gallery") ? onGallery :
-                    (attachments[index].text == "Audio") ? onAudio :
-                    (attachments[index].text == "Contact") ? onContact :
-                    (attachments[index].text == "Location") ? onLocation : () {},iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
+                    (attachments[index].attachmentId == Constants.attachmentTypeDocument) ? onDocument :
+                    (attachments[index].attachmentId == Constants.attachmentTypeCamera) ? onCamera :
+                    (attachments[index].attachmentId == Constants.attachmentTypeGallery) ? onGallery :
+                    (attachments[index].attachmentId == Constants.attachmentTypeAudio) ? onAudio :
+                    (attachments[index].attachmentId == Constants.attachmentTypeContact) ? onContact :
+                    (attachments[index].attachmentId == Constants.attachmentTypeLocation) ? onLocation : () {},
+                    iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
               });
         }),
       ),
@@ -61,17 +63,17 @@ class AttachmentsSheetView extends StatelessWidget {
 
   IconStyle getIconStyle(String attachment){
     switch(attachment){
-      case "Document":
+      case Constants.attachmentTypeDocument:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
-      case "Camera":
+      case Constants.attachmentTypeCamera:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.cameraStyle;
-      case "Gallery":
+      case Constants.attachmentTypeGallery:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.galleryStyle;
-      case "Audio":
+      case Constants.attachmentTypeAudio:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.audioStyle;
-      case "Contact":
+      case Constants.attachmentTypeContact:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.contactStyle;
-      case "Location":
+      case Constants.attachmentTypeLocation:
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.locationStyle;
       default :
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
@@ -80,9 +82,10 @@ class AttachmentsSheetView extends StatelessWidget {
 }
 
 class AttachmentIcon {
+  String attachmentId;
   String iconPath;
   String text;
-  AttachmentIcon(this.iconPath, this.text);
+  AttachmentIcon(this.attachmentId, this.iconPath, this.text);
 }
 
 
@@ -90,11 +93,12 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle i
   return InkWell(
     onTap: onTap,
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircleAvatar(
           radius: (50/2),
           backgroundColor: iconStyle.bgColor,
-            child: SvgPicture.asset(iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
+            child: AppUtils.svgIcon(icon:iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
         ),
         const SizedBox(
           height: 7,

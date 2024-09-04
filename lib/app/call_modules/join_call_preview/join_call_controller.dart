@@ -1,12 +1,13 @@
-import 'dart:convert';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import '../../common/constants.dart';
+import '../../data/permissions.dart';
+import '../../data/session_management.dart';
+import '../../data/utils.dart';
+import '../../extensions/extensions.dart';
+import '../../routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../common/app_localizations.dart';
@@ -30,12 +31,10 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   @override
   void onInit(){
     super.onInit();
-    listenMuteEvents();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
     initializeCall();
     checkPermission();
-    startVideoCapture();
   }
 
   /// check permission and set Mute Status
@@ -48,26 +47,11 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     Mirrorfly.muteVideo(status: videoMuted.value, flyCallBack: (_){});
   }
 
-  /// listen mute event for Audio and video
-  void listenMuteEvents(){
-    Mirrorfly.onMuteStatusUpdated.listen((event) {
-      LogMessage.d("onMuteStatusUpdated", "$event");
-      var muteStatus = jsonDecode(event);
-      var muteEvent = muteStatus["muteEvent"].toString();
-      // var userJid = muteStatus["userJid"].toString();
-        if (muteEvent == MuteStatus.localAudioMute || muteEvent == MuteStatus.localAudioUnMute) {
-          muted(muteEvent == MuteStatus.localAudioMute);
-        }
-        if (muteEvent == MuteStatus.localVideoMute || muteEvent == MuteStatus.localVideoUnMute) {
-          videoMuted(muteEvent == MuteStatus.localVideoMute);
-        }
-    });
-  }
-
   // initialize the meet or join via link call
   void initializeCall() {
     Mirrorfly.initializeMeet(callLinkId: callLinkId,userName: SessionManagement.getName().checkNull(),flyCallback: (res){
       LogMessage.d("initializeMeet", res.toString());
+      startVideoCapture();
       if(!res.isSuccess) {
         subscribeSuccess(false);
         if(res.hasError){
@@ -160,8 +144,10 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
 
   videoMute() async {
     if (!videoMuted.value || await AppPermission.askVideoCallPermissions()) {
-      if(!videoMuted.value){
+      if(!videoMuted.value && !subscribeSuccess.value){
         startVideoCapture();
+      }else{
+        debugPrint("Start Video Capture is already initialized, skipping the initialization");
       }
       Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
       videoMuted(!videoMuted.value);

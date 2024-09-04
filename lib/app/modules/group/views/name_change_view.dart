@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/modules/group/controllers/group_info_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../modules/group/controllers/group_info_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -24,7 +23,7 @@ class NameChangeView extends NavView<GroupInfoController> {
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -80,7 +79,7 @@ class NameChangeView extends NavView<GroupInfoController> {
                                 icon: controller.showEmoji.value
                                     ? const Icon(
                                   Icons.keyboard, color: iconColor,)
-                                    : SvgPicture.asset(
+                                    : AppUtils.svgIcon(icon:
                                   smileIcon, width: 18, height: 18,));
                           })
                         ],

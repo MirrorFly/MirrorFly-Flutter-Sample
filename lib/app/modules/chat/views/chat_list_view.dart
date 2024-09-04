@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/controllers/chat_controller.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:swipe_to/swipe_to.dart';
 
@@ -69,17 +68,17 @@ class _ChatListViewState extends State<ChatListView> {
                   }),
                   (widget.chatList[index].messageType.toUpperCase() != Constants.mNotification)
                       ? SwipeTo(
-                          onRightSwipe: (DragUpdateDetails dragUpdateDetails) {
+                          onRightSwipe: (widget.chatController.arguments?.enableSwipeToReply).checkNull() ? (DragUpdateDetails dragUpdateDetails) {
                             if (!widget.chatList[index].isMessageRecalled.value &&
                                 !widget.chatList[index].isMessageDeleted &&
                                 widget.chatList[index].messageStatus.value.checkNull().toString() != "N") {
                               widget.chatController.handleReplyChatMessage(widget.chatList[index]);
                             }
-                          },
+                          } : null,
                           animationDuration: const Duration(milliseconds: 300),
                           offsetDx: 0.2,
                           child: GestureDetector(
-                            onLongPress: () {
+                            onLongPress: (widget.chatController.arguments?.disableAppBar).checkNull() ? null : () {
                               debugPrint("LongPressed");
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (!widget.chatController.isSelected.value) {
@@ -129,7 +128,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: SvgPicture.asset(forwardMedia)),
+                                            icon: AppUtils.svgIcon(icon:forwardMedia)),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
@@ -180,7 +179,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: SvgPicture.asset(forwardMedia))
+                                            icon: AppUtils.svgIcon(icon:forwardMedia))
                                       ],
                                     ],
                                   ),

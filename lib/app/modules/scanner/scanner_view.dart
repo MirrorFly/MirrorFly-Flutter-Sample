@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
+import '../../common/constants.dart';
+import '../../modules/scanner/scanner_controller.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../extensions/extensions.dart';

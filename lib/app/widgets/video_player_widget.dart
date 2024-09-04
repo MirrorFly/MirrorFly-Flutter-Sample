@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
+import '../common/app_localizations.dart';
+import '../common/constants.dart';
+import '../data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:video_player/video_player.dart';
 

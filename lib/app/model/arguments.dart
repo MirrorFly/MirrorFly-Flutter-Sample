@@ -1,19 +1,23 @@
 
+import 'chat_message_model.dart';
+
 class DashboardViewArguments{
   final bool didMissedCallNotificationLaunchApp;
 
-  DashboardViewArguments({this.didMissedCallNotificationLaunchApp = false});
+  const DashboardViewArguments({this.didMissedCallNotificationLaunchApp = false});
 }
 class ChatViewArguments{
-  ChatViewArguments({
+  const ChatViewArguments({
     required this.chatJid,
     this.topicId = '',
     this.didNotificationLaunchApp = false,
     this.isUser = false,
     this.messageId,
     // this.isFromStarred = false,
-    this.enableCalls = false,
-    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
+    this.enableCalls = true,
+    this.showChatDeliveryIndicator = true,
+    this.disableAppBar = false,
+    this.enableSwipeToReply = true});
 
   final String chatJid;
   final String topicId;
@@ -24,10 +28,23 @@ class ChatViewArguments{
   final bool showChatDeliveryIndicator;
   final bool didNotificationLaunchApp;
   final bool disableAppBar;
+  final bool enableSwipeToReply;
+}
+
+class ChatSearchViewArguments{
+  const ChatSearchViewArguments({
+    required this.chatJid,
+    required this.chatList,
+    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
+
+  final String chatJid;
+  final List<ChatMessageModel> chatList;
+  final bool showChatDeliveryIndicator;
+  final bool disableAppBar;
 }
 
 class ContactListArguments{
-  ContactListArguments(
+  const ContactListArguments(
       {this.messageIds = const [], this.topicId = "", this.callType = "", this.forMakeCall = false,this.groupJid = "",this.forGroup = false});
   final List<String> messageIds;
   final String groupJid;
@@ -40,10 +57,10 @@ class ContactListArguments{
 class ChatInfoArguments{
   final String chatJid;
   final bool disableAppbar;
-  ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
+  const ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
 }
 
 class ViewAllMediaArguments{
   final String chatJid;
-  ViewAllMediaArguments({required this.chatJid});
+  const ViewAllMediaArguments({required this.chatJid});
 }

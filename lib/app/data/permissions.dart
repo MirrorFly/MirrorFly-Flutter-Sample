@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../common/app_localizations.dart';
+import '../common/constants.dart';
+import '../data/session_management.dart';
+import '../data/utils.dart';
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -831,7 +830,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -846,7 +845,7 @@ class AppPermission {
                   child: CircleAvatar(
                 backgroundColor: buttonBgColor,
                 radius: 30,
-                child: SvgPicture.asset(notificationAlertPermission),
+                child: AppUtils.svgIcon(icon:notificationAlertPermission),
               )),
             ),
             Padding(
@@ -913,7 +912,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -926,7 +925,7 @@ class AppPermission {
               padding: const EdgeInsets.symmetric(vertical: 35.0),
               decoration: dialogStyle.headerContainerDecoration,
               // color: buttonBgColor,
-              child: Center(child: SvgPicture.asset(icon,colorFilter: ColorFilter.mode(dialogStyle.iconColor, BlendMode.srcIn),)),
+              child: Center(child: AppUtils.svgIcon(icon:icon,colorFilter: ColorFilter.mode(dialogStyle.iconColor, BlendMode.srcIn),)),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -970,7 +969,7 @@ class AppPermission {
       contentPadding: EdgeInsets.zero,
       content: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -982,7 +981,7 @@ class AppPermission {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 35.0),
               decoration: dialogStyle.headerContainerDecoration,
-              child: Center(child: SvgPicture.asset(icon,colorFilter: ColorFilter.mode(dialogStyle.iconColor, BlendMode.srcIn),)),
+              child: Center(child: AppUtils.svgIcon(icon:icon,colorFilter: ColorFilter.mode(dialogStyle.iconColor, BlendMode.srcIn),)),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
