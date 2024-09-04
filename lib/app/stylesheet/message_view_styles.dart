@@ -103,11 +103,14 @@ class TextMessageViewStyle{
   const TextMessageViewStyle({this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
     this.highlightColor = Colors.orange,//while searching a message to highlight the text
-    this.urlMessageColor = const Color(0xff4879F9)});
+    this.urlMessageColor = const Color(0xff4879F9),this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
+      color: Color(0xffD0D8EB),
+    ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7)),});
   final TextStyle textStyle;
   final TextStyle timeTextStyle;
   final Color highlightColor;
   final Color urlMessageColor;
+  final CallLinkViewStyle callLinkViewStyle;
 }
 
 class DownloadUploadViewStyle{
@@ -220,6 +223,20 @@ class AudioMessageViewStyle{
   final TextStyle timeTextStyle;
   final DownloadUploadViewStyle downloadUploadViewStyle;
   final IconStyle iconStyle;
+}
+
+class CallLinkViewStyle{
+  const CallLinkViewStyle({
+    this.decoration = const BoxDecoration(
+      color: Color(0xffD0D8EB),
+    ),
+    this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),
+    this.iconColor = const Color(0xff97A5C7),
+  });
+  final Decoration decoration;
+  final TextStyle textStyle;
+  final Color iconColor;
+
 }
 
 class IconStyle{

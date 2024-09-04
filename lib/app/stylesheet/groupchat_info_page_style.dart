@@ -9,10 +9,10 @@ class GroupChatInfoPageStyle{
     this.silverAppBarSubTitleStyle = const TextStyle(fontWeight: FontWeight.w300,color: Colors.white,fontSize: 10),
     this.silverAppBarIconColor = Colors.white,
     this.muteNotificationStyle = const MuteNotificationStyle(textStyle: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff181818),fontSize: 14),
-        activeColor: Colors.white,
+        toggleStyle: ToggleStyle(activeColor: Colors.white,
         inactiveColor: Colors.white,
         activeToggleColor: Colors.blue,
-        inactiveToggleColor: Colors.grey,),
+        inactiveToggleColor: Colors.grey),),
     this.groupMemberStyle = const ContactItemStyle(
         titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 14),
         descriptionStyle:TextStyle(fontWeight: FontWeight.normal,color: Color(0xff767676),fontSize: 12),

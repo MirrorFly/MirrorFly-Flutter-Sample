@@ -52,6 +52,7 @@ abstract class Routes {
   static const addProfileStatus = _Paths.addProfileStatus;
 
   //call
+  static const joinCallPreview = _Paths.joinCallPreview;
   static const outGoingCallView = _Paths.outGoingCallView;
   static const onGoingCallView = _Paths.onGoingCallView;
   static const callTimeOutView = _Paths.callTimeOutView;
@@ -112,6 +113,7 @@ abstract class _Paths {
   static const addProfileStatus = '/add_profile_status';
 
   //call
+  static const joinCallPreview = '/joinCallPreview';
   static const outGoingCallView = '/outGoingCallView';
   static const onGoingCallView = '/onGoingCallView';
   static const callTimeOutView = '/call-timeout';

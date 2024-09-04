@@ -1,8 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../extensions/extensions.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -42,7 +41,7 @@ class CaptionMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               chatMessage.isMessageStarred.value
-                  ? SvgPicture.asset(starSmallIcon)
+                  ? AppUtils.svgIcon(icon:starSmallIcon)
                   : const Offstage(),
               const SizedBox(
                 width: 5,

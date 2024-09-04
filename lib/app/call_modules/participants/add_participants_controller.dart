@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-
+import '../../call_modules/outgoing_call/call_controller.dart';
+import '../../common/main_controller.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -35,6 +34,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   @override
   Future<void> onInit() async {
     super.onInit();
+    getCallLink();
     groupId(await Mirrorfly.getCallGroupJid());
     tabController = TabController(length: 2, vsync: this);
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
@@ -76,6 +76,14 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
     } else {
       getGroupMembers();
     }
+  }
+
+  ///get ongoing call link
+  var meetLink = "".obs;
+  void getCallLink(){
+    Mirrorfly.getCallLink().then((value){
+      meetLink(value);
+    });
   }
 
   void onSearchPressed() {

@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:get/get.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -30,7 +29,7 @@ ViewAllMediaPreviewController createController({String? tag}) => Get.put(ViewAll
         actions: [
           IconButton(onPressed: () {
             controller.shareMedia();
-          }, icon: SvgPicture.asset(shareIcon))
+          }, icon: AppUtils.svgIcon(icon:shareIcon))
         ],
       ),
       body: SafeArea(
@@ -93,7 +92,7 @@ ViewAllMediaPreviewController createController({String? tag}) => Get.put(ViewAll
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      SvgPicture.asset(data.mediaChatMessage!.isAudioRecorded.checkNull() ? audioMic1 : headsetImg,height: 150,width: 150,),
+                      AppUtils.svgIcon(icon:data.mediaChatMessage!.isAudioRecorded.checkNull() ? audioMic1 : headsetImg,height: 150,width: 150,),
                       FloatingActionButton.small(
                         onPressed: (){
                           AppUtils.openDocument(data.mediaChatMessage!.mediaLocalStoragePath.value.checkNull());

@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/group/controllers/group_creation_controller.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/group/controllers/group_creation_controller.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -40,7 +39,7 @@ GroupCreationController createController({String? tag}) => Get.put(GroupCreation
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }
@@ -88,7 +87,7 @@ GroupCreationController createController({String? tag}) => Get.put(GroupCreation
                                             height: AppStyleConfig.createGroupPageStyle.profileImageSize.height,
                                             clipOval: true,
                                             errorWidget: ClipOval(
-                                              child: Image.asset(groupImg, width: AppStyleConfig.createGroupPageStyle.profileImageSize.width, height: AppStyleConfig.createGroupPageStyle.profileImageSize.height, fit: BoxFit.cover),
+                                              child: AppUtils.assetIcon(assetName:groupImg, width: AppStyleConfig.createGroupPageStyle.profileImageSize.width, height: AppStyleConfig.createGroupPageStyle.profileImageSize.height, fit: BoxFit.cover),
                                             ),
                                             isGroup: true,
                                             blocked: false,
@@ -125,7 +124,7 @@ GroupCreationController createController({String? tag}) => Get.put(GroupCreation
                                           : () {
                                               controller.choosePhoto();
                                             },
-                                      child: SvgPicture.asset(
+                                      child: AppUtils.svgIcon(icon:
                                         'assets/logos/camera_profile_change.svg',
                                         colorFilter: ColorFilter.mode(AppStyleConfig.createGroupPageStyle.cameraIconStyle.iconColor, BlendMode.srcIn),
                                       ),
@@ -182,7 +181,7 @@ GroupCreationController createController({String? tag}) => Get.put(GroupCreation
                                           Icons.keyboard,
                                           color: AppStyleConfig.createGroupPageStyle.emojiColor,
                                         )
-                                      : SvgPicture.asset(
+                                      : AppUtils.svgIcon(icon:
                                           smileIcon,
                                           width: 18,
                                           height: 18,

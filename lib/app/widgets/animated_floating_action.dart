@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../common/constants.dart';
+import '../data/utils.dart';
 
 class AnimatedFloatingAction extends StatefulWidget {
   final String tooltip;
@@ -135,7 +135,7 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
          child: FloatingActionButton.small(heroTag:"videoCall",onPressed: (){
            animate();
            widget.videoCallOnPressed();
-         },backgroundColor:widget.backgroundColor,child: SvgPicture.asset(
+         },backgroundColor:widget.backgroundColor,child: AppUtils.svgIcon(icon:
            videoCallSmallIcon,
            width: 18,
            height: 18,
@@ -152,7 +152,7 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
          child: FloatingActionButton.small(heroTag:"audioCall",onPressed: (){
            animate();
            widget.audioCallOnPressed();
-         },backgroundColor:widget.backgroundColor,child: SvgPicture.asset(
+         },backgroundColor:widget.backgroundColor,child: AppUtils.svgIcon(icon:
            audioCallSmallIcon,
            width: 18,
            height: 18,

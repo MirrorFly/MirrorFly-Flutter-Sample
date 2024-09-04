@@ -16,12 +16,12 @@ class DialogUtils {
   }
 
   static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
-    bool enableDrag = true,bool isDismissible = true,}){
+    bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent}){
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
       return builder;
-    },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: Colors.transparent,isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: Colors.transparent);
+    },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 
   // Method to show a loading dialog
@@ -35,7 +35,7 @@ class DialogUtils {
           backgroundColor: dialogStyle.backgroundColor,
           child: PopScope(
             canPop: dismiss,
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }
@@ -69,7 +69,7 @@ class DialogUtils {
             backgroundColor: Colors.transparent,
             content: PopScope(
               canPop: dismiss,
-              onPopInvoked: (didPop) {
+              onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   return;
                 }
@@ -112,7 +112,7 @@ class DialogUtils {
                 : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
             content: PopScope(
               canPop: barrierDismissible ?? true,
-              onPopInvoked: (didPop) {
+              onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   return;
                 }

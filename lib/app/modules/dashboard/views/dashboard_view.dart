@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/callhistory_view.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/recentchat_view.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
-import 'package:mirror_fly_demo/app/widgets/animated_floating_action.dart';
+import '../../../app_style_config.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/views/callhistory_view.dart';
+import '../../../modules/dashboard/views/recentchat_view.dart';
+import '../../../stylesheet/stylesheet.dart';
+import '../../../widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
@@ -36,7 +35,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
         child: Obx(
           () => PopScope(
             canPop: !(controller.selected.value || controller.isSearching.value),
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }
@@ -123,7 +122,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.chatInfo();
                                                 },
-                                                icon: SvgPicture.asset(infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Info',
                                               ),
                                               overflowWidget: Text(getTranslated("info"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -138,7 +137,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.currentTab.value == 0 ? controller.deleteChats() : controller.deleteCallLog();
                                                 },
-                                                icon: SvgPicture.asset(delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Delete',
                                               ),
                                               overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -157,7 +156,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.pinChats();
                                                 },
-                                                icon: SvgPicture.asset(pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Pin',
                                               ),
                                               overflowWidget: Text(getTranslated("pin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -172,7 +171,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.unPinChats();
                                                 },
-                                                icon: SvgPicture.asset(unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnPin',
                                               ),
                                               overflowWidget: Text(getTranslated("unPin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -187,7 +186,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.muteChats();
                                                 },
-                                                icon: SvgPicture.asset(mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Mute',
                                               ),
                                               overflowWidget: Text(getTranslated("mute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -202,7 +201,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.unMuteChats();
                                                 },
-                                                icon: SvgPicture.asset(unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnMute',
                                               ),
                                               overflowWidget: Text(getTranslated("unMute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -217,7 +216,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.archiveChats();
                                                 },
-                                                icon: SvgPicture.asset(archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppUtils.svgIcon(icon:archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Archive',
                                               ),
                                               overflowWidget: Text(getTranslated("archived"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -250,7 +249,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.gotoSearch();
                                                 },
-                                                icon: SvgPicture.asset(
+                                                icon: AppUtils.svgIcon(icon:
                                                   searchIcon,
                                                   width: 18,
                                                   height: 18,
@@ -296,7 +295,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                               visibleWidget: const Icon(Icons.web),
                                               overflowWidget: Text(getTranslated("clearCallLog"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
-                                                  controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0
+                                                  controller.selected.value || controller.isSearching.value || controller.currentTab.value == 0 || controller.callLogList.isEmpty
                                                       ? ShowAsAction.gone
                                                       : ShowAsAction.never,
                                               keyValue: 'Clear call log',
@@ -329,7 +328,8 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                             },
                             body: TabBarView(controller: controller.tabController, children: [
                               RecentChatView(controller: controller, archivedTileStyle: AppStyleConfig.dashBoardPageStyle.archivedTileStyle, recentChatItemStyle: AppStyleConfig.dashBoardPageStyle.recentChatItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,contactItemStyle: AppStyleConfig.dashBoardPageStyle.contactItemStyle,),
-                              CallHistoryView(controller: controller,callHistoryItemStyle: AppStyleConfig.dashBoardPageStyle.callHistoryItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,)
+                              CallHistoryView(controller: controller,callHistoryItemStyle: AppStyleConfig.dashBoardPageStyle.callHistoryItemStyle,noDataTextStyle: AppStyleConfig.dashBoardPageStyle.noDataTextStyle,
+                              createMeetLinkStyle: AppStyleConfig.dashBoardPageStyle.createMeetLinkStyle,recentCallsTitleStyle: AppStyleConfig.dashBoardPageStyle.titlesTextStyle,meetBottomSheetStyle: AppStyleConfig.dashBoardPageStyle.meetBottomSheetStyle,)
                             ])));
                   }),
                 ),
@@ -370,7 +370,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
           controller.gotoContacts();
         },
         child:
-        SvgPicture.asset(
+        AppUtils.svgIcon(icon:
           chatFabIcon,
           width: Theme.of(context).floatingActionButtonTheme.iconSize,
           colorFilter: ColorFilter.mode(Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),
@@ -383,7 +383,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
         tooltip: "New Call",
         backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
         foregroundColor: Theme.of(context).floatingActionButtonTheme.foregroundColor,
-        icon: SvgPicture.asset(
+        icon: AppUtils.svgIcon(icon:
           plusIcon,
           width: Theme.of(context).floatingActionButtonTheme.iconSize,
           colorFilter: ColorFilter.mode(Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),

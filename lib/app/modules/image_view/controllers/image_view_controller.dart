@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../../data/utils.dart';
 

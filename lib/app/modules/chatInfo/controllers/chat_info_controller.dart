@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/controllers/dashboard_controller.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
+
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
@@ -109,14 +110,14 @@ class ChatInfoController extends GetxController {
     }
   }
 
-  void networkConnected() {
+  void onConnected() {
     LogMessage.d("networkConnected", 'true');
     Future.delayed(const Duration(milliseconds: 2000), () {
       getUserLastSeen();
     });
   }
 
-  void networkDisconnected() {
+  void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
     getUserLastSeen();
   }

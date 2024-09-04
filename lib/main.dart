@@ -7,22 +7,22 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mirror_fly_demo/app/call_modules/ongoing_call/ongoingcall_view.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/modules/chat/views/chat_view.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/views/dashboard_view.dart';
-import 'package:mirror_fly_demo/app/modules/login/views/login_view.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirror_fly_demo/app/modules/profile/views/profile_view.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/app_lock/pin_view.dart';
-import 'package:mirror_fly_demo/app/routes/mirrorfly_navigation_observer.dart';
+import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
+import 'app/common/app_localizations.dart';
+import 'app/modules/chat/views/chat_view.dart';
+import 'app/modules/dashboard/views/dashboard_view.dart';
+import 'app/modules/login/views/login_view.dart';
+import 'app/modules/notification/notification_builder.dart';
+import 'app/modules/profile/views/profile_view.dart';
+import 'app/modules/settings/views/app_lock/pin_view.dart';
+import 'app/routes/mirrorfly_navigation_observer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_theme.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/data/pushnotification.dart';
+import 'app/common/app_theme.dart';
+import 'app/common/constants.dart';
+import 'app/extensions/extensions.dart';
+import 'app/data/pushnotification.dart';
 import 'app/common/main_controller.dart';
 import 'app/common/notification_service.dart';
 import 'app/data/session_management.dart';
@@ -82,7 +82,6 @@ Future<void> main() async {
       iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
-      enablePrivateStorage: false,
       flyCallback: (response) async {
         if (response.isSuccess) {//8825508012
           LogMessage.d("onSuccess", response.message);

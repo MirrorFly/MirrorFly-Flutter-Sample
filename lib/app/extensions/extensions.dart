@@ -3,24 +3,24 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../common/constants.dart';
+import '../data/helper.dart';
+import '../data/session_management.dart';
+import '../model/chat_message_model.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../common/app_localizations.dart';
 import '../data/utils.dart';
 
-part 'recent_chat_extension.dart';
-part 'profile_parsing_extension.dart';
 part 'chat_message_extension.dart';
-part 'scroll_controller_extension.dart';
-part 'permission_extension.dart';
 part 'data_type_extension.dart';
+part 'permission_extension.dart';
+part 'profile_parsing_extension.dart';
+part 'recent_chat_extension.dart';
+part 'scroll_controller_extension.dart';
 
 
 extension FileFormatter on num {
@@ -65,10 +65,10 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 
 // Abstract class for StatefulWidget
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
-  final String? jid;
-  const NavViewStateful({Key? key, this.jid}) : super(key: key);
+  final String? tag;
+  const NavViewStateful({Key? key, this.tag}) : super(key: key);
 
-  T get controller => Get.find<T>(tag: jid);
+  T get controller => Get.find<T>(tag: tag);
   T controllerWithTag(String tag){
     return Get.find<T>(tag:tag);
   }
@@ -92,9 +92,9 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
   @override
   void initState() {
-    debugPrint("NavViewState key ${widget.jid}");
+    debugPrint("NavViewState key ${widget.tag}");
     // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
-      widget.createController(tag: widget.jid);
+      widget.createController(tag: widget.tag);
     // }
 
     // Get.put<T>(controller);
@@ -106,9 +106,9 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
   @override
   void dispose() {
     widget.onDispose();
-    Get.delete<T>(tag: widget.jid);
+    Get.delete<T>(tag: widget.tag);
     super.dispose();
-    LogMessage.d("NavViewState : dispose key: ${widget.jid}", T.toString());
+    LogMessage.d("NavViewState : dispose key: ${widget.tag}", T.toString());
   }
 
   @override

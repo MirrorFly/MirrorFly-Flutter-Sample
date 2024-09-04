@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/group_participants/group_participants_controller.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../call_modules/group_participants/group_participants_controller.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../data/utils.dart';
@@ -47,7 +46,7 @@ GroupParticipantsController createController({String? tag}) => Get.put(GroupPart
               visible: controller.isSearchVisible,
               child: IconButton(
                   onPressed: () => controller.onSearchPressed(),
-                  icon: SvgPicture.asset(searchIcon)),
+                  icon: AppUtils.svgIcon(icon:searchIcon)),
             ),
             Visibility(
               visible: controller.isClearVisible,
@@ -108,7 +107,7 @@ GroupParticipantsController createController({String? tag}) => Get.put(GroupPart
                           mainAxisAlignment: MainAxisAlignment.center,
                           // crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            SvgPicture.asset(
+                            AppUtils.svgIcon(icon:
                               controller.callType.value == CallType.audio
                                   ? audioCallSmallIcon
                                   : videoCallSmallIcon,

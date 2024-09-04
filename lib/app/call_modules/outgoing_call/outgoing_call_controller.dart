@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/call_user_list.dart';
+import '../../call_modules/call_utils.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
+import '../../model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../data/permissions.dart';
@@ -72,7 +72,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     super.onInit();
     enterFullScreen();
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    debugPrint("#Mirrorfly Call Controller onInit");
+    debugPrint("#Mirrorfly Call outgoing Controller onInit");
 
     isCallTimerEnabled = true;
     if (NavUtils.arguments != null) {
@@ -293,7 +293,7 @@ class OutgoingCallController extends GetxController with GetTickerProviderStateM
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if(response.isSuccess) {
         callList.clear();
-        // NavUtils.back();
+        NavUtils.back();
       }
     });
   }

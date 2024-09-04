@@ -3,15 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/call_user_list.dart';
+import '../../call_modules/call_utils.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
+import '../../model/call_user_list.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-import '../../../main.dart';
 import '../../app_style_config.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
@@ -76,6 +75,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   TabController? tabController ;
   var getMaxCallUsersCount = 8;
 
+  var joinViaLink = false;
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -87,7 +87,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     isCallTimerEnabled = true;
     if (NavUtils.arguments != null) {
       users.value = NavUtils.arguments?["userJid"] as List<String?>;
-      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
+      cameraSwitch(NavUtils.arguments?["cameraSwitch"] ?? false);
+      joinViaLink = NavUtils.arguments?["joinViaLink"] ?? false;
     }
     // await outGoingUsers();
     // callType.value = NavUtils.arguments["callType"];
@@ -108,36 +109,21 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     getAudioDevices();
     await Mirrorfly.getCallDirection().then((value) async {
       debugPrint("#Mirrorfly Call Direction $value");
-      if (value == "Incoming") {
-        Mirrorfly.getCallUsersList().then((value) {
-          // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
-          debugPrint("#Mirrorfly call get users --> $value");
-          final callUserList = callUserListFromJson(value);
-          callList(callUserList);
-          if(callUserList.length > 1) {
-            // pinnedUserJid(callUserList[0].userJid);
-            CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid!.value);
-            pinnedUser(firstAttendedCallUser);
-          }
-          // getNames();
-        });
-      } else {
-        debugPrint("#Mirrorfly Call Direction outgoing");
-        debugPrint("#Mirrorfly Call getCallUsersList");
-        Mirrorfly.getCallUsersList().then((value) {
-          debugPrint("#Mirrorfly call get users --> $value");
-          // callList.clear();
-          final callUserList = callUserListFromJson(value);
-          callList(callUserList);
-          if(callUserList.length > 1) {
-            // pinnedUserJid(callUserList[0].userJid);
-            CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
-            pinnedUserJid(firstAttendedCallUser.userJid!.value);
-            pinnedUser(firstAttendedCallUser);
-          }
-          // getNames();
-        });
+    });
+    Mirrorfly.getCallUsersList().then((value) {
+      // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
+      debugPrint("#Mirrorfly call get users --> $value");
+      final callUserList = callUserListFromJson(value);
+      callList(callUserList);
+      users(List.from(callUserList.map((e) => e.userJid!.value)));
+      if(callUserList.length > 1) {
+        // pinnedUserJid(callUserList[0].userJid);
+        CallUserList firstAttendedCallUser = callUserList.firstWhere((callUser) => callUser.callStatus?.value == CallStatus.attended || callUser.callStatus?.value == CallStatus.connected, orElse: () => callUserList[0]);
+        pinnedUserJid(firstAttendedCallUser.userJid!.value);
+        pinnedUser(firstAttendedCallUser);
+      }else if(joinViaLink){
+        pinnedUserJid(callUserList.first.userJid!.value);
+        pinnedUser(callUserList.first);
       }
     });
 
@@ -254,7 +240,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   videoMute() async {
     debugPrint("isOneToOneCall : $isOneToOneCall");
     if (await AppPermission.askVideoCallPermissions()) {
-      if (callType.value != CallType.audio) {
+      if (callType.value != CallType.audio || joinViaLink) {
         Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {  });
         videoMuted(!videoMuted.value);
       } else if (callType.value == CallType.audio && isOneToOneCall && NavUtils.currentRoute == Routes.onGoingCallView) {
@@ -318,7 +304,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         NavUtils.back();
       }
     } else {
-      NavUtils.offNamed(getInitialRoute());
+      debugPrint("#Disconnect previous route is empty");
+      // NavUtils.offNamed(getInitialRoute());
+      NavUtils.offNamed(NavUtils.defaultRouteName);
     }
   }
 
@@ -416,7 +404,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           NavUtils.back();
         }
       } else {
-        NavUtils.offNamed(getInitialRoute());
+        NavUtils.offNamed(NavUtils.defaultRouteName);
       }
     }
   }
@@ -493,6 +481,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
       if(callList.length > 1) {
         callList.insert(callList.length - 1, callUserList);
+        users.insert(users.length - 1 , userJid);
       }else {
         callList.add(callUserList);
       }
@@ -530,6 +519,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       CallUserList callUserList = CallUserList(userJid: userJid.obs, callStatus: RxString(callStatus), isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted,);
      if(indexValid.isNegative) {
        callList.insert(callList.length - 1, callUserList);
+       users.insert(users.length - 1, userJid);
        // callList.add(callUserList);
        debugPrint("#MirrorflyCall List value updated ${callList.length}");
      }else{
@@ -956,8 +946,22 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     videoCallConversionCancel();
   }
 
-  void onUserJoined(String callMode, String userJid, String callType,String callStatus) {
-    // addParticipants(callMode, userJid, callType);
+  Future<void> onUserJoined(String callMode, String userJid, String callType,String callStatus) async {
+    LogMessage.d("callController", " onUserJoined $userJid from joinViaLink");
+    var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: userJid))
+        .checkNull();
+    var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: userJid))
+        .checkNull();
+    var indexValid = callList.indexWhere((element) => element.userJid?.value == userJid);
+    LogMessage.d("callController", "indexValid : $indexValid jid : $userJid");
+    if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
+      callList.insert(callList.length - 1, CallUserList(
+          userJid: userJid.obs,
+          isAudioMuted: isAudioMuted,
+          isVideoMuted: isVideoMuted,
+          callStatus: CallStatus.connected.obs));
+      users.insert(users.length - 1, userJid);
+    }
   }
 
   void addParticipants(String callMode, String userJid, String callType){
@@ -970,13 +974,18 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var isAudioMuted = (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
           var isVideoMuted = (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
           var indexValid = callList.indexWhere((element) => element.userJid?.value == jid);
-          LogMessage.d("callController", "indexValid : $indexValid jid : $jid");
+          LogMessage.d("callController", "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : $getMaxCallUsersCount");
           if(indexValid.isNegative && callList.length != getMaxCallUsersCount) {
             callList.insert(callList.length - 1, CallUserList(
-                userJid: jid.obs, isAudioMuted: isAudioMuted, isVideoMuted: isVideoMuted, callStatus: CallStatus.calling.obs));
+                userJid: jid.obs,
+                isAudioMuted: isAudioMuted,
+                isVideoMuted: isVideoMuted,
+                callStatus: CallStatus.calling.obs));
             users.insert(users.length - 1, jid);
             // getNames();
             LogMessage.d("callController", "after ${callUserListToJson(callList)}");
+          }else{
+            LogMessage.d("callController", "User already in the list");
           }
         }
       }
@@ -1000,8 +1009,12 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     speakingUsers.removeWhere((element) => element.userJid == userJid);
     debugPrint("after removeUser ${callList.length}");
     debugPrint("removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
-    if(callList.length>1 && pinnedUserJid.value == userJid) {
+    if(callList.isNotEmpty && pinnedUserJid.value == userJid) {
       pinnedUserJid(callList[0].userJid!.value);
+    }
+    ///if user is from joinViaLink then no need to close the screen until user disconnects manually.
+    if(joinViaLink){
+      return;
     }
     userDisconnection(callMode, userJid, callType);
     // getNames();

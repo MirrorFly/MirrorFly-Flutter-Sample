@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/busy_status_controller.dart';
 
 class AddBusyStatusView extends NavViewStateful<BusyStatusController> {
@@ -33,7 +32,7 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -103,8 +102,7 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                               controller.showHideEmoji(context);
                             },
                             icon: controller.showEmoji.value ? const Icon(
-                              Icons.keyboard, color: iconColor,) : SvgPicture
-                                .asset(smileIcon));
+                              Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
                       })
                     ],
                   ),

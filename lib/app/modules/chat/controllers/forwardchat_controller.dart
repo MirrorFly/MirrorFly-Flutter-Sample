@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import '../../../app_style_config.dart';
-import '../../../data/utils.dart';
+import '../../../common/constants.dart';
+import '../../../data/helper.dart';
+import '../../../data/session_management.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
+import '../../../data/utils.dart';
 
 class ForwardChatController extends GetxController {
   //main list

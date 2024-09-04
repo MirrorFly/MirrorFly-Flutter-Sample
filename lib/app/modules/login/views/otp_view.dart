@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/modules/login/controllers/login_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../data/utils.dart';
+import '../../../modules/login/controllers/login_controller.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -51,7 +50,7 @@ LoginController createController({String? tag}) => Get.put(LoginController());
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: SvgPicture.asset(registerIcon),
+                          child: AppUtils.svgIcon(icon:registerIcon),
                         ),
                         Text(
                           getTranslated("verifyOTP"),

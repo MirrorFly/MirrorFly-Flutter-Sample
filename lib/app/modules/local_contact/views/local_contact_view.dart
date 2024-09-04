@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/model/local_contact_model.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../common/app_localizations.dart';
+import '../../../model/local_contact_model.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
@@ -30,6 +28,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
       child: Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
+          centerTitle: false,
           title: Obx(() {
             return controller.search.value
                 ? TextField(
@@ -64,7 +63,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
             controller.search.value
                 ? const Offstage()
                 : IconButton(
-              icon: SvgPicture.asset(
+              icon: AppUtils.svgIcon(icon:
                 searchIcon,
                 width: 18,
                 height: 18,
@@ -85,7 +84,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
         ),
         body: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
               return;
             }
@@ -153,7 +152,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
                         Positioned(
                             right: 2,
                             bottom: 2,
-                            child: SvgPicture.asset(
+                            child: AppUtils.svgIcon(icon:
                               closeContactIcon,
                               width: 15,
                             )),
@@ -207,7 +206,7 @@ class LocalContactView extends NavViewStateful<LocalContactController> {
                                 child: Positioned(
                                     right: 0,
                                     bottom: 0,
-                                    child: SvgPicture.asset(
+                                    child: AppUtils.svgIcon(icon:
                                       contactSelectTick,
                                       width: 12,
                                     )),

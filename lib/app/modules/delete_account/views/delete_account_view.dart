@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -33,7 +31,7 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
               children: [
                 Row(
                   children: [
-                  SvgPicture.asset(
+                  AppUtils.svgIcon(icon:
                     warningIcon,
                   fit: BoxFit.contain,
                 ),

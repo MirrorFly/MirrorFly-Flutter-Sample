@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class AudioLevelAnimation extends StatefulWidget {

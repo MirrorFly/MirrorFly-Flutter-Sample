@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/modules/settings/controllers/settings_controller.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/settings_widgets.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../modules/settings/controllers/settings_controller.dart';
+import '../../../modules/settings/views/settings_widgets.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';

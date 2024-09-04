@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../common/app_localizations.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
+import '../../routes/route_settings.dart';
+import '../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../common/constants.dart';
@@ -217,7 +217,7 @@ class RecentChatItem extends StatelessWidget {
       clipOval: true,
       errorWidget: item.isGroup!
           ? ClipOval(
-              child: Image.asset(
+              child: AppUtils.assetIcon(assetName:
                 groupImg,
                 height: profileImageSize.width,
                 width: profileImageSize.height,
@@ -252,7 +252,7 @@ class RecentChatItem extends StatelessWidget {
   }
 
   Positioned buildEmailIcon() {
-    return Positioned(right: 0, bottom: 0, child: SvgPicture.asset(emailContactIcon));
+    return Positioned(right: 0, bottom: 0, child: AppUtils.svgIcon(icon:emailContactIcon));
   }
 
   Visibility buildArchivedTextVisibility() {
@@ -265,7 +265,7 @@ class RecentChatItem extends StatelessWidget {
             getTranslated("archived"),
             style: const TextStyle(color: buttonBgColor),
           ),
-        ) /*SvgPicture.asset(
+        ) /*AppUtils.svgIcon(icon:
                                       archive,
                                       width: 18,
                                       height: 18,
@@ -276,7 +276,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildMuteIconVisibility() {
     return Visibility(
         visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           mute,
           width: 13,
           height: 13,
@@ -286,7 +286,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildPinIconVisibility() {
     return Visibility(
         visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           pin,
           width: 18,
           height: 18,
@@ -330,7 +330,7 @@ class RecentChatItem extends StatelessWidget {
     if (item.isGroup.checkNull()) {
       if (!chat.isMessageSentByMe.checkNull()) {
         return (chat.messageType != Constants.mNotification || chat.messageTextContent == " added you") ||
-            (forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
+            (MessageUtils.forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()).checkNull().isNotEmpty);
       }
     }
     return false;
@@ -357,11 +357,11 @@ class RecentChatItem extends StatelessWidget {
                         ),
                       )
                     : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0
-                      : forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()) != null
+                      : MessageUtils.forMessageTypeString(chat.messageType, content: chat.messageTextContent.checkNull()) != null
                           ? 3.0
                           : 0.0,
                 ),
@@ -370,7 +370,7 @@ class RecentChatItem extends StatelessWidget {
                       ? Text(
                           chat.isMessageRecalled.value
                               ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                              : MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
@@ -379,7 +379,7 @@ class RecentChatItem extends StatelessWidget {
                       : spannableText(
                           chat.isMessageRecalled.value
                               ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                              : MessageUtils.forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           spanTxt,
                       recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor)//Theme.of(context).textTheme.titleSmall),
@@ -545,17 +545,17 @@ class RecentChatMessageItem extends StatelessWidget {
                           ),
                           item.isMessageRecalled.value
                               ? const Offstage()
-                              : forMessageTypeIcon(item.messageType, item.mediaChatMessage),
+                              : MessageUtils.forMessageTypeIcon(item.messageType, item.mediaChatMessage),
                           SizedBox(
                             width:
-                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
+                            MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) !=
                                 null
                                 ? 3.0
                                 : 0.0,
                           ),
                           Expanded(
                             child:
-                            forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                            MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                 null
                                 ? spannableText(
                               item.messageTextContent.toString(),
@@ -563,7 +563,7 @@ class RecentChatMessageItem extends StatelessWidget {
                               recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor,
                             )
                                 : Text(
-                              forMessageTypeString(item.messageType,
+                              MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.toString(),
                               // style: Theme.of(context).textTheme.titleSmall,
@@ -678,7 +678,19 @@ onTapForSpanText(String e) {
   var stringType = spannableTextType(e);
   debugPrint("Text span click");
   if (stringType == "website") {
-    launchInBrowser(e);
+    if(e.startsWith(Constants.webChatLogin)){
+      AppUtils.isNetConnected().then((value){
+        if(value) {
+          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": e.replaceAll(Constants.webChatLogin, "")
+          });
+        }else{
+          toToast(getTranslated("noInternetConnection"));
+        }
+      });
+    }else {
+      launchInBrowser(e);
+    }
     // return;
   } else if (stringType == "mobile") {
     makePhoneCall(e);
@@ -698,17 +710,14 @@ Widget callLogTime(String time, int? callState,TextStyle? textStyle) {
   return Row(
     children: [
       callState == 0
-          ? SvgPicture.asset(
-              "assets/calls/ic_arrow_down_red.svg",
+          ? AppUtils.svgIcon(icon: arrowDropDown,
               colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
             )
           : callState == 1
-              ? SvgPicture.asset(
-                  "assets/calls/ic_arrow_up_green.svg",
+              ? AppUtils.svgIcon(icon: arrowUpIcon,
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 )
-              : SvgPicture.asset(
-                  "assets/calls/ic_arrow_down_green.svg",
+              : AppUtils.svgIcon(icon: arrowDownIcon,
                   colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
                 ),
       const SizedBox(

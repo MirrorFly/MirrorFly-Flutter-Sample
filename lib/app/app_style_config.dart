@@ -51,11 +51,64 @@ class AppStyleConfig{
     }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50))
   );
 
+  static final ButtonStyle _joinCallButtonStyle = ButtonStyle(
+        shape: WidgetStateProperty.resolveWith((states) => const StadiumBorder()),
+      padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Color when the button is disabled
+      }
+      return const Color(0xff3276E2); // Default color
+    }),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+        }
+        return Colors.white;
+      }),
+    iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+      }
+      return Colors.white; // Default color
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50)),
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        return const TextStyle(fontSize: 14, fontWeight: FontWeight.w600); // Default text style
+      })
+  );
+
+  static final ButtonStyle _joinMeetButtonStyle = ButtonStyle(
+        shape: WidgetStateProperty.resolveWith((states) => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30)))),
+      padding: WidgetStateProperty.resolveWith((states) => const EdgeInsets.symmetric(horizontal: 30, vertical: 15)),
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey; // Color when the button is disabled
+      }
+      return const Color(0xff3276E2); // Default color
+    }),
+
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+        }
+        return Colors.white;
+      }),
+    iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+      }
+      return Colors.white; // Default color
+    }),maximumSize: WidgetStateProperty.resolveWith<Size>((Set<WidgetState> states) => const Size(200, 50)),
+      textStyle: WidgetStateProperty.resolveWith<TextStyle>((Set<WidgetState> states) {
+        return const TextStyle(fontSize: 14, fontWeight: FontWeight.w600); // Default text style
+      })
+  );
+
   static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);
   static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
-  static DashBoardPageStyle _dashBoardPageStyle = const DashBoardPageStyle();
+  static DashBoardPageStyle _dashBoardPageStyle = DashBoardPageStyle(meetBottomSheetStyle: MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle));
   static ArchivedChatsPageStyle _archivedChatsPageStyle = const ArchivedChatsPageStyle();
-  static ChatPageStyle _chatPageStyle = const ChatPageStyle();
+  static ChatPageStyle _chatPageStyle =  ChatPageStyle(instantScheduleMeetStyle: InstantScheduleMeetStyle(meetBottomSheetStyle:MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle)));
   static CreateGroupPageStyle _createGroupPageStyle = const CreateGroupPageStyle();
   static ChatInfoPageStyle _chatInfoPageStyle = const ChatInfoPageStyle();
   static GroupChatInfoPageStyle _groupChatInfoPageStyle = const GroupChatInfoPageStyle();
@@ -76,6 +129,7 @@ class AppStyleConfig{
   static LocalContactPreviewPageStyle _localContactPreviewPageStyle = const LocalContactPreviewPageStyle();
   static LocationSentPageStyle _locationSentPageStyle = const LocationSentPageStyle();
   static MediaSentPreviewPageStyle _mediaSentPreviewPageStyle = const MediaSentPreviewPageStyle();
+  static JoinCallPreviewPageStyle _joinCallPreviewPageStyle = JoinCallPreviewPageStyle(joinCallButtonStyle: _joinCallButtonStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;
@@ -102,6 +156,7 @@ class AppStyleConfig{
   static LocalContactPreviewPageStyle localContactPreviewPageStyle = _localContactPreviewPageStyle;
   static LocationSentPageStyle locationSentPageStyle = _locationSentPageStyle;
   static MediaSentPreviewPageStyle mediaSentPreviewPageStyle = _mediaSentPreviewPageStyle;
+  static JoinCallPreviewPageStyle joinCallPreviewPageStyle = _joinCallPreviewPageStyle;
 
   static setAppStyle({required AppStyle appStyle}){
     loginPageStyle = appStyle.loginPageStyle ?? _loginPageStyle;
@@ -223,5 +278,9 @@ class AppStyleConfig{
 
   static setMediaSentPreviewPageStyle(MediaSentPreviewPageStyle mediaSentPreviewPageStyle){
     _mediaSentPreviewPageStyle = mediaSentPreviewPageStyle;
+  }
+
+  static setJoinCallPreviewPageStyle(JoinCallPreviewPageStyle joinCallPreviewPageStyle){
+    _joinCallPreviewPageStyle = joinCallPreviewPageStyle;
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
 import '../../../common/constants.dart';
@@ -78,7 +77,7 @@ class VideoMessageView extends StatelessWidget {
                 left: 10,
                 child: Row(
                   children: [
-                    SvgPicture.asset(
+                    AppUtils.svgIcon(icon:
                       mVideoIcon,
                       fit: BoxFit.contain,
                       colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
@@ -107,7 +106,7 @@ class VideoMessageView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     chatMessage.isMessageStarred.value
-                        ? SvgPicture.asset(starSmallIcon)
+                        ? AppUtils.svgIcon(icon:starSmallIcon)
                         : const Offstage(),
                     const SizedBox(
                       width: 5,

@@ -23,7 +23,7 @@ class _NotificationNotWorkingViewState extends State<NotificationNotWorkingView>
             child: Stack(
               children: [
                 InAppWebView(
-                  initialUrlRequest: URLRequest(url: Uri.parse(notificationNotWorkingURL)),
+                  initialUrlRequest: URLRequest(url: WebUri(notificationNotWorkingURL)),
                   onLoadStart: (controller, url) async {
 
                   },

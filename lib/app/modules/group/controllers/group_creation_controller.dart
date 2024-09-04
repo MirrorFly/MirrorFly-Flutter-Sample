@@ -5,16 +5,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+
 import '../../../app_style_config.dart';
+import '../../../common/crop_image.dart';
+import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../routes/route_settings.dart';
-
-import '../../../common/crop_image.dart';
-import '../../../data/permissions.dart';
 
 class GroupCreationController extends GetxController {
   var imagePath = "".obs;
@@ -102,7 +102,7 @@ class GroupCreationController extends GetxController {
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
       //NavUtils.toNamed(Routes.ADD_PARTICIPANTS);
-      NavUtils.toNamed(Routes.contacts, arguments: ContactListArguments(forGroup:true)
+      NavUtils.toNamed(Routes.contacts, arguments: const ContactListArguments(forGroup:true)
           /*{"forward" : false,"group":true,"groupJid":"" }*/)?.then((value){
         if(value!=null){
           createGroup(value as List<String>);
@@ -141,7 +141,7 @@ class GroupCreationController extends GetxController {
             var name = "${DateTime
                 .now()
                 .millisecondsSinceEpoch}.jpg";
-            writeImageTemp(value.bytes, name).then((value) {
+            MessageUtils.writeImageTemp(value.bytes, name).then((value) {
               imagePath(value.path);
             });
           }
@@ -168,7 +168,7 @@ class GroupCreationController extends GetxController {
           var name = "${DateTime
               .now()
               .millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
+          MessageUtils.writeImageTemp(value.bytes, name).then((value) {
             imagePath(value.path);
           });
         }

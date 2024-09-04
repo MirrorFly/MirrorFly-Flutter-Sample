@@ -1,7 +1,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
+import '../../../common/app_localizations.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -98,7 +98,7 @@ class ContactSyncController extends GetxController
     NavUtils.offNamed(Routes.dashboard);
   }
 
-  Future<void> networkConnected() async {
+  Future<void> onConnected() async {
     LogMessage.d('networkConnected', 'contactSync');
     textContactSync('');
     if(!await Mirrorfly.contactSyncStateValue()){
@@ -109,7 +109,7 @@ class ContactSyncController extends GetxController
     }
   }
 
-  void networkDisconnected() {
+  void onDisconnected() {
     syncing(false);
     textContactSync(getTranslated("noInternetConnection"));
   }

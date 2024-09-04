@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class RecalledMessageView extends StatelessWidget {
@@ -27,7 +28,7 @@ class RecalledMessageView extends StatelessWidget {
           Flexible(
             child: Row(
               children: [
-                Image.asset(
+                AppUtils.assetIcon(assetName:
                   disabledIcon,
                   width: 15,
                   height: 15,

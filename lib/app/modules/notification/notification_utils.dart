@@ -1,7 +1,7 @@
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
+import '../../extensions/extensions.dart';
+import '../../model/chat_message_model.dart';
 
 class NotificationUtils{
   static var deletedMessage = getTranslated("deletedMessage");
