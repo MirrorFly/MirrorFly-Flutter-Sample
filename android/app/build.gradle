@@ -1,3 +1,11 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "kotlin-kapt"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+}
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -6,10 +14,10 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterRoot = localProperties.getProperty('flutter.sdk')
+/*def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-}
+}*/
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
@@ -21,14 +29,15 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-apply plugin: 'com.android.application'
+/*apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'*/
 
 android {
-    compileSdk flutter.compileSdkVersion
+    namespace = "com.contusdemo.mirror_fly_demo"
+    compileSdk = 34
     ndkVersion flutter.ndkVersion
 
     signingConfigs {
@@ -102,15 +111,15 @@ android {
             applicationId "com.mirrorfly.uikit_flutter.qa"
             resValue("string", "app_name", "MF-Flutter-QA")
         }
-       /* contactSync {
-            dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.qa"
-            resValue("string", "app_name", "MF-Flutter-QA(Sync)")
-        }
-        prod {
-            dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.dev"
-        }*/
+        /* contactSync {
+             dimension "version"
+             applicationId "com.mirrorfly.uikit_flutter.qa"
+             resValue("string", "app_name", "MF-Flutter-QA(Sync)")
+         }
+         prod {
+             dimension "version"
+             applicationId "com.mirrorfly.uikit_flutter.dev"
+         }*/
     }
 
 
@@ -135,11 +144,11 @@ flutter {
 
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.core:core-splashscreen:1.1.0-alpha01'
+    implementation 'androidx.core:core-splashscreen:1.2.0-alpha01'
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     configurations {
         all {
