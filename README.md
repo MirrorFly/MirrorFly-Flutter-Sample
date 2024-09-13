@@ -1,13 +1,15 @@
-<center><p>
-  <img  src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" data-canonical-src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" width="400"  alt=""/>
-</p></center>
+<center>
+  <p>
+    <img  src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" data-canonical-src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" width="400"  alt=""/>
+  </p>
 
-<h1 style="text-align: center">
-  Customizable, Low-code Flutter Sample App For Android
-</h1>
+  <h1>
+    Customizable, Low-code Flutter Sample App For Android
+  </h1>
+</center>
 
 
-<b>MirrorFly’s Flutter Sample App</b> is a basic product with all the assets and libraries needed to develop a communication platform. All you need to do is, use the [MirrorFly Plugin](https://www.mirrorfly.com/) to add 1000+ real-time communication capabilities and deliver a fully-built communication platform in Flutter.
+<b>MirrorFly’s Flutter Sample App</b> is a basic product with all the assets and libraries needed to develop a communication platform. All you need to do is, use the [MirrorFly Plugin]([https://www.mirrorfly.com/](https://pub.dev/packages/mirrorfly_plugin)) to add 1000+ real-time communication capabilities and deliver a fully-built communication platform in Flutter.
 
 
 The platform is fully customizable, enabling you to personalize it to your customer experience. You can add your company logo, color and other brand elements to your Flutter chat app without any limitations. You will have access to the full source code giving you the full freedom to amend any part of the solution to meet your business needs.
