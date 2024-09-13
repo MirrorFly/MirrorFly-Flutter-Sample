@@ -67,7 +67,7 @@ class CallInfoController extends GetxController{
               onPressed: () {
                 Get.back();
               },
-              child: Text(Constants.cancel.toUpperCase(),style: TextStyle(color: buttonBgColor))),
+              child: Text(Constants.cancel.toUpperCase(),style: const TextStyle(color: buttonBgColor))),
           TextButton(
               onPressed: () {
                 Get.back();
