@@ -1,6 +1,6 @@
-<p style="text-align: center;">
+<center><p>
   <img  src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" data-canonical-src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" width="400"  alt=""/>
-</p>
+</p></center>
 
 <h1 style="text-align: center">
   Customizable, Low-code Flutter Sample App For Android
