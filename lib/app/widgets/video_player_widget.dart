@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../common/app_localizations.dart';
+import '../common/constants.dart';
+import '../data/utils.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -19,7 +21,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isPlaying = false;
-  bool isStoped = false;
+  bool isStopped = false;
   double _sliderValue = 0.0;
 
   @override
@@ -30,7 +32,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         setState(() {
           _sliderValue =
               _controller.value.position.inSeconds.toDouble();
-          isStoped = _controller.value.isCompleted;
+          isStopped = _controller.value.isCompleted;
         });
       });
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
@@ -41,6 +43,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _controller.setPlaybackSpeed(1.0);
 
       });
+    }).catchError((e){
+      LogMessage.d("initialize", "$e");
+      //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
+      toToast(getTranslated("errorVideoInitialize"));
+      Navigator.pop(context);
     });
   }
 
@@ -117,7 +124,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     final duration = _controller.value.duration;
 
     String formatDuration(Duration d) {
-      return Helper.durationToString(d);
+      return DateTimeUtils.durationToString(d);
     }
 
     return Column(
@@ -136,7 +143,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               onPressed: _playPause,
               backgroundColor: buttonBgColor,
               child: Icon(
-                !_isPlaying || isStoped ? Icons.play_arrow : Icons.pause,
+                !_isPlaying || isStopped ? Icons.play_arrow : Icons.pause,
                 color: Colors.white,
               ),
             ),

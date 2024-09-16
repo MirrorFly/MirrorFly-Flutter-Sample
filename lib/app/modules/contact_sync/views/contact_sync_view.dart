@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 
+import '../../../data/utils.dart';
 import '../controllers/contact_sync_controller.dart';
 
-class ContactSyncPage extends GetView<ContactSyncController> {
+class ContactSyncPage extends StatefulWidget {
   const ContactSyncPage({super.key});
+
+  @override
+  State<ContactSyncPage> createState() => _ContactSyncPageState();
+}
+
+class _ContactSyncPageState extends State<ContactSyncPage> {
+  final ContactSyncController controller = ContactSyncController().get();
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +26,7 @@ class ContactSyncPage extends GetView<ContactSyncController> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(),
-            const Text('Hello..!!', style: TextStyle(fontSize: 23,
+            Text(getTranslated("hello"), style: const TextStyle(fontSize: 23,
                 fontWeight: FontWeight.w800,
                 color: textHintColor), textAlign: TextAlign.center,),
             Text(controller.name,
@@ -34,21 +43,21 @@ class ContactSyncPage extends GetView<ContactSyncController> {
               padding: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: Stack(
                 children: [
-                  Image.asset(contactSyncBg),
+                  AppUtils.assetIcon(assetName:contactSyncBg),
                   Positioned(
                     top: 100,
                     left: 100,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(contactBookFill),
+                        AppUtils.svgIcon(icon:contactBookFill),
                         Obx(() {
                           return Visibility(
                             visible: controller.syncing.value,
                             child: RotationTransition(
                                 turns: controller.turnsTween.animate(
                                     controller.animController),
-                                child: SvgPicture.asset(syncIcon)),
+                                child: AppUtils.svgIcon(icon:syncIcon)),
                           );
                         }),
                       ],

@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import '../../../common/app_localizations.dart';
 
 import '../../../common/constants.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/delete_account_reason_controller.dart';
 
-class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
+class DeleteAccountReasonView extends NavViewStateful<DeleteAccountReasonController> {
   const DeleteAccountReasonView({Key? key}) : super(key: key);
+
+  @override
+DeleteAccountReasonController createController({String? tag}) => Get.put(DeleteAccountReasonController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Delete My Account'),
+          title: Text(getTranslated("deleteMyAccount")),
         ),
         body: SafeArea(
           child: Padding(
@@ -21,9 +25,9 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'We hate to see you leave! Tell us why you are deleting your account:',
-                    style: TextStyle(color: textHintColor, fontSize: 15,fontWeight: FontWeight.normal),
+                  Text(
+                    getTranslated("deleteAccountReason"),
+                    style: const TextStyle(color: textHintColor, fontSize: 15,fontWeight: FontWeight.normal),
                   ),
                   const SizedBox(
                     height: 15,
@@ -35,7 +39,7 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                           ? null
                           : controller.reasonValue.value,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      hint: const Text("Select a reason",style: TextStyle(fontWeight: FontWeight.normal),),
+                      hint: Text(getTranslated("selectReason"),style: const TextStyle(fontWeight: FontWeight.normal),),
                       items: controller.deleteReasons.map((String items) {
                         return DropdownMenuItem(
                           value: items,
@@ -56,19 +60,19 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                     maxLines: null,
                     focusNode: controller.focusNode,
                     controller: controller.feedback,
-                    decoration: const InputDecoration(
-                      hintText: "Tell us how we can improve",
-                      hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                    decoration: InputDecoration(
+                      hintText: getTranslated("tellUsImprove"),
+                      hintStyle: const TextStyle(fontWeight: FontWeight.normal),
                       counterText: '',
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
-                      border: UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
+                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: dividerColor)),
+                      border: const UnderlineInputBorder(borderSide: BorderSide(color: dividerColor,width: 0)),
                     ),
                   ),
                   const SizedBox(
                     height: 15,
                   ),
-                  const Text(
-                    'We will store your feedback for future purpose',style: TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
+            Text(
+                    getTranslated("feedbackDesc"),style: const TextStyle(color: textColor,fontSize: 11,fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(
                     height: 55,
@@ -89,9 +93,9 @@ class DeleteAccountReasonView extends GetView<DeleteAccountReasonController> {
                               onPressed: () {
                                 controller.deleteAccount();
                               },
-                              child: const Text(
-                                'Delete My Account',
-                                style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                              child: Text(
+                                getTranslated("deleteMyAccount"),
+                                style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                               ),
                             ),
                           );

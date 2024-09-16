@@ -1,12 +1,16 @@
 // import 'package:better_video_player/better_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/video_preview/controllers/video_play_controller.dart';
+import '../../../modules/video_preview/controllers/video_play_controller.dart';
 
+import '../../../extensions/extensions.dart';
 import '../../../widgets/video_player_widget.dart';
 
-class VideoPlayerView extends GetView<VideoPlayController> {
+class VideoPlayerView extends NavViewStateful<VideoPlayController> {
   const VideoPlayerView({Key? key}) : super(key: key);
+
+  @override
+  VideoPlayController createController({String? tag}) => Get.put(VideoPlayController());
 
   @override
   Widget build(BuildContext context) {
@@ -17,35 +21,9 @@ class VideoPlayerView extends GetView<VideoPlayController> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // AspectRatio(
-            //   aspectRatio: 0.6,
-            //   child: BetterVideoPlayer(
-            //       configuration:
-            //       const BetterVideoPlayerConfiguration(
-            //         looping: false,
-            //         autoPlay: false,
-            //         allowedScreenSleep: false,
-            //         autoPlayWhenResume: false,
-            //       ),
-            //       controller:
-            //       BetterVideoPlayerController(),
-            //       dataSource: BetterVideoPlayerDataSource(
-            //         BetterVideoPlayerDataSourceType.file,
-            //         controller.videoPath.value,
-            //       ),
-            //     ),
-            // ),
-
-            AspectRatio(
-              aspectRatio: 0.6,
-              child: VideoPlayerWidget(
-                videoPath: controller.videoPath.value,
-                videoTitle: "Video",
-              ),
-            ),
-          ],
+        child: VideoPlayerWidget(
+          videoPath: controller.videoPath.value,
+          videoTitle: "Video",
         ),
       ),
     );

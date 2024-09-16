@@ -1,6 +1,6 @@
 
 
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
+import '../model/chat_message_model.dart';
 
 abstract class GroupedMedia {
   late double id;

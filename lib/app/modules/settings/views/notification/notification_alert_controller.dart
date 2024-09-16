@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../../../../data/session_management.dart';
 
 class NotificationAlertController extends FullLifeCycleController
 with FullLifeCycleMixin {
@@ -67,7 +67,7 @@ with FullLifeCycleMixin {
 
   getRingtoneName() {
     // var uri = SessionManagement.getNotificationUri();
-    // mirrorFlyLog("uri", uri.toString());
+    // LogMessage.d("uri", uri.toString());
     /*Mirrorfly.getRingtoneName().then((value) {
       var jsonNotification = json.decode(value!);
       if (jsonNotification != null) {

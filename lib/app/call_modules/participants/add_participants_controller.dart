@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-
+import '../../call_modules/outgoing_call/call_controller.dart';
+import '../../common/main_controller.dart';
+import '../../data/helper.dart';
+import '../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../app_style_config.dart';
+import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
-import '../../data/apputils.dart';
 import '../../data/session_management.dart';
+import '../../data/utils.dart';
 
 class AddParticipantsController extends GetxController with GetTickerProviderStateMixin {
   var callList = Get.find<CallController>().callList; //List<CallUserList>.empty(growable: true).obs;
@@ -33,6 +34,8 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   @override
   Future<void> onInit() async {
     super.onInit();
+    getCallLink();
+    groupId(await Mirrorfly.getCallGroupJid());
     tabController = TabController(length: 2, vsync: this);
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     // callList = Get.find<CallController>().callList;
@@ -68,11 +71,19 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         isPageLoading(true);
         fetchUsers(false);
       } else {
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
     } else {
       getGroupMembers();
     }
+  }
+
+  ///get ongoing call link
+  var meetLink = "".obs;
+  void getCallLink(){
+    Mirrorfly.getCallLink().then((value){
+      meetLink(value);
+    });
   }
 
   void onSearchPressed() {
@@ -173,29 +184,29 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.progressLoading();
+              NavUtils.back();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if (response.isSuccess && response.hasData) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES")),
+          child: Text(getTranslated("yes").toUpperCase())),
     ]);
   }
 
@@ -213,16 +224,16 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             selectedUsersJIDList.add(item.jid!);
             groupCallMembersCount(groupCallMembersCount.value + 1);
           } else {
-            toToast(Constants.callMembersLimit6.replaceFirst("%d", (groupCallMembersCount.value).toString()));
+            toToast(getTranslated("youCanSelectForCall").replaceFirst("%d", (groupCallMembersCount.value).toString()));
           }
         } else {
-          toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+          toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
         }
         //item.isSelected = true;
       }
       usersList.refresh();
     } else {
-      toToast("User Already Added");
+      toToast(getTranslated("userAlreadyAddedInCall"));
     }
   }
 
@@ -253,7 +264,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       getProfileDetails(jid).then((value) {
         var userListIndex = usersList.indexWhere((element) => element.jid == jid);
         var mainListIndex = mainUsersList.indexWhere((element) => element.jid == jid);
-        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
+        LogMessage.d('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
           usersList.refresh();
@@ -292,22 +303,24 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callList.length != getMaxCallUsersCount) {
-      if (await AppUtils.isNetConnected()) {
-        Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList, flyCallback: (FlyResponse response) {  });
-        Get.back();
-      } else {
-        toToast(Constants.noInternetConnection);
-      }
+      Mirrorfly.inviteUsersToOngoingCall(jidList: selectedUsersJIDList,flyCallback: (FlyResponse response){
+        LogMessage.d("inviteUsersToOngoingCall", response.toString());
+        if(response.isSuccess){
+          NavUtils.back();
+        }else{
+          toToast(getErrorDetails(response));
+        }
+      });
     } else {
-      toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+      toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
     }
   }
 
@@ -330,7 +343,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       callback(FlyResponse response) async {
         if (response.isSuccess && response.hasData) {
           var data = response.data;
-          mirrorFlyLog("userlist", data);
+          LogMessage.d("userlist", data);
           var item = userListFromJson(data);
           var items = getFilteredList(callConnectedUserList, item.data);
           var list = <ProfileDetails>[];
@@ -338,7 +351,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
           if (groupJid.value.checkNull().isNotEmpty) {
             await Future.forEach(items, (it) async {
               await Mirrorfly.isMemberOfGroup(groupJid: groupJid.value.checkNull(), userJid: it.jid.checkNull()).then((value) {
-                mirrorFlyLog("item", value.toString());
+                LogMessage.d("item", value.toString());
                 if (value == null || !value) {
                   list.add(it);
                 }
@@ -427,11 +440,13 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
       }
 
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: _searchText, flyCallback: callback)
+          ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
+          metaDataUserList: Constants.metaDataUserList, //#metaData
+          flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
       /*future.then((data) async {
         //Mirrorfly.getUserList(pageNum, _searchText).then((data) async {
-        mirrorFlyLog("userlist", data);
+        LogMessage.d("userlist", data);
         var item = userListFromJson(data);
         var items = getFilteredList(callConnectedUserList,item.data);
         var list = <ProfileDetails>[];
@@ -441,7 +456,7 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
             await Mirrorfly.isMemberOfGroup(
                 groupJid.value.checkNull(), it.jid.checkNull())
                 .then((value) {
-              mirrorFlyLog("item", value.toString());
+              LogMessage.d("item", value.toString());
               if (value == null || !value) {
                 list.add(it);
               }
@@ -535,17 +550,17 @@ class AddParticipantsController extends GetxController with GetTickerProviderSta
         toToast(error.toString());
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   void getGroupMembers() {
     if (groupId.isNotEmpty) {
       Mirrorfly.getGroupMembersList(jid: groupId.value.checkNull(), flyCallBack: (FlyResponse response) {
-        mirrorFlyLog("getGroupMembersList", response.toString());
+        LogMessage.d("getGroupMembersList", response.toString());
         if (response.isSuccess && response.hasData) {
           var list = profileFromJson(response.data);
-          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid));
+          var callConnectedUserList = List<String>.from(callList.map((element) => element.userJid?.value));
           var filteredList = getFilteredList(callConnectedUserList, list);
           mainUsersList(filteredList);
           usersList(filteredList);

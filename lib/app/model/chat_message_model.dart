@@ -5,7 +5,9 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import 'package:get/get_rx/get_rx.dart';
+import '../extensions/extensions.dart';
+import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
 
 List<ChatMessageModel> chatMessageModelFromJson(String str) =>
     List<ChatMessageModel>.from(
@@ -37,8 +39,10 @@ class ChatMessageModel {
     required this.messageId,
     required this.messageSentTime,
     required this.messageStatus,
+    required this.isMessageEdited,
     required this.messageTextContent,
     required this.messageType,
+    this.metaData = const [],
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -64,8 +68,10 @@ class ChatMessageModel {
   String messageId;
   int messageSentTime;
   RxString messageStatus;
+  RxBool isMessageEdited;
   String? messageTextContent;
   String messageType;
+  List<MessageMetaData> metaData;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -94,8 +100,10 @@ class ChatMessageModel {
           messageId: json["messageId"],
           messageSentTime: json["messageSentTime"],
           messageStatus: json["messageStatus"].toString().obs,
+          isMessageEdited: json["isMessageEdited"].toString().toBool().obs,
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
+          metaData: json["metaData"] == null ? [] : List<MessageMetaData>.from(json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
           replyParentChatMessage: json["replyParentChatMessage"] == null
               ? null
               : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -129,8 +137,10 @@ class ChatMessageModel {
         "messageId": messageId,
         "messageSentTime": messageSentTime,
         "messageStatus": messageStatus.value,
+        "isMessageEdited": isMessageEdited.value,
         "messageTextContent": messageTextContent,
         "messageType": messageType,
+        "metaData": metaData,
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,

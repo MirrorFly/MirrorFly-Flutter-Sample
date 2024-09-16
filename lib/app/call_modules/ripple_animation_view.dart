@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 
 
 class RipplesAnimation extends StatefulWidget {
@@ -116,4 +117,88 @@ class CirclePainter extends CustomPainter {
   }
   @override
   bool shouldRepaint(CirclePainter oldDelegate) => true;
+}
+
+class RippleWidget extends StatefulWidget {
+  const RippleWidget({super.key,required this.size, required this.rippleColor, this.child,});
+  final double size;
+  final Color rippleColor;
+  final Widget? child;
+
+  @override
+  RippleWidgetState createState() => RippleWidgetState();
+}
+
+class RippleWidgetState extends State<RippleWidget> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      animationBehavior: AnimationBehavior.preserve,
+      vsync: this,
+    )..repeat(); // Repeat the animation indefinitely
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        children: [
+          Center(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return CustomPaint(
+                  painter: RipplePainter(_controller.value,widget.rippleColor),
+                  child: SizedBox(
+                    width: widget.size,
+                    height: widget.size,
+                  ),
+                );
+              },
+            ),
+          ),
+          Center(child: widget.child,)
+        ],
+      ),
+    );
+  }
+}
+
+class RipplePainter extends CustomPainter {
+  final double progress;
+  final Color rippleColor;
+  final int rippleCount = 2;
+
+  RipplePainter(this.progress, this.rippleColor);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // final radius = (progress * size.width/2);
+    final paint = Paint()
+      ..color = rippleColor.withOpacity(1.0 - progress)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width/2;
+
+    final center = Offset(size.width/2, size.height/2);
+
+    for (int i = 0; i < rippleCount; i++) {
+      final rippleProgress = (progress + i / rippleCount) % 1.0;
+      final radius = rippleProgress * size.width / 2;
+      canvas.drawCircle(center, radius, paint..color = rippleColor.withOpacity(1.0 - rippleProgress));
+    }
+    // canvas.drawCircle(center, radius, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

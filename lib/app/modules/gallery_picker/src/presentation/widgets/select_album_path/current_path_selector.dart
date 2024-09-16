@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../../data/utils.dart';
 import '../../pages/gallery_media_picker_controller.dart';
 import 'change_path_widget.dart';
 import 'dropdown.dart';
@@ -73,7 +74,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
                   /// save selected album
                   if (value != null) {
                     provider.currentAlbum = value;
-                    //provider.setAssetCount();
+                    provider.setAssetCount();
                   }
                 },
                 onShow: (value) {
@@ -85,7 +86,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
 
             /// top custom widget
             Container(
-              width: MediaQuery.of(context).size.width / 2,
+              width: NavUtils.size.width / 2,
               alignment: Alignment.bottomLeft,
               child: appBarLeadingWidget ?? Container(),
             )
@@ -127,7 +128,7 @@ class SelectedPathDropdownButton extends StatelessWidget {
           children: [
             /// current album name
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.28,
+              width: NavUtils.size.width * 0.28,
               child: Text(
                 provider.currentAlbum!.name,
                 overflow: TextOverflow.ellipsis,

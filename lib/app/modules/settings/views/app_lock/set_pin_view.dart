@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
+import '../../../../common/app_localizations.dart';
+import '../../../../common/widgets.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
+import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
-class SetPinView extends GetView<AppLockController> {
+class SetPinView extends NavView<AppLockController> {
   const SetPinView({Key? key}) : super(key: key);
+
+  @override
+AppLockController createController({String? tag}) => AppLockController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.modifyPin.value ? 'Change PIN' : 'PIN Lock',
+        title: Text(controller.modifyPin.value ? getTranslated("changePin") : getTranslated("pinLock"),
           style: const TextStyle(fontWeight: FontWeight.bold,
               color: appbarTextColor,
               fontSize: 20.0),),
@@ -26,7 +31,7 @@ class SetPinView extends GetView<AppLockController> {
           return Column(
             children: [
               Visibility(visible: controller.modifyPin.value,
-                  child: passwordField(title: 'Enter old PIN',
+                  child: passwordField(title: getTranslated("enterOldPIN"),
                       controller: controller.oldPin,
                       secure: controller.oldPinSecure.value,
                       focusNode: controller.oldPinFocus,
@@ -42,7 +47,7 @@ class SetPinView extends GetView<AppLockController> {
                   height: 10,
                 ),
               ),
-              passwordField(title: 'Enter new PIN',
+              passwordField(title: getTranslated("enterNewPIN"),
                   controller: controller.newPin,
                   secure: controller.newPinSecure.value,
                   focusNode: controller.newPinFocus,
@@ -55,7 +60,7 @@ class SetPinView extends GetView<AppLockController> {
               const SizedBox(
                 height: 10,
               ),
-              passwordField(title: 'Confirm new PIN',
+              passwordField(title: getTranslated("confirmNewPIN"),
                   controller: controller.confirmPin,
                   secure: controller.confirmPinSecure.value,
                   focusNode: controller.confirmPinFocus,
@@ -80,8 +85,8 @@ class SetPinView extends GetView<AppLockController> {
                   onPressed: () {
                     controller.savePin();
                   },
-                  child: const Text(
-                    'Save',style: TextStyle(color: Colors.white),
+                  child: Text(
+                    getTranslated("save"),style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -109,7 +114,7 @@ class SetPinView extends GetView<AppLockController> {
           ),
           Row(
             children: [
-              SvgPicture.asset(lockOutlineBlack, width: 24, height: 24,),
+              AppUtils.svgIcon(icon:lockOutlineBlack, width: 24, height: 24,),
               Expanded(
                 child: TextFormField(
                   textInputAction: textAction,
@@ -138,13 +143,13 @@ class SetPinView extends GetView<AppLockController> {
                       color: textColor),
                 ),
               ),
-              IconButton(icon: Image.asset(
+              IconButton(icon: AppUtils.assetIcon(assetName:
                 secure ? eyeOff : eyeOn, width: 24, height: 24,),
                 onPressed: eyeTap,)
             ],
           ),
           const AppDivider()
-          /* ListItem(leading:SvgPicture.asset(lockOutlineBlack,width: 24,height: 24,),
+          /* ListItem(leading:AppUtils.svgIcon(icon:lockOutlineBlack,width: 24,height: 24,),
               title: TextField(
                 controller: controller,
                 onChanged: (value) {},
@@ -160,7 +165,7 @@ class SetPinView extends GetView<AppLockController> {
                     counterText: ""
                 ),
                 style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 20),
-          ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: Image.asset(secure ? eyeOff : eyeOn,width: 24,height: 24,), onPressed: eyeTap,))*/
+          ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: AppUtils.assetIcon(assetName:secure ? eyeOff : eyeOn,width: 24,height: 24,), onPressed: eyeTap,))*/
         ],
       ),
     );

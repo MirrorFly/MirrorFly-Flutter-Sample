@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../../common/app_localizations.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
 
 class AboutUsView extends StatelessWidget {
   const AboutUsView({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class AboutUsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Us'),
+        title: Text(getTranslated("aboutUs")),
         automaticallyImplyLeading: true,
       ),
       body: Padding(
@@ -24,21 +26,21 @@ class AboutUsView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(titleContactMsg,style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(titleContactUs,style: textStyle,),
+            Text(getTranslated("contactUs"),style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(titleContactMsg,style: textMsgStyle,),
+            Text(getTranslated("titleContactMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
-            const Text(titleFaq,style: textStyle,),
+            Text(getTranslated("titleFaq"),style: textStyle,),
             const SizedBox(height: 16,),
-            const Text(titleFaqMsg,style: textMsgStyle,),
+            Text(getTranslated("titleFaqMsg"),style: textMsgStyle,),
             const SizedBox(height: 16,),
             InkWell(child: const Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Text.rich(TextSpan(text: mirrorFly,style: TextStyle(fontSize: 17, decoration: TextDecoration.underline,color: Color(
                   0xffa2a1a1)))),
-            ),onTap: ()=>launchWeb(websiteMirrorFly),)
+            ),onTap: ()=>AppUtils.launchWeb(Uri.parse(getTranslated("aboutUsLink"))),)
           ],
         ),
       ),

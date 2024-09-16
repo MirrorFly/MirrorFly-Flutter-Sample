@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../data/permissions.dart';
-import '../../../routes/app_pages.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 class CallTimeoutController extends GetxController {
   var callType = ''.obs;
@@ -22,10 +23,10 @@ class CallTimeoutController extends GetxController {
     super.onInit();
     enterFullScreen();
     groupId(await Mirrorfly.getCallGroupJid());
-    callType(Get.arguments["callType"]);
-    callMode(Get.arguments["callMode"]);
-    users.value = (Get.arguments["userJid"] as List<String?>);
-    calleeName(Get.arguments["calleeName"]);
+    callType(NavUtils.arguments["callType"]);
+    callMode(NavUtils.arguments["callMode"]);
+    users.value = (NavUtils.arguments["userJid"] as List<String?>);
+    calleeName(NavUtils.arguments["calleeName"]);
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
   }
@@ -37,24 +38,24 @@ class CallTimeoutController extends GetxController {
   }
 
   void cancelCallTimeout() {
-    Get.back();
+    NavUtils.back();
   }
 
   callAgain() async {
-    // Get.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
+    // NavUtils.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
-      if(callType.value == Constants.audioCall) {
+      if(callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
           if(users.length==1) {
             Mirrorfly.makeVoiceCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
             Mirrorfly.makeGroupVoiceCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }
@@ -66,7 +67,7 @@ class CallTimeoutController extends GetxController {
           if(users.length==1) {
             Mirrorfly.makeVideoCall(toUserJid: users.first!, flyCallBack: (FlyResponse response) {
               if (response.isSuccess) {
-                Get.offNamed(
+                NavUtils.offNamed(
                     Routes.outGoingCallView, arguments: {"userJid": users});
               }
             });
@@ -74,7 +75,7 @@ class CallTimeoutController extends GetxController {
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
             Mirrorfly.makeGroupVideoCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
-              Get.offNamed(
+              NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
           }
@@ -83,7 +84,7 @@ class CallTimeoutController extends GetxController {
         }
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

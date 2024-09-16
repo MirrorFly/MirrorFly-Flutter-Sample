@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../../data/session_management.dart';
+import '../../../../../data/utils.dart';
 import '../../../../../model/language_model.dart';
 
 class LanguageController extends GetxController{
@@ -21,9 +22,9 @@ class LanguageController extends GetxController{
     languageList.clear();
     if(text.isNotEmpty) {
       var filter = mainLanguageList.where((item) => item.languageName.toLowerCase().contains(text.toLowerCase()));
-      languageList(filter.toList());
+      languageList.addAll(filter.toList());
     }else{
-      languageList(mainLanguageList);
+      languageList.addAll(mainLanguageList);
     }
     languageList.refresh();
   }
@@ -33,21 +34,21 @@ class LanguageController extends GetxController{
     search.value=false;
     if(isSearching){
      languageList.clear();
-     languageList(mainLanguageList);
+     languageList.addAll(mainLanguageList);
      languageList.refresh();
      isSearching=false;
     }else{
-      Get.back();
+      NavUtils.back();
     }
   }
 
   @override
   void onInit() {
     super.onInit();
-    translationLanguage(Get.arguments as String);
+    translationLanguage(NavUtils.arguments as String);
     loadAsset().then((value){
       mainLanguageList.addAll(value);
-      languageList(value);
+      languageList.addAll(value);
     });
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -69,6 +70,6 @@ class LanguageController extends GetxController{
     translationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguage(item.languageName);
     SessionManagement.setGoogleTranslationLanguageCode(item.languageCode);
-    Get.back(result: item.languageName);
+    NavUtils.back(result: item.languageName);
   }
 }

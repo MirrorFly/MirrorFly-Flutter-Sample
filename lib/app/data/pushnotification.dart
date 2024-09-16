@@ -7,10 +7,10 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../data/session_management.dart';
+import '../data/utils.dart';
+import '../model/chat_message_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 import '../common/constants.dart';
 import '../common/notification_service.dart';
@@ -68,7 +68,7 @@ class PushNotifications {
   static void getToken(){
     FirebaseMessaging.instance.getToken().then((value) {
       if(value!=null) {
-        mirrorFlyLog("firebase_token", value);
+        LogMessage.d("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
         SessionManagement.setToken(value);
         Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
@@ -76,18 +76,18 @@ class PushNotifications {
         });
       }
     }).catchError((er){
-      mirrorFlyLog("FirebaseMessaging", er.toString());
+      LogMessage.d("FirebaseMessaging", er.toString());
     });
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) {
-      mirrorFlyLog("onTokenRefresh", fcmToken.toString());
+      LogMessage.d("onTokenRefresh", fcmToken.toString());
       SessionManagement.setToken(fcmToken);
       Mirrorfly.updateFcmToken(firebaseToken: fcmToken, flyCallBack: (FlyResponse response) {
         LogMessage.d("updateFcmToken", response.isSuccess);
       });
     }).onError((err) {
       // Error getting token.
-      mirrorFlyLog("onTokenRefresh", err.toString());
+      LogMessage.d("onTokenRefresh", err.toString());
     });
   }
   static void initInfo(){
@@ -96,13 +96,13 @@ class PushNotifications {
     var iosInitialize = const DarwinInitializationSettings();
     var initalizationSettings = InitializationSettings(android: androidInitialize,iOS: iosInitialize);
     flutterLocalNotificationsPlugin.initialize(initalizationSettings,onDidReceiveNotificationResponse: (NotificationResponse response){
-      mirrorFlyLog("notificationresposne", response.payload.toString());
+      LogMessage.d("notificationresposne", response.payload.toString());
       try {
         if (response.payload != null && response.payload!.isNotEmpty) {
           //on notification click
         }
       }catch(e){
-        mirrorFlyLog("error", e.toString());
+        LogMessage.d("error", e.toString());
         return;
       }
     });*/
@@ -115,22 +115,27 @@ class PushNotifications {
     debugPrint("#Mirrorfly Notification setupInteractedMessage $initialMessage");
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
+
+    //This below method will called, when clicking the notification popup in the screen itself during the message received. Not from the notification tray
     if (initialMessage != null) {
       debugPrint("#Mirrorfly Notification setupInteractedMessage message opened from notification click terminated");
       // onMessage(initialMessage);
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data["to_user"]}");
       debugPrint("#Mirrorfly Notification message received for ${initialMessage.data}");
-      Get.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
+      NavUtils.offAllNamed("${AppPages.chat}?jid=${initialMessage.data["from_user"]}&from_notification=true");
+      return;
     }else{
       debugPrint("#Mirrorfly Notification setupInteractedMessage else");
     }
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
+
+    //This method will called, when the notification popup is clicked from the notification tray.
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
       debugPrint("#Mirrorfly Notification message opened from notification click background");
-      Get.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
-
+      NavUtils.offAllNamed("${AppPages.chat}?jid=${message.data["from_user"]}&from_notification=true");
+      return;
     });
   }
 
@@ -150,7 +155,7 @@ class PushNotifications {
     if(Platform.isAndroid) {
       var permission = await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()!.requestPermission();
+          AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
       debugPrint("permission :$permission");
     }
     NotificationSettings settings = await messaging.requestPermission(
@@ -193,7 +198,7 @@ class PushNotifications {
     if(notificationData.isNotEmpty && Platform.isAndroid) {
       WidgetsFlutterBinding.ensureInitialized();
       Mirrorfly.handleReceivedMessage(notificationData: notificationData, flyCallBack: (FlyResponse response) {
-          mirrorFlyLog("#Mirrorfly Notification -> notification message", response.toString());
+          LogMessage.d("#Mirrorfly Notification -> notification message", response.toString());
         if(response.isSuccess && response.hasData){
           var data = sendMessageModelFromJson(response.data);
           if(data.messageId.isNotEmpty) {
