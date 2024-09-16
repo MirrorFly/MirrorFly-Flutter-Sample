@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
+import '../../../common/app_localizations.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../controllers/video_preview_controller.dart';
 
-class VideoPreviewView extends GetView<VideoPreviewController> {
+class VideoPreviewView extends NavViewStateful<VideoPreviewController> {
   const VideoPreviewView({Key? key}) : super(key: key);
+
+  @override
+VideoPreviewController createController({String? tag}) => Get.put(VideoPreviewController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,7 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                 if (controller.isInitialized.value) {
                   return Center(
                     child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
+                        width: NavUtils.size.width,
                         height: controller.videoPlayerController.value.size.height,
                         child: AspectRatio(
                           aspectRatio:
@@ -87,10 +91,10 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                 ),
                                 maxLines: 6,
                                 minLines: 1,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: "Add Caption....",
-                                  hintStyle: TextStyle(
+                                  hintText: getTranslated("addCaption"),
+                                  hintStyle: const TextStyle(
                                     color: Colors.white,
                                   ),),
                               ),
@@ -100,11 +104,11 @@ class VideoPreviewView extends GetView<VideoPreviewController> {
                                   controller.sendVideoMessage();
 
                                 },
-                                child: SvgPicture.asset(
+                                child: AppUtils.svgIcon(icon:
                                     'assets/logos/img_send.svg')),
                           ],
                         ),
-                        // SvgPicture.asset(
+                        // AppUtils.svgIcon(icon:
                         //   rightArrow,
                         //   width: 18,
                         //   height: 18,

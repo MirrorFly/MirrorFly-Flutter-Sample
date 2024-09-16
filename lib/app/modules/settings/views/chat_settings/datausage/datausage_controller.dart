@@ -1,6 +1,6 @@
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../../../common/constants.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class DataUsageController extends GetxController{
 
@@ -67,8 +67,8 @@ class DataUsageController extends GetxController{
   setAutoDownloadWifiDocument(bool value) => _autoDownloadWifiDocument(value);
 
   void onClick(String from, String type){
-    mirrorFlyLog("from", from);
-    mirrorFlyLog("type", type);
+    LogMessage.d("from", from);
+    LogMessage.d("type", type);
     if(from==mobile) {
       switch (type) {
         case Constants.photo:

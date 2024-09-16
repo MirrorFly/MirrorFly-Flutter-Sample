@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../data/utils.dart';
 import 'dropdown.dart';
 
 class OverlayDropDown<T> extends StatelessWidget {
@@ -18,7 +19,7 @@ class OverlayDropDown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// local variables
-    final Size size = MediaQuery.of(context).size;
+    final Size size = NavUtils.size;
     final double screenHeight = size.height;
     final double screenWidth = size.width;
     final double space = screenHeight - height;

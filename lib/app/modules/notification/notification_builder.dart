@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_utils.dart';
-import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import '../../common/constants.dart';
+import '../../data/session_management.dart';
+import '../../extensions/extensions.dart';
+import '../../model/chat_message_model.dart';
+import '../../modules/notification/notification_utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
 
 import '../../common/notification_service.dart';
 import '../../data/helper.dart';
@@ -253,7 +252,6 @@ class NotificationBuilder {
 
   //Call Notification
   static var unReadCallCount = 0;
-  static var callNotificationId = 124;
   static createCallNotification(String title,String messageContent) async {
     unReadCallCount += 1;
     unReadCallCount += await getTotalUnReadCount();
@@ -283,8 +281,8 @@ class NotificationBuilder {
         ?.createNotificationChannel(channel);
 
     await flutterLocalNotificationsPlugin.show(
-        callNotificationId, title, messageContent, notificationDetails,
-        payload: "$callNotificationId");
+       Constants.callNotificationId, title, messageContent, notificationDetails,
+        payload: "${Constants.callNotificationId}");
   }
 
   static AndroidNotificationChannel buildCallNotificationChannel(){

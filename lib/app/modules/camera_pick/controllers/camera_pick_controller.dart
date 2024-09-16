@@ -4,10 +4,12 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../data/utils.dart';
 
 class CameraPickController extends GetxController with WidgetsBindingObserver  {
   RxDouble scale = 1.0.obs;
@@ -43,11 +45,11 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   @override
   void dispose() {
-    cameraController?.dispose();
+    debugPrint("cameraController disposed");
     super.dispose();
   }
   var min = 1.0;
-  var max = 8.0;
+  var max = 5.0;
   var pointers =0;
   Future<void> initCamera() async {
     cameras = await availableCameras();
@@ -55,9 +57,11 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     cameraController?.initialize().then((value)async {
       cameraInitialized(true);
       min = (await cameraController?.getMinZoomLevel())!;
-      max = (await cameraController?.getMaxZoomLevel())!;
-      debugPrint("min : $min");
-      debugPrint("max : $max");
+      var maxZoom = (await cameraController?.getMaxZoomLevel())!;
+      //Setting this max zoom, due to iOS devices are stuck when capturing stating - CameraException(setFocusPointFailed, Device does not have focus point capabilities)
+      max = maxZoom * 0.35;
+      debugPrint("zoom min : $min");
+      debugPrint("zoom max : $max");
     });
 
   }
@@ -159,7 +163,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   }
 
   void showInSnackBar(String message) {
-    ScaffoldMessenger.of(Get.context!)
+    ScaffoldMessenger.of(NavUtils.currentContext)
         .showSnackBar(SnackBar(content: Text(message)));
   }
 
@@ -181,37 +185,37 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   Future<void> takePhoto(context) async {
     if(cameraInitialized.value) {
-      Helper.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
         file = await cameraController?.takePicture();
       }catch(e){
         LogMessage.d("takePhoto", "$e");
-        Helper.hideLoading();
-        toToast(Constants.insufficientMemoryError);//CameraException(IOError, Failed saving image)
+        DialogUtils.hideLoading();
+        toToast(getTranslated("insufficientMemoryError"));//CameraException(IOError, Failed saving image)
       }finally{
         debugPrint("file : ${file?.path}");
-        Helper.hideLoading();
-        Get.back(result: file);
+        DialogUtils.hideLoading();
+        NavUtils.back(result: file);
       }
     }
   }
 
   stopRecord()async{
     if(cameraInitialized.value) {
-      //Helper.showLoading();
-      Helper.showLoading();
+      //DialogUtils.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
        file = await stopVideoRecording();
       }catch(e){
         LogMessage.d("stopRecord", "$e");
-        Helper.hideLoading();
-        toToast(Constants.insufficientMemoryError);
+        DialogUtils.hideLoading();
+        toToast(getTranslated("insufficientMemoryError"));
       }finally{
         // debugPrint("file : ${file?.path}, ${file?.length()},");
-        Helper.hideLoading();
-        Get.back(result: file);
+        DialogUtils.hideLoading();
+        NavUtils.back(result: file);
         isRecording(false);
       }
 
@@ -220,11 +224,15 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
 
   void toggleCamera() {
     cameraInitialized(false);
+    flash(false);
     isFrontCamera.value = !isFrontCamera.value;
     transform = transform * pi;
     int cameraPos = isFrontCamera.value ? 0 : 1;
     cameraController = CameraController(cameras[cameraPos], ResolutionPreset.high);
-    cameraController?.initialize().then((value) => cameraInitialized(true));
+    cameraController?.initialize().then((value){
+      cameraInitialized(true);
+    });
+
   }
 
 

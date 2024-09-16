@@ -1,13 +1,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../../common/constants.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:mirrorfly_plugin/mirrorfly.dart';
-import '../../data/apputils.dart';
-import '../../routes/app_pages.dart';
+import '../../app_style_config.dart';
+import '../../common/app_localizations.dart';
+import '../../data/utils.dart';
+import '../../routes/route_settings.dart';
 
 class ScannerController extends GetxController {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -49,14 +50,14 @@ class ScannerController extends GetxController {
   }
 
   loginWebChatViaQRCode(String? barcode) async {
-    mirrorFlyLog("barcode", barcode.toString());
+    LogMessage.d("barcode", barcode.toString());
     if (barcode != null) {
       if(await AppUtils.isNetConnected()) {
         controller!.pauseCamera();
         /*Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
           if (value != null) {
             SessionManagement.setWebChatLogin(value);
-            Get.back();
+            NavUtils.back();
           } else {
 
           }
@@ -64,7 +65,7 @@ class ScannerController extends GetxController {
           controller!.resumeCamera();
         });*/
       }else{
-        toToast(Constants.noInternetConnection);
+        toToast(getTranslated("noInternetConnection"));
       }
 
     }
@@ -72,17 +73,17 @@ class ScannerController extends GetxController {
 
   logoutWebUser() async {
     if(await AppUtils.isNetConnected()) {
-      Helper.progressLoading();
+      DialogUtils.progressLoading();
       /*Mirrorfly.webLoginDetailsCleared();
       Mirrorfly.logoutWebUser(loginQr).then((value) {
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
         if (value != null && value) {
           SessionManagement.setWebChatLogin(false);
-          Get.back();
+          NavUtils.back();
         }
       });*/
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -130,24 +131,24 @@ class ScannerController extends GetxController {
 
   addLogin() {
     // Mirrorfly.webLoginDetailsCleared();
-    Get.toNamed(Routes.scanner)?.then((value) {
+    NavUtils.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
   }
 
   logoutWeb() {
-    Helper.showAlert(message: "Are you want to logout?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("logoutConfirmation"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             logoutWebUser();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 }

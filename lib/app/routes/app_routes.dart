@@ -1,4 +1,5 @@
-part of 'app_pages.dart';
+
+part of 'route_settings.dart';
 
 abstract class Routes {
   Routes._();
@@ -47,8 +48,11 @@ abstract class Routes {
   static const dataUsageSetting = _Paths.dataUsageSetting;
   static const contactSync = _Paths.contactSync;
   static const viewAllMediaPreview = _Paths.viewAllMediaPreview;
+  static const addBusyStatus = _Paths.addBusyStatus;
+  static const addProfileStatus = _Paths.addProfileStatus;
 
   //call
+  static const joinCallPreview = _Paths.joinCallPreview;
   static const outGoingCallView = _Paths.outGoingCallView;
   static const onGoingCallView = _Paths.onGoingCallView;
   static const callTimeOutView = _Paths.callTimeOutView;
@@ -105,8 +109,11 @@ abstract class _Paths {
   static const dataUsageSetting = '/data_usage_setting';
   static const contactSync = '/contact_sync';
   static const viewAllMediaPreview = '/view-all-media-preview';
+  static const addBusyStatus = '/add_busy_status';
+  static const addProfileStatus = '/add_profile_status';
 
   //call
+  static const joinCallPreview = '/joinCallPreview';
   static const outGoingCallView = '/outGoingCallView';
   static const onGoingCallView = '/onGoingCallView';
   static const callTimeOutView = '/call-timeout';

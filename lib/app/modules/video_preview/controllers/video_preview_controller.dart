@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../data/utils.dart';
 import '../../chat/controllers/chat_controller.dart';
 
 class VideoPreviewController extends GetxController {
@@ -21,12 +22,12 @@ class VideoPreviewController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    userName = Get.arguments['userName'];
-    videoPath = Get.arguments['filePath'];
-    textMessage = Get.arguments['caption'];
+    userName = NavUtils.arguments['userName'];
+    videoPath = NavUtils.arguments['filePath'];
+    textMessage = NavUtils.arguments['caption'];
     debugPrint("caption text received--> $textMessage");
     caption.text = textMessage;
-    videoPlayerController = VideoPlayerController.file(File(Get.arguments['filePath']))
+    videoPlayerController = VideoPlayerController.file(File(NavUtils.arguments['filePath']))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         isInitialized(true);
@@ -66,10 +67,10 @@ class VideoPreviewController extends GetxController {
        var response = await Get.find<ChatController>().sendVideoMessage(videoPath, caption.text , "");
        debugPrint("Preview View ==> $response");
        if(response != null){
-         Get.back();
+         NavUtils.back();
        }
     /* }else{
-       toToast(Constants.noInternetConnection);
+       toToast(getTranslated("noInternetConnection"));
      }*/
 
    }

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../data/utils.dart';
+
 class CountryController extends GetxController{
 
   var mainCountryList = List<CountryData>.empty(growable: true);
@@ -33,7 +35,7 @@ class CountryController extends GetxController{
      countryList.refresh();
      isSearching=false;
     }else{
-      Get.back();
+      NavUtils.back();
     }
   }
 
