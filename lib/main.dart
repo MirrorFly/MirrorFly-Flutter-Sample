@@ -78,12 +78,12 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+      licenseKey: 'Your_License_Key_Here',
       iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
       flyCallback: (response) async {
-        if (response.isSuccess) {//8825508012
+        if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
           LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
           Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
