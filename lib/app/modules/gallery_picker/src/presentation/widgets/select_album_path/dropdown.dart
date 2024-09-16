@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../../data/utils.dart';
 import '../../../core/functions.dart';
 
 typedef DropdownWidgetBuilder<T> = Widget Function(
@@ -41,7 +42,7 @@ class DropDownState<T> extends State<DropDown<T>>
         }
 
         /// render overlay
-        final height = MediaQuery.of(context).size.height;
+        final height = NavUtils.size.height;
         final ctx = widget.relativeKey?.currentContext ?? context;
         RenderBox box = ctx.findRenderObject() as RenderBox;
         final offsetStart = box.localToGlobal(Offset.zero);

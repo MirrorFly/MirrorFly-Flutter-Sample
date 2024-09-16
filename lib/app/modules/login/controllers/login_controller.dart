@@ -3,22 +3,24 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
+import 'package:get/get.dart';
+import '../../../common/main_controller.dart';
+import '../../../data/helper.dart';
+import '../../../data/permissions.dart';
+import '../../../extensions/extensions.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:otp_text_field/otp_field.dart';
 
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
 import '../../../data/session_management.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
-import '../../../routes/app_pages.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -52,11 +54,11 @@ class LoginController extends GetxController {
   // void registerUser(BuildContext context) {
 
   showLoading() {
-    Helper.showLoading(message: "Please Wait...");
+    DialogUtils.showLoading(message: getTranslated("pleaseWait"),dialogStyle: AppStyleConfig.dialogStyle);
   }
 
   hideLoading() {
-    Helper.hideLoading();
+    DialogUtils.hideLoading();
   }
 
   void startTimer() {
@@ -93,13 +95,13 @@ class LoginController extends GetxController {
 
   Future<void> registerUser() async {
     if (mobileNumber.text.isEmpty) {
-      toToast("Please Enter Mobile Number");
+      toToast(getTranslated("plsEnterMobileNumber"));
     } else {
       if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
         // phoneAuth();
         registerAccount();
       }else{
-        toToast("Please Enter Valid Mobile Number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
       }
     }
   }
@@ -110,7 +112,7 @@ class LoginController extends GetxController {
           "dialCode : $dialCode, mobileNumber : $mobileNumber");
       lib_phone_number.init();
       var parse = await lib_phone_number.parse(dialCode+mobileNumber);
-      LogMessage.d("validMobileNumber", "parse : $parse");;
+      LogMessage.d("validMobileNumber", "parse : $parse");
       return true;
     }catch(e){
       LogMessage.d("validMobileNumber", "error : $e");
@@ -126,8 +128,8 @@ class LoginController extends GetxController {
     Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
-        Helper.hideLoading();
-        Get.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        DialogUtils.hideLoading();
+        NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
       }
     }).catchError((error) {
       debugPrint(error.message);
@@ -150,14 +152,14 @@ class LoginController extends GetxController {
           verificationFailed: (FirebaseAuthException e) {
             timeout(true);
 
-            mirrorFlyLog("verificationFailed", e.toString());
-            mirrorFlyLog("verificationFailed", e.message!);
-            mirrorFlyLog("verificationFailed", e.code);
-            toToast("Please Enter Valid Mobile Number");
+            LogMessage.d("verificationFailed", e.toString());
+            LogMessage.d("verificationFailed", e.message!);
+            LogMessage.d("verificationFailed", e.code);
+            toToast(getTranslated("plsEnterValidMobileNumber"));
             hideLoading();
           },
           codeSent: (String verificationId, int? resendToken) {
-            mirrorFlyLog("codeSent", verificationId);
+            LogMessage.d("codeSent", verificationId);
             this.verificationId = verificationId;
             resendingToken = resendToken;
 
@@ -166,25 +168,25 @@ class LoginController extends GetxController {
 
             if (verificationId.isNotEmpty) {
               hideLoading();
-              Get.toNamed(Routes.otp)?.then((value) {
+              NavUtils.toNamed(Routes.otp)?.then((value) {
                 //Change Number
                 if (value != null) {
-                  mirrorFlyLog("change number", "initiated");
+                  LogMessage.d("change number", "initiated");
                 } else {
-                  Get.back();
+                  NavUtils.back();
                 }
               });
             }
           },
           forceResendingToken: resendingToken,
           codeAutoRetrievalTimeout: (String verificationId) {
-            mirrorFlyLog("codeAutoRetrievalTimeout", verificationId);
+            LogMessage.d("codeAutoRetrievalTimeout", verificationId);
             timeout(true);
           },
         );
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -202,20 +204,20 @@ class LoginController extends GetxController {
         debugPrint("smsCode $smsCode");
         signIn(credential);
       } else {
-        toToast("InValid OTP");
+        toToast(getTranslated("inValidOTP"));
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   _onVerificationCompleted(PhoneAuthCredential credential) async {
     timeout(true);
-    mirrorFlyLog("verificationCompleted providerId", credential.providerId.toString());
-    mirrorFlyLog("verificationCompleted signInMethod", credential.signInMethod.toString());
-    mirrorFlyLog("verificationCompleted verificationId", credential.verificationId.toString());
-    mirrorFlyLog("verificationCompleted smsCode", credential.smsCode.toString());
-    mirrorFlyLog("verificationCompleted token", credential.token.toString());
+    LogMessage.d("verificationCompleted providerId", credential.providerId.toString());
+    LogMessage.d("verificationCompleted signInMethod", credential.signInMethod.toString());
+    LogMessage.d("verificationCompleted verificationId", credential.verificationId.toString());
+    LogMessage.d("verificationCompleted smsCode", credential.smsCode.toString());
+    LogMessage.d("verificationCompleted token", credential.token.toString());
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       otpController.set(credential.smsCode!.split(""));
@@ -234,15 +236,15 @@ class LoginController extends GetxController {
           //registerAccount();//for get registered user purpose
         }
         stopTimer();
-        mirrorFlyLog("sign in ", value.toString());
+        LogMessage.d("sign in ", value.toString());
       }).catchError((error) {
         debugPrint("Firebase Verify Error $error");
-        toToast("Invalid OTP");
+        toToast(getTranslated("inValidOTP"));
         hideLoading();
       });
     } on FirebaseAuthException catch (e) {
-      mirrorFlyLog("sign in error", e.toString());
-      toToast("Enter Valid Otp");
+      LogMessage.d("sign in error", e.toString());
+      toToast(getTranslated("enterValidOTP"));
       hideLoading();
     }
   }
@@ -253,7 +255,7 @@ class LoginController extends GetxController {
       await mUser.getIdToken(true).then((value) {
         verifyTokenWithServer(value!);
       }).catchError((er) {
-        mirrorFlyLog("sendTokenToServer", er.toString());
+        LogMessage.d("sendTokenToServer", er.toString());
         hideLoading();
       });
     } else {
@@ -278,7 +280,7 @@ class LoginController extends GetxController {
         hideLoading();
       });*/
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -289,19 +291,19 @@ class LoginController extends GetxController {
         FirebaseMessaging.instance.getToken().then((value) {
           if (value != null) {
             firebaseToken = value;
-            mirrorFlyLog("firebase_token", firebaseToken);
+            LogMessage.d("firebase_token", firebaseToken);
             SessionManagement.setToken(firebaseToken);
             navigateToUserRegisterMethod(deviceToken, firebaseToken);
           } else {}
         }).catchError((er) {
-          mirrorFlyLog("FirebaseInstallations", er.toString());
+          LogMessage.d("FirebaseInstallations", er.toString());
           hideLoading();
         });
       } else {
         navigateToUserRegisterMethod(deviceToken, firebaseToken);
       }
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // navigateToUserRegisterMethod(deviceToken, firebaseToken);
   }
@@ -318,14 +320,14 @@ class LoginController extends GetxController {
   registerAccount() async {
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
-        toToast("Mobile number too short");
+        toToast(getTranslated("mobileNumberTooShort"));
         return;
       }
       if (mobileNumber.text.length < 10) {
-        toToast("Please enter valid mobile number");
+        toToast(getTranslated("plsEnterValidMobileNumber"));
         return;
       }
-      if (!(await AppPermission.askNotificationPermission())) {
+      if (Platform.isAndroid && !(await AppPermission.askNotificationPermission())) {
         return;
       }
       // if(mobileNumber.text.length > 9) {
@@ -334,6 +336,7 @@ class LoginController extends GetxController {
       Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
           fcmToken: SessionManagement.getToken().checkNull(),
           isForceRegister: isForceRegister,
+          // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
           flyCallback: (FlyResponse response) {
               if (response.isSuccess) {
                 if (response.hasData) {
@@ -361,22 +364,22 @@ class LoginController extends GetxController {
                 hideLoading();
                 if (response.exception?.code == "403") {
                   debugPrint("issue 403 ===> ${response.errorMessage }");
-                  Get.offAllNamed(Routes.adminBlocked);
+                  NavUtils.offAllNamed(Routes.adminBlocked);
                 } else if (response.exception?.code  == "405") {
                   debugPrint("issue 405 ===> ${response.errorMessage }");
-                  sessionExpiredDialogShow(Constants.maximumLoginReached);
+                  sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
                 } else {
                   debugPrint("issue else code ===> ${response.exception?.code }");
                   debugPrint("issue else ===> ${response.errorMessage }");
-                  toToast(response.exception!.message.toString());
+                  toToast(getErrorDetails(response));
                 }
               }
             });
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
     // } else {
-    //   toToast(Constants.noInternetConnection);
+    //   toToast(getTranslated("noInternetConnection"));
     // }
   }
 
@@ -384,7 +387,7 @@ class LoginController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       Mirrorfly.enableDisableArchivedSettings(enable: true,flyCallBack: (_){});
     } else {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
@@ -394,21 +397,21 @@ class LoginController extends GetxController {
     //Already Logged Popup
     hideLoading();
     verifyVisible(false);
-    mirrorFlyLog("showUserAccountDeviceStatus", "Already Login");
+    LogMessage.d("showUserAccountDeviceStatus", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: "You have logged-in another device. Do you want to continue here?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deviceConfirmation"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             gotoLogin();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             registerAccount();
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -416,26 +419,26 @@ class LoginController extends GetxController {
     //Already Logged Popup
     hideLoading();
     verifyVisible(false);
-    mirrorFlyLog("sessionExpiredDialogShow", "Already Login");
+    LogMessage.d("sessionExpiredDialogShow", "Already Login");
     //PlatformRepo.logout();
-    Helper.showAlert(message: message.toString(), actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: message.toString(), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = false;
           },
-          child: const Text("Cancel",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("cancel"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
             isForceRegister = true;
             registerUser();
           },
-          child: const Text("Continue",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("continue"), )),
     ]);
   }
 
   gotoLogin() {
-    Get.offAllNamed(Routes.login);
+    NavUtils.offAllNamed(Routes.login);
   }
 }

@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
+import '../../../data/utils.dart';
 import 'chat_controller.dart';
 
 class ImagePreviewController extends GetxController {
-  // var filePath = Get.arguments['filePath'];
-  var userName = Get.arguments['userName'];
+  // var filePath = NavUtils.arguments['filePath'];
+  var userName = NavUtils.arguments['userName'];
 
   TextEditingController caption = TextEditingController();
 
@@ -20,10 +21,10 @@ class ImagePreviewController extends GetxController {
   void onInit() {
     super.onInit();
 
-    textMessage = Get.arguments['caption'];
+    textMessage = NavUtils.arguments['caption'];
     // debugPrint("caption text received--> $textMessage");
     caption.text = textMessage;
-    SchedulerBinding.instance.addPostFrameCallback((_) => filePath(Get.arguments['filePath']));
+    SchedulerBinding.instance.addPostFrameCallback((_) => filePath(NavUtils.arguments['filePath']));
   }
 
   sendImageMessage() async {
@@ -33,10 +34,10 @@ class ImagePreviewController extends GetxController {
             filePath.value, caption.text, "");
         // debugPrint("Preview View ==> $response");
         if (response != null) {
-          Get.back();
+          NavUtils.back();
         }
       // }else{
-      //   toToast(Constants.noInternetConnection);
+      //   toToast(getTranslated("noInternetConnection"));
       // }
     } else {
       debugPrint("File Not Found For Image Upload");

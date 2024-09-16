@@ -1,7 +1,9 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../../data/utils.dart';
 import '../../../core/decode_image.dart';
 import '../../pages/gallery_media_picker_controller.dart';
 
@@ -176,11 +178,5 @@ class ThumbnailWidget extends StatelessWidget {
 
 /// parse second to duration
 _parseDuration(int seconds) {
-  if (seconds < 600) {
-    return '${Duration(seconds: seconds)}'.toString().substring(3, 7);
-  } else if (seconds > 600 && seconds < 3599) {
-    return '${Duration(seconds: seconds)}'.toString().substring(2, 7);
-  } else {
-    return '${Duration(seconds: seconds)}'.toString().substring(1, 7);
-  }
+  return DateTimeUtils.durationToString(Duration(seconds: seconds));
 }
