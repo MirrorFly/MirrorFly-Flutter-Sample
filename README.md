@@ -1,12 +1,10 @@
-<center>
-  <p>
+  <p align="center">
     <img  src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" data-canonical-src="https://dasa7d6hxd0bp.cloudfront.net/images/mirrorfly.webp" width="400"  alt=""/>
   </p>
 
-  <h1>
-    Customizable, Low-code Flutter Sample App For Android
+  <h1 align="center">
+    Customizable, Low-code Flutter Sample App For Android & iOS
   </h1>
-</center>
 
 
 <b>MirrorFly’s Flutter Sample App</b> is a basic product with all the assets and libraries needed to develop a communication platform. All you need to do is, use the [MirrorFly Plugin]([https://www.mirrorfly.com/](https://pub.dev/packages/mirrorfly_plugin)) to add 1000+ real-time communication capabilities and deliver a fully-built communication platform in Flutter.
@@ -21,7 +19,7 @@ The platform is fully customizable, enabling you to personalize it to your custo
 MirrorFly’s Flutter Sample App & MirrorFly Flutter Chat Plugin allows you to add the following capabilities to your platform.
 
 
-💬 [In-app Messaging](https://www.mirrorfly.com/chat-api-solution.php) - real-time chat features for private or group interactions
+💬 [In-app Messaging](https://www.mirrorfly.com/docs/platformapi/overview/) - real-time chat features for private or group interactions
 
 🎯 [HD Video Calling](https://www.mirrorfly.com/video-call-solution.php)- High-definition video calling for face to face conversations
 
@@ -29,7 +27,7 @@ MirrorFly’s Flutter Sample App & MirrorFly Flutter Chat Plugin allows you to a
 
 🦾 [Live Streaming](https://www.mirrorfly.com/live-streaming-sdk.php) - Broadcasting functionality to take content to millions of audience.
 
-You can also add 1000+ real-time communication capabilities. Check out our other offerings [here](https://www.mirrorfly.com/chat-features.php).
+You can also add 1000+ real-time communication capabilities. Check out our other offerings [here](https://www.mirrorfly.com/docs/chat/overview/).
 
 
 # ☁️ Deployment Models - Self-hosted and Cloud
@@ -105,7 +103,7 @@ open terminal(from the project root folder) and type
 If you need any further help with our Flutter Sample App, check out our resources
 
 - [Flutter API](https://www.mirrorfly.com/flutter-chat-sdk.php)
-- [Flutter Tutorial](https://www.mirrorfly.com/tutorials/build-chat-app-using-flutter.php)
+- [Flutter Tutorial](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/quick-start/)
 - [Flutter docs](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/quick-start/)
 - [Developer Portal](https://www.mirrorfly.com/docs/)
 
