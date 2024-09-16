@@ -19,15 +19,15 @@ The platform is fully customizable, enabling you to personalize it to your custo
 MirrorFly’s Flutter Sample App & MirrorFly Flutter Chat Plugin allows you to add the following capabilities to your platform.
 
 
-💬 [In-app Messaging](https://www.mirrorfly.com/docs/platformapi/overview/) - real-time chat features for private or group interactions
+ 💬 [In-app Messaging](https://www.mirrorfly.com/chat-api-solution.php) - real-time chat features for private or group interactions
 
-🎯 [HD Video Calling](https://www.mirrorfly.com/video-call-solution.php)- High-definition video calling for face to face conversations
+ 🎯 [HD Video Calling](https://www.mirrorfly.com/video-call-solution.php)- High-definition video calling for face to face conversations 
 
-🦾 [HQ Voice Calling](https://www.mirrorfly.com/voice-call-solution.php) - Crystal-clear audio calling for voice calling experiences
+ 🦾 [HQ Voice Calling](https://www.mirrorfly.com/voice-call-solution.php) - Crystal-clear audio calling for voice calling experiences
+ 
+ 🦾 [Live Streaming](https://www.mirrorfly.com/live-streaming-sdk.php) - Broadcasting functionality to take content to millions of audience.
 
-🦾 [Live Streaming](https://www.mirrorfly.com/live-streaming-sdk.php) - Broadcasting functionality to take content to millions of audience.
-
-You can also add 1000+ real-time communication capabilities. Check out our other offerings [here](https://www.mirrorfly.com/docs/chat/overview/).
+ You can also add 1000+ real-time communication capabilities. Check out our other offerings [here](https://www.mirrorfly.com/chat-features.php). 
 
 
 # ☁️ Deployment Models - Self-hosted and Cloud
@@ -91,7 +91,8 @@ In Info.plist, add the below key
 # ▶️ Run project
 
 - flutter pub get
-  To Run in iOS, make sure to POD install.
+
+To Run in iOS, make sure to POD install.
 
 open terminal(from the project root folder) and type
 - cd ios
