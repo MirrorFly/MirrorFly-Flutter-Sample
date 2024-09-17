@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
+import '../common/app_localizations.dart';
+import '../common/constants.dart';
+import '../data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:video_player/video_player.dart';
 
@@ -45,7 +46,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     }).catchError((e){
       LogMessage.d("initialize", "$e");
       //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
-      toToast(Constants.errorVideoInitialize);
+      toToast(getTranslated("errorVideoInitialize"));
       Navigator.pop(context);
     });
   }
@@ -123,7 +124,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     final duration = _controller.value.duration;
 
     String formatDuration(Duration d) {
-      return Helper.durationToString(d);
+      return DateTimeUtils.durationToString(d);
     }
 
     return Column(

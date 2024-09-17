@@ -1,7 +1,9 @@
 
 
 
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
+
+import 'package:flutter_contacts/contact.dart';
 
 class LocalContact{
 

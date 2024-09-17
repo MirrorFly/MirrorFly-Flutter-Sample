@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../../../common/app_localizations.dart';
+import '../../../../../common/constants.dart';
 
+import '../../../../../data/utils.dart';
+import '../../../../../extensions/extensions.dart';
 import 'datausage_controller.dart';
 
-class DataUsageListView extends GetView<DataUsageController> {
+class DataUsageListView extends NavViewStateful<DataUsageController> {
   const DataUsageListView({Key? key}) : super(key: key);
+
+  @override
+DataUsageController createController({String? tag}) => Get.put(DataUsageController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Data Usage Setting'),
+          title: Text(getTranslated("dataUsageSettings")),
           automaticallyImplyLeading: true,
         ),
         body: SafeArea(
@@ -21,24 +26,24 @@ class DataUsageListView extends GetView<DataUsageController> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ListTile(
+                  ListTile(
                     title: Text(
-                      Constants.mediaAutoDownload,
-                      style: TextStyle(
+                      getTranslated("mediaAutoDownload"),
+                      style: const TextStyle(
                           color: appbarTextColor,
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600),
                     ),
                   ),
                   ListTile(
-                    title: const Text(
-                      Constants.whenUsingMobileData,
-                      style: TextStyle(
+                    title: Text(
+                      getTranslated("whenUsingMobileData"),
+                      style: const TextStyle(
                           color: textColor,
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600),
                     ),
-                    trailing: SvgPicture.asset(
+                    trailing: AppUtils.svgIcon(icon:
                         controller.openMobileData ? arrowUp : arrowDown),
                     onTap: () {
                       controller.openMobile();
@@ -48,22 +53,22 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openMobileData,
                     child: Column(
                       children: [
-                        mediaItem(Constants.photo, controller.autoDownloadMobilePhoto, controller.mobile),
-                        mediaItem(Constants.video, controller.autoDownloadMobileVideo, controller.mobile),
-                        mediaItem(Constants.audio, controller.autoDownloadMobileAudio, controller.mobile),
-                        mediaItem(Constants.document, controller.autoDownloadMobileDocument, controller.mobile),
+                        mediaItem(Constants.photo,getTranslated("autoDownloadPhoto"), controller.autoDownloadMobilePhoto, controller.mobile),
+                        mediaItem(Constants.video,getTranslated("autoDownloadVideo"), controller.autoDownloadMobileVideo, controller.mobile),
+                        mediaItem(Constants.audio,getTranslated("autoDownloadAudio"), controller.autoDownloadMobileAudio, controller.mobile),
+                        mediaItem(Constants.document,getTranslated("autoDownloadDocument"), controller.autoDownloadMobileDocument, controller.mobile),
                       ],
                     )//buildMediaTypeList(controller.mobile),
                   ),
                   ListTile(
-                    title: const Text(
-                      Constants.whenUsingWifiData,
-                      style: TextStyle(
+                    title: Text(
+                      getTranslated("whenUsingWifiData"),
+                      style: const TextStyle(
                           color: textColor,
                           fontSize: 12.0,
                           fontWeight: FontWeight.w600),
                     ),
-                    trailing: SvgPicture.asset(
+                    trailing: AppUtils.svgIcon(icon:
                         controller.openWifiData ? arrowUp : arrowDown),
                     onTap: () {
                       controller.openWifi();
@@ -73,10 +78,10 @@ class DataUsageListView extends GetView<DataUsageController> {
                     visible: controller.openWifiData,
                       child: Column(
                         children: [
-                          mediaItem(Constants.photo, controller.autoDownloadWifiPhoto, controller.wifi),
-                          mediaItem(Constants.video, controller.autoDownloadWifiVideo, controller.wifi),
-                          mediaItem(Constants.audio, controller.autoDownloadWifiAudio, controller.wifi),
-                          mediaItem(Constants.document, controller.autoDownloadWifiDocument, controller.wifi),
+                          mediaItem(Constants.photo,getTranslated("autoDownloadPhoto"), controller.autoDownloadWifiPhoto, controller.wifi),
+                          mediaItem(Constants.video,getTranslated("autoDownloadVideo"), controller.autoDownloadWifiVideo, controller.wifi),
+                          mediaItem(Constants.audio,getTranslated("autoDownloadAudio"), controller.autoDownloadWifiAudio, controller.wifi),
+                          mediaItem(Constants.document,getTranslated("autoDownloadDocument"), controller.autoDownloadWifiDocument, controller.wifi),
                         ],
                       )//buildMediaTypeList(controller.wifi),
                   ),
@@ -87,7 +92,7 @@ class DataUsageListView extends GetView<DataUsageController> {
         ));
   }
 
-  Widget mediaItem(String item, bool on, String type) {
+  Widget mediaItem(String itemValue,String item, bool on, String type) {
     return Padding(
           padding: const EdgeInsets.only(
               left: 15.0, right: 5, bottom: 5),
@@ -105,14 +110,14 @@ class DataUsageListView extends GetView<DataUsageController> {
                     )),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
+                  child: AppUtils.svgIcon(icon:
                     on ? tickRoundBlue : tickRound,
                   ),
                 ),
               ],
             ),
             onTap: () {
-              controller.onClick(type,item);
+              controller.onClick(type,itemValue);
             },
           ),
         );

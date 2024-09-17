@@ -1,52 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:focus_detector/focus_detector.dart';
-
 import 'package:get/get.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
-import '../../chat/chat_widgets.dart';
-import '../../chat/views/starred_message_header.dart';
+import '../../chat/widgets/chat_widgets.dart';
+import '../../chat/widgets/message_content.dart';
+import '../../chat/widgets/reply_message_widgets.dart';
 import '../controllers/starred_messages_controller.dart';
+import 'starred_message_header.dart';
 
-class StarredMessagesView extends GetView<StarredMessagesController> {
+class StarredMessagesView extends NavViewStateful<StarredMessagesController> {
   const StarredMessagesView({Key? key}) : super(key: key);
+
+  @override
+StarredMessagesController createController({String? tag}) => Get.put(StarredMessagesController());
+
   @override
   Widget build(BuildContext context) {
-    controller.height = MediaQuery.of(context).size.height;
-    controller.width = MediaQuery.of(context).size.width;
-    return FocusDetector(
-      onFocusGained: () {
-        controller.getFavouriteMessages();
-      },
-      child: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {
-          if (didPop) {
-            return;
-          }
-          if (controller.isSelected.value) {
-            controller.clearAllChatSelection();
-            return;
-          }else if(controller.isSearch.value){
-            controller.clearSearch();
-            return;
-          }
-          Get.back();
+    controller.height = NavUtils.size.height;
+    controller.width = NavUtils.size.width;
+    return Theme(
+      data: Theme.of(context).copyWith(appBarTheme: AppStyleConfig.starredMessageListPageStyle.appBarTheme),
+      child: FocusDetector(
+        onFocusGained: () {
+          controller.getFavouriteMessages();
         },
-        child: Scaffold(
-          appBar: getAppBar(),
-          body: Obx(() {
-            return controller.starredChatList.isNotEmpty ?
-            SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
-            controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
-              child: Text(controller.isSearch.value ? "No result found" : "No Starred Messages Found"),
-            ));
-          })
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              return;
+            }
+            if (controller.isSelected.value) {
+              controller.clearAllChatSelection();
+              return;
+            }else if(controller.isSearch.value){
+              controller.clearSearch();
+              return;
+            }
+            NavUtils.back();
+          },
+          child: Scaffold(
+            appBar: getAppBar(context),
+            body: Obx(() {
+              return controller.starredChatList.isNotEmpty ?
+              SingleChildScrollView(child: favouriteChatListView(controller.starredChatList)) :
+              controller.isListLoading.value ? const Center(child: CircularProgressIndicator(),) : Center(child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 30),
+                child: Text(controller.isSearch.value ? getTranslated("noResultFound") : getTranslated("noStarredMessages"),style: AppStyleConfig.starredMessageListPageStyle.noDataTextStyle,),
+              ));
+            })
+          ),
         ),
       ),
     );
@@ -95,7 +106,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                         children: [
                           const AppDivider(),
                           const SizedBox(height: 10,),
-                          StarredMessageHeader(chatList: starredChatList[index], isTapEnabled: false,),
+                          StarredMessageHeader(chatList: starredChatList[index], isTapEnabled: false,controller: controller,),
                           const SizedBox(height: 10,),
                           Align(
                             alignment: (starredChatList[index].isMessageSentByMe
@@ -104,7 +115,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                             child: Container(
                               constraints:
                               BoxConstraints(maxWidth: controller.width * 0.75),
-                              decoration: BoxDecoration(
+                              decoration: starredChatList[index].isMessageSentByMe ? AppStyleConfig.starredMessageListPageStyle.senderChatBubbleStyle.decoration : AppStyleConfig.starredMessageListPageStyle.receiverChatBubbleStyle.decoration,
+                              /*decoration: BoxDecoration(
                                   borderRadius: starredChatList[index].isMessageSentByMe
                                       ? const BorderRadius.only(
                                       topLeft: Radius.circular(10),
@@ -119,7 +131,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                       : Colors.white),
                                   border: starredChatList[index].isMessageSentByMe
                                       ? Border.all(color: chatSentBgColor)
-                                      : Border.all(color: chatBorderColor)),
+                                      : Border.all(color: chatBorderColor)),*/
                               child: Column(
                                 crossAxisAlignment:
                                 CrossAxisAlignment.start,
@@ -127,12 +139,14 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                                   starredChatList[index].isThisAReplyMessage ? starredChatList[index].replyParentChatMessage == null
                                       ? messageNotAvailableWidget(starredChatList[index])
                                       : ReplyMessageHeader(
-                                      chatMessage: starredChatList[index]) : const SizedBox.shrink(),
+                                      chatMessage: starredChatList[index],
+                                    replyHeaderMessageViewStyle: starredChatList[index].isMessageSentByMe ? AppStyleConfig.starredMessageListPageStyle.senderChatBubbleStyle.replyHeaderMessageViewStyle : AppStyleConfig.starredMessageListPageStyle.receiverChatBubbleStyle.replyHeaderMessageViewStyle,) : const Offstage(),
                                   MessageContent(chatList: starredChatList,search: controller.searchedText.text.trim(),index:index, onPlayAudio: (){
                                     controller.playAudio(starredChatList[index]);
                                   },onSeekbarChange:(value){
 
-                                  },),
+                                  },senderChatBubbleStyle: AppStyleConfig.starredMessageListPageStyle.senderChatBubbleStyle,
+                                  receiverChatBubbleStyle: AppStyleConfig.starredMessageListPageStyle.receiverChatBubbleStyle,),
                                 ],
                               ),
                             ),
@@ -149,20 +163,21 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  getAppBar() {
+  getAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(55.0),
       child: Obx(() {
         return Container(
-          child: controller.isSelected.value ? selectedAppBar() : controller.isSearch.value ? searchBar() : AppBar(
-            title: const Text('Starred Messages'),
+          child: controller.isSelected.value ? selectedAppBar(context) : controller.isSearch.value ? searchBar(context) : AppBar(
+            title: Text(getTranslated("starredMessages")),
             actions: [
               IconButton(
-                icon: SvgPicture.asset(
+                icon: AppUtils.svgIcon(icon:
                   searchIcon,
                   width: 18,
                   height: 18,
                   fit: BoxFit.contain,
+                  colorFilter: ColorFilter.mode(AppBarTheme.of(context).iconTheme?.color ?? Colors.black, BlendMode.srcIn),
                 ),
                 onPressed: () {
                   controller.onSearchClick();
@@ -175,7 +190,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  searchBar(){
+  searchBar(BuildContext context){
     return AppBar(
       automaticallyImplyLeading: true,
       title: TextField(
@@ -183,8 +198,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
         controller: controller.searchedText,
         focusNode: controller.searchFocus,
         autofocus: true,
-        decoration: const InputDecoration(
-            hintText: "Search...", border: InputBorder.none),
+        decoration: InputDecoration(
+            hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
       ),
       iconTheme: const IconThemeData(color: iconColor),
       actions: [
@@ -201,7 +216,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
     );
   }
 
-  selectedAppBar() {
+  selectedAppBar(BuildContext context) {
     return AppBar(
       // leadingWidth: 25,
       backgroundColor: Colors.white,
@@ -214,6 +229,7 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
       title: Text(controller.selectedChatList.length.toString()),
       actions: [
         CustomActionBarIcons(
+          popupMenuThemeData: AppStyleConfig.starredMessageListPageStyle.popupMenuThemeData,
             availableWidth: controller.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
             actions: [
@@ -222,8 +238,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.checkBusyStatusForForward();
                     },
-                    icon: SvgPicture.asset(forwardIcon),tooltip: 'Forward',),
-                overflowWidget: const Text("Forward"),
+                    icon: AppUtils.svgIcon(icon:forwardIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),tooltip: 'Forward',),
+                overflowWidget: Text(getTranslated("forward")),
                 showAsAction: controller.canBeForward.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Forward',
                 onItemClick: () {
@@ -235,8 +251,8 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.favouriteMessage();
                     },
-                    icon: SvgPicture.asset(unFavouriteIcon),tooltip: 'unFavourite',),
-                overflowWidget: const Text("unFavourite"),
+                    icon: AppUtils.svgIcon(icon:unFavouriteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'unFavourite',),
+                overflowWidget: Text(getTranslated("unFavourite")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'unfavoured',
                 onItemClick: () {
@@ -248,41 +264,47 @@ class StarredMessagesView extends GetView<StarredMessagesController> {
                     onPressed: () {
                       controller.share();
                     },
-                    icon: SvgPicture.asset(shareIcon),tooltip: 'Share',),
-                overflowWidget: const Text("Share"),
+                    icon: AppUtils.svgIcon(icon:shareIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Share',),
+                overflowWidget: Text(getTranslated("share")),
                 showAsAction: controller.canBeShare.value ? ShowAsAction.always : ShowAsAction.gone,
                 keyValue: 'Share',
                 onItemClick: () {},
               ),
-              controller.selectedChatList.length > 1 ||
+              if(!(controller.selectedChatList.length > 1 ||
+                  controller.selectedChatList[0].messageType !=
+                      Constants.mText))...[
+                CustomAction(
+                  visibleWidget: IconButton(
+                    onPressed: () {
+                      controller.copyTextMessages();
+                    },
+                    icon: AppUtils.svgIcon(icon:
+                        copyIcon,
+                        fit: BoxFit.contain,
+                        colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)
+                    ),
+                    tooltip: 'Copy',
+                  ),
+                  overflowWidget: Text(getTranslated("copy")),
+                  showAsAction: ShowAsAction.always,
+                  keyValue: 'Copy',
+                  onItemClick: () {
+                    controller.copyTextMessages();
+                  },
+                )
+              ],
+              /*controller.selectedChatList.length > 1 ||
                   controller.selectedChatList[0].messageType !=
                       Constants.mText
                   ? customEmptyAction()
-                  : CustomAction(
-                visibleWidget: IconButton(
-                  onPressed: () {
-                    controller.copyTextMessages();
-                  },
-                  icon: SvgPicture.asset(
-                    copyIcon,
-                    fit: BoxFit.contain,
-                  ),
-                  tooltip: 'Copy',
-                ),
-                overflowWidget: const Text("Copy"),
-                showAsAction: ShowAsAction.always,
-                keyValue: 'Copy',
-                onItemClick: () {
-                  controller.copyTextMessages();
-                },
-              ),
+                  : ,*/
               CustomAction(
                 visibleWidget: IconButton(
                     onPressed: () {
                       controller.deleteMessages();
                     },
-                    icon: SvgPicture.asset(deleteIcon),tooltip: 'Delete',),
-                overflowWidget: const Text("Delete"),
+                    icon: AppUtils.svgIcon(icon:deleteIcon,colorFilter: ColorFilter.mode(AppStyleConfig.starredMessageListPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),tooltip: 'Delete',),
+                overflowWidget: Text(getTranslated("delete")),
                 showAsAction: ShowAsAction.always,
                 keyValue: 'Delete',
                 onItemClick: () {

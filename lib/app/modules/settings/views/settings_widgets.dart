@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 
 Widget lockItem(
     {required String title, required String subtitle, required bool on, Widget? trailing, required Function(bool value) onToggle, Function()? onTap}) {
@@ -68,42 +69,50 @@ ListItem notificationItem({required String title,
         ],
       ),
       dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-      trailing: SvgPicture.asset(
+      trailing: AppUtils.svgIcon(icon:
         on ? tickRoundBlue : tickRound,
       ),
       onTap: onTap);
 }
 
-Widget settingListItem(
-    String title, String? leading, String trailing, Function() onTap) {
-  return Column(
-    children: [
-      InkWell(
-        onTap: onTap,
-        child: Row(
-          children: [
-            leading != null ? Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(leading),
-            ) :  const SizedBox(height: 4,),
-            Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 15.0,
-                      fontFamily: 'sf_ui',
-                      fontWeight: FontWeight.w400),
-                )),
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(trailing),
-            ),
-          ],
+class SettingListItem extends StatelessWidget {
+  const SettingListItem({super.key, required this.title, this.leading, this.trailing, required this.onTap, required this.listItemStyle});
+  final String title;
+  final String? leading;
+  final String? trailing;
+  final Function() onTap;
+  final ListItemStyle listItemStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Row(
+            children: [
+              leading != null ? Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                    width: 24,
+                    child: AppUtils.svgIcon(icon:leading!,colorFilter: ColorFilter.mode(listItemStyle.leadingIconColor, BlendMode.srcIn))),
+              ) :  const SizedBox(height: 4,),
+              Expanded(
+                  child: Text(
+                    title,
+                    style: listItemStyle.titleTextStyle,
+                  )),
+              trailing != null ? Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: AppUtils.svgIcon(icon:trailing!,colorFilter: ColorFilter.mode(listItemStyle.trailingIconColor, BlendMode.srcIn)),
+              ) : const Offstage(),
+            ],
+          ),
         ),
-      ),
-      const AppDivider(),
-    ],
-  );
+        AppDivider(color: listItemStyle.dividerColor,),
+      ],
+    );
+  }
 }
 
 
@@ -122,7 +131,7 @@ Widget chatListItem(
                 )),
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(trailing),
+              child: AppUtils.svgIcon(icon:trailing),
             ),
           ],
         ),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
+import '../../common/widgets.dart';
+import '../../extensions/extensions.dart';
+import '../../modules/scanner/scanner_controller.dart';
 
 import '../../common/constants.dart';
+import '../../data/utils.dart';
 
-class WebLoginResultView extends GetView<ScannerController> {
+class WebLoginResultView extends NavViewStateful<ScannerController> {
   const WebLoginResultView({Key? key}) : super(key: key);
+
+  @override
+ScannerController createController({String? tag}) => Get.put(ScannerController());
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class WebLoginResultView extends GetView<ScannerController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.asset(icQrScannerWebLogin, fit: BoxFit.cover,),
+            AppUtils.assetIcon(assetName:icQrScannerWebLogin, fit: BoxFit.cover,),
             FutureBuilder(
                 future: controller.getWebLoginDetails(),
                 builder: (c, data) {
@@ -33,7 +37,7 @@ class WebLoginResultView extends GetView<ScannerController> {
                         itemBuilder: (context, index) {
                           var item = controller.webLogins[index];
                           return ListItem(
-                            leading: Image.asset(
+                            leading: AppUtils.assetIcon(assetName:
                                 controller.getImageForBrowser(item),width: 50,height: 50,),
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

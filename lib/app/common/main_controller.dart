@@ -4,30 +4,29 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:is_lock_screen/is_lock_screen.dart';
-import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
-import 'package:mirror_fly_demo/app/data/pushnotification.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/modules/contact_sync/controllers/contact_sync_controller.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-
+import 'package:is_lock_screen2/is_lock_screen2.dart';
+// import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../modules/chatInfo/controllers/chat_info_controller.dart';
+import '../base_controller.dart';
+import '../common/constants.dart';
+import '../data/pushnotification.dart';
+import '../data/session_management.dart';
+import '../data/utils.dart';
+import '../extensions/extensions.dart';
+import '../model/arguments.dart';
+import '../modules/archived_chats/archived_chat_list_controller.dart';
+import '../modules/dashboard/controllers/dashboard_controller.dart';
+import '../modules/notification/notification_builder.dart';
+import '../routes/route_settings.dart';
 import 'notification_service.dart';
 
-class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin /*with FullLifeCycleMixin */ {
+class MainController extends FullLifeCycleController with FullLifeCycleMixin /*with FullLifeCycleMixin */ {
   var currentAuthToken = "".obs;
   var googleMapKey = "";
   Rx<String> mediaEndpoint = "".obs;
@@ -51,17 +50,17 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     super.onInit();
     /*Mirrorfly.isOnGoingCall().then((value){
       if(value.checkNull()){
-        Get.toNamed(Routes.onGoingCallView);
+        NavUtils.toNamed(Routes.onGoingCallView);
       }
     });*/
     Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
       googleMapKey = value;
-      mirrorFlyLog("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
     });
     //presentPinPage();
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
-    initListeners();
+    BaseController.initListeners();
     mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
     currentAuthToken(SessionManagement.getAuthToken().checkNull());
@@ -75,7 +74,6 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
@@ -88,10 +86,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
               ?.areNotificationsEnabled() ??
           false;
 
-      // setState(() {
       _notificationsEnabled = granted;
       debugPrint("Notification Enabled--> $_notificationsEnabled");
-      // });
     }
   }
 
@@ -111,7 +107,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? granted = await androidImplementation?.requestPermission();
+      final bool? granted = await androidImplementation?.requestNotificationsPermission();
       // setState(() {
       _notificationsEnabled = granted ?? false;
       // });
@@ -123,27 +119,46 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${Get.currentRoute}");
-      if (payload != null && payload.isNotEmpty && payload.toString() != "124") {
+      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${NavUtils.currentRoute}");
+      if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
-        if (Get.isRegistered<ChatController>()) {
+        if(SessionManagement.getCurrentChatJID().checkNull() == chatJid){
+          NotificationBuilder.cancelNotifications();
+         return;
+        }
+        if (NavUtils.isOverlayOpen || NavUtils.currentRoute == Routes.chat) {
           LogMessage.d("#Mirrorfly Notification ->","already chat page");
-          if (Get.currentRoute == Routes.forwardChat ||
-              Get.currentRoute == Routes.chatInfo ||
-              Get.currentRoute == Routes.groupInfo ||
-              Get.currentRoute == Routes.messageInfo) {
-            Get.back();
+          if (NavUtils.currentRoute == Routes.forwardChat ||
+              NavUtils.currentRoute == Routes.chatInfo ||
+              NavUtils.currentRoute == Routes.groupInfo ||
+              NavUtils.currentRoute == Routes.messageInfo) {
+            NavUtils.back();
           }
-          if (Get.currentRoute.contains("from_notification=true")) {
+          if (NavUtils.currentRoute.contains("from_notification=true")) {
             LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            Get.offAllNamed("${AppPages.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
+            NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp: true));
+            // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
-            Get.offNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
+            if(NavUtils.isOverlayOpen){
+              LogMessage.d("#Mirrorfly Notification ->" , "isOverlayOpen dismissing");
+
+              NavUtils.back();
+            }
+            LogMessage.d("#Mirrorfly Notification ->" , "Calling off named");
+
+
+            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
+            // NavUtils.back();
+            /*Below 400 milliseconds the controller is not deleted and creating the issue in the Scrolled Positioned list issue,
+             so we are waiting for 500 considering Android Platform*/
+           /* Future.delayed(const Duration(milliseconds: 500),(){
+              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            });*/
           }
         } else {
           debugPrint("not chat page");
-          Get.toNamed(Routes.chat, parameters: {"chatJid": chatJid, "topicId": topicId});
+          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {
@@ -162,7 +177,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   getMediaEndpoint() async {
     await Mirrorfly.mediaEndPoint().then((value) {
-      mirrorFlyLog("media_endpoint", value.toString());
+      LogMessage.d("media_endpoint", value.toString());
       if (value != null) {
         if (value.isNotEmpty) {
           mediaEndpoint(value);
@@ -176,7 +191,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   getCurrentAuthToken() async {
     await Mirrorfly.getCurrentAuthToken().then((value) {
-      mirrorFlyLog("getCurrentAuthToken", value.toString());
+      LogMessage.d("getCurrentAuthToken", value.toString());
       if (value.isNotEmpty) {
         currentAuthToken(value);
         SessionManagement.setAuthToken(value);
@@ -191,7 +206,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       if (status) {
         //show Admin Blocked Activity
         SessionManagement.setAdminBlocked(status);
-        Get.toNamed(Routes.adminBlocked);
+        NavUtils.toNamed(Routes.adminBlocked);
       }
     }
   }
@@ -199,38 +214,18 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   handleAdminBlockedUserFromRegister() {}
 
   void startNetworkListen() {
-    final InternetConnectionChecker customInstance = InternetConnectionChecker.createInstance(
-      checkTimeout: const Duration(seconds: 1),
-      checkInterval: const Duration(seconds: 1),
-    );
-    listener = customInstance.onStatusChange.listen(
+    final connectionChecker = InternetConnectionChecker();
+
+    listener = connectionChecker.onStatusChange.listen(
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-            mirrorFlyLog("network", 'Data connection is available.');
+            LogMessage.d("network", 'Data connection is available.');
             networkConnected();
-            if (Get.isRegistered<ChatController>()) {
-              Get.find<ChatController>().networkConnected();
-            }
-            if (Get.isRegistered<ChatInfoController>()) {
-              Get.find<ChatInfoController>().networkConnected();
-            }
-            if (Get.isRegistered<ContactSyncController>()) {
-              Get.find<ContactSyncController>().networkConnected();
-            }
             break;
           case InternetConnectionStatus.disconnected:
-            mirrorFlyLog("network", 'You are disconnected from the internet.');
+            LogMessage.d("network", 'You are disconnected from the internet.');
             networkDisconnected();
-            if (Get.isRegistered<ChatController>()) {
-              Get.find<ChatController>().networkDisconnected();
-            }
-            if (Get.isRegistered<ChatInfoController>()) {
-              Get.find<ChatInfoController>().networkDisconnected();
-            }
-            if (Get.isRegistered<ContactSyncController>()) {
-              Get.find<ContactSyncController>().networkDisconnected();
-            }
             break;
         }
       },
@@ -245,36 +240,41 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onDetached() {
-    mirrorFlyLog('LifeCycle', 'onDetached');
+    LogMessage.d('LifeCycle', 'onDetached');
   }
 
   @override
   void onInactive() {
-    mirrorFlyLog('LifeCycle', 'onInactive');
+    LogMessage.d('LifeCycle', 'onInactive');
   }
 
   bool fromLockScreen = false;
 
+  var hasPaused = false;
   @override
   void onPaused() async {
-    mirrorFlyLog('LifeCycle', 'onPaused');
+    hasPaused = true;
+    LogMessage.d('LifeCycle', 'onPaused');
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
     fromLockScreen = await isLockScreen() ?? false;
-    mirrorFlyLog('isLockScreen', '$fromLockScreen');
+    LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
 
   @override
   void onResumed() {
-    mirrorFlyLog('LifeCycle', 'onResumed');
+    LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     checkShouldShowPin();
-    if (Constants.enableContactSync) {
-      syncContacts();
+    if(hasPaused) {
+      hasPaused = false;
+      if (Constants.enableContactSync) {
+        syncContacts();
+      }
+      unreadMissedCallCount();
     }
-    unreadMissedCallCount();
   }
 
   void syncContacts() async {
@@ -291,8 +291,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
         Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
-          onContactSyncComplete(true);
-          mirrorFlyLog("checkContactPermission isSuccess", response.isSuccess.toString());
+          BaseController.onContactSyncComplete(true);
+          LogMessage.d("checkContactPermission isSuccess", response.isSuccess.toString());
         });
       }
     }
@@ -336,8 +336,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   void presentPinPage() {
-    if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && Get.currentRoute != Routes.pin) {
-      Get.toNamed(
+    if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
+      NavUtils.toNamed(
         Routes.pin,
       );
     }
@@ -357,20 +357,57 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
 
   @override
   void onHidden() {
-    mirrorFlyLog('LifeCycle', 'onHidden');
+    LogMessage.d('LifeCycle', 'onHidden');
   }
 
   unreadMissedCallCount() async {
-    var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-    unreadCallCount.value = unreadMissedCallCount ?? 0;
-    debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+    try {
+      var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+      unreadCallCount.value = unreadMissedCallCount ?? 0;
+      debugPrint("unreadMissedCallCount $unreadMissedCallCount");
+    }catch(e){
+      debugPrint("unreadMissedCallCount $e");
+    }
   }
 
   void _setBadgeCount(int count) {
-    FlutterAppBadger.updateBadgeCount(count);
+    FlutterAppBadge.count(count);
   }
 
   void _removeBadge() {
-    FlutterAppBadger.removeBadge();
+    FlutterAppBadge.count(0);
+  }
+
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
+    }
+  }
+
+  void onUpdateLastMessageUI(String chatJid){
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, newInsertable: true);
+    }
+  }
+
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
+  void clearAllConvRecentChatUI() {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
+  void markConversationReadNotifyUI(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
+    }
   }
 }

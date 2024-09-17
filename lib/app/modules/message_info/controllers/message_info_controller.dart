@@ -3,21 +3,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 
-import '../../../common/constants.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
-  var chatController = Get.find<ChatController>();
 
-  var messageID = Get.arguments["messageID"];
-  var jid = Get.arguments["jid"];
-  var isGroupProfile = Get.arguments["isGroupProfile"];
-  var chatMessage = [Get.arguments["chatMessage"] as ChatMessageModel].obs;
+  var messageID = NavUtils.arguments["messageID"];
+  var jid = NavUtils.arguments["jid"];
+  var isGroupProfile = NavUtils.arguments["isGroupProfile"];
+  var chatMessage = [NavUtils.arguments["chatMessage"] as ChatMessageModel].obs;
   var readTime = ''.obs;
   var deliveredTime = ''.obs;
 
@@ -71,7 +70,7 @@ class MessageInfoController extends GetxController {
 
 
   downloadMedia(String messageId) async {
-    var permission = await AppPermission.getStoragePermission(permissionContent: Constants.writeStoragePermission,deniedContent: Constants.writeStoragePermissionDenied);
+    var permission = await AppPermission.getStoragePermission(permissionContent: getTranslated("writeStoragePermissionContent"),deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
     if (permission) {
       Mirrorfly.downloadMedia(messageId: messageId);
     }
@@ -97,7 +96,7 @@ class MessageInfoController extends GetxController {
       if (result == 1) {
         playingChat!.mediaChatMessage!.isPlaying=true;
       } else {
-        mirrorFlyLog("", "Error while playing audio.");
+        LogMessage.d("", "Error while playing audio.");
       }
     } else if (!playingChat!.mediaChatMessage!.isPlaying) {
       int result = await player.resume();
@@ -105,7 +104,7 @@ class MessageInfoController extends GetxController {
         playingChat!.mediaChatMessage!.isPlaying=true;
         this.chatMessage.refresh();
       } else {
-        mirrorFlyLog("", "Error on resume audio.");
+        LogMessage.d("", "Error on resume audio.");
       }
     } else {
       int result = await player.pause();
@@ -113,7 +112,7 @@ class MessageInfoController extends GetxController {
         playingChat!.mediaChatMessage!.isPlaying=false;
         this.chatMessage.refresh();
       } else {
-        mirrorFlyLog("", "Error on pause audio.");
+        LogMessage.d("", "Error on pause audio.");
       }
     }*/
   }
@@ -185,11 +184,17 @@ class MessageInfoController extends GetxController {
   }
 
   void onMessageStatusUpdated(ChatMessageModel chatMessageModel){
-    // mirrorFlyLog("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
+    // LogMessage.d("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
     if(chatMessageModel.messageId == chatMessage[0].messageId){
       chatMessage[0]=chatMessageModel;
       chatMessage.refresh();
       getStatusOfMessage(chatMessageModel.messageId);
+    }
+  }
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    if(editedChatMessage.messageId == chatMessage[0].messageId){
+      chatMessage[0]=editedChatMessage;
     }
   }
   

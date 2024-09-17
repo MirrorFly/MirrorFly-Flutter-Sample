@@ -1,39 +1,56 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
 
+import '../../../data/utils.dart';
 import '../controllers/camera_pick_controller.dart';
 
-class CameraPickView extends GetView<CameraPickController> {
+class CameraPickView extends NavViewStateful<CameraPickController> {
   const CameraPickView({Key? key}) : super(key: key);
+
+  @override
+CameraPickController createController({String? tag}) => Get.put(CameraPickController());
+
+  @override
+  void onDispose(){
+    controller.cameraController?.dispose();
+    debugPrint("cameraController disposed onView");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: SafeArea(
-        child: Expanded(
-          child: Obx(() {
-            return controller.cameraInitialized.value ? Stack(
+        child: Obx(() {
+          return controller.cameraInitialized.value ? Container(
+            color: Colors.black,
+            child: Stack(
               alignment: Alignment.topCenter,
               children: [
-                Listener(
-                  onPointerDown: (_) => controller.pointers++,
-                  onPointerUp: (_) => controller.pointers--,
-                  child: CameraPreview(
-                    controller.cameraController!, child: LayoutBuilder(
-                      builder: (BuildContext context,
-                          BoxConstraints constraints) {
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onScaleStart: controller.handleScaleStart,
-                          onScaleUpdate: controller.handleScaleUpdate,
-                          onTapDown: (TapDownDetails details) =>
-                              controller.onViewFinderTap(
-                                  details, constraints),
-                        );
-                      }),),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Listener(
+                    onPointerDown: (_) => controller.pointers++,
+                    onPointerUp: (_) => controller.pointers--,
+                    child: AspectRatio(
+                      aspectRatio: NavUtils.width/(NavUtils.height-(NavUtils.safeAreaPadding)),
+                      child: CameraPreview(
+                        controller.cameraController!, child: LayoutBuilder(
+                          builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onScaleStart: controller.handleScaleStart,
+                              onScaleUpdate: controller.handleScaleUpdate,
+                              onTapDown: (TapDownDetails details) =>
+                                  controller.onViewFinderTap(
+                                      details, constraints),
+                            );
+                          }),),
+                    ),
+                  ),
                 ),
                 Row(
             mainAxisSize : MainAxisSize.max,
@@ -42,7 +59,7 @@ class CameraPickView extends GetView<CameraPickController> {
                       icon: const Icon(Icons.clear,
                           color: Colors.white),
                       onPressed: () {
-                        Get.back();
+                        NavUtils.back();
                       },
                     ),
                     Expanded(
@@ -62,7 +79,7 @@ class CameraPickView extends GetView<CameraPickController> {
                 Positioned(
                   bottom: 0,
                   child: Container(
-                    width: MediaQuery.of(context).size.width,
+                    width: NavUtils.size.width,
                     color: Colors.transparent,
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
                     child: Column(
@@ -125,25 +142,21 @@ class CameraPickView extends GetView<CameraPickController> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text(
-                          "Hold for Video, tap for photo",
-                          style: TextStyle(color: Colors.white),
+                        Text(
+                          getTranslated("holdToRecord"),
+                          style: const TextStyle(color: Colors.white),
                           textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 10,
                         ),
                       ],
                     ),
                   ),
                 ),
               ]
-            ) : const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
-
-        ),
+            ),
+          ) : const Center(
+            child: CircularProgressIndicator(),
+          );
+        }),
       ),
     );
   }
