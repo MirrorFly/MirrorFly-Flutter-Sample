@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>iCloudContainerEnvironment</key>
+	<string>Production</string>
+	<key>method</key>
+	<string>ad-hoc</string>
+	<key>uploadBitcode</key>
+	<false/>
+	<key>compileBitcode</key>
+	<false/>
+	<key>uploadSymbols</key>
+	<false/>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>signingCertificate</key>
+	<string>iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.mirrorfly.uikitflutter.qa</key>
+		<string>MirrorFly Flutter In house</string>
+		<key>com.mirrorfly.uikitflutter.qa.notificationextention</key>
+		<string>MirrorFly QA Flutter notification in house</string>
+	</dict>
+</dict>
+</plist>

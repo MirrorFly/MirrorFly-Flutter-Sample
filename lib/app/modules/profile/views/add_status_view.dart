@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/modules/profile/controllers/status_controller.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../modules/profile/controllers/status_controller.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 
-class AddStatusView extends GetView<StatusListController> {
+class AddStatusView extends NavView<StatusListController> {
   const AddStatusView({Key? key}) : super(key: key);
+
+  @override
+StatusListController createController({String? tag}) => StatusListController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Add New Status'),
+        title: Text(getTranslated("addNewStatus")),
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) {
             return;
           }
@@ -89,7 +94,7 @@ class AddStatusView extends GetView<StatusListController> {
                               controller.showEmoji(!controller.showEmoji.value);
                             });
                           },
-                          icon: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : SvgPicture.asset(smileIcon));
+                          icon: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
                     })
                   ],
                 ),
@@ -100,13 +105,13 @@ class AddStatusView extends GetView<StatusListController> {
                 child: ElevatedButton(
                   onPressed: () => controller.onBackPressed(),
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
+                      backgroundColor: WidgetStateColor.resolveWith(
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "CANCEL",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  child: Text(
+                    getTranslated("cancel").toUpperCase(),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                 ),
               ),
@@ -120,13 +125,13 @@ class AddStatusView extends GetView<StatusListController> {
                     controller.validateAndFinish();
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: MaterialStateColor.resolveWith(
+                      backgroundColor: WidgetStateColor.resolveWith(
                               (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  child: Text(
+                    getTranslated("ok").toUpperCase(),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                 ),
               ),

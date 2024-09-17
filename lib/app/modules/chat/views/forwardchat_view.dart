@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/modules/chat/controllers/forwardchat_controller.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
+import '../../../common/app_localizations.dart';
+import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/chat/controllers/forwardchat_controller.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
+import 'package:mirrorfly_plugin/model/recent_chat.dart';
+
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../dashboard/widgets.dart';
 
-class ForwardChatView extends GetView<ForwardChatController> {
-  const ForwardChatView({Key? key}) : super(key: key);
+class ForwardChatView extends StatefulWidget{
+  const ForwardChatView(
+      {super.key, required this.forwardMessageIds, this.enableAppBar = true});
+  final List<String> forwardMessageIds;
+  final bool enableAppBar;
 
+  @override
+  State<ForwardChatView> createState() => _ForwardChatViewState();
+}
+
+class _ForwardChatViewState extends State<ForwardChatView> {
+  final ForwardChatController controller = ForwardChatController().get();
+
+  @override
+  void dispose() {
+    Get.delete<ForwardChatController>();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    controller.init(widget.forwardMessageIds, context);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -19,28 +44,28 @@ class ForwardChatView extends GetView<ForwardChatController> {
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              !controller.isSearchVisible ? controller.backFromSearch() : Get.back();
+              !controller.isSearchVisible ? controller.backFromSearch() : NavUtils.back();
             },
           ),
           title: !controller.isSearchVisible
               ? TextField(
                   onChanged: (text) {
-                    mirrorFlyLog("text", text);
+                    LogMessage.d("text", text);
                     controller.onSearch(text);
                   },
                   style: const TextStyle(fontSize: 16),
                   controller: controller.searchQuery,
                   autofocus: true,
-                  decoration: const InputDecoration(
-                      hintText: "Search...", border: InputBorder.none),
+                  decoration: InputDecoration(
+                      hintText: getTranslated("searchPlaceholder"), border: InputBorder.none),
                 )
-              : const Text("Forward to..."),
+              : Text(getTranslated("forwardTo")),
           actions: [
             Visibility(
               visible: controller.isSearchVisible,
               child: IconButton(
                   onPressed: () => controller.onSearchPressed(),
-                  icon: SvgPicture.asset(searchIcon)),
+                  icon: AppUtils.svgIcon(icon:searchIcon)),
             )
           ],
         ),
@@ -56,14 +81,14 @@ class ForwardChatView extends GetView<ForwardChatController> {
                       children: [
                         Visibility(
                           visible: !controller.searchLoading.value && controller.recentChats.isEmpty && controller.groupList.isEmpty && controller.userList.isEmpty,
-                          child: const Center(child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20.0),
-                            child: Text('No Results found'),
+                          child: Center(child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: Text(getTranslated("noResultsFound")),
                           ),),
                         ),
                         Visibility(
                           visible: controller.recentChats.isNotEmpty,
-                          child: searchHeader("Recent Chat",
+                          child: searchHeader(getTranslated("recentChat"),
                               "", context),
                         ),
                         ListView.builder(
@@ -75,7 +100,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                               return Opacity(
                                 opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
                                 child: RecentChatItem(
-                                    item: item,onTap:() {
+                                    item: item,onTap:(RecentChatData chatItem) {
                                       //chat page
                                       controller.onItemSelect(item.jid.checkNull(),
                                           getRecentName(item)/*item.profileName.checkNull()*/,item.isBlocked.checkNull(),item.isGroup.checkNull());
@@ -92,7 +117,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.groupList.isNotEmpty,
-                          child: searchHeader("Groups","", context),
+                          child: searchHeader(getTranslated("groups"),"", context),
                         ),
                         ListView.builder(
                             itemCount: controller.groupList.length,
@@ -109,11 +134,11 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                     if (data.data != null) {
                                       return Opacity(
                                         opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                        child: memberItem(
+                                        child: MemberItem(
                                             name: getName(item),//item.name.checkNull(),
                                             image: item.image.checkNull(),
                                             status: data.data.checkNull(),
-                                            spantext: controller.searchQuery.text.toString(),
+                                            searchTxt: controller.searchQuery.text.toString(),
                                             onTap: () {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
@@ -122,7 +147,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                             isCheckBoxVisible: true,
                                             isChecked: controller.isChecked(
                                                 item.jid.checkNull()),
-                                            onchange: (value) {
+                                            onChange: (value) {
                                               controller.onItemSelect(
                                                   item.jid.checkNull(),
                                                   getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
@@ -138,7 +163,7 @@ class ForwardChatView extends GetView<ForwardChatController> {
                             }),
                         Visibility(
                           visible: controller.userList.isNotEmpty,
-                          child: searchHeader("Contacts", "", context),
+                          child: searchHeader(getTranslated("contacts"), "", context),
                         ),
                         Visibility(
                           visible: controller.searchLoading.value || controller.contactLoading.value,
@@ -170,18 +195,18 @@ class ForwardChatView extends GetView<ForwardChatController> {
                                   var item = controller.userList[index];
                                   return Opacity(
                                     opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
-                                    child: memberItem(
+                                    child: MemberItem(
                                         name: getName(item),
                                         image: item.image.checkNull(),
                                         status: item.status.checkNull(),
-                                        spantext: controller.searchQuery.text.toString(),
+                                        searchTxt: controller.searchQuery.text.toString(),
                                         onTap: () {
                                           controller.onItemSelect(item.jid.checkNull(),
                                               getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },
                                         isCheckBoxVisible: true,
                                         isChecked: controller.isChecked(item.jid.checkNull()),
-                                        onchange: (value) {
+                                        onChange: (value) {
                                           controller.onItemSelect(item.jid.checkNull(),
                                               getName(item)/*item.name.checkNull()*/,item.isBlocked.checkNull(),item.isGroupProfile.checkNull());
                                         },
@@ -200,35 +225,22 @@ class ForwardChatView extends GetView<ForwardChatController> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    Expanded(child: controller.selectedNames.isEmpty ? const Text("No Users Selected",style: TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
+                    Expanded(child: controller.selectedNames.isEmpty ? Text(getTranslated("noUsersSelected"),style: const TextStyle(color: textColor)) : Text(controller.selectedNames.join(","),maxLines: 2,overflow: TextOverflow.ellipsis,style: const TextStyle(color: textColor),),),
                     Visibility(
                       visible: controller.selectedNames.isNotEmpty,
                       child: InkWell(
                         onTap: () {
                           controller.forwardMessages();
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("next").toUpperCase(),style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
                         ),
                       ),
                     )
                   ],
                 ),
               ),
-              /*ListTile(
-                leading:
-                    Flexible(child: Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: Text(controller.selectedNames.value.join(",")),
-                    )),
-                trailing: InkWell(
-                  onTap: () {
-                    controller.forwardMessages();
-                  },
-                  child: Text("NEXT",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
-                ),
-              )*/
             ],
           ),
         ),

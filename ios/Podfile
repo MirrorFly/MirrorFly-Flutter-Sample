@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '12.1'
+platform :ios, '14.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -33,6 +33,7 @@ target 'Runner' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_modular_headers!
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  pod 'FMDB'
   # Pods for Runner
 end
 
@@ -52,8 +53,16 @@ post_install do |installer|
        end
   
   installer.pods_project.targets.each do |target|
+#    targets_with_12_1 = ['Alamofire', 'Alamofire-Alamofire', 'MirrorFlySDK', 'libPhoneNumber-iOS', 'SocketRocket', 'Socket.IO-Client-Swift', 'Starscream', 'XMPPFramework', 'Realm', 'Realm-realm_objc_privacy', 'RealmSwift', 'RealmSwift-realm_swift_privacy', 'GoogleWebRTC', 'SDWebImage', 'SDWebImage-SDWebImage', 'IDZSwiftCommonCrypto']
+    
+#    puts "Configuring target: #{target.name}"
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
+#      if targets_with_12_1.include?(target.name)
+#          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
+#        else
+#          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+#      end
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.1'
       config.build_settings['ENABLE_BITCODE'] = 'NO'
       config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'

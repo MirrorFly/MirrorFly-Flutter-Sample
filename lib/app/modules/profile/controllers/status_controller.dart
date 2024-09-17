@@ -4,12 +4,13 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-
-import '../../../common/constants.dart';
-import '../../../data/apputils.dart';
-import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 
 class StatusListController extends FullLifeCycleController with FullLifeCycleMixin{
   var statusList = List<StatusData>.empty(growable: true).obs;
@@ -62,6 +63,7 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
       if (cursorPosition < 0) {
         controller.text += emoji.emoji;
         // widget.onEmojiSelected?.call(category, emoji);
+        count((139 - addStatusController.text.characters.length));
         return;
       }
 
@@ -81,11 +83,17 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   @override
   void onInit() {
     super.onInit();
-    selectedStatus.value = Get.arguments['status'];
+    selectedStatus.value = NavUtils.arguments['status'];
     addStatusController.text= selectedStatus.value;
-    onChanged();
+    // onChanged();
     getStatusList();
     onChanged();
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        showEmoji(false);
+      }
+    });
   }
   getStatusList(){
     loading.value=true;
@@ -106,41 +114,42 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   updateStatus([String? statusText, String? statusId]) async {
     debugPrint("updating item details--> $statusId");
     if(await AppUtils.isNetConnected()) {
-      Helper.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       Mirrorfly.setMyProfileStatus(status: statusText!, statusId: statusId!,flyCallBack: (response){
         if(response.isSuccess) {
           LogMessage.d("setMyProfileStatus flutter", response.toString());
           selectedStatus.value = statusText;
           addStatusController.text = statusText;
+          onChanged();
           var data = json.decode(response.data);
-          toToast('Status update successfully');
+          toToast(getTranslated("statusUpdated"));
           if(data['status']) {
             getStatusList();
           }
         }else{
           toToast(response.exception!.message.toString());
         }
-        Helper.hideLoading();
+        DialogUtils.hideLoading();
       }).then((value){
 
       }).catchError((er){
         toToast(er);
       });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   insertStatus() async{
     if(await AppUtils.isNetConnected()){
-      Helper.showLoading();
+      DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
         Mirrorfly.insertNewProfileStatus(status: addStatusController.text.trim().toString())
             .then((value) {
           selectedStatus.value = addStatusController.text.trim().toString();
           addStatusController.text = addStatusController.text.trim().toString();
           // var data = json.decode(value.toString());
-          toToast('Status update successfully');
-          Helper.hideLoading();
+          toToast(getTranslated("statusUpdated"));
+          DialogUtils.hideLoading();
           if (value.checkNull()) {
             getStatusList();
           }
@@ -148,21 +157,21 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
           toToast(er);
         });
     }else{
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 
   validateAndFinish()async{
     if(addStatusController.text.trim().isNotEmpty) {
       if(await AppUtils.isNetConnected()) {
-        Get.back(result: addStatusController.text
+        NavUtils.back(result: addStatusController.text
             .trim().toString());
       }else{
-        toToast(Constants.noInternetConnection);
-        Get.back();
+        toToast(getTranslated("noInternetConnection"));
+        NavUtils.back();
       }
     }else{
-      toToast("Status cannot be empty");
+      toToast(getTranslated("statusCantEmpty"));
     }
   }
 
@@ -195,16 +204,16 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     debugPrint("item delete status-->${item.id}");
     debugPrint("item delete status-->${item.status}");
     if(!item.isCurrentStatus!){
-      Helper.showButtonAlert(actions: [
+      DialogUtils.showButtonAlert(actions: [
         ListTile(
           contentPadding: const EdgeInsets.only(left: 10),
-          title: const Text("Delete",
-              style: TextStyle(
+          title: Text(getTranslated("delete"),
+              style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal)),
 
           onTap: () {
-            Get.back();
+            NavUtils.back();
             statusDeleteConfirmation(item);
           },
         ),
@@ -213,30 +222,30 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
   }
 
   void statusDeleteConfirmation(StatusData item) {
-    Helper.showAlert(message: "Do you want to delete the status?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deleteStatus"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("No",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no"), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.showLoading(message: "Deleting Status");
+              NavUtils.back();
+              DialogUtils.showLoading(message: getTranslated("deletingStatus"),dialogStyle: AppStyleConfig.dialogStyle);
               Mirrorfly.deleteProfileStatus(id: item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)
                   .then((value) {
                 statusList.remove(item);
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
               }).catchError((error) {
-                Helper.hideLoading();
-                toToast("Unable to delete the Busy Status");
+                DialogUtils.hideLoading();
+                toToast(getTranslated("unableDeleteBusyStatus"));
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("Yes",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes"), )),
     ]);
   }
 
@@ -250,9 +259,9 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
     showEmoji(false);
     addStatusController.text = selectedStatus.value;
     if(result != null){
-      Get.back(result: result);
+      NavUtils.back(result: result);
     }else {
-      Get.back();
+      NavUtils.back();
     }
   }
 }

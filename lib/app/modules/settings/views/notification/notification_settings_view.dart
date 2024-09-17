@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_controller.dart';
-import 'package:mirror_fly_demo/app/modules/settings/views/notification/notification_alert_view.dart';
+import '../../../../common/constants.dart';
+import '../../../../modules/settings/views/notification/notification_alert_controller.dart';
+import '../../../../modules/settings/views/notification/notification_alert_view.dart';
 
 import '../../../../common/widgets.dart';
+import '../../../../data/utils.dart';
+import '../../../../extensions/extensions.dart';
 import 'notification_not_working_view.dart';
 
-class NotificationSettingsView extends GetView<NotificationAlertController> {
+class NotificationSettingsView extends NavViewStateful<NotificationAlertController> {
   const NotificationSettingsView({Key? key}) : super(key: key);
+
+  @override
+NotificationAlertController createController({String? tag}) => Get.put(NotificationAlertController());
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,7 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
           notificationSettingsItem(
               title: "Notification Alert",
               subtitle: 'Choose alert type for incoming message',
-              onTap: () => Get.to(() => const NotificationAlertView())),
+              onTap: () => NavUtils.to(() => const NotificationAlertView())),
           FutureBuilder(
               future: controller.getRingtoneName(),
               builder: (context, data) {
@@ -37,7 +41,7 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
           notificationSettingsItem(
               title: "Notification Not Working?",
               subtitle: 'Learn more in our Help Center',
-              onTap: () => Get.to(const NotificationNotWorkingView())),
+              onTap: () => NavUtils.to(const NotificationNotWorkingView())),
         ],
       ),
     );
@@ -66,7 +70,7 @@ class NotificationSettingsView extends GetView<NotificationAlertController> {
           ],
         ),
         dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-        trailing: SvgPicture.asset(rightArrowIcon),
+        trailing: AppUtils.svgIcon(icon:rightArrowIcon),
         onTap: onTap);
   }
 }

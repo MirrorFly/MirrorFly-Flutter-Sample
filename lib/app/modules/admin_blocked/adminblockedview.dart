@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../common/app_localizations.dart';
 
 import '../../common/constants.dart';
+import '../../data/utils.dart';
+import '../../routes/route_settings.dart';
 
-class AdminBlockedView extends GetView {
+class AdminBlockedView extends StatelessWidget {
   const AdminBlockedView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           return;
         }
-        onFinish();
+        onFinish(context);
         return;
       },
       child: SafeArea(child: Container(
@@ -27,23 +27,23 @@ class AdminBlockedView extends GetView {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 55.0,left: 55.0),
-                child: Image.asset(icLogo),
+                child: AppUtils.assetIcon(assetName:icLogo),
               ),
               Padding(
                 padding: const EdgeInsets.only(top:20.0),
-                child: SvgPicture.asset(icAdminBlocked),
+                child: AppUtils.svgIcon(icon:icAdminBlocked),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
-                child: Text(Constants.adminBlockedMessage,style: TextStyle(decoration: TextDecoration.none,color: textColorBlack,fontSize: 18.0,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
+                child: Text(getTranslated("adminBlockedMessage"),style: const TextStyle(decoration: TextDecoration.none,color: textColorBlack,fontSize: 18.0,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(Constants.adminBlockedMessageLabel,style: TextStyle(decoration: TextDecoration.none,color: textColor,fontSize: 16.0,fontWeight: FontWeight.w200),textAlign: TextAlign.center,),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
+                child: Text(getTranslated("adminBlockedMessageLabel"),style: const TextStyle(decoration: TextDecoration.none,color: textColor,fontSize: 16.0,fontWeight: FontWeight.w200),textAlign: TextAlign.center,),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(Constants.supportMail,style: TextStyle(decoration: TextDecoration.underline,color: buttonBgColor,fontSize: 16.0,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
+                child: Text(getTranslated("supportMail"),style: const TextStyle(decoration: TextDecoration.underline,color: buttonBgColor,fontSize: 16.0,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
@@ -57,11 +57,11 @@ class AdminBlockedView extends GetView {
                           fontWeight: FontWeight.w500),
                       shape: const StadiumBorder()),
                   onPressed: () {
-                    onFinish();
+                    onFinish(context);
                   },
-                  child: const Text(
-                    'Ok',
-                    style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                  child: Text(
+                    getTranslated("ok"),
+                    style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
                   ),
                 ),
               ),
@@ -72,14 +72,8 @@ class AdminBlockedView extends GetView {
     );
   }
 
-  onFinish(){
-    /*Helper.showLoading();
-    var token = SessionManagement.getToken().checkNull();
-    SessionManagement.clear().then((value){
-      SessionManagement.setToken(token);
-      Helper.hideLoading();
-      Get.offAllNamed(Routes.login);
-    });*/
-    Get.offAllNamed(Routes.login);
+  onFinish(BuildContext context){
+    // NavUtils.offAllNamed(Routes.login);
+    Navigator.pushNamedAndRemoveUntil(context, Routes.login, (Route<dynamic> route) => false);
   }
 }
