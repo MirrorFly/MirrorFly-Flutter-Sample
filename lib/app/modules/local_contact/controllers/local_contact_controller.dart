@@ -1,11 +1,14 @@
 
-import 'package:contacts_service/contacts_service.dart';
+// import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../../common/app_localizations.dart';
 
 import '../../../common/constants.dart';
+import '../../../data/utils.dart';
 import '../../../model/local_contact_model.dart';
+import '../../../routes/route_settings.dart';
 
 
 class LocalContactController extends GetxController {
@@ -17,6 +20,8 @@ class LocalContactController extends GetxController {
   var contactsSelected = List<LocalContact>.empty(growable: true).obs;
   TextEditingController searchTextController = TextEditingController();
 
+  var userJid = NavUtils.arguments['userJid'];
+
   @override
   void onInit() {
     super.onInit();
@@ -24,12 +29,14 @@ class LocalContactController extends GetxController {
   }
 
   getContacts() async{
-    await ContactsService.getContacts().then((localContactList) {
+    FlutterContacts.getContacts(withProperties: true).then((localContactList) {
       for (var userDetail in localContactList) {
-        if (userDetail.phones != null && userDetail.phones!.isNotEmpty) {
+        if (userDetail.phones.isNotEmpty) {
           LocalContact localContact = LocalContact(contact: userDetail, isSelected: false);
           contactList.add(localContact);
           searchList.add(localContact);
+        }else{
+          debugPrint("No phone number found for contact--> $userDetail");
         }
       }
     });
@@ -41,7 +48,6 @@ class LocalContactController extends GetxController {
   }
 
   onSearchTextChanged(String text) async {
-    debugPrint("ontextChanged--> $text");
     searchList.clear();
     if (searchTextController.text.trim().isEmpty) {
       searchList.addAll(contactList);
@@ -61,17 +67,17 @@ class LocalContactController extends GetxController {
     //   contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     // }
 
-    Get.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick"});
+    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick", "userJid" : userJid});
 
   }
 
   name(Contact item) {
-    return item.displayName ?? item.givenName ?? item.middleName ?? item.androidAccountName ?? item.familyName ?? "";
+    return item.displayName;
   }
 
-  isValidContactNumber(List<Item> phones){
-    return phones.isNotEmpty;
-  }
+  // isValidContactNumber(List<Item> phones){
+  //   return phones.isNotEmpty;
+  // }
 
   void contactSelected(LocalContact localContact) {
 
@@ -80,7 +86,7 @@ class LocalContactController extends GetxController {
       contactsSelected.remove(localContact);
     }else {
       if(contactsSelected.length == 5){
-        toToast("Can't share more than 5 contacts");
+        toToast(getTranslated("cantShare5More"));
         return;
       }
       localContact.isSelected = true;

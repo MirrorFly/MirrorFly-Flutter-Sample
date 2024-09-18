@@ -102,6 +102,17 @@ class GalleryMediaPickerController extends ChangeNotifier
     notifyListeners();
   }
 
+  void removeEntity(AssetEntity entity){
+    if (picked.contains(entity)) {
+      picked.remove(entity);
+      pickedNotifier.value = picked;
+      pickedNotifier.notifyListeners();
+      notifyListeners();
+    } else {
+      debugPrint("the entity is already de-selected");
+    }
+  }
+
   void unPick(int index){
     debugPrint("unPick $index");
     picked.removeAt(index);

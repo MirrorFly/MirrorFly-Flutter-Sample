@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/apputils.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import '../../common/constants.dart';
+import '../../common/de_bouncer.dart';
+import '../../common/main_controller.dart';
+import '../../data/helper.dart';
+import '../../data/permissions.dart';
+import '../../data/session_management.dart';
+import '../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+import '../../app_style_config.dart';
+import '../../common/app_localizations.dart';
+import '../../data/utils.dart';
+import '../../model/arguments.dart';
+import '../../routes/route_settings.dart';
 
 class GroupParticipantsController extends GetxController {
   var usersList = <ProfileDetails>[].obs;
@@ -23,8 +27,8 @@ class GroupParticipantsController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
-    groupId(Get.arguments["groupId"]);
-    callType(Get.arguments["callType"]);
+    groupId(NavUtils.arguments["groupId"]);
+    callType(NavUtils.arguments["callType"]);
     getGroupMembers();
   }
 
@@ -36,7 +40,7 @@ class GroupParticipantsController extends GetxController {
 
   void getGroupMembers() {
     Mirrorfly.getGroupMembersList(jid: groupId.value.checkNull(), fetchFromServer: false, flyCallBack: (FlyResponse response) {
-      mirrorFlyLog("getGroupMembersList", response.toString());
+      LogMessage.d("getGroupMembersList", response.toString());
       if (response.isSuccess &&response.hasData) {
         var list = profileFromJson(response.data);
         var withoutMe = list.where((element) => element.jid != SessionManagement.getUserJID()).toList();
@@ -108,18 +112,17 @@ class GroupParticipantsController extends GetxController {
 
   showProfilePopup(Rx<ProfileDetails> profile) {
     showQuickProfilePopup(
-        context: Get.context,
         // chatItem: chatItem,
         chatTap: () {
-          Get.back();
+          NavUtils.back();
           onListItemPressed(profile.value);
         },
         infoTap: () {
-          Get.back();
+          NavUtils.back();
           if (profile.value.isGroupProfile ?? false) {
-            Get.toNamed(Routes.groupInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.groupInfo, arguments: profile.value.jid.checkNull());
           } else {
-            Get.toNamed(Routes.chatInfo, arguments: profile.value);
+            NavUtils.toNamed(Routes.chatInfo, arguments: ChatInfoArguments(chatJid:profile.value.jid.checkNull()));
           }
         },
         profile: profile,
@@ -135,29 +138,29 @@ class GroupParticipantsController extends GetxController {
   }
 
   unBlock(ProfileDetails item) {
-    Helper.showAlert(message: "Unblock ${getName(item)}?", actions: [
-      TextButton(
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(item)), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Get.back();
+            NavUtils.back();
           },
-          child: const Text("NO",style: TextStyle(color: buttonBgColor))),
-      TextButton(
+          child: Text(getTranslated("no").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () async {
             if (await AppUtils.isNetConnected()) {
-              Get.back();
-              Helper.progressLoading();
+              NavUtils.back();
+              DialogUtils.progressLoading();
               Mirrorfly.unblockUser(userJid: item.jid.checkNull(), flyCallBack: (FlyResponse response) {
-                Helper.hideLoading();
+                DialogUtils.hideLoading();
                 if (response.isSuccess && response.hasData) {
-                  toToast("${getName(item)} has been Unblocked");
+                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(item)));
                   userUpdatedHisProfile(item.jid.checkNull());
                 }
               });
             } else {
-              toToast(Constants.noInternetConnection);
+              toToast(getTranslated("noInternetConnection"));
             }
           },
-          child: const Text("YES",style: TextStyle(color: buttonBgColor))),
+          child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
 
@@ -170,7 +173,7 @@ class GroupParticipantsController extends GetxController {
       getProfileDetails(jid).then((value) {
         var userListIndex = usersList.indexWhere((element) => element.jid == jid);
         var mainUserListIndex = mainUserList.indexWhere((element) => element.jid == jid);
-        mirrorFlyLog('value.isBlockedMe', value.isBlockedMe.toString());
+        LogMessage.d('value.isBlockedMe', value.isBlockedMe.toString());
         if (!userListIndex.isNegative) {
           usersList[userListIndex] = value;
           usersList.refresh();
@@ -197,7 +200,7 @@ class GroupParticipantsController extends GetxController {
         selectedUsersJIDList.add(item.jid!);
         groupCallMembersCount(groupCallMembersCount.value + 1);
       } else {
-        toToast(Constants.callMembersLimit.replaceFirst("%d", getMaxCallUsersCount.toString()));
+        toToast(getTranslated("callMembersLimit").replaceFirst("%d", getMaxCallUsersCount.toString()));
       }
     }
     usersList.refresh();
@@ -208,23 +211,23 @@ class GroupParticipantsController extends GetxController {
       return;
     }
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
-      Helper.showFeatureUnavailable();
+      DialogUtils.showFeatureUnavailable();
       return;
     }
     if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
-      toToast(Constants.msgOngoingCallAlert);
+      toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
     if (!(await AppUtils.isNetConnected())) {
-      toToast(Constants.noInternetConnection);
+      toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (callType.value == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
         Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
-            Get.offNamed(Routes.outGoingCallView,
+            NavUtils.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.audio});
           }
         });
@@ -233,7 +236,7 @@ class GroupParticipantsController extends GetxController {
       if (await AppPermission.askVideoCallPermissions()) {
         Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, toUserJidList: selectedUsersJIDList, flyCallBack: (FlyResponse response) {
           if (response.isSuccess) {
-            Get.offNamed(Routes.outGoingCallView,
+            NavUtils.offNamed(Routes.outGoingCallView,
                 arguments: {"userJid": selectedUsersJIDList, "callType": CallType.video});
           }
         });

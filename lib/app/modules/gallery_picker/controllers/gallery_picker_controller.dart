@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:get/get.dart';
+import '../../../modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../../data/utils.dart';
 import '../src/data/models/picked_asset_model.dart';
 
 class GalleryPickerController extends GetxController {
   var provider = GalleryMediaPickerController();
   var pickedFile = <PickedAssetModel>[].obs;
-  var userName = Get.arguments['userName'];
-  var textMessage = Get.arguments['caption'];
-  var profile = Get.arguments['profile'] as ProfileDetails;
+  var userName = NavUtils.arguments['userName'];
+  var textMessage = NavUtils.arguments['caption'];
+  var profile = NavUtils.arguments['profile'] as ProfileDetails;
+  var userJid = NavUtils.arguments['userJid'];
   var maxPickImages = 10;
 
   @override

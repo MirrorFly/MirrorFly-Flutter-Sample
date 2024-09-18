@@ -5,13 +5,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/routes/app_pages.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/crop_image.dart';
 import '../../../data/permissions.dart';
+import '../../../data/utils.dart';
+import '../../../model/arguments.dart';
+import '../../../routes/route_settings.dart';
 
 class GroupCreationController extends GetxController {
   var imagePath = "".obs;
@@ -98,18 +101,19 @@ class GroupCreationController extends GetxController {
 
   goToAddParticipantsPage(){
     if(groupName.text.trim().isNotEmpty) {
-      //Get.toNamed(Routes.ADD_PARTICIPANTS);
-      Get.toNamed(Routes.contacts, arguments: {"forward" : false,"group":true,"groupJid":"" })?.then((value){
+      //NavUtils.toNamed(Routes.ADD_PARTICIPANTS);
+      NavUtils.toNamed(Routes.contacts, arguments: const ContactListArguments(forGroup:true)
+          /*{"forward" : false,"group":true,"groupJid":"" }*/)?.then((value){
         if(value!=null){
           createGroup(value as List<String>);
         }
       });
     }else{
-      toToast("Please provide group name");
+      toToast(getTranslated("pleaseProvideGroupName"));
     }
   }
 
-  showHideEmoji(BuildContext context){
+  showHideEmoji(){
     if (!showEmoji.value) {
       focusNode.unfocus();
     }else{
@@ -122,23 +126,25 @@ class GroupCreationController extends GetxController {
   }
 
 
-  Future imagePick(BuildContext context) async {
+  Future imagePick() async {
     if(await AppPermission.getStoragePermission()) {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
         // isImageSelected.value = true;
-        Get.to(CropImage(
+        NavUtils.to(CropImage(
           imageFile: File(result.files.single.path!),
         ))?.then((value) {
-          value as MemoryImage;
-          // imageBytes = value.bytes;
-          var name = "${DateTime
-              .now()
-              .millisecondsSinceEpoch}.jpg";
-          writeImageTemp(value.bytes, name).then((value) {
-            imagePath(value.path);
-          });
+          if (value != null) {
+            value as MemoryImage;
+            // imageBytes = value.bytes;
+            var name = "${DateTime
+                .now()
+                .millisecondsSinceEpoch}.jpg";
+            MessageUtils.writeImageTemp(value.bytes, name).then((value) {
+              imagePath(value.path);
+            });
+          }
         });
       } else {
         // User canceled the picker
@@ -153,15 +159,19 @@ class GroupCreationController extends GetxController {
         source: ImageSource.camera);
     if (photo != null) {
       // isImageSelected.value = true;
-      Get.to(CropImage(
+      NavUtils.to(CropImage(
         imageFile: File(photo.path),
       ))?.then((value) {
-        value as MemoryImage;
-        // imageBytes = value.bytes;
-        var name ="${DateTime.now().millisecondsSinceEpoch}.jpg";
-        writeImageTemp(value.bytes, name).then((value) {
-          imagePath(value.path);
-        });
+        if (value != null) {
+          value as MemoryImage;
+          // imageBytes = value.bytes;
+          var name = "${DateTime
+              .now()
+              .millisecondsSinceEpoch}.jpg";
+          MessageUtils.writeImageTemp(value.bytes, name).then((value) {
+            imagePath(value.path);
+          });
+        }
       });
     } else {
       // User canceled the Camera
@@ -170,43 +180,43 @@ class GroupCreationController extends GetxController {
   }
 
   createGroup(List<String> users,){
-    mirrorFlyLog("group name", groupName.text);
-    mirrorFlyLog("users", users.toString());
-    mirrorFlyLog("group image", imagePath.value);
-    Helper.showLoading();
+    LogMessage.d("group name", groupName.text);
+    LogMessage.d("users", users.toString());
+    LogMessage.d("group image", imagePath.value);
+    DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
     Mirrorfly.createGroup(groupName: groupName.text.toString(),userList: users,image: imagePath.value, flyCallBack: (FlyResponse response) {
-      Helper.hideLoading();
+      DialogUtils.hideLoading();
       if(response.isSuccess) {
-        Get.back();
-        toToast('Group created Successfully');
+        NavUtils.back();
+        toToast(getTranslated("groupCreatedSuccessfully"));
       }
     });
   }
 
   void choosePhoto() {
-    Helper.showVerticalButtonAlert([
+    DialogUtils.showVerticalButtonAlert(actions:[
       ListTile(
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         onTap: () {
-          Get.back();
-          imagePick(Get.context!);
+          NavUtils.back();
+          imagePick();
         },
-        title: const Text(
-          "Choose from Gallery",
-          style: TextStyle(color: textBlackColor, fontSize: 14),
+        title: Text(
+          getTranslated("chooseFromGallery"),
+          style: const TextStyle(color: textBlackColor, fontSize: 14),
         ),
       ),
       ListTile(
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         onTap: () {
-          Get.back();
+          NavUtils.back();
           camera();
         },
-        title: const Text(
-          "Take Photo",
-          style: TextStyle(color: textBlackColor, fontSize: 14),
+        title: Text(
+          getTranslated("takePhoto"),
+          style: const TextStyle(color: textBlackColor, fontSize: 14),
         ),
       ),
     ]);

@@ -1,5 +1,5 @@
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/constants.dart';
@@ -111,9 +111,7 @@ class SessionManagement {
   static Future setWebChatLogin(bool webChatLogin) async {
     await _preferences.setBool("${prefix}web_chat_login", webChatLogin);
   }
-  static Future setChatJid(String setChatJid) async {
-    await _preferences.setString("${prefix}chatJid", setChatJid);
-  }
+
   static void setAdminBlocked(bool status) async {
     await _preferences.setBool("${prefix}admin_blocked", status);
   }
@@ -181,9 +179,7 @@ class SessionManagement {
   static String getString(String key) => _preferences.getString("$prefix$key") ?? "";
 
   static bool getLogin() => _preferences.getBool("${prefix}login") ?? false;
-
   static String getUserIdentifier() => _preferences.getString("${prefix}userIdentifier") ?? "";
-  static String? getChatJid() => _preferences.getString("${prefix}chatJid");
   static String getCurrentChatJID() => _preferences.getString("${prefix}CurrentChatJID") ?? "";
   static String? getName() => _preferences.getString("${prefix}name");
   static String? getMobileNumber() => _preferences.getString("${prefix}mobileNumber");
@@ -218,5 +214,5 @@ class SessionManagement {
   static int appLastSession() => _preferences.getInt("$prefix${Constants.appSession}") ?? DateTime.now().millisecondsSinceEpoch;
   static int lastPinChangedAt() => _preferences.getInt("$prefix${Constants.changedPinAt}") ?? DateTime.now().millisecondsSinceEpoch;
   static bool showAlert() => _preferences.getBool('${prefix}show_alert') ?? true;
-  // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";//Mirrorfly Topic
+  // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";
 }

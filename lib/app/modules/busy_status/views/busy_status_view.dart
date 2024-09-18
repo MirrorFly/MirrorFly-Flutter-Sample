@@ -1,20 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/extensions.dart';
-import '../../../common/constants.dart';
-import '../controllers/busy_status_controller.dart';
-import 'add_busy_status_view.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
 
-class BusyStatusView extends GetView<BusyStatusController> {
-  const BusyStatusView({Key? key}) : super(key: key);
+import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../../routes/route_settings.dart';
+import '../controllers/busy_status_controller.dart';
+
+class BusyStatusView extends StatefulWidget {
+  const BusyStatusView({super.key, this.status, this.enableAppBar = true});
+  final String? status;
+  final bool enableAppBar;
+
+  @override
+  State<BusyStatusView> createState() => _BusyStatusViewState();
+}
+
+class _BusyStatusViewState extends State<BusyStatusView> {
+  final BusyStatusController controller = BusyStatusController().get();
+
+
+  @override
+  void initState() {
+    controller.init(widget.status);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<BusyStatusController>();
+    controller.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(Constants.editBusyStatus),
+          title: Text(getTranslated("editBusyStatus")),
+          titleSpacing: 0.0,
         ),
         body: SafeArea(
           child: Padding(
@@ -22,9 +47,9 @@ class BusyStatusView extends GetView<BusyStatusController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  Constants.yourBusyStatus,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                Text(
+                  getTranslated("yourBusyStatus"),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
                   height: 5,
@@ -42,14 +67,14 @@ class BusyStatusView extends GetView<BusyStatusController> {
                                 color: textColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal)),
-                        trailing: SvgPicture.asset(
+                        trailing: AppUtils.svgIcon(icon:
                           pencilEditIcon,
                           fit: BoxFit.contain,
                         ),
                         onTap: () {
                           controller.addStatusController.text = controller.busyStatus.value;
                           controller.onChanged();
-                          Get.to(const AddBusyStatusView(),arguments: {"status":controller.selectedStatus.value})?.then((value){
+                          NavUtils.toNamed(Routes.addBusyStatus,arguments: {"status":controller.busyStatus.value})?.then((value){
                             if(value!=null){
                               controller.insertBusyStatus(value);
                             }
@@ -61,16 +86,16 @@ class BusyStatusView extends GetView<BusyStatusController> {
                   height: 5,
                 ),
 
-                const Text(
-                  Constants.busyStatusDescription,
-                  style: TextStyle(fontSize: 15),
+                Text(
+                  getTranslated("busyStatusDescription"),
+                  style: const TextStyle(fontSize: 15),
                 ),
                 const SizedBox(
                   height: 40,
                 ),
-                const Text(
-                  Constants.newBusyStatus,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                Text(
+                  getTranslated("selectYourBusyStatus"),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(
                   height: 5,
@@ -97,7 +122,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             trailing: item.status == controller.busyStatus.value
-                                ? SvgPicture.asset(
+                                ? AppUtils.svgIcon(icon:
                               tickIcon,
                               fit: BoxFit.contain,
                             ) : const SizedBox(),
@@ -106,7 +131,7 @@ class BusyStatusView extends GetView<BusyStatusController> {
                                   index, item.status.checkNull());
                             },
                             onLongPress: () {
-                              controller.deleteBusyStatus(item);
+                              controller.deleteBusyStatus(item, context);
                             },
                           );
                         }) : const SizedBox();
