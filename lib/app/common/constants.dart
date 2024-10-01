@@ -325,7 +325,7 @@ toToast(String text) {
 }
 
 class Constants {
-  static MetaDataUserList? metaDataUserList = MetaDataUserList(key: "platform", value: ["flutter"]);
+  static MetaDataUserList? metaDataUserList;// = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
   static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id

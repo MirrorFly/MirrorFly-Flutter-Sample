@@ -135,7 +135,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   RxString editMessageText = ''.obs;
 
   //#metaData
-  List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
+  List<MessageMetaData> messageMetaData = [];//[MessageMetaData(key: "platform", value: "flutter")];
   final ChatViewArguments? arguments;
 
   var screenWidth = 0.0.obs;

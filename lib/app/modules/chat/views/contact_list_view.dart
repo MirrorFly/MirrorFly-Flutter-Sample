@@ -156,7 +156,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                               )) : const Offstage(),
                               Column(
                             children: [
-                              controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
+                              Expanded(
                                 child: ListView.builder(
                                     itemCount: controller.scrollable.value
                                         ? controller.usersList.length + 1
