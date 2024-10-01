@@ -60,6 +60,12 @@ class AppStyleConfig{
       }
       return const Color(0xff3276E2); // Default color
     }),
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+        }
+        return Colors.white;
+      }),
     iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
@@ -80,6 +86,13 @@ class AppStyleConfig{
       }
       return const Color(0xff3276E2); // Default color
     }),
+
+      foregroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.withOpacity(0.5); // Color when the icon is disabled
+        }
+        return Colors.white;
+      }),
     iconColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         return Colors.grey.withOpacity(0.5); // Color when the icon is disabled

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
+import '../../../modules/gallery_picker/src/presentation/pages/gallery_media_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/utils.dart';

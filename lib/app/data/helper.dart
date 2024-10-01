@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../common/constants.dart';
+import '../data/permissions.dart';
+import '../data/session_management.dart';
+import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -394,7 +393,7 @@ void showQuickProfilePopup(
                             height: 250,
                             clipOval: false,
                             errorWidget: profile.value.isGroupProfile!
-                                ? Image.asset(
+                                ? AppUtils.assetIcon(assetName:
                                     groupImg,
                                     height: 250,
                                     width: NavUtils.width * 0.72,
@@ -432,7 +431,7 @@ void showQuickProfilePopup(
                     Expanded(
                       child: InkWell(
                         onTap: chatTap,
-                        child: SvgPicture.asset(
+                        child: AppUtils.svgIcon(icon:
                           quickMessage,
                           fit: BoxFit.contain,
                           width: 30,
@@ -448,7 +447,7 @@ void showQuickProfilePopup(
                                   makeVoiceCall(profile,
                                       availableFeatures);
                               },
-                              child: SvgPicture.asset(
+                              child: AppUtils.svgIcon(icon:
                                 quickCall,
                                 fit: BoxFit.contain,
                               ),
@@ -462,7 +461,7 @@ void showQuickProfilePopup(
                                 NavUtils.back();
                                 makeVideoCall(profile, availableFeatures);
                               },
-                              child: SvgPicture.asset(
+                              child: AppUtils.svgIcon(icon:
                                 quickVideo,
                                 fit: BoxFit.contain,
                               ),
@@ -472,7 +471,7 @@ void showQuickProfilePopup(
                     Expanded(
                       child: InkWell(
                         onTap: infoTap,
-                        child: SvgPicture.asset(
+                        child: AppUtils.svgIcon(icon:
                           quickInfo,
                           fit: BoxFit.contain,
                         ),

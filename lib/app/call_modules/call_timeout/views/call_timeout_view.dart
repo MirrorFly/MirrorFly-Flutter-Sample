@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
+import '../../../app_style_config.dart';
+import '../../../call_modules/call_utils.dart';
+import '../../../data/helper.dart';
+import '../../../data/utils.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
@@ -81,7 +79,7 @@ CallTimeoutController createController({String? tag}) => Get.put(CallTimeoutCont
                         );
                       }),
                       /*ClipOval(
-                        child: Image.asset(
+                        child: AppUtils.assetIcon(assetName:
                           groupImg,
                           height: 100,
                           width: 100,
@@ -124,7 +122,7 @@ CallTimeoutController createController({String? tag}) => Get.put(CallTimeoutCont
                                         onPressed: () {
                                           controller.cancelCallTimeout();
                                         },
-                                        child: SvgPicture.asset(callCancel,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.cancelActionStyle.activeIconColor, BlendMode.srcIn),),
+                                        child: AppUtils.svgIcon(icon:callCancel,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.cancelActionStyle.activeIconColor, BlendMode.srcIn),),
                                       ),
                                       const SizedBox(height: 13,),
                                       Text(getTranslated("cancel"),
@@ -148,8 +146,7 @@ CallTimeoutController createController({String? tag}) => Get.put(CallTimeoutCont
                                             controller.callAgain();
                                           },
                                           child: controller.callType.value == CallType.audio ?
-                                          SvgPicture.asset(audioCallAgain,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.callAgainActionStyle.activeIconColor, BlendMode.srcIn),) : SvgPicture
-                                              .asset(videoCallAgain,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.callAgainActionStyle.activeIconColor, BlendMode.srcIn)),
+                                          AppUtils.svgIcon(icon:audioCallAgain,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.callAgainActionStyle.activeIconColor, BlendMode.srcIn),) : AppUtils.svgIcon(icon:videoCallAgain,colorFilter: ColorFilter.mode(AppStyleConfig.callAgainPageStyle.callAgainActionStyle.activeIconColor, BlendMode.srcIn)),
                                         );
                                       }),
                                       const SizedBox(height: 13,),

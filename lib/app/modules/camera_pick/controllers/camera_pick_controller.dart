@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../app_style_config.dart';

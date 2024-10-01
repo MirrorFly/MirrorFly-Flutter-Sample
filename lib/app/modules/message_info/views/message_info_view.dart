@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../chat/widgets/chat_widgets.dart';
@@ -93,8 +92,7 @@ MessageInfoController createController({String? tag}) => Get.put(MessageInfoCont
         children: [
           const AppDivider(),
           ListItem(
-            leading: !controller.visibleDeliveredList.value ? SvgPicture
-                .asset(icExpand) : SvgPicture.asset(icCollapse),
+            leading: !controller.visibleDeliveredList.value ? AppUtils.svgIcon(icon:icExpand) : AppUtils.svgIcon(icon:icCollapse),
             title: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
@@ -126,8 +124,8 @@ MessageInfoController createController({String? tag}) => Get.put(MessageInfoCont
                   context, getTranslated("sentNotDelivered"),AppStyleConfig.messageInfoPageStyle.deliveredMsgTitleStyle)),
           const AppDivider(),
           ListItem(
-            leading: !controller.visibleReadList.value ? SvgPicture.asset(
-                icExpand) : SvgPicture.asset(icCollapse),
+            leading: !controller.visibleReadList.value ? AppUtils.svgIcon(icon:
+                icExpand) : AppUtils.svgIcon(icon:icCollapse),
             title: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 15.0, vertical: 10.0),
@@ -214,7 +212,7 @@ MessageInfoController createController({String? tag}) => Get.put(MessageInfoCont
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
+          AppUtils.assetIcon(assetName:
             noChatIcon,
             width: 200,
           ),

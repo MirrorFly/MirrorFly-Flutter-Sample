@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../data/helper.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
@@ -193,7 +192,7 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(emailIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
+                  AppUtils.svgIcon(icon:emailIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.email.checkNull(),
@@ -226,7 +225,7 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(phoneIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
+                  AppUtils.svgIcon(icon:phoneIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.mobileNumber.checkNull(),
@@ -259,7 +258,7 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
               padding: const EdgeInsets.only(left: 15.0, bottom: 16),
               child: Row(
                 children: [
-                  SvgPicture.asset(statusIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
+                  AppUtils.svgIcon(icon:statusIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
                     return Text(controller.profile.status.checkNull(),
@@ -282,7 +281,7 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
           controller.reportChatOrUser();
         }, listItemStyle: AppStyleConfig.chatInfoPageStyle.viewAllMediaStyle,),
         /*listItem(
-            leading: SvgPicture.asset(imageOutline,),
+            leading: AppUtils.svgIcon(icon:imageOutline,),
             title: Text(getTranslated("viewAllMedia"),
                 style: const TextStyle(
                     color: Colors.black,
@@ -295,7 +294,7 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
             } //controller.gotoViewAllMedia(),
         ),*/
         /*listItem(
-            leading: SvgPicture.asset(reportUser),
+            leading: AppUtils.svgIcon(icon:reportUser),
             title: Text(getTranslated("report"),
                 style: const TextStyle(
                     color: Colors.red,

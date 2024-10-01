@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../extensions/extensions.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -69,7 +68,7 @@ class TextMessageView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               chatMessage.isMessageStarred.value
-                  ? SvgPicture.asset(starSmallIcon)
+                  ? AppUtils.svgIcon(icon:starSmallIcon)
                   : const Offstage(),
               const SizedBox(
                 width: 5,
@@ -131,11 +130,11 @@ class CallLinkView extends StatelessWidget{
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Image.asset(mirrorflySmall,width: 24,),
+            AppUtils.assetIcon(assetName:mirrorflySmall,width: 24,),
             const SizedBox(width: 8,),
             Expanded(child: Text(getTranslated("joinVideoCall"),style: callLinkViewStyle.textStyle,)),
             const SizedBox(width: 8,),
-            SvgPicture.asset(videoCamera,width: 18,colorFilter: ColorFilter.mode(callLinkViewStyle.iconColor, BlendMode.srcIn),)
+            AppUtils.svgIcon(icon:videoCamera,width: 18,colorFilter: ColorFilter.mode(callLinkViewStyle.iconColor, BlendMode.srcIn),)
           ],
         ),
       ),

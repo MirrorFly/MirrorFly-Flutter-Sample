@@ -35,7 +35,7 @@ class DialogUtils {
           backgroundColor: dialogStyle.backgroundColor,
           child: PopScope(
             canPop: dismiss,
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }
@@ -69,7 +69,7 @@ class DialogUtils {
             backgroundColor: Colors.transparent,
             content: PopScope(
               canPop: dismiss,
-              onPopInvoked: (didPop) {
+              onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   return;
                 }
@@ -112,7 +112,7 @@ class DialogUtils {
                 : const EdgeInsets.only(top: 0, right: 25, left: 25, bottom: 5),
             content: PopScope(
               canPop: barrierDismissible ?? true,
-              onPopInvoked: (didPop) {
+              onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   return;
                 }

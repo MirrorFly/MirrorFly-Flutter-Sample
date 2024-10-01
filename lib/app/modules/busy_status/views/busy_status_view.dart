@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../common/app_localizations.dart';
+import '../../../extensions/extensions.dart';
+
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
@@ -68,7 +67,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                                 color: textColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal)),
-                        trailing: SvgPicture.asset(
+                        trailing: AppUtils.svgIcon(icon:
                           pencilEditIcon,
                           fit: BoxFit.contain,
                         ),
@@ -123,7 +122,7 @@ class _BusyStatusViewState extends State<BusyStatusView> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500)),
                             trailing: item.status == controller.busyStatus.value
-                                ? SvgPicture.asset(
+                                ? AppUtils.svgIcon(icon:
                               tickIcon,
                               fit: BoxFit.contain,
                             ) : const SizedBox(),

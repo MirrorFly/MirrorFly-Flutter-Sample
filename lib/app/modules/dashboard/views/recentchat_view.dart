@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../extensions/extensions.dart';
+import '../../../modules/dashboard/controllers/dashboard_controller.dart';
+import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/model/recent_chat.dart';
 
@@ -99,7 +98,7 @@ class RecentChatView extends StatelessWidget {
                 child: ListItem(
                   leading: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SvgPicture.asset(archive),
+                    child: AppUtils.svgIcon(icon:archive),
                   ),
                   title: Text(
                     getTranslated("archived"),
@@ -174,7 +173,7 @@ class RecentChatView extends StatelessWidget {
                           child: ListItem(
                             leading: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: SvgPicture.asset(archive),
+                              child: AppUtils.svgIcon(icon:archive),
                             ),
                             title: Text(
                               getTranslated("archived"),
@@ -458,7 +457,7 @@ class RecentChatView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(
+          AppUtils.assetIcon(assetName:
             noChatIcon,
             width: 200,
           ),

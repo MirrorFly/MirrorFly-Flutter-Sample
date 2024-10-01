@@ -1,4 +1,4 @@
-import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import '../routes/route_settings.dart';
 
 //Need to delete//
 

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../../../../data/session_management.dart';
 
 class NotificationAlertController extends FullLifeCycleController
 with FullLifeCycleMixin {

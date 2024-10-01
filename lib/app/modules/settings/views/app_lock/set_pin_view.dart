@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
+import '../../../../common/app_localizations.dart';
+import '../../../../common/widgets.dart';
 
 import '../../../../common/constants.dart';
+import '../../../../data/utils.dart';
 import '../../../../extensions/extensions.dart';
 import 'app_lock_controller.dart';
 
@@ -114,7 +114,7 @@ AppLockController createController({String? tag}) => AppLockController();
           ),
           Row(
             children: [
-              SvgPicture.asset(lockOutlineBlack, width: 24, height: 24,),
+              AppUtils.svgIcon(icon:lockOutlineBlack, width: 24, height: 24,),
               Expanded(
                 child: TextFormField(
                   textInputAction: textAction,
@@ -143,13 +143,13 @@ AppLockController createController({String? tag}) => AppLockController();
                       color: textColor),
                 ),
               ),
-              IconButton(icon: Image.asset(
+              IconButton(icon: AppUtils.assetIcon(assetName:
                 secure ? eyeOff : eyeOn, width: 24, height: 24,),
                 onPressed: eyeTap,)
             ],
           ),
           const AppDivider()
-          /* ListItem(leading:SvgPicture.asset(lockOutlineBlack,width: 24,height: 24,),
+          /* ListItem(leading:AppUtils.svgIcon(icon:lockOutlineBlack,width: 24,height: 24,),
               title: TextField(
                 controller: controller,
                 onChanged: (value) {},
@@ -165,7 +165,7 @@ AppLockController createController({String? tag}) => AppLockController();
                     counterText: ""
                 ),
                 style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 20),
-          ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: Image.asset(secure ? eyeOff : eyeOn,width: 24,height: 24,), onPressed: eyeTap,))*/
+          ),dividerPadding: EdgeInsets.zero,trailing: IconButton(icon: AppUtils.assetIcon(assetName:secure ? eyeOff : eyeOn,width: 24,height: 24,), onPressed: eyeTap,))*/
         ],
       ),
     );

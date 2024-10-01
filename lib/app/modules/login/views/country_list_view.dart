@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
 
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
@@ -39,7 +38,7 @@ CountryController createController({String? tag}) => Get.put(CountryController()
             controller.search.value
                 ? const SizedBox()
                 : IconButton(
-                    icon: SvgPicture.asset(
+                    icon: AppUtils.svgIcon(icon:
                       searchIcon,
                       width: 18,
                       height: 18,

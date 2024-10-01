@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
+import '../../app/common/app_localizations.dart';
+import '../../app/data/helper.dart';
+import '../../app/data/session_management.dart';
+import '../../app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/model/call_log_model.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import '../common/constants.dart';
 import '../data/utils.dart';

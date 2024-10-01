@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
-import 'package:mirror_fly_demo/app/common/widgets.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../app_style_config.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/widgets.dart';
+import '../../../data/helper.dart';
+import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
+import '../../../stylesheet/stylesheet.dart';
+
 import '../../../common/constants.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
@@ -175,7 +175,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
         controller.imageFromBase64String(
             item.mediaChatMessage!.mediaThumbImage, null, null),
         Center(
-          child: SvgPicture.asset(videoWhite,colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
+          child: AppUtils.svgIcon(icon:videoWhite,colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
         )
       ],
     );
@@ -183,7 +183,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
 
   Widget audioItem(ChatMessageModel item,MediaItemStyle mediaItemStyle) {
     return Center(
-      child: SvgPicture.asset(
+      child: AppUtils.svgIcon(icon:
           item.mediaChatMessage!.isAudioRecorded ? audioMic1 : audioWhite,
       colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
     );
@@ -263,7 +263,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SvgPicture.asset(
+                child: AppUtils.svgIcon(icon:
                   assetName,
                   width: 20,
                   height: 20,
@@ -347,7 +347,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
                               width: 70,
                               decoration: linkItemStyle.iconDecoration,
                               child: Center(
-                                child: SvgPicture.asset(linkImage,colorFilter: ColorFilter.mode(linkItemStyle.iconColor, BlendMode.srcIn),),
+                                child: AppUtils.svgIcon(icon:linkImage,colorFilter: ColorFilter.mode(linkItemStyle.iconColor, BlendMode.srcIn),),
                               ),
                             ),
                       Expanded(

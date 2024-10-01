@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
+import '../../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
-import '../../../data/utils.dart';
 import '../../../data/session_management.dart';
+import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
 class DeleteAccountReasonController extends FullLifeCycleController

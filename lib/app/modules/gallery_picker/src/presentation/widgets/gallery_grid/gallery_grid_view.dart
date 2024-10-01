@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
-import '../../../../../../common/de_bouncer.dart';
-import 'thumbnail_widget.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../../common/de_bouncer.dart';
 import '../../pages/gallery_media_picker_controller.dart';
+import 'thumbnail_widget.dart';
 
 typedef OnAssetItemClick = void Function(AssetEntity entity, int index);
 typedef RemoveAssetItem = void Function(AssetEntity entity, int index);

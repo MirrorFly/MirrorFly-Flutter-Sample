@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
-import 'package:mirror_fly_demo/app/common/main_controller.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
-import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../common/constants.dart';
+import '../../common/de_bouncer.dart';
+import '../../common/main_controller.dart';
+import '../../data/helper.dart';
+import '../../data/permissions.dart';
+import '../../data/session_management.dart';
+import '../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../app_style_config.dart';

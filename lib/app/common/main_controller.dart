@@ -4,27 +4,29 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:is_lock_screen2/is_lock_screen2.dart';
-import 'package:mirror_fly_demo/app/base_controller.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/pushnotification.dart';
-import 'package:mirror_fly_demo/app/data/session_management.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
-import 'package:mirror_fly_demo/app/modules/notification/notification_builder.dart';
+// import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../base_controller.dart';
+import '../common/constants.dart';
+import '../data/pushnotification.dart';
+import '../data/session_management.dart';
 import '../data/utils.dart';
+import '../extensions/extensions.dart';
 import '../model/arguments.dart';
+import '../modules/archived_chats/archived_chat_list_controller.dart';
+import '../modules/dashboard/controllers/dashboard_controller.dart';
+import '../modules/notification/notification_builder.dart';
 import '../routes/route_settings.dart';
 import 'notification_service.dart';
 
-class MainController extends FullLifeCycleController with BaseController, FullLifeCycleMixin /*with FullLifeCycleMixin */ {
+class MainController extends FullLifeCycleController with FullLifeCycleMixin /*with FullLifeCycleMixin */ {
   var currentAuthToken = "".obs;
   var googleMapKey = "";
   Rx<String> mediaEndpoint = "".obs;
@@ -58,7 +60,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     //presentPinPage();
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
-    initListeners();
+    BaseController.initListeners();
     mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
     currentAuthToken(SessionManagement.getAuthToken().checkNull());
@@ -72,7 +74,6 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     await notificationService.init();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    // _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
@@ -85,10 +86,8 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
               ?.areNotificationsEnabled() ??
           false;
 
-      // setState(() {
       _notificationsEnabled = granted;
       debugPrint("Notification Enabled--> $_notificationsEnabled");
-      // });
     }
   }
 
@@ -108,7 +107,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? granted = await androidImplementation?.requestPermission();
+      final bool? granted = await androidImplementation?.requestNotificationsPermission();
       // setState(() {
       _notificationsEnabled = granted ?? false;
       // });
@@ -215,11 +214,9 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   handleAdminBlockedUserFromRegister() {}
 
   void startNetworkListen() {
-    final InternetConnectionChecker customInstance = InternetConnectionChecker.createInstance(
-      checkTimeout: const Duration(seconds: 1),
-      checkInterval: const Duration(seconds: 1),
-    );
-    listener = customInstance.onStatusChange.listen(
+    final connectionChecker = InternetConnectionChecker();
+
+    listener = connectionChecker.onStatusChange.listen(
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
@@ -294,7 +291,7 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
     }else{
       if(SessionManagement.isInitialContactSyncDone()) {
         Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
-          onContactSyncComplete(true);
+          BaseController.onContactSyncComplete(true);
           LogMessage.d("checkContactPermission isSuccess", response.isSuccess.toString());
         });
       }
@@ -374,10 +371,43 @@ class MainController extends FullLifeCycleController with BaseController, FullLi
   }
 
   void _setBadgeCount(int count) {
-    FlutterAppBadger.updateBadgeCount(count);
+    FlutterAppBadge.count(count);
   }
 
   void _removeBadge() {
-    FlutterAppBadger.removeBadge();
+    FlutterAppBadge.count(0);
+  }
+
+  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
+    }
+  }
+
+  void onUpdateLastMessageUI(String chatJid){
+    if (Get.isRegistered<ArchivedChatListController>()) {
+      Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: chatJid, newInsertable: true);
+    }
+  }
+
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
+  void clearAllConvRecentChatUI() {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().getRecentChatList();
+    }
+  }
+
+  void markConversationReadNotifyUI(String jid) {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().markConversationReadNotifyUI(jid);
+    }
   }
 }

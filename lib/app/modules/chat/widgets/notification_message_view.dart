@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 class NotificationMessageView extends StatelessWidget {
   const NotificationMessageView({Key? key, required this.chatMessage,this.notificationMessageViewStyle = const NotificationMessageViewStyle()})

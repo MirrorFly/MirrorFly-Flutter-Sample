@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel;
 
 import '../../../common/app_localizations.dart';
@@ -52,7 +51,7 @@ class MediaMessageOverlay extends StatelessWidget {
                   height: 30,
                   width: 30,
                   padding: const EdgeInsets.all(7),
-                  child: SvgPicture.asset(
+                  child: AppUtils.svgIcon(icon:
                     chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
                     height: 17,
                     colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
@@ -193,13 +192,13 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),*/
         padding: const EdgeInsets.all(7),
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           uploadIcon,
           colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
         ))
         : Container(
         height: 35,
-        width: 80,
+        width: 90,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -209,7 +208,7 @@ Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewS
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(uploadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
+            AppUtils.svgIcon(icon:uploadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
             const SizedBox(
               width: 5,
             ),
@@ -236,13 +235,13 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         //     border: Border.all(color: borderColor),
         //     borderRadius: BorderRadius.circular(3)),
         padding: const EdgeInsets.all(7),
-        child: SvgPicture.asset(
+        child: AppUtils.svgIcon(icon:
           downloadIcon,
           colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)
         ))
         : Container(
         height: 31,
-        width: 80,
+        width: 90,
         decoration: downloadUploadViewStyle.decoration,
         /*decoration: BoxDecoration(
           border: Border.all(
@@ -255,7 +254,7 @@ Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyl
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(downloadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
+            AppUtils.svgIcon(icon:downloadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
             const SizedBox(
               width: 5,
             ),
@@ -300,7 +299,7 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
               alignment: Alignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
+                AppUtils.svgIcon(icon:
                   downloading,
                   fit: BoxFit.contain,
                   colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
@@ -339,7 +338,7 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
             alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
+              AppUtils.svgIcon(icon:
                 downloading,
                 fit: BoxFit.contain,
                 colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),

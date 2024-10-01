@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
 
 import '../../../data/utils.dart';
