@@ -45,7 +45,7 @@ dependencies:
   path: ^1.9.0
   camera: ^0.11.0+2
   video_player: ^2.9.1
-  internet_connection_checker: ^2.0.0
+  internet_connection_checker: ^1.0.0+1
   provider: ^6.1.2
   photo_manager: ^3.2.3
   oktoast: ^3.4.0
