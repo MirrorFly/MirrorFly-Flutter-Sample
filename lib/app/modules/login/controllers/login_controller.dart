@@ -121,10 +121,6 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    if (!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
-      debugPrint("recentChatList Calling getAllGroups");
-      Mirrorfly.getAllGroups(fetchFromServer: true,flyCallBack: (_){}); // chat history enabled so this no longer need
-    }
     Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
