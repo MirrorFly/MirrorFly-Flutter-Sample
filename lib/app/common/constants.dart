@@ -298,6 +298,8 @@ const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
 const String icBioBackground = "assets/logos/ic_bio_background.png";
 const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
+const String icJoinCallMirrorflyLogo = "assets/calls/ic_join_call_mirrorfly_logo.svg";
+const String icJoinCallEnded = "assets/calls/ic_join_call_ended.svg";
 
 
 //About us

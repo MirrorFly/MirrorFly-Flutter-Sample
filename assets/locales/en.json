@@ -522,5 +522,6 @@
     "invalidLink" : "Invalid link",
     "callEnded" : "Call Ended!",
     "wentWrong" : "Something went wrong. Please try again",
-    "couldNotProcess" : "Couldn't process the link. Please try again."
+    "couldNotProcess" : "Couldn't process the link. Please try again.",
+    "returnToChat" : "Return to chat"
   }

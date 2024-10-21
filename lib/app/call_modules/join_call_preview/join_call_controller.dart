@@ -33,8 +33,10 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     super.onInit();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
-    initializeCall();
-    checkPermission();
+    checkPermission().then((v){
+      initializeCall();
+    });
+
   }
 
   /// check permission and set Mute Status
@@ -51,53 +53,73 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   void initializeCall() {
     Mirrorfly.initializeMeet(callLinkId: callLinkId,userName: SessionManagement.getName().checkNull(),flyCallback: (res){
       LogMessage.d("initializeMeet", res.toString());
-      startVideoCapture();
       if(!res.isSuccess) {
         subscribeSuccess(false);
         if(res.hasError){
           showError(res.exception);
         }
-      }else{
-        checkPermission();
-        startVideoCapture();
       }
+      checkPermission().then((v){
+        startVideoCapture();
+      });
     });
   }
 
+  RxString callEnded = "".obs;
+  bool invalidLink = false;
+  String callEndedMessage = "";
   // to show error message
   void showError(FlyException? error){
+    disposePreview();
+    invalidLink=false;
     switch(error?.code){
       case "100601":
       //Call link is not valid
-        toToast(getTranslated("invalidLink"));
+        callEnded(getTranslated("invalidLink"));
+        invalidLink=true;
+        callEndedMessage= getTranslated("invalidLink");
+        // toToast(getTranslated("invalidLink"));
         break;
       case "100602":
       //Api returned ended status for call
-        toToast(getTranslated("noOneHere"));
+        callEnded(getTranslated("callEnded"));
+        callEndedMessage=getTranslated("noOneHere");
+        // toToast(getTranslated("noOneHere"));
         //callEnded
         break;
       case "100603":
       //Maximum participants already in call
+      //   callEnded(getTranslated("callEnded"));
+      //   callEndedMessage = (getTranslated("callMembersLimit").replaceFirst("%d", "8"));
         toToast(getTranslated("callMembersLimit").replaceFirst("%d", "8"));
+        NavUtils.back();
         break;
       case "100605":
       //Server didn't give success response code
-        toToast(getTranslated("wentWrong"));
+        callEnded(getTranslated("callEnded"));
+        callEndedMessage = (getTranslated("wentWrong"));
+        // toToast(getTranslated("wentWrong"));
         //callEnded
         break;
       case "100620":
       //Couldn't process the link. Please try again.
-        toToast(getTranslated("couldNotProcess"));
+        callEnded(getTranslated("callEnded"));
+        callEndedMessage = (getTranslated("couldNotProcess"));
+        // toToast(getTranslated("couldNotProcess"));
         break;
       case "100610":
       //Couldn't process the link.Please try again.
-        toToast(getTranslated("couldNotProcess"));
+        callEnded(getTranslated("callEnded"));
+        callEndedMessage = (getTranslated("couldNotProcess"));
+        // toToast(getTranslated("couldNotProcess"));
         break;
       default:
-        toToast(error?.message ?? "Error");
+        callEnded(getTranslated("callEnded"));
+        callEndedMessage = (error?.message ?? "Error");
+        // toToast(error?.message ?? "Error");
         break;
     }
-    NavUtils.back();
+    // NavUtils.back();
   }
 
   /// start video capture
