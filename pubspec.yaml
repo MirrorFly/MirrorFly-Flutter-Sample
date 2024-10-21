@@ -43,7 +43,7 @@ dependencies:
   qr_code_scanner: ^1.0.1
   yaml: ^3.1.2
   path: ^1.9.0
-  camera: ^0.11.0+2
+  camera: ^0.10.6
   video_player: ^2.9.1
   internet_connection_checker: ^1.0.0+1
   provider: ^6.1.2
