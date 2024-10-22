@@ -137,8 +137,8 @@ class ViewAllMediaController extends GetxController {
     // NavUtils.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
     NavUtils.back();
     NavUtils.back();
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().navigateToMessage(linkChatItem);
+    if (Get.isRegistered<ChatController>(tag: linkChatItem.chatUserJid)) {
+      Get.find<ChatController>(tag: linkChatItem.chatUserJid).navigateToMessage(linkChatItem);
     }
   }
 
