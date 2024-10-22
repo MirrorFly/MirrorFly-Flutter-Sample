@@ -221,19 +221,25 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   @override
-  void onResumed() {
+  Future<void> onResumed() async {
     if(paused){
       paused = false;
+      // if(!connected && !(await AppUtils.isNetConnected())){
+      //   displayStatus = getTranslated("noInternetConnection");
+      // }
       checkPermission();
     }
   }
 
+  var connected = false;
   void onDisconnected() {
+    connected=false;
     displayStatus = getTranslated("noInternetConnection");
     subscribeSuccess(false);
   }
 
   void onConnected() {
+    connected=true;
     displayStatus = getTranslated("connectingPleaseWait");
     //if network connected then reinitialize call
     initializeCall();

@@ -981,6 +981,7 @@ class BaseController {
   static void usersWhoBlockedMeListFetched(result) {}
 
   static void onConnected(result) {
+    LogMessage.d('onConnected', result.toString());
     if(Get.isRegistered<ChatController>(tag: controllerTag)){
       Get.find<ChatController>(tag: controllerTag).onConnected();
     }
@@ -995,6 +996,8 @@ class BaseController {
     }
     if(Get.isRegistered<JoinCallController>()){
       Get.find<JoinCallController>().onConnected();
+    }else{
+      LogMessage.d('onConnected', "JoinCallController not found");
     }
   }
 
