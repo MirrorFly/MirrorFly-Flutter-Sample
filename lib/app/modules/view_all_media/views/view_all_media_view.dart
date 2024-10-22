@@ -323,7 +323,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
             children: [
               InkWell(
                 onTap: () {
-                  AppUtils.launchWeb(Uri.parse(item.linkMap!["url"]));
+                  controller.navigateLink(item.linkMap!["url"]);
                 },
                 child: Container(
                   decoration: linkItemStyle.innerDecoration,

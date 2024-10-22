@@ -106,6 +106,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   bool get ableToCall => profile.isGroupProfile.checkNull() ? isMemberOfGroup : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
 
+  bool get ableToScheduleMeet => profile.isGroupProfile ?? false ? availableFeatures.value.isGroupChatAvailable.checkNull() && _isMemberOfGroup.value : true;
   // var profileDetail = Profile();
 
   String nJid = "";
@@ -134,7 +135,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   RxString editMessageText = ''.obs;
 
   //#metaData
-  List<MessageMetaData> messageMetaData = [MessageMetaData(key: "platform", value: "flutter")];
+  List<MessageMetaData> messageMetaData = [];//[MessageMetaData(key: "platform", value: "flutter")];
   final ChatViewArguments? arguments;
 
   var screenWidth = 0.0.obs;

@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 3.0.0+02
+version: 3.0.1+01
 build_release_date: Jul 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -43,9 +43,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   yaml: ^3.1.2
   path: ^1.9.0
-  camera: ^0.11.0+2
+  camera: ^0.10.6
   video_player: ^2.9.1
-  internet_connection_checker: ^2.0.0
+  internet_connection_checker: ^1.0.0+1
   provider: ^6.1.2
   photo_manager: ^3.2.3
   oktoast: ^3.4.0

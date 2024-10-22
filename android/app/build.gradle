@@ -110,15 +110,15 @@ android {
             applicationId "com.mirrorfly.uikit_flutter.qa"
             resValue("string", "app_name", "MF-Flutter-QA")
         }
-       /* contactSync {
-            dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.qa"
-            resValue("string", "app_name", "MF-Flutter-QA(Sync)")
-        }
-        prod {
-            dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.dev"
-        }*/
+        /* contactSync {
+             dimension "version"
+             applicationId "com.mirrorfly.uikit_flutter.qa"
+             resValue("string", "app_name", "MF-Flutter-QA(Sync)")
+         }
+         prod {
+             dimension "version"
+             applicationId "com.mirrorfly.uikit_flutter.dev"
+         }*/
     }
 
 

@@ -923,7 +923,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void openParticipantScreen() {
-    NavUtils.toNamed(Routes.participants);
+    NavUtils.toNamed(Routes.participants,arguments: {"joinViaLink":joinViaLink});
   }
 
   void onUserInvite(String callMode, String userJid, String callType) {
