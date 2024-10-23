@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../common/constants.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
@@ -42,7 +43,11 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   /// check permission and set Mute Status
   Future<void> checkPermission() async {
     var audioPermission = await AppPermission.askAudioCallPermissions();
-    var videoPermission = await AppPermission.askVideoCallPermissions();
+    var videoPermission = await AppPermission.checkAndRequestPermissions(
+        permissions: [Permission.camera],
+        permissionIcon: cameraPermission,
+        permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
     muted(!audioPermission);
     videoMuted(!videoPermission);
     Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
@@ -168,7 +173,12 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   videoMute() async {
-    if (!videoMuted.value || await AppPermission.askVideoCallPermissions()) {
+    var videoPermission = await AppPermission.checkAndRequestPermissions(
+        permissions: [Permission.camera],
+        permissionIcon: cameraPermission,
+        permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
+    if (!videoMuted.value || videoPermission) {
       if(!videoMuted.value && !subscribeSuccess.value){
         startVideoCapture();
       }else{
