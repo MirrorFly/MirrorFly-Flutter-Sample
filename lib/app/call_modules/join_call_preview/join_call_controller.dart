@@ -34,9 +34,9 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     super.onInit();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
-    checkPermission().then((v){
+    // checkPermission().then((v){
       initializeCall();
-    });
+    // });
 
   }
 
@@ -128,10 +128,11 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   /// start video capture
+  var videoCaptureStarted = false;
   Future<void> startVideoCapture() async {
     Mirrorfly.startVideoCapture(flyCallback: (res) async {
-      if(!res.isSuccess){
-        // await AppPermission.askVideoCallPermissions();
+      if(res.isSuccess){
+        videoCaptureStarted=true;
       }
     });
   }
@@ -179,7 +180,8 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
         permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
         permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
     if (!videoMuted.value || videoPermission) {
-      if(!videoMuted.value && !subscribeSuccess.value){
+      debugPrint("Start Video Capture initialization $videoCaptureStarted ${videoMuted.value}");
+      if(videoMuted.value && !videoCaptureStarted){
         startVideoCapture();
       }else{
         debugPrint("Start Video Capture is already initialized, skipping the initialization");
