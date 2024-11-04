@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../common/constants.dart';
 import '../../data/permissions.dart';
 import '../../data/session_management.dart';
@@ -33,16 +34,20 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     super.onInit();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
-    checkPermission().then((v){
+    // checkPermission().then((v){
       initializeCall();
-    });
+    // });
 
   }
 
   /// check permission and set Mute Status
   Future<void> checkPermission() async {
     var audioPermission = await AppPermission.askAudioCallPermissions();
-    var videoPermission = await AppPermission.askVideoCallPermissions();
+    var videoPermission = await AppPermission.checkAndRequestPermissions(
+        permissions: [Permission.camera],
+        permissionIcon: cameraPermission,
+        permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
     muted(!audioPermission);
     videoMuted(!videoPermission);
     Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
@@ -123,10 +128,11 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   /// start video capture
+  var videoCaptureStarted = false;
   Future<void> startVideoCapture() async {
     Mirrorfly.startVideoCapture(flyCallback: (res) async {
-      if(!res.isSuccess){
-        // await AppPermission.askVideoCallPermissions();
+      if(res.isSuccess){
+        videoCaptureStarted=true;
       }
     });
   }
@@ -168,8 +174,14 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   }
 
   videoMute() async {
-    if (!videoMuted.value || await AppPermission.askVideoCallPermissions()) {
-      if(!videoMuted.value && !subscribeSuccess.value){
+    var videoPermission = await AppPermission.checkAndRequestPermissions(
+        permissions: [Permission.camera],
+        permissionIcon: cameraPermission,
+        permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
+    if (!videoMuted.value || videoPermission) {
+      debugPrint("Start Video Capture initialization $videoCaptureStarted ${videoMuted.value}");
+      if(videoMuted.value && !videoCaptureStarted){
         startVideoCapture();
       }else{
         debugPrint("Start Video Capture is already initialized, skipping the initialization");
