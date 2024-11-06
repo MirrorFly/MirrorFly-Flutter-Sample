@@ -40,7 +40,7 @@ dependencies:
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.8
   flutter_switch: ^0.3.2
-  qr_code_scanner: ^1.0.1
+#  qr_code_scanner: ^1.0.1
   yaml: ^3.1.2
   path: ^1.9.0
   camera: ^0.10.6
@@ -68,7 +68,7 @@ dependencies:
   firebase_app_installations: ^0.3.0+4
   firebase_messaging: ^15.0.4
   flutter_local_notifications: ^17.2.2
-  is_lock_screen2: ^2.0.1
+#  is_lock_screen2: ^2.0.1
   flutter_app_badge: ^2.0.2
 
 dependency_overrides:
