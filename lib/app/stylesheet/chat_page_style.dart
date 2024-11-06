@@ -21,8 +21,8 @@ class ChatPageStyle {
             shape: RoundedRectangleBorder(side: BorderSide(color: Color(0xffE8E8E8),width: 1)),
             iconColor: Color(0xff181818)
         ),
-        this.instantScheduleMeetStyle = const InstantScheduleMeetStyle()
-      });
+        this.instantScheduleMeetStyle = const InstantScheduleMeetStyle(),
+        this.chatPageBackgroundDecoration});
   final AppBarTheme appBarTheme;
   final ChatUserAppBarStyle chatUserAppBarStyle;
   final EditTextFieldStyle searchTextFieldStyle;
@@ -34,6 +34,7 @@ class ChatPageStyle {
   final AttachmentViewStyle attachmentViewStyle;
   final PopupMenuThemeData popupMenuThemeData;
   final InstantScheduleMeetStyle instantScheduleMeetStyle;
+  final Decoration? chatPageBackgroundDecoration;
 }
 
 class InstantScheduleMeetStyle{
@@ -73,10 +74,29 @@ class ChatUserAppBarStyle{
     this.profileImageSize = const Size(36, 36),
     this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),
     this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 10),
+    this.iconAudioCall,
+    this.iconVideoCall,
+    this.iconMoreOptions,
+    this.iconBack,
+    this.iconReply,
+    this.iconForward,
+    this.iconFavourites,
+    this.iconDelete,
+    this.iconClose,
   });
+
   final Size profileImageSize;
   final TextStyle titleTextStyle;
   final TextStyle subtitleTextStyle;
+  final ChatAppBarIcon? iconAudioCall;
+  final ChatAppBarIcon? iconVideoCall;
+  final ChatAppBarIcon? iconMoreOptions;
+  final ChatAppBarIcon? iconBack;
+  final ChatAppBarIcon? iconReply;
+  final ChatAppBarIcon? iconForward;
+  final ChatAppBarIcon? iconFavourites;
+  final ChatAppBarIcon? iconDelete;
+  final ChatAppBarIcon? iconClose;
 }
 
 class SenderChatBubbleStyle{

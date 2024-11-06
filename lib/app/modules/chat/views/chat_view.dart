@@ -27,6 +27,7 @@ class ChatView extends NavViewStateful<ChatController> {
   ChatView({Key? key, this.chatViewArguments})
       : super(key: key, tag: chatViewArguments?.chatJid);
   final ChatViewArguments? chatViewArguments;
+  final appBarStyle = AppStyleConfig.chatPageStyle.chatUserAppBarStyle;
 
   @override
   ChatController createController({String? tag}) {
@@ -56,7 +57,8 @@ class ChatView extends NavViewStateful<ChatController> {
             child: Container(
               width: NavUtils.width,
               height: NavUtils.height,
-              decoration: BoxDecoration(
+              decoration: AppStyleConfig
+                  .chatPageStyle.chatPageBackgroundDecoration ?? BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(chatBgIcon, package: iconPackageName),
                   fit: BoxFit.cover,
@@ -308,7 +310,7 @@ class ChatView extends NavViewStateful<ChatController> {
                                                 : controller.sendMessage(
                                                 controller.profile);
                                           },
-                                                        child: AppUtils.svgIcon(icon:sendIcon,colorFilter: ColorFilter.mode( AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn)))
+                                                        child: AppUtils.svgIcon(icon:sendIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.messageTypingAreaStyle.sentIconColor, BlendMode.srcIn)))
                                           : const Offstage();
                                     }),
                                     Obx(() {
@@ -651,8 +653,7 @@ class ChatView extends NavViewStateful<ChatController> {
         },
       ),
       title: Text(controller.selectedChatList.length.toString(),
-        style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
-            .titleTextStyle,),
+        style: appBarStyle.titleTextStyle,),
       actions: [
         CustomActionBarIcons(
             popupMenuThemeData: AppStyleConfig.chatPageStyle.popupMenuThemeData,
@@ -684,16 +685,16 @@ class ChatView extends NavViewStateful<ChatController> {
               const SizedBox(
                 width: 10,
               ),
-              const Icon(Icons.arrow_back),
+              appBarStyle.iconBack ?? const Icon(Icons.arrow_back),
               const SizedBox(
                 width: 10,
               ),
               ImageNetwork(
                 url: controller.profile.image.checkNull(),
-                width: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                width: appBarStyle
                     .profileImageSize.width,
                 //35,
-                height: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                height: appBarStyle
                     .profileImageSize.height,
                 //35,
                 clipOval: true,
@@ -702,9 +703,9 @@ class ChatView extends NavViewStateful<ChatController> {
                     ? ClipOval(
                         child: AppUtils.assetIcon(assetName:
                     groupImg,
-                    width: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                    width: appBarStyle
                         .profileImageSize.width, //35,
-                    height: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                    height: appBarStyle
                         .profileImageSize.height, //35,
                     fit: BoxFit.cover,
                   ),
@@ -741,7 +742,7 @@ class ChatView extends NavViewStateful<ChatController> {
                       ? controller.profile.nickName.checkNull()
                       : controller.profile.name.checkNull(),*/
                   overflow: TextOverflow.fade,
-                  style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                  style: appBarStyle
                       .titleTextStyle,
                 ),
                 Obx(() {
@@ -751,13 +752,13 @@ class ChatView extends NavViewStateful<ChatController> {
                       height: 15,
                       child: Marquee(text: "${controller
                           .groupParticipantsName}",
-                        style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                        style: appBarStyle
                             .subtitleTextStyle,
                         blankSpace: 25,))
                       : controller.subtitle.isNotEmpty
                       ? Text(
                     controller.subtitle,
-                    style: AppStyleConfig.chatPageStyle.chatUserAppBarStyle
+                    style: appBarStyle
                         .subtitleTextStyle, //const TextStyle(fontSize: 12),
                     overflow: TextOverflow.fade,
                   )
@@ -786,7 +787,7 @@ class ChatView extends NavViewStateful<ChatController> {
               controller.handleReplyChatMessage(controller.selectedChatList[0]);
               controller.clearChatSelection(controller.selectedChatList[0]);
             },
-            icon: AppUtils.svgIcon(icon:replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),
+            icon: AppStyleConfig.chatPageStyle.chatUserAppBarStyle.iconReply ?? AppUtils.svgIcon(icon:replyIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatPageStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),
             tooltip: 'Reply',
           ),
           overflowWidget: Text(getTranslated("reply"),
