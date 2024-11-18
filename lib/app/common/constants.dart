@@ -213,7 +213,7 @@ const String attachIcon = 'assets/logos/attach.svg';
 
 const String arrowDropDown = 'assets/calls/ic_arrow_down_red.svg';
 const String arrowUpIcon = 'assets/calls/ic_arrow_up_green.svg';
-const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg.svg';
+const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';
