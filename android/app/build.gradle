@@ -47,9 +47,9 @@ android {
             storeFile file('contus_internal_uikit_keystore.jks')
             storePassword 'contus@uikit'
         }
-//        aaptOptions {
-//            noCompress "tflite"
-//        }
+        /*aaptOptions {
+            noCompress "tflite"
+        }*/
     }
 
     compileOptions {
