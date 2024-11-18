@@ -276,7 +276,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildMuteIconVisibility() {
     return Visibility(
         visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
-        child: AppUtils.svgIcon(icon:
+        child:  recentChatItemStyle.iconMute ?? AppUtils.svgIcon(icon:
           mute,
           width: 13,
           height: 13,
@@ -286,7 +286,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildPinIconVisibility() {
     return Visibility(
         visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
-        child: AppUtils.svgIcon(icon:
+        child: recentChatItemStyle.iconPin ?? AppUtils.svgIcon(icon:
           pin,
           width: 18,
           height: 18,

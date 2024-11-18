@@ -70,9 +70,32 @@ class ArchivedTileStyle {
         this.countTextStyle = const TextStyle(
             fontWeight: FontWeight.w600,
             color: Color(0xff4879F9),
-            fontSize: 12)});
+            fontSize: 12),
+      this.iconArchive});
   final TextStyle textStyle;
   final TextStyle countTextStyle;
+  final UIKitIcon? iconArchive;
+}
+
+class RecentChatAppBarStyle{
+  const RecentChatAppBarStyle(
+      {this.iconSearch,
+      this.iconInfo,
+      this.iconDelete,
+      this.iconPin,
+      this.iconUnPin,
+      this.iconMute,
+      this.iconUnMute,
+      this.iconArchive});
+
+  final UIKitIcon? iconSearch;
+  final UIKitIcon? iconInfo;
+  final UIKitIcon? iconDelete;
+  final UIKitIcon? iconPin;
+  final UIKitIcon? iconUnPin;
+  final UIKitIcon? iconMute;
+  final UIKitIcon? iconUnMute;
+  final UIKitIcon? iconArchive;
 }
 
 class RecentChatItemStyle {
@@ -88,7 +111,10 @@ class RecentChatItemStyle {
         this.dividerColor = const Color(0XffE2E2E2),
         this.unreadColor = const Color(0xff4879F9),
         this.selectedBgColor = Colors.black12,
-        this.unselectedBgColor = Colors.transparent});
+        this.unselectedBgColor = Colors.transparent,
+        this.iconMute,
+        this.iconPin,
+      });
   final Size profileImageSize;
   final TextStyle titleTextStyle;
   final TextStyle subtitleTextStyle;
@@ -101,6 +127,8 @@ class RecentChatItemStyle {
   final Color unreadColor;
   final Color selectedBgColor;
   final Color unselectedBgColor;
+  final UIKitIcon? iconMute;
+  final UIKitIcon? iconPin;
 }
 
 class CallHistoryItemStyle{
