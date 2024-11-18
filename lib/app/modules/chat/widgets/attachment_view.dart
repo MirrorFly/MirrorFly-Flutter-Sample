@@ -6,6 +6,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
+import '../../../widgets/mirror_fly_icon.dart';
 
 class AttachmentsSheetView extends StatelessWidget {
   const AttachmentsSheetView({Key? key,
@@ -54,7 +55,7 @@ class AttachmentsSheetView extends StatelessWidget {
                     (attachments[index].attachmentId == Constants.attachmentTypeAudio) ? onAudio :
                     (attachments[index].attachmentId == Constants.attachmentTypeContact) ? onContact :
                     (attachments[index].attachmentId == Constants.attachmentTypeLocation) ? onLocation : () {},
-                    iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle);
+                    iconStyle,AppStyleConfig.chatPageStyle.attachmentViewStyle.textStyle, getCustomisedIcon(attachments[index].attachmentId));
               });
         }),
       ),
@@ -79,6 +80,26 @@ class AttachmentsSheetView extends StatelessWidget {
         return AppStyleConfig.chatPageStyle.attachmentViewStyle.documentStyle;
     }
   }
+
+  UIKitIcon? getCustomisedIcon(String attachmentId) {
+
+    switch(attachmentId){
+      case Constants.attachmentTypeDocument:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconDocument;
+      case Constants.attachmentTypeCamera:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconCamera;
+      case Constants.attachmentTypeGallery:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconGallery;
+      case Constants.attachmentTypeAudio:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconAudio;
+      case Constants.attachmentTypeContact:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconContact;
+      case Constants.attachmentTypeLocation:
+        return AppStyleConfig.chatPageStyle.attachmentViewStyle.iconLocation;
+      default:
+        return null;
+    }
+  }
 }
 
 class AttachmentIcon {
@@ -89,7 +110,7 @@ class AttachmentIcon {
 }
 
 
-Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle iconStyle,TextStyle textStyle) {
+Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle iconStyle,TextStyle textStyle, UIKitIcon? uikitIcon) {
   return InkWell(
     onTap: onTap,
     child: Column(
@@ -98,7 +119,7 @@ Widget iconCreation(String iconPath, String text, VoidCallback onTap,IconStyle i
         CircleAvatar(
           radius: (50/2),
           backgroundColor: iconStyle.bgColor,
-            child: AppUtils.svgIcon(icon:iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
+            child: uikitIcon ?? AppUtils.svgIcon(icon:iconPath,colorFilter: ColorFilter.mode(iconStyle.iconColor, BlendMode.srcIn),)
         ),
         const SizedBox(
           height: 7,

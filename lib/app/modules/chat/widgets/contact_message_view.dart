@@ -76,7 +76,7 @@ class ContactMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred.value
-                    ? AppUtils.svgIcon(icon:starSmallIcon)
+                    ? contactMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                     : const Offstage(),
                 const SizedBox(
                   width: 5,

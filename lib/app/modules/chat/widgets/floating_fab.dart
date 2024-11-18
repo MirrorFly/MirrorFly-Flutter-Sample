@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
 import '../../../data/utils.dart';
@@ -11,7 +12,7 @@ class FloatingFab extends StatefulWidget {
   final RxDouble parentWidgetHeight;
   final RxDouble parentWidgetWidth;
   final Function() onFabTap;
-  final FloatingActionButtonThemeData fabTheme;
+  final InstantScheduleMeetStyle fabTheme;
 
   @override
   State<FloatingFab> createState() => _FloatingFabState();
@@ -89,13 +90,13 @@ class _FloatingFabState extends State<FloatingFab> {
 
   Widget buildFab() {
     return Theme(
-      data: ThemeData(floatingActionButtonTheme: widget.fabTheme),
+      data: ThemeData(floatingActionButtonTheme: widget.fabTheme.meetFabStyle),
       child: FloatingActionButton(
         onPressed: widget.onFabTap,
-        child: AppUtils.svgIcon(icon:
+        child: widget.fabTheme.iconMeet ?? AppUtils.svgIcon(icon:
           meetSchedule,
-          width: widget.fabTheme.iconSize,
-          colorFilter: ColorFilter.mode(widget.fabTheme.foregroundColor ?? Colors.white, BlendMode.srcIn),
+          width: widget.fabTheme.meetFabStyle.iconSize,
+          colorFilter: ColorFilter.mode(widget.fabTheme.meetFabStyle.foregroundColor ?? Colors.white, BlendMode.srcIn),
         ),
       ),
     );

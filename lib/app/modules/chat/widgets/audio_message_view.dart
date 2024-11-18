@@ -272,7 +272,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
               mainAxisSize: MainAxisSize.min,
               children: [
                 widget.chatMessage.isMessageStarred.value
-                    ? AppUtils.svgIcon(icon:starSmallIcon)
+                    ? widget.audioMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                     : const Offstage(),
                 const SizedBox(
                   width: 5,

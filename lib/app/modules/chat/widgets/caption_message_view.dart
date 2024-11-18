@@ -41,7 +41,7 @@ class CaptionMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               chatMessage.isMessageStarred.value
-                  ? AppUtils.svgIcon(icon:starSmallIcon)
+                  ? textMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                   : const Offstage(),
               const SizedBox(
                 width: 5,

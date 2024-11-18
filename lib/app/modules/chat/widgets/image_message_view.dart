@@ -55,7 +55,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          widget.chatMessage.isMessageStarred.value ? AppUtils.svgIcon(icon:starSmallIcon) : const SizedBox.shrink(),
+                          widget.chatMessage.isMessageStarred.value ? widget.imageMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon) : const SizedBox.shrink(),
                           const SizedBox(
                             width: 5,
                           ),

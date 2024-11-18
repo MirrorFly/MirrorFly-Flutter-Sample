@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../extensions/extensions.dart';
@@ -19,7 +20,7 @@ import '../widgets/sender_header.dart';
 class ChatSearchView extends StatelessWidget {
   ChatSearchView({super.key});
 
-  final ChatController controller = ChatController(null).get();
+  final ChatController controller = ChatController((NavUtils.arguments as ChatViewArguments)).get(tag: (NavUtils.arguments as ChatViewArguments).chatJid);
 
   @override
   Widget build(BuildContext context) {

@@ -119,7 +119,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred.value
-                      ? AppUtils.svgIcon(icon:starSmallIcon)
+                      ? docMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                       : const Offstage(),
                   const SizedBox(
                     width: 5,
