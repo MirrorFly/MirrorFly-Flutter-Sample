@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
 
@@ -43,6 +44,7 @@ class ChatMessageModel {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
+    this.mentionedUsersIds,
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -72,6 +74,8 @@ class ChatMessageModel {
   String? messageTextContent;
   String messageType;
   List<MessageMetaData> metaData;
+  /// A list of profile details associated with the mentionId.
+  List<ProfileDetails>? mentionedUsersIds;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -103,7 +107,12 @@ class ChatMessageModel {
           isMessageEdited: json["isMessageEdited"].toString().toBool().obs,
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
-          metaData: json["metaData"] == null ? [] : List<MessageMetaData>.from(json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
+          metaData: json["metaData"] == null
+              ? []
+              : List<MessageMetaData>.from(
+              json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
+          mentionedUsersIds: json["mentionedUsersIds"] == null ? [] : List<ProfileDetails>.from(json["mentionedUsersIds"].map((x) => ProfileDetails.fromJson(x))),
+
           replyParentChatMessage: json["replyParentChatMessage"] == null
               ? null
               : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -141,6 +150,9 @@ class ChatMessageModel {
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "metaData": metaData,
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+            : List<dynamic>.from(mentionedUsersIds!.map((x) => x.toJson())),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
