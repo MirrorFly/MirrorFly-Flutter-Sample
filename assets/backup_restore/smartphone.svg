@@ -1,0 +1,12 @@
+<svg id="smartphone" xmlns="http://www.w3.org/2000/svg" width="20.06" height="33.232" viewBox="0 0 20.06 33.232">
+  <path id="Path_9796" data-name="Path 9796" d="M101.473,33.481h20.06V60.762h-20.06Z" transform="translate(-101.473 -31.308)" fill="#c0d6f2"/>
+  <path id="Path_9797" data-name="Path 9797" d="M121.533,5.115h-20.06V2.006A2.006,2.006,0,0,1,103.479,0h16.048a2.006,2.006,0,0,1,2.006,2.006V5.115Z" transform="translate(-101.473 0)" fill="#acacac"/>
+  <path id="Path_9798" data-name="Path 9798" d="M119.527,432.526H103.479a2.006,2.006,0,0,1-2.006-2.006v-3.51h20.06v3.51A2.006,2.006,0,0,1,119.527,432.526Z" transform="translate(-101.473 -399.294)" fill="#acacac"/>
+  <path id="Path_9799" data-name="Path 9799" d="M214.793,455.366v-1.1a.468.468,0,0,1,.468-.468h4.413a.468.468,0,0,1,.468.468v1.1a.468.468,0,0,1-.468.468h-4.413A.468.468,0,0,1,214.793,455.366Z" transform="translate(-207.438 -424.341)" fill="#f8f6f6"/>
+  <circle id="Ellipse_30" data-name="Ellipse 30" cx="1.003" cy="1.003" r="1.003" transform="translate(9.027 1.555)" fill="#fff"/>
+  <path id="Path_9800" data-name="Path 9800" d="M369.644,33.481H372.3V60.762h-2.654Z" transform="translate(-352.238 -31.308)" fill="#c0d6f2"/>
+  <g id="Group_7568" data-name="Group 7568" transform="translate(15.4 0)">
+    <path id="Path_9801" data-name="Path 9801" d="M341.393,0h-2.654a2.006,2.006,0,0,1,2.006,2.006V5.115H343.4V2.006A2.006,2.006,0,0,0,341.393,0Z" transform="translate(-338.739 0)" fill="#acacac"/>
+    <path id="Path_9802" data-name="Path 9802" d="M340.745,427.01v3.51a2.006,2.006,0,0,1-2.006,2.006h2.654a2.006,2.006,0,0,0,2.006-2.006v-3.51Z" transform="translate(-338.739 -399.294)" fill="#acacac"/>
+  </g>
+</svg>

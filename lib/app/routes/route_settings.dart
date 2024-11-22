@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import '../model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
@@ -156,6 +157,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
     case Routes.addProfileStatus:
       return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
+    case Routes.restoreBackup:
+      return MaterialPageRoute(builder: (_) => const RestoreView(),settings: settings);
 
     //calls
     case Routes.joinCallPreview:

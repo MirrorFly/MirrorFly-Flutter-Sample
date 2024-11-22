@@ -301,6 +301,11 @@ const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
 const String icJoinCallMirrorflyLogo = "assets/calls/ic_join_call_mirrorfly_logo.svg";
 const String icJoinCallEnded = "assets/calls/ic_join_call_ended.svg";
 
+//Backup Restore
+const String backupTimer = "assets/backup_restore/backup_timer.svg";
+const String backupDatabase = "assets/backup_restore/database.svg";
+const String backupSmartPhone = "assets/backup_restore/smartphone.svg";
+
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
