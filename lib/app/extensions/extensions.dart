@@ -88,16 +88,11 @@ abstract class NavViewStateful<T extends GetxController> extends StatefulWidget 
 }
 
 class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
-  // late T controller;
 
   @override
   void initState() {
     debugPrint("NavViewState key ${widget.tag}");
-    // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
-      widget.createController(tag: widget.tag);
-    // }
-
-    // Get.put<T>(controller);
+    widget.createController(tag: widget.tag);
     super.initState();
     widget.onInit();
     LogMessage.d("NavViewState : initState", T.toString());
@@ -116,50 +111,4 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     return widget.build(context);
   }
 
-  // Widget buildPage(BuildContext context);
 }
-
-/*
-abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
-  const NavViewStateful({Key? key}) : super(key: key);
-
-  final String? tag = null;
-
-  T get controller => createController({String? tag}).get();
-  dynamic get arguments => NavUtils.arguments;
-
-  T createController({String? tag});
-
-  @override
-  NavViewState<NavViewStateful<T>, T> createState();
-}
-
-abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxController> extends State<V> {
-  late T controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = widget.createController({String? tag});
-    // Initialize the controller
-    if (widget.tag == null) {
-      Get.put<T>(controller);
-    } else {
-      Get.put<T>(controller, tag: widget.tag);
-    }
-  }
-
-  @override
-  void dispose() {
-    // Dispose of the controller
-    if (widget.tag == null) {
-      Get.delete<T>();
-    } else {
-      Get.delete<T>(tag: widget.tag);
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context);
-}*/
