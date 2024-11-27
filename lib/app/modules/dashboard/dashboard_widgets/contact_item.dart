@@ -19,6 +19,7 @@ class ContactItem extends StatelessWidget {
     required this.checkValue,
     required this.onCheckBoxChange,
     this.onListItemPressed,this.contactItemStyle = const ContactItemStyle(),
+    this.showStatus = true
   }) : super(key: key);
   final ProfileDetails item;
   final Function()? onAvatarClick;
@@ -28,6 +29,7 @@ class ContactItem extends StatelessWidget {
   final Function(bool?) onCheckBoxChange;
   final Function()? onListItemPressed;
   final ContactItemStyle contactItemStyle;
+  final bool showStatus;
   @override
   Widget build(BuildContext context) {
     // LogMessage.d("Contact item", item.toJson());
@@ -87,14 +89,16 @@ class ContactItem extends StatelessWidget {
                           contactItemStyle.titleStyle,
                           // const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
                           contactItemStyle.spanTextColor),
-                      const SizedBox(height: 5,),
-                      Text(
-                        item.status.toString(),
-                        style: contactItemStyle.descriptionStyle,
-                        // style: Theme.of(context).textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      if(showStatus)...[
+                        const SizedBox(height: 5,),
+                        Text(
+                          item.status.toString(),
+                          style: contactItemStyle.descriptionStyle,
+                          // style: Theme.of(context).textTheme.titleSmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),
