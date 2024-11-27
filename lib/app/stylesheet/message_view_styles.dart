@@ -31,6 +31,15 @@ class MessageTypingAreaStyle{
     this.iconAttachment,
     this.iconRecord,
     this.iconSend,
+    this.mentionUserStyle = const ContactItemStyle(
+        profileImageSize: Size(30, 30),
+        titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
+        dividerColor: Color(0xffEBEBEB)
+    ),
+    this.mentionUserBgDecoration = const BoxDecoration(
+      border: Border(left: BorderSide(color: Color(0xffC1C1C1)),right: BorderSide(color: Color(0xffC1C1C1)),top: BorderSide(color: Color(0xffC1C1C1)),),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(8),
+      topRight: Radius.circular(8)),),
   });
   final EditTextFieldStyle textFieldStyle;
   final Decoration decoration;
@@ -49,6 +58,8 @@ class MessageTypingAreaStyle{
   final UIKitIcon? iconAttachment;
   final UIKitIcon? iconRecord;
   final UIKitIcon? iconSend;
+  final ContactItemStyle mentionUserStyle;
+  final Decoration mentionUserBgDecoration;
 
 
 }
