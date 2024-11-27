@@ -1056,8 +1056,11 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     deBouncer.run(() {
       debugPrint("DeBouncer");
       sendUserTypingGoneStatus();
+      filterMentionUsers(typingText);
     });
   }
+
+  var showMentionUsers = true;
 
   clearChatHistory(bool isStarredExcluded) {
     if (!availableFeatures.value.isClearChatAvailable.checkNull()) {
@@ -2022,6 +2025,33 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   var groupParticipantsName = ''.obs;
+  var groupMembers = List<ProfileDetails>.empty().obs;
+
+  var filteredItems = List<ProfileDetails>.empty().obs;
+  var showMentionUserList = false.obs;
+  void filterMentionUsers(String? typingText) {
+    if(typingText==null){
+      filteredItems.clear();
+      return;
+    }
+    debugPrint("filterMentionUsers $typingText");
+    if(filteredItems.isEmpty){
+      filteredItems(groupMembers);
+    }
+    if(!typingText.contains("@")){
+      filteredItems.clear();
+      return;
+    }
+    showMentionUserList(true);
+    var query = typingText.toLowerCase().split("@")[1];
+    var filter = groupMembers
+        .where((item) => item.getName().toLowerCase().contains(query))
+        .toList();
+    debugPrint("filter ${filter.length}");
+    // setState(() {
+    filteredItems(filter);
+    // });
+  }
 
   getParticipantsNameAsCsv(String jid) {
     Mirrorfly.getGroupMembersList(
@@ -2031,8 +2061,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           if (response.isSuccess && response.hasData) {
             var str = <String>[];
             LogMessage.d("getGroupMembersList-->", response.toString());
-            var groupsMembersProfileList = memberFromJson(response.data);
-            for (var it in groupsMembersProfileList) {
+            groupMembers(memberFromJson(response.data));
+            for (var it in groupMembers) {
               if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
                 str.add(getMemberName(it).checkNull());
               }
@@ -2042,7 +2072,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             });
             groupParticipantsName(str.join(","));
           }
-        }).then((value) {});
+        });
   }
 
   String get subtitle => userPresenceStatus.value.isEmpty
