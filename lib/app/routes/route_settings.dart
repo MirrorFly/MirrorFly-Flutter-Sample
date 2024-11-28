@@ -12,6 +12,7 @@ import '../call_modules/outgoing_call/outgoing_call_view.dart';
 import '../call_modules/participants/participants_view.dart';
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/backup_restore/views/backup_view.dart';
 import '../modules/busy_status/views/add_busy_status_view.dart';
 import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
@@ -159,6 +160,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
     case Routes.restoreBackup:
       return MaterialPageRoute(builder: (_) => const RestoreView(),settings: settings);
+     case Routes.backUpView:
+      return MaterialPageRoute(builder: (_) => const BackupView(),settings: settings);
 
     //calls
     case Routes.joinCallPreview:

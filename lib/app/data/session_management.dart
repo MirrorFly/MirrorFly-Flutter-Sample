@@ -140,6 +140,10 @@ class SessionManagement {
     await _preferences.setBool('${prefix}show_alert', false);
   }
 
+  static void setBackUpState(String backUpState) async {
+    await _preferences.setString("${prefix}backUpState", backUpState);
+  }
+
   static Future clear()async{
     // await _preferences.clear();
     final keys = _preferences.getKeys();
@@ -215,4 +219,5 @@ class SessionManagement {
   static int lastPinChangedAt() => _preferences.getInt("$prefix${Constants.changedPinAt}") ?? DateTime.now().millisecondsSinceEpoch;
   static bool showAlert() => _preferences.getBool('${prefix}show_alert') ?? true;
   // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";
+  static String? getBackUpState() => _preferences.getString('${prefix}backUpState') ?? "";
 }

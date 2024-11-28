@@ -50,7 +50,7 @@ class SettingsController extends GetxController {
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         DialogUtils.hideLoading();
         if (response.isSuccess) {
-          // clearAllPreferences();
+          clearAllPreferences();
         } else {
           toToast(getTranslated("logoutFailed"));
           // Get.snackbar("Logout", "Logout Failed");

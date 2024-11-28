@@ -91,7 +91,7 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                 chatListItem(Text(getTranslated("chatBackup"),
                     style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w400)), rightArrowIcon, () => {NavUtils.toNamed(Routes.restoreBackup)}),
+                        fontWeight: FontWeight.w400)), rightArrowIcon, () => {NavUtils.toNamed(Routes.backUpView)}),
                 // notificationItem(title: getTranslated("chatBackup"), subtitle: "", onTap: onTap)
                 /*Commented out, because this feature is NI*/
                 /* notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),
