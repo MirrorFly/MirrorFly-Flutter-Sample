@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_restore_manager.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -10,7 +9,8 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
-import '../../settings/views/settings_widgets.dart';
+import '../backup_utils.dart';
+import '../icloud_instruction_view.dart';
 
 class RestoreController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -27,7 +27,6 @@ class RestoreController extends GetxController
     backupAnimation6,
   ];
 
-  final List<String> backupFrequency = ["Daily", "Weekly", "Monthly"];
 
   var selectedBackupFrequency = "Monthly".obs;
 
@@ -43,6 +42,10 @@ class RestoreController extends GetxController
   var isBackupFound = false.obs;
 
   var isBackupAnimationRunning = false.obs;
+
+  final List<String> backupFrequency = ["Daily", "Weekly", "Monthly"];
+
+  final backupUtils = BackupUtils();
 
   @override
   Future<void> onInit() async {
@@ -118,67 +121,6 @@ class RestoreController extends GetxController
     animationController.forward();
   }
 
-  void showBackupFrequency() {
-    DialogUtils.createDialog(
-      Dialog(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 20.0, top: 20, right: 15, bottom: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                getTranslated("backupScheduleTitle"),
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: backupFrequency.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var frequencyItem = backupFrequency[index];
-                    return Obx(() {
-                      return ListTile(
-                        contentPadding: const EdgeInsets.only(left: 10),
-                        title: Text(frequencyItem,
-                            style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.normal)),
-                        leading: frequencyItem == selectedBackupFrequency.value
-                            ? const Icon(
-                                Icons.check_circle_rounded,
-                                color: Colors.green,
-                              )
-                            : const SizedBox.shrink(),
-                        onTap: () {
-                          if (frequencyItem != selectedBackupFrequency.value) {
-                            NavUtils.back();
-                            debugPrint("selected audio item $frequencyItem");
-                            selectedBackupFrequency(frequencyItem);
-                          } else {
-                            LogMessage.d("routeAudioOption",
-                                "clicked on same audio type selected");
-                          }
-                        },
-                      );
-                    });
-                  }),
-              TextButton(
-                  onPressed: () {
-                    NavUtils.back();
-                  },
-                  child: Text(getTranslated("cancel")))
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void showIcloudSetupInstruction() {
     showModalBottomSheet(
       context: NavUtils.currentContext,
@@ -190,83 +132,9 @@ class RestoreController extends GetxController
       },
     );
   }
-}
 
-class IcloudInstructionView extends StatelessWidget {
-  const IcloudInstructionView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(getTranslated("restoreBackup")),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-              onPressed: () => NavUtils.back(),
-              child: Text(getTranslated("done")))
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 15),
-              Text(
-                getTranslated("iCloudTitleDesc"),
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 15),
-              ListTile(
-                leading: AppUtils.assetIcon(
-                    assetName: restoreSetting, width: 30, height: 30),
-                title: Text(
-                  getTranslated("openIphoneSettings"),
-                  style: TextStyle(fontSize: 12, color: Color(0xff767676)),
-                ),
-              ),
-              ListTile(
-                leading: AppUtils.assetIcon(
-                    assetName: restoreCloud, width: 30, height: 30),
-                title: Text(getTranslated("iCloudSignInDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
-              ),
-              ListTile(
-                leading: AppUtils.assetIcon(
-                    assetName: restoreCloud, width: 30, height: 30),
-                title: Text(getTranslated("iCloudDriveOnDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
-              ),
-              ListTile(
-                leading: AppUtils.assetIcon(
-                    assetName: restoreCloud, width: 30, height: 30),
-                title: Text(getTranslated("iCloudDriveMirrorFlyOnDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
-              ),
-              const SizedBox(height: 35),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.grey,
-                    width: 0.5,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(5),
-                  ),
-                ),
-                child: lockItem(
-                    title: getTranslated("appName"),
-                    on: true,
-                    onToggle: (value) {},
-                    subtitle: ''),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  showBackupFrequency() async {
+    selectedBackupFrequency(await backupUtils.showBackupOptionList(selectedValue: selectedBackupFrequency.value, listValue: backupFrequency));
   }
 }
+

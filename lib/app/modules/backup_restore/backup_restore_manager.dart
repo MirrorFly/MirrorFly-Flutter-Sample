@@ -3,14 +3,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:icloud_storage_sync/icloud_storage_sync.dart';
 import 'package:icloud_storage_sync/models/icloud_file_download.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_controller.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 class BackupRestoreManager {
@@ -155,7 +158,7 @@ class BackupRestoreManager {
   void initializeEventListeners() {
     Mirrorfly.onBackupSuccess.listen((event) {
       debugPrint("onBackupSuccess==> $event");
-      uploadBackupFile(filePath: "filePath");
+      // uploadBackupFile(filePath: "filePath");
     });
 
     Mirrorfly.onBackupFailure.listen((event) {
@@ -163,7 +166,9 @@ class BackupRestoreManager {
     });
 
     Mirrorfly.onBackupProgressChanged.listen((event) {
-
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().backUpProgress(event);
+      }
     });
 
     Mirrorfly.onRestoreSuccess.listen((event) {
@@ -178,6 +183,51 @@ class BackupRestoreManager {
 
     });
   }
+
+  void startBackup() {
+    Mirrorfly.startBackup();
+  }
+
+  void restoreBackup() {
+    Mirrorfly.restoreBackup(backupPath: "backupFilePath");
+  }
+
+
+  Future<String?> getGroupContainerIDPath() async {
+
+    // Check if the app group directory exists
+    try {
+      final appGroupContainer = Directory('/private/var/mobile/Containers/Shared/AppGroup/$_iCloudContainerID');
+      if (await appGroupContainer.exists()) {
+        return appGroupContainer.path;
+      }
+    } catch (e) {
+      LogMessage.d("BackupRestoreManager", "Error accessing App Group Container: $e");
+    }
+
+    // Fallback to the documents directory
+    final documentDirectory = await getApplicationDocumentsDirectory();
+    return documentDirectory.path;
+  }
+
+  Future<String?> getBackupUrl(String username) async {
+    final baseDirectory = await getGroupContainerIDPath();
+
+    if (baseDirectory == null) {
+      return null;
+    }
+
+    // Append "iCloudBackup" and the backup filename
+    final backupDirectory = Directory('$baseDirectory/iCloudBackup');
+    if (!await backupDirectory.exists()) {
+      // await backupDirectory.create(recursive: true);
+      LogMessage.d("BackupRestoreManager", "Error while accessing Backup Directory, Directory path is not found");
+    }
+
+    return '${backupDirectory.path}/Backup_$username.txt';
+  }
+
+
 
   void destroy() {
     LogMessage.d("BackupRestoreManager", "Destroying manager...");

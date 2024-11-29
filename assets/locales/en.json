@@ -547,7 +547,7 @@
     "lastBackUp": "Last Backup: ",
     "totalSize": "Total size: ",
     "backupNow": "Backup Now",
-    "backUpOver": "Back up Over",
+    "backUpOver": "Auto Back up Over",
     "wifiOnly": "Wi-Fi only",
     "restoreBackup": "Restore Backup",
     "lastBackUpDesc": "Back up your chat history and media to Google Drive so if you loose your device or switch to new one, your chat history is safe.You can restore your chat history when you reinstall Mirrorfly.",

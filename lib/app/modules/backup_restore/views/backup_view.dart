@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_controller.dart';
@@ -14,7 +13,6 @@ class BackupView extends NavViewStateful<BackupController> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(getTranslated("chatBackup")),
@@ -26,18 +24,27 @@ class BackupView extends NavViewStateful<BackupController> {
           children: [
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: Text(getTranslated("lastBackUp"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),),
+              child: Text(getTranslated("lastBackUp"), style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold),),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
-              child: Text(getTranslated("lastBackUpDesc"), style: TextStyle(color: Color(0xff767676)),),
+              child: Text(getTranslated("lastBackUpDesc"),
+                style: TextStyle(color: Color(0xff767676)),),
             ),
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Row(
                 children: [
-                  Text(getTranslated("lastBackUp"), style: TextStyle(color: Color(0xff767676))),
-                  Text("8 March 2020 | 4:30 pm", style: const TextStyle(color: Colors.black),)
+                  Text(getTranslated("lastBackUp"),
+                      style: TextStyle(color: Color(0xff767676))),
+                  Obx(() {
+                    return controller.isBackupFound.value ? Text(
+                      controller.backUpFoundDate.value, style: const TextStyle(
+                        color: Colors.black),) : const Text("--");
+                  })
                 ],
               ),
             ),
@@ -45,8 +52,14 @@ class BackupView extends NavViewStateful<BackupController> {
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
               child: Row(
                 children: [
-                  Text(getTranslated("totalSize"), style: TextStyle(color: Color(0xff767676))),
-                  Text("1.4 GB", style: const TextStyle(color: Colors.black)),
+                  Text(getTranslated("totalSize"),
+                      style: TextStyle(color: Color(0xff767676))),
+                  Obx(() {
+                    return controller.isBackupFound.value
+                        ? Text(controller.backUpFoundSize.value,
+                        style: const TextStyle(color: Colors.black))
+                        : const Text("--");
+                  }),
                 ],
               ),
             ),
@@ -55,7 +68,7 @@ class BackupView extends NavViewStateful<BackupController> {
               child: ElevatedButton(
                 style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                 onPressed: () {
-
+                  controller.initializeBackUp();
                 },
                 child: Text(
                   getTranslated("backupNow"),
@@ -64,36 +77,81 @@ class BackupView extends NavViewStateful<BackupController> {
             ),
             const SizedBox(height: 20,),
             const AppDivider(color: Color(0xffEBEBEB)),
-            lockItem(title: getTranslated("autoBackup"),
-                on: true,
-                onToggle: (value) {}, subtitle: ''),
-            Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Text(getTranslated("googleDriveSettings"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
-            ),
+            Obx(() {
+              return lockItem(title: getTranslated("autoBackup"),
+                  on: controller.isAutoBackupEnabled.value,
+                  onToggle: (value) {
+                    controller.updateAutoBackupOption(value);
+                  }, subtitle: '');
+            }),
+            Obx(() {
+              return controller.isAutoBackupEnabled.value
+                  ? InkWell(
+                onTap: () => controller.showBackupFrequency(),
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Row(
+                    children: [
+                      Text(getTranslated("scheduleBackUp")),
+                      const Spacer(),
+                      Obx(() {
+                        return Text(controller.selectedBackupFrequency.value);
+                      }),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.keyboard_arrow_right_rounded),
+                    ],
+                  ),
+                ),
+              )
+                  : const Offstage();
+            }),
+            const AppDivider(color: Color(0xffEBEBEB)),
+            if (controller.isAndroid) ... [
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Text(getTranslated("googleDriveSettings"),
+                    style: const TextStyle(color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold)),
+              ),
 
-            ListTile(
-              title: Text(getTranslated("googleAccount"), style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold)),
-              subtitle: Text(getTranslated("googleAccountEmail"), style: const TextStyle(color: Colors.black, fontSize: 12,)),
-              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
-            ),
-
+              ListTile(
+                title: Text(getTranslated("googleAccount"),
+                    style: const TextStyle(color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold)),
+                subtitle: Text(getTranslated("googleAccountEmail"),
+                    style: const TextStyle(color: Colors.black, fontSize: 12,)),
+                trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+              ),
+            ],
             const AppDivider(color: Color(0xffEBEBEB)),
 
-            ListTile(
-              title: Text(getTranslated("backUpOver"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
-              subtitle: Text(getTranslated("wifiOnly"), style: const TextStyle(color: Colors.black, fontSize: 12)),
-              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
-            ),
-
+            Obx(() {
+              return ListTile(
+                title: Text(getTranslated("backUpOver"), style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold)),
+                subtitle: Text(controller.selectedBackupNetworkFrequency.value,
+                    style: const TextStyle(color: Colors.black, fontSize: 12)),
+                trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                onTap: () => controller.showBackupNetworkFrequency(),
+              );
+            }),
+            const AppDivider(color: Color(0xffEBEBEB)),
             Padding(
               padding: const EdgeInsets.all(18.0),
-              child: Text(getTranslated("localBackUpRestore"), style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
+              child: Text(getTranslated("localBackUpRestore"),
+                  style: const TextStyle(color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold)),
             ),
 
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
-              child: Text(getTranslated("localBackupDesc"), style: TextStyle(color: Color(0xff767676))),
+              child: Text(getTranslated("localBackupDesc"),
+                  style: TextStyle(color: Color(0xff767676))),
             ),
 
             const SizedBox(height: 30,),
@@ -103,7 +161,7 @@ class BackupView extends NavViewStateful<BackupController> {
                 ElevatedButton(
                   style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                   onPressed: () {
-
+                    controller.downloadBackup();
                   },
                   child: Text(
                     getTranslated("download"),
@@ -125,7 +183,6 @@ class BackupView extends NavViewStateful<BackupController> {
         ),
       )),
     );
-
   }
 
   @override
