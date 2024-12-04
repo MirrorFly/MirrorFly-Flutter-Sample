@@ -3,7 +3,7 @@
   </p>
 
   <h1 align="center">
-    Customizable, Low-code Flutter Sample App For Android & iOS
+    Customizable, Low-code Flutter Chat SDK Sample App For Android & iOS
   </h1>
 
 
