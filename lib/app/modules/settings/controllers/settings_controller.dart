@@ -51,6 +51,11 @@ class SettingsController extends GetxController {
         DialogUtils.hideLoading();
         if (response.isSuccess) {
           // clearAllPreferences();
+          var token = SessionManagement.getToken().checkNull();
+          SessionManagement.clear().then((value) {
+            SessionManagement.setToken(token);
+            NavUtils.offAllNamed(Routes.login);
+          });
         } else {
           toToast(getTranslated("logoutFailed"));
           // Get.snackbar("Logout", "Logout Failed");
