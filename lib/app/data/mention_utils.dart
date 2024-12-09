@@ -47,11 +47,14 @@ class MentionUtils {
 
     List<TextSpan> spans = [];
     var splits = text.split(" ");
+    int index = 0;
     for (var word in splits) {
       if (TextUtils.hasMatch(word, mentionRegex.pattern)) {
+        // debugPrint("formatMentionTextSpan ${profileDetails[index].getName()} $index $word");
         var mentionSpans = formatMentionTextSpan(
-            word, profileDetails, defaultStyle, underlineStyle, mentionStyle);
+            word, profileDetails, defaultStyle, underlineStyle, mentionStyle,index);
         spans.addAll(mentionSpans);
+        index++;
       } else {
         spans.addAll(TextUtils.getTextSpan(word, defaultStyle, underlineStyle));
         spans.add(const TextSpan(text: " "));
@@ -76,11 +79,11 @@ class MentionUtils {
       TextStyle? defaultStyle,
       TextStyle? underlineStyle,
       TextStyle? mentionStyle,
+      int index
       ) {
-    int index = 0;
+    // int index = 0;
     List<TextSpan> spans = [];
     int lastMatchEnd = 0;
-
     mentionRegex.allMatches(input).forEach((match) {
       // Add regular text before the mention.
       if (match.start > lastMatchEnd) {
@@ -89,7 +92,8 @@ class MentionUtils {
       }
 
       // Add the mention text with style and recognizer.
-      if (index < replacements.length) {
+      if (index < replacements.length && replacements.length>index) {
+        // debugPrint("replacements[index].getName() ${replacements[index].getName()} $index");
         spans.addAll(setSpanForEachLetter(
           "@${replacements[index].getName()} ",
           mentionStyle,
@@ -98,7 +102,7 @@ class MentionUtils {
               debugPrint('Tapped on: ${replacements[index]}');
             },
         ));
-        index++;
+        // index++;
       } else {
         var str = match.group(0) ?? "";
         spans.addAll(TextUtils.getTextSpan(str, defaultStyle, underlineStyle));
