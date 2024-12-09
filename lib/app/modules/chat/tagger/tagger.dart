@@ -413,13 +413,6 @@ class _ChatTaggerState extends State<ChatTagger> {
       var tag = foundTag.values.first.values.first;
       if(foundTag.values.first.keys.first){
         spans.add("@[?] ");
-        // spans.add(
-        //   TextSpan(
-        //     text: tag?.text,
-        //     style: _tagStyles[tag?.text[0]],
-        //   ),
-        // );
-        // spans.add(const TextSpan(text: " "));
         skipIndexes = tag?.endIndex;
       }else{
         spans.add(text[i]);
@@ -1118,6 +1111,7 @@ class ChatTaggerController extends TextEditingController {
       );
     }
   }
+  List<String> get getTags => _tags.values.toList();
 
   /// Defers [ChatTagger]'s listener attached to this controller.
   void _runDeferedAction(Function action) {

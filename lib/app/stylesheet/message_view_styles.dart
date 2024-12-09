@@ -129,7 +129,9 @@ class TextMessageViewStyle{
   const TextMessageViewStyle({this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
     this.highlightColor = Colors.orange,//while searching a message to highlight the text
-    this.urlMessageColor = const Color(0xff4879F9),this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
+    this.urlMessageColor = const Color(0xff4879F9),
+    this.mentionUserColor = const Color(0xff4879F9),
+    this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
       color: Color(0xffD0D8EB),
     ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7)),
     this.iconFavourites,
@@ -138,6 +140,7 @@ class TextMessageViewStyle{
   final TextStyle timeTextStyle;
   final Color highlightColor;
   final Color urlMessageColor;
+  final Color mentionUserColor;
   final CallLinkViewStyle callLinkViewStyle;
   final UIKitIcon? iconFavourites;
 }
