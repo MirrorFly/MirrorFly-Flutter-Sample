@@ -195,12 +195,15 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
                   AppUtils.svgIcon(icon:emailIcon,colorFilter: ColorFilter.mode(AppStyleConfig.chatInfoPageStyle.optionsViewStyle.leadingIconColor, BlendMode.srcIn),),
                   const SizedBox(width: 10,),
                   Obx(() {
-                    return Text(controller.profile.email.checkNull(),
-                        style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.descriptionTextStyle,
-                        /*style: const TextStyle(
-                            fontSize: 13,
-                            color: textColor,
-                            fontWeight: FontWeight.w500)*/
+                    return Flexible(
+                      child: Text(controller.profile.email.checkNull(),
+                          style: AppStyleConfig.chatInfoPageStyle.optionsViewStyle.descriptionTextStyle,
+                          overflow: TextOverflow.ellipsis,
+                          /*style: const TextStyle(
+                              fontSize: 13,
+                              color: textColor,
+                              fontWeight: FontWeight.w500)*/
+                      ),
                     );
                   }),
                 ],
