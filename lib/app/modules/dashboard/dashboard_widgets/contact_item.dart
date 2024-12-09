@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -7,7 +8,6 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
-import '../widgets.dart';
 
 class ContactItem extends StatelessWidget {
   const ContactItem({
@@ -74,7 +74,16 @@ class ContactItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      spanTxt.isEmpty
+                      CustomTextView(
+                        text: item.getName().checkNull(),
+                        defaultTextStyle: contactItemStyle.titleStyle,
+                        linkColor: Colors.blue,
+                        mentionUserTextColor: Colors.blue,
+                        searchQueryTextColor: contactItemStyle.spanTextColor,
+                        searchQueryString: spanTxt,
+                        maxLines: 1,
+                      ),
+                      /*spanTxt.isEmpty
                           ? Text(
                         getName(item),
                         style: contactItemStyle.titleStyle,
@@ -88,7 +97,7 @@ class ContactItem extends StatelessWidget {
                           spanTxt.trim(),
                           contactItemStyle.titleStyle,
                           // const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
-                          contactItemStyle.spanTextColor),
+                          contactItemStyle.spanTextColor),*/
                       if(showStatus)...[
                         const SizedBox(height: 5,),
                         Text(

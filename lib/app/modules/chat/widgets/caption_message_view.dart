@@ -8,8 +8,7 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
-import '../../dashboard/widgets.dart';
-import 'chat_widgets.dart';
+import 'custom_text_view.dart';
 
 class CaptionMessageView extends StatelessWidget {
   const CaptionMessageView({super.key, required this.mediaMessage,
@@ -28,14 +27,14 @@ class CaptionMessageView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          search.isEmpty
-              ? textMessageSpannableText(
-              mediaMessage.mediaCaptionText.checkNull(),textMessageViewStyle.textStyle,textMessageViewStyle.urlMessageColor)
-              : chatSpannedText(
-            mediaMessage.mediaCaptionText.checkNull(),
-            search,textMessageViewStyle.textStyle,spanColor: textMessageViewStyle.highlightColor,
-            urlColor: textMessageViewStyle.urlMessageColor
-            // const TextStyle(fontSize: 14, color: textHintColor),
+          CustomTextView(
+            text: mediaMessage.mediaCaptionText.checkNull(),
+            defaultTextStyle: textMessageViewStyle.textStyle,
+            linkColor: textMessageViewStyle.urlMessageColor,
+            mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+            searchQueryTextColor: textMessageViewStyle.highlightColor,
+            searchQueryString: search,
+            mentionUserIds: chatMessage.mentionedUsersIds ?? [],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

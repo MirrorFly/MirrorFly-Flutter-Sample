@@ -278,7 +278,9 @@ class RecentChatView extends StatelessWidget {
                   var item = snap.data!.entries.first.value!;
                   // var unreadMessageCount = "0";
                   return RecentChatMessageItem(profile: profile, item: item, searchTxt: controller.search.text,
-                    onTap: () { controller.toChatPage(items.chatUserJid.checkNull()); },);
+                    onTap: () {
+                      debugPrint("filteredMessageListView : ${items.chatUserJid}");
+                    controller.toChatPage(items.chatUserJid.checkNull()); },);
                 } else if (snap.hasError) {
                   LogMessage.d("snap error", snap.error.toString());
                 }
@@ -303,6 +305,7 @@ class RecentChatView extends StatelessWidget {
                   item: item,
                   spanTxt: controller.search.text,
                   onTap: (RecentChatData chatItem) {
+                    debugPrint("recentChatSearchListView : ${item.jid}");
                     controller.toChatPage(item.jid.checkNull(),);
                   },recentChatItemStyle: recentChatItemStyle,
                 )
