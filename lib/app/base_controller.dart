@@ -791,6 +791,24 @@ class BaseController {
   static void blockedThisUser(result) {}
 
   static void myProfileUpdated(result) {
+    var myJid = SessionManagement.getUserJID().checkNull();
+    Mirrorfly.getUserProfile(jid: myJid,fetchFromServer: true,flyCallback:(FlyResponse response){
+    LogMessage.d("getUserProfile", response.toString());
+    if(response.isSuccess) {
+      var data = profileDataFromJson(response.data);
+      var userProfileData = ProData(
+              email: data.data?.email,
+              image: data.data?.image,
+              mobileNumber: data.data?.mobileNumber,
+              nickName: data.data?.nickName,
+              name: data.data?.name,
+              status: data.data?.status);
+      SessionManagement.setCurrentUser(userProfileData);
+    }else{
+      LogMessage.d("Base Controller myProfileUpdated Error", response);
+    }
+    });
+
     if (Get.isRegistered<GroupInfoController>()) {
       Get.find<GroupInfoController>().myProfileUpdated();
     }

@@ -323,14 +323,15 @@ class ProfileController extends GetxController {
                 SessionManagement.setUserImage(Constants.emptyString);
                 changed((from == Routes.login));
                 name(data.data!.name.toString());
-                var userProfileData = ProData(
-                    email: profileEmail.text.toString(),
-                    image: userImgUrl.value,
-                    mobileNumber: data.data!.mobileNumber.checkNull(),
-                    nickName: profileName.text,
-                    name: profileName.text,
-                    status: profileStatus.value);
-                SessionManagement.setCurrentUser(userProfileData);
+
+                // var userProfileData = ProData(
+                //     email: profileEmail.text.toString(),
+                //     image: userImgUrl.value,
+                //     mobileNumber: data.data!.mobileNumber.checkNull(),
+                //     nickName: profileName.text,
+                //     name: profileName.text,
+                //     status: profileStatus.value);
+                // SessionManagement.setCurrentUser(userProfileData);
                 update();
               }
             } else {
