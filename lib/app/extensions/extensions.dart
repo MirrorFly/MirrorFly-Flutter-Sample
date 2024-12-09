@@ -112,3 +112,21 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
   }
 
 }
+
+extension Regexparesing on RegExp {
+  Iterable<RegExpMatch> matcher(String text){
+    return allMatches(text);
+  }
+  List<RegExpMatch> findMatchedPosition(String text){
+    var list = <RegExpMatch>[];
+    allMatches(text).forEach((match) {
+      list.add(match);
+    });
+    return list;
+  }
+}
+extension RegexpMatcharesing on RegExpMatch {
+  String string(){
+    return "groupNames : $groupNames, pattern : $pattern, start : $start, end : $end, input : $input";
+  }
+}
