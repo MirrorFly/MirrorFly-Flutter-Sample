@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -11,6 +13,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/permissions.dart';
@@ -69,7 +72,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   late AudioRecorder record;
   bool _isDisposed = false;
 
-  TextEditingController messageController = TextEditingController();
+  ChatTaggerController messageController = ChatTaggerController();
   TextEditingController editMessageController = TextEditingController();
 
   FocusNode focusNode = FocusNode();
@@ -270,6 +273,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   @override
   void onClose() {
     debugPrint("onClose");
+    messageController.dispose();
     saveUnsentMessage();
     setOnGoingUserGone();
     ImageCacheManager.disposeCache();
@@ -292,7 +296,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   saveUnsentMessage() {
     if (profile.jid.checkNull().isNotEmpty) {
-      Mirrorfly.saveUnsentMessage(jid: profile.jid.checkNull(), message: messageController.text.trim().toString());
+      Mirrorfly.saveUnsentMessage(jid: profile.jid.checkNull(), message: messageController.text.trim().toString(),mentionedUsers: selectedMentionUsers);
     }
     if (isReplying.value) {
       ReplyHashMap.saveReplyId(profile.jid.checkNull(), replyChatMessage.messageId);
@@ -301,9 +305,11 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   getUnsentMessageOfAJid() async {
     if (profile.jid.checkNull().isNotEmpty) {
-      Mirrorfly.getUnsentMessageOfAJid(jid: profile.jid.checkNull()).then((value) {
-        if (value != null) {
-          messageController.text = value;
+      Mirrorfly.getUnsentMessageOf(jid: profile.jid.checkNull()).then((value) {
+        if (value != null) {//{"mentionedUsers":["8000800080@xmpp-uikit-qa.contus.us"],"textContent":"@Flutter"}
+          log(value,name: "getUnsentMessageOf");//{"mentionedUsers":[],"textContent":""}
+          var data = json.decode(value.toString());
+          messageController.text = data["textContent"];
         } else {
           messageController.text = '';
         }
@@ -402,13 +408,15 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           scrollToBottom();
           updateLastMessage(value);
         });*/
+
         Mirrorfly.sendMessage(
             messageParams: MessageParams.text(
                 toJid: profile.jid.checkNull(),
                 replyMessageId: replyMessageId,
+                mentionedUsersIds: messageController.getTags,
                 topicId: topicId,
                 metaData: messageMetaData, //#metaData
-                textMessageParams: TextMessageParams(messageText: messageController.text.trim())),
+                textMessageParams: TextMessageParams(messageText: messageController.formattedText.trim())),
             flyCallback: (response) {
               if (response.isSuccess) {
                 LogMessage.d("text message", response.data);
@@ -1056,7 +1064,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     deBouncer.run(() {
       debugPrint("DeBouncer");
       sendUserTypingGoneStatus();
-      filterMentionUsers(typingText);
     });
   }
 
@@ -2025,9 +2032,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   var groupParticipantsName = ''.obs;
-  var groupMembers = List<ProfileDetails>.empty().obs;
-
-  var filteredItems = List<ProfileDetails>.empty().obs;
+  var groupMembers = List<ProfileDetails>.empty(growable: true).obs;
+  var filteredItems = List<ProfileDetails>.empty(growable: true).obs;
   var showMentionUserList = false.obs;
   void filterMentionUsers(String? typingText) {
     if(typingText==null){
@@ -2035,22 +2041,34 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       return;
     }
     debugPrint("filterMentionUsers $typingText");
-    if(filteredItems.isEmpty){
+
+    var query = typingText;
+    if(query.isEmpty){
       filteredItems(groupMembers);
+    }else {
+      var filter = groupMembers
+          .where((item) => item.getName().toLowerCase().contains(query))
+          .toList();
+      debugPrint("filter ${filter.length}");
+      filteredItems(filter);
     }
-    if(!typingText.contains("@")){
-      filteredItems.clear();
-      return;
-    }
-    showMentionUserList(true);
-    var query = typingText.toLowerCase().split("@")[1];
-    var filter = groupMembers
-        .where((item) => item.getName().toLowerCase().contains(query))
-        .toList();
-    debugPrint("filter ${filter.length}");
     // setState(() {
-    filteredItems(filter);
     // });
+  }
+
+  void showOrHideTagListView(bool show){
+    if(showMentionUserList.value != show) {
+      filteredItems(groupMembers);
+      showMentionUserList(show);
+    }
+  }
+
+  var selectedMentionUsers = List<String>.empty(growable: true);
+  void onUserTagClicked(ProfileDetails profile){
+    // _mentionWatcher.replaceText(profile.getName());
+    messageController.addTag(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+    selectedMentionUsers.add(profile.jid.checkNull());
+    debugPrint("$selectedMentionUsers");
   }
 
   getParticipantsNameAsCsv(String jid) {

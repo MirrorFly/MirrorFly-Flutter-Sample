@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
+import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/reply_message_widgets.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/dashboard_widgets/contact_item.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
@@ -234,25 +236,51 @@ class ChatInputField extends NavViewStateful<ChatController> {
         if(controller.isAudioRecording.value ==
             Constants.audioRecordInitial)...[
           Expanded(
-            child: TextField(
-              onChanged: (text) {
-                controller.isTyping(text);
-              },
-              style: messageTypingAreaStyle
-                  .textFieldStyle.editTextStyle,
-              //const TextStyle(fontWeight: FontWeight.w400),
-              keyboardType: TextInputType.multiline,
-              minLines: 1,
-              maxLines: 4,
-              enabled: controller.isAudioRecording.value ==
-                  Constants.audioRecordInitial ? true : false,
-              controller: controller.messageController,
-              focusNode: controller.focusNode,
-              decoration: InputDecoration(
-                  hintText: getTranslated("startTypingPlaceholder"),
-                  border: InputBorder.none,
-                  hintStyle: messageTypingAreaStyle
-                      .textFieldStyle.editTextHintStyle),
+            child: ChatTagger(
+              overlay: const Offstage(),
+                controller: controller.messageController,
+                triggerCharacterAndStyles: const {
+                  '@': TextStyle(color: Colors.blueAccent),
+                },
+                onShowOrHideTaggers: (show){
+                  // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
+                  controller.showOrHideTagListView(show);
+                },
+                onSearch: (query, triggerCharacter) {
+                  //perform search
+                  // log("query : $query, triggerCharacter : $triggerCharacter",name: "FlutterTagger");
+                  if (triggerCharacter == '@') {
+                    // log('Mention detected: $keyword',name: "onMentionTextChanged");
+                    controller.filterMentionUsers(query);
+                  } else {
+                    // log('No mention detected.',name: "onMentionTextChanged");
+                    controller.filteredItems.clear();
+                    controller.showMentionUserList(true);
+                  }
+                },
+                builder: (context, textFieldKey) {
+                return TextField(
+                  key: textFieldKey,
+                  onChanged: (text) {
+                    controller.isTyping(text);
+                  },
+                  style: messageTypingAreaStyle
+                      .textFieldStyle.editTextStyle,
+                  //const TextStyle(fontWeight: FontWeight.w400),
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 4,
+                  enabled: controller.isAudioRecording.value ==
+                      Constants.audioRecordInitial ? true : false,
+                  controller: controller.messageController,
+                  focusNode: controller.focusNode,
+                  decoration: InputDecoration(
+                      hintText: getTranslated("startTypingPlaceholder"),
+                      border: InputBorder.none,
+                      hintStyle: messageTypingAreaStyle
+                          .textFieldStyle.editTextHintStyle),
+                );
+              }
             ),
           )
         ],
@@ -483,7 +511,10 @@ class MentionUsersList extends NavViewStateful<ChatController> {
                       checkValue: false,
                       onCheckBoxChange: (val) {},
                       showStatus: false,
-                      contactItemStyle: mentionUserStyle,);
+                      contactItemStyle: mentionUserStyle,
+                    onListItemPressed: (){
+                      controller.onUserTagClicked(controller.filteredItems[index]);
+                    },);
                   }),
             ) : const Offstage();
           });
