@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_info/views/call_info_view.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_restore_manager.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -124,6 +122,7 @@ class RestoreController extends GetxController
     if(animationController != null){
       animationController?.stop();
     }
+    SessionManagement.setBackUpState(Constants.backupSkipped);
     NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber});
   }
 
@@ -132,6 +131,7 @@ class RestoreController extends GetxController
       animationController?.stop();
     }
     SessionManagement.setBackUpAccount(selectedEmail.value);
+    SessionManagement.setBackUpState(Constants.backupAccountSelected);
     NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber});
   }
 
