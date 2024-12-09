@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
 import 'app/modules/chat/views/chat_view.dart';
@@ -171,6 +172,13 @@ class _MyAppState extends State<MyApp> {
                 name: Routes.profile,
               ),
               builder: (context) => const ProfileView(),
+            )];
+          case Routes.restoreBackup:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.restoreBackup,
+              ),
+              builder: (context) => const RestoreView(),
             )];
           case Routes.chat:
             return [MaterialPageRoute(

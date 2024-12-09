@@ -60,7 +60,6 @@ dependencies:
   #BackUp and Restore
   icloud_storage_sync: ^0.0.1
   google_sign_in: ^6.2.2
-  googleapis: ^13.2.0
   googleapis_auth: ^1.6.0
 
 

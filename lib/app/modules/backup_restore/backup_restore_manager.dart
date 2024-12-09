@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:icloud_storage_sync/icloud_storage_sync.dart';
 import 'package:icloud_storage_sync/models/icloud_file_download.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -11,8 +12,6 @@ import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_co
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
-import 'package:googleapis/drive/v3.dart' as drive;
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -49,7 +48,16 @@ class BackupRestoreManager {
 
   get clientId => _clientId;
 
-  final List<String> _scopes = [drive.DriveApi.driveReadonlyScope];
+  // GoogleSignInAccount? _googleAccountSignedIn;
+
+
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: ['https://www.googleapis.com/auth/drive.file'],
+  );
+
+  GoogleSignInAccount? get getGoogleAccountSignedIn => googleSignIn.currentUser;
+
+  bool isServerUploadRequired = false;
 
   initialize({required iCloudContainerID, required googleClientId}){
 
@@ -96,7 +104,7 @@ class BackupRestoreManager {
       await icloudSyncPlugin.upload(
         containerId: _iCloudContainerID,
         filePath: filePath,
-        destinationRelativePath: iCloudRelativePath,
+        // destinationRelativePath: iCloudRelativePath,
         onProgress: onBackupUploadProgress,
       );
 
@@ -125,7 +133,7 @@ class BackupRestoreManager {
   }
 
 
-  Future<bool> _checkGoogleDriveAccess() async {
+  /*Future<bool> _checkGoogleDriveAccess() async {
     try {
       // Authenticate using Google Sign-In
       final authClient = await clientViaUserConsent(
@@ -152,13 +160,81 @@ class BackupRestoreManager {
       LogMessage.d("BackupRestoreManager", "Error checking Google Drive access: $e");
       return false;
     }
+  }*/
+
+  Future<bool> _checkGoogleDriveAccess() async {
+    try {
+      // Attempt silent sign-in to get the last signed-in user
+      final GoogleSignInAccount? account = await googleSignIn.signInSilently();
+
+      if (account != null) {
+        LogMessage.d("BackupRestoreManager", 'User is already signed in!');
+        LogMessage.d("BackupRestoreManager", 'Email: ${account.email}');
+        LogMessage.d("BackupRestoreManager", 'Display Name: ${account.displayName}');
+        LogMessage.d("BackupRestoreManager", 'Profile Picture URL: ${account.photoUrl}');
+        return true;
+      } else {
+        // No user is signed in
+        LogMessage.d("BackupRestoreManager", 'No user is signed in currently.');
+        return false;
+      }
+    } catch (error) {
+      LogMessage.d("BackupRestoreManager", 'Error retrieving signed-in user: $error');
+      return false;
+    }
+  }
+
+  Future<GoogleSignInAccount?> selectGoogleAccount() async {
+    try {
+      final GoogleSignInAccount? account = await googleSignIn.signIn();
+      if (account != null) {
+        LogMessage.d("BackupRestoreManager", 'Selected account email: ${account.email}');
+        return account;
+      } else {
+        LogMessage.d("BackupRestoreManager", 'No account selected');
+        return null;
+      }
+    } catch (error) {
+      LogMessage.d("BackupRestoreManager", 'Error selecting account: $error');
+      return null;
+    }
+  }
+
+  Future<GoogleSignInAccount?> switchGoogleAccount() async {
+    try {
+      final GoogleSignInAccount? currentUser = googleSignIn.currentUser;
+
+      if (currentUser != null) {
+        LogMessage.d("BackupRestoreManager", 'Current user: ${currentUser.email}');
+        LogMessage.d("BackupRestoreManager", 'Signing out...');
+
+        await googleSignIn.signOut();
+        LogMessage.d("BackupRestoreManager", 'Signed out successfully.');
+      }
+
+      final GoogleSignInAccount? newAccount = await googleSignIn.signIn();
+
+      if (newAccount != null) {
+        LogMessage.d("BackupRestoreManager", 'Signed in with new account: ${newAccount.email}');
+        LogMessage.d("BackupRestoreManager", 'Display Name: ${newAccount.displayName}');
+        return newAccount;
+      } else {
+        LogMessage.d("BackupRestoreManager", 'User canceled the sign-in process.');
+        return null;
+      }
+    } catch (error) {
+      LogMessage.d("BackupRestoreManager", 'Error switching account: $error');
+      return null;
+    }
   }
 
 
   void initializeEventListeners() {
-    Mirrorfly.onBackupSuccess.listen((event) {
-      debugPrint("onBackupSuccess==> $event");
-      // uploadBackupFile(filePath: "filePath");
+    Mirrorfly.onBackupSuccess.listen((backUpPath) {
+      debugPrint("onBackupSuccess==> $backUpPath");
+      if(isServerUploadRequired) {
+        uploadBackupFile(filePath: backUpPath);
+      }
     });
 
     Mirrorfly.onBackupFailure.listen((event) {
@@ -184,7 +260,8 @@ class BackupRestoreManager {
     });
   }
 
-  void startBackup() {
+  void startBackup({bool isServerUploadRequired = false}) {
+    this.isServerUploadRequired = isServerUploadRequired;
     Mirrorfly.startBackup();
   }
 

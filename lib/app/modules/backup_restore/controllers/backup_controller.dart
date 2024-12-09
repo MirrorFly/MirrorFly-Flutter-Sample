@@ -2,8 +2,10 @@
 
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../backup_restore_manager.dart';
@@ -62,10 +64,10 @@ class BackupController extends GetxController {
   }
 
   void initializeBackUp() {
-    if(driveAccessible.value){
+    if(!driveAccessible.value){
       toToast("Unable to access drive");
     }else{
-      backupRestoreManager.startBackup();
+      backupRestoreManager.startBackup(isServerUploadRequired: true);
     }
   }
 
@@ -89,6 +91,19 @@ class BackupController extends GetxController {
   void updateAutoBackupOption(bool isEnabled) {
     LogMessage.d("Backup Controller", "Auto Backup Toggle => $isEnabled");
     isAutoBackupEnabled(isEnabled);
+  }
+
+  Future<void> restoreLocalBackup() async {
+
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(allowMultiple: false, type: FileType.custom, allowedExtensions: ['txt'],);
+    if (result != null) {
+      LogMessage.d("Backup Controller", "Restore selected file path => ${result.files.single.path}");
+      Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
+    } else {
+
+    }
+
   }
 
 

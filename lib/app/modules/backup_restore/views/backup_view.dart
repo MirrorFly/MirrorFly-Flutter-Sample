@@ -171,7 +171,7 @@ class BackupView extends NavViewStateful<BackupController> {
                 ElevatedButton(
                   style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                   onPressed: () {
-
+                    controller.restoreLocalBackup();
                   },
                   child: Text(
                     getTranslated("restore"),

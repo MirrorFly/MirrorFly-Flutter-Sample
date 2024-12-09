@@ -30,8 +30,8 @@ class RestoreView extends NavViewStateful<RestoreController> {
             child: Column(
               children: [
                 Obx(() {
-                  return !controller.isAndroid &&
-                      !controller.driveAccessible.value
+                  return !controller.driveAccessible.value &&
+                      !controller.isAndroid
                       ? InkWell(
                     onTap: () => controller.showIcloudSetupInstruction(),
                     child: Container(
@@ -205,12 +205,16 @@ class RestoreView extends NavViewStateful<RestoreController> {
             title: getTranslated("addGoogleAccount"),
             leading: addAccountUser,
             listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle,
-            onTap: () {})
+            onTap: () {
+              controller.pickAccount();
+            })
             : const Offstage(),
         const SizedBox(height: 50),
         ElevatedButton(
           style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-          onPressed: () {},
+          onPressed: () {
+            controller.skipBackup();
+          },
           child: Text(
             getTranslated("skip"),
           ),
@@ -258,8 +262,9 @@ class RestoreView extends NavViewStateful<RestoreController> {
         controller.isAndroid
             ? ListTile(
           title: Text(getTranslated("googleAccount")),
-          subtitle: Text(getTranslated("googleAccountEmail")),
+          subtitle: Text(controller.selectedEmail.value),
           trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+          onTap: () => controller.switchAccount(),
         )
             : const Offstage(),
         Obx(() {
@@ -302,9 +307,10 @@ class RestoreView extends NavViewStateful<RestoreController> {
                 style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                 onPressed: controller.isBackupFound.value
                     ? () => controller.startMessageRestore()
-                    : null,
+                    : () => controller.nextScreen(),
                 child: Text(
-                  getTranslated("restore"),
+                  controller.isBackupFound.value
+                      ? getTranslated("restore") : getTranslated("next"),
                 ),
               );
             }),
