@@ -144,6 +144,10 @@ class SessionManagement {
     await _preferences.setString("${prefix}backUpState", backUpState);
   }
 
+  static void setBackUpFrequency(String backUpState) async {
+    await _preferences.setString("${prefix}backUpFrequency", backUpState);
+  }
+
   static void setBackUpAccount(String backUpAccount) async {
     await _preferences.setString("${prefix}backUpAccount", backUpAccount);
   }
@@ -225,4 +229,5 @@ class SessionManagement {
   // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";
   static String getBackUpState() => _preferences.getString('${prefix}backUpState') ?? "";
   static String getBackUpAccount() => _preferences.getString('${prefix}backUpAccount') ?? "";
+  static String getBackUpFrequency() => _preferences.getString('${prefix}backUpFrequency') ?? "";
 }

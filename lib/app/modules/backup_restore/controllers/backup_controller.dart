@@ -3,9 +3,12 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -46,6 +49,8 @@ class BackupController extends GetxController {
   var backupProgress = 0.0.obs;
   var restoreProgress = 0.0.obs;
 
+  var backUpEmailId = ''.obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -53,6 +58,18 @@ class BackupController extends GetxController {
     backupRestoreManager = BackupRestoreManager();
     backupRestoreManager.initialize(
         iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter");
+
+    var backUpFrequency = SessionManagement.getBackUpFrequency().checkNull();
+    debugPrint("backUpFrequency at backup controller $backUpFrequency");
+    selectedBackupFrequency(backUpFrequency);
+    isAutoBackupEnabled.value = backUpFrequency.isNotEmpty;
+
+    var previousBackupEmail = SessionManagement.getBackUpAccount();
+
+    if (previousBackupEmail.isNotEmpty){
+      // isAccountSelected(true);
+      backUpEmailId(previousBackupEmail);
+    }
 
     await backupRestoreManager.checkDriveAccess().then((isDriveAccessible) {
       LogMessage.d(
@@ -87,10 +104,10 @@ class BackupController extends GetxController {
     }
   }
 
-
-
   showBackupFrequency() async {
-    selectedBackupFrequency(await backupUtils.showBackupOptionList(selectedValue: selectedBackupFrequency.value, listValue: backupFrequency));
+    var backUpFrequencyResult = await backupUtils.showBackupOptionList(selectedValue: selectedBackupFrequency.value, listValue: backupFrequency);
+    selectedBackupFrequency(backUpFrequencyResult);
+    SessionManagement.setBackUpFrequency(backUpFrequencyResult);
   }
 
   showBackupNetworkFrequency() async {
@@ -156,6 +173,19 @@ class BackupController extends GetxController {
         "Restore Controller", "Restore Success => $event");
     isRestoreStarted(false);
     toToast(getTranslated("localRestoreSuccess"));
+  }
+
+  Future<void> handleGoogleAccount() async {
+    var newAccount = await BackupRestoreManager().switchGoogleAccount();
+    LogMessage.d(
+        "Restore Controller", "New Switched Account => $newAccount");
+
+    backUpEmailId(newAccount?.email ?? BackupRestoreManager().getGoogleAccountSignedIn?.email);
+
+    if(newAccount?.email != null) {
+      SessionManagement.setBackUpAccount(backUpEmailId.value);
+      SessionManagement.setBackUpState(Constants.backupAccountSelected);
+    }
   }
 
 }

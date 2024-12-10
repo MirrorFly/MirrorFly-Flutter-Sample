@@ -262,7 +262,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
         controller.isAndroid
             ? ListTile(
           title: Text(getTranslated("googleAccount")),
-          subtitle: Text(controller.selectedEmail.value),
+          subtitle: Text(controller.backUpEmailId.value),
           trailing: const Icon(Icons.keyboard_arrow_right_rounded),
           onTap: () => controller.switchAccount(),
         )

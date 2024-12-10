@@ -33,7 +33,7 @@ class RestoreController extends GetxController
   var selectedBackupFrequency = "Monthly".obs;
 
   var isAccountSelected = false.obs;
-  var selectedEmail = ''.obs;
+  var backUpEmailId = ''.obs;
   bool get isAndroid => Platform.isAndroid;
 
   var driveAccessible = false.obs;
@@ -58,7 +58,7 @@ class RestoreController extends GetxController
 
     if (previousBackupEmail.isNotEmpty){
       isAccountSelected(true);
-      selectedEmail(previousBackupEmail);
+      backUpEmailId(previousBackupEmail);
     }
 
     LogMessage.d(
@@ -73,7 +73,7 @@ class RestoreController extends GetxController
       GoogleSignInAccount? googleSignInAccount = BackupRestoreManager().getGoogleAccountSignedIn;
       if (Platform.isIOS || (Platform.isAndroid && googleSignInAccount != null)){
         isAccountSelected(true);
-        selectedEmail(googleSignInAccount?.email ?? '');
+        backUpEmailId(googleSignInAccount?.email ?? '');
       }else{
         isAccountSelected(false);
       }
@@ -130,14 +130,15 @@ class RestoreController extends GetxController
     if(animationController != null){
       animationController?.stop();
     }
-    SessionManagement.setBackUpAccount(selectedEmail.value);
+    SessionManagement.setBackUpAccount(backUpEmailId.value);
     SessionManagement.setBackUpState(Constants.backupAccountSelected);
+    SessionManagement.setBackUpFrequency(selectedBackupFrequency.value);
     NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber});
   }
 
   void updateAutoBackupOption(bool isEnabled) {
     LogMessage.d("Restore Controller", "Auto Backup Toggle => $isEnabled");
-    if (Platform.isAndroid && selectedEmail.value == ''){
+    if (Platform.isAndroid && backUpEmailId.value == ''){
       toToast(getTranslated("autoBackupAndroidError"));
       return;
     }
@@ -190,7 +191,7 @@ class RestoreController extends GetxController
     LogMessage.d(
         "Restore Controller", "New Switched Account => $newAccount");
 
-    selectedEmail(newAccount?.email ?? BackupRestoreManager().getGoogleAccountSignedIn?.email);
+    backUpEmailId(newAccount?.email ?? BackupRestoreManager().getGoogleAccountSignedIn?.email);
 
   }
 
