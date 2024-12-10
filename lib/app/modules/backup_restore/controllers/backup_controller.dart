@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
@@ -39,9 +40,11 @@ class BackupController extends GetxController {
 
   final List<String> networkFrequency = ["Wi-Fi", "Wi-Fi or Cellular"];
 
-  var isBackupRestoreStarted = false.obs;
+  var isBackupStarted = false.obs;
+  var isRestoreStarted = false.obs;
 
-  var progress = 0.obs;
+  var backupProgress = 0.0.obs;
+  var restoreProgress = 0.0.obs;
 
   @override
   Future<void> onInit() async {
@@ -77,7 +80,7 @@ class BackupController extends GetxController {
 
   Future<void> downloadBackup() async {
     if(await AppPermission.getStoragePermission()) {
-      isBackupRestoreStarted(true);
+      isBackupStarted(true);
       backupRestoreManager.startBackup();
     }else {
       toToast("Need Storage Permission for creating the Backup file");
@@ -108,31 +111,51 @@ class BackupController extends GetxController {
       if (result != null) {
         LogMessage.d("Backup Controller",
             "Restore selected file path => ${result.files.single.path}");
+        isRestoreStarted(true);
         Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
       } else {
-
+        LogMessage.d("Backup Controller", "Restore file is not Selected");
       }
     }else{
-      toToast("Need Storage Permission for selecting the Backup file");
+      toToast(getTranslated("backupPermissionDeniedToast"));
     }
 
   }
 
   void backUpSuccess(String backUpPath) {
-    // isBackupRestoreStarted(false);
-
+    LogMessage.d(
+        "Restore Controller", "Backup Success => $backUpPath");
+    isBackupStarted(false);
+    toToast(getTranslated("localBackupSuccess"));
   }
 
   void backUpProgress(event) {
     LogMessage.d(
-        "Restore Controller", "backUpProgress => $event");
-    if (event < 50) {
-    progress(int.parse(event.toString()));
-    }
+        "Restore Controller", "backUp Progress => $event");
+    backupProgress(int.parse(event.toString()) / 100);
   }
 
   void backUpFailed(event) {
-    isBackupRestoreStarted(false);
-
+    isBackupStarted(false);
+    toToast(event);
   }
+
+  void restoreBackupProgress(event) {
+    LogMessage.d(
+        "Restore Controller", "restore Progress => $event");
+    restoreProgress(int.parse(event.toString()) / 100);
+  }
+
+  void restoreFailed(event) {
+    isRestoreStarted(false);
+    toToast(event);
+  }
+
+  void restoreSuccess(event) {
+    LogMessage.d(
+        "Restore Controller", "Restore Success => $event");
+    isRestoreStarted(false);
+    toToast(getTranslated("localRestoreSuccess"));
+  }
+
 }

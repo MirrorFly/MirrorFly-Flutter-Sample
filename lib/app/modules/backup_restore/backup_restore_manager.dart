@@ -272,15 +272,21 @@ class BackupRestoreManager {
     });
 
     Mirrorfly.onRestoreSuccess.listen((event) {
-
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().restoreSuccess(event);
+      }
     });
 
     Mirrorfly.onRestoreFailure.listen((event) {
-
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().restoreFailed(event);
+      }
     });
 
     Mirrorfly.onRestoreProgressChanged.listen((event) {
-
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().restoreBackupProgress(event);
+      }
     });
   }
 
