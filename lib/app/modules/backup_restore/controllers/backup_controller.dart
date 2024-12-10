@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
+import '../../../data/permissions.dart';
 import '../backup_restore_manager.dart';
 import '../backup_utils.dart';
 
@@ -38,14 +39,17 @@ class BackupController extends GetxController {
 
   final List<String> networkFrequency = ["Wi-Fi", "Wi-Fi or Cellular"];
 
+  var isBackupRestoreStarted = false.obs;
+
+  var progress = 0.obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
 
     backupRestoreManager = BackupRestoreManager();
     backupRestoreManager.initialize(
-        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter",
-        googleClientId: "");
+        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter");
 
     await backupRestoreManager.checkDriveAccess().then((isDriveAccessible) {
       LogMessage.d(
@@ -71,14 +75,16 @@ class BackupController extends GetxController {
     }
   }
 
-  void downloadBackup() {
-    backupRestoreManager.startBackup();
+  Future<void> downloadBackup() async {
+    if(await AppPermission.getStoragePermission()) {
+      isBackupRestoreStarted(true);
+      backupRestoreManager.startBackup();
+    }else {
+      toToast("Need Storage Permission for creating the Backup file");
+    }
   }
 
-  backUpProgress(event) {
-    LogMessage.d(
-        "Restore Controller", "backUpProgress => $event");
-  }
+
 
   showBackupFrequency() async {
     selectedBackupFrequency(await backupUtils.showBackupOptionList(selectedValue: selectedBackupFrequency.value, listValue: backupFrequency));
@@ -94,17 +100,39 @@ class BackupController extends GetxController {
   }
 
   Future<void> restoreLocalBackup() async {
+    if(await AppPermission.getStoragePermission()) {
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['txt'],);
+      if (result != null) {
+        LogMessage.d("Backup Controller",
+            "Restore selected file path => ${result.files.single.path}");
+        Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
+      } else {
 
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(allowMultiple: false, type: FileType.custom, allowedExtensions: ['txt'],);
-    if (result != null) {
-      LogMessage.d("Backup Controller", "Restore selected file path => ${result.files.single.path}");
-      Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
-    } else {
-
+      }
+    }else{
+      toToast("Need Storage Permission for selecting the Backup file");
     }
 
   }
 
+  void backUpSuccess(String backUpPath) {
+    // isBackupRestoreStarted(false);
 
+  }
+
+  void backUpProgress(event) {
+    LogMessage.d(
+        "Restore Controller", "backUpProgress => $event");
+    if (event < 50) {
+    progress(int.parse(event.toString()));
+    }
+  }
+
+  void backUpFailed(event) {
+    isBackupRestoreStarted(false);
+
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_restore_manager.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -63,8 +64,7 @@ class RestoreController extends GetxController
     LogMessage.d(
         "Restore Controller", " => onInit Method called");
     BackupRestoreManager().initialize(
-        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter",
-        googleClientId: "235373697524-h2la9od8svq8b5j95pgp98nk2qf02bcs.apps.googleusercontent.com");
+        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter");
 
     await BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
       LogMessage.d(
@@ -137,8 +137,12 @@ class RestoreController extends GetxController
 
   void updateAutoBackupOption(bool isEnabled) {
     LogMessage.d("Restore Controller", "Auto Backup Toggle => $isEnabled");
-    if (selectedEmail.value == ''){
-      toToast("Please Select Google Account");
+    if (Platform.isAndroid && selectedEmail.value == ''){
+      toToast(getTranslated("autoBackupAndroidError"));
+      return;
+    }
+    if (Platform.isIOS && !driveAccessible.value){
+      toToast(getTranslated("autoBackupIOSError"));
       return;
     }
     isAutoBackupEnabled(isEnabled);

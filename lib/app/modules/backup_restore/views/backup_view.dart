@@ -155,30 +155,38 @@ class BackupView extends NavViewStateful<BackupController> {
             ),
 
             const SizedBox(height: 30,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                  onPressed: () {
-                    controller.downloadBackup();
-                  },
-                  child: Text(
-                    getTranslated("download"),
+
+            Obx(() {
+              return controller.isBackupRestoreStarted.value ? LinearProgressIndicator(
+                value: controller.progress.value.toDouble(),
+                backgroundColor: Colors.grey,
+              ) :  Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                    onPressed: () {
+                      controller.downloadBackup();
+                    },
+                    child: Text(
+                      getTranslated("download"),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                  onPressed: () {
-                    controller.restoreLocalBackup();
-                  },
-                  child: Text(
-                    getTranslated("restore"),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                    onPressed: () {
+                      controller.restoreLocalBackup();
+                    },
+                    child: Text(
+                      getTranslated("restore"),
+                    ),
                   ),
-                ),
-              ],
-            )
+                ],
+              );
+            }),
+            const SizedBox(height: 50,),
+
           ],
         ),
       )),

@@ -792,7 +792,7 @@ class BaseController {
 
   static void myProfileUpdated(result) {
     var myJid = SessionManagement.getUserJID().checkNull();
-    Mirrorfly.getUserProfile(jid: myJid,fetchFromServer: true,flyCallback:(FlyResponse response){
+    Mirrorfly.getUserProfile(jid: myJid,fetchFromServer: false,flyCallback:(FlyResponse response){
     LogMessage.d("getUserProfile", response.toString());
     if(response.isSuccess) {
       var data = profileDataFromJson(response.data);

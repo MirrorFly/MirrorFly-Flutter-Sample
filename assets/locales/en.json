@@ -557,5 +557,7 @@
     "iCloudSignInDesc" : "Tap 'iCloud' and make sure you're signed in.",
     "iCloudDriveOnDesc": "Tap 'iCloud Drive' and set it to ON.",
     "iCloudDriveMirrorFlyOnDesc" : "In 'iCloud Drive', make sure 'Mirrorfly App' is also ON.",
-    "iCloudTitleDesc" : "To back up your chat history:"
+    "iCloudTitleDesc" : "To back up your chat history:",
+    "autoBackupAndroidError" : "Please Select Google Account to enable Auto Backup",
+    "autoBackupIOSError" : "Sign In iCloud Drive to enable Auto Backup"
   }

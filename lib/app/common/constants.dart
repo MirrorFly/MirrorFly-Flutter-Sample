@@ -489,5 +489,10 @@ class Constants {
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
 
+  //Backup State
+  static const String backupAccountSelected = "account_selected";
+  static const String backupSkipped = "backup_skip";
+  static const String backupCompleted = "backup_completed";
+
 }
 

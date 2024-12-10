@@ -44,9 +44,9 @@ class BackupRestoreManager {
   /// Check if the manager is initialized
   bool get isInitialized => _isInitialized;
 
-  var _clientId = '';
+  // var _clientId = '';
 
-  get clientId => _clientId;
+  // get clientId => _clientId;
 
   // GoogleSignInAccount? _googleAccountSignedIn;
 
@@ -59,7 +59,7 @@ class BackupRestoreManager {
 
   bool isServerUploadRequired = false;
 
-  initialize({required iCloudContainerID, required googleClientId}){
+  initialize({required iCloudContainerID}){
 
     if (_isInitialized) {
       LogMessage.d("BackupRestoreManager", "Already initialized.");
@@ -67,7 +67,7 @@ class BackupRestoreManager {
     }
 
     _iCloudContainerID = iCloudContainerID;
-    _clientId = googleClientId;
+    // _clientId = googleClientId;
     _backupFileName = "Backup_${SessionManagement.getUsername()}.txt";
 
     initializeEventListeners();
@@ -79,6 +79,7 @@ class BackupRestoreManager {
       return _checkGoogleDriveAccess();
     }else if (Platform.isIOS){
       return _checkICloudAccess();
+      // return checkICloudSignInStatus();
     }else{
       LogMessage.d("Backup and Restore", "Platform is not Supported");
       return true;
@@ -131,6 +132,23 @@ class BackupRestoreManager {
       return false;
     }
   }
+
+  // Future<bool> checkICloudSignInStatus() async {
+  //   try {
+  //     // Attempt to gather iCloud files
+  //     await IcloudStorageSync().gather(containerId: _iCloudContainerID);
+  //     return true; // If successful, iCloud is signed in
+  //   } catch (e) {
+  //     // If an error occurs, check for containerError
+  //     if (e is PlatformException && e.code == "E_CTR") {
+  //       // Handle iCloud not signed in
+  //       debugPrint("iCloud is not signed in: ${e.message}");
+  //       return false;
+  //     }
+  //     debugPrint("Unexpected error: $e");
+  //     return false;
+  //   }
+  // }
 
 
   /*Future<bool> _checkGoogleDriveAccess() async {
@@ -234,11 +252,17 @@ class BackupRestoreManager {
       debugPrint("onBackupSuccess==> $backUpPath");
       if(isServerUploadRequired) {
         uploadBackupFile(filePath: backUpPath);
+      }else{
+        if (Get.isRegistered<BackupController>()) {
+          Get.find<BackupController>().backUpSuccess(backUpPath);
+        }
       }
     });
 
     Mirrorfly.onBackupFailure.listen((event) {
-
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().backUpFailed(event);
+      }
     });
 
     Mirrorfly.onBackupProgressChanged.listen((event) {
