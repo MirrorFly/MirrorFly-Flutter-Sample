@@ -75,17 +75,43 @@ class BackupView extends NavViewStateful<BackupController> {
                 const SizedBox(
                   height: 30,
                 ),
-                Center(
-                  child: ElevatedButton(
-                    style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                    onPressed: () {
-                      controller.initializeBackUp();
-                    },
-                    child: Text(
-                      getTranslated("backupNow"),
+                Obx(() {
+                  return controller.isRemoteBackupStarted.value ? Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              value: controller.remoteBackupProgress.value,
+                            ),
+                          ),
+                          IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {}),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                              getTranslated("restoreStatusInfo")),
+                          Text(
+                              "(${(controller.remoteBackupProgress.value * 100)
+                                  .floor()}%)"),
+                        ],
+                      )
+                    ],
+                  ) : Center(
+                    child: ElevatedButton(
+                      style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                      onPressed: () {
+                        controller.initializeBackUp();
+                      },
+                      child: Text(
+                        getTranslated("backupNow"),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }),
                 const SizedBox(
                   height: 20,
                 ),
@@ -184,7 +210,7 @@ class BackupView extends NavViewStateful<BackupController> {
                   height: 30,
                 ),
                 Obx(() {
-                  return controller.isBackupStarted.value ||
+                  return controller.isLocalBackupStarted.value ||
                       controller.isRestoreStarted.value
                       ? Padding(
                     padding: const EdgeInsets.only(left: 18.0, right: 10),
@@ -194,8 +220,8 @@ class BackupView extends NavViewStateful<BackupController> {
                           children: [
                             Expanded(
                               child: LinearProgressIndicator(
-                                value: controller.isBackupStarted.value
-                                    ? controller.backupProgress.value
+                                value: controller.isLocalBackupStarted.value
+                                    ? controller.localBackupProgress.value
                                     : controller.restoreProgress.value,
                               ),
                             ),
@@ -206,11 +232,11 @@ class BackupView extends NavViewStateful<BackupController> {
                         ),
                         Row(
                           children: [
-                            controller.isBackupStarted.value ? Text(
+                            controller.isLocalBackupStarted.value ? Text(
                                 getTranslated("backupStatusInfo")) : Text(
                                 getTranslated("restoreStatusInfo")),
-                            controller.isBackupStarted.value ? Text(
-                                "(${(controller.backupProgress.value * 100)
+                            controller.isLocalBackupStarted.value ? Text(
+                                "(${(controller.localBackupProgress.value * 100)
                                     .floor()}%)") : Text(
                                 "(${(controller.restoreProgress.value * 100)
                                     .floor()}%)"),

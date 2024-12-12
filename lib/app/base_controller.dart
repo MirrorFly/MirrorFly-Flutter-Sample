@@ -632,7 +632,7 @@ class BaseController {
 
   static void onMediaStatusUpdated(event) {
     ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
-    LogMessage.d("Media Status Updated",chatMessageModel.toJson());
+    LogMessage.d("Media Status Updated", "messageId: ${chatMessageModel.messageId}");
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).onMediaStatusUpdated(chatMessageModel);
     }
@@ -793,7 +793,7 @@ class BaseController {
   static void myProfileUpdated(result) {
     var myJid = SessionManagement.getUserJID().checkNull();
     Mirrorfly.getUserProfile(jid: myJid,fetchFromServer: false,flyCallback:(FlyResponse response){
-    LogMessage.d("getUserProfile", response.toString());
+    LogMessage.d("MyProfileUpdated base controller getUserProfile", response.toString());
     if(response.isSuccess) {
       var data = profileDataFromJson(response.data);
       var userProfileData = ProData(

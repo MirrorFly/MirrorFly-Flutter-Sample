@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../common/app_localizations.dart';
@@ -63,5 +64,11 @@ class BackupUtils {
         ),
       ),
     );
+  }
+
+  String formatDateTime(String isoString) {
+    final DateTime parsedDate = DateTime.parse(isoString).toLocal();
+    final DateFormat formatter = DateFormat("d MMM yyyy | h.mm a");
+    return formatter.format(parsedDate);
   }
 }

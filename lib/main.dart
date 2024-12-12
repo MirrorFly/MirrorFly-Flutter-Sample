@@ -84,7 +84,7 @@ Future<void> main() async {
       chatHistoryEnable: true,
       enableDebugLog: true,
       flyCallback: (response) async {
-        if (response.isSuccess) {//8825508012
+        if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
           LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
           Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
@@ -254,7 +254,9 @@ String getInitialRoute() {
   }
   if (!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
-      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
+      LogMessage.d("SessionManagement.getName()", SessionManagement.getName().toString());
+      LogMessage.d("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty && SessionManagement.getBackUpState().checkNull().isNotEmpty) {
         if (Constants.enableContactSync) {
           // LogMessage.d("nonChatUsers", nonChatUsers.toString());
           LogMessage.d("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
@@ -273,11 +275,11 @@ String getInitialRoute() {
         }
       } else {
 
-        if (SessionManagement.getBackUpState().checkNull().isEmpty && SessionManagement.getMobileNumber().checkNull().isEmpty) {
+        if (SessionManagement.getBackUpState().checkNull().isEmpty) {
           /// This condition handles the case where a number logs in and is redirected to the Chat Backup Page.
           /// If the app is closed before saving the backup state, reopening the app should show this to enter the backup state.
           return Routes.restoreBackup;
-        }else if (SessionManagement.getMobileNumber().checkNull().isEmpty) {
+        }else if (SessionManagement.getBackUpState().checkNull().isNotEmpty) {
           /// This condition handles the case where a new number logs in and is redirected to the Profile Page.
           /// If the app is closed before saving the profile, reopening the app would cause an error.
           /// This condition prevents that error from occurring.

@@ -11,6 +11,8 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
+import 'package:flutter/material.dart';
+
 class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
   RxString version = "".obs;
@@ -49,19 +51,18 @@ class SettingsController extends GetxController {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         DialogUtils.hideLoading();
-        if (response.isSuccess) {
+        /*if (response.isSuccess) {
           clearAllPreferences();
         } else {
           toToast(getTranslated("logoutFailed"));
           // Get.snackbar("Logout", "Logout Failed");
-        }
-      })/*.catchError((er) {
+        }*/
+        clearAllPreferences();
+      }).catchError((er) {
+        debugPrint("logoutOfChatSDK Catch Error==> $er");
         DialogUtils.hideLoading();
-        SessionManagement.clear().then((value) {
-          // SessionManagement.setToken(token);
-          NavUtils.offAllNamed(Routes.login);
-        });
-      })*/;
+        clearAllPreferences();
+      });
     } else {
       toToast(getTranslated("noInternetConnection"));
     }

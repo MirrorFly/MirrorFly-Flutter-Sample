@@ -61,6 +61,7 @@ dependencies:
   icloud_storage_sync: ^0.0.1
   google_sign_in: ^6.2.2
   googleapis_auth: ^1.6.0
+  googleapis: ^13.2.0
 
 
   mirrorfly_plugin:

@@ -239,12 +239,24 @@ class RestoreView extends NavViewStateful<RestoreController> {
         ),
         Obx(() {
           return controller.isBackupFound.value
-              ? Text(getTranslated("backupTime"))
+              ? Row(
+            mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(getTranslated("backupTime")),
+                  Text(controller.backupFile.value.fileCreatedDate.toString()),
+                ],
+              )
               : const Offstage();
         }),
         Obx(() {
           return controller.isBackupFound.value
-              ? Text(getTranslated("backupSize"))
+              ? Row(
+            mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(getTranslated("backupSize")),
+                  Text(controller.backupFile.value.fileSize.checkNull()),
+                ],
+              )
               : const Offstage();
         }),
         const SizedBox(

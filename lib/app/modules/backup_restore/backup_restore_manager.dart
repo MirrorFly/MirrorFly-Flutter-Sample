@@ -5,15 +5,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart';
 import 'package:icloud_storage_sync/icloud_storage_sync.dart';
 import 'package:icloud_storage_sync/models/icloud_file_download.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_controller.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:googleapis/drive/v3.dart' as drive;
 
+import '../../data/utils.dart';
+import 'backup_utils.dart';
 
 class BackupRestoreManager {
 
@@ -59,12 +65,17 @@ class BackupRestoreManager {
 
   bool isServerUploadRequired = false;
 
-  initialize({required iCloudContainerID}){
+  drive.DriveApi? driveApi;
+
+  bool get isDriveApiInitialized => driveApi != null;
+
+  Future<bool> initialize({required iCloudContainerID}) async {
 
     if (_isInitialized) {
       LogMessage.d("BackupRestoreManager", "Already initialized.");
-      return;
+      return true;
     }
+    LogMessage.d("BackupRestoreManager", "Initializing Backup Restore Manager.");
 
     _iCloudContainerID = iCloudContainerID;
     // _clientId = googleClientId;
@@ -72,11 +83,59 @@ class BackupRestoreManager {
 
     initializeEventListeners();
 
+    // Sign in
+    final GoogleSignInAccount? account = getGoogleAccountSignedIn;
+    if (account != null) {
+      LogMessage.d("BackupRestoreManager", "Account $account");
+      return assignAccountAuth(account);
+      // return true;
+    }else{
+      LogMessage.d("BackupRestoreManager", "Account not signed in");
+      final GoogleSignInAccount? account = await googleSignIn.signInSilently();
+      if (account != null) {
+        LogMessage.d("BackupRestoreManager", 'User is already signed in!');
+        LogMessage.d("BackupRestoreManager", 'Email: ${account.email}');
+        LogMessage.d("BackupRestoreManager", 'Display Name: ${account.displayName}');
+        LogMessage.d("BackupRestoreManager", 'Profile Picture URL: ${account.photoUrl}');
+        return assignAccountAuth(account);
+        // return true;
+      } else {
+        // No user is signed in
+        LogMessage.d("BackupRestoreManager", 'No user is signed in currently.');
+        return false;
+      }
+    }
+
   }
+
+  Future<bool> assignAccountAuth(GoogleSignInAccount account) async {
+    // Get authentication credentials
+    final GoogleSignInAuthentication auth = await account.authentication;
+    LogMessage.d("BackupRestoreManager", "GoogleSignInAuthentication $auth");
+    // Create authenticated HTTP client
+    final authClient = authenticatedClient(
+      Client(),
+      AccessCredentials(
+        AccessToken('Bearer', auth.accessToken!, DateTime.now().toUtc()),
+        null, // No refresh token needed for a single use
+        ['https://www.googleapis.com/auth/drive.file'],
+      ),
+    );
+    LogMessage.d("BackupRestoreManager", "authClient $authClient");
+
+    // Initialize Google Drive API
+    driveApi = drive.DriveApi(authClient);
+
+    LogMessage.d("BackupRestoreManager", "driveApi $driveApi");
+
+    return true;
+  }
+
 
   Future<bool> checkDriveAccess() async {
     if(Platform.isAndroid){
-      return _checkGoogleDriveAccess();
+      // return _checkGoogleDriveAccess();
+      return getGoogleAccountSignedIn?.serverAuthCode?.isNotEmpty ?? false;
     }else if (Platform.isIOS){
       return _checkICloudAccess();
       // return checkICloudSignInStatus();
@@ -86,21 +145,68 @@ class BackupRestoreManager {
     }
   }
 
-  Future<bool> checkBackUpFiles() async {
+  Future<BackupFile?> checkBackUpFiles() async {
     if (Platform.isAndroid) {
-      return false;
+      return getBackupFileDetails();
     }else if (Platform.isIOS){
       List<CloudFiles> iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
-      return iCloudFiles.any((file) => file.filePath == backupFileName);
+      iCloudFiles.any((file) => file.filePath == backupFileName);
+      return null;
     }else{
-      LogMessage.d("Backup and Restore", "Platform is not Supported");
-      return false;
+      LogMessage.d("BackupRestoreManager", "Platform is not Supported");
+      return null;
+    }
+  }
+
+  Future<void> uploadFileToGoogleDrive(String filePath) async {
+    LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
+    try {
+      File backupFile = File(filePath);
+
+      // Prepare the file metadata
+      var driveFile = drive.File();
+      driveFile.name = backupFile.path.split('/').last;
+
+      // Upload the file
+      var response = await driveApi?.files.create(
+        driveFile,
+        uploadMedia: drive.Media(backupFile.openRead(), backupFile.lengthSync()),
+      );
+      LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
+      toToast("Backup Successfull");
+    } catch (e) {
+      LogMessage.d("BackupRestoreManager", "Error uploading to Google Drive: $e");
+      toToast("Backup Failed");
+    }
+  }
+
+  Future<BackupFile?> getBackupFileDetails() async {
+    try {
+      final fileList = await driveApi?.files.list(
+        q: "'me' in owners and name = '$_backupFileName'", // Filter by name
+        spaces: 'drive',
+        orderBy: 'modifiedTime desc', // Get the latest file first
+        pageSize: 1,
+        $fields: 'files(id, name, size, createdTime, mimeType)',
+      );
+
+      if (fileList != null && fileList.files!.isNotEmpty) {
+        final latestFile = fileList.files?.first;
+        LogMessage.d("BackupRestoreManager getLatestFile", "Latest File ID: ${latestFile?.id}, Name: ${latestFile?.name}");
+        return BackupFile(fileId: latestFile?.id, fileName: latestFile?.name, fileSize: MediaUtils.fileSize(int.parse(latestFile?.size ?? "0")), fileCreatedDate: BackupUtils().formatDateTime(latestFile!.createdTime.toString()));
+      } else {
+        LogMessage.d("BackupRestoreManager getLatestFile", "No file found with the name $_backupFileName.");
+        return null;
+      }
+    } catch (e) {
+      LogMessage.d("BackupRestoreManager listFiles", "Error listing files: $e");
+      return null;
     }
   }
 
   Future<void> uploadBackupFile({required String filePath}) async {
     if(Platform.isAndroid){
-
+      uploadFileToGoogleDrive(filePath);
     }else if (Platform.isIOS){
       await icloudSyncPlugin.upload(
         containerId: _iCloudContainerID,
@@ -249,7 +355,7 @@ class BackupRestoreManager {
 
   void initializeEventListeners() {
     Mirrorfly.onBackupSuccess.listen((backUpPath) {
-      debugPrint("onBackupSuccess==> $backUpPath");
+      debugPrint("onBackupSuccess==> $backUpPath isServerUploadRequired ==> $isServerUploadRequired");
       if(isServerUploadRequired) {
         uploadBackupFile(filePath: backUpPath);
       }else{
@@ -342,4 +448,27 @@ class BackupRestoreManager {
     _iCloudContainerID = '';
     _backupFileName = '';
   }
+}
+
+
+class BackupFile {
+  String? fileId;
+  String? fileName;
+  String? fileSize;
+  String? fileCreatedDate;
+
+  BackupFile({
+    this.fileId,
+    this.fileName,
+    this.fileSize,
+    this.fileCreatedDate,
+  });
+
+  Map<String, dynamic> toJson() => {
+    "fileId": fileId,
+    "fileName": fileName,
+    "fileSize": fileSize,
+    "fileDate": fileCreatedDate,
+  };
+
 }

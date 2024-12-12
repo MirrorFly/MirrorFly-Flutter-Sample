@@ -530,8 +530,8 @@
     "skip": "Skip",
     "backupFound": "Backup Found",
     "backupNotFound": "Backup Not Found",
-    "backupTime": "Last Backup: --",
-    "backupSize": "Backup Size: --",
+    "backupTime": "Last Backup:",
+    "backupSize": "Backup Size:",
     "googleAccount": "Google Account",
     "googleAccountEmail": "Mail ID",
     "scheduleBackUp": "Scheduled your backup",
@@ -564,5 +564,6 @@
     "localRestoreSuccess" : "Backup File Restored Successfully",
     "backupPermissionDeniedToast" : "Need Storage Permission for selecting the Backup file",
     "backupStatusInfo" : "Please wait a moment",
-    "restoreStatusInfo" : "Restoring"
+    "restoreStatusInfo" : "Restoring",
+    "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?"
   }
