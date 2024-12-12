@@ -1,35 +1,31 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/ripple_animation_view.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/model/arguments.dart';
+
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/reply_message_widgets.dart';
-import 'package:mirror_fly_demo/app/modules/dashboard/dashboard_widgets/contact_item.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirror_fly_demo/app/widgets/lottie_animation.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
 
-
-class ChatInputField extends NavViewStateful<ChatController> {
-  ChatInputField(
-      {Key? key, required this.messageTypingAreaStyle, required this.chatViewArguments})
-      : super(key: key, tag: chatViewArguments?.chatJid);
+class ChatInputField extends StatelessWidget {
+  const ChatInputField(
+      {Key? key, required this.messageTypingAreaStyle, required this.controller, required this.chatTaggerController, this.onChanged, this.focusNode, required this.jid})
+      : super(key: key);
   final MessageTypingAreaStyle messageTypingAreaStyle;
-  final ChatViewArguments? chatViewArguments;
-
-
-  @override
-  ChatController createController({String? tag}) =>
-      ChatController(chatViewArguments).get(tag: tag);
-
+  final ChatController controller;
+  final ChatTaggerController chatTaggerController;
+  final void Function(String value)? onChanged;
+  final FocusNode? focusNode;
+  final String jid;
+  final tag = "chatView";
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +53,16 @@ class ChatInputField extends NavViewStateful<ChatController> {
               return const Offstage();
             }
           }),
-          MentionUsersList(chatViewArguments: chatViewArguments!,
-            mentionUserBgDecoration: messageTypingAreaStyle
-                .mentionUserBgDecoration,
-            mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,),
+          MentionUsersList(
+              tag,
+              groupJid: jid.checkNull(),
+              mentionUserBgDecoration: messageTypingAreaStyle
+                  .mentionUserBgDecoration,
+              mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,
+              chatTaggerController: chatTaggerController,
+              onListItemPressed: (profile) {
+                controller.onUserTagClicked(profile, chatTaggerController);
+              },),
           Divider(
               height: 1,
               thickness: 0.29,
@@ -129,8 +131,7 @@ class ChatInputField extends NavViewStateful<ChatController> {
             ],
           ),
           controller.emojiLayout(
-              textEditingController: controller
-                  .messageController,
+              textEditingController: chatTaggerController,
               sendTypingStatus: true),
         ],
       )
@@ -237,50 +238,39 @@ class ChatInputField extends NavViewStateful<ChatController> {
             Constants.audioRecordInitial)...[
           Expanded(
             child: ChatTagger(
-              overlay: const Offstage(),
-                controller: controller.messageController,
+                overlay: const Offstage(),
+                controller: chatTaggerController,
                 triggerCharacterAndStyles: const {
                   '@': TextStyle(color: Colors.blueAccent),
                 },
-                onShowOrHideTaggers: (show){
+                onShowOrHideTaggers: (show) {
                   // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
-                  controller.showOrHideTagListView(show);
+                  controller.showOrHideTagListView(show, tag);
                 },
                 onSearch: (query, triggerCharacter) {
-                  //perform search
-                  // log("query : $query, triggerCharacter : $triggerCharacter",name: "FlutterTagger");
-                  if (triggerCharacter == '@') {
-                    // log('Mention detected: $keyword',name: "onMentionTextChanged");
-                    controller.filterMentionUsers(query);
-                  } else {
-                    // log('No mention detected.',name: "onMentionTextChanged");
-                    controller.filteredItems.clear();
-                    controller.showMentionUserList(true);
-                  }
+                  controller.filterMentionUsers(triggerCharacter, query, tag);
                 },
                 builder: (context, textFieldKey) {
-                return TextField(
-                  key: textFieldKey,
-                  onChanged: (text) {
-                    controller.isTyping(text);
-                  },
-                  style: messageTypingAreaStyle
-                      .textFieldStyle.editTextStyle,
-                  //const TextStyle(fontWeight: FontWeight.w400),
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: 4,
-                  enabled: controller.isAudioRecording.value ==
-                      Constants.audioRecordInitial ? true : false,
-                  controller: controller.messageController,
-                  focusNode: controller.focusNode,
-                  decoration: InputDecoration(
-                      hintText: getTranslated("startTypingPlaceholder"),
-                      border: InputBorder.none,
-                      hintStyle: messageTypingAreaStyle
-                          .textFieldStyle.editTextHintStyle),
-                );
-              }
+                  return TextField(
+                    key: textFieldKey,
+                    onChanged: onChanged,
+                    style: messageTypingAreaStyle
+                        .textFieldStyle.editTextStyle,
+                    //const TextStyle(fontWeight: FontWeight.w400),
+                    keyboardType: TextInputType.multiline,
+                    minLines: 1,
+                    maxLines: 4,
+                    enabled: controller.isAudioRecording.value ==
+                        Constants.audioRecordInitial ? true : false,
+                    controller: chatTaggerController,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                        hintText: getTranslated("startTypingPlaceholder"),
+                        border: InputBorder.none,
+                        hintStyle: messageTypingAreaStyle
+                            .textFieldStyle.editTextHintStyle),
+                  );
+                }
             ),
           )
         ],
@@ -424,103 +414,5 @@ class ChatInputField extends NavViewStateful<ChatController> {
 
 }
 
-/*class MentionUserList extends StatefulWidget {
-  const MentionUserList({super.key,required this.chatViewArguments,this.mentionUserBgDecoration, this.mentionUserStyle = const ContactItemStyle(),});
-  final Decoration? mentionUserBgDecoration;
-  final ContactItemStyle mentionUserStyle;
-  final ChatViewArguments chatViewArguments;
 
-  @override
-  State<MentionUserList> createState() => _MentionUserListState();
-}
-
-class _MentionUserListState extends State<MentionUserList> {
-  var filteredItems = List<ProfileDetails>.empty().obs;
-
-  late final ChatController controller;
-
-  @override
-  void initState() {
-    controller = ChatController(widget.chatViewArguments).get(tag: widget.chatViewArguments.chatJid);
-    filteredItems = controller.groupMembers;
-    super.initState();
-  }
-
-  void filterItems() {
-    final query = controller.messageController.text.toLowerCase();
-    // setState(() {
-    filteredItems(controller.groupMembers
-        .where((item) => item.getName().toLowerCase().contains(query))
-        .toList());
-    // });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return KeyboardVisibilityBuilder(
-        builder: (context, isKeyboardVisible) {
-          return controller.filteredItems.isNotEmpty ? Container(
-            decoration: widget.mentionUserBgDecoration,
-            height: isKeyboardVisible ? 150 : 250,
-            child: ListView.builder(
-                key: const PageStorageKey("mentionUsers"),
-                itemCount: controller.filteredItems.length,
-                itemBuilder: (ct, index) {
-                  return ContactItem(item: controller.filteredItems[index],
-                    checkValue: false,
-                    onCheckBoxChange: (val) {},
-                    showStatus: false,
-                    contactItemStyle: widget.mentionUserStyle,);
-                }),
-          ) : const Offstage();
-        }
-    );
-  }
-}*/
-
-
-class MentionUsersList extends NavViewStateful<ChatController> {
-  MentionUsersList(
-      {Key? key, required this.chatViewArguments, this.mentionUserBgDecoration, this.mentionUserStyle = const ContactItemStyle(),})
-      : super(key: key, tag: chatViewArguments.chatJid);
-  final Decoration? mentionUserBgDecoration;
-  final ContactItemStyle mentionUserStyle;
-  final ChatViewArguments chatViewArguments;
-
-  @override
-  createController({String? tag}) =>
-      ChatController(chatViewArguments).get(tag: tag);
-
-
-  @override
-  Widget build(BuildContext context) {
-    return KeyboardVisibilityBuilder(
-        builder: (context, isKeyboardVisible) {
-          return Obx(() {
-            debugPrint("showMentionUserList : ${controller.showMentionUserList} ${controller.filteredItems.length}");
-            return controller.filteredItems.isNotEmpty &&
-                controller.showMentionUserList.value ? Container(
-              decoration: mentionUserBgDecoration,
-              height: isKeyboardVisible ? 150 : 250,
-              child: ListView.builder(
-                  key: const PageStorageKey("mentionUsers"),
-                  shrinkWrap: true,
-                  itemCount: controller.filteredItems.length,
-                  itemBuilder: (ct, index) {
-                    return ContactItem(item: controller.filteredItems[index],
-                      checkValue: false,
-                      onCheckBoxChange: (val) {},
-                      showStatus: false,
-                      contactItemStyle: mentionUserStyle,
-                    onListItemPressed: (){
-                      controller.onUserTagClicked(controller.filteredItems[index]);
-                    },);
-                  }),
-            ) : const Offstage();
-          });
-        }
-    );
-  }
-
-}
 

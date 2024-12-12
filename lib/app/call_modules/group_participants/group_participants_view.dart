@@ -80,7 +80,7 @@ GroupParticipantsController createController({String? tag}) => Get.put(GroupPart
                             onCheckBoxChange: (value) {
                               controller.onListItemPressed(item);
                             },
-                            onListItemPressed: () {
+                            onListItemPressed: (profile) {
                               controller.onListItemPressed(item);
                             },);
                         } else {

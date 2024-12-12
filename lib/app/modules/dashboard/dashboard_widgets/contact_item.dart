@@ -27,7 +27,7 @@ class ContactItem extends StatelessWidget {
   final bool isCheckBoxVisible;
   final bool checkValue;
   final Function(bool?) onCheckBoxChange;
-  final Function()? onListItemPressed;
+  final Function(ProfileDetails profile)? onListItemPressed;
   final ContactItemStyle contactItemStyle;
   final bool showStatus;
   @override
@@ -37,7 +37,7 @@ class ContactItem extends StatelessWidget {
     return Opacity(
       opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
       child: InkWell(
-        onTap: onListItemPressed,
+        onTap: ()=> onListItemPressed !=null ? onListItemPressed!(item) : null,
         child: Column(
           children: [
             Row(

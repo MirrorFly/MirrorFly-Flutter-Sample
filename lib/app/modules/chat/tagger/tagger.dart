@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/data/mention_utils.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagged_text.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/trie.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:tuple/tuple.dart';
 
 /// {@macro builder}
@@ -177,6 +180,13 @@ class _ChatTaggerState extends State<ChatTagger> {
   String _formatTagText(String id, String tag, String triggerCharacter) {
     return widget.tagTextFormatter?.call(id, tag, triggerCharacter) ??
         "@$id#$tag#";
+  }
+
+
+  void _rebuild(String newText){
+    controller.text = newText;
+    controller._text = newText;
+    // build(context);
   }
 
   /// Updates formatted text
@@ -451,12 +461,15 @@ class _ChatTaggerState extends State<ChatTagger> {
     id = id.trim();
 
     final text = controller.text;
-    late final position = controller.selection.base.offset - 1;
+    debugPrint("setEditMessageText $text");
+    debugPrint("setEditMessageText ${controller.selection.base.offset}");
+    debugPrint("setEditMessageText ${text.length}");
+    late final position = !(controller.selection.base.offset).isNegative ? controller.selection.base.offset - 1 : 0;
     int index = 0;
     int selectionOffset = 0;
 
-    if (position != text.length - 1) {
-      index = text.substring(0, position).lastIndexOf(_currentTriggerChar);
+    if (position != text.length - 1 && !position.isNegative) {
+      index = text.substring(0, position+1).lastIndexOf(_currentTriggerChar);
     } else {
       index = text.lastIndexOf(_currentTriggerChar);
     }
@@ -904,6 +917,7 @@ class _ChatTaggerState extends State<ChatTagger> {
     controller._setTagStyles(widget.triggerCharacterAndStyles);
     controller._setTriggerCharactersRegExpPattern(_triggerCharactersPattern);
     controller._registerFormatTagTextCallback(_formatTagText);
+    controller._registerReBuildCallback(_rebuild);
     controller.addListener(_tagListener);
     controller._onClear(() {
       _tags.clear();
@@ -941,7 +955,7 @@ class ChatTaggerController extends TextEditingController {
   late final Trie _trie = Trie();
   late Map<TaggedText, String> _tags;
 
-  late Map<String, TextStyle> _tagStyles;
+  Map<String, TextStyle> _tagStyles = {'@': const TextStyle(color: Colors.blueAccent)};
 
   void _setTagStyles(Map<String, TextStyle> tagStyles) {
     _tagStyles = tagStyles;
@@ -1010,6 +1024,7 @@ class ChatTaggerController extends TextEditingController {
     super.selection = newSelection;
   }
 
+  Function(String newText)? _rebuildCallback;
   Function? _deferCallback;
   Function? _clearCallback;
   Function? _dismissOverlayCallback;
@@ -1113,6 +1128,30 @@ class ChatTaggerController extends TextEditingController {
   }
   List<String> get getTags => _tags.values.toList();
 
+  void setText(String input, List<ProfileDetails> profileDetails){
+    var allMatches = MentionUtils.mentionRegex.allMatches(input).toList();
+    debugPrint("setText : $allMatches");
+    int index = 0;
+    int lastMatchEnd = 0;
+    text="";
+    for (var currentMatch in allMatches) {
+      text += input.substring(lastMatchEnd,currentMatch.start+1);
+      _rebuild(text);
+      String id = profileDetails[index].jid.checkNull().split("@")[0];
+      String name = profileDetails[index].getName();
+      addTag(id: id, name: name);
+      lastMatchEnd = currentMatch.end;
+      index++;
+    }
+    if (lastMatchEnd < input.length) {
+      text += input.substring(lastMatchEnd);
+      _rebuild(text);
+    }
+  }
+  void _rebuild(String newText){
+    _rebuildCallback?.call(newText);
+  }
+
   /// Defers [ChatTagger]'s listener attached to this controller.
   void _runDeferedAction(Function action) {
     _deferCallback?.call();
@@ -1163,6 +1202,11 @@ class ChatTaggerController extends TextEditingController {
     String Function(String id, String tag, String triggerCharacter) callback,
   ) {
     _formatTagTextCallback = callback;
+  }
+  void _registerReBuildCallback(
+      Function(String newText) callback,
+      ) {
+    _rebuildCallback = callback;
   }
 
   @override
@@ -1289,7 +1333,7 @@ class ChatTaggerController extends TextEditingController {
             style: _tagStyles[tag?.text[0]],
           ),
         );
-        spans.add(const TextSpan(text: " "));
+          spans.add(const TextSpan(text: " "));
         skipIndexes = tag?.endIndex;
       }else{
         spans.add(TextSpan(text: text[i]));
@@ -1410,21 +1454,3 @@ class ChatTaggerController extends TextEditingController {
     return Tuple2(spans,endIndex);
   }
 }
-
-/*extension _RegExpExtension on RegExp {
-  List<String> allMatchesWithSep(String input, [int start = 0]) {
-    var result = <String>[];
-    for (var match in allMatches(input, start)) {
-      result.add(input.substring(start, match.start));
-      result.add(match[0]!);
-      start = match.end;
-    }
-    result.add(input.substring(start));
-    return result;
-  }
-}*/
-
-/*extension _StringExtension on String {
-  List<String> splitWithDelim(RegExp pattern) =>
-      pattern.allMatchesWithSep(this);
-}*/

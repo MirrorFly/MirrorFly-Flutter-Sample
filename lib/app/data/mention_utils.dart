@@ -144,6 +144,9 @@ class MentionUtils {
   static Future<List<ProfileDetails>> getProfileDetailsOfUsername(
       List<String> mentionedUsers,
       ) async {
+    if(mentionedUsers.isEmpty){
+      return [];
+    }
     var profileDetails = <ProfileDetails>[];
     for (var username in mentionedUsers) {
       var jid = await Mirrorfly.getJid(username: username);
@@ -153,74 +156,5 @@ class MentionUtils {
     return profileDetails;
   }
 
-  /// Formats a text with mentions into a styled [TextSpan].
-  ///
-  /// [text] - The input text containing mentions.
-  /// [mentionedUsers] - List of mentioned users with their details.
-  /// [defaultStyle] - The style for normal text.
-  /// [mentionStyle] - The style for mentions.
-  /// Returns a [TextSpan] with styled mentions.
-  static TextSpan formatMentionText(
-      String text,
-      List<MentionedUser> mentionedUsers,
-      TextStyle defaultStyle,
-      TextStyle mentionStyle,
-      ) {
-    final spans = <TextSpan>[];
-    int lastMatchEnd = 0;
-
-    for (final match in mentionRegex.allMatches(text)) {
-      // Extract mention details
-      // final matchText = match.group(0)!; // Full match like "@[username]"
-      final mentionDisplayName = match.group(1)!; // Username inside brackets
-      final mentionedUser = mentionedUsers.firstWhere(
-            (user) => user.displayName == mentionDisplayName,
-        orElse: () =>
-            MentionedUser(displayName: mentionDisplayName, userId: ''),
-      );
-
-      // Add text before the mention as a normal span
-      if (match.start > lastMatchEnd) {
-        spans.add(TextSpan(
-            text: text.substring(lastMatchEnd, match.start),
-            style: defaultStyle));
-      }
-
-      // Add the mention span
-      spans.add(TextSpan(
-        text: '@${mentionedUser.displayName}',
-        style: mentionStyle,
-        recognizer: TapGestureRecognizer()
-          ..onTap = () {
-            debugPrint('Tapped on mention: ${mentionedUser.userId}');
-          },
-      ));
-
-      lastMatchEnd = match.end;
-    }
-
-    // Add remaining text after the last mention
-    if (lastMatchEnd < text.length) {
-      spans.add(TextSpan(
-          text: text.substring(lastMatchEnd), style: defaultStyle));
-    }
-
-    return TextSpan(children: spans, style: defaultStyle);
-  }
-
-  /// Converts a text with mentions to plain text.
-  ///
-  /// [text] - The input text containing mentions.
-  /// [mentionedUsers] - List of mentioned users.
-  /// Returns a plain text version of the input.
-  static String getMentionedPlainText(
-      String text,
-      List<MentionedUser> mentionedUsers,
-      ) {
-    return text.replaceAllMapped(mentionRegex, (match) {
-      final mentionDisplayName = match.group(1)!;
-      return '@$mentionDisplayName';
-    });
-  }
 }
 

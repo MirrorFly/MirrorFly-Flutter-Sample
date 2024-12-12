@@ -70,7 +70,7 @@ class ChatView extends NavViewStateful<ChatController> {
                       "viewInsets", "${NavUtils.defaultRouteName} : ${MediaQuery
                       .of(context)
                       .viewInsets
-                      .bottom}");
+                      .bottom}, NavUtils.canPop : ${NavUtils.canPop}, selected : ${controller.isSelected.value},  emoji : ${controller.showEmoji.value}");
                   if (controller.showEmoji.value) {
                     controller.showEmoji(false);
                   } else if (MediaQuery
@@ -234,8 +234,11 @@ class ChatView extends NavViewStateful<ChatController> {
                     Align(
                       alignment: Alignment.bottomCenter,
                       // child: Obx(() {
-                        child: ChatInputField(messageTypingAreaStyle: chatStyle
-                            .messageTypingAreaStyle,chatViewArguments: controller.arguments,)
+                        child: ChatInputField(
+                          jid: controller.arguments!.chatJid.checkNull(),
+                          messageTypingAreaStyle: chatStyle
+                            .messageTypingAreaStyle,controller: controller,chatTaggerController: controller.messageController,
+                        onChanged: (text) => controller.isTyping(text),focusNode: controller.focusNode,)
                       // }),
                     ),
                   ],

@@ -37,6 +37,7 @@ class MessageTypingAreaStyle{
         dividerColor: Color(0xffEBEBEB)
     ),
     this.mentionUserBgDecoration = const BoxDecoration(
+      color: Colors.white,
       border: Border(left: BorderSide(color: Color(0xffC1C1C1)),right: BorderSide(color: Color(0xffC1C1C1)),top: BorderSide(color: Color(0xffC1C1C1)),),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(8),
       topRight: Radius.circular(8)),),

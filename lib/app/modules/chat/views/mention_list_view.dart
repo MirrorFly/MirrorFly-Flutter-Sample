@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
+import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/dashboard_widgets/contact_item.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
+class MentionUsersList extends NavViewStateful<MentionController> {
+  const MentionUsersList(this.tags,
+      {Key? key, required this.groupJid, this.mentionUserBgDecoration, this.mentionUserStyle = const ContactItemStyle(), required this.chatTaggerController, this.onListItemPressed,})
+      : super(key: key, tag: tags);
+  final Decoration? mentionUserBgDecoration;
+  final ContactItemStyle mentionUserStyle;
+  final ChatTaggerController chatTaggerController;
+  final String groupJid;
+  final String tags;
+  final Function(ProfileDetails profile)? onListItemPressed;
+
+  @override
+  createController({String? tag}) =>
+      MentionController().get(tag: tag);
+
+  @override
+  void onInit() {
+    controller.getGroupMembers(groupJid);
+    super.onInit();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyboardVisibilityBuilder(
+        builder: (context, isKeyboardVisible) {
+          return Obx(() {
+            return controller.filteredItems.isNotEmpty &&
+                controller.showMentionUserList.value ? Container(
+              decoration: mentionUserBgDecoration,
+              height: controller.filteredItems.length < 2 ? isKeyboardVisible
+                  ? 150
+                  : 250 : null,
+              child: ListView.builder(
+                  key: const PageStorageKey("mentionUsers"),
+                  shrinkWrap: true,
+                  itemCount: controller.filteredItems.length,
+                  itemBuilder: (ct, index) {
+                    return ContactItem(item: controller.filteredItems[index],
+                      checkValue: false,
+                      onCheckBoxChange: (val) {},
+                      showStatus: false,
+                      contactItemStyle: mentionUserStyle,
+                      onListItemPressed: onListItemPressed,);
+                  }),
+            ) : const Offstage();
+          });
+        }
+    );
+  }
+
+}
+
+class MentionController extends GetxController {
+  ///All Group Members
+  var groupMembers = List<ProfileDetails>.empty(growable: true).obs;
+
+  ///Filtering group members based on search
+  var filteredItems = List<ProfileDetails>.empty(growable: true).obs;
+
+  ///Show or Hide the mention user list in the view
+  var showMentionUserList = false.obs;
+
+  void getGroupMembers(String groupJid) {
+    if (Mirrorfly.isValidGroupJid(groupJid)) {
+      Mirrorfly.getGroupMembersList(
+          jid: groupJid,
+          flyCallBack: (FlyResponse response) {
+            if (response.isSuccess && response.hasData) {
+              LogMessage.d("getGroupMembersList-->", response.toString());
+              groupMembers(memberFromJson(response.data));
+            }
+          });
+    } else {
+      LogMessage.d("MentionController",
+          "this is not a group so no need to get group members list");
+    }
+  }
+
+  ///filter the group members from [groupMembers]
+  ///with [triggerCharacter] and [query] of the search character
+  void filterMentionUsers(String triggerCharacter, String? query) {
+    if (query == null) {
+      filteredItems.clear();
+      return;
+    }
+    if (triggerCharacter == '@') {
+      var groupMembersWithoutMe = groupMembers.where((item) =>
+      item.jid != SessionManagement.getUserJID()).toList();
+
+      // log('Mention detected: $keyword',name: "onMentionTextChanged");
+      debugPrint("filterMentionUsers $query");
+      if (query.isEmpty) {
+        filteredItems(groupMembersWithoutMe);
+      } else {
+        var filter = groupMembersWithoutMe
+            .where((item) => item.getName().toLowerCase().contains(query))
+            .toList();
+        debugPrint("filter ${filter.length}");
+        filteredItems(filter);
+      }
+    } else {
+      // log('No mention detected.',name: "onMentionTextChanged");
+      filteredItems.clear();
+      showMentionUserList(true);
+    }
+  }
+
+  ///show or hide the list based the trigger character
+  void showOrHideTagListView(bool show) {
+    if (showMentionUserList.value != show) {
+      filteredItems(groupMembers.where((item) => (item.jid !=
+          SessionManagement.getUserJID())).toList());
+      showMentionUserList(show);
+    }
+  }
+
+  void onUserTagClicked(ProfileDetails profile,
+      ChatTaggerController controller) {
+    // _mentionWatcher.replaceText(profile.getName());
+    controller.addTag(
+        id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+  }
+}

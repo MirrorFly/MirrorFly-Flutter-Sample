@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -209,6 +212,16 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                 );
                         }),
                       ),
+                      MentionUsersList(
+                        Routes.galleryPicker,
+                        groupJid: controller.profile.jid.checkNull(),
+                        mentionUserBgDecoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle
+                            .mentionUserBgDecoration,
+                        mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,
+                        chatTaggerController:  controller.caption,
+                        onListItemPressed: (profile){
+                          controller.onUserTagClicked(profile,controller.caption);
+                        },),
                       SizedBox(
                         width: NavUtils.size.width,
                         child: Column(
@@ -268,26 +281,39 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                           child: Focus(
                                             onFocusChange: (isFocus) =>
                                                 controller.isFocused(isFocus),
-                                            child: TextFormField(
-                                              focusNode: controller.captionFocusNode,
-                                              controller: controller.caption,
-                                              onChanged: controller.onCaptionTyped,
-                                              style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
-                                              // style: const TextStyle(
-                                              //   color: Colors.white,
-                                              //   fontSize: 15,
-                                              // ),
-                                              maxLines: 6,
-                                              minLines: 1,
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: getTranslated("addCaption"),
-                                                hintStyle: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextHintStyle,
-                                                // hintStyle: const TextStyle(
-                                                //   color: previewTextColor,
-                                                //   fontSize: 15,
-                                                // ),
-                                              ),
+                                            child: ChatTagger(
+                                                overlay: const Offstage(),
+                                                controller: controller.caption,
+                                                triggerCharacterAndStyles: const {
+                                                  '@': TextStyle(color: Colors.blueAccent),
+                                                },
+                                                onShowOrHideTaggers: (show) {
+                                                  // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
+                                                  controller.showOrHideTagListView(show, Routes.galleryPicker);
+                                                },
+                                                onSearch: (query, triggerCharacter) {
+                                                  controller.filterMentionUsers(triggerCharacter, query, Routes.galleryPicker);
+                                                },
+                                                builder: (context, textFieldKey) {
+                                                return TextField(
+                                                  key: textFieldKey,
+                                                  focusNode: controller.captionFocusNode,
+                                                  controller: controller.caption,
+                                                  onChanged: controller.onCaptionTyped,
+                                                  style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
+                                                  maxLines: 4,
+                                                  minLines: 1,
+                                                  decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: getTranslated("addCaption"),
+                                                    hintStyle: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextHintStyle,
+                                                    // hintStyle: const TextStyle(
+                                                    //   color: previewTextColor,
+                                                    //   fontSize: 15,
+                                                    // ),
+                                                  ),
+                                                );
+                                              }
                                             ),
                                           ),
                                         ),

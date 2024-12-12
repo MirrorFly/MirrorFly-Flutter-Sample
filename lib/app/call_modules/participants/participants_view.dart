@@ -285,7 +285,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                                 checkValue: controller.selectedUsersJIDList.contains(item.jid),
                                 onCheckBoxChange: (value){
                                   controller.onListItemPressed(item);
-                                },onListItemPressed: (){
+                                },onListItemPressed: (profile){
                                   controller.onListItemPressed(item);
                                 },contactItemStyle: style,);
                             } else {
