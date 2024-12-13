@@ -175,6 +175,7 @@ class BackupController extends GetxController {
   void backUpSuccess(String backUpPath) {
     LogMessage.d("Backup Controller", "Backup Success => $backUpPath");
     isLocalBackupStarted(false);
+    isRemoteBackupStarted(false);
     toToast(getTranslated("localBackupSuccess"));
   }
 
