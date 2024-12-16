@@ -64,11 +64,17 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       //   cameraFilePath(NavUtils.arguments['filePath']);
       // }
       var index = 0;
-      for (var _ in filePath) {
-        captionMessage.add(index++ == 0 && textMessage != null ? textMessage : "");
-        captionMessageMentions.add(index == 1 ? mentionedUsersIds : []);
+      for(var _ in filePath){
+        if(index == 0 && textMessage != null){
+          captionMessage.add(textMessage);
+          captionMessageMentions.add(mentionedUsersIds);
+          index = index + 1;
+        }else {
+          captionMessage.add("");
+          captionMessageMentions.add([]);
+        }
       }
-
+      LogMessage.d("initial ","text: ${captionMessage.join(",")}, tags: ${captionMessageMentions.join(",")}");
       // _loadFiles();
     });
 
@@ -219,28 +225,28 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   Future<void> setMediaCaptionText(String content,List<String> mentionedUsersIds) async {
     LogMessage.d("setMediaCaptionText $content",mentionedUsersIds);
     if(content.isNotEmpty) {
-      captionFocusNode.requestFocus();
       var profileDetails = await MentionUtils.getProfileDetailsOfUsername(
           mentionedUsersIds);
       caption.setText(content, profileDetails);
     }else{
-      caption.text=Constants.emptyString;
+      caption.setText(Constants.emptyString, []);
     }
   }
 
   void onMediaPreviewPageChanged(int value) {
     LogMessage.d("onMediaPreviewPageChanged ",value.toString());
+    captionFocusNode.unfocus();
     currentPageIndex(value);
     setMediaCaptionText(captionMessage[value],captionMessageMentions[value]);
-    captionFocusNode.unfocus();
   }
 
   void onCaptionTyped(String value) {
-    updateCaptionsArray();
+    LogMessage.d("onCaptionTyped ","index: ${currentPageIndex.value}, text: ${caption.formattedText}, tags: ${caption.getTags}");
+    // updateCaptionsArray();
   }
 
   void updateCaptionsArray(){
-    LogMessage.d("updateCaptionsArray ","text: ${caption.formattedText}, tags: ${caption.getTags}");
+    LogMessage.d("updateCaptionsArray ","index: ${currentPageIndex.value}, text: ${caption.formattedText}, tags: ${caption.getTags}");
     captionMessage[currentPageIndex.value] = caption.formattedText;
     captionMessageMentions[currentPageIndex.value] = caption.getTags;
   }

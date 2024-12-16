@@ -454,6 +454,11 @@ class _ChatTaggerState extends State<ChatTagger> {
   /// Adds [tag] and [id] to [_tags] and
   /// updates TextField value with [tag].
   void _addTag(String id, String tag) {
+    if(controller.selection.base.offset.isNegative){
+      _addTagWhenFieldNotFocused(id,tag);
+      return;
+    }
+    LogMessage.d("_addTag", "id : $id, tag: $tag");
     _shouldSearch = false;
     _shouldHideOverlay(true);
 
@@ -518,6 +523,81 @@ class _ChatTaggerState extends State<ChatTagger> {
       );
 
       _onFormattedTextChanged();
+    }
+  }
+
+  void _addTagWhenFieldNotFocused(String id, String tag){
+    LogMessage.d("_addTagWhenFieldNotFocused", "id : $id, tag: $tag");
+    _shouldSearch = false;
+    _shouldHideOverlay(true);
+
+    tag = "$_currentTriggerChar${tag.trim()}";
+    id = id.trim();
+
+    final text = controller.text;
+    late final position = text.length;
+    int index = 0;
+    // int selectionOffset = 0;
+    LogMessage.d("_addTagWhenFieldNotFocused","tag:$tag:");
+    LogMessage.d("_addTagWhenFieldNotFocused","text:$text:");
+    LogMessage.d("_addTagWhenFieldNotFocused","position:$position:");
+
+    if (position != text.length - 1 && !position.isNegative) {
+      index = text.substring(0, position).lastIndexOf(_currentTriggerChar);
+      LogMessage.d("_addTagWhenFieldNotFocused","if index:$index:");
+    } else {
+      index = text.lastIndexOf(_currentTriggerChar);
+      LogMessage.d("_addTagWhenFieldNotFocused","else index:$index:");
+    }
+    if (index >= 0) {
+      _defer = true;
+
+      String newText;
+
+      if (index - 1 > 0 && text[index - 1] != " ") {
+        newText = text.replaceRange(index, position, tag);
+        LogMessage.d("_addTagWhenFieldNotFocused","if newText:$newText:");
+        // index++;
+      } else {
+        newText = text.replaceRange(index, position, tag);
+        LogMessage.d("_addTagWhenFieldNotFocused","else newText:$newText:");
+      }
+
+      var addExtra = 0;
+      if (text.length == position) {
+        newText += " ";
+        addExtra++;
+        // selectionOffset++;
+      }
+
+      // final oldCachedText = _lastCachedText;
+      _lastCachedText = newText;
+      controller.text = newText;
+      _defer = true;
+
+      int offset = (index) + tag.length;
+      LogMessage.d("_addTagWhenFieldNotFocused","offset: $offset");
+      LogMessage.d("_addTagWhenFieldNotFocused","startIndex: ${offset - tag.length}");
+      final taggedText = TaggedText(
+        startIndex: offset - tag.length,
+        endIndex: offset+addExtra,
+        text: tag[0] != "@" ? "@$tag" : tag,
+      );
+      _tags[taggedText] = id;
+      _tagTrie.insert(taggedText);
+
+      // controller.selection = TextSelection.fromPosition(
+      //   TextPosition(
+      //     offset: offset + selectionOffset,
+      //   ),
+      // );
+      // _recomputeTags(
+      //   oldCachedText,
+      //   newText,
+      //   taggedText.startIndex + 1,
+      // );
+      //
+      // _onFormattedTextChanged();
     }
   }
 
@@ -746,6 +826,10 @@ class _ChatTaggerState extends State<ChatTagger> {
   void _tagListener() {
     final currentCursorPosition = controller.selection.baseOffset;
     final text = controller.text;
+    if(currentCursorPosition.isNegative){
+      _currentTriggerChar = text.isNotEmpty ? text[text.length-1] : "";
+      return;
+    }
 
     if (_shouldSearch &&
         _isBacktrackingToSearch &&
@@ -1129,11 +1213,14 @@ class ChatTaggerController extends TextEditingController {
   List<String> get getTags => _tags.values.toList();
 
   void setText(String input, List<ProfileDetails> profileDetails){
+    _tags.clear();
+    _trie.clear();
     var allMatches = MentionUtils.mentionRegex.allMatches(input).toList();
     debugPrint("setText : $allMatches");
     int index = 0;
     int lastMatchEnd = 0;
     text="";
+    _rebuild(text);
     for (var currentMatch in allMatches) {
       text += input.substring(lastMatchEnd,currentMatch.start+1);
       _rebuild(text);
@@ -1317,6 +1404,7 @@ class ChatTaggerController extends TextEditingController {
     if (text.isEmpty) return const TextSpan();
     List<TextSpan> spans = [];
     int? skipIndexes;
+    LogMessage.d("_buildTextSpan tags", _tags);
     for (int i = 0; i < text.characters.length; i++) {
       if(skipIndexes!=null && i<=skipIndexes){
         if(i==skipIndexes){
@@ -1339,6 +1427,7 @@ class ChatTaggerController extends TextEditingController {
         spans.add(TextSpan(text: text[i]));
       }
     }
+    // LogMessage.d("_buildTextSpan", spans);
     return TextSpan(children: spans, style: style);
   }
 

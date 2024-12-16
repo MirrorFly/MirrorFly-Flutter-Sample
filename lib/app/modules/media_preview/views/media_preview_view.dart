@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/routes/route_settings.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -287,6 +288,10 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                 triggerCharacterAndStyles: const {
                                                   '@': TextStyle(color: Colors.blueAccent),
                                                 },
+                                                onFormattedTextChanged: (value){
+                                                  LogMessage.d("onFormattedTextChanged ","text: $value");
+                                                  controller.updateCaptionsArray();
+                                                },
                                                 onShowOrHideTaggers: (show) {
                                                   // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
                                                   controller.showOrHideTagListView(show, Routes.galleryPicker);
@@ -299,7 +304,6 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                   key: textFieldKey,
                                                   focusNode: controller.captionFocusNode,
                                                   controller: controller.caption,
-                                                  onChanged: controller.onCaptionTyped,
                                                   style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
                                                   maxLines: 4,
                                                   minLines: 1,

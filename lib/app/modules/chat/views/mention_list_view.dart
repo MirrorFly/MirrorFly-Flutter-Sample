@@ -34,13 +34,14 @@ class MentionUsersList extends NavViewStateful<MentionController> {
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) {
+          LogMessage.d("KeyboardVisibilityBuilder","isKeyboardVisible:$isKeyboardVisible");
           return Obx(() {
             return controller.filteredItems.isNotEmpty &&
                 controller.showMentionUserList.value ? Container(
               decoration: mentionUserBgDecoration,
-              height: controller.filteredItems.length < 2 ? isKeyboardVisible
-                  ? 150
-                  : 250 : null,
+              height: isKeyboardVisible
+                  ? controller.filteredItems.length > 2 ? 100 : null
+                  : null,
               child: ListView.builder(
                   key: const PageStorageKey("mentionUsers"),
                   shrinkWrap: true,
@@ -75,6 +76,7 @@ class MentionController extends GetxController {
     if (Mirrorfly.isValidGroupJid(groupJid)) {
       Mirrorfly.getGroupMembersList(
           jid: groupJid,
+          fetchFromServer: false,
           flyCallBack: (FlyResponse response) {
             if (response.isSuccess && response.hasData) {
               LogMessage.d("getGroupMembersList-->", response.toString());
