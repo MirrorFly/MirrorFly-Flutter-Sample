@@ -115,6 +115,7 @@ class TextUtils {
   /// Returns a [TextSpan] containing the entire formatted text.
   static TextSpan getNormalTextSpans(
       String? text,
+      List<String> mentionUserIds,
       TextStyle? normalStyle,
       TextStyle? underlineStyle,
       ) {
@@ -126,7 +127,7 @@ class TextUtils {
       }
     }
     var result = TextSpan(children: spans);
-    CustomTextViewManager.setCustomText(text ?? "", result);
+    CustomTextViewManager.setCustomText((text ?? "")+mentionUserIds.join(","), result);
     return result;
   }
 

@@ -34,14 +34,14 @@ class CustomTextView extends StatelessWidget {
   }
 
   Widget getNormalText() {
-    var getText = CustomTextViewManager.getCustomText(text);
+    var getText = CustomTextViewManager.getCustomText(text+mentionUserIds.join(","));
     if(getText!=null){
       return Text.rich(getText,
         maxLines: maxLines,
         style: defaultTextStyle,
         overflow: maxLines == null ? null : TextOverflow.ellipsis,);
     }
-    var normalTextSpans = TextUtils.getNormalTextSpans(text,defaultTextStyle,defaultTextStyle.copyWith(
+    var normalTextSpans = TextUtils.getNormalTextSpans(text,mentionUserIds,defaultTextStyle,defaultTextStyle.copyWith(
         color: linkColor,
         decoration: TextDecoration.underline,
         decorationColor: linkColor));
@@ -61,8 +61,8 @@ class CustomTextView extends StatelessWidget {
         decorationColor: linkColor);
     TextStyle? mentionStyle =
         defaultTextStyle.copyWith(color: mentionUserTextColor,inherit: false);
-    debugPrint("mentionUserTextColor $mentionUserTextColor");
-    var getText  = CustomTextViewManager.getCustomText(text);
+    debugPrint("mentionUserTextColor ${mentionUserIds.join(",")}");
+    var getText  = CustomTextViewManager.getCustomText(text+mentionUserIds.join(","));
     return getText !=null ? Text.rich(getText,
       maxLines: maxLines,
       style: defaultTextStyle,
@@ -70,7 +70,7 @@ class CustomTextView extends StatelessWidget {
         future: MentionUtils.getProfileDetailsOfUsername(mentionUserIds),
         builder: (context, data) {
           if(data.connectionState==ConnectionState.done && data.hasData) {
-            var formattedString = MentionUtils.replaceMentionedUserText(text,data.data!,defaultTextStyle,underlineStyle,mentionStyle);
+            var formattedString = MentionUtils.replaceMentionedUserText(text,mentionUserIds,data.data!,defaultTextStyle,underlineStyle,mentionStyle);
             return Text.rich(formattedString,
               maxLines: maxLines,
               style: defaultTextStyle,
@@ -83,7 +83,7 @@ class CustomTextView extends StatelessWidget {
   }
 
   Widget searchWidget() {
-    var span = CustomTextViewManager.getCustomText(text);
+    var span = CustomTextViewManager.getCustomText(text+mentionUserIds.join(","));
     if (span!=null) {
       var changedSearchSpans = TextUtils.getSearchedTextSpans(span.toPlainText(),searchQueryString.toLowerCase(),span,searchQueryTextColor);
       return Text.rich(

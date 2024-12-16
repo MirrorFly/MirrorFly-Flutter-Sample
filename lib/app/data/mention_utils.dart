@@ -36,6 +36,7 @@ class MentionUtils {
   /// Returns a [TextSpan] containing the entire styled text.
   static TextSpan replaceMentionedUserText(
       String text,
+      List<String> mentionUserIds,
       List<ProfileDetails> profileDetails,
       TextStyle? defaultStyle,
       TextStyle? underlineStyle,
@@ -61,7 +62,10 @@ class MentionUtils {
       }
     }
     var result = TextSpan(children: spans);
-    CustomTextViewManager.setCustomText(text, result);
+    var list = mentionUserIds.join(",");
+    if(defaultStyle!=null && underlineStyle != null && mentionStyle != null) {
+      CustomTextViewManager.setCustomText(text + list, result);
+    }
     return result;
   }
 
@@ -95,7 +99,7 @@ class MentionUtils {
       if (index < replacements.length && replacements.length>index) {
         // debugPrint("replacements[index].getName() ${replacements[index].getName()} $index");
         spans.addAll(setSpanForEachLetter(
-          "@${replacements[index].getName()} ",
+          "@${replacements[index].name} ",
           mentionStyle,
           recognizer: TapGestureRecognizer()
             ..onTap = () {
