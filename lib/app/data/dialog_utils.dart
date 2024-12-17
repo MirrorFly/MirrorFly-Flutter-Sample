@@ -47,7 +47,7 @@ class DialogUtils {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(width: 16),
-                  Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,),
+                  Expanded(child: Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,maxLines: 2,)),
                 ],
               ),
             ),
