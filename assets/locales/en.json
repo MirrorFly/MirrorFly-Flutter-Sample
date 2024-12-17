@@ -275,7 +275,7 @@
     "msgOngoingCallAlert": "You are already on another call",
     "errorOnCallLogDelete": "Error in while deleting call log",
     "deleteChatWith": "Delete chat with %d ?",
-    "deleteSelectedChats": "Delete $d selected chats?",
+    "deleteSelectedChats": "Delete %d selected chats?",
     "deleteCallLogConfirmation": "Do you want to delete a call log?",
     "deleteSelectedCallLog" : "Do you want to delete the selected call logs?",
     "deleteAllCallLog" : "Do you want to clear your entire call log?",
