@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
@@ -329,31 +330,37 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                       ],
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.keyboard_arrow_right,
-                                        color: AppStyleConfig.mediaSentPreviewPageStyle.iconColor,
-                                        // color: Colors.white,
-                                        size: 13,
-                                      ),
-                                      Text(
-                                        controller.userName,
-                                        style: AppStyleConfig.mediaSentPreviewPageStyle.nameTextStyle,
-                                        // style: const TextStyle(
-                                        //     color: previewTextColor, fontSize: 13),
-                                      ),
-                                    ],
-                                  ),
+                                  KeyboardVisibilityBuilder(builder: (cxt,isKeyboardVisible){
+                                    return isKeyboardVisible ? const Offstage() :
+                                      Row(
+                                          children: [
+                                            Icon(
+                                              Icons.keyboard_arrow_right,
+                                              color: AppStyleConfig.mediaSentPreviewPageStyle.iconColor,
+                                              // color: Colors.white,
+                                              size: 13,
+                                            ),
+                                            Text(
+                                              controller.userName,
+                                              style: AppStyleConfig.mediaSentPreviewPageStyle.nameTextStyle,
+                                              // style: const TextStyle(
+                                              //     color: previewTextColor, fontSize: 13),
+                                            ),
+                                          ],
+                                      );
+                                    }),
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Obx(() {
-                              return controller.filePath.length > 1
-                                  ? SizedBox(
+                            KeyboardVisibilityBuilder(builder: (cxt,isKeyboardVisible){
+                              return isKeyboardVisible ? const Offstage() : Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Obx(() {
+                                    return controller.filePath.length > 1
+                                        ? SizedBox(
                                       height: 45,
                                       child: ListView.builder(
                                           scrollDirection: Axis.horizontal,
@@ -368,24 +375,24 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                           .currentPageIndex(index);
                                                       controller.pageViewController
                                                           .animateToPage(index,
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          1),
-                                                              curve: Curves.easeIn);
+                                                          duration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                              1),
+                                                          curve: Curves.easeIn);
                                                     },
                                                     child: Container(
                                                       width: 45,
                                                       height: 45,
                                                       decoration: controller
-                                                                  .currentPageIndex
-                                                                  .value ==
-                                                              index
+                                                          .currentPageIndex
+                                                          .value ==
+                                                          index
                                                           ? BoxDecoration(
-                                                              border: Border.all(
-                                                              color: Colors.blue,
-                                                              width: 1,
-                                                            ))
+                                                          border: Border.all(
+                                                            color: Colors.blue,
+                                                            width: 1,
+                                                          ))
                                                           : null,
                                                       margin: const EdgeInsets
                                                           .symmetric(horizontal: 1),
@@ -396,21 +403,24 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                   );
                                                 }),
                                                 controller.filePath[index].type ==
-                                                        "image"
+                                                    "image"
                                                     ? const Offstage()
                                                     : Positioned(
-                                                        bottom: 4,
-                                                        left: 4,
-                                                        child: AppUtils.svgIcon(icon:
-                                                          videoCamera,
-                                                          width: 5,
-                                                          height: 5,
-                                                        )),
+                                                    bottom: 4,
+                                                    left: 4,
+                                                    child: AppUtils.svgIcon(icon:
+                                                    videoCamera,
+                                                      width: 5,
+                                                      height: 5,
+                                                    )),
                                               ],
                                             );
                                           }),
                                     )
-                                  : const Offstage();
+                                        : const Offstage();
+                                  }),
+                                ],
+                              );
                             }),
                             emojiLayout(),
                           ],
