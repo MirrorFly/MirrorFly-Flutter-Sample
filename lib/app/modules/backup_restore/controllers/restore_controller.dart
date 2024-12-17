@@ -177,7 +177,7 @@ class RestoreController extends GetxController
     isBackupAnimationRunning(true);
     if(animationController != null) {
       animationController?.forward();
-    }
+    }BackupRestoreManager().downloadAndProcessFile(fileId: fileId, driveApi: driveApi, savePath: savePath, processFile: processFile, onProgress: onProgress)
   }
 
   void showIcloudSetupInstruction() {

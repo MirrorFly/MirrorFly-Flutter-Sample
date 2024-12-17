@@ -1,5 +1,6 @@
 
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -68,6 +69,8 @@ class BackupRestoreManager {
   drive.DriveApi? driveApi;
 
   bool get isDriveApiInitialized => driveApi != null;
+
+  StreamSubscription<List<int>>? _downloadSubscription;
 
   Future<bool> initialize({required iCloudContainerID}) async {
 
@@ -447,6 +450,124 @@ class BackupRestoreManager {
     _isInitialized = false;
     _iCloudContainerID = '';
     _backupFileName = '';
+  }
+
+  /*Future<void> downloadFileWithCancel({
+    required String fileId,
+    required String savePath,
+    required drive.DriveApi driveApi,
+    required Function(File) onComplete,
+    required Function(double) onProgress,
+  }) async {
+    try {
+      final file = File(savePath);
+      final media = await driveApi.files.get(
+        fileId,
+        downloadOptions: drive.DownloadOptions.fullMedia,
+      );
+
+      final List<int> data = [];
+      int downloadedBytes = 0;
+      int totalBytes = 0;
+
+      _downloadSubscription = media.stream.listen(
+            (chunk) {
+          data.addAll(chunk);
+          downloadedBytes += chunk.length;
+
+          // Calculate progress
+          if (totalBytes == 0) {
+            // Get total file size from metadata if available
+            drive.File metadata =
+            driveApi.files.get(fileId, $fields: 'size') as drive.File;
+            totalBytes = int.parse(metadata.size ?? '0');
+          }
+          final progress = (downloadedBytes / totalBytes) * 100;
+          onProgress(progress);
+        },
+        onDone: () async {
+          await file.writeAsBytes(data);
+          onComplete(file);
+          _downloadSubscription = null; // Reset subscription
+        },
+        onError: (error) {
+          print("Error downloading file: $error");
+          _downloadSubscription = null; // Reset subscription
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print("Error during download: $e");
+    }
+  }*/
+
+  Future<void> downloadAndProcessFile({
+    required Function(File) processFile,
+    required Function(double) onProgress,
+  }) async {
+    final file = File(savePath);
+
+    try {
+      // Request the file from Google Drive
+      final response = await driveApi.files.get(
+        fileId,
+        downloadOptions: drive.DownloadOptions.fullMedia,
+      );
+
+      if (response is drive.Media) {
+        final totalSize = response.length ?? 0;
+        int downloadedSize = 0;
+
+        final sink = file.openWrite();
+
+        // Stream the file data and write to disk
+        response.stream.listen(
+              (chunk) {
+            sink.add(chunk);
+            downloadedSize += chunk.length;
+
+            // Calculate and report progress
+            if (totalSize > 0) {
+              final progress = (downloadedSize / totalSize) * 100;
+              onProgress(progress);
+            }
+          },
+          onDone: () async {
+            await sink.close();
+            print("Download complete: ${file.path}");
+
+            // Process the downloaded file
+            processFile(file);
+
+            // Delete the file after processing
+            if (await file.exists()) {
+              await file.delete();
+              print("File deleted: ${file.path}");
+            }
+          },
+          onError: (error) {
+            print("Error during file download: $error");
+            sink.close();
+            throw error;
+          },
+          cancelOnError: true,
+        );
+      } else {
+        print("Unexpected response type: ${response.runtimeType}");
+      }
+    } catch (e) {
+      print("Error downloading file: $e");
+    }
+  }
+
+  void cancelDownload() {
+    if (_downloadSubscription != null) {
+      _downloadSubscription?.cancel();
+      _downloadSubscription = null;
+      print("Download canceled.");
+    } else {
+      print("No active download to cancel.");
+    }
   }
 }
 
