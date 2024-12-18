@@ -20,7 +20,11 @@ class DialogUtils {
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
-      return builder;
+      return Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(NavUtils.currentContext).viewInsets.bottom),
+        child: builder,
+      );
     },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 

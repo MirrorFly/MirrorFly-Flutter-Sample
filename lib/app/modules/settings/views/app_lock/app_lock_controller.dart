@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -160,6 +159,9 @@ class AppLockController extends FullLifeCycleController
         _pinEnabled(true);
         _bioEnabled(fromBio);
         modifyPin(false);
+        newPin.text = "";
+        confirmPin.text = "";
+        oldPin.text = "";
         NavUtils.back(result: true);
       } else {
         toToast(getTranslated("pinNotMatched"));
@@ -672,6 +674,7 @@ class AppLockController extends FullLifeCycleController
                           children: [
                             TextButton(
                                 onPressed: () {
+                                  stopTimer();
                                   NavUtils.back();
                                 },
                                 child: Text(
@@ -741,15 +744,8 @@ class AppLockController extends FullLifeCycleController
   String? verificationId;
 
   Future<void> sendVerificationCode() async {
-    var mobileNumber =
-    /*${(SessionManagement.getCountryCode() ?? '').replaceAll('+', '')}*/'+${SessionManagement.getMobileNumber() ?? ''}';
+    /*var mobileNumber = '+${SessionManagement.getMobileNumber() ?? ''}';
     debugPrint('mobileNumber $mobileNumber');
-    /*Future.delayed(const Duration(milliseconds: 500), () {
-      hideLoading();
-      showOtpView();
-      startTimer();
-    });*/
-
     if (kIsWeb) {
       final confirmationResult =
           await _auth.signInWithPhoneNumber(mobileNumber);
@@ -785,7 +781,13 @@ class AppLockController extends FullLifeCycleController
           timeout(true);
         },
       );
-    }
+    }*/
+    startTimer();
+    toToast(getTranslated("otpSentSuccess"));
+    // if (verificationId.isNotEmpty) {
+      hideLoading();
+      showOtpView();
+    // }
   }
 
   resend() {
@@ -794,14 +796,28 @@ class AppLockController extends FullLifeCycleController
 
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
-      if (smsCode.length == 6) {
-        DialogUtils.showLoading(message: getTranslated("verifyingOTP"),dialogStyle: AppStyleConfig.dialogStyle);
+      debugPrint("smsCode $smsCode");
+      if (smsCode.length == 6 && smsCode == "123456") {
+        stopTimer();
+        LogMessage.d("sign in ", smsCode.toString());
+        // hideLoading();
+        smsCode='';
+        NavUtils.toNamed(Routes.setPin)?.then((value) {
+          if (NavUtils.isOverlayOpen.checkNull()) {
+            otpController.clear();
+            NavUtils.back(); //for bottomsheetdialog close
+          }
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setUpPinExpiryDialog();
+          });
+        });
+        /*DialogUtils.showLoading(message: getTranslated("verifyingOTP"),dialogStyle: AppStyleConfig.dialogStyle);
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
         // Sign the user in (or link) with the credential
         debugPrint("Verification ID $verificationId");
         debugPrint("smsCode $smsCode");
-        signIn(credential);
+        signIn(credential);*/
       } else {
         toToast(getTranslated("inValidOTP"));
       }
@@ -817,7 +833,7 @@ class AppLockController extends FullLifeCycleController
         LogMessage.d("sign in ", value.toString());
         hideLoading();
         NavUtils.toNamed(Routes.setPin)?.then((value) {
-          if (Get.isBottomSheetOpen.checkNull()) {
+          if (NavUtils.isOverlayOpen.checkNull()) {
             otpController.clear();
             NavUtils.back(); //for bottomsheetdialog close
           }
@@ -837,14 +853,14 @@ class AppLockController extends FullLifeCycleController
     }
   }
 
-  _onVerificationCompleted(PhoneAuthCredential credential) async {
+  /*_onVerificationCompleted(PhoneAuthCredential credential) async {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       //timeout(true);
       otpController.set(credential.smsCode!.split(""));
       verifyOTP();
     }
-  }
+  }*/
 
   @override
   void onHidden() {

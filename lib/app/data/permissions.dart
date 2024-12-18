@@ -319,13 +319,27 @@ class AppPermission {
           getTranslated("callPermissionContent").replaceAll("%d", permissionName);
       var dialogContent2 =
           getTranslated("callPermissionDeniedContent").replaceAll("%d", permissionName);
+
+      var isAnyPermissionPermanentlyDenied = microphone.isPermanentlyDenied || (Platform.isAndroid && (bluetoothConnect.isPermanentlyDenied || phone.isPermanentlyDenied || notification.isPermanentlyDenied));
       if (shouldShowRequestRationale) {
         LogMessage.d("shouldShowRequestRationale", shouldShowRequestRationale);
         return requestAudioCallPermissions(
             content: dialogContent,
             permissions: permissions,
             showFromRational: true);
-      } else if (alreadyAsked) {
+      }else if (isAnyPermissionPermanentlyDenied) {
+        var popupValue = await customPermissionDialog(
+            icon: audioPermission,
+            content:
+            dialogContent2,dialogStyle: AppStyleConfig.dialogStyle); //getPermissionAlertMessage("audio_call"));
+        LogMessage.d("requestAudioCallPermissions popupValue", popupValue);
+        if (popupValue) {
+          openAppSettings();
+          return false;
+        } else {
+          return false;
+        }
+      }else if (alreadyAsked) {
         LogMessage.d("alreadyAsked", alreadyAsked);
         var popupValue = await customPermissionDialog(
             icon: audioPermission,
@@ -339,6 +353,7 @@ class AppPermission {
         }
       } else {
         if (permissions.isNotEmpty) {
+          LogMessage.d("requestAudioCallPermissions", permissions);
           return requestAudioCallPermissions(
               content: dialogContent, permissions: permissions);
         } else {
@@ -346,6 +361,7 @@ class AppPermission {
               icon: audioPermission,
               content:
                   dialogContent2,dialogStyle: AppStyleConfig.dialogStyle); //getPermissionAlertMessage("audio_call"));
+          LogMessage.d("requestAudioCallPermissions popupValue", popupValue);
           if (popupValue) {
             openAppSettings();
             return false;
