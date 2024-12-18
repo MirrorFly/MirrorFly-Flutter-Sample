@@ -18,71 +18,77 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (didPop) {
-              return;
-            }
-            SystemNavigator.pop();
-          },
-          child: Stack(
-            children: [
-              AppUtils.assetIcon(assetName:icBioBackground),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: GestureDetector(
+        onTap: ()=> FocusManager.instance.primaryFocus?.unfocus(),
+        child: SingleChildScrollView(
+          child: SafeArea(
+            child: PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) {
+                if (didPop) {
+                  return;
+                }
+                SystemNavigator.pop();
+              },
+
+              child: Stack(
                 children: [
-                  Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
-                    child: AppUtils.assetIcon(assetName:icLogo),
-                  ),
-                  Text(getTranslated("enterYourPIN"),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
-                  Obx(() {
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        pinItem(controller.pin1),
-                        pinItem(controller.pin2),
-                        pinItem(controller.pin3),
-                        pinItem(controller.pin4),
-                      ],
-                    );
-                  }),
-                  Center(
-                    child: SizedBox(
-                      width: 280,
-                      child: GridView.builder(
-                        itemCount: numbers.length,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,childAspectRatio: 1.5),
-                        itemBuilder: (BuildContext context, int index) {
-                          var item = numbers[index];
-                          return numberItem(item,!item.isNegative
-                              ? () => controller.numberClick(item)
-                              : null);
+                  AppUtils.assetIcon(assetName:icBioBackground),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 30.0, vertical: 50),
+                        child: AppUtils.assetIcon(assetName:icLogo),
+                      ),
+                      Text(getTranslated("enterYourPIN"),style: const TextStyle(fontWeight: FontWeight.w300,color: appbarTextColor,fontSize: 16.0),),
+                      Obx(() {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            pinItem(controller.pin1),
+                            pinItem(controller.pin2),
+                            pinItem(controller.pin3),
+                            pinItem(controller.pin4),
+                          ],
+                        );
+                      }),
+                      Center(
+                        child: SizedBox(
+                          width: 280,
+                          child: GridView.builder(
+                            itemCount: numbers.length,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,childAspectRatio: 1.5),
+                            itemBuilder: (BuildContext context, int index) {
+                              var item = numbers[index];
+                              return numberItem(item,!item.isNegative
+                                  ? () => controller.numberClick(item)
+                                  : null);
+                            },
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: (){
+                          controller.forgetPin();
                         },
-                      ),
-                    ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            getTranslated("forgotPIN"),
+                            style: const TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  InkWell(
-                    onTap: (){
-                      controller.forgetPin();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        getTranslated("forgotPIN"),
-                        style: const TextStyle(color: Color(0XFFFF0000),fontWeight: FontWeight.normal,fontSize: 14),
-                      ),
-                    ),
-                  )
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
