@@ -672,6 +672,7 @@ class AppLockController extends FullLifeCycleController
                           children: [
                             TextButton(
                                 onPressed: () {
+                                  stopTimer();
                                   NavUtils.back();
                                 },
                                 child: Text(
@@ -741,15 +742,8 @@ class AppLockController extends FullLifeCycleController
   String? verificationId;
 
   Future<void> sendVerificationCode() async {
-    var mobileNumber =
-    /*${(SessionManagement.getCountryCode() ?? '').replaceAll('+', '')}*/'+${SessionManagement.getMobileNumber() ?? ''}';
+    /*var mobileNumber = '+${SessionManagement.getMobileNumber() ?? ''}';
     debugPrint('mobileNumber $mobileNumber');
-    /*Future.delayed(const Duration(milliseconds: 500), () {
-      hideLoading();
-      showOtpView();
-      startTimer();
-    });*/
-
     if (kIsWeb) {
       final confirmationResult =
           await _auth.signInWithPhoneNumber(mobileNumber);
@@ -785,7 +779,13 @@ class AppLockController extends FullLifeCycleController
           timeout(true);
         },
       );
-    }
+    }*/
+    startTimer();
+    toToast(getTranslated("otpSentSuccess"));
+    // if (verificationId.isNotEmpty) {
+      hideLoading();
+      showOtpView();
+    // }
   }
 
   resend() {
@@ -795,13 +795,25 @@ class AppLockController extends FullLifeCycleController
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
       if (smsCode.length == 6) {
-        DialogUtils.showLoading(message: getTranslated("verifyingOTP"),dialogStyle: AppStyleConfig.dialogStyle);
+        stopTimer();
+        LogMessage.d("sign in ", smsCode.toString());
+        // hideLoading();
+        NavUtils.toNamed(Routes.setPin)?.then((value) {
+          if (NavUtils.isOverlayOpen.checkNull()) {
+            otpController.clear();
+            NavUtils.back(); //for bottomsheetdialog close
+          }
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setUpPinExpiryDialog();
+          });
+        });
+        /*DialogUtils.showLoading(message: getTranslated("verifyingOTP"),dialogStyle: AppStyleConfig.dialogStyle);
         PhoneAuthCredential credential = PhoneAuthProvider.credential(
             verificationId: verificationId!, smsCode: smsCode);
         // Sign the user in (or link) with the credential
         debugPrint("Verification ID $verificationId");
         debugPrint("smsCode $smsCode");
-        signIn(credential);
+        signIn(credential);*/
       } else {
         toToast(getTranslated("inValidOTP"));
       }
@@ -817,7 +829,7 @@ class AppLockController extends FullLifeCycleController
         LogMessage.d("sign in ", value.toString());
         hideLoading();
         NavUtils.toNamed(Routes.setPin)?.then((value) {
-          if (Get.isBottomSheetOpen.checkNull()) {
+          if (NavUtils.isOverlayOpen.checkNull()) {
             otpController.clear();
             NavUtils.back(); //for bottomsheetdialog close
           }
