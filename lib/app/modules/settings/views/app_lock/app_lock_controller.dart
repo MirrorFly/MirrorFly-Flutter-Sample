@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -854,14 +853,14 @@ class AppLockController extends FullLifeCycleController
     }
   }
 
-  _onVerificationCompleted(PhoneAuthCredential credential) async {
+  /*_onVerificationCompleted(PhoneAuthCredential credential) async {
     // need otp so i can autofill in a text box
     if (credential.smsCode != null) {
       //timeout(true);
       otpController.set(credential.smsCode!.split(""));
       verifyOTP();
     }
-  }
+  }*/
 
   @override
   void onHidden() {
