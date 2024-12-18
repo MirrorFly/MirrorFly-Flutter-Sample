@@ -160,6 +160,9 @@ class AppLockController extends FullLifeCycleController
         _pinEnabled(true);
         _bioEnabled(fromBio);
         modifyPin(false);
+        newPin.text = "";
+        confirmPin.text = "";
+        oldPin.text = "";
         NavUtils.back(result: true);
       } else {
         toToast(getTranslated("pinNotMatched"));
@@ -794,10 +797,12 @@ class AppLockController extends FullLifeCycleController
 
   Future<void> verifyOTP() async {
     if (await AppUtils.isNetConnected()) {
+      debugPrint("smsCode $smsCode");
       if (smsCode.length == 6) {
         stopTimer();
         LogMessage.d("sign in ", smsCode.toString());
         // hideLoading();
+        smsCode='';
         NavUtils.toNamed(Routes.setPin)?.then((value) {
           if (NavUtils.isOverlayOpen.checkNull()) {
             otpController.clear();
