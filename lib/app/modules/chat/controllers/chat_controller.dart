@@ -575,7 +575,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: true/*starredChatMessageId == null*/,
+      exclude: Platform.isAndroid ? starredChatMessageId != null ? false : true : true/*starredChatMessageId == null*/,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
