@@ -265,9 +265,9 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onResumed() {
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
-    checkShouldShowPin();
     if(hasPaused) {
       hasPaused = false;
+      checkShouldShowPin();
       if (Constants.enableContactSync) {
         syncContacts();
       }
