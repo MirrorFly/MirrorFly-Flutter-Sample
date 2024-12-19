@@ -48,11 +48,7 @@ class ChatSearchView extends StatelessWidget {
                 hintStyle: AppStyleConfig.chatPageStyle.searchTextFieldStyle.editTextHintStyle
               ),
               onSubmitted: (str) {
-                if (controller.filteredPosition.isNotEmpty) {
-                  controller.scrollUp();
-                } else {
-                  toToast(getTranslated("noResultsFound"));
-                }
+                controller.scrollUp();
               },
             ),
             actions: [
