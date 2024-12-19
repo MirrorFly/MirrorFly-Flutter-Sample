@@ -1645,20 +1645,36 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       var permission = await AppPermission.getStoragePermission();
       if (permission) {
         Mirrorfly.exportChatConversationToEmail(
-            jid: profile.jid.checkNull(),
-            flyCallBack: (FlyResponse response) async {
-              debugPrint("exportChatConversationToEmail $response");
-              if (response.isSuccess && response.hasData) {
-                var data = exportModelFromJson(response.data);
-                if (data.mediaAttachmentsUrl != null) {
-                  if (data.mediaAttachmentsUrl!.isNotEmpty) {
-                    var xfiles = <XFile>[];
-                    data.mediaAttachmentsUrl?.forEach((element) => xfiles.add(XFile(element)));
-                    await Share.shareXFiles(xfiles);
-                  }
+          jid: profile.jid.checkNull(),
+          flyCallBack: (FlyResponse response) async {
+            debugPrint("exportChatConversationToEmail $response");
+
+            if (response.isSuccess && response.hasData) {
+              var data = exportModelFromJson(response.data);
+
+              // Check if media attachment URLs exist and are not empty
+              if (data.mediaAttachmentsUrl?.isNotEmpty ?? false) {
+                try {
+                  // Convert media URLs to XFile objects
+                  var xFiles = data.mediaAttachmentsUrl!
+                      .map((element) => XFile(element))
+                      .toList();
+
+                  // Share the files
+                  await Share.shareXFiles(xFiles);
+                  debugPrint("Files shared successfully.");
+                } catch (e) {
+                  debugPrint("Error while sharing files: $e");
                 }
+              } else {
+                debugPrint("No media attachments available to share.");
               }
-            });
+            } else {
+              debugPrint("Failed to export chat conversation: ${response.message}");
+            }
+          },
+        );
+
       }
     } else {
       toToast(getTranslated("noConversation"));

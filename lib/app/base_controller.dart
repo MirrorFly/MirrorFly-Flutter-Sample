@@ -232,6 +232,15 @@ class BaseController {
             debugPrint("onCallStatusUpdated Inside Get.back");
             NavUtils.back();
           }*/
+          if (callMode.toLowerCase() == CallMode.meet){
+            /// This condition is added as the meet link,
+            /// when joining we will be receiving the "Attended" in call status update,
+            /// which makes the route to navigate to ongoing call screen.
+            /// But we will be redirecting to ongoing call screen manually
+            /// on clicking join now button in join_call_controller => joinCall() function
+            LogMessage.d("CallStatus Received for Meet link", statusUpdateReceived);
+            return;
+          }
           if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute !=
               Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
