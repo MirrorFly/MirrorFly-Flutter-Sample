@@ -833,6 +833,9 @@ class BaseController {
 
   static void unblockedThisUser(String jid) {
     LogMessage.d("unblockedThisUser", jid.toString());
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);;
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).unblockedThisUser(jid);
     }
@@ -852,6 +855,9 @@ class BaseController {
 
   static void userBlockedMe(String jid) {
     LogMessage.d('userBlockedMe', jid.toString());
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);;
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
