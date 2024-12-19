@@ -2040,7 +2040,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             str.sort((a, b) {
               return a.toLowerCase().compareTo(b.toLowerCase());
             });
-            groupParticipantsName(str.join(","));
+            groupParticipantsName(str.join(", "));
           }
         }).then((value) {});
   }
