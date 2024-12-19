@@ -28,11 +28,14 @@ CallController createController({String? tag}) => Get.put(CallController());
           return;
         }
       },
-      child: Container(
-        decoration: AppStyleConfig.ongoingCallPageStyle.backgroundDecoration,
+      ///commented this to match the XD design pattern
+      // child: Container(
+      //   decoration: AppStyleConfig.ongoingCallPageStyle.backgroundDecoration,
         child: Scaffold(
-          backgroundColor: Colors.transparent,//AppColors.callBg,
+          // backgroundColor: Colors.transparent,//AppColors.callBg,
           body: SafeArea(
+            bottom: false,
+            top: true,
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -147,7 +150,7 @@ CallController createController({String? tag}) => Get.put(CallController());
                           : const Offstage();
                     }),
                     const SizedBox(
-                      height: 15,
+                      height: 25,
                     ),
                     Obx(() {
                       return AnimatedSize(
@@ -164,7 +167,7 @@ CallController createController({String? tag}) => Get.put(CallController());
                   return AnimatedPositioned(
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
-                    bottom: controller.isVisible.value ? 0.0 : -140,
+                    bottom: controller.isVisible.value ? 0.0 : -170,
                     left: 0.0,
                     right: 0.0,
                     child: buildCallOptions(AppStyleConfig.ongoingCallPageStyle.actionButtonsStyle),
@@ -197,7 +200,7 @@ CallController createController({String? tag}) => Get.put(CallController());
             ),
           ),
         ),
-      ),
+      // ),
     );
   }
 
@@ -377,6 +380,7 @@ CallController createController({String? tag}) => Get.put(CallController());
                   callEndButton,
                 )),
           ),
+          const SizedBox(height: 20),
           // )
         ],
       );
