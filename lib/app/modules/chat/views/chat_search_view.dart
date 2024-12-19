@@ -68,9 +68,11 @@ class ChatSearchView extends StatelessWidget {
                   icon: const Icon(Icons.keyboard_arrow_down)),
             ],
           ),
-          body: Obx(() => controller.chatList.isEmpty
-              ? const Offstage()
-              : chatListView(controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle)),
+          body: SafeArea(
+            child: Obx(() => controller.chatList.isEmpty
+                ? const Offstage()
+                : chatListView(controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle)),
+          ),
         ),
       ),
     );
