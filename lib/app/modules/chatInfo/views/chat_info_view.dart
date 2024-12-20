@@ -41,6 +41,13 @@ ChatInfoController createController({String? tag}) => Get.put(ChatInfoController
                   floating: false,
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.9), // Shadow color
+                            offset: const Offset(2, 2), // Shadow position
+                            blurRadius: 5, // Shadow blur
+                          ),
+                        ],
                         color: controller.isSliverAppBarExpanded
                             ? AppStyleConfig.chatInfoPageStyle.silverAppBarIconColor
                             : AppBarTheme.of(context).actionsIconTheme?.color),
