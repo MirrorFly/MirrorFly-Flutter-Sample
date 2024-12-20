@@ -18,12 +18,16 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: NavUtils.canPop ? AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: true,
+      ) : null,
       body: GestureDetector(
         onTap: ()=> FocusManager.instance.primaryFocus?.unfocus(),
         child: SingleChildScrollView(
           child: SafeArea(
             child: PopScope(
-              canPop: false,
+              canPop: true,
               onPopInvokedWithResult: (didPop, result) {
                 if (didPop) {
                   return;
