@@ -48,18 +48,18 @@ class ChatSearchView extends StatelessWidget {
                 hintStyle: AppStyleConfig.chatPageStyle.searchTextFieldStyle.editTextHintStyle
               ),
               onSubmitted: (str) {
-                controller.scrollUp();
+                controller.scrollTop();
               },
             ),
             actions: [
               IconButton(
                   onPressed: () {
-                    controller.scrollUp();
+                    controller.scrollTop();
                   },
                   icon: const Icon(Icons.keyboard_arrow_up)),
               IconButton(
                   onPressed: () {
-                    controller.scrollDown();
+                    controller.scrollBottom();
                   },
                   icon: const Icon(Icons.keyboard_arrow_down)),
             ],

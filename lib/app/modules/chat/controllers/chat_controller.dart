@@ -610,6 +610,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
     // showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages(flyCallback: (FlyResponse response) {
+      // LogMessage.d("loadPreviousMessages", response);
       if (response.isSuccess && response.hasData) {
         var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
         chatMessageModel.addAll(chatMessageModelFromJson(response.data));
@@ -1564,6 +1565,45 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
+  int _currentIndex = 0;
+  bool topReached =false;
+  bool bottomReached =false;
+  void scrollTop(){
+    LogMessage.d("scrollTop", "filteredPosition : $filteredPosition _currentIndex : $_currentIndex");
+    if (filteredPosition.length > _currentIndex && !topReached) {
+      bottomReached=false;
+      _scrollToPosition(filteredPosition[_currentIndex]);
+      if(_currentIndex<filteredPosition.length-1) {
+        _currentIndex++;
+      }else{
+        topReached=true;
+      }
+    } else {
+      topReached=true;
+      toToast(getTranslated("noResultsFound"));
+    }
+  }
+
+  void scrollBottom(){
+    LogMessage.d("scrollBottom", "filteredPosition : $filteredPosition _currentIndex : $_currentIndex");
+    if(!_currentIndex.isNegative && _currentIndex!=0) {
+      _currentIndex--;
+    }
+    if (filteredPosition.length > _currentIndex && !_currentIndex.isNegative && !bottomReached) {
+      topReached=false;
+      _scrollToPosition(filteredPosition[_currentIndex]);
+      if(_currentIndex>1) {
+        _currentIndex--;
+      }else{
+        bottomReached=true;
+      }
+    } else {
+      bottomReached=true;
+      toToast(getTranslated("noResultsFound"));
+      _currentIndex=0;
+    }
+  }
+
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
@@ -1860,6 +1900,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
+      _currentIndex = 0;
+      topReached = false;
+      bottomReached = false;
       NavUtils.toNamed(Routes.chatSearch, arguments: arguments);
     });
   }
