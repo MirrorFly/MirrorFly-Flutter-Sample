@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel, ContactChatMessage;
