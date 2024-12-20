@@ -156,7 +156,18 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
           }
         } else {
           debugPrint("not chat page");
-          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          if (NavUtils.currentRoute == Routes.forwardChat ||
+              NavUtils.currentRoute == Routes.chatInfo ||
+              NavUtils.currentRoute == Routes.groupInfo ||
+              NavUtils.currentRoute == Routes.messageInfo){
+            debugPrint("chat info page");
+            NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+            Future.delayed(const Duration(milliseconds: 500), () {
+              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            });
+          }else{
+            NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          }
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {
