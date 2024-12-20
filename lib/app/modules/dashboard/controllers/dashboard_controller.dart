@@ -1050,6 +1050,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    LogMessage.d("setTypingStatus", "singleOrgroupJid : $singleOrgroupJid, userId : $userId, typingStatus: $typingStatus");
     var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
     if (typingStatus.toLowerCase() == Constants.composing) {
       if (index.isNegative) {

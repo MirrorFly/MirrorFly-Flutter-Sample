@@ -843,7 +843,7 @@ class BaseController {
   static void unblockedThisUser(String jid) {
     LogMessage.d("unblockedThisUser", jid.toString());
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);;
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
     }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).unblockedThisUser(jid);
@@ -865,7 +865,7 @@ class BaseController {
   static void userBlockedMe(String jid) {
     LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);;
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
     }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
@@ -983,6 +983,10 @@ class BaseController {
   }
 
   static void userWentOffline(String jid) {
+    LogMessage.d("userWentOffline", "jid $jid");
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().setTypingStatus(jid, "", Constants.gone);
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userWentOffline(jid);
     }
