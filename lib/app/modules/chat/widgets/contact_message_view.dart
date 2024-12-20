@@ -151,8 +151,8 @@ class ContactMessageView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: (userJid != null && userJid.isNotEmpty)
-                              ? Text(getTranslated("message"))
-                              : Text(getTranslated("invite")),
+                              ? Text(getTranslated("message"),style: textStyle,)
+                              : Text(getTranslated("view"),style: textStyle,),
                         ))),
               ],
             ),
@@ -178,7 +178,8 @@ class ContactMessageView extends StatelessWidget {
   }
 
   showInvitePopup(ContactChatMessage contactChatMessage) {
-    DialogUtils.showButtonAlert(actions: [
+    NavUtils.toNamed(Routes.previewContact, arguments: {"previewContactList" : chatMessage.contactChatMessage?.contactPhoneNumbers,"contactName" : chatMessage.contactChatMessage?.contactName, "from": "chat", "userJid" : chatMessage.senderUserJid});
+    /*DialogUtils.showButtonAlert(actions: [
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),
         title: Text(getTranslated("inviteFriend"),
@@ -203,7 +204,7 @@ class ContactMessageView extends StatelessWidget {
           sendSMS(contactChatMessage.contactPhoneNumbers[0]);
         },
       ),
-    ]);
+    ]);*/
   }
 
   void sendSMS(String contactPhoneNumber) async {
