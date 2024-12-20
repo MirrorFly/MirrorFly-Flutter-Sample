@@ -288,7 +288,7 @@ const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
 
-const String mediaBg = "assets/logos/ic_baloon.svg";
+const String mediaBg = "assets/logos/ic_baloon.png";
 
 //contact sync
 const String syncIcon = "assets/logos/sync.svg";
