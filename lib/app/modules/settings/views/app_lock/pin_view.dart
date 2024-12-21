@@ -18,7 +18,7 @@ AppLockController createController({String? tag}) => Get.put(AppLockController()
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: NavUtils.canPop ? AppBar(
+      appBar: NavUtils.arguments == null ? AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: true,
       ) : null,

@@ -264,10 +264,10 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onPaused() async {
     hasPaused = true;
     LogMessage.d('LifeCycle', 'onPaused');
+    fromLockScreen = await Mirrorfly.isLockScreen();
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
-    fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
@@ -347,7 +347,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void presentPinPage() {
     if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
       NavUtils.toNamed(
-        Routes.pin,
+          Routes.pin, arguments: {"showBack": "false"}
       );
     }
   }
