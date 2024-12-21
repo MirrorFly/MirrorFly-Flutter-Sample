@@ -205,28 +205,31 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
                 var audioItem = availableAudioList[index];
                 debugPrint("audio item name ${audioItem.name}");
                 return Obx(() {
-                  return ListTile(
-                    contentPadding: const EdgeInsets.only(left: 10),
-                    title: Text(audioItem.name ?? "",
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.normal)),
-                    trailing: audioItem.type == audioOutputType.value
-                        ? const Icon(
-                            Icons.check_outlined,
-                            color: Colors.green,
-                          )
-                        : const SizedBox.shrink(),
-                    onTap: () {
-                      if (audioOutputType.value != audioItem.type) {
-                        NavUtils.back();
-                        debugPrint("selected audio item ${audioItem.type}");
-                        audioOutputType(audioItem.type);
-                        Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
-                      } else {
-                        LogMessage.d("routeAudioOption",
-                            "clicked on same audio type selected");
-                      }
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.only(left: 10),
+                      title: Text(audioItem.name ?? "",
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.normal)),
+                      trailing: audioItem.type == audioOutputType.value
+                          ? const Icon(
+                              Icons.check_outlined,
+                              color: Colors.green,
+                            )
+                          : const SizedBox.shrink(),
+                      onTap: () {
+                        if (audioOutputType.value != audioItem.type) {
+                          NavUtils.back();
+                          debugPrint("selected audio item ${audioItem.type}");
+                          audioOutputType(audioItem.type);
+                          Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                        } else {
+                          LogMessage.d("routeAudioOption",
+                              "clicked on same audio type selected");
+                        }
+                      },
+                    ),
                   );
                 });
               });
