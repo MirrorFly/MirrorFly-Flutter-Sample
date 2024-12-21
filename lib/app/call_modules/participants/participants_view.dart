@@ -138,7 +138,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
 
   Widget callParticipantsView(BuildContext context,ParticipantItemStyle style) {
     return Obx(() {
-      return ListView.builder(
+      return controller.callList.length > 1 ? ListView.builder(
           shrinkWrap: true,
           itemCount: controller.callList.length,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -206,7 +206,10 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                       ],
                     ),
                   );
-          });
+          }): Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Text(getTranslated("noContactsFound"),),
+      ),);
     });
   }
 
