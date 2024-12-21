@@ -1592,9 +1592,12 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     if (filteredPosition.length > _currentIndex && !_currentIndex.isNegative && !bottomReached) {
       topReached=false;
       _scrollToPosition(filteredPosition[_currentIndex]);
-      if(_currentIndex>1) {
+      /*if(_currentIndex>1) {
         _currentIndex--;
       }else{
+        bottomReached=true;
+      }*/
+      if (_currentIndex < 1){
         bottomReached=true;
       }
     } else {
@@ -1903,6 +1906,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       _currentIndex = 0;
       topReached = false;
       bottomReached = false;
+      lastInputValue = "";
       NavUtils.toNamed(Routes.chatSearch, arguments: arguments);
     });
   }

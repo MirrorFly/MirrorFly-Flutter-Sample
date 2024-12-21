@@ -26,7 +26,7 @@ extension StringParsing on String? {
   }
 
   bool startsWithTextInWords(String text) {
-    return !this!.toLowerCase().contains(text.toLowerCase()) ? false : this!.toLowerCase().startsWith(text.toLowerCase());
+    return !this!.toLowerCase().contains(text.toLowerCase()) ? false : true/*this!.toLowerCase().startsWith(text.toLowerCase())*/;
     //checkIndexes(text)>-1;
     /*return when {
       this.indexOf(text, ignoreCase = true) <= -1 -> false
