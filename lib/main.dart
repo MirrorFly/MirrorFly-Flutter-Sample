@@ -161,7 +161,7 @@ class _MyAppState extends State<MyApp> {
           case Routes.pin:
             return [MaterialPageRoute(
               settings: const RouteSettings(
-                name: Routes.pin,
+                name: Routes.pin, arguments: {"showBack": "false"}
               ),
               builder: (context) => const PinView(),
             )];
