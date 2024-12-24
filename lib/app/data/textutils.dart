@@ -212,5 +212,39 @@ class TextUtils {
   static bool hasMatch(String? value, String pattern) {
     return (value == null) ? false : RegExp(pattern).hasMatch(value);
   }
+
+  static List<TextSpan> convertEmojiInTextSpan(String? text,TextStyle? style){
+    final children = <TextSpan>[];
+    if(text == null){
+      return children;
+    }
+    final runes = text.runes;
+
+    for (int i = 0; i < runes.length; /* empty */ ) {
+      int current = runes.elementAt(i);
+
+      // we assume that everything that is not
+      // in Extended-ASCII set is an emoji...
+      final isEmoji = current > 255;
+      final shouldBreak = isEmoji
+          ? (x) => x <= 255
+          : (x) => x > 255;
+
+      final chunk = <int>[];
+      while (! shouldBreak(current)) {
+        chunk.add(current);
+        if (++i >= runes.length) break;
+        current = runes.elementAt(i);
+      }
+      // LogMessage.d("forEmoji", "chunk : $chunk, current : $current, fromCharCodes : ${String.fromCharCodes(chunk)}");
+
+      children.add(
+        TextSpan(
+            text: String.fromCharCodes(chunk),
+        ),
+      );
+    }
+    return children;
+  }
 }
 

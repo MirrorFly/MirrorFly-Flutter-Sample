@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/mention_utils.dart';
+import 'package:mirror_fly_demo/app/data/textutils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagged_text.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/trie.dart';
@@ -425,9 +426,10 @@ class _ChatTaggerState extends State<ChatTagger> {
         spans.add("@[?] ");
         skipIndexes = tag?.endIndex;
       }else{
-        spans.add(text[i]);
+        spans.add(text.characters.elementAt(i));
       }
     }
+    LogMessage.d("_formatedText", spans);
     return spans.join("");
   }
 
@@ -1404,7 +1406,7 @@ class ChatTaggerController extends TextEditingController {
     if (text.isEmpty) return const TextSpan();
     List<TextSpan> spans = [];
     int? skipIndexes;
-    LogMessage.d("_buildTextSpan tags", _tags);
+    LogMessage.d("_buildTextSpan tags", "${text.length} ${text.characters.length}");
     for (int i = 0; i < text.characters.length; i++) {
       if(skipIndexes!=null && i<=skipIndexes){
         if(i==skipIndexes){
@@ -1417,14 +1419,15 @@ class ChatTaggerController extends TextEditingController {
       if(foundTag.values.first.keys.first){
         spans.add(
           TextSpan(
-            text: tag?.text,
+            // text: tag?.text,
+            children: TextUtils.convertEmojiInTextSpan(tag?.text,_tagStyles[tag?.text[0]]),
             style: _tagStyles[tag?.text[0]],
           ),
         );
           spans.add(const TextSpan(text: " "));
         skipIndexes = tag?.endIndex;
       }else{
-        spans.add(TextSpan(text: text[i]));
+        spans.add(TextSpan(children: TextUtils.convertEmojiInTextSpan(text.characters.elementAt(i),style)));
       }
     }
     // LogMessage.d("_buildTextSpan", spans);

@@ -134,10 +134,8 @@ class MentionUtils {
       TextStyle? style, {
         GestureRecognizer? recognizer,
       }) {
-    return text
-        .split("")
-        .map((letter) =>
-        TextSpan(text: letter, style: style, recognizer: recognizer))
+    return text.characters.map((letter) =>
+        TextSpan(children: TextUtils.convertEmojiInTextSpan(letter,style), style: style, recognizer: recognizer))
         .toList();
   }
 
