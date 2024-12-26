@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
-import 'package:mirror_fly_demo/app/data/mention_utils.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';

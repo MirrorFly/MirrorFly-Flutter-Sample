@@ -312,7 +312,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           var data = json.decode(value.toString());
           var content = data["textContent"];
           var mentionedUsers = List<String>.from(data["mentionedUsers"].map((x) => x));
-          setUnSentMessageInTextField(content,mentionedUsers);
+          setUnSentMessageInTextField(messageController,content,mentionedUsers);
 
         } else {
           messageController.text = Constants.emptyString;
@@ -320,11 +320,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       });
     }
   }
-  Future<void> setUnSentMessageInTextField(String content,List<String> mentionedUsers) async {
+  Future<void> setUnSentMessageInTextField(ChatTaggerController controller,String content,List<String> mentionedUsers) async {
     if(content.isNotEmpty) {
-      focusNode.requestFocus();
       var profileDetails = await MentionUtils.getProfileDetailsOfUsername(mentionedUsers);
-      messageController.setText(content, profileDetails);
+      controller.setText(content, profileDetails);
       isUserTyping(true);
     }
 
@@ -3081,16 +3080,26 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   }
 
-  Widget emojiLayout({required TextEditingController textEditingController, required bool sendTypingStatus}) {
+  Widget emojiLayout({required ChatTaggerController textEditingController, required bool sendTypingStatus}) {
     return Obx(() {
       if (showEmoji.value) {
         return EmojiLayout(
             textController: textEditingController, //controller.addStatusController,
             onBackspacePressed: () {
-              sendTypingStatus ? isTyping() : editMessageText(textEditingController.text);
+              if(sendTypingStatus){
+                isTyping();
+              }else{
+                editMessageText(textEditingController.text);
+              }
+              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
             },
             onEmojiSelected: (cat, emoji) {
-              sendTypingStatus ? isTyping() : editMessageText(textEditingController.text);
+              if(sendTypingStatus){
+                isTyping();
+              }else{
+                editMessageText(textEditingController.text);
+              }
+              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
             });
       } else {
         return const Offstage();
