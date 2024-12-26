@@ -41,10 +41,10 @@ class CustomTextView extends StatelessWidget {
         style: defaultTextStyle,
         overflow: maxLines == null ? null : TextOverflow.ellipsis,);
     }
-    var normalTextSpans = TextUtils.getNormalTextSpans(key,text,mentionUserIds,defaultTextStyle,defaultTextStyle.copyWith(
+    var normalTextSpans = TextUtils.getNormalTextSpans(key,text,mentionUserIds,defaultTextStyle,key != null ? defaultTextStyle.copyWith(
         color: linkColor,
         decoration: TextDecoration.underline,
-        decorationColor: linkColor));
+        decorationColor: linkColor) : null);
     // LogMessage.d("normalTextSpans", normalTextSpans.children);
     return Text.rich(
       normalTextSpans,
@@ -88,15 +88,6 @@ class CustomTextView extends StatelessWidget {
       var changedSearchSpans = TextUtils.getSearchedTextSpans(span.toPlainText(),searchQueryString.toLowerCase(),span,searchQueryTextColor);
       return Text.rich(
         TextSpan(children: changedSearchSpans,style: defaultTextStyle),
-        // TextSpan(
-        //     text: startText,
-        //     children: [
-        //       TextSpan(
-        //           text: colorText,
-        //           style: TextStyle(color: searchQueryTextColor)),
-        //       TextSpan(text: endText, style: defaultTextStyle)
-        //     ],
-        //     style: defaultTextStyle),
         maxLines: maxLines,
         overflow: maxLines == null ? null : TextOverflow.ellipsis,
       );
@@ -112,12 +103,12 @@ class CustomTextViewManager {
   static final Map<String, TextSpan> _cache = {};
 
   static TextSpan? getCustomText(String key){
-    // debugPrint("CustomTextViewManager getCustomText key : $key, value : ${_cache[key]?.children}");
+    debugPrint("CustomTextViewManager getCustomText key : $key, value : ${_cache[key]?.children}");
     return _cache[key];
   }
 
   static setCustomText(String key,TextSpan text){
     _cache[key]=text;
-    // debugPrint("CustomTextViewManager setCustomText key : $key, value : ${text.children}");
+    debugPrint("CustomTextViewManager setCustomText key : $key, value : ${text.children}");
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/textutils.dart';
@@ -54,11 +53,11 @@ class MentionUtils {
       if (TextUtils.hasMatch(word, mentionRegex.pattern)) {
         // debugPrint("formatMentionTextSpan ${profileDetails[index].getName()} $index $word");
         var mentionSpans = formatMentionTextSpan(
-            word, profileDetails, defaultStyle, underlineStyle, mentionStyle,index);
+            word, profileDetails, defaultStyle, key != null ? underlineStyle : null, mentionStyle,index);
         spans.addAll(mentionSpans);
         index++;
       } else {
-        spans.addAll(TextUtils.getTextSpan(word, defaultStyle, underlineStyle));
+        spans.addAll(TextUtils.getTextSpan(word, defaultStyle, key != null ? underlineStyle : null));
         spans.add(const TextSpan(text: " "));
       }
     }
@@ -102,10 +101,10 @@ class MentionUtils {
         spans.addAll(TextUtils.parseEachLetterIntoTextSpan(
           "@${replacements[index].name} ",
           mentionStyle,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              debugPrint('Tapped on: ${replacements[index]}');
-            },
+          // recognizer: TapGestureRecognizer()
+          //   ..onTap = () {
+          //     debugPrint('Tapped on: ${replacements[index]}');
+          //   },
         ));
         // index++;
       } else {

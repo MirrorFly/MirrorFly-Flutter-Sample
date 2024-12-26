@@ -49,9 +49,9 @@ class TextUtils {
         text.checkNull(),
         underlineStyle,
         recognizer: TapGestureRecognizer()
-          ..onTap = () {
+          ..onTap = underlineStyle != null ? (){
             onTapForSpanText(text.checkNull());
-          },
+          } : null,
       );
     } else {
       return parseEachLetterIntoTextSpan(
