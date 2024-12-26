@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
@@ -72,7 +73,9 @@ class MentionController extends GetxController {
   ///Show or Hide the mention user list in the view
   var showMentionUserList = false.obs;
 
+  var groupJid = "";
   void getGroupMembers(String groupJid) {
+    this.groupJid = groupJid;
     if (Mirrorfly.isValidGroupJid(groupJid)) {
       Mirrorfly.getGroupMembersList(
           jid: groupJid,
@@ -132,5 +135,42 @@ class MentionController extends GetxController {
     // _mentionWatcher.replaceText(profile.getName());
     controller.addTag(
         id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+  }
+
+  void sortGroupMembers(List<ProfileDetails> list){
+    list.sort((a,b)=>a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
+    groupMembers.value=(list);
+    groupMembers.refresh();
+  }
+
+  void onNewMemberAddedToGroup({required String groupJid, required String newMemberJid, required String addedByMemberJid}) {
+    if(this.groupJid==groupJid) {
+      var index = groupMembers.indexWhere((element) => element.jid == newMemberJid);
+      if(index.isNegative) {
+        if(newMemberJid.checkNull().isNotEmpty) {
+          getProfileDetails(newMemberJid).then((value) {
+            List<ProfileDetails> list = [];//groupMembers;
+            list.addAll(groupMembers);
+            list.add(value);
+            sortGroupMembers(list);
+          });
+        }
+      }
+    }
+  }
+
+  void onMemberRemovedFromGroup({required String groupJid, required String removedMemberJid, required String removedByMemberJid}) {
+    if(this.groupJid==groupJid) {
+        var index = groupMembers.indexWhere((element) => element.jid == removedMemberJid);
+        var filterIndex = filteredItems.indexWhere((element) => element.jid == removedMemberJid);
+        if(!index.isNegative) {
+          debugPrint('user removed ${groupMembers[index].name}');
+          groupMembers.removeAt(index);
+          groupMembers.refresh();
+        }
+        if(!filterIndex.isNegative){
+          filteredItems.removeAt(filterIndex);
+        }
+    }
   }
 }

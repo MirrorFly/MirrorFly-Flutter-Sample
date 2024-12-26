@@ -2650,6 +2650,18 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         getParticipantsNameAsCsv(groupJid);
       }
     }
+    if (Get.isRegistered<MentionController>(tag: "chatView")) {
+      Get.find<MentionController>(tag: "chatView")
+          .onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
+    if (Get.isRegistered<MentionController>(tag: "editWindow")) {
+      Get.find<MentionController>(tag: "editWindow")
+          .onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
+    if (Get.isRegistered<MentionController>(tag: Routes.galleryPicker)) {
+      Get.find<MentionController>(tag: Routes.galleryPicker)
+          .onNewMemberAddedToGroup(groupJid: groupJid, newMemberJid: newMemberJid, addedByMemberJid: addedByMemberJid);
+    }
   }
 
   void onMemberRemovedFromGroup({required String groupJid, required String removedMemberJid, required String removedByMemberJid}) {
@@ -2663,6 +2675,21 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           onLeftFromGroup(groupJid: groupJid, userJid: removedMemberJid);
         }
       }
+    }
+    if (Get.isRegistered<MentionController>(tag: "chatView")) {
+      Get.find<MentionController>(tag: "chatView")
+          .onMemberRemovedFromGroup(
+          groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+    if (Get.isRegistered<MentionController>(tag: "editWindow")) {
+      Get.find<MentionController>(tag: "editWindow")
+          .onMemberRemovedFromGroup(
+          groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
+    }
+    if (Get.isRegistered<MentionController>(tag: Routes.galleryPicker)) {
+      Get.find<MentionController>(tag: Routes.galleryPicker)
+          .onMemberRemovedFromGroup(
+          groupJid: groupJid, removedMemberJid: removedMemberJid, removedByMemberJid: removedByMemberJid);
     }
   }
 
