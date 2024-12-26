@@ -6,6 +6,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Utility class for handling text-related operations, such as determining
@@ -95,11 +96,14 @@ class TextUtils {
     var allSpans = <TextSpan>[];
     if (text != null && query.isNotEmpty) {
       var startIndex = text.toLowerCase().indexOf(query.toLowerCase());
+      LogMessage.d("startIndex", startIndex);
       if (startIndex != -1) {
         var endIndex = startIndex + query.length;
         allSpans.add(TextSpan(children: span?.children?.sublist(0, startIndex) ?? []));
         allSpans.add(TextSpan(children: changeSpanColor(span?.children?.sublist(startIndex, endIndex), color) ?? []));
         allSpans.add(TextSpan(children: span?.children?.sublist(endIndex) ?? []));
+      }else{
+        allSpans.add(TextSpan(children: span?.children));
       }
     }
 
