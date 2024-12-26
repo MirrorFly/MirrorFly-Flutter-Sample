@@ -3086,10 +3086,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       if (showEmoji.value) {
         return EmojiLayout(
             textController: textEditingController, //controller.addStatusController,
-            onBackspacePressed: () => sendTypingStatus ? isTyping() : editMessageText(textEditingController.text),
-            onEmojiSelected: (cat, emoji) => sendTypingStatus ? isTyping() : editMessageText(textEditingController.text));
+            onBackspacePressed: () {
+              sendTypingStatus ? isTyping() : editMessageText(textEditingController.text);
+            },
+            onEmojiSelected: (cat, emoji) {
+              sendTypingStatus ? isTyping() : editMessageText(textEditingController.text);
+            });
       } else {
-        return const SizedBox.shrink();
+        return const Offstage();
       }
     });
   }

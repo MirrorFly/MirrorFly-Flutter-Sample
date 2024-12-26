@@ -45,7 +45,7 @@ class TextUtils {
     if (isEmail(text.checkNull().trim()) ||
         isValidPhoneNumber(text.checkNull().trim()) ||
         text.checkNull().trim().isURL) {
-      return MentionUtils.setSpanForEachLetter(
+      return parseEachLetterIntoTextSpan(
         text.checkNull(),
         underlineStyle,
         recognizer: TapGestureRecognizer()
@@ -54,7 +54,7 @@ class TextUtils {
           },
       );
     } else {
-      return MentionUtils.setSpanForEachLetter(
+      return parseEachLetterIntoTextSpan(
           text.checkNull(), normalStyle);
     }
   }
@@ -213,7 +213,15 @@ class TextUtils {
     return (value == null) ? false : RegExp(pattern).hasMatch(value);
   }
 
-  static List<TextSpan> convertEmojiInTextSpan(String? text,TextStyle? style){
+  /// Splits the text into individual characters and applies a style.
+  ///
+  /// [text] - The input text to style.
+  /// [style] - The text style to apply.
+  /// [recognizer] - An optional [GestureRecognizer] for handling taps.
+  /// Returns a list of [TextSpan] objects.
+  static List<TextSpan> parseEachLetterIntoTextSpan(String? text,TextStyle? style, {
+    GestureRecognizer? recognizer,
+  }){
     final children = <TextSpan>[];
     if(text == null){
       return children;
@@ -241,6 +249,8 @@ class TextUtils {
       children.add(
         TextSpan(
             text: String.fromCharCodes(chunk),
+          style: style,
+          recognizer: recognizer
         ),
       );
     }

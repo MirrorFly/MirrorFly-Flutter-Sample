@@ -1420,14 +1420,14 @@ class ChatTaggerController extends TextEditingController {
         spans.add(
           TextSpan(
             // text: tag?.text,
-            children: TextUtils.convertEmojiInTextSpan(tag?.text,_tagStyles[tag?.text[0]]),
+            children: TextUtils.parseEachLetterIntoTextSpan(tag?.text,_tagStyles[tag?.text[0]]),
             style: _tagStyles[tag?.text[0]],
           ),
         );
           spans.add(const TextSpan(text: " "));
         skipIndexes = tag?.endIndex;
       }else{
-        spans.add(TextSpan(children: TextUtils.convertEmojiInTextSpan(text.characters.elementAt(i),style)));
+        spans.add(TextSpan(children: TextUtils.parseEachLetterIntoTextSpan(text.characters.elementAt(i),style)));
       }
     }
     // LogMessage.d("_buildTextSpan", spans);

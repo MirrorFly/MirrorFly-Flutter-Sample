@@ -91,14 +91,14 @@ class MentionUtils {
     mentionRegex.allMatches(input).forEach((match) {
       // Add regular text before the mention.
       if (match.start > lastMatchEnd) {
-        spans.addAll(setSpanForEachLetter(
+        spans.addAll(TextUtils.parseEachLetterIntoTextSpan(
             input.substring(lastMatchEnd, match.start), defaultStyle));
       }
 
       // Add the mention text with style and recognizer.
       if (index < replacements.length && replacements.length>index) {
         // debugPrint("replacements[index].getName() ${replacements[index].getName()} $index");
-        spans.addAll(setSpanForEachLetter(
+        spans.addAll(TextUtils.parseEachLetterIntoTextSpan(
           "@${replacements[index].name} ",
           mentionStyle,
           recognizer: TapGestureRecognizer()
@@ -121,22 +121,6 @@ class MentionUtils {
           input.substring(lastMatchEnd), defaultStyle, underlineStyle));
     }
     return spans;
-  }
-
-  /// Splits the text into individual characters and applies a style.
-  ///
-  /// [text] - The input text to style.
-  /// [style] - The text style to apply.
-  /// [recognizer] - An optional [GestureRecognizer] for handling taps.
-  /// Returns a list of [TextSpan] objects.
-  static List<TextSpan> setSpanForEachLetter(
-      String text,
-      TextStyle? style, {
-        GestureRecognizer? recognizer,
-      }) {
-    return text.characters.map((letter) =>
-        TextSpan(children: TextUtils.convertEmojiInTextSpan(letter,style), style: style, recognizer: recognizer))
-        .toList();
   }
 
   /// Retrieves profile details for the given list of mentioned users.
