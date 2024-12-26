@@ -113,6 +113,7 @@ class TextUtils {
   /// [underlineStyle] - The style for links or clickable text.
   /// Returns a [TextSpan] containing the entire formatted text.
   static TextSpan getNormalTextSpans(
+      Key? key,
       String? text,
       List<String> mentionUserIds,
       TextStyle? normalStyle,
@@ -126,7 +127,7 @@ class TextUtils {
       }
     }
     var result = TextSpan(children: spans);
-    CustomTextViewManager.setCustomText((text ?? "")+mentionUserIds.join(","), result);
+    CustomTextViewManager.setCustomText((text ?? "")+mentionUserIds.join(",")+key.toString(), result);
     return result;
   }
 
@@ -243,16 +244,14 @@ class TextUtils {
         if (++i >= runes.length) break;
         current = runes.elementAt(i);
       }
-      // LogMessage.d("forEmoji", "chunk : $chunk, current : $current, fromCharCodes : ${String.fromCharCodes(chunk)}");
-
-      children.add(
-        TextSpan(
-            text: String.fromCharCodes(chunk),
-          style: style,
-          recognizer: recognizer
-        ),
+      // LogMessage.d("parseEachLetterIntoTextSpan", "chunk : $chunk, current : $current, fromCharCodes : ${String.fromCharCodes(chunk)}");
+      children.addAll(
+          String.fromCharCodes(chunk).characters.map((letter) =>
+              TextSpan(text: letter, style: style, recognizer: recognizer))
+              .toList()
       );
     }
+    // LogMessage.d("parseEachLetterIntoTextSpan", children);
     return children;
   }
 }

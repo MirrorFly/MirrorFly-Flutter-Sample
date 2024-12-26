@@ -350,9 +350,9 @@ class RecentChatItem extends StatelessWidget {
         key: ValueKey(item.lastMessageId),
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
-          // LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
+          // LogMessage.d("getMessageOfId future", "${chat.toJson()}");
             return Row(
               children: [
                 checkSenderShouldShow(chat)
@@ -567,6 +567,7 @@ class RecentChatMessageItem extends StatelessWidget {
                               mentionUserTextColor: recentChatItemStyle.mentionUserColor,
                               searchQueryTextColor: recentChatItemStyle.spanTextColor,
                               searchQueryString: searchTxt,
+                              mentionUserIds: item.mentionedUsersIds ?? [],
                               maxLines: 1,
                             )
                              /*MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==

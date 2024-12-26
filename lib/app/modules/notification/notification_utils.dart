@@ -27,7 +27,7 @@ class NotificationUtils{
         var lastMessageMentionContent = message.messageTextContent.checkNull();
         if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
           var profileDetails = await MentionUtils.getProfileDetailsOfUsername(message.mentionedUsersIds!);
-          var formattedString = MentionUtils.replaceMentionedUserText(lastMessageMentionContent,message.mentionedUsersIds!,profileDetails,null,null,null);
+          var formattedString = MentionUtils.replaceMentionedUserText(null,lastMessageMentionContent,message.mentionedUsersIds!,profileDetails,null,null,null);
           //need to work on mentions
           return formattedString.toPlainText();
         }

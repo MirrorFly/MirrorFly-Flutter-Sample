@@ -28,6 +28,7 @@ class CaptionMessageView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextView(
+            key: const Key("message_view"),
             text: mediaMessage.mediaCaptionText.checkNull(),
             defaultTextStyle: textMessageViewStyle.textStyle,
             linkColor: textMessageViewStyle.urlMessageColor,

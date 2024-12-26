@@ -35,6 +35,7 @@ class MentionUtils {
   /// [mentionStyle] - The style for mentions.
   /// Returns a [TextSpan] containing the entire styled text.
   static TextSpan replaceMentionedUserText(
+      Key? key,
       String text,
       List<String> mentionUserIds,
       List<ProfileDetails> profileDetails,
@@ -64,7 +65,7 @@ class MentionUtils {
     var result = TextSpan(children: spans);
     var list = mentionUserIds.join(",");
     if(defaultStyle!=null && underlineStyle != null && mentionStyle != null) {
-      CustomTextViewManager.setCustomText(text + list, result);
+      CustomTextViewManager.setCustomText(text + list+key.toString(), result);
     }
     return result;
   }

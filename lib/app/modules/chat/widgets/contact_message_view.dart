@@ -50,6 +50,7 @@ class ContactMessageView extends StatelessWidget {
                 ),
                 Expanded(
                     child: CustomTextView(
+                      key: const Key("message_view"),
                       text: chatMessage.contactChatMessage!.contactName
                           .checkNull(),
                       defaultTextStyle: contactMessageViewStyle.textMessageViewStyle.textStyle,
