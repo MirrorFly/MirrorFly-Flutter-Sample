@@ -71,11 +71,9 @@ class ReplyingMessageHeader extends StatelessWidget {
                           textStyle:
                               replyHeaderMessageViewStyle.contentTextStyle,
                           contactName: chatMessage
-                              .contactChatMessage!.contactName
-                              .checkNull(),
+                              .contactChatMessage?.contactName,
                           mediaFileName: chatMessage
-                              .mediaChatMessage!.mediaFileName
-                              .checkNull(),
+                              .mediaChatMessage?.mediaFileName,
                           mediaChatMessage: chatMessage.mediaChatMessage,
                           mentionedUsers: chatMessage.mentionedUsersIds ?? [],
                           linkColor: replyHeaderMessageViewStyle.linkColor,
