@@ -104,12 +104,12 @@ class CustomTextViewManager {
   static final Map<String, TextSpan> _cache = {};
 
   static TextSpan? getCustomText(String key){
-    debugPrint("CustomTextViewManager getCustomText key : $key, value : ${_cache[key]?.children}");
+    // debugPrint("CustomTextViewManager getCustomText key : $key, value : ${_cache[key]?.children}");
     return _cache[key];
   }
 
   static setCustomText(String key,TextSpan text){
     _cache[key]=text;
-    debugPrint("CustomTextViewManager setCustomText key : $key, value : ${text.children}");
+    // debugPrint("CustomTextViewManager setCustomText key : $key, value : ${text.children}");
   }
 }

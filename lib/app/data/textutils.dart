@@ -73,7 +73,7 @@ class TextUtils {
       for (var span in colorInline) {
         changedSpans.add(TextSpan(
           text: span.toPlainText(),
-          style: TextStyle(color: color),
+          style: span.style?.copyWith(color: color),
         ));
       }
     }
