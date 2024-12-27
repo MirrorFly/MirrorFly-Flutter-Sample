@@ -60,6 +60,7 @@ class ContactMessageView extends StatelessWidget {
                       searchQueryString: search,
                       mentionUserIds: chatMessage.mentionedUsersIds ?? [],
                       maxLines: 2,
+                      mentionedMeBgColor: contactMessageViewStyle.textMessageViewStyle.mentionedMeBgColor,
                     )
                 ),
               ],

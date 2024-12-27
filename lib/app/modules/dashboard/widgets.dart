@@ -108,7 +108,7 @@ class RecentChatItem extends StatelessWidget {
             mentionUserTextColor: Colors.blue,
             searchQueryTextColor: recentChatItemStyle.spanTextColor,
             searchQueryString: spanTxt,
-            maxLines: 1,
+            maxLines: 1,mentionedMeBgColor:recentChatItemStyle.mentionedMeBgColor
           ),
           /*spanTxt.isEmpty
               ? Text(
@@ -386,6 +386,7 @@ class RecentChatItem extends StatelessWidget {
                     searchQueryString: spanTxt,
                     mentionUserIds: chat.mentionedUsersIds ?? [],
                     maxLines: 1,
+                      mentionedMeBgColor:recentChatItemStyle.mentionedMeBgColor
                   )
                 ),
               ],
@@ -568,7 +569,7 @@ class RecentChatMessageItem extends StatelessWidget {
                               searchQueryTextColor: recentChatItemStyle.spanTextColor,
                               searchQueryString: searchTxt,
                               mentionUserIds: item.mentionedUsersIds ?? [],
-                              maxLines: 1,
+                              maxLines: 1,mentionedMeBgColor: recentChatItemStyle.mentionedMeBgColor,
                             )
                              /*MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                 null

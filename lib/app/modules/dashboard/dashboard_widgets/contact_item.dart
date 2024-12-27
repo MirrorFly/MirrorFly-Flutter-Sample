@@ -82,6 +82,7 @@ class ContactItem extends StatelessWidget {
                         searchQueryTextColor: contactItemStyle.spanTextColor,
                         searchQueryString: spanTxt,
                         maxLines: 1,
+                        mentionedMeBgColor: Colors.transparent,
                       ),
                       /*spanTxt.isEmpty
                           ? Text(

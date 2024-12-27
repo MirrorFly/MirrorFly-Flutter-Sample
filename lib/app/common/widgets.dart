@@ -416,6 +416,7 @@ class MemberItem extends StatelessWidget {
                             searchQueryTextColor: itemStyle.spanTextColor,
                             searchQueryString: searchTxt,
                             maxLines: 1,
+                            mentionedMeBgColor: Colors.transparent,
                           ),
                           /*searchTxt.isEmpty
                               ? Text(

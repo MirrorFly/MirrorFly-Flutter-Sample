@@ -32,7 +32,7 @@ class MessageTypingAreaStyle{
     this.iconRecord,
     this.iconSend,
     this.mentionUserStyle = const ContactItemStyle(
-        profileImageSize: Size(30, 30),
+        profileImageSize: Size(36, 36),
         titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
         dividerColor: Color(0xffEBEBEB)
     ),
@@ -91,13 +91,21 @@ class ReplyHeaderMessageViewStyle{
     this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
     this.contentTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
     this.mediaIconStyle = const IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
-    this.borderRadius = const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
+    this.borderRadius = const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+    this.searchHighLightColor = Colors.orange,
+    this.linkColor = const Color(0xff4879F9),
+    this.mentionUserColor = const Color(0xff4879F9),
+    this.mentionedMeBgColor = const Color(0XffD2E3FC),
   });
   final Decoration decoration;
   final TextStyle titleTextStyle;
   final TextStyle contentTextStyle;
   final IconStyle mediaIconStyle;
   final BorderRadius borderRadius;
+  final Color searchHighLightColor;
+  final Color linkColor;
+  final Color mentionUserColor;
+  final Color mentionedMeBgColor;
 }
 
 class LocationMessageViewStyle{
@@ -132,6 +140,7 @@ class TextMessageViewStyle{
     this.highlightColor = Colors.orange,//while searching a message to highlight the text
     this.urlMessageColor = const Color(0xff4879F9),
     this.mentionUserColor = const Color(0xff4879F9),
+    this.mentionedMeBgColor = const Color(0XffD2E3FC),
     this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
       color: Color(0xffD0D8EB),
     ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7)),
@@ -142,6 +151,7 @@ class TextMessageViewStyle{
   final Color highlightColor;
   final Color urlMessageColor;
   final Color mentionUserColor;
+  final Color mentionedMeBgColor;
   final CallLinkViewStyle callLinkViewStyle;
   final UIKitIcon? iconFavourites;
 }

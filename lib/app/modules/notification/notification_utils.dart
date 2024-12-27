@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/mention_utils.dart';
 
 import '../../common/app_localizations.dart';
@@ -27,7 +28,7 @@ class NotificationUtils{
         var lastMessageMentionContent = message.messageTextContent.checkNull();
         if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
           var profileDetails = await MentionUtils.getProfileDetailsOfUsername(message.mentionedUsersIds!);
-          var formattedString = MentionUtils.replaceMentionedUserText(null,lastMessageMentionContent,message.mentionedUsersIds!,profileDetails,null,null,null);
+          var formattedString = MentionUtils.replaceMentionedUserText(null,lastMessageMentionContent,message.mentionedUsersIds!,profileDetails,null,null,null,const Color(0XffD2E3FC));
           //need to work on mentions
           return formattedString.toPlainText();
         }

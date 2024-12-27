@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/textutils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
@@ -41,6 +42,7 @@ class MentionUtils {
       TextStyle? defaultStyle,
       TextStyle? underlineStyle,
       TextStyle? mentionStyle,
+      Color mentionedMeBgColor,
       ) {
     if (text.isEmpty) {
       return const TextSpan(children: []);
@@ -53,7 +55,7 @@ class MentionUtils {
       if (TextUtils.hasMatch(word, mentionRegex.pattern)) {
         // debugPrint("formatMentionTextSpan ${profileDetails[index].getName()} $index $word");
         var mentionSpans = formatMentionTextSpan(
-            word, profileDetails, defaultStyle, key != null ? underlineStyle : null, mentionStyle,index);
+            word, profileDetails, defaultStyle, key != null ? underlineStyle : null, mentionStyle,mentionedMeBgColor,index);
         spans.addAll(mentionSpans);
         index++;
       } else {
@@ -83,6 +85,7 @@ class MentionUtils {
       TextStyle? defaultStyle,
       TextStyle? underlineStyle,
       TextStyle? mentionStyle,
+      Color mentionedMeBgColor,
       int index
       ) {
     // int index = 0;
@@ -100,7 +103,7 @@ class MentionUtils {
         // debugPrint("replacements[index].getName() ${replacements[index].getName()} $index");
         spans.addAll(TextUtils.parseEachLetterIntoTextSpan(
           "@${replacements[index].name} ",
-          mentionStyle,
+          mentionStyle?.copyWith(backgroundColor: replacements[index].jid == SessionManagement.getUserJID() ? mentionedMeBgColor : Colors.transparent),
           // recognizer: TapGestureRecognizer()
           //   ..onTap = () {
           //     debugPrint('Tapped on: ${replacements[index]}');

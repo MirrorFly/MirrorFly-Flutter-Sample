@@ -46,6 +46,7 @@ class TextMessageView extends StatelessWidget {
                     searchQueryTextColor: textMessageViewStyle.highlightColor,
                     searchQueryString: search,
                     mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                    mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
                   )
               ),
               const SizedBox(width: 60,),

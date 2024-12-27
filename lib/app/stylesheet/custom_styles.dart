@@ -104,6 +104,7 @@ class RecentChatItemStyle {
         this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),
         this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 14),
         this.spanTextColor = Colors.orange,//const Color(0xff4879F9),
+        this.mentionedMeBgColor = const Color(0XffD2E3FC),//const Color(0xff4879F9),
         this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: AppColor.primaryColor,fontSize: 14),
         this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
         this.unreadCountBgColor = const Color(0xff4879F9),
@@ -121,6 +122,7 @@ class RecentChatItemStyle {
   final TextStyle titleTextStyle;
   final TextStyle subtitleTextStyle;
   final Color spanTextColor;
+  final Color mentionedMeBgColor;
   final TextStyle typingTextStyle;
   final TextStyle timeTextStyle;
   final Color unreadCountBgColor;

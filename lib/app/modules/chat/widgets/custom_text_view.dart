@@ -13,7 +13,7 @@ class CustomTextView extends StatelessWidget {
       required this.mentionUserTextColor,
       required this.searchQueryTextColor,
       this.mentionUserIds = const [],
-      this.maxLines});
+      this.maxLines, required this.mentionedMeBgColor});
   final String text;
   final String searchQueryString;
   final TextStyle defaultTextStyle;
@@ -22,6 +22,7 @@ class CustomTextView extends StatelessWidget {
   final Color searchQueryTextColor;
   final List<String> mentionUserIds;
   final int? maxLines;
+  final Color mentionedMeBgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class CustomTextView extends StatelessWidget {
         future: MentionUtils.getProfileDetailsOfUsername(mentionUserIds),
         builder: (context, data) {
           if(data.connectionState==ConnectionState.done && data.hasData) {
-            var formattedString = MentionUtils.replaceMentionedUserText(key,text,mentionUserIds,data.data!,defaultTextStyle,underlineStyle,mentionStyle);
+            var formattedString = MentionUtils.replaceMentionedUserText(key,text,mentionUserIds,data.data!,defaultTextStyle,underlineStyle,mentionStyle,mentionedMeBgColor);
             return Text.rich(formattedString,
               maxLines: maxLines,
               style: defaultTextStyle,

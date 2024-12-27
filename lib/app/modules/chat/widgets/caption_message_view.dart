@@ -36,6 +36,7 @@ class CaptionMessageView extends StatelessWidget {
             searchQueryTextColor: textMessageViewStyle.highlightColor,
             searchQueryString: search,
             mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+            mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

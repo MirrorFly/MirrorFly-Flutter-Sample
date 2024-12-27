@@ -76,6 +76,7 @@ class DocumentMessageView extends StatelessWidget {
                       searchQueryString: search,
                       mentionUserIds: chatMessage.mentionedUsersIds ?? [],
                       maxLines: 2,
+                      mentionedMeBgColor: docMessageViewStyle.fileTextStyle.mentionedMeBgColor,
                     )
                   ),
                   MediaMessageOverlay(chatMessage: chatMessage,downloadUploadViewStyle:  docMessageViewStyle.downloadUploadViewStyle,),
