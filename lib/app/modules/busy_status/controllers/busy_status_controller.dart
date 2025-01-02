@@ -188,14 +188,14 @@ class BusyStatusController extends GetxController with WidgetsBindingObserver {
     DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("deleteStatus"), actions: [
       TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
-            Navigator.pop(context);
+            NavUtils.back();
           },
           child: Text(getTranslated("no") )),
       TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
           onPressed: () {
             AppUtils.isNetConnected().then((isConnected) {
               if (isConnected) {
-                Navigator.pop(context);
+                NavUtils.back();
                 DialogUtils.showLoading(message: "Deleting Busy Status",dialogStyle: AppStyleConfig.dialogStyle);
                 Mirrorfly.deleteBusyStatus(id:
                 item.id!, status: item.status!, isCurrentStatus: item.isCurrentStatus!)

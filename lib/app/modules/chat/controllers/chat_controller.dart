@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -74,8 +74,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   late AudioRecorder record;
   bool _isDisposed = false;
 
-  ChatTaggerController messageController = ChatTaggerController();
-  ChatTaggerController editMessageController = ChatTaggerController();
+  MentionTagTextEditingController messageController = MentionTagTextEditingController();
+  MentionTagTextEditingController editMessageController = MentionTagTextEditingController();
 
   FocusNode focusNode = FocusNode();
   FocusNode searchfocusNode = FocusNode();
@@ -320,10 +320,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       });
     }
   }
-  Future<void> setUnSentMessageInTextField(ChatTaggerController controller,String content,List<String> mentionedUsers) async {
+  Future<void> setUnSentMessageInTextField(MentionTagTextEditingController controller,String content,List<String> mentionedUsers) async {
     if(content.isNotEmpty) {
       var profileDetails = await MentionUtils.getProfileDetailsOfUsername(mentionedUsers);
-      controller.setText(content, profileDetails);
+      controller.setCustomText(content, profileDetails);
       isUserTyping(true);
     }
 
@@ -417,7 +417,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           scrollToBottom();
           updateLastMessage(value);
         });*/
-
+        LogMessage.d("send text sending-->", "${messageController.formattedText} mention : ${messageController.getTags}" );
         Mirrorfly.sendMessage(
             messageParams: MessageParams.text(
                 toJid: profile.jid.checkNull(),
@@ -2054,8 +2054,11 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       Get.find<MentionController>(tag: tag).showOrHideTagListView(show);
     }
   }
-  void onUserTagClicked(ProfileDetails profile,ChatTaggerController controller){
-    controller.addTag(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+  void onUserTagClicked(ProfileDetails profile,MentionTagTextEditingController controller,String tag){
+    // controller.addMention(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+    var mention = profile.jid.checkNull().split("@")[0];
+    controller.addMention(label: profile.getName(),data: mention,stylingWidget: Text('@${profile.getName()}',style: const TextStyle(color: Colors.blueAccent),));
+    showOrHideTagListView(false, tag);
   }
 
   var groupParticipantsName = ''.obs;
@@ -3107,7 +3110,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   }
 
-  Widget emojiLayout({required ChatTaggerController textEditingController, required bool sendTypingStatus}) {
+  Widget emojiLayout({required MentionTagTextEditingController textEditingController, required bool sendTypingStatus}) {
     return Obx(() {
       if (showEmoji.value) {
         return EmojiLayout(
@@ -3158,7 +3161,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             });
       } else if (chatItem.messageType == Constants.mImage || chatItem.messageType == Constants.mVideo) {
         Mirrorfly.editMediaCaption(
-            editMessageParams: EditMessageParams(messageId: chatItem.messageId, editedTextContent: editMessageController.formattedText.trim()),
+            editMessageParams: EditMessageParams(messageId: chatItem.messageId, editedTextContent: editMessageController.formattedText.trim(),mentionedUsersIds: editMessageController.getTags),
             flyCallback: (FlyResponse response) {
               debugPrint("Edit Media Caption ==> $response");
               if (response.isSuccess) {

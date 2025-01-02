@@ -1,12 +1,12 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/data/mention_utils.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -26,7 +26,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   var userName = NavUtils.arguments['userName'];
   var profile = NavUtils.arguments['profile'] as ProfileDetails;
 
-  ChatTaggerController caption = ChatTaggerController();
+  MentionTagTextEditingController caption = MentionTagTextEditingController();
 
   var filePath = <PickedAssetModel>[].obs;
 
@@ -159,8 +159,11 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     updateCaptionsArray();
   }
 
-  void onUserTagClicked(ProfileDetails profile,ChatTaggerController controller){
-    controller.addTag(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+  void onUserTagClicked(ProfileDetails profile,MentionTagTextEditingController controller,String tag){
+    // controller.addTag(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+    controller.addMention(label: profile.getName(),data: profile.jid.checkNull().split("@")[0],stylingWidget: Text('@${profile.getName()}',style: const TextStyle(color: Colors.blueAccent),));
+    showOrHideTagListView(false, tag);
+    updateCaptionsArray();
   }
 
   Future<void> sendMedia() async {
@@ -227,9 +230,9 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     if(content.isNotEmpty) {
       var profileDetails = await MentionUtils.getProfileDetailsOfUsername(
           mentionedUsersIds);
-      caption.setText(content, profileDetails);
+      caption.setCustomText(content, profileDetails);
     }else{
-      caption.setText(Constants.emptyString, []);
+      caption.setCustomText(Constants.emptyString, []);
     }
   }
 

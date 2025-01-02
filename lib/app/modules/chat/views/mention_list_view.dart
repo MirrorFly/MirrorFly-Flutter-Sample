@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
@@ -15,7 +16,7 @@ class MentionUsersList extends NavViewStateful<MentionController> {
       : super(key: key, tag: tags);
   final Decoration? mentionUserBgDecoration;
   final ContactItemStyle mentionUserStyle;
-  final ChatTaggerController chatTaggerController;
+  final MentionTagTextEditingController chatTaggerController;
   final String groupJid;
   final String tags;
   final Function(ProfileDetails profile)? onListItemPressed;
@@ -97,6 +98,7 @@ class MentionController extends GetxController {
   void filterMentionUsers(String triggerCharacter, String? query) {
     if (query == null) {
       filteredItems.clear();
+      showMentionUserList(false);
       return;
     }
     if (triggerCharacter == '@') {
@@ -107,12 +109,14 @@ class MentionController extends GetxController {
       debugPrint("filterMentionUsers $query");
       if (query.isEmpty) {
         filteredItems(groupMembersWithoutMe);
+        showMentionUserList(true);
       } else {
         var filter = groupMembersWithoutMe
             .where((item) => item.getName().toLowerCase().contains(query))
             .toList();
         debugPrint("filter ${filter.length}");
         filteredItems(filter);
+        showMentionUserList(true);
       }
     } else {
       // log('No mention detected.',name: "onMentionTextChanged");

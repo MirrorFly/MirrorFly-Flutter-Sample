@@ -47,7 +47,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       LogMessage.d("initialize", "$e");
       //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
       toToast(getTranslated("errorVideoInitialize"));
-      Navigator.pop(context);
+      NavUtils.back();
     });
   }
 

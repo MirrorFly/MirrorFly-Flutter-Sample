@@ -6,11 +6,11 @@ import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/reply_message_widgets.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirror_fly_demo/app/widgets/lottie_animation.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
@@ -21,7 +21,7 @@ class ChatInputField extends StatelessWidget {
       : super(key: key);
   final MessageTypingAreaStyle messageTypingAreaStyle;
   final ChatController controller;
-  final ChatTaggerController chatTaggerController;
+  final MentionTagTextEditingController chatTaggerController;
   final void Function(String value)? onChanged;
   final FocusNode? focusNode;
   final String jid;
@@ -54,15 +54,15 @@ class ChatInputField extends StatelessWidget {
             }
           }),
           MentionUsersList(
-              tag,
-              groupJid: jid.checkNull(),
-              mentionUserBgDecoration: messageTypingAreaStyle
-                  .mentionUserBgDecoration,
-              mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,
-              chatTaggerController: chatTaggerController,
-              onListItemPressed: (profile) {
-                controller.onUserTagClicked(profile, chatTaggerController);
-              },),
+            tag,
+            groupJid: jid.checkNull(),
+            mentionUserBgDecoration: messageTypingAreaStyle
+                .mentionUserBgDecoration,
+            mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,
+            chatTaggerController: chatTaggerController,
+            onListItemPressed: (profile) {
+              controller.onUserTagClicked(profile, chatTaggerController, tag);
+            },),
           Divider(
               height: 1,
               thickness: 0.29,
@@ -237,42 +237,47 @@ class ChatInputField extends StatelessWidget {
         if(controller.isAudioRecording.value ==
             Constants.audioRecordInitial)...[
           Expanded(
-            child: ChatTagger(
-                overlay: const Offstage(),
-                controller: chatTaggerController,
-                triggerCharacterAndStyles: const {
-                  '@': TextStyle(color: Colors.blueAccent),
-                },
-                onShowOrHideTaggers: (show) {
-                  // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
-                  controller.showOrHideTagListView(show, tag);
-                },
-                onSearch: (query, triggerCharacter) {
-                  controller.filterMentionUsers(triggerCharacter, query, tag);
-                },
-                builder: (context, textFieldKey) {
-                  return TextField(
-                    key: textFieldKey,
-                    onChanged: onChanged,
-                    style: messageTypingAreaStyle
-                        .textFieldStyle.editTextStyle,
-                    //const TextStyle(fontWeight: FontWeight.w400),
-                    keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 4,
-                    enabled: controller.isAudioRecording.value ==
-                        Constants.audioRecordInitial ? true : false,
-                    controller: chatTaggerController,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                        hintText: getTranslated("startTypingPlaceholder"),
-                        border: InputBorder.none,
-                        hintStyle: messageTypingAreaStyle
-                            .textFieldStyle.editTextHintStyle),
-                  );
-                }
-            ),
-          )
+              child: Obx(() {
+                return MentionTagTextField(
+                  mentionTagDecoration: const MentionTagDecoration(
+                      mentionStart: ['@'],
+                      mentionBreak: ' ',
+                      allowDecrement: false,
+                      allowEmbedding: false,
+                      showMentionStartSymbol: false,
+                      maxWords: null,
+                      mentionTextStyle: TextStyle(
+                          color: Colors.blueAccent,
+                          backgroundColor: Colors.transparent)),
+                  controller: chatTaggerController,
+                  //                 initialMentions: const [
+                  // ('@Emily Johnson', User(id: 1, name: 'Emily Johnson'), null)
+                  // ],
+                  onMention: (query) {
+                    debugPrint("query : $query");
+                    if (query != null) {
+                      final searchInput = query.substring(1);
+                      controller.filterMentionUsers('@', searchInput, tag);
+                    }
+                  },
+                  onChanged: onChanged,
+                  style: messageTypingAreaStyle
+                      .textFieldStyle.editTextStyle,
+                  //const TextStyle(fontWeight: FontWeight.w400),
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 4,
+                  enabled: controller.isAudioRecording.value ==
+                      Constants.audioRecordInitial ? true : false,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                      hintText: getTranslated("startTypingPlaceholder"),
+                      border: InputBorder.none,
+                      hintStyle: messageTypingAreaStyle
+                          .textFieldStyle.editTextHintStyle),
+                );
+              })
+          ),
         ],
         if(controller.isAudioRecording.value == Constants.audioRecordInitial &&
             controller.availableFeatures.value.isAttachmentAvailable

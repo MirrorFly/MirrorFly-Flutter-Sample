@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/routes/route_settings.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -222,7 +221,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                         mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,
                         chatTaggerController:  controller.caption,
                         onListItemPressed: (profile){
-                          controller.onUserTagClicked(profile,controller.caption);
+                          controller.onUserTagClicked(profile,controller.caption,Routes.galleryPicker);
                         },),
                       SizedBox(
                         width: NavUtils.size.width,
@@ -283,26 +282,28 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                           child: Focus(
                                             onFocusChange: (isFocus) =>
                                                 controller.isFocused(isFocus),
-                                            child: ChatTagger(
-                                                overlay: const Offstage(),
-                                                controller: controller.caption,
-                                                triggerCharacterAndStyles: const {
-                                                  '@': TextStyle(color: Colors.blueAccent),
-                                                },
-                                                onFormattedTextChanged: (value){
-                                                  LogMessage.d("onFormattedTextChanged ","text: $value");
-                                                  controller.updateCaptionsArray();
-                                                },
-                                                onShowOrHideTaggers: (show) {
-                                                  // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
-                                                  controller.showOrHideTagListView(show, Routes.galleryPicker);
-                                                },
-                                                onSearch: (query, triggerCharacter) {
-                                                  controller.filterMentionUsers(triggerCharacter, query, Routes.galleryPicker);
-                                                },
-                                                builder: (context, textFieldKey) {
-                                                return TextField(
-                                                  key: textFieldKey,
+                                            child: MentionTagTextField(
+                                                  // key: textFieldKey,
+                                              onMention: (query) {
+                                                debugPrint("query : $query");
+                                                if (query != null) {
+                                                  final searchInput = query.substring(1);
+                                                  controller.filterMentionUsers('@', searchInput, Routes.galleryPicker);
+                                                }
+                                              },
+                                              onChanged: (value){
+                                                controller.updateCaptionsArray();
+                                              },
+                                              mentionTagDecoration: const MentionTagDecoration(
+                                                  mentionStart: ['@'],
+                                                  mentionBreak: ' ',
+                                                  allowDecrement: false,
+                                                  allowEmbedding: false,
+                                                  showMentionStartSymbol: false,
+                                                  maxWords: null,
+                                                  mentionTextStyle: TextStyle(
+                                                      color: Colors.blueAccent,
+                                                      backgroundColor: Colors.transparent)),
                                                   focusNode: controller.captionFocusNode,
                                                   controller: controller.caption,
                                                   style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
@@ -317,8 +318,6 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                     //   fontSize: 15,
                                                     // ),
                                                   ),
-                                                );
-                                              }
                                             ),
                                           ),
                                         ),

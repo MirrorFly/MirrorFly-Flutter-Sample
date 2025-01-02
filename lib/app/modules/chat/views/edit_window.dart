@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/mention_utils.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../common/app_localizations.dart';
 import '../../../extensions/extensions.dart';
@@ -28,7 +28,7 @@ class EditMessageScreen extends StatefulWidget {
 
 class _EditMessageScreenState extends State<EditMessageScreen> {
   FocusNode textFocusNode = FocusNode();
-  String? get messageToEdit => (widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
+  String? get messageToEdit => ((widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText)?.replaceAll("@[?]", Constants.mentionEscape);
   final tag = "editWindow";
   @override
   void initState() {
@@ -50,7 +50,7 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
   void setEditMessageText() async {
     var messageToEdit = (widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
     var profileDetails = await MentionUtils.getProfileDetailsOfUsername(widget.chatItem.mentionedUsersIds ?? []);
-    widget.chatController.editMessageController.setText(messageToEdit ?? "",profileDetails);
+    widget.chatController.editMessageController.setCustomText(messageToEdit ?? "",profileDetails);
     LogMessage.d("setEditMessageText", widget.chatController.editMessageController.getTags);
   }
 
@@ -147,9 +147,9 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                         groupJid: widget.chatController.profile.jid.checkNull(),
                         mentionUserBgDecoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle
                             .mentionUserBgDecoration,
-                        mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,chatTaggerController:  widget.chatController.editMessageController,
+                        mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,chatTaggerController:  widget.chatController.messageController,
                       onListItemPressed: (profile){
-                        widget.chatController.onUserTagClicked(profile,widget.chatController.editMessageController);
+                        widget.chatController.onUserTagClicked(profile,widget.chatController.editMessageController,tag);
                       },),
                       IntrinsicHeight(
                         child: Row(
@@ -180,42 +180,42 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                         width: 10,
                                       ),
                                       Expanded(
-                                        child: ChatTagger(
-                                            overlay: const Offstage(),
+                                        child: Scrollbar(
+                                          thumbVisibility: true, // Always show the scrollbar, optional
+                                          thickness: 4.0, // Set the thickness of the scrollbar
+                                          radius: const Radius.circular(20),
+                                          child: MentionTagTextField(
+                                            mentionTagDecoration: const MentionTagDecoration(
+                                                mentionStart: ['@'],
+                                                mentionBreak: ' ',
+                                                allowDecrement: false,
+                                                allowEmbedding: false,
+                                                showMentionStartSymbol: false,
+                                                maxWords: null,
+                                                mentionTextStyle: TextStyle(
+                                                    color: Colors.blueAccent,
+                                                    backgroundColor: Colors.transparent)),
+                                            focusNode: textFocusNode,
+                                            onMention: (query) {
+                                              debugPrint("query : $query");
+                                              if (query != null) {
+                                                final searchInput = query.substring(1);
+                                                widget.chatController.filterMentionUsers('@',searchInput,tag);
+                                              }
+                                            },
+                                            onChanged: (text) {
+                                              widget.chatController.editMessageText(text);
+                                            },
+                                            style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle,//const TextStyle(fontWeight: FontWeight.w400),
+                                            // style: const TextStyle(fontWeight: FontWeight.w400),
+                                            keyboardType: TextInputType.multiline,
+                                            minLines: 1,
+                                            maxLines: 4,
                                             controller: widget.chatController.editMessageController,
-                                            triggerCharacterAndStyles: const {
-                                              '@': TextStyle(color: Colors.blueAccent),
-                                            },
-                                            onShowOrHideTaggers: (show){
-                                              // log("onShowOrHideTaggers : $show",name: "FlutterTagger");
-                                              widget.chatController.showOrHideTagListView(show,tag);
-                                            },
-                                            onSearch: (query, triggerCharacter) {
-                                              widget.chatController.filterMentionUsers(triggerCharacter,query,tag);
-                                            },
-                                            builder: (context, textFieldKey) {
-                                            return Scrollbar(
-                                              thumbVisibility: true, // Always show the scrollbar, optional
-                                              thickness: 4.0, // Set the thickness of the scrollbar
-                                              radius: const Radius.circular(20),
-                                              child: TextField(
-                                                key: textFieldKey,
-                                                focusNode: textFocusNode,
-                                                onChanged: (text) {
-                                                  widget.chatController.editMessageText(text);
-                                                },
-                                                style: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextStyle,//const TextStyle(fontWeight: FontWeight.w400),
-                                                // style: const TextStyle(fontWeight: FontWeight.w400),
-                                                keyboardType: TextInputType.multiline,
-                                                minLines: 1,
-                                                maxLines: 4,
-                                                controller: widget.chatController.editMessageController,
-                                                // focusNode: controller.focusNode,
-                                              decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle, contentPadding: EdgeInsets.zero),
-                                            ),
-                                                                                  );
-                                          }
+                                            // focusNode: controller.focusNode,
+                                          decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle, contentPadding: EdgeInsets.zero),
                                         ),
+                                                                              ),
                                       ),
                                     ],
                                   )),

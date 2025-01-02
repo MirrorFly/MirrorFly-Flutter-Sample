@@ -470,13 +470,19 @@ class _ChatTaggerState extends State<ChatTagger> {
     final text = controller.text;
     debugPrint("setEditMessageText $text");
     debugPrint("setEditMessageText ${controller.selection.base.offset}");
-    debugPrint("setEditMessageText ${text.length}");
-    late final position = !(controller.selection.base.offset).isNegative ? controller.selection.base.offset - 1 : 0;
+    final currentCursorPosition = getVisualOffset(text, controller.selection.base.offset);//controller.selection.base.offset;
+    late final position = !(currentCursorPosition).isNegative ? currentCursorPosition : 0;
+    final visualOffset = getVisualOffset(text, controller.selection.base.offset);
+
+    debugPrint("_addTag Visual Offset: $visualOffset"); // Corrected visual offset
+    debugPrint("_addTag Raw Offset: ${getRawOffset(text, visualOffset)}"); // Reverse mapping
+    debugPrint("_addTag setEditMessageText ${text.length} ${text.characters.length} $position");
     int index = 0;
     int selectionOffset = 0;
 
-    if (position != text.length - 1 && !position.isNegative) {
-      index = text.substring(0, position+1).lastIndexOf(_currentTriggerChar);
+    if (position != text.characters.length - 1 && !position.isNegative) {
+      final runes = text.runes.toList();
+      index = String.fromCharCodes(runes.sublist(0, position)).lastIndexOf(_currentTriggerChar);
     } else {
       index = text.lastIndexOf(_currentTriggerChar);
     }
@@ -486,13 +492,13 @@ class _ChatTaggerState extends State<ChatTagger> {
       String newText;
 
       if (index - 1 > 0 && text[index - 1] != " ") {
-        newText = text.replaceRange(index, position + 1, " $tag");
+        newText = text.replaceRange(index, position, " $tag");
         index++;
       } else {
-        newText = text.replaceRange(index, position + 1, tag);
+        newText = text.replaceRange(index, position, tag);
       }
 
-      if (text.length - 1 == position) {
+      if (text.characters.length >= position) {
         newText += " ";
         selectionOffset++;
       }
@@ -502,20 +508,19 @@ class _ChatTaggerState extends State<ChatTagger> {
       controller.text = newText;
       _defer = true;
 
-      int offset = index + tag.length;
+      int offset = index + tag.characters.length;
 
       final taggedText = TaggedText(
-        startIndex: offset - tag.length,
+        startIndex: offset - tag.characters.length,
         endIndex: offset,
         text: tag,
       );
       _tags[taggedText] = id;
       _tagTrie.insert(taggedText);
 
-      controller.selection = TextSelection.fromPosition(
-        TextPosition(
-          offset: offset + selectionOffset,
-        ),
+      var newOffset = calculateTrueOffset(newText,offset + selectionOffset);
+      controller.selection = TextSelection.collapsed(
+        offset: newOffset,
       );
 
       _recomputeTags(
@@ -526,6 +531,14 @@ class _ChatTaggerState extends State<ChatTagger> {
 
       _onFormattedTextChanged();
     }
+  }
+  // Function to handle grapheme clusters
+  int calculateTrueOffset(String text, int visualOffset) {
+    final graphemeClusters = text.characters.toList();
+    if (visualOffset > graphemeClusters.length) {
+      return graphemeClusters.length; // Prevent overflow
+    }
+    return graphemeClusters.take(visualOffset).join().length;
   }
 
   void _addTagWhenFieldNotFocused(String id, String tag){
@@ -577,11 +590,11 @@ class _ChatTaggerState extends State<ChatTagger> {
       controller.text = newText;
       _defer = true;
 
-      int offset = (index) + tag.length;
+      int offset = (index) + tag.characters.length;
       LogMessage.d("_addTagWhenFieldNotFocused","offset: $offset");
-      LogMessage.d("_addTagWhenFieldNotFocused","startIndex: ${offset - tag.length}");
+      LogMessage.d("_addTagWhenFieldNotFocused","startIndex: ${offset - tag.characters.length}");
       final taggedText = TaggedText(
-        startIndex: offset - tag.length,
+        startIndex: offset - tag.characters.length,
         endIndex: offset+addExtra,
         text: tag[0] != "@" ? "@$tag" : tag,
       );
@@ -628,7 +641,7 @@ class _ChatTaggerState extends State<ChatTagger> {
         _lastCachedText = text;
         return false;
       }
-      final position = controller.selection.base.offset - 1;
+      final position = getVisualOffset(controller.text, controller.selection.base.offset) - 1;
       if (position >= 0 && triggerCharacters.contains(text[position])) {
         _shouldSearch = true;
         return false;
@@ -658,7 +671,7 @@ class _ChatTaggerState extends State<ChatTagger> {
     String text = controller.text;
     if (!text.contains(_triggerCharactersPattern)) return false;
 
-    final length = controller.selection.base.offset;
+    final length = getVisualOffset(text, controller.selection.base.offset);
 
     if (tag.startIndex > length || tag.endIndex - 1 > length) {
       return false;
@@ -678,7 +691,7 @@ class _ChatTaggerState extends State<ChatTagger> {
 
       temp = text[i] + temp;
       if (triggerCharacters.contains(text[i]) &&
-          temp.length > 1 &&
+          temp.characters.length > 1 &&
           temp == tag.text &&
           i == tag.startIndex) {
         _selectedTag = TaggedText(
@@ -784,7 +797,7 @@ class _ChatTaggerState extends State<ChatTagger> {
     if (!text.contains(_triggerCharactersPattern)) return false;
 
     _lastCachedText = text;
-    final length = controller.selection.base.offset - 1;
+    final length = getVisualOffset(text, controller.selection.base.offset) - 1;
 
     for (int i = length; i >= 0; i--) {
       if ((i == length && triggerCharacters.contains(text[i])) ||
@@ -826,16 +839,28 @@ class _ChatTaggerState extends State<ChatTagger> {
   /// Exits search context and hides overlay when a terminating character
   /// not matched by [_searchRegexPattern] is entered.
   void _tagListener() {
-    final currentCursorPosition = controller.selection.baseOffset;
     final text = controller.text;
+    final currentCursorPosition = getVisualOffset(text, controller.selection.base.offset);//controller.selection.base.offset;
+    final visualOffset = getVisualOffset(text, controller.selection.base.offset);
+
+    debugPrint("Visual Offset: $visualOffset"); // Corrected visual offset
+    debugPrint("Raw Offset: ${getRawOffset(text, visualOffset)}"); // Reverse mapping
     if(currentCursorPosition.isNegative){
       _currentTriggerChar = text.isNotEmpty ? text[text.length-1] : "";
       return;
     }
+    // if (text.isNotEmpty && currentCursorPosition >= 0 && triggerCharacters.contains(text[currentCursorPosition >= 1 ? currentCursorPosition-1 : currentCursorPosition])) {
+    //   // _shouldSearch = true;
+    //   _shouldHideOverlay(false);
+    // }else{
+    //   // _shouldSearch = false;
+    //   _shouldHideOverlay(true);
+    // }
+
 
     if (_shouldSearch &&
         _isBacktrackingToSearch &&
-        ((text.trim().length < _lastCachedText.trim().length &&
+        ((text.trim().characters.length < _lastCachedText.trim().characters.length &&
                 _lastCursorPosition - 1 != currentCursorPosition) ||
             _lastCursorPosition + 1 != currentCursorPosition)) {
       _shouldSearch = false;
@@ -858,6 +883,7 @@ class _ChatTaggerState extends State<ChatTagger> {
         _shouldHideOverlay(false);
         _currentTriggerChar = text[position];
       }
+      _onFormattedTextChanged();
       return;
     }
 
@@ -887,6 +913,7 @@ class _ChatTaggerState extends State<ChatTagger> {
         _extractAndSearch(text, position);
         _recomputeTags(oldCachedText, text, position);
         _lastCachedText = text;
+        _onFormattedTextChanged();
         return;
       }
     }
@@ -901,8 +928,8 @@ class _ChatTaggerState extends State<ChatTagger> {
       return;
     }
 
-    if (_lastCachedText.length > text.length ||
-        currentCursorPosition < text.length) {
+    if (_lastCachedText.characters.length > text.characters.length ||
+        currentCursorPosition < text.characters.length) {
       if (_removeEditedTags()) {
         _shouldHideOverlay(true);
         _onFormattedTextChanged();
@@ -944,10 +971,32 @@ class _ChatTaggerState extends State<ChatTagger> {
     _onFormattedTextChanged();
   }
 
+  // Function to get the correct visual offset
+  int getVisualOffset(String text, int rawOffset) {
+    final graphemeClusters = text.characters.toList();
+    int visualOffset = 0;
+    int cumulativeLength = 0;
+
+    // Iterate through grapheme clusters to calculate visual offset
+    for (final cluster in graphemeClusters) {
+      cumulativeLength += cluster.length;
+      if (cumulativeLength > rawOffset) break;
+      visualOffset++;
+    }
+
+    return visualOffset;
+  }
+
+// Function to get the raw offset from a visual offset
+  int getRawOffset(String text, int visualOffset) {
+    final graphemeClusters = text.characters.toList();
+    return graphemeClusters.take(visualOffset).join().length;
+  }
+
   /// Recomputes affected tag positions when text value is modified.
   void _recomputeTags(String oldCachedText, String currentText, int position) {
-    final currentCursorPosition = controller.selection.baseOffset;
-    if (currentCursorPosition != currentText.length) {
+    // final currentCursorPosition = getVisualOffset(currentText, controller.selection.base.offset);
+    // if (currentCursorPosition != currentText.characters.length) {
       Map<TaggedText, String> newTable = {};
       _tagTrie.clear();
 
@@ -955,8 +1004,8 @@ class _ChatTaggerState extends State<ChatTagger> {
         if (tag.startIndex >= position) {
           final newTag = TaggedText(
             startIndex:
-                tag.startIndex + currentText.length - oldCachedText.length,
-            endIndex: tag.endIndex + currentText.length - oldCachedText.length,
+                tag.startIndex + currentText.characters.length - oldCachedText.characters.length,
+            endIndex: tag.endIndex + currentText.characters.length - oldCachedText.characters.length,
             text: tag.text,
           );
 
@@ -970,7 +1019,7 @@ class _ChatTaggerState extends State<ChatTagger> {
 
       _tags.clear();
       _tags.addAll(newTable);
-    }
+    // }
   }
 
   /// Extracts text appended to the last [_currentTriggerChar] symbol

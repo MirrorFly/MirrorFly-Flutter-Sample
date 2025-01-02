@@ -345,6 +345,7 @@ class Constants {
   static const sessionLockTime = 32;//in Seconds
   static const pinExpiry = 31;//in Days
   static const pinAlert = pinExpiry-5;//in Days
+  static const String mentionEscape = '‡';
 
 
 
