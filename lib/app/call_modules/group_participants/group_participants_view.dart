@@ -60,7 +60,10 @@ GroupParticipantsController createController({String? tag}) => Get.put(GroupPart
             children: [
               Expanded(
                 child: Obx(() {
-                  return ListView.builder(
+                  return controller.usersList.isEmpty ? Center(child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Text(getTranslated("noContactsFound")),
+                  ),) : ListView.builder(
                       itemCount: controller.usersList.length,
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
@@ -80,7 +83,7 @@ GroupParticipantsController createController({String? tag}) => Get.put(GroupPart
                             onCheckBoxChange: (value) {
                               controller.onListItemPressed(item);
                             },
-                            onListItemPressed: () {
+                            onListItemPressed: (profile) {
                               controller.onListItemPressed(item);
                             },);
                         } else {

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -7,7 +8,6 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
-import '../widgets.dart';
 
 class ContactItem extends StatelessWidget {
   const ContactItem({
@@ -19,6 +19,7 @@ class ContactItem extends StatelessWidget {
     required this.checkValue,
     required this.onCheckBoxChange,
     this.onListItemPressed,this.contactItemStyle = const ContactItemStyle(),
+    this.showStatus = true
   }) : super(key: key);
   final ProfileDetails item;
   final Function()? onAvatarClick;
@@ -26,8 +27,9 @@ class ContactItem extends StatelessWidget {
   final bool isCheckBoxVisible;
   final bool checkValue;
   final Function(bool?) onCheckBoxChange;
-  final Function()? onListItemPressed;
+  final Function(ProfileDetails profile)? onListItemPressed;
   final ContactItemStyle contactItemStyle;
+  final bool showStatus;
   @override
   Widget build(BuildContext context) {
     // LogMessage.d("Contact item", item.toJson());
@@ -35,7 +37,7 @@ class ContactItem extends StatelessWidget {
     return Opacity(
       opacity: item.isBlocked.checkNull() ? 0.3 : 1.0,
       child: InkWell(
-        onTap: onListItemPressed,
+        onTap: ()=> onListItemPressed !=null ? onListItemPressed!(item) : null,
         child: Column(
           children: [
             Row(
@@ -72,7 +74,17 @@ class ContactItem extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      spanTxt.isEmpty
+                      CustomTextView(
+                        text: item.getName().checkNull(),
+                        defaultTextStyle: contactItemStyle.titleStyle,
+                        linkColor: Colors.blue,
+                        mentionUserTextColor: Colors.blue,
+                        searchQueryTextColor: contactItemStyle.spanTextColor,
+                        searchQueryString: spanTxt,
+                        maxLines: 1,
+                        mentionedMeBgColor: Colors.transparent,
+                      ),
+                      /*spanTxt.isEmpty
                           ? Text(
                         getName(item),
                         style: contactItemStyle.titleStyle,
@@ -86,15 +98,17 @@ class ContactItem extends StatelessWidget {
                           spanTxt.trim(),
                           contactItemStyle.titleStyle,
                           // const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w700, fontFamily: 'sf_ui', color: textHintColor),
-                          contactItemStyle.spanTextColor),
-                      const SizedBox(height: 5,),
-                      Text(
-                        item.status.toString(),
-                        style: contactItemStyle.descriptionStyle,
-                        // style: Theme.of(context).textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                          contactItemStyle.spanTextColor),*/
+                      if(showStatus)...[
+                        const SizedBox(height: 5,),
+                        Text(
+                          item.status.toString(),
+                          style: contactItemStyle.descriptionStyle,
+                          // style: Theme.of(context).textTheme.titleSmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),

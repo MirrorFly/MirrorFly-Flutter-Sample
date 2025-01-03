@@ -178,7 +178,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                                           checkValue: controller.selectedUsersJIDList.contains(item.jid),
                                           onCheckBoxChange: (value){
                                             controller.onListItemPressed(item);
-                                          },onListItemPressed: (){
+                                          },onListItemPressed: (profile){
                                             controller.onListItemPressed(item);
                                           },contactItemStyle: AppStyleConfig.contactListPageStyle.contactItemStyle,);
                                       } else {

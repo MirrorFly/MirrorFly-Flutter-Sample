@@ -128,7 +128,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: AppUtils.svgIcon(icon:forwardMedia)),
+                                            icon: widget.senderChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia)),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
@@ -179,7 +179,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             onPressed: () {
                                               widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
                                             },
-                                            icon: AppUtils.svgIcon(icon:forwardMedia))
+                                            icon: widget.receiverChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia))
                                       ],
                                     ],
                                   ),

@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
 
@@ -43,6 +44,7 @@ class ChatMessageModel {
     required this.messageTextContent,
     required this.messageType,
     this.metaData = const [],
+    this.mentionedUsersIds,
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -72,6 +74,8 @@ class ChatMessageModel {
   String? messageTextContent;
   String messageType;
   List<MessageMetaData> metaData;
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -103,7 +107,12 @@ class ChatMessageModel {
           isMessageEdited: json["isMessageEdited"].toString().toBool().obs,
           messageTextContent: json["messageTextContent"],
           messageType: json["messageType"],
-          metaData: json["metaData"] == null ? [] : List<MessageMetaData>.from(json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
+          metaData: json["metaData"] == null
+              ? []
+              : List<MessageMetaData>.from(
+              json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
+          mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
+
           replyParentChatMessage: json["replyParentChatMessage"] == null
               ? null
               : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
@@ -141,6 +150,9 @@ class ChatMessageModel {
         "messageTextContent": messageTextContent,
         "messageType": messageType,
         "metaData": metaData,
+        "mentionedUsersIds": mentionedUsersIds == null
+            ? null
+         : List<String>.from(mentionedUsersIds!.map((x) => x)),
         "replyParentChatMessage":
             replyParentChatMessage ?? replyParentChatMessage?.toJson(),
         "senderNickName": senderNickName,
@@ -300,6 +312,7 @@ class ReplyParentChatMessage {
     required this.locationChatMessage,
     required this.contactChatMessage,
     required this.mediaChatMessage,
+    this.mentionedUsersIds,
   });
 
   String chatUserJid;
@@ -316,6 +329,8 @@ class ReplyParentChatMessage {
   LocationChatMessage? locationChatMessage;
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
 
   factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
       ReplyParentChatMessage(
@@ -339,6 +354,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -356,5 +372,8 @@ class ReplyParentChatMessage {
     "locationChatMessage": locationChatMessage?.toJson(),
     "contactChatMessage": contactChatMessage?.toJson(),
     "mediaChatMessage": mediaChatMessage?.toJson(),
+    "mentionedUsersIds": mentionedUsersIds == null
+        ? null
+        : List<String>.from(mentionedUsersIds!.map((x) => x)),
   };
 }

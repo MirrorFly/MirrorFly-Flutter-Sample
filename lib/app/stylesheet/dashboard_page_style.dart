@@ -9,6 +9,7 @@ class DashBoardPageStyle {
           iconTheme: IconThemeData(color: Color(0xff181818)),
           actionsIconTheme: IconThemeData(color: Color(0xff181818)),
       ),
+      this.recentChatAppBarStyle = const RecentChatAppBarStyle(),
       this.tabBarTheme = const TabBarTheme(
           indicatorColor: AppColor.primaryColor,
           labelColor: AppColor.primaryColor,
@@ -40,6 +41,7 @@ class DashBoardPageStyle {
       });
   final AppBarTheme appBarTheme;
   final TabBarTheme tabBarTheme;
+  final RecentChatAppBarStyle recentChatAppBarStyle;
   final EditTextFieldStyle searchTextFieldStyle;
   final TabItemStyle tabItemStyle;
   final ArchivedTileStyle archivedTileStyle;

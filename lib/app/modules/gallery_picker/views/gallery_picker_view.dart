@@ -76,6 +76,7 @@ GalleryPickerController createController({String? tag}) => Get.put(GalleryPicker
                                     "userName": controller.userName,
                                     'profile': controller.profile,
                                     'caption': controller.textMessage,
+                                    'mentionedUsersIds': controller.mentionedUsersIds,
                                     'from': 'gallery_pick',
                                     'userJid': controller.userJid
                                   })?.then((value) {
