@@ -592,7 +592,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: true/*starredChatMessageId == null*/,
+      exclude: Platform.isAndroid ? starredChatMessageId != null ? false : true : true/*starredChatMessageId == null*/,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
@@ -627,6 +627,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
     // showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages(flyCallback: (FlyResponse response) {
+      // LogMessage.d("loadPreviousMessages", response);
       if (response.isSuccess && response.hasData) {
         var chatMessageModel = List<ChatMessageModel>.empty(growable: true).obs;
         chatMessageModel.addAll(chatMessageModelFromJson(response.data));
@@ -1586,6 +1587,48 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     }
   }
 
+  int _currentIndex = 0;
+  bool topReached =false;
+  bool bottomReached =false;
+  void scrollTop(){
+    LogMessage.d("scrollTop", "filteredPosition : $filteredPosition _currentIndex : $_currentIndex");
+    if (filteredPosition.length > _currentIndex && !topReached) {
+      bottomReached=false;
+      _scrollToPosition(filteredPosition[_currentIndex]);
+      if(_currentIndex<filteredPosition.length-1) {
+        _currentIndex++;
+      }else{
+        topReached=true;
+      }
+    } else {
+      topReached=true;
+      toToast(getTranslated("noResultsFound"));
+    }
+  }
+
+  void scrollBottom(){
+    LogMessage.d("scrollBottom", "filteredPosition : $filteredPosition _currentIndex : $_currentIndex");
+    if(!_currentIndex.isNegative && _currentIndex!=0) {
+      _currentIndex--;
+    }
+    if (filteredPosition.length > _currentIndex && !_currentIndex.isNegative && !bottomReached) {
+      topReached=false;
+      _scrollToPosition(filteredPosition[_currentIndex]);
+      /*if(_currentIndex>1) {
+        _currentIndex--;
+      }else{
+        bottomReached=true;
+      }*/
+      if (_currentIndex < 1){
+        bottomReached=true;
+      }
+    } else {
+      bottomReached=true;
+      toToast(getTranslated("noResultsFound"));
+      _currentIndex=0;
+    }
+  }
+
   var color = Colors.transparent.obs;
 
   _scrollToPosition(int position) {
@@ -1667,20 +1710,36 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       var permission = await AppPermission.getStoragePermission();
       if (permission) {
         Mirrorfly.exportChatConversationToEmail(
-            jid: profile.jid.checkNull(),
-            flyCallBack: (FlyResponse response) async {
-              debugPrint("exportChatConversationToEmail $response");
-              if (response.isSuccess && response.hasData) {
-                var data = exportModelFromJson(response.data);
-                if (data.mediaAttachmentsUrl != null) {
-                  if (data.mediaAttachmentsUrl!.isNotEmpty) {
-                    var xfiles = <XFile>[];
-                    data.mediaAttachmentsUrl?.forEach((element) => xfiles.add(XFile(element)));
-                    await Share.shareXFiles(xfiles);
-                  }
+          jid: profile.jid.checkNull(),
+          flyCallBack: (FlyResponse response) async {
+            debugPrint("exportChatConversationToEmail $response");
+
+            if (response.isSuccess && response.hasData) {
+              var data = exportModelFromJson(response.data);
+
+              // Check if media attachment URLs exist and are not empty
+              if (data.mediaAttachmentsUrl?.isNotEmpty ?? false) {
+                try {
+                  // Convert media URLs to XFile objects
+                  var xFiles = data.mediaAttachmentsUrl!
+                      .map((element) => XFile(element))
+                      .toList();
+
+                  // Share the files
+                  await Share.shareXFiles(xFiles);
+                  debugPrint("Files shared successfully.");
+                } catch (e) {
+                  debugPrint("Error while sharing files: $e");
                 }
+              } else {
+                debugPrint("No media attachments available to share.");
               }
-            });
+            } else {
+              debugPrint("Failed to export chat conversation: ${response.message}");
+            }
+          },
+        );
+
       }
     } else {
       toToast(getTranslated("noConversation"));
@@ -1866,6 +1925,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   gotoSearch() {
     Future.delayed(const Duration(milliseconds: 100), () {
+      _currentIndex = 0;
+      topReached = false;
+      bottomReached = false;
+      lastInputValue = "";
       NavUtils.toNamed(Routes.chatSearch, arguments: arguments);
     });
   }
@@ -2080,7 +2143,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
             str.sort((a, b) {
               return a.toLowerCase().compareTo(b.toLowerCase());
             });
-            groupParticipantsName(str.join(","));
+            groupParticipantsName(str.join(", "));
           }
         });
   }

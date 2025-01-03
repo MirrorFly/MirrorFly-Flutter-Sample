@@ -78,7 +78,7 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+      licenseKey: 'Eq4kdTyt1YVMjXSey3KG9D2WvfR9Hd', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
       iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
       chatHistoryEnable: true,
       enableDebugLog: true,
@@ -161,7 +161,7 @@ class _MyAppState extends State<MyApp> {
           case Routes.pin:
             return [MaterialPageRoute(
               settings: const RouteSettings(
-                name: Routes.pin,
+                name: Routes.pin, arguments: {"showBack": "false"}
               ),
               builder: (context) => const PinView(),
             )];

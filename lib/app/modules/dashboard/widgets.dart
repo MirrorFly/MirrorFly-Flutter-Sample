@@ -126,7 +126,7 @@ class RecentChatItem extends StatelessWidget {
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == MessageType.isText && item.lastMessageContent.checkNull().isNotEmpty ||
-                              item.lastMessageType != MessageType.isText) &&
+                              item.lastMessageType != MessageType.isText && item.lastMessageType != "MEET") &&
                           typingUserid.isEmpty
                       ? buildMessageIndicator()
                       : const Offstage()
@@ -353,6 +353,11 @@ class RecentChatItem extends StatelessWidget {
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
           // LogMessage.d("getMessageOfId future", "${chat.toJson()}");
+            if(chat.messageType =="MEET"){
+              return const SizedBox(
+                height: 15,
+              );
+            }
             return Row(
               children: [
                 checkSenderShouldShow(chat)

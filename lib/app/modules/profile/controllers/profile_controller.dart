@@ -310,7 +310,7 @@ class ProfileController extends GetxController {
                   });
                 } else {
                   var userIdentifier = SessionManagement.getUserIdentifier();
-                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(value));
+                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(!value));
                   // mobileEditAccess(true);
                 }
 

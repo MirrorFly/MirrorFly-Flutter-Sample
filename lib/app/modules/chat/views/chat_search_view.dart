@@ -48,29 +48,27 @@ class ChatSearchView extends StatelessWidget {
                 hintStyle: AppStyleConfig.chatPageStyle.searchTextFieldStyle.editTextHintStyle
               ),
               onSubmitted: (str) {
-                if (controller.filteredPosition.isNotEmpty) {
-                  controller.scrollUp();
-                } else {
-                  toToast(getTranslated("noResultsFound"));
-                }
+                controller.scrollTop();
               },
             ),
             actions: [
               IconButton(
                   onPressed: () {
-                    controller.scrollUp();
+                    controller.scrollTop();
                   },
                   icon: const Icon(Icons.keyboard_arrow_up)),
               IconButton(
                   onPressed: () {
-                    controller.scrollDown();
+                    controller.scrollBottom();
                   },
                   icon: const Icon(Icons.keyboard_arrow_down)),
             ],
           ),
-          body: Obx(() => controller.chatList.isEmpty
-              ? const Offstage()
-              : chatListView(controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle)),
+          body: SafeArea(
+            child: Obx(() => controller.chatList.isEmpty
+                ? const Offstage()
+                : chatListView(controller.chatList,senderChatStyle: AppStyleConfig.chatPageStyle.senderChatBubbleStyle,receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle)),
+          ),
         ),
       ),
     );

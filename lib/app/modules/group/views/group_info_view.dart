@@ -39,7 +39,15 @@ GroupInfoController createController({String? tag}) => Get.put(GroupInfoControll
                   pinned: true,
                   floating: false,
                   leading: Obx(()=>IconButton(
-                    icon: Icon(Icons.arrow_back,color: controller.isSliverAppBarExpanded
+                    icon: Icon(Icons.arrow_back,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.9), // Shadow color
+                            offset: const Offset(2, 2), // Shadow position
+                            blurRadius: 5, // Shadow blur
+                          ),
+                        ],
+                        color: controller.isSliverAppBarExpanded
                         ? AppStyleConfig.groupChatInfoPageStyle.silverAppBarIconColor
                         : AppBarTheme.of(context).actionsIconTheme?.color),
                     onPressed: () {

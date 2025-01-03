@@ -20,7 +20,11 @@ class DialogUtils {
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
-      return builder;
+      return Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(NavUtils.currentContext).viewInsets.bottom),
+        child: builder,
+      );
     },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 
@@ -47,7 +51,7 @@ class DialogUtils {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(width: 16),
-                  Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,),
+                  Expanded(child: Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,maxLines: 2,)),
                 ],
               ),
             ),
