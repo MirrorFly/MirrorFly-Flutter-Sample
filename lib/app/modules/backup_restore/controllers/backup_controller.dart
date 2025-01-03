@@ -156,8 +156,6 @@ class BackupController extends GetxController {
     if (await AppPermission.getStoragePermission()) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        type: FileType.custom,
-        allowedExtensions: ['txt'],
       );
       if (result != null) {
         LogMessage.d("Backup Controller",

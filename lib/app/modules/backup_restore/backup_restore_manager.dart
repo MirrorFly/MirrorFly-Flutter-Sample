@@ -505,9 +505,9 @@ class BackupRestoreManager {
     required Function(File) processFile,
     required Function(double) onProgress,
   }) async {
-    final file = File(savePath);
+    final file = File("savePath");
 
-    try {
+    /*try {
       // Request the file from Google Drive
       final response = await driveApi.files.get(
         fileId,
@@ -557,7 +557,7 @@ class BackupRestoreManager {
       }
     } catch (e) {
       print("Error downloading file: $e");
-    }
+    }*/
   }
 
   void cancelDownload() {
