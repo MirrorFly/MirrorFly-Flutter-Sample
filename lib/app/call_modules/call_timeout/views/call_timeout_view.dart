@@ -40,6 +40,15 @@ CallTimeoutController createController({String? tag}) => Get.put(CallTimeoutCont
                         ),
                       const SizedBox(height: 16,),
                       Obx(() {
+                        return controller.groupId.isNotEmpty ? Padding(
+                            padding: const EdgeInsets.only(left: 30.0,right: 30.0,bottom: 16.0),
+                            child: FutureBuilder(future:getProfileDetails(controller.groupId.value),builder: (ctx,snap) {
+                              return snap.hasData && snap.data!=null ? Text(
+                                snap.data!.getName(),
+                                style: AppStyleConfig.callAgainPageStyle.callerNameTextStyle,
+                                overflow: TextOverflow.ellipsis,) : const Offstage();
+                            })): const Offstage();}),
+                      Obx(() {
                         return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 30.0),
                             child: FutureBuilder(future: CallUtils.getCallersName(controller.users,controller.users.length==1), builder: (ctx, snap) {
