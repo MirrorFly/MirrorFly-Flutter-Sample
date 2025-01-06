@@ -752,6 +752,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       clearAllChatSelection();
       toToast(getTranslated("chatsUnPinned"));
     }
+    reArrangeRecentChats();
+  }
+
+  void reArrangeRecentChats(){
+    try {
+      recentChats.sort((a, b) =>
+          b.lastMessageTime!.compareTo(a.lastMessageTime!));
+    }catch(e){
+      debugPrint(e.toString());
+    }
   }
 
   muteChats() {
