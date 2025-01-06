@@ -6,6 +6,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../common/app_localizations.dart';
+import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -430,6 +431,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
                       }
                       isSelected(false);
                       selectedChatList.clear();
+                      updateRecentChatListHistory();
                     });
               },
               child: Text(getTranslated("deleteForMe").toUpperCase(), )),
@@ -722,5 +724,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   }
 
+  void updateRecentChatListHistory(){
+    if (Get.isRegistered<MainController>()) {
+      Get.find<MainController>().updateRecentChatListHistory();
+    }
+  }
 
 }
