@@ -564,9 +564,9 @@ class BackupRestoreManager {
     if (_downloadSubscription != null) {
       _downloadSubscription?.cancel();
       _downloadSubscription = null;
-      print("Download canceled.");
+      debugPrint("Download canceled.");
     } else {
-      print("No active download to cancel.");
+      debugPrint("No active download to cancel.");
     }
   }
 }
