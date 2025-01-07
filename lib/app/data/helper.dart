@@ -117,8 +117,8 @@ String getChatTime(BuildContext context, int? epochTime) {
 
 Future<void> launchInBrowser(String url) async {
   if (await AppUtils.isNetConnected()) {
-    var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
-    final Uri toLaunch = Uri(scheme: 'https', host: webUrl);
+    //var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
+    final Uri toLaunch = Uri.parse(url);//Uri(scheme: 'https', host: webUrl);
     if (!await launchUrl(
       toLaunch,
       mode: LaunchMode.externalApplication,
