@@ -154,4 +154,33 @@ class DateTimeUtils {
         : time;
   }
 
+  static String getFormattedCallDurationTime(int timeInMilliseconds) {
+    if (timeInMilliseconds < 1000) {
+      return ""; // Equivalent to EMPTY_TIME
+    } else {
+      // If call duration is greater than or equal to one hour
+      if (timeInMilliseconds >= 3600 * 1000) {
+        return _formatTime(
+          hours: timeInMilliseconds ~/ (3600 * 1000),
+          minutes: (timeInMilliseconds ~/ (60 * 1000)) % 60,
+          seconds: (timeInMilliseconds ~/ 1000) % 60,
+        );
+      } else {
+        return _formatTime(
+          minutes: (timeInMilliseconds ~/ (60 * 1000)) % 60,
+          seconds: (timeInMilliseconds ~/ 1000) % 60,
+        );
+      }
+    }
+  }
+
+  static String _formatTime({int hours = 0, int minutes = 0, int seconds = 0}) {
+    if (hours > 0) {
+      return "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+    } else {
+      return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+    }
+  }
+
+
 }
