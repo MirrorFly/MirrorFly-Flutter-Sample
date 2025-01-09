@@ -16,10 +16,10 @@ The platform is fully customizable, enabling you to personalize it to your custo
 
 # ⚒️ Key Product Offerings
 
-MirrorFly’s Flutter Sample App & MirrorFly Flutter Chat Plugin allows you to add the following capabilities to your platform.
+MirrorFly’s Flutter Sample App & MirrorFly Flutter Chat API& SDK allows you to add the following capabilities to your platform.
 
 
- 💬 [In-app Messaging](https://www.mirrorfly.com/chat-api-solution.php) - real-time chat features for private or group interactions
+ 💬 [In-app Messaging](https://www.mirrorfly.com/chat-api-solution.php) - Real-time chat features for private or group interactions
 
  🎯 [HD Video Calling](https://www.mirrorfly.com/video-call-solution.php)- High-definition video calling for face to face conversations 
 
