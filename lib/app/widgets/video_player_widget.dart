@@ -155,27 +155,30 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           ],
         ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Text(
-              formatDuration(position),
-              style: const TextStyle(fontSize: 16, color: buttonBgColor),
-            ),
-            Expanded(
-              child: Slider(
-                min: 0.0,
-                max: _controller.value.duration.inSeconds.toDouble(),
-                value: _sliderValue,
-                onChanged: _onSliderChanged,
-                thumbColor: buttonBgColor,
-                activeColor: buttonBgColor,
+        Padding(
+          padding: const EdgeInsets.only(left: 10,right: 10),
+          child: Row(
+            children: [
+              Text(
+                formatDuration(position),
+                style: const TextStyle(fontSize: 16, color: buttonBgColor),
               ),
-            ),
-            Text(
-              formatDuration(duration),
-              style: const TextStyle(fontSize: 16, color: buttonBgColor),
-            ),
-          ],
+              Expanded(
+                child: Slider(
+                  min: 0.0,
+                  max: _controller.value.duration.inSeconds.toDouble(),
+                  value: _sliderValue,
+                  onChanged: _onSliderChanged,
+                  thumbColor: buttonBgColor,
+                  activeColor: buttonBgColor,
+                ),
+              ),
+              Text(
+                formatDuration(duration),
+                style: const TextStyle(fontSize: 16, color: buttonBgColor),
+              ),
+            ],
+          ),
         ),
       ],
     );

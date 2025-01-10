@@ -140,7 +140,7 @@ class OutgoingCallController extends GetxController
                 debugPrint("audio item name ${audioItem.name}");
                 return Obx(() {
                   return ListTile(
-                    contentPadding: const EdgeInsets.only(left: 10),
+                    contentPadding: const EdgeInsets.only(left: 10,right: 10),
                     title: Text(audioItem.name ?? "",
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.normal)),
