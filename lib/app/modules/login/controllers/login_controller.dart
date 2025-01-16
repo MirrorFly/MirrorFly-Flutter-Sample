@@ -314,6 +314,7 @@ class LoginController extends GetxController {
   }
 
   registerAccount() async {
+    LogMessage.d("Mirrorfly.isInitializedSDK", Mirrorfly.isInitializedSDK);
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
         toToast(getTranslated("mobileNumberTooShort"));
@@ -327,56 +328,80 @@ class LoginController extends GetxController {
         return;
       }
       // if(mobileNumber.text.length > 9) {
+      if(!Mirrorfly.isInitializedSDK){
+        initializeSDK();
+        return;
+      }
       showLoading();
-      var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
-      Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
-          fcmToken: SessionManagement.getToken().checkNull(),
-          isForceRegister: isForceRegister,
-          // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
-          flyCallback: (FlyResponse response) {
-              if (response.isSuccess) {
-                if (response.hasData) {
-                  var userData = registerModelFromJson(response.data); //message
-                  SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
-                  SessionManagement.setUser(userData.data!);
-                  SessionManagement.setUserIdentifier(userIdentifier);
-                  SessionManagement.setAdminBlocked(false);
-                  SessionManagement.setAuthToken(userData.data!.token.checkNull());
-                  if (Get.isRegistered<MainController>()) {
-                    Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
-                  }
-                  // Mirrorfly.setNotificationSound(true);
-                  // SessionManagement.setNotificationSound(true);
-                  // userData.data.
-                  enableArchive();
-                  Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
-
-                  ///if its not set then error comes in contact sync delete from phonebook.
-                  SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-                  setUserJID(userData.data!.username!);
-                }
-              } else {
-                debugPrint("issue===> ${response.errorMessage.toString()}");
-                hideLoading();
-                if (response.exception?.code == "403") {
-                  debugPrint("issue 403 ===> ${response.errorMessage }");
-                  NavUtils.offAllNamed(Routes.adminBlocked);
-                } else if (response.exception?.code  == "405") {
-                  debugPrint("issue 405 ===> ${response.errorMessage }");
-                  sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
-                } else {
-                  debugPrint("issue else code ===> ${response.exception?.code }");
-                  debugPrint("issue else ===> ${response.errorMessage }");
-                  toToast(getErrorDetails(response));
-                }
-              }
-            });
+      login();
     } else {
       toToast(getTranslated("noInternetConnection"));
     }
     // } else {
     //   toToast(getTranslated("noInternetConnection"));
     // }
+  }
+  void initializeSDK(){
+    showLoading();
+    Mirrorfly.initializeSDK(
+        licenseKey: Constants.licenseKey,
+        iOSContainerID: Constants.iOSContainerID,
+        chatHistoryEnable: Constants.chatHistoryEnable,
+        enableDebugLog: Constants.enableDebugLog,
+        flyCallback: (response) async {
+      if (response.isSuccess) {
+          login();
+      }else{
+        hideLoading();
+        toToast(response.errorMessage.toString());
+      }
+      });
+  }
+
+  void login(){
+    var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
+    Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
+        fcmToken: SessionManagement.getToken().checkNull(),
+        isForceRegister: isForceRegister,
+        // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
+        flyCallback: (FlyResponse response) {
+          if (response.isSuccess) {
+            if (response.hasData) {
+              var userData = registerModelFromJson(response.data); //message
+              SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
+              SessionManagement.setUser(userData.data!);
+              SessionManagement.setUserIdentifier(userIdentifier);
+              SessionManagement.setAdminBlocked(false);
+              SessionManagement.setAuthToken(userData.data!.token.checkNull());
+              if (Get.isRegistered<MainController>()) {
+                Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
+              }
+              // Mirrorfly.setNotificationSound(true);
+              // SessionManagement.setNotificationSound(true);
+              // userData.data.
+              enableArchive();
+              Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
+
+              ///if its not set then error comes in contact sync delete from phonebook.
+              SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
+              setUserJID(userData.data!.username!);
+            }
+          } else {
+            debugPrint("issue===> ${response.errorMessage.toString()}");
+            hideLoading();
+            if (response.exception?.code == "403") {
+              debugPrint("issue 403 ===> ${response.errorMessage }");
+              NavUtils.offAllNamed(Routes.adminBlocked);
+            } else if (response.exception?.code  == "405") {
+              debugPrint("issue 405 ===> ${response.errorMessage }");
+              sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
+            } else {
+              debugPrint("issue else code ===> ${response.exception?.code }");
+              debugPrint("issue else ===> ${response.errorMessage }");
+              toToast(getErrorDetails(response));
+            }
+          }
+        });
   }
 
   void enableArchive() async {
