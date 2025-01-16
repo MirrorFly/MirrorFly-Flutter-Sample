@@ -314,7 +314,7 @@ class LoginController extends GetxController {
   }
 
   registerAccount() async {
-    LogMessage.d("Mirrorfly.isInitializedSDK", Mirrorfly.isInitializedSDK);
+    LogMessage.d("Mirrorfly.isSDKInitialized", Mirrorfly.isSDKInitialized);
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
         toToast(getTranslated("mobileNumberTooShort"));
@@ -328,7 +328,7 @@ class LoginController extends GetxController {
         return;
       }
       // if(mobileNumber.text.length > 9) {
-      if(!Mirrorfly.isInitializedSDK){
+      if(!Mirrorfly.isSDKInitialized){
         initializeSDK();
         return;
       }
