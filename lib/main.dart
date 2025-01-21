@@ -42,9 +42,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   SessionManagement.onInit();
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   if (Platform.isAndroid) {
-    Mirrorfly.onMissedCall.listen((event) {
-      LogMessage.d("onMissedCall Background", event);
-    });
     PushNotifications.onMessage(message);
   }
 }
@@ -78,10 +75,10 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
-      chatHistoryEnable: true,
-      enableDebugLog: true,
+      licenseKey: Constants.licenseKey,
+      iOSContainerID: Constants.iOSContainerID,
+      chatHistoryEnable: Constants.chatHistoryEnable,
+      enableDebugLog: Constants.enableDebugLog,
       flyCallback: (response) async {
         if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
