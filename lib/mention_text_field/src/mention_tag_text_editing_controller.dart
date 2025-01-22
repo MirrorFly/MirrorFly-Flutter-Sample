@@ -97,6 +97,7 @@ class MentionTagTextEditingController extends TextEditingController {
 
   setCustomText(String content,List<ProfileDetails> profileDetails){
     debugPrint("setText : $content");
+    super.text = "";
     _mentions.clear();
     var reformedText = content;
     for(var profile in profileDetails){
