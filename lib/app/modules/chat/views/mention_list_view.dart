@@ -83,7 +83,7 @@ class MentionController extends GetxController {
           flyCallBack: (FlyResponse response) {
             if (response.isSuccess && response.hasData) {
               LogMessage.d("getGroupMembersList-->", response.toString());
-              groupMembers(memberFromJson(response.data));
+              sortGroupMembers(memberFromJson(response.data));
             }
           });
     } else {
