@@ -147,8 +147,8 @@ class BackupView extends NavViewStateful<BackupController> {
                   )
                       : const Offstage();
                 }),
-                const AppDivider(color: Color(0xffEBEBEB)),
                 if (controller.isAndroid) ...[
+                  const AppDivider(color: Color(0xffEBEBEB)),
                   Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Text(getTranslated("googleDriveSettings"),
@@ -178,7 +178,8 @@ class BackupView extends NavViewStateful<BackupController> {
                 ],
                 const AppDivider(color: Color(0xffEBEBEB)),
                 Obx(() {
-                  return ListTile(
+                  return controller.isAutoBackupEnabled.value
+                      ? ListTile(
                     title: Text(getTranslated("backUpOver"),
                         style: const TextStyle(
                             color: Colors.black,
@@ -190,7 +191,7 @@ class BackupView extends NavViewStateful<BackupController> {
                             color: Colors.black, fontSize: 12)),
                     trailing: const Icon(Icons.keyboard_arrow_right_rounded),
                     onTap: () => controller.showBackupNetworkFrequency(),
-                  );
+                  ) : const Offstage();
                 }),
                 const AppDivider(color: Color(0xffEBEBEB)),
                 Padding(

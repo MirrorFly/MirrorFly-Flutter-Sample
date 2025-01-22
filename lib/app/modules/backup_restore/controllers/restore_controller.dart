@@ -51,9 +51,13 @@ class RestoreController extends GetxController
 
   final backupUtils = BackupUtils();
 
+  var fetchingBackupDetails = false.obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    fetchingBackupDetails(true);
 
     LogMessage.d(
         "Restore Controller", " => onInit Method called");
@@ -78,30 +82,7 @@ class RestoreController extends GetxController
       mobileNumber = "";
     }
 
-    await BackupRestoreManager().initialize(
-        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter").then((isSuccess) {
-      if (isSuccess) {
-        BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
-          LogMessage.d(
-              "Restore Controller",
-              "Drive Access Status => $isDriveAccessible");
-          driveAccessible(isDriveAccessible);
-          GoogleSignInAccount? googleSignInAccount = BackupRestoreManager()
-              .getGoogleAccountSignedIn;
-          if (Platform.isIOS ||
-              (Platform.isAndroid && googleSignInAccount != null)) {
-            isAccountSelected(true);
-            backUpEmailId(googleSignInAccount?.email ?? '');
-          } else {
-            isAccountSelected(false);
-          }
-          checkForBackUpFiles();
-        });
-      }else {
-        LogMessage.d(
-            "Restore Controller", "Sign In to Drive/Console to access the drive");
-      }
-    });
+    initialiseBackUpProcess();
 
     animationController = AnimationController(
       vsync: this,
@@ -163,12 +144,14 @@ class RestoreController extends GetxController
   }
 
   Future<void> checkForBackUpFiles() async {
+    fetchingBackupDetails(true);
     await BackupRestoreManager().checkBackUpFiles().then((backupFileDetails) {
       LogMessage.d(
           "Restore Controller", "Backup file Available => ${backupFileDetails?.toJson()}");
       if(backupFileDetails != null) {
         isBackupFound(backupFileDetails.fileId?.isNotEmpty);
         backupFile(backupFileDetails);
+        fetchingBackupDetails(false);
       }
     });
   }
@@ -178,7 +161,18 @@ class RestoreController extends GetxController
     if(animationController != null) {
       animationController?.forward();
     }
-    // BackupRestoreManager().downloadAndProcessFile(fileId: fileId, driveApi: driveApi, savePath: savePath, processFile: processFile, onProgress: onProgress)
+
+    if (Platform.isAndroid) {
+      // BackupRestoreManager().downloadAndProcessFile(fileId: fileId, driveApi: driveApi, savePath: savePath, processFile: processFile, onProgress: onProgress)
+    } else {
+      if (backupFile.value.iCloudRelativePath != null) {
+        BackupRestoreManager().startIcloudFileDownload(
+            relativePath: backupFile.value.iCloudRelativePath ?? '');
+      }else{
+        LogMessage.d(
+            "Restore Controller", "Backup file Download => Backup file relative path is not found ==> ${backupFile.toJson()}");
+      }
+    }
   }
 
   void showIcloudSetupInstruction() {
@@ -198,11 +192,12 @@ class RestoreController extends GetxController
   }
 
   Future<void> pickAccount() async {
+
     var accounts = await BackupRestoreManager().selectGoogleAccount();
     LogMessage.d(
         "Restore Controller", "pick Account => $accounts");
     if (accounts != null) {
-      backUpEmailId(accounts.email);
+      /*backUpEmailId(accounts.email);
       isAccountSelected(true);
       if (BackupRestoreManager().isDriveApiInitialized) {
         checkForBackUpFiles();
@@ -210,7 +205,8 @@ class RestoreController extends GetxController
         BackupRestoreManager().assignAccountAuth(accounts).then((isSuccess) {
           checkForBackUpFiles();
         });
-      }
+      }*/
+      initialiseBackUpProcess();
     }else{
       LogMessage.d(
           "Restore Controller", "Account selection cancelled by user");
@@ -224,6 +220,39 @@ class RestoreController extends GetxController
 
     backUpEmailId(newAccount?.email ?? BackupRestoreManager().getGoogleAccountSignedIn?.email);
 
+  }
+
+  void checkCloudAccess() {
+    BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
+      LogMessage.d(
+          "Restore Controller",
+          "Drive Access Status => $isDriveAccessible");
+      driveAccessible(isDriveAccessible);
+
+      if (Platform.isAndroid) {
+        GoogleSignInAccount? googleSignInAccount = BackupRestoreManager()
+            .getGoogleAccountSignedIn;
+        if (googleSignInAccount != null) {
+          isAccountSelected(true);
+          backUpEmailId(googleSignInAccount.email);
+        } else {
+          isAccountSelected(false);
+        }
+      }
+      checkForBackUpFiles();
+    });
+  }
+
+  void initialiseBackUpProcess() {
+    BackupRestoreManager().initialize(
+        iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter").then((isSuccess) {
+      if (isSuccess) {
+        checkCloudAccess();
+      }else {
+        LogMessage.d(
+            "Restore Controller", "Sign In to Drive to access the drive");
+      }
+    });
   }
 
 }

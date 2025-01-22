@@ -78,17 +78,22 @@ class BackupController extends GetxController {
     selectedBackupFrequency(backUpFrequency);
     isAutoBackupEnabled.value = backUpFrequency.isNotEmpty;
 
-    var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty
-        ? (BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull()
-        : SessionManagement.getBackUpAccount();
+    /// Restoring the mail id in Android Backup Screen
+    if (Platform.isAndroid) {
+      var previousBackupEmail = SessionManagement
+          .getBackUpAccount()
+          .isEmpty
+          ? (BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull()
+          : SessionManagement.getBackUpAccount();
 
-    if (previousBackupEmail.isNotEmpty) {
-      // isAccountSelected(true);
-      backUpEmailId(previousBackupEmail);
-      LogMessage.d(
-          "Backup Controller", "Logged In User => $previousBackupEmail");
-    } else {
-      LogMessage.d("Backup Controller", "Gmail Not Configured");
+      if (previousBackupEmail.isNotEmpty) {
+        // isAccountSelected(true);
+        backUpEmailId(previousBackupEmail);
+        LogMessage.d(
+            "Backup Controller", "Logged In User => $previousBackupEmail");
+      } else {
+        LogMessage.d("Backup Controller", "Gmail Not Configured");
+      }
     }
   }
 
