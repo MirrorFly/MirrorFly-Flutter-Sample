@@ -18,6 +18,7 @@ import '../../../data/utils.dart';
 import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
+import '../../chat/widgets/custom_text_view.dart';
 
 class StarredMessagesController extends FullLifeCycleController with FullLifeCycleMixin {
   var starredChatList = List<ChatMessageModel>.empty(growable: true).obs;
@@ -647,9 +648,12 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   bool isVideoCaptionContainsFilterKey(
       ChatMessageModel message, String filterKey) {
+    var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ? (CustomTextViewManager.getCustomText(
+        message.mediaChatMessage!.mediaCaptionText.checkNull() +
+            message.mentionedUsersIds!.join(",") +
+            (const Key("message_view")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mVideo == message.messageType &&
-        message.mediaChatMessage!.mediaCaptionText.checkNull().isNotEmpty &&
-        message.mediaChatMessage!.mediaCaptionText
+        content
             .checkNull()
             .toLowerCase()
             .contains(filterKey.toLowerCase());
@@ -657,9 +661,10 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   bool isImageCaptionContainsFilterKey(
       ChatMessageModel message, String filterKey) {
+    var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ?
+    (CustomTextViewManager.getCustomText(message.mediaChatMessage!.mediaCaptionText.checkNull()+message.mentionedUsersIds!.join(",")+(const Key("message_view")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mImage == message.messageType &&
-        message.mediaChatMessage!.mediaCaptionText.checkNull().isNotEmpty &&
-        message.mediaChatMessage!.mediaCaptionText
+        content
             .checkNull()
             .toLowerCase()
             .contains(filterKey.toLowerCase());
@@ -667,9 +672,9 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   bool isTextMessageContainsFilterKey(
       ChatMessageModel message, String filterKey) {
+    var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ? (CustomTextViewManager.getCustomText(message.messageTextContent!+message.mentionedUsersIds!.join(",")+(const Key("message_view")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mText == message.messageType &&
-        message.messageTextContent
-            .checkNull()
+        content.checkNull()
             .toLowerCase()
             .contains(filterKey.toLowerCase());
   }
