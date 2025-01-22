@@ -111,7 +111,7 @@ class MentionController extends GetxController {
         showMentionUserList(true);
       } else {
         var filter = groupMembersWithoutMe
-            .where((item) => item.getName().toLowerCase().contains(query))
+            .where((item) => item.getName().toLowerCase().contains(query.toLowerCase()))
             .toList();
         debugPrint("filter ${filter.length}");
         filteredItems(filter);
