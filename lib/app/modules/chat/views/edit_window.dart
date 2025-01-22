@@ -201,6 +201,8 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                               if (query != null) {
                                                 final searchInput = query.substring(1);
                                                 widget.chatController.filterMentionUsers('@',searchInput,tag);
+                                              }else{
+                                                widget.chatController.filterMentionUsers('@',null,tag);
                                               }
                                             },
                                             onChanged: (text) {

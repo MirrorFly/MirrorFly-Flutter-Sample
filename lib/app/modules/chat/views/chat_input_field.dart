@@ -258,6 +258,8 @@ class ChatInputField extends StatelessWidget {
                     if (query != null) {
                       final searchInput = query.substring(1);
                       controller.filterMentionUsers('@', searchInput, tag);
+                    }else{
+                      controller.filterMentionUsers('@', null, tag);
                     }
                   },
                   onChanged: onChanged,

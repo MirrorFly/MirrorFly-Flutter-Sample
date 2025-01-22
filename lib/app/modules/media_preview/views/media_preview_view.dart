@@ -289,6 +289,8 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                 if (query != null) {
                                                   final searchInput = query.substring(1);
                                                   controller.filterMentionUsers('@', searchInput, Routes.galleryPicker);
+                                                }else{
+                                                  controller.filterMentionUsers('@', null, Routes.galleryPicker);
                                                 }
                                               },
                                               onChanged: (value){
