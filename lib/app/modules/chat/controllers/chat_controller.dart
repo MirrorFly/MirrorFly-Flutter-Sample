@@ -3195,7 +3195,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               }else{
                 editMessageText(textEditingController.text);
               }
-              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
+              enterEmojiMention(textEditingController:textEditingController);
             },
             onEmojiSelected: (cat, emoji) {
               if(sendTypingStatus){
@@ -3203,12 +3203,17 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               }else{
                 editMessageText(textEditingController.text);
               }
-              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
+              enterEmojiMention(textEditingController:textEditingController);
             });
       } else {
         return const Offstage();
       }
     });
+  }
+
+  void enterEmojiMention({required MentionTagTextEditingController textEditingController}){
+    textEditingController.onChanged(textEditingController.text);
+    setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
   }
 
   //#editMessage
