@@ -74,6 +74,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var getMaxCallUsersCount = 8;
 
   var joinViaLink = false;
+
+  var isCallDisconnectedClicked = false;
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -292,6 +294,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   void disconnectCall() {
     // BaseController baseController = ConcreteController();
     // baseController.stopTimer();
+    if (isCallDisconnectedClicked) {
+      return;
+    }
+    isCallDisconnectedClicked = true;
     isCallTimerEnabled = false;
     callTimer("Disconnected");
     if (callList.isNotEmpty) {
@@ -432,12 +438,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           callTimer("Disconnected");
           Future.delayed(const Duration(seconds: 1), () {
             NavUtils.back();
+            isCallDisconnectedClicked = false;
           });
         } else if (NavUtils.currentRoute == Routes.outGoingCallView) {
           NavUtils.back();
+          isCallDisconnectedClicked = false;
         }
       } else {
         NavUtils.offNamed(NavUtils.defaultRouteName);
+        isCallDisconnectedClicked = false;
       }
     }
   }
