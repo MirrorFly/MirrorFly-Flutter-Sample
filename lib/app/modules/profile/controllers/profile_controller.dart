@@ -40,7 +40,7 @@ class ProfileController extends GetxController {
   var name = "".obs;
 
   bool get emailEditAccess => true;//NavUtils.previousRoute!=Routes.settings;
-  RxBool mobileEditAccess = false.obs;//NavUtils.previousRoute!=Routes.settings;
+  RxBool mobileEditAccess = true.obs;//NavUtils.previousRoute!=Routes.settings;
 
   var userNameFocus= FocusNode();
   var emailFocus= FocusNode();
@@ -309,11 +309,11 @@ class ProfileController extends GetxController {
                   //if (from.value != Routes.login) {
                   validMobileNumber(data.data!.mobileNumber.checkNull()).then((valid) {
                     // if(valid) profileMobile.text = data.data!.mobileNumber.checkNull();
-                    mobileEditAccess(!valid);
+                    // mobileEditAccess(!valid);
                   });
                 } else {
                   var userIdentifier = SessionManagement.getUserIdentifier();
-                  validMobileNumber(userIdentifier).then((value) => mobileEditAccess(!value));
+                  // validMobileNumber(userIdentifier).then((value) => mobileEditAccess(!value));
                   // mobileEditAccess(true);
                 }
 
