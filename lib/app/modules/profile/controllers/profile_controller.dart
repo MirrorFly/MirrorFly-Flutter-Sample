@@ -218,6 +218,8 @@ class ProfileController extends GetxController {
             hideLoader();
             if (update) {
               save();
+            }else{
+              toToast(getTranslated("profileImageUpdatedSuccess"));
             }
           }else{
             toToast(getTranslated("profileImageUpdateFailed"));
@@ -270,6 +272,7 @@ class ProfileController extends GetxController {
             } else {
               // save(frmImage: true);
             }
+            toToast(getTranslated("removedProfileImage"));
             update();
           } else {
             toToast(getTranslated("profileImageRemoveFailed"));
