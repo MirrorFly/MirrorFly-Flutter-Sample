@@ -313,17 +313,25 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         debugPrint("#Disconnect current route is ongoing call view");
         // Future.delayed(const Duration(seconds: 1), () {
         //   debugPrint("#Disconnect call controller back called from Ongoing Screen");
-        NavUtils.back();
+        if (NavUtils.canPop) {
+          NavUtils.back();
+        }
         // });
       } else if (NavUtils.currentRoute == Routes.participants) {
-        NavUtils.back();
+        if (NavUtils.canPop) {
+          NavUtils.back();
+        }
         // Future.delayed(const Duration(seconds: 1), () {
         debugPrint(
-            "#Disconnect call controller back called from Participant Screen");
-        NavUtils.back();
+            "#Disconnect Event #Disconnect call controller back called from Participant Screen");
+        if (NavUtils.canPop) {
+          NavUtils.back();
+        }
         // });
       } else if (NavUtils.currentRoute == Routes.outGoingCallView) {
-        NavUtils.back();
+        if (NavUtils.canPop) {
+          NavUtils.back();
+        }
       }
     } else {
       debugPrint("#Disconnect previous route is empty");
