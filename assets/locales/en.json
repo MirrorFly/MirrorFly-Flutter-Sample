@@ -425,6 +425,7 @@
     "pleaseEnterValidMail": "Please enter a valid Mail",
     "pleaseEnterProfileStatus": "Enter Profile Status",
     "removedProfileImage": "Removed profile image successfully",
+    "profileImageUpdatedSuccess": "Profile image updated successfully",
     "pleaseEnterValidMobileWithCode": "Please enter a valid mobile number with country code",
     "unableToUpdateProfile": "Unable to update profile",
     "profileImageUpdateFailed": "Error while updating profile image",
