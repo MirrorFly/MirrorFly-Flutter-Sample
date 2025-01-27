@@ -43,6 +43,13 @@ import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
 class BaseController {
   static void initListeners() {
+    Mirrorfly.getCurrentCallDuration().then((value){
+      var startTime = value ?? 0;
+      if(startTime>0){
+        var difference = (DateTime.now().millisecondsSinceEpoch-startTime);
+        startTimer(time: difference);
+      }
+    });
     Mirrorfly.onMessageReceived.listen(onMessageReceived);
     Mirrorfly.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     Mirrorfly.onMediaStatusUpdated.listen(onMediaStatusUpdated);
@@ -1204,14 +1211,14 @@ class BaseController {
   }
 
   static Timer? timer;
-  static void startTimer() {
+  static void startTimer({int? time}) {
     // if (timer == null) {
     if (timer != null) {
       timer?.cancel();
     }
     timer = null;
     const oneSec = Duration(seconds: 1);
-    var startTime = DateTime.now();
+    var startTime = time != null ? DateTime.fromMillisecondsSinceEpoch(time) : DateTime.now();
     timer = Timer.periodic(
       oneSec,
       (Timer timer) {

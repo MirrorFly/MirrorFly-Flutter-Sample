@@ -1200,11 +1200,22 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     });
   }
 
-  copyTextMessages() {
+  copyTextMessages() async {
     debugPrint('Copy text ==> ${selectedChatList[0].messageTextContent}');
-    Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent ?? Constants.emptyString));
-    clearChatSelection(selectedChatList[0]);
-    toToast(getTranslated("textCopiedSuccess"));
+    if(selectedChatList[0].mentionedUsersIds!.isEmpty){
+      Clipboard.setData(ClipboardData(text: selectedChatList[0].messageTextContent ?? Constants.emptyString));
+      clearChatSelection(selectedChatList[0]);
+      toToast(getTranslated("textCopiedSuccess"));
+    }else{
+      var selected = selectedChatList[0];
+      clearChatSelection(selectedChatList[0]);
+      toToast(getTranslated("textCopiedSuccess"));
+      var profileDetails = await MentionUtils.getProfileDetailsOfUsername(selected.mentionedUsersIds!);
+      var text = MentionUtils.getMentionedText(selected.messageTextContent.checkNull(),profileDetails);
+      Clipboard.setData(ClipboardData(text: text));
+      debugPrint("text : $text");
+    }
+
   }
 
   Map<bool, bool> isMessageCanbeRecalled() {
@@ -1774,6 +1785,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   }
 
   void startTimer() {
+    showOrHideTagListView(false, "chatView");
     const oneSec = Duration(seconds: 1);
     startTime = DateTime.now();
     _audioTimer = Timer.periodic(
@@ -3184,7 +3196,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               }else{
                 editMessageText(textEditingController.text);
               }
-              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
+              enterEmojiMention(textEditingController:textEditingController);
             },
             onEmojiSelected: (cat, emoji) {
               if(sendTypingStatus){
@@ -3192,12 +3204,17 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               }else{
                 editMessageText(textEditingController.text);
               }
-              setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
+              enterEmojiMention(textEditingController:textEditingController);
             });
       } else {
         return const Offstage();
       }
     });
+  }
+
+  void enterEmojiMention({required MentionTagTextEditingController textEditingController}){
+    textEditingController.onChanged(textEditingController.text);
+    setUnSentMessageInTextField(textEditingController,textEditingController.text,textEditingController.getTags);
   }
 
   //#editMessage

@@ -5,7 +5,6 @@ import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/chat/tagger/tagger.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/dashboard_widgets/contact_item.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -84,7 +83,7 @@ class MentionController extends GetxController {
           flyCallBack: (FlyResponse response) {
             if (response.isSuccess && response.hasData) {
               LogMessage.d("getGroupMembersList-->", response.toString());
-              groupMembers(memberFromJson(response.data));
+              sortGroupMembers(memberFromJson(response.data));
             }
           });
     } else {
@@ -112,7 +111,7 @@ class MentionController extends GetxController {
         showMentionUserList(true);
       } else {
         var filter = groupMembersWithoutMe
-            .where((item) => item.getName().toLowerCase().contains(query))
+            .where((item) => item.getName().toLowerCase().contains(query.toLowerCase()))
             .toList();
         debugPrint("filter ${filter.length}");
         filteredItems(filter);
@@ -132,13 +131,6 @@ class MentionController extends GetxController {
           SessionManagement.getUserJID())).toList());
       showMentionUserList(show);
     }
-  }
-
-  void onUserTagClicked(ProfileDetails profile,
-      ChatTaggerController controller) {
-    // _mentionWatcher.replaceText(profile.getName());
-    controller.addTag(
-        id: profile.jid.checkNull().split("@")[0], name: profile.getName());
   }
 
   void sortGroupMembers(List<ProfileDetails> list){

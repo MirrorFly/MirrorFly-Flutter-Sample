@@ -19,6 +19,9 @@ class MentionTagTextEditingController extends TextEditingController {
   }
 
   void _updateCursorPostion() {
+    if(selection.base.offset.isNegative){
+      return;
+    }
     _cursorPosition = selection.base.offset;
     if (_indexMentionEnd == null) return;
     if (_cursorPosition - _indexMentionEnd! == 1) {
@@ -97,6 +100,7 @@ class MentionTagTextEditingController extends TextEditingController {
 
   setCustomText(String content,List<ProfileDetails> profileDetails){
     debugPrint("setText : $content");
+    super.text = "";
     _mentions.clear();
     var reformedText = content;
     for(var profile in profileDetails){
@@ -198,8 +202,11 @@ class MentionTagTextEditingController extends TextEditingController {
     return false;
   }
 
-  String? _getMention(String value) {
+  String? getMention(String value) {
     final indexCursor = selection.base.offset;
+    if(indexCursor.isNegative){
+      return null;
+    }
 
     final indexMentionFromStart = _getIndexFromMentionStart(indexCursor, value);
 
@@ -239,7 +246,7 @@ class MentionTagTextEditingController extends TextEditingController {
   void onChanged(String value) async {
     if (onMention == null) return;
     _indexMentionEnd = null;
-    String? mention = _getMention(value);
+    String? mention = getMention(value);
     _updateOnMention(mention);
 
     if (value.length < _temp.length) {

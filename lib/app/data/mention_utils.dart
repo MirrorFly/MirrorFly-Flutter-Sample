@@ -145,5 +145,16 @@ class MentionUtils {
     return profileDetails;
   }
 
+  static String getMentionedText(String content,List<ProfileDetails> profileDetails){
+    debugPrint("setText : $content");
+    var reformedText = content;
+    for(var profile in profileDetails){
+      reformedText = reformedText.replaceFirst(
+          "@[?]", "@${(SessionManagement.getUserJID()==profile.jid.checkNull()) ? profile.name : profile.getName()}");
+    }
+    return reformedText;
+
+  }
+
 }
 

@@ -101,7 +101,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                 if (didPop) {
                   return;
                 }
-                NavUtils.back(result: "back");
+                NavUtils.back();
               },
               child: GestureDetector(
                 onTap: () => controller.hideKeyBoard(),
@@ -258,7 +258,8 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                       controller.showAdd
                                                   ? InkWell(
                                                       onTap: () {
-                                                        NavUtils.back();
+                                                        NavUtils.back(result: {"from": controller.pickerType,"filePath":controller.filePath,"captionMessage"
+                                                          :controller.captionMessage,"captionMessageMentions":controller.captionMessageMentions});
                                                       },
                                                       child: AppUtils.svgIcon(icon:
                                                           previewAddImg,colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.iconColor, BlendMode.srcIn),),
@@ -289,6 +290,8 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                 if (query != null) {
                                                   final searchInput = query.substring(1);
                                                   controller.filterMentionUsers('@', searchInput, Routes.galleryPicker);
+                                                }else{
+                                                  controller.filterMentionUsers('@', null, Routes.galleryPicker);
                                                 }
                                               },
                                               onChanged: (value){
