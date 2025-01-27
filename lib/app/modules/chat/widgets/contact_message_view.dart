@@ -49,7 +49,7 @@ class ContactMessageView extends StatelessWidget {
                 ),
                 Expanded(
                     child: CustomTextView(
-                      key: const Key("message_view"),
+                      key: Key("message_view+${chatMessage.messageId}"),
                       text: chatMessage.contactChatMessage!.contactName
                           .checkNull(),
                       defaultTextStyle: contactMessageViewStyle.textMessageViewStyle.textStyle,

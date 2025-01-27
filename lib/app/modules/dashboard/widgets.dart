@@ -110,18 +110,6 @@ class RecentChatItem extends StatelessWidget {
             searchQueryString: spanTxt,
             maxLines: 1,mentionedMeBgColor:recentChatItemStyle.mentionedMeBgColor
           ),
-          /*spanTxt.isEmpty
-              ? Text(
-                  getRecentName(item),
-                  style: recentChatItemStyle.titleTextStyle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              : spannableText(
-                  getRecentName(item),
-                  //item.profileName.checkNull(),
-                  spanTxt,
-                  recentChatItemStyle.titleTextStyle,recentChatItemStyle.spanTextColor),*/
           Row(
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()

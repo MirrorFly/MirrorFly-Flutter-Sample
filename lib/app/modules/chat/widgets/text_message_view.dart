@@ -38,7 +38,7 @@ class TextMessageView extends StatelessWidget {
             children: [
               Flexible(
                   child: CustomTextView(
-                    key: const Key("message_view"),
+                    key: Key("message_view+${chatMessage.messageId}"),
                     text: chatMessage.messageTextContent.checkNull(),
                     defaultTextStyle: textMessageViewStyle.textStyle,
                     linkColor: textMessageViewStyle.urlMessageColor,
