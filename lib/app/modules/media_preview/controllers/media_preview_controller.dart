@@ -66,6 +66,8 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     captionFocusNode.addListener(() {
       if (captionFocusNode.hasFocus) {
         showEmoji(false);
+      }else{
+        showOrHideTagListView(false, Routes.galleryPicker);
       }
     });
   }
