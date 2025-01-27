@@ -15,7 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "#EWE-3 - mention feature"
+  change_Log = "Mention Bugfixes : #FLUTTER-1711,#FLUTTER-1709,#FLUTTER-1707,#EWE-24,#EWE-26,#EWE-27,#EWE-28,#EWE-29,#EWE-30,#EWE-31"
 
 
   desc "Upload dev version to distributes in firebase"
