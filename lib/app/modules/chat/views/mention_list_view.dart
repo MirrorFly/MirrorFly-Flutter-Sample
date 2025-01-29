@@ -38,9 +38,9 @@ class MentionUsersList extends NavViewStateful<MentionController> {
         builder: (context, isKeyboardVisible) {
           LogMessage.d("KeyboardVisibilityBuilder","isKeyboardVisible:$isKeyboardVisible");
           final double height = NavUtils.size.height;
-          LogMessage.d("KeyboardVisibilityBuilder","height:$height ${height * 0.7}");
-          final double currentKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-          LogMessage.d("KeyboardVisibilityBuilder","currentKeyboardHeight:$currentKeyboardHeight");
+          // LogMessage.d("KeyboardVisibilityBuilder","height:$height ${height * 0.7}");
+          // final double currentKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+          // LogMessage.d("KeyboardVisibilityBuilder","currentKeyboardHeight:$currentKeyboardHeight");
 
           return Obx(() {
             return controller.filteredItems.isNotEmpty &&
@@ -51,7 +51,7 @@ class MentionUsersList extends NavViewStateful<MentionController> {
                     //             height: isKeyboardVisible
                     // ? controller.filteredItems.length > 2  ? 100 : null
                     // : null,
-                                child: ListView.builder(
+                    child: ListView.builder(
                     key: const PageStorageKey("mentionUsers"),
                     shrinkWrap: true,
                     itemCount: controller.filteredItems.length,

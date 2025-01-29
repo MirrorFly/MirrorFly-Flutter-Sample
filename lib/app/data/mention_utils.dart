@@ -100,7 +100,7 @@ class MentionUtils {
 
       // Add the mention text with style and recognizer.
       if (index < replacements.length && replacements.length>index) {
-        // debugPrint("replacements[index].getName() ${replacements[index].getName()} $index");
+        //debugPrint("replacements[index].getName() ${replacements[index].toJson()} $index");
         spans.addAll(TextUtils.parseEachLetterIntoTextSpan(
           "@${replacements[index].name} ",
           mentionStyle?.copyWith(backgroundColor: replacements[index].jid == SessionManagement.getUserJID() ? mentionedMeBgColor : Colors.transparent),
