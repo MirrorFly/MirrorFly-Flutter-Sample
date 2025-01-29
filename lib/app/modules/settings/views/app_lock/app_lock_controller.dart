@@ -579,6 +579,7 @@ class AppLockController extends FullLifeCycleController
       DialogUtils.bottomSheet(
         isDismissible: false,
         isScrollControlled: true,
+        needKeyboardPadding: true,
         BottomSheet(
             enableDrag: true,
             animationController: BottomSheet.createAnimationController(this),
