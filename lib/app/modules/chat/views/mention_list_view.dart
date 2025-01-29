@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -36,29 +37,53 @@ class MentionUsersList extends NavViewStateful<MentionController> {
     return KeyboardVisibilityBuilder(
         builder: (context, isKeyboardVisible) {
           LogMessage.d("KeyboardVisibilityBuilder","isKeyboardVisible:$isKeyboardVisible");
+          final double height = NavUtils.size.height;
+          // LogMessage.d("KeyboardVisibilityBuilder","height:$height ${height * 0.7}");
+          // final double currentKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+          // LogMessage.d("KeyboardVisibilityBuilder","currentKeyboardHeight:$currentKeyboardHeight");
+
           return Obx(() {
             return controller.filteredItems.isNotEmpty &&
-                controller.showMentionUserList.value ? Container(
-              decoration: mentionUserBgDecoration,
-              height: isKeyboardVisible
-                  ? controller.filteredItems.length > 2 ? 100 : null
-                  : null,
-              child: ListView.builder(
-                  key: const PageStorageKey("mentionUsers"),
-                  shrinkWrap: true,
-                  itemCount: controller.filteredItems.length,
-                  itemBuilder: (ct, index) {
-                    return ContactItem(item: controller.filteredItems[index],
-                      checkValue: false,
-                      onCheckBoxChange: (val) {},
-                      showStatus: false,
-                      contactItemStyle: mentionUserStyle,
-                      onListItemPressed: onListItemPressed,);
-                  }),
-            ) : const Offstage();
+                controller.showMentionUserList.value ? ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: getHeight(isKeyboardVisible,height,controller.filteredItems.length)),
+                  child: Container(
+                    decoration: mentionUserBgDecoration,
+                    //             height: isKeyboardVisible
+                    // ? controller.filteredItems.length > 2  ? 100 : null
+                    // : null,
+                    child: ListView.builder(
+                    key: const PageStorageKey("mentionUsers"),
+                    shrinkWrap: true,
+                    itemCount: controller.filteredItems.length,
+                    itemBuilder: (ct, index) {
+                      return ContactItem(item: controller.filteredItems[index],
+                        checkValue: false,
+                        onCheckBoxChange: (val) {},
+                        showStatus: false,
+                        contactItemStyle: mentionUserStyle,
+                        onListItemPressed: onListItemPressed,);
+                    }),
+                              ),
+                ) : const Offstage();
           });
         }
     );
+  }
+
+  double getHeight(bool isKeyboardVisible,double height,int count){
+    if(isKeyboardVisible){
+      if(height<641){
+        //small mobiles
+        return 100;
+      }else if(height<801){
+        //medium mobiles
+        return 200;
+      }else{
+        return 250;
+      }
+    }else{
+      return height * 0.4;
+    }
   }
 
 }
