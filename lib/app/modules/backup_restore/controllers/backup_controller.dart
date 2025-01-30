@@ -44,10 +44,12 @@ class BackupController extends GetxController {
 
   var isLocalBackupStarted = false.obs;
   var isRemoteBackupStarted = false.obs;
+  var isRemoteUploadStarted = false.obs;
   var isRestoreStarted = false.obs;
 
   var localBackupProgress = 0.0.obs;
   var remoteBackupProgress = 0.0.obs;
+  var remoteUploadProgress = 0.0.obs;
   var restoreProgress = 0.0.obs;
 
   var backUpEmailId = ''.obs;
@@ -69,7 +71,8 @@ class BackupController extends GetxController {
         });
       } else {
         LogMessage.d(
-            "Backup Controller", "Sign In to Drive/Console to access the drive");
+            "Backup Controller",
+            "Sign In to Drive/Console to access the drive");
       }
     });
 
@@ -100,8 +103,9 @@ class BackupController extends GetxController {
   Future<void> checkForBackUpFiles() async {
     await backupRestoreManager.checkBackUpFiles().then((backupFileDetails) {
       LogMessage.d(
-          "Restore Controller", "Backup file Available => ${backupFileDetails?.toJson()}");
-      if(backupFileDetails != null) {
+          "Restore Controller",
+          "Backup file Available => ${backupFileDetails?.toJson()}");
+      if (backupFileDetails != null) {
         isBackupFound(backupFileDetails.fileId?.isNotEmpty);
         backUpFoundDate(backupFileDetails.fileCreatedDate);
         backUpFoundSize(backupFileDetails.fileSize);
@@ -114,6 +118,7 @@ class BackupController extends GetxController {
       toToast("Unable to access drive");
     } else if (await AppPermission.getStoragePermission()) {
       isRemoteBackupStarted(true);
+      showBackupDialog();
       backupRestoreManager.startBackup(isServerUploadRequired: true);
     } else {
       toToast("Storage Permission Needed for backup process");
@@ -145,11 +150,11 @@ class BackupController extends GetxController {
 
   void updateAutoBackupOption(bool isEnabled) {
     LogMessage.d("Backup Controller", "Auto Backup Toggle => $isEnabled");
-    if (Platform.isAndroid && !driveAccessible.value){
+    if (Platform.isAndroid && !driveAccessible.value) {
       toToast(getTranslated("autoBackupAndroidError"));
       return;
     }
-    if (Platform.isIOS && !driveAccessible.value){
+    if (Platform.isIOS && !driveAccessible.value) {
       toToast(getTranslated("autoBackupIOSError"));
       return;
     }
@@ -181,11 +186,33 @@ class BackupController extends GetxController {
     toToast(getTranslated("localBackupSuccess"));
   }
 
+  void remoteBackUpFileReady({required String backUpPath}) {
+    if(NavUtils.isOverlayOpen) {
+      NavUtils.back();
+    }
+    isRemoteUploadStarted(true);
+    backupRestoreManager.uploadBackupFile(filePath: backUpPath).listen((progress){
+      LogMessage.d("Backup Controller", "Upload Progress*** $progress");
+      remoteUploadProgress(progress.toDouble());
+    }, onDone: () {
+      // isRemoteBackupStarted(false);
+      // isRemoteUploadStarted(false);
+    }, onError: (error) {
+      isRemoteBackupStarted(false);
+      isRemoteUploadStarted(false);
+      LogMessage.d("Backup Controller", "Upload Backup File Error => $error");
+    });
+  }
+
+  void serverUploadSuccess() {
+    isRemoteUploadStarted(false);
+  }
+
   void backUpProgress(event) {
     LogMessage.d("Backup Controller", "backUp Progress => $event");
-    if(isLocalBackupStarted.value) {
+    if (isLocalBackupStarted.value) {
       localBackupProgress(int.parse(event.toString()) / 100);
-    }else{
+    } else {
       remoteBackupProgress(int.parse(event.toString()) / 100);
     }
   }
@@ -193,6 +220,7 @@ class BackupController extends GetxController {
   void backUpFailed(event) {
     isLocalBackupStarted(false);
     isRemoteBackupStarted(false);
+    isRemoteUploadStarted(false);
     toToast(event);
   }
 
@@ -213,7 +241,7 @@ class BackupController extends GetxController {
   }
 
   void handleGoogleAccount() {
-    if (backUpEmailId.value.isNotEmpty){
+    if (backUpEmailId.value.isNotEmpty) {
       DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
           message:
           getTranslated("restoreAndroidAccountSwitch"),
@@ -222,18 +250,17 @@ class BackupController extends GetxController {
                 onPressed: () {
                   NavUtils.back();
                 },
-                child: Text(getTranslated("no").toUpperCase(), )),
+                child: Text(getTranslated("no").toUpperCase(),)),
             TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   _switchAccount();
                 },
-                child: Text(getTranslated("yes").toUpperCase(), ))
+                child: Text(getTranslated("yes").toUpperCase(),))
           ]);
-    }else{
+    } else {
       _switchAccount();
     }
-
   }
 
   Future<void> _switchAccount() async {
@@ -247,5 +274,52 @@ class BackupController extends GetxController {
       SessionManagement.setBackUpAccount(backUpEmailId.value);
       SessionManagement.setBackUpState(Constants.backupAccountSelected);
     }
+  }
+
+  showBackupDialog() {
+    showDialog(
+        context: NavUtils.currentContext, routeSettings: DialogUtils.routeSettings,
+        builder: (_) {
+      return Dialog(
+      backgroundColor: Colors.white,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            return;
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+              child: Text(getTranslated("backingUpMessages"),
+                style: const TextStyle(fontWeight: FontWeight.bold),),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 16),
+                  Obx(() {
+                    return Flexible(child: Text("${getTranslated(
+                        "pleaseWaitAMoment")} (${(remoteBackupProgress
+                        .value * 100).floor()}%)"));
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+        },
+      barrierDismissible: false,
+    );
   }
 }

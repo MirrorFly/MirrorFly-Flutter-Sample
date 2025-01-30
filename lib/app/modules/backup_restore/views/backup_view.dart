@@ -76,31 +76,35 @@ class BackupView extends NavViewStateful<BackupController> {
                   height: 30,
                 ),
                 Obx(() {
-                  return controller.isRemoteBackupStarted.value ? Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: controller.remoteBackupProgress.value,
+                  return controller.isRemoteBackupStarted.value ? controller.isRemoteUploadStarted.value ? Padding(
+                    padding: const EdgeInsets.only(left: 18.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LinearProgressIndicator(
+                                value: controller.remoteUploadProgress.value / 100,
+                              ),
                             ),
-                          ),
-                          IconButton(
-                              icon: const Icon(Icons.close),
-                              onPressed: () {}),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                              getTranslated("restoreStatusInfo")),
-                          Text(
-                              "(${(controller.remoteBackupProgress.value * 100)
-                                  .floor()}%)"),
-                        ],
-                      )
-                    ],
-                  ) : Center(
+                           /* IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {}),*/
+                          ],
+                        ),
+                        const SizedBox(height: 10,),
+                        Row(
+                          children: [
+                            Text(
+                                getTranslated("restoreStatusInfo")),
+                            Text(
+                                "(${(controller.remoteUploadProgress.value)
+                                    .floor()}%)"),
+                          ],
+                        )
+                      ],
+                    ),
+                  ) : const Offstage() : Center(
                     child: ElevatedButton(
                       style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                       onPressed: () {
@@ -234,7 +238,7 @@ class BackupView extends NavViewStateful<BackupController> {
                         Row(
                           children: [
                             controller.isLocalBackupStarted.value ? Text(
-                                getTranslated("backupStatusInfo")) : Text(
+                                getTranslated("pleaseWaitAMoment")) : Text(
                                 getTranslated("restoreStatusInfo")),
                             controller.isLocalBackupStarted.value ? Text(
                                 "(${(controller.localBackupProgress.value * 100)

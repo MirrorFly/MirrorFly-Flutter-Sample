@@ -563,7 +563,9 @@
     "localBackupSuccess" : "Backup File Downloaded Successfully",
     "localRestoreSuccess" : "Backup File Restored Successfully",
     "backupPermissionDeniedToast" : "Need Storage Permission for selecting the Backup file",
-    "backupStatusInfo" : "Please wait a moment",
+    "pleaseWaitAMoment" : "Please wait a moment",
     "restoreStatusInfo" : "Restoring",
+    "backingUpMessages" : "Backing up messages",
+    "backUpSuccess" : "Back up Success",
     "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?"
   }

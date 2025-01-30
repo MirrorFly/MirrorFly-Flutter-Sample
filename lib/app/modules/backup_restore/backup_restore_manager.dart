@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
 import 'package:icloud_storage_sync/icloud_storage_sync.dart';
 import 'package:icloud_storage_sync/models/icloud_file_download.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_controller.dart';
@@ -196,27 +197,45 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> uploadFileToGoogleDrive(String filePath) async {
+  Future<void> uploadFileToGoogleDrive(String filePath, StreamController<int> progressController) async {
     LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
     try {
       File backupFile = File(filePath);
+      int fileSize = backupFile.lengthSync();
 
       // Prepare the file metadata
       var driveFile = drive.File();
       driveFile.name = backupFile.path.split('/').last;
 
+      var trackedStream = trackProgress(
+        backupFile.openRead(),
+        fileSize,
+            (progress) {
+          // backupController.updateProgress(progress);
+          // LogMessage.d("BackupRestoreManager",
+          //     "Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
+          progressController.add((progress * 100).floor());
+        },
+      );
       // Upload the file
       var response = await driveApi?.files.create(
         driveFile,
         uploadMedia:
-            drive.Media(backupFile.openRead(), backupFile.lengthSync()),
+            drive.Media(trackedStream, fileSize),
       );
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
-      toToast("Backup Successfull");
+      toToast(getTranslated("backUpSuccess"));
+      if (Get.isRegistered<BackupController>()) {
+        Get.find<BackupController>().serverUploadSuccess();
+      }
+      progressController.add(100); // Mark upload as complete
+      progressController.close();
     } catch (e) {
       LogMessage.d(
           "BackupRestoreManager", "Error uploading to Google Drive: $e");
       toToast("Backup Failed");
+      progressController.addError(e);
+      progressController.close();
     }
   }
 
@@ -251,41 +270,43 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> uploadBackupFile({required String filePath}) async {
-    if (Platform.isAndroid) {
-      uploadFileToGoogleDrive(filePath);
+  Stream<int> uploadBackupFile({required String filePath}) {
+     final StreamController<int> progressController = StreamController<int>();
+     if (Platform.isAndroid) {
+      uploadFileToGoogleDrive(filePath, progressController);
     } else if (Platform.isIOS) {
       debugPrint("Filepath to upload in drive $filePath");
       final file = File(filePath.replaceFirst('file://', ''));
       debugPrint("Cleaned File Path: $file");
-      if (await file.exists()) {
-        debugPrint("File exists, proceeding with upload.");
+      if (!file.existsSync()) {
+        progressController.addError(Exception("File does not exist at the given path: $filePath"));
+        progressController.close();
+        return progressController.stream;
       } else {
-        throw Exception("File does not exist at the given path: $filePath");
+        debugPrint("File exists, proceeding with upload.");
       }
 
       debugPrint("Container ID to upload $_iCloudContainerID");
 
-      /*await icloudSyncPlugin.upload(
-        containerId: _iCloudContainerID,
-        filePath: file.path,
-        // destinationRelativePath: iCloudRelativePath,
-        onProgress: onBackupUploadProgress,
-      );*/
       try {
-        await icloudSyncPlugin.upload(
+        icloudSyncPlugin.upload(
           containerId: _iCloudContainerID,
           filePath: file.path,
           onProgress: (progressStream) {
             progressStream.listen(
               (progress) {
-                debugPrint("Uploading to server progress: $progress");
+                // debugPrint("Uploading to server progress: $progress");
+                progressController.add((progress * 100).floor());
               },
               onError: (error) {
                 debugPrint("Upload failed with error: $error");
+                progressController.addError(error);
+                progressController.close();
               },
               onDone: () {
                 debugPrint("Upload completed successfully.");
+                progressController.add(100); // Mark 100% completion
+                progressController.close();
               },
               cancelOnError: true,
             );
@@ -293,10 +314,15 @@ class BackupRestoreManager {
         );
       } catch (e) {
         debugPrint("Upload failed with exception: $e");
+        progressController.addError(e);
+        progressController.close();
       }
     } else {
       LogMessage.d("Backup and Restore", "Platform is not Supported");
+      progressController.addError(Exception("Platform not supported"));
+      progressController.close();
     }
+     return progressController.stream;
   }
 
   Future<void> backupFile() async {
@@ -452,7 +478,9 @@ class BackupRestoreManager {
       debugPrint(
           "onBackupSuccess==> $backUpPath isServerUploadRequired ==> $isServerUploadRequired");
       if (isServerUploadRequired) {
-        uploadBackupFile(filePath: backUpPath);
+        if (Get.isRegistered<BackupController>()) {
+          Get.find<BackupController>().remoteBackUpFileReady(backUpPath: backUpPath);
+        }
       } else {
         if (Get.isRegistered<BackupController>()) {
           Get.find<BackupController>().backUpSuccess(backUpPath);
@@ -592,7 +620,35 @@ class BackupRestoreManager {
     }
   }*/
 
-  Future<void> downloadAndProcessFile({
+  Future<String> getAndroidBackUpFolderPath() async {
+    String rootFilePath;
+
+    if (Platform.isAndroid) {
+      int sdkVersion = int.tryParse(Platform.version.split(" ")[0]) ?? 0;
+      LogMessage.d("BackupRestoreManager", "sdkVersion $sdkVersion");
+
+      if (sdkVersion < 29) {
+        // For Android < Q (29), use external storage directory
+        rootFilePath = "/storage/emulated/0"; // Equivalent to Environment.getExternalStorageDirectory().absolutePath
+      } else {
+        // For Android 10+ (Q), use externalMediaDirs[0]
+        Directory? externalDir = (await getExternalStorageDirectories(type: StorageDirectory.documents))?.first;
+        rootFilePath = externalDir?.path ?? "/storage/emulated/0"; // Fallback in case of null
+      }
+    } else {
+      throw UnsupportedError("This function is only for Android");
+    }
+
+    // Construct the backup folder path
+    String backupFolderPath = "$rootFilePath/MirrorFly/Backups}";
+
+    // Logging equivalent
+    print("getBackUpFolderPath: $backupFolderPath");
+
+    return backupFolderPath;
+  }
+
+  Future<void> downloadAndProcessFile(/*{
     required Function(File) processFile,
     required Function(double) onProgress,
   }) async {
@@ -661,6 +717,23 @@ class BackupRestoreManager {
     }
   }
 }
+
+Stream<List<int>> trackProgress(
+    Stream<List<int>> stream, int totalBytes, Function(double) onProgress) {
+  int uploadedBytes = 0;
+
+  return stream.transform(
+    StreamTransformer<List<int>, List<int>>.fromHandlers(
+      handleData: (chunk, sink) {
+        uploadedBytes += chunk.length;
+        double progress = uploadedBytes / totalBytes;
+        onProgress(progress); // Update progress
+        sink.add(chunk); // Pass chunk to the next stream
+      },
+    ),
+  );
+}
+
 
 class BackupFile {
   String? fileId;
