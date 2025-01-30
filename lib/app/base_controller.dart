@@ -260,8 +260,21 @@ class BaseController {
               stopTimer();
             }
           } else {
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call Ongoing call controller not registered for disconnect event");
           }
+
+          if (Get.isRegistered<OutgoingCallController>()) {
+            debugPrint("Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+
+            Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
+
+            if (Get.find<CallController>().callList.length <= 1) {
+              stopTimer();
+            }
+          } else {
+            debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
+          }
+
           break;
         case CallStatus.calling10s:
           break;
