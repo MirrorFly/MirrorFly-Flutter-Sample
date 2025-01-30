@@ -5,20 +5,20 @@ class DialogUtils {
   DialogUtils._();
   // DialogUtils(this.buildContext);
 
-  static const RouteSettings _routeSettings = RouteSettings(name: '/dialog');
+  static const RouteSettings routeSettings = RouteSettings(name: '/dialog');
   // final BuildContext buildContext;
   static BuildContext get buildContext => NavUtils.currentContext;
 
   static createDialog(Widget builder){
     return showDialog(context: buildContext, builder: (_){
       return builder;
-    },routeSettings: _routeSettings);
+    },routeSettings: routeSettings);
   }
 
   static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
     bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent}){
     return showModalBottomSheet(context: buildContext,
-        routeSettings: _routeSettings,
+        routeSettings: routeSettings,
         builder: (_){
       return builder;
     },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
@@ -26,10 +26,10 @@ class DialogUtils {
 
   // Method to show a loading dialog
   static void showLoading(
-      {String? message,
+      {String? title, String? message,
       bool dismiss = false,required DialogStyle dialogStyle}) {
     showDialog(
-      context: buildContext,routeSettings: _routeSettings,
+      context: buildContext,routeSettings: routeSettings,
       builder: (_) {
         return Dialog(
           backgroundColor: dialogStyle.backgroundColor,
@@ -40,16 +40,28 @@ class DialogUtils {
                 return;
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(width: 16),
-                  Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (title != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+                    child: Text(title,style: dialogStyle.titleTextStyle,),
+                  )
                 ],
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(width: 16),
+                      Flexible(child: Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -62,7 +74,7 @@ class DialogUtils {
   static void progressLoading(
       {bool dismiss = false}) {
     showDialog(
-        context: buildContext,routeSettings: _routeSettings,
+        context: buildContext,routeSettings: routeSettings,
         builder: (_) {
           return AlertDialog(
             elevation: 0,
@@ -96,7 +108,7 @@ class DialogUtils {
       Widget? content,
       bool? barrierDismissible,required DialogStyle dialogStyle}) {
     showDialog(
-        context: buildContext,routeSettings: _routeSettings,
+        context: buildContext,routeSettings: routeSettings,
         builder: (_) {
           return AlertDialog(
             backgroundColor: dialogStyle.backgroundColor,//Colors.white,
@@ -139,7 +151,7 @@ class DialogUtils {
   static void showVerticalButtonAlert(
       {required List<Widget> actions}) {
     showDialog(
-        context: buildContext,routeSettings: _routeSettings,
+        context: buildContext,routeSettings: routeSettings,
         builder: (_) {
           return Dialog(
             child: Column(
@@ -155,7 +167,7 @@ class DialogUtils {
   static void showButtonAlert(
       {required List<Widget> actions}) {
     showDialog(
-        context: buildContext,routeSettings: _routeSettings,
+        context: buildContext,routeSettings: routeSettings,
         builder: (_) {
           return Dialog(
             child: Padding(
