@@ -649,7 +649,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   bool isVideoCaptionContainsFilterKey(
       ChatMessageModel message, String filterKey) {
     var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ? (CustomTextViewManager.getCustomText(
-        message.mediaChatMessage!.mediaCaptionText.checkNull() +
+        (message.mediaChatMessage?.mediaCaptionText).checkNull() +
             message.mentionedUsersIds!.join(",") +
             (Key("message_view+${message.messageId}")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mVideo == message.messageType &&
@@ -662,7 +662,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   bool isImageCaptionContainsFilterKey(
       ChatMessageModel message, String filterKey) {
     var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ?
-    (CustomTextViewManager.getCustomText(message.mediaChatMessage!.mediaCaptionText.checkNull()+message.mentionedUsersIds!.join(",")+(Key("message_view+${message.messageId}")).toString()))?.toPlainText() : message.messageTextContent;
+    (CustomTextViewManager.getCustomText((message.mediaChatMessage?.mediaCaptionText).checkNull()+message.mentionedUsersIds!.join(",")+(Key("message_view+${message.messageId}")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mImage == message.messageType &&
         content
             .checkNull()
@@ -672,7 +672,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
 
   bool isTextMessageContainsFilterKey(
       ChatMessageModel message, String filterKey) {
-    var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ? (CustomTextViewManager.getCustomText(message.messageTextContent!+message.mentionedUsersIds!.join(",")+(Key("message_view+${message.messageId}")).toString()))?.toPlainText() : message.messageTextContent;
+    var content = (message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty) ? (CustomTextViewManager.getCustomText(message.messageTextContent.checkNull()+message.mentionedUsersIds!.join(",")+(Key("message_view+${message.messageId}")).toString()))?.toPlainText() : message.messageTextContent;
     return Constants.mText == message.messageType &&
         content.checkNull()
             .toLowerCase()
