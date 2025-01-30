@@ -242,7 +242,7 @@ class BackupRestoreManager {
   Future<BackupFile?> getBackupFileDetails() async {
     try {
       final fileList = await driveApi?.files.list(
-        q: "'me' in owners and name = '$_backupFileName'", // Filter by name
+        q: "'me' in owners", // Filter by name
         spaces: 'drive',
         orderBy: 'modifiedTime desc', // Get the latest file first
         pageSize: 1,
@@ -252,16 +252,23 @@ class BackupRestoreManager {
       if (fileList != null && fileList.files!.isNotEmpty) {
         final latestFile = fileList.files?.first;
         LogMessage.d("BackupRestoreManager getLatestFile",
-            "Latest File ID: ${latestFile?.id}, Name: ${latestFile?.name}");
-        return BackupFile(
-            fileId: latestFile?.id,
-            fileName: latestFile?.name,
-            fileSize: MediaUtils.fileSize(int.parse(latestFile?.size ?? "0")),
-            fileCreatedDate: BackupUtils()
-                .formatDateTime(latestFile!.createdTime.toString()));
+            "Latest File ID: ${latestFile?.id}, Name: ${latestFile?.name}, {$backupFileName}.crypto7");
+        //
+        if (latestFile?.name == "$backupFileName.crypto7") {
+          return BackupFile(
+              fileId: latestFile?.id,
+              fileName: latestFile?.name,
+              fileSize: MediaUtils.fileSize(int.parse(latestFile?.size ?? "0")),
+              fileCreatedDate: BackupUtils()
+                  .formatDateTime(latestFile!.createdTime.toString()));
+        }else{
+          LogMessage.d("BackupRestoreManager getLatestFile",
+              "No file found with the name $backupFileName matches");
+          return null;
+        }
       } else {
         LogMessage.d("BackupRestoreManager getLatestFile",
-            "No file found with the name $_backupFileName.");
+            "No file found with the name $backupFileName");
         return null;
       }
     } catch (e) {
