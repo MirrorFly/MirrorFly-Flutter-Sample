@@ -310,8 +310,8 @@ class BackupRestoreManager {
           onProgress: (progressStream) {
             progressStream.listen(
               (progress) {
-                // debugPrint("Uploading to server progress: $progress");
-                progressController.add((progress * 100).floor());
+                debugPrint("Uploading to server progress: $progress");
+                progressController.add(progress.floor());
               },
               onError: (error) {
                 debugPrint("Upload failed with error: $error");

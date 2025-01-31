@@ -38,6 +38,38 @@ class MediaUtils {
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
+  int parseFileSize(String fileSize) {
+    // Define unit suffixes and their corresponding multipliers in bytes
+    const Map<String, int> units = {
+      'B': 1,
+      'KB': 1024,
+      'MB': 1024 * 1024,
+      'GB': 1024 * 1024 * 1024,
+      'TB': 1024 * 1024 * 1024 * 1024,
+      'PB': 1024 * 1024 * 1024 * 1024 * 1024,
+      'EB': 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
+      'ZB': 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
+      'YB': 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
+    };
+
+    // Regular expression to match the numeric value and unit
+    final regex = RegExp(r'^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)$');
+    final match = regex.firstMatch(fileSize.trim());
+
+    if (match != null) {
+      final value = double.parse(match.group(1)!);
+      final unit = match.group(2)!.toUpperCase();
+
+      if (units.containsKey(unit)) {
+        return (value * units[unit]!).round();
+      } else {
+        throw ArgumentError('Unrecognized unit: $unit');
+      }
+    } else {
+      throw ArgumentError('Invalid file size format: $fileSize');
+    }
+  }
+
   /// Checks if the size of a file at the specified [path] is within the acceptable
   /// upload limits for the given [mediaType].
   /// Returns true if the file size is within the limits, otherwise false.
