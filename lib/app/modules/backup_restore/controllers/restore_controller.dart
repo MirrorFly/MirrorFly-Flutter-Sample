@@ -289,6 +289,10 @@ class RestoreController extends GetxController
 
   void restoreSuccess(event) {
     // backupRestoreStarted(false);
+    if(animationController != null){
+      animationController?.stop();
+      currentIndex(0);
+    }
     remoteRestoreProgress(100);
     toToast(getTranslated("localRestoreSuccess"));
     restoreCompleted(true);

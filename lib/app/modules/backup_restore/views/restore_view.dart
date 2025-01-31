@@ -245,6 +245,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(getTranslated("backupTime")),
+                    const SizedBox(width: 5),
                     Text(
                         controller.backupFile.value.fileCreatedDate.toString()),
                   ],
@@ -257,6 +258,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(getTranslated("backupSize")),
+                    const SizedBox(width: 5),
                     Text(controller.backupFile.value.fileSize.checkNull()),
                   ],
                 )
