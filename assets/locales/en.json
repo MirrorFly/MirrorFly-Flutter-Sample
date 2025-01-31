@@ -565,6 +565,7 @@
     "backupPermissionDeniedToast" : "Need Storage Permission for selecting the Backup file",
     "pleaseWaitAMoment" : "Please wait a moment",
     "restoreStatusInfo" : "Restoring",
+    "uploadingStatusInfo" : "Uploading",
     "backingUpMessages" : "Backing up messages",
     "backUpSuccess" : "Back up Success",
     "restoringMessages" : "Restoring messages",

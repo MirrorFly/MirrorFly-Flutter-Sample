@@ -96,7 +96,7 @@ class BackupView extends NavViewStateful<BackupController> {
                         Row(
                           children: [
                             Text(
-                                getTranslated("restoreStatusInfo")),
+                                getTranslated("uploadingStatusInfo")),
                             Text(
                                 "(${(controller.remoteUploadProgress.value)
                                     .floor()}%)"),
