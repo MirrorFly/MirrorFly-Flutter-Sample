@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_controller.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/restore_controller.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
@@ -70,6 +71,10 @@ class BackupRestoreManager {
   bool get isDriveApiInitialized => driveApi != null;
 
   StreamSubscription<List<int>>? _downloadSubscription;
+
+  String _cloudBackUpDownloadPath = "";
+
+  get remoteBackupPath => _cloudBackUpDownloadPath;
 
   Future<bool> initialize({required iCloudContainerID}) async {
     if (_isInitialized) {
@@ -350,11 +355,16 @@ class BackupRestoreManager {
   }
 
   Future<void> startIcloudFileDownload({required String relativePath}) async{
+    _cloudBackUpDownloadPath = "";
     await getBackupUrl().then((result) async {
       LogMessage.d("BackupRestoreManager", "download backup url: $result");
       await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: result ?? '', onProgress: (value) {
         value.listen((progress){
           LogMessage.d("BackupRestoreManager", "Download Progress: $progress");
+        }, onDone: () {
+          _cloudBackUpDownloadPath = result ?? "";
+        }, onError: (error) {
+          _cloudBackUpDownloadPath = "";
         });
       });
     });
@@ -495,17 +505,26 @@ class BackupRestoreManager {
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().restoreSuccess(event);
       }
+      if (Get.isRegistered<RestoreController>()) {
+        Get.find<RestoreController>().restoreSuccess(event);
+      }
     });
 
     Mirrorfly.onRestoreFailure.listen((event) {
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().restoreFailed(event);
       }
+      if (Get.isRegistered<RestoreController>()) {
+        Get.find<RestoreController>().restoreFailed(event);
+      }
     });
 
     Mirrorfly.onRestoreProgressChanged.listen((event) {
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().restoreBackupProgress(event);
+      }
+      if (Get.isRegistered<RestoreController>()) {
+        Get.find<RestoreController>().restoreBackupProgress(event);
       }
     });
   }
@@ -651,9 +670,12 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> downloadAndProcessFile(BackupFile backupFile) async {
+  Stream<int> downloadAndroidBackupFile(BackupFile backupFile) async*{
+    final StreamController<int> downloadProgress = StreamController<int>();
     var downloadPath = await getAndroidBackUpFolderPath();
     final file = File("$downloadPath/$backupFileName.crypto7");
+
+    _cloudBackUpDownloadPath = "";
 
     try {
 
@@ -687,26 +709,36 @@ class BackupRestoreManager {
             if (totalSize > 0) {
               final progress = (downloadedSize / totalSize) * 100;
               LogMessage.d("BackupRestoreManager", "Android Backup File Download Progress $progress");
-              // onProgress(progress);
+              downloadProgress.add((progress * 100).floor());
             }
           },
           onDone: () async {
             await sink.close();
             LogMessage.d("BackupRestoreManager", "Android Backup File Download complete: ${file.path}");
+            _cloudBackUpDownloadPath = file.path;
+            downloadProgress.add(100);
+            downloadProgress.close();
           },
           onError: (error) {
             LogMessage.d("BackupRestoreManager", "Android Backup File Error during file download: $error");
             sink.close();
-            throw error;
+            downloadProgress.addError(error);
+            downloadProgress.close();
+            // throw error;
           },
           cancelOnError: true,
         );
       } else {
         LogMessage.d("BackupRestoreManager", "Android Backup File Unexpected response type: ${response.runtimeType}");
+        downloadProgress.addError(response.runtimeType);
+        downloadProgress.close();
       }
     } catch (e) {
       LogMessage.d("BackupRestoreManager", "Android Backup File Error downloading file: $e");
+      downloadProgress.addError(e);
+      downloadProgress.close();
     }
+    yield* downloadProgress.stream;
   }
 
   void cancelDownload() {

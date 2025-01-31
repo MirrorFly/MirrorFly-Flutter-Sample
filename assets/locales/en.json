@@ -567,5 +567,7 @@
     "restoreStatusInfo" : "Restoring",
     "backingUpMessages" : "Backing up messages",
     "backUpSuccess" : "Back up Success",
+    "restoringMessages" : "Restoring messages",
+    "downloadingBackup" : "Downloading Backup File",
     "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?"
   }

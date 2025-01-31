@@ -168,13 +168,18 @@ class RestoreView extends NavViewStateful<RestoreController> {
                 const SizedBox(
                   height: 35,
                 ),
-                controller.isAndroid
-                    ? Obx(() {
-                  return controller.isAccountSelected.value
-                      ? backupFound()
-                      : addAccount();
-                })
-                    : backupFound(),
+                Obx(() {
+                  return !controller.backupRestoreStarted.value &&
+                      !controller.backupDownloadStarted.value
+                      ? controller.isAndroid
+                      ? Obx(() {
+                    return controller.isAccountSelected.value
+                        ? backupFound()
+                        : addAccount();
+                  })
+                      : backupFound()
+                      : restoreProgress();
+                }),
               ],
             ),
           )),
@@ -241,22 +246,23 @@ class RestoreView extends NavViewStateful<RestoreController> {
           return controller.isBackupFound.value
               ? Row(
             mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(getTranslated("backupTime")),
-                  Text(controller.backupFile.value.fileCreatedDate.toString()),
-                ],
-              )
+            children: [
+              Text(getTranslated("backupTime")),
+              Text(
+                  controller.backupFile.value.fileCreatedDate.toString()),
+            ],
+          )
               : const Offstage();
         }),
         Obx(() {
           return controller.isBackupFound.value
               ? Row(
             mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(getTranslated("backupSize")),
-                  Text(controller.backupFile.value.fileSize.checkNull()),
-                ],
-              )
+            children: [
+              Text(getTranslated("backupSize")),
+              Text(controller.backupFile.value.fileSize.checkNull()),
+            ],
+          )
               : const Offstage();
         }),
         const SizedBox(
@@ -322,7 +328,8 @@ class RestoreView extends NavViewStateful<RestoreController> {
                     : () => controller.nextScreen(),
                 child: Text(
                   controller.isBackupFound.value
-                      ? getTranslated("restore") : getTranslated("next"),
+                      ? getTranslated("restore")
+                      : getTranslated("next"),
                 ),
               );
             }),
@@ -341,6 +348,93 @@ class RestoreView extends NavViewStateful<RestoreController> {
         const SizedBox(
           height: 20,
         ),
+      ],
+    );
+  }
+
+  restoreProgress() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Obx(() {
+          return Text(
+              controller.isBackupFound.value
+                  ? getTranslated("backupFound")
+                  : getTranslated("backupNotFound"),
+              style:
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+        }),
+        const SizedBox(
+          height: 15,
+        ),
+        Obx(() {
+          return controller.isBackupFound.value
+              ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(getTranslated("backupTime")),
+              Text(
+                  controller.backupFile.value.fileCreatedDate.toString()),
+            ],
+          )
+              : const Offstage();
+        }),
+        Obx(() {
+          return controller.isBackupFound.value
+              ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(getTranslated("backupSize")),
+              Text(controller.backupFile.value.fileSize.checkNull()),
+            ],
+          )
+              : const Offstage();
+        }),
+        const SizedBox(
+          height: 15,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Text(
+            controller.isAndroid
+                ? getTranslated("restoreDescAndroid")
+                : getTranslated("restoreDescIos"),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: LinearProgressIndicator(
+            value: controller.remoteRestoreProgress.value / 100,
+          ),
+        ),
+        Obx(() {
+          return controller.backupDownloadStarted.value
+              ? Text(
+              "${getTranslated("downloadingBackup")} (${controller
+                  .remoteDownloadProgress}%)")
+              : Text(
+              "${getTranslated("restoringMessages")} (${controller
+                  .remoteRestoreProgress}%)");
+        }),
+        const SizedBox(
+          height: 25,
+        ),
+        Obx(() {
+          return ElevatedButton(
+            style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+            onPressed: () {
+              controller.restoreCompleted.value ? controller.nextScreen() : controller.skipBackup();
+            },
+            child: Text(
+              controller.restoreCompleted.value ? getTranslated("done") : getTranslated("skip"),
+            ),
+          );
+        }),
       ],
     );
   }

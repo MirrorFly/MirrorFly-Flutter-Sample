@@ -52,6 +52,12 @@ class RestoreController extends GetxController
   final backupUtils = BackupUtils();
 
   var fetchingBackupDetails = false.obs;
+  var backupRestoreStarted = false.obs;
+  var backupDownloadStarted = false.obs;
+  var restoreCompleted = false.obs;
+
+  var remoteDownloadProgress = 0.0.obs;
+  var remoteRestoreProgress = 0.0.obs;
 
   @override
   Future<void> onInit() async {
@@ -157,13 +163,30 @@ class RestoreController extends GetxController
   }
 
   void startMessageRestore() {
+    backupDownloadStarted(true);
     isBackupAnimationRunning(true);
     if(animationController != null) {
       animationController?.forward();
     }
 
     if (Platform.isAndroid) {
-      BackupRestoreManager().downloadAndProcessFile(backupFile.value);
+      BackupRestoreManager().downloadAndroidBackupFile(backupFile.value).listen((progress){
+        LogMessage.d(
+            "Restore Controller", "Backup file Download Progress=> $progress");
+        remoteDownloadProgress((progress / 100));
+        // backupDownloadStarted(false);
+      }, onDone: () {
+        String backUpPath = BackupRestoreManager().remoteBackupPath;
+        backupDownloadStarted(false);
+        backupRestoreStarted(true);
+        BackupRestoreManager().restoreBackup(backupFilePath: backUpPath);
+      }, onError: (error) {
+        LogMessage.d(
+            "Restore Controller", "Backup file Download Failed=> $error");
+        backupDownloadStarted(false);
+        backupRestoreStarted(false);
+      });
+
     } else {
       if (backupFile.value.iCloudRelativePath != null) {
         BackupRestoreManager().startIcloudFileDownload(
@@ -253,6 +276,24 @@ class RestoreController extends GetxController
             "Restore Controller", "Sign In to Drive to access the drive");
       }
     });
+  }
+
+  void restoreBackupProgress(progress) {
+    LogMessage.d(
+        "Restore Controller", "Restore Progress $progress");
+    remoteRestoreProgress(double.parse(progress.toString()));
+  }
+
+  void restoreSuccess(event) {
+    // backupRestoreStarted(false);
+    remoteRestoreProgress(100);
+    toToast(getTranslated("localRestoreSuccess"));
+    restoreCompleted(true);
+  }
+
+  void restoreFailed(event) {
+    backupRestoreStarted(false);
+    toToast(event);
   }
 
 }
