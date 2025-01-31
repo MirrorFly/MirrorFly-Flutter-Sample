@@ -641,7 +641,7 @@ class BackupRestoreManager {
       );
 
       if (response is drive.Media) {
-        final totalSize = response.length ?? 0;
+        final totalSize = MediaUtils().parseFileSize(backupFile.fileSize);
         int downloadedSize = 0;
 
         final sink = file.openWrite();
@@ -651,7 +651,6 @@ class BackupRestoreManager {
               (chunk) {
             sink.add(chunk);
             downloadedSize += chunk.length;
-
             // Calculate and report progress
             if (totalSize > 0) {
               final progress = (downloadedSize / totalSize) * 100;

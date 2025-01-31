@@ -38,7 +38,10 @@ class MediaUtils {
     return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
-  int parseFileSize(String fileSize) {
+  int parseFileSize(String? fileSize) {
+    if(fileSize==null){
+      return 0;
+    }
     // Define unit suffixes and their corresponding multipliers in bytes
     const Map<String, int> units = {
       'B': 1,
