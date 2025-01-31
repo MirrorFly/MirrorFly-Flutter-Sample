@@ -77,7 +77,7 @@ class BackupView extends NavViewStateful<BackupController> {
                 ),
                 Obx(() {
                   return controller.isRemoteBackupStarted.value ? controller.isRemoteUploadStarted.value ? Padding(
-                    padding: const EdgeInsets.only(left: 18.0),
+                    padding: const EdgeInsets.only(left: 18.0, right: 18.0),
                     child: Column(
                       children: [
                         Row(
