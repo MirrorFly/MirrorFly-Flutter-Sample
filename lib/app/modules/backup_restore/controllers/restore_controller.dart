@@ -163,7 +163,7 @@ class RestoreController extends GetxController
     }
 
     if (Platform.isAndroid) {
-      // BackupRestoreManager().downloadAndProcessFile(fileId: fileId, driveApi: driveApi, savePath: savePath, processFile: processFile, onProgress: onProgress)
+      BackupRestoreManager().downloadAndProcessFile(backupFile.value);
     } else {
       if (backupFile.value.iCloudRelativePath != null) {
         BackupRestoreManager().startIcloudFileDownload(
