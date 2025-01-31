@@ -195,8 +195,8 @@ class BackupController extends GetxController {
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
       remoteUploadProgress(progress.toDouble());
     }, onDone: () {
-      // isRemoteBackupStarted(false);
-      // isRemoteUploadStarted(false);
+      isRemoteBackupStarted(false);
+      isRemoteUploadStarted(false);
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
