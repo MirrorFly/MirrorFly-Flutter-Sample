@@ -167,6 +167,10 @@ class BackupRestoreManager {
           await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
       LogMessage.d("BackupRestoreManager",
           "iCloudFiles found under the container ID ${iCloudFiles.length}");
+      // Sort the files by modificationDate in descending order
+      iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+          .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+
       CloudFiles? iCloudFile = iCloudFiles.firstWhereOrNull(
           (file) => file.title == backupFileName);
       if (iCloudFile != null) {
