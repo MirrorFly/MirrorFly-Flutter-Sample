@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -360,23 +361,6 @@ class BackupRestoreManager {
 
   }
 
-  // Future<bool> checkICloudSignInStatus() async {
-  //   try {
-  //     // Attempt to gather iCloud files
-  //     await IcloudStorageSync().gather(containerId: _iCloudContainerID);
-  //     return true; // If successful, iCloud is signed in
-  //   } catch (e) {
-  //     // If an error occurs, check for containerError
-  //     if (e is PlatformException && e.code == "E_CTR") {
-  //       // Handle iCloud not signed in
-  //       debugPrint("iCloud is not signed in: ${e.message}");
-  //       return false;
-  //     }
-  //     debugPrint("Unexpected error: $e");
-  //     return false;
-  //   }
-  // }
-
   /*Future<bool> _checkGoogleDriveAccess() async {
     try {
       // Authenticate using Google Sign-In
@@ -406,7 +390,7 @@ class BackupRestoreManager {
     }
   }*/
 
-  Future<bool> _checkGoogleDriveAccess() async {
+  /*Future<bool> _checkGoogleDriveAccess() async {
     try {
       // Attempt silent sign-in to get the last signed-in user
       final GoogleSignInAccount? account = await googleSignIn.signInSilently();
@@ -429,7 +413,7 @@ class BackupRestoreManager {
           "BackupRestoreManager", 'Error retrieving signed-in user: $error');
       return false;
     }
-  }
+  }*/
 
   Future<GoogleSignInAccount?> selectGoogleAccount() async {
     try {
@@ -631,7 +615,13 @@ class BackupRestoreManager {
     String rootFilePath;
 
     if (Platform.isAndroid) {
-      int sdkVersion = int.tryParse(Platform.version.split(" ")[0]) ?? 0;
+      var sdkVersion = 0;
+      if (Platform.isAndroid) {
+        var sdk = await DeviceInfoPlugin().androidInfo;
+        sdkVersion = sdk.version.sdkInt;
+      } else {
+        sdkVersion = 0;
+      }
       LogMessage.d("BackupRestoreManager", "sdkVersion $sdkVersion");
 
       if (sdkVersion < 29) {
@@ -639,7 +629,7 @@ class BackupRestoreManager {
         rootFilePath = "/storage/emulated/0"; // Equivalent to Environment.getExternalStorageDirectory().absolutePath
       } else {
         // For Android 10+ (Q), use externalMediaDirs[0]
-        Directory? externalDir = (await getExternalStorageDirectories(type: StorageDirectory.documents))?.first;
+        Directory? externalDir = (await getExternalStorageDirectories())?.first;
         rootFilePath = externalDir?.path ?? "/storage/emulated/0"; // Fallback in case of null
       }
     } else {
@@ -647,24 +637,37 @@ class BackupRestoreManager {
     }
 
     // Construct the backup folder path
-    String backupFolderPath = "$rootFilePath/MirrorFly/Backups}";
+    String backupFolderPath = "$rootFilePath/MirrorFly/Backups";
 
     // Logging equivalent
-    print("getBackUpFolderPath: $backupFolderPath");
+    LogMessage.d("BackupRestoreManager", "Android Cloud Backup Download Path: $backupFolderPath");
 
-    return backupFolderPath;
+    Directory backUpDir = Directory(backupFolderPath);
+    if (await backUpDir.exists()){
+      return backupFolderPath;
+    }else{
+      await backUpDir.create(recursive: true);
+      return backupFolderPath;
+    }
   }
 
-  Future<void> downloadAndProcessFile(/*{
-    required Function(File) processFile,
-    required Function(double) onProgress,
-  }) async {
-    final file = File("savePath");
+  Future<void> downloadAndProcessFile(BackupFile backupFile) async {
+    var downloadPath = await getAndroidBackUpFolderPath();
+    final file = File("$downloadPath/$backupFileName.crypto7");
 
-    /*try {
+    try {
+
+      // Delete the file if already exists
+      if (await file.exists()) {
+        await file.delete();
+        LogMessage.d("BackupRestoreManager", "File deleted: ${file.path}");
+      }else {
+        LogMessage.d("BackupRestoreManager", "File not exists, so proceeding for Download");
+      }
+
       // Request the file from Google Drive
-      final response = await driveApi.files.get(
-        fileId,
+      final response = await driveApi?.files.get(
+        backupFile.fileId ?? "",
         downloadOptions: drive.DownloadOptions.fullMedia,
       );
 
@@ -683,35 +686,27 @@ class BackupRestoreManager {
             // Calculate and report progress
             if (totalSize > 0) {
               final progress = (downloadedSize / totalSize) * 100;
-              onProgress(progress);
+              LogMessage.d("BackupRestoreManager", "Android Backup File Download Progress $progress");
+              // onProgress(progress);
             }
           },
           onDone: () async {
             await sink.close();
-            print("Download complete: ${file.path}");
-
-            // Process the downloaded file
-            processFile(file);
-
-            // Delete the file after processing
-            if (await file.exists()) {
-              await file.delete();
-              print("File deleted: ${file.path}");
-            }
+            LogMessage.d("BackupRestoreManager", "Android Backup File Download complete: ${file.path}");
           },
           onError: (error) {
-            print("Error during file download: $error");
+            LogMessage.d("BackupRestoreManager", "Android Backup File Error during file download: $error");
             sink.close();
             throw error;
           },
           cancelOnError: true,
         );
       } else {
-        print("Unexpected response type: ${response.runtimeType}");
+        LogMessage.d("BackupRestoreManager", "Android Backup File Unexpected response type: ${response.runtimeType}");
       }
     } catch (e) {
-      print("Error downloading file: $e");
-    }*/
+      LogMessage.d("BackupRestoreManager", "Android Backup File Error downloading file: $e");
+    }
   }
 
   void cancelDownload() {
