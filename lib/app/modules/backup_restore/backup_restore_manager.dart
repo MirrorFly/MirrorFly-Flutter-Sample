@@ -88,7 +88,6 @@ class BackupRestoreManager {
     // _clientId = googleClientId;
     _backupFileName = "Backup_${SessionManagement.getUsername()}";
 
-    initializeBackupListeners();
 
     if (Platform.isAndroid) {
       // Fetch Google Previous Sign in
@@ -472,61 +471,6 @@ class BackupRestoreManager {
       LogMessage.d("BackupRestoreManager", 'Error switching account: $error');
       return null;
     }
-  }
-
-  void initializeBackupListeners() {
-    Mirrorfly.onBackupSuccess.listen((backUpPath) {
-      debugPrint(
-          "onBackupSuccess==> $backUpPath isServerUploadRequired ==> $isServerUploadRequired");
-      if (isServerUploadRequired) {
-        if (Get.isRegistered<BackupController>()) {
-          Get.find<BackupController>().remoteBackUpFileReady(backUpPath: backUpPath);
-        }
-      } else {
-        if (Get.isRegistered<BackupController>()) {
-          Get.find<BackupController>().backUpSuccess(backUpPath);
-        }
-      }
-    });
-
-    Mirrorfly.onBackupFailure.listen((event) {
-      if (Get.isRegistered<BackupController>()) {
-        Get.find<BackupController>().backUpFailed(event);
-      }
-    });
-
-    Mirrorfly.onBackupProgressChanged.listen((event) {
-      if (Get.isRegistered<BackupController>()) {
-        Get.find<BackupController>().backUpProgress(event);
-      }
-    });
-
-    Mirrorfly.onRestoreSuccess.listen((event) {
-      if (Get.isRegistered<BackupController>()) {
-        Get.find<BackupController>().restoreSuccess(event);
-      }
-      if (Get.isRegistered<RestoreController>()) {
-        Get.find<RestoreController>().restoreSuccess(event);
-      }
-    });
-
-    Mirrorfly.onRestoreFailure.listen((event) {
-      if (Get.isRegistered<BackupController>()) {
-        Get.find<BackupController>().restoreFailed(event);
-      }
-      if (Get.isRegistered<RestoreController>()) {
-        Get.find<RestoreController>().restoreFailed(event);
-      }
-    });
-
-    Mirrorfly.onRestoreProgressChanged.listen((event) {
-      if (Get.isRegistered<BackupController>()) {
-        Get.find<BackupController>().restoreBackupProgress(event);
-      }
-      if (Get.isRegistered<RestoreController>()) {
-        Get.find<RestoreController>().restoreBackupProgress(event);
-      }
-    });
   }
 
   void startBackup({bool isServerUploadRequired = false}) {
