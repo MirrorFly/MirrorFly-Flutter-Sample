@@ -120,37 +120,39 @@ class BackupView extends NavViewStateful<BackupController> {
                   height: 20,
                 ),
                 const AppDivider(color: Color(0xffEBEBEB)),
-                Obx(() {
-                  return lockItem(
-                      title: getTranslated("autoBackup"),
-                      on: controller.isAutoBackupEnabled.value,
-                      onToggle: (value) {
-                        controller.updateAutoBackupOption(value);
-                      },
-                      subtitle: '');
-                }),
-                Obx(() {
-                  return controller.isAutoBackupEnabled.value
-                      ? InkWell(
-                    onTap: () => controller.showBackupFrequency(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        children: [
-                          Text(getTranslated("scheduleBackUp")),
-                          const Spacer(),
-                          Obx(() {
-                            return Text(
-                                controller.selectedBackupFrequency.value);
-                          }),
-                          const SizedBox(width: 10),
-                          const Icon(Icons.keyboard_arrow_right_rounded),
-                        ],
+                if (controller.isAutoBackupFeatureEnabled) ...[
+                  Obx(() {
+                    return lockItem(
+                        title: getTranslated("autoBackup"),
+                        on: controller.isAutoBackupEnabled.value,
+                        onToggle: (value) {
+                          controller.updateAutoBackupOption(value);
+                        },
+                        subtitle: '');
+                  }),
+                  Obx(() {
+                    return controller.isAutoBackupEnabled.value
+                        ? InkWell(
+                      onTap: () => controller.showBackupFrequency(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Row(
+                          children: [
+                            Text(getTranslated("scheduleBackUp")),
+                            const Spacer(),
+                            Obx(() {
+                              return Text(
+                                  controller.selectedBackupFrequency.value);
+                            }),
+                            const SizedBox(width: 10),
+                            const Icon(Icons.keyboard_arrow_right_rounded),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                      : const Offstage();
-                }),
+                    )
+                        : const Offstage();
+                  }),
+                ],
                 if (controller.isAndroid) ...[
                   const AppDivider(color: Color(0xffEBEBEB)),
                   Padding(

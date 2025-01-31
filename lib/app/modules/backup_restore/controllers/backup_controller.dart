@@ -24,6 +24,7 @@ class BackupController extends GetxController {
   var mobileNumber = '';
 
   var isAutoBackupEnabled = false.obs;
+  var isAutoBackupFeatureEnabled = false;
 
   var isBackupFound = false.obs;
 
