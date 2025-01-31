@@ -197,6 +197,7 @@ class BackupController extends GetxController {
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
+      checkForBackUpFiles();
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
