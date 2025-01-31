@@ -356,21 +356,28 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> startIcloudFileDownload({required String relativePath}) async{
+  Stream<int> startIcloudFileDownload({required String relativePath}) async*{
+    StreamController<int> iCloudProgressController = StreamController<int>();
     _cloudBackUpDownloadPath = "";
     await getBackupUrl().then((result) async {
       LogMessage.d("BackupRestoreManager", "download backup url: $result");
       await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: result ?? '', onProgress: (value) {
         value.listen((progress){
           LogMessage.d("BackupRestoreManager", "Download Progress: $progress");
+          iCloudProgressController.add((progress).floor());
         }, onDone: () {
           _cloudBackUpDownloadPath = result ?? "";
+          iCloudProgressController.add(100);
+          iCloudProgressController.close();
         }, onError: (error) {
           _cloudBackUpDownloadPath = "";
+          iCloudProgressController.addError(error);
+          iCloudProgressController.close();
         });
       });
     });
 
+    yield* iCloudProgressController.stream;
   }
 
   /*Future<bool> _checkGoogleDriveAccess() async {
@@ -482,6 +489,7 @@ class BackupRestoreManager {
   }
 
   void restoreBackup({required String backupFilePath}) {
+    LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
     Mirrorfly.restoreBackup(backupPath: backupFilePath);
   }
 
@@ -517,8 +525,7 @@ class BackupRestoreManager {
       LogMessage.d("BackupRestoreManager",
           "Error while accessing Backup Directory, Directory path is not found, Creating the Directory");
     }
-
-    return '${backupDirectory.path}/Backup_${SessionManagement.getUsername()}';
+    return '${backupDirectory.path}/Backup_${SessionManagement.getUsername()}.crypto7';
   }
 
   void destroy() {

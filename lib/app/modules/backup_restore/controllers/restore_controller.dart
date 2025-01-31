@@ -193,10 +193,21 @@ class RestoreController extends GetxController
     } else {
       if (backupFile.value.iCloudRelativePath != null) {
         BackupRestoreManager().startIcloudFileDownload(
-            relativePath: backupFile.value.iCloudRelativePath ?? '');
+            relativePath: backupFile.value.iCloudRelativePath ?? '').listen((progress){
+          remoteDownloadProgress((progress / 100));
+        }, onDone: () {
+          String backUpPath = BackupRestoreManager().remoteBackupPath;
+          LogMessage.d(
+              "Restore Controller", "Backup file Downloaded => Restoring the messages==> ${backupFile.toJson()}");
+          backupDownloadStarted(false);
+          backupRestoreStarted(true);
+          BackupRestoreManager().restoreBackup(backupFilePath: backUpPath);
+        });
       }else{
         LogMessage.d(
             "Restore Controller", "Backup file Download => Backup file relative path is not found ==> ${backupFile.toJson()}");
+        backupDownloadStarted(false);
+        backupRestoreStarted(false);
       }
     }
   }
@@ -289,6 +300,8 @@ class RestoreController extends GetxController
 
   void restoreSuccess(event) {
     // backupRestoreStarted(false);
+    LogMessage.d(
+        "Restore Controller", "Restore Success $event");
     if(animationController != null){
       animationController?.stop();
       currentIndex(0);
