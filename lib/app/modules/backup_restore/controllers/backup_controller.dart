@@ -74,8 +74,7 @@ class BackupController extends GetxController {
           checkForBackUpFiles();
         });
       } else {
-        LogMessage.d(
-            "Backup Controller",
+        LogMessage.d("Backup Controller",
             "Sign In to Drive/Console to access the drive");
       }
     });
@@ -87,9 +86,7 @@ class BackupController extends GetxController {
 
     /// Restoring the mail id in Android Backup Screen
     if (Platform.isAndroid) {
-      var previousBackupEmail = SessionManagement
-          .getBackUpAccount()
-          .isEmpty
+      var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty
           ? (BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull()
           : SessionManagement.getBackUpAccount();
 
@@ -106,8 +103,7 @@ class BackupController extends GetxController {
 
   Future<void> checkForBackUpFiles() async {
     await backupRestoreManager.checkBackUpFiles().then((backupFileDetails) {
-      LogMessage.d(
-          "Restore Controller",
+      LogMessage.d("Restore Controller",
           "Backup file Available => ${backupFileDetails?.toJson()}");
       if (backupFileDetails != null) {
         isBackupFound(backupFileDetails.fileId?.isNotEmpty);
@@ -117,7 +113,7 @@ class BackupController extends GetxController {
     });
   }
 
-  resetBackupProgress(){
+  resetBackupProgress() {
     localBackupProgress(0);
     remoteBackupProgress(0);
     remoteUploadProgress(0);
@@ -128,23 +124,33 @@ class BackupController extends GetxController {
 
   Future<void> initializeBackUp() async {
     resetBackupProgress();
-    if (!driveAccessible.value) {
-      toToast("Unable to access drive");
-    } else if (await AppPermission.getStoragePermission()) {
-      isRemoteBackupStarted(true);
-      showBackupDialog();
-      backupRestoreManager.startBackup(isServerUploadRequired: true);
+    if (await AppUtils.isNetConnected()) {
+      if (!driveAccessible.value) {
+        toToast("Unable to access drive");
+      } else if (await AppPermission.getStoragePermission()) {
+        isRemoteBackupStarted(true);
+        showBackupDialog();
+        backupRestoreManager.startBackup(isServerUploadRequired: true);
+      } else {
+        toToast("Storage Permission Needed for backup process");
+      }
     } else {
-      toToast("Storage Permission Needed for backup process");
+      toToast(getTranslated("noInternetConnection"));
+      return;
     }
   }
 
   Future<void> downloadBackup() async {
-    if (await AppPermission.getStoragePermission()) {
-      isLocalBackupStarted(true);
-      backupRestoreManager.startBackup();
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.getStoragePermission()) {
+        isLocalBackupStarted(true);
+        backupRestoreManager.startBackup();
+      } else {
+        toToast("Need Storage Permission for creating the Backup file");
+      }
     } else {
-      toToast("Need Storage Permission for creating the Backup file");
+      toToast(getTranslated("noInternetConnection"));
+      return;
     }
   }
 
@@ -211,7 +217,9 @@ class BackupController extends GetxController {
 
     LogMessage.d("Backup Controller", "Upload fileSize*** $totalFileSize");
     isRemoteUploadStarted(true);
-    backupRestoreManager.uploadBackupFile(filePath: backupFilePath, fileSize: totalFileSize).listen((progress){
+    backupRestoreManager
+        .uploadBackupFile(filePath: backupFilePath, fileSize: totalFileSize)
+        .listen((progress) {
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
       remoteUploadProgress(progress.toDouble());
       int uploadedBytes = ((progress / 100) * totalFileSize).floor();
@@ -219,7 +227,9 @@ class BackupController extends GetxController {
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
-      toToast(Platform.isAndroid ? getTranslated("androidRemoteBackupSuccess") : getTranslated("iOSRemoteBackupSuccess"));
+      toToast(Platform.isAndroid
+          ? getTranslated("androidRemoteBackupSuccess")
+          : getTranslated("iOSRemoteBackupSuccess"));
       checkForBackUpFiles();
     }, onError: (error) {
       isRemoteBackupStarted(false);
@@ -267,21 +277,27 @@ class BackupController extends GetxController {
 
   void handleGoogleAccount() {
     if (backUpEmailId.value.isNotEmpty) {
-      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
-          message:
-          getTranslated("restoreAndroidAccountSwitch"),
+      DialogUtils.showAlert(
+          dialogStyle: AppStyleConfig.dialogStyle,
+          message: getTranslated("restoreAndroidAccountSwitch"),
           actions: [
-            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            TextButton(
+                style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                 },
-                child: Text(getTranslated("no").toUpperCase(),)),
-            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                child: Text(
+                  getTranslated("no").toUpperCase(),
+                )),
+            TextButton(
+                style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   _switchAccount();
                 },
-                child: Text(getTranslated("yes").toUpperCase(),))
+                child: Text(
+                  getTranslated("yes").toUpperCase(),
+                ))
           ]);
     } else {
       _switchAccount();
@@ -303,47 +319,49 @@ class BackupController extends GetxController {
 
   showBackupDialog() {
     showDialog(
-        context: NavUtils.currentContext, routeSettings: DialogUtils.routeSettings,
-        builder: (_) {
-      return Dialog(
-      backgroundColor: Colors.white,
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (didPop) {
-            return;
-          }
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-              child: Text(getTranslated("backingUpMessages"),
-                style: const TextStyle(fontWeight: FontWeight.bold),),
+      context: NavUtils.currentContext,
+      routeSettings: DialogUtils.routeSettings,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) {
+                return;
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+                  child: Text(
+                    getTranslated("backingUpMessages"),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(width: 16),
+                      Obx(() {
+                        return Flexible(
+                            child: Text(
+                                "${getTranslated("pleaseWaitAMoment")} (${(remoteBackupProgress.value * 100).floor()}%)"));
+                      }),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(width: 16),
-                  Obx(() {
-                    return Flexible(child: Text("${getTranslated(
-                        "pleaseWaitAMoment")} (${(remoteBackupProgress
-                        .value * 100).floor()}%)"));
-                  }),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-        },
+          ),
+        );
+      },
       barrierDismissible: false,
     );
   }
