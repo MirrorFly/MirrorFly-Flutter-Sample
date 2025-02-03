@@ -208,7 +208,7 @@ class BackupController extends GetxController {
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
       remoteUploadProgress(progress.toDouble());
       int uploadedBytes = ((progress / 100) * totalFileSize).floor();
-      backupUploadingSize(MediaUtils.fileSize(uploadedBytes));
+      backupUploadingSize(MediaUtils.fileSize(uploadedBytes, 2));
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
@@ -219,15 +219,6 @@ class BackupController extends GetxController {
       isRemoteUploadStarted(false);
       LogMessage.d("Backup Controller", "Upload Backup File Error => $error");
     });
-  }
-
-  String getUploadedSize(int totalFileSizeInBytes, double percentageUploaded) {
-    int uploadedBytes = ((percentageUploaded / 100) * totalFileSizeInBytes).floor();
-
-    String uploadedSize = MediaUtils.fileSize(uploadedBytes);
-    String totalSize = MediaUtils.fileSize(totalFileSizeInBytes);
-
-    return "$uploadedSize uploaded out of $totalSize";
   }
 
   void serverUploadSuccess() {
