@@ -188,9 +188,7 @@ class BackupController extends GetxController {
   }
 
   void remoteBackUpFileReady({required String backUpPath}) {
-    if(NavUtils.isOverlayOpen) {
-      NavUtils.back();
-    }
+    DialogUtils.hideLoading();
     isRemoteUploadStarted(true);
     backupRestoreManager.uploadBackupFile(filePath: backUpPath).listen((progress){
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
@@ -220,6 +218,7 @@ class BackupController extends GetxController {
   }
 
   void backUpFailed(event) {
+    DialogUtils.hideLoading();
     isLocalBackupStarted(false);
     isRemoteBackupStarted(false);
     isRemoteUploadStarted(false);

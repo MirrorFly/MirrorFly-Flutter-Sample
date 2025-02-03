@@ -37,7 +37,7 @@ class BackupView extends NavViewStateful<BackupController> {
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
               child: Text(
                 getTranslated("lastBackUpDesc"),
-                style: TextStyle(color: Color(0xff767676)),
+                style: const TextStyle(color: Color(0xff767676)),
               ),
             ),
             Padding(
@@ -45,7 +45,7 @@ class BackupView extends NavViewStateful<BackupController> {
               child: Row(
                 children: [
                   Text(getTranslated("lastBackUp"),
-                      style: TextStyle(color: Color(0xff767676))),
+                      style: const TextStyle(color: Color(0xff767676))),
                   Obx(() {
                     return controller.isBackupFound.value
                         ? Text(
@@ -62,7 +62,7 @@ class BackupView extends NavViewStateful<BackupController> {
               child: Row(
                 children: [
                   Text(getTranslated("totalSize"),
-                      style: TextStyle(color: Color(0xff767676))),
+                      style: const TextStyle(color: Color(0xff767676))),
                   Obx(() {
                     return controller.isBackupFound.value
                         ? Text(controller.backUpFoundSize.value,
@@ -223,7 +223,7 @@ class BackupView extends NavViewStateful<BackupController> {
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
               child: Text(getTranslated("localBackupDesc"),
-                  style: TextStyle(color: Color(0xff767676))),
+                  style: const TextStyle(color: Color(0xff767676))),
             ),
             const SizedBox(
               height: 30,
