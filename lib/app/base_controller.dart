@@ -1310,6 +1310,9 @@ class BaseController {
       if (Get.isRegistered<RestoreController>()) {
         Get.find<RestoreController>().restoreSuccess(event);
       }
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>().getRecentChatList();
+      }
     });
 
     Mirrorfly.onRestoreFailure.listen((event) {
