@@ -68,7 +68,20 @@ class BackupUtils {
 
   String formatDateTime(String isoString) {
     final DateTime parsedDate = DateTime.parse(isoString).toLocal();
-    final DateFormat formatter = DateFormat("d MMM yyyy | h.mm a");
-    return formatter.format(parsedDate);
+    final DateTime now = DateTime.now();
+    final Duration difference = now.difference(parsedDate);
+
+    if (difference.inSeconds < 60) {
+      return "Just now";
+    } else if (difference.inMinutes == 1) {
+      return "1 minute ago";
+    } else if (difference.inMinutes < 60) {
+      return "${difference.inMinutes} minutes ago";
+    } else if (difference.inHours == 1) {
+      return "1 hour ago";
+    } else {
+      final DateFormat formatter = DateFormat("d MMM yyyy | h.mm a");
+      return formatter.format(parsedDate);
+    }
   }
 }
