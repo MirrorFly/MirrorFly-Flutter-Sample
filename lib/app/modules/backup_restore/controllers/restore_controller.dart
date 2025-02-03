@@ -14,7 +14,6 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../backup_utils.dart';
-import '../icloud_instruction_view.dart';
 
 class RestoreController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -212,6 +211,17 @@ class RestoreController extends GetxController
           backupRestoreStarted(true);
           BackupRestoreManager().restoreBackup(backupFilePath: backUpPath);
         });
+
+        // LogMessage.d("Restore Controller", "download backup url: ${backupFile.value.filePath}");
+        // BackupRestoreManager().restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
+        /*BackupRestoreManager().getBackupUrl().then((backupPath){
+          LogMessage.d("Restore Controller", "download backup url: $backupPath");
+          final fullFilePath = backupPath != null ? "$backupPath/${backupFile.value.iCloudRelativePath}" : '';
+
+          LogMessage.d("Restore Controller", "download full backup url: $fullFilePath");
+          BackupRestoreManager().restoreBackup(backupFilePath: fullFilePath);
+        });*/
+
       }else{
         LogMessage.d(
             "Restore Controller", "Backup file Download => Backup file relative path is not found ==> ${backupFile.toJson()}");
@@ -219,18 +229,6 @@ class RestoreController extends GetxController
         backupRestoreStarted(false);
       }
     }
-  }
-
-  void showIcloudSetupInstruction() {
-    showModalBottomSheet(
-      context: NavUtils.currentContext,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (BuildContext context) {
-        return const IcloudInstructionView();
-      },
-    );
   }
 
   showBackupFrequency() async {

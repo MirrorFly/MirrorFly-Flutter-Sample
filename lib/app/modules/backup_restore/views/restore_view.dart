@@ -8,6 +8,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/widgets.dart';
 import '../../../extensions/extensions.dart';
 import '../../settings/views/settings_widgets.dart';
+import '../backup_utils.dart';
 import '../controllers/restore_controller.dart';
 
 class RestoreView extends NavViewStateful<RestoreController> {
@@ -32,7 +33,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
             Obx(() {
               return !controller.driveAccessible.value && !controller.isAndroid
                   ? InkWell(
-                      onTap: () => controller.showIcloudSetupInstruction(),
+                      onTap: () => BackupUtils().showIcloudSetupInstruction(),
                       child: Container(
                         padding: const EdgeInsets.only(
                             left: 15, top: 10, bottom: 10, right: 15),

@@ -4,6 +4,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../common/app_localizations.dart';
 import '../../data/utils.dart';
+import 'icloud_instruction_view.dart';
 
 class BackupUtils {
   Future<dynamic> showBackupOptionList(
@@ -83,5 +84,17 @@ class BackupUtils {
       final DateFormat formatter = DateFormat("d MMM yyyy | h.mm a");
       return formatter.format(parsedDate);
     }
+  }
+
+  void showIcloudSetupInstruction() {
+    showModalBottomSheet(
+      context: NavUtils.currentContext,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return const IcloudInstructionView();
+      },
+    );
   }
 }

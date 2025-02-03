@@ -4,9 +4,12 @@ import 'package:mirror_fly_demo/app/modules/backup_restore/controllers/backup_co
 
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
 import '../../../common/widgets.dart';
+import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../settings/views/settings_widgets.dart';
+import '../backup_utils.dart';
 
 class BackupView extends NavViewStateful<BackupController> {
   const BackupView({super.key});
@@ -23,6 +26,41 @@ class BackupView extends NavViewStateful<BackupController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Obx(() {
+              return !controller.driveAccessible.value && !controller.isAndroid
+                  ? InkWell(
+                      onTap: () => BackupUtils().showIcloudSetupInstruction(),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            left: 15, top: 10, bottom: 10, right: 15),
+                        color: Colors.blueAccent,
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 15,
+                              child: AppUtils.assetIcon(
+                                  assetName: backupHistoryIcon,
+                                  width: 15,
+                                  height: 15),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Flexible(
+                                child: Text(
+                              getTranslated("iCloudInstructions"),
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.white),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            )),
+                          ],
+                        ),
+                      ),
+                    )
+                  : const Offstage();
+            }),
             Padding(
               padding: const EdgeInsets.all(18.0),
               child: Text(
