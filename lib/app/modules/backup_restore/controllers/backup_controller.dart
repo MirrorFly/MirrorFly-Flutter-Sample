@@ -117,7 +117,17 @@ class BackupController extends GetxController {
     });
   }
 
+  resetBackupProgress(){
+    localBackupProgress(0);
+    remoteBackupProgress(0);
+    remoteUploadProgress(0);
+    restoreProgress(0);
+    backupUploadingSize("0 KB");
+    backupTotalSize("0 KB");
+  }
+
   Future<void> initializeBackUp() async {
+    resetBackupProgress();
     if (!driveAccessible.value) {
       toToast("Unable to access drive");
     } else if (await AppPermission.getStoragePermission()) {
@@ -205,7 +215,7 @@ class BackupController extends GetxController {
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
       remoteUploadProgress(progress.toDouble());
       int uploadedBytes = ((progress / 100) * totalFileSize).floor();
-      backupUploadingSize(MediaUtils.fileSize(uploadedBytes));
+      backupUploadingSize(MediaUtils.fileSize(uploadedBytes, 1));
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
