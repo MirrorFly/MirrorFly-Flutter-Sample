@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_restore_manager.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
+import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
@@ -63,7 +64,7 @@ class RestoreController extends GetxController
   var remoteRestoreProgress = 0.0.obs;
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
 
     fetchingBackupDetails(true);
@@ -91,7 +92,6 @@ class RestoreController extends GetxController
       mobileNumber = "";
     }
 
-    initialiseBackUpProcess();
 
     animationController = AnimationController(
       vsync: this,
@@ -108,6 +108,12 @@ class RestoreController extends GetxController
         animationController?.forward();
       }
     });
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    initialiseBackUpProcess();
   }
 
   @override
@@ -162,6 +168,9 @@ class RestoreController extends GetxController
         backupFile(backupFileDetails);
         fetchingBackupDetails(false);
       }
+      DialogUtils.hideLoading();
+    }).catchError((onError){
+      DialogUtils.hideLoading();
     });
   }
 
@@ -259,8 +268,8 @@ class RestoreController extends GetxController
 
   }
 
-  void checkCloudAccess() {
-    BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
+  Future<void> checkCloudAccess() async {
+    await BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
       LogMessage.d(
           "Restore Controller",
           "Drive Access Status => $isDriveAccessible");
@@ -277,18 +286,26 @@ class RestoreController extends GetxController
         }
       }
       checkForBackUpFiles();
+    }).catchError((er){
+      DialogUtils.hideLoading();
     });
   }
 
-  void initialiseBackUpProcess() {
-    BackupRestoreManager().initialize(
+  Future<void> initialiseBackUpProcess() async {
+    DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
+    await BackupRestoreManager().initialize(
         iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter").then((isSuccess) {
       if (isSuccess) {
         checkCloudAccess();
       }else {
         LogMessage.d(
             "Restore Controller", "Sign In to Drive to access the drive");
+        DialogUtils.hideLoading();
       }
+    }).catchError((onError){
+      LogMessage.d(
+          "Restore Controller", "Sign In to Drive to access the drive $onError");
+      DialogUtils.hideLoading();
     });
   }
 

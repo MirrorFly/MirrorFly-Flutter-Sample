@@ -86,8 +86,8 @@ class BackupRestoreManager {
 
     _iCloudContainerID = iCloudContainerID;
     // _clientId = googleClientId;
-    _backupFileName = "Backup_${SessionManagement.getUsername()}";
-
+    _backupFileName = "Backup_${SessionManagement.getUsername() ?? SessionManagement.getUserJID()?.split("@").first}";
+    debugPrint("_backupFileName $_backupFileName");
 
     if (Platform.isAndroid) {
       // Fetch Google Previous Sign in
@@ -253,7 +253,7 @@ class BackupRestoreManager {
 
     try {
       final fileList = await driveApi?.files.list(
-        q: "'me' in owners", // Filter by name
+        q: "'me' in owners and name = '$_backupFileName.$fileFormat'",
         spaces: 'drive',
         orderBy: 'modifiedTime desc', // Get the latest file first
         pageSize: 1,
