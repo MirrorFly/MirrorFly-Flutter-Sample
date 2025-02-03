@@ -369,7 +369,7 @@ class BackupRestoreManager {
     await getBackupUrl().then((result) async {
       final fullFilePath = result != null ? "$result/$relativePath" : '';
       LogMessage.d("BackupRestoreManager", "download backup url: $fullFilePath");
-      await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: fullFilePath ?? '', onProgress: (value) {
+      await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: fullFilePath, onProgress: (value) {
         value.listen((progress){
           LogMessage.d("BackupRestoreManager", "Download Progress: $progress");
           iCloudProgressController.add((progress).floor());
