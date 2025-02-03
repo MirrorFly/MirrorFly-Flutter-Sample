@@ -173,7 +173,11 @@ class RestoreController extends GetxController
     });
   }
 
-  void startMessageRestore() {
+  Future<void> startMessageRestore() async {
+    if (!await AppUtils.isNetConnected()) {
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
     backupDownloadStarted(true);
     isBackupAnimationRunning(true);
     if(animationController != null) {
