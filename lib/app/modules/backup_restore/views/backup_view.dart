@@ -102,7 +102,8 @@ class BackupView extends NavViewStateful<BackupController> {
                               ),
                               Row(
                                 children: [
-                                  Text("${getTranslated("uploadingStatusInfo")}: ${controller.backupUploadingSize.value} of ${controller.backupTotalSize.value}"),
+                                  Text(
+                                      "${getTranslated("uploadingStatusInfo")}: ${controller.backupUploadingSize.value} of ${controller.backupTotalSize.value}"),
                                   Text(
                                       "(${(controller.remoteUploadProgress.value).floor()}%)"),
                                 ],
@@ -111,17 +112,19 @@ class BackupView extends NavViewStateful<BackupController> {
                           ),
                         )
                       : const Offstage()
-                  : Center(
-                      child: ElevatedButton(
-                        style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                        onPressed: () {
-                          controller.initializeBackUp();
-                        },
-                        child: Text(
-                          getTranslated("backupNow"),
+                  : Obx(() {
+                      return Center(
+                        child: ElevatedButton(
+                          style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                          onPressed: controller.driveAccessible.value
+                              ? () => controller.initializeBackUp()
+                              : null,
+                          child: Text(
+                            getTranslated("backupNow"),
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    });
             }),
             const SizedBox(
               height: 20,

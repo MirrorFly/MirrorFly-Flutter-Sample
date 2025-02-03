@@ -314,6 +314,7 @@ class BackupController extends GetxController {
     if (newAccount?.email != null) {
       SessionManagement.setBackUpAccount(backUpEmailId.value);
       SessionManagement.setBackUpState(Constants.backupAccountSelected);
+      checkForBackUpFiles();
     }
   }
 
