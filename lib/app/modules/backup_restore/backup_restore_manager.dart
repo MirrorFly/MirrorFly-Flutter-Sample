@@ -64,6 +64,7 @@ class BackupRestoreManager {
   GoogleSignInAccount? get getGoogleAccountSignedIn => googleSignIn.currentUser;
 
   bool isServerUploadRequired = false;
+  bool isEncryptionEnabled = true;
 
   drive.DriveApi? driveApi;
 
@@ -193,7 +194,7 @@ class BackupRestoreManager {
             fileSize: MediaUtils.fileSize(iCloudFile.sizeInBytes),
             fileCreatedDate:
                 BackupUtils().formatDateTime(iCloudFile.lastSyncDt.toString()),
-        iCloudRelativePath: iCloudFile.relativePath);
+        iCloudRelativePath: iCloudFile.relativePath, filePath: iCloudFile.filePath);
       } else {
         LogMessage.d("BackupRestoreManager",
             "iCloudFiles found under the container ID not found");
@@ -248,6 +249,8 @@ class BackupRestoreManager {
   }
 
   Future<BackupFile?> getBackupFileDetails() async {
+    String fileFormat = Constants.backupEncryptedFileFormat;
+
     try {
       final fileList = await driveApi?.files.list(
         q: "'me' in owners", // Filter by name
@@ -259,10 +262,14 @@ class BackupRestoreManager {
 
       if (fileList != null && fileList.files!.isNotEmpty) {
         final latestFile = fileList.files?.first;
+        if (!isEncryptionEnabled){
+          fileFormat = Constants.backupRawFileFormat;
+        }
+
         LogMessage.d("BackupRestoreManager getLatestFile",
-            "Latest File ID: ${latestFile?.id}, Name: ${latestFile?.name}, {$backupFileName}.crypto7");
+            "Latest File ID: ${latestFile?.id}, Name: ${latestFile?.name}, {$backupFileName}.$fileFormat");
         //
-        if (latestFile?.name == "$backupFileName.crypto7") {
+        if (latestFile?.name == "$backupFileName.$fileFormat") {
           return BackupFile(
               fileId: latestFile?.id,
               fileName: latestFile?.name,
@@ -341,7 +348,7 @@ class BackupRestoreManager {
   }
 
   Future<void> backupFile() async {
-    await Mirrorfly.startBackup();
+    await Mirrorfly.startBackup(enableEncryption: true);
   }
 
   Future<bool> _checkICloudAccess() async {
@@ -360,13 +367,14 @@ class BackupRestoreManager {
     StreamController<int> iCloudProgressController = StreamController<int>();
     _cloudBackUpDownloadPath = "";
     await getBackupUrl().then((result) async {
-      LogMessage.d("BackupRestoreManager", "download backup url: $result");
-      await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: result ?? '', onProgress: (value) {
+      final fullFilePath = result != null ? "$result/$relativePath" : '';
+      LogMessage.d("BackupRestoreManager", "download backup url: $fullFilePath");
+      await icloudSyncPlugin.download(containerId: _iCloudContainerID, relativePath: relativePath, destinationFilePath: fullFilePath ?? '', onProgress: (value) {
         value.listen((progress){
           LogMessage.d("BackupRestoreManager", "Download Progress: $progress");
           iCloudProgressController.add((progress).floor());
         }, onDone: () {
-          _cloudBackUpDownloadPath = result ?? "";
+          _cloudBackUpDownloadPath = fullFilePath;
           iCloudProgressController.add(100);
           iCloudProgressController.close();
         }, onError: (error) {
@@ -483,9 +491,10 @@ class BackupRestoreManager {
     }
   }
 
-  void startBackup({bool isServerUploadRequired = false}) {
+  void startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) {
     this.isServerUploadRequired = isServerUploadRequired;
-    Mirrorfly.startBackup();
+    isEncryptionEnabled = enableEncryption;
+    Mirrorfly.startBackup(enableEncryption: enableEncryption);
   }
 
   void restoreBackup({required String backupFilePath}) {
@@ -525,7 +534,10 @@ class BackupRestoreManager {
       LogMessage.d("BackupRestoreManager",
           "Error while accessing Backup Directory, Directory path is not found, Creating the Directory");
     }
-    return '${backupDirectory.path}/Backup_${SessionManagement.getUsername()}.crypto7';
+    return backupDirectory.path;
+
+
+
   }
 
   void destroy() {
@@ -627,7 +639,12 @@ class BackupRestoreManager {
   Stream<int> downloadAndroidBackupFile(BackupFile backupFile) async*{
     final StreamController<int> downloadProgress = StreamController<int>();
     var downloadPath = await getAndroidBackUpFolderPath();
-    final file = File("$downloadPath/$backupFileName.crypto7");
+    String fileFormat = Constants.backupEncryptedFileFormat;
+
+    if (!isEncryptionEnabled){
+      fileFormat = Constants.backupRawFileFormat;
+    }
+    final file = File("$downloadPath/$backupFileName.$fileFormat");
 
     _cloudBackUpDownloadPath = "";
 
@@ -728,6 +745,7 @@ class BackupFile {
   String? fileSize;
   String? fileCreatedDate;
   String? iCloudRelativePath;
+  String? filePath;
 
   BackupFile({
     this.fileId,
@@ -735,6 +753,7 @@ class BackupFile {
     this.fileSize,
     this.fileCreatedDate,
     this.iCloudRelativePath,
+    this.filePath,
   });
 
   Map<String, dynamic> toJson() => {
@@ -743,5 +762,6 @@ class BackupFile {
         "fileSize": fileSize,
         "fileDate": fileCreatedDate,
         "iCloudRelativePath": iCloudRelativePath,
+        "filePath": filePath,
       };
 }

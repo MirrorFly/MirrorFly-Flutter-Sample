@@ -494,5 +494,8 @@ class Constants {
   static const String backupSkipped = "backup_skip";
   static const String backupCompleted = "backup_completed";
 
+  static const String backupEncryptedFileFormat = "crypto7";
+  static const String backupRawFileFormat = "txt";
+
 }
 
