@@ -206,11 +206,11 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> uploadFileToGoogleDrive(String filePath, StreamController<int> progressController) async {
+  Future<void> uploadFileToGoogleDrive(String filePath,int fileSize, StreamController<int> progressController) async {
     LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
     try {
       File backupFile = File(filePath);
-      int fileSize = backupFile.lengthSync();
+      // int fileSize = backupFile.lengthSync();
 
       // Prepare the file metadata
       var driveFile = drive.File();
@@ -292,14 +292,15 @@ class BackupRestoreManager {
     }
   }
 
-  Stream<int> uploadBackupFile({required String filePath}) {
+  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
      final StreamController<int> progressController = StreamController<int>();
      if (Platform.isAndroid) {
-      uploadFileToGoogleDrive(filePath, progressController);
+      uploadFileToGoogleDrive(filePath, fileSize, progressController);
     } else if (Platform.isIOS) {
       debugPrint("Filepath to upload in drive $filePath");
-      final file = File(filePath.replaceFirst('file://', ''));
-      debugPrint("Cleaned File Path: $file");
+      // final file = File(filePath.replaceFirst('file://', ''));
+      final file = File(filePath);
+      // debugPrint("Cleaned File Path: $file");
       if (!file.existsSync()) {
         progressController.addError(Exception("File does not exist at the given path: $filePath"));
         progressController.close();
@@ -326,9 +327,12 @@ class BackupRestoreManager {
                 progressController.close();
               },
               onDone: () {
-                debugPrint("Upload completed successfully.");
-                progressController.add(100); // Mark 100% completion
-                progressController.close();
+                ///Delay is added here, as the iCloud Process some time to update the latest file
+                Future.delayed(const Duration(seconds: 1), () {
+                  debugPrint("Upload completed successfully.");
+                  progressController.add(100); // Mark 100% completion
+                  progressController.close();
+                });
               },
               cancelOnError: true,
             );
