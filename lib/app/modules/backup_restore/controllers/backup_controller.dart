@@ -53,6 +53,9 @@ class BackupController extends GetxController {
   var remoteUploadProgress = 0.0.obs;
   var restoreProgress = 0.0.obs;
 
+  var backupUploadingSize = "0 KB".obs;
+  var backupTotalSize = "0 KB".obs;
+
   var backUpEmailId = ''.obs;
 
   @override
@@ -189,19 +192,39 @@ class BackupController extends GetxController {
 
   void remoteBackUpFileReady({required String backUpPath}) {
     DialogUtils.hideLoading();
+
+    String backupFilePath = backUpPath.replaceFirst('file://', '');
+    File backupFile = File(backupFilePath);
+    int totalFileSize = backupFile.lengthSync();
+
+    backupTotalSize(MediaUtils.fileSize(totalFileSize));
+
+    LogMessage.d("Backup Controller", "Upload fileSize*** $totalFileSize");
     isRemoteUploadStarted(true);
-    backupRestoreManager.uploadBackupFile(filePath: backUpPath).listen((progress){
+    backupRestoreManager.uploadBackupFile(filePath: backupFilePath, fileSize: totalFileSize).listen((progress){
       LogMessage.d("Backup Controller", "Upload Progress*** $progress");
       remoteUploadProgress(progress.toDouble());
+      int uploadedBytes = ((progress / 100) * totalFileSize).floor();
+      backupUploadingSize(MediaUtils.fileSize(uploadedBytes));
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
+      toToast(Platform.isAndroid ? getTranslated("androidRemoteBackupSuccess") : getTranslated("iOSRemoteBackupSuccess"));
       checkForBackUpFiles();
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
       LogMessage.d("Backup Controller", "Upload Backup File Error => $error");
     });
+  }
+
+  String getUploadedSize(int totalFileSizeInBytes, double percentageUploaded) {
+    int uploadedBytes = ((percentageUploaded / 100) * totalFileSizeInBytes).floor();
+
+    String uploadedSize = MediaUtils.fileSize(uploadedBytes);
+    String totalSize = MediaUtils.fileSize(totalFileSizeInBytes);
+
+    return "$uploadedSize uploaded out of $totalSize";
   }
 
   void serverUploadSuccess() {

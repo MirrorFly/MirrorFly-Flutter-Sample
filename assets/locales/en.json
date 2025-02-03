@@ -570,5 +570,7 @@
     "backUpSuccess" : "Back up Success",
     "restoringMessages" : "Restoring messages",
     "downloadingBackup" : "Downloading Backup File",
+    "iOSRemoteBackupSuccess" : "iCloud Backup Successful",
+    "androidRemoteBackupSuccess" : "Google Drive Backup Successful",
     "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?"
   }
