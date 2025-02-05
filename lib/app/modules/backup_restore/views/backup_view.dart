@@ -9,7 +9,7 @@ import '../../../common/widgets.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../settings/views/settings_widgets.dart';
-import '../backup_utils.dart';
+import '../backup_utils/backup_utils.dart';
 
 class BackupView extends NavViewStateful<BackupController> {
   const BackupView({super.key});

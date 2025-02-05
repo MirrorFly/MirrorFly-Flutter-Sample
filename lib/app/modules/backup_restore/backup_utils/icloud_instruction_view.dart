@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../common/app_localizations.dart';
-import '../../common/constants.dart';
-import '../../data/utils.dart';
-import '../settings/views/settings_widgets.dart';
+import '../../../common/app_localizations.dart';
+import '../../../common/constants.dart';
+import '../../../data/utils.dart';
+import '../../settings/views/settings_widgets.dart';
 
 class IcloudInstructionView extends StatelessWidget {
   const IcloudInstructionView({super.key});

@@ -13,8 +13,8 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../app_style_config.dart';
 import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
-import '../backup_restore_manager.dart';
-import '../backup_utils.dart';
+import '../backup_utils/backup_restore_manager.dart';
+import '../backup_utils/backup_utils.dart';
 
 class BackupController extends GetxController {
   bool get isAndroid => Platform.isAndroid;

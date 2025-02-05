@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirror_fly_demo/app/modules/backup_restore/backup_restore_manager.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../app_style_config.dart';
@@ -13,7 +13,7 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
-import '../backup_utils.dart';
+import '../backup_utils/backup_utils.dart';
 
 class RestoreController extends GetxController
     with GetSingleTickerProviderStateMixin {
