@@ -111,7 +111,7 @@ class ProfileController extends GetxController {
             var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
             // var unformatted = profileMobile.text;
             Mirrorfly.updateMyProfile(name: profileName.text.toString(), email: profileEmail.text.toString(),
-                mobile: unformatted,
+                mobile: "${SessionManagement.getCountryCode().checkNull()}$unformatted",
                 status: profileStatus.value.toString(),
                 image: userImgUrl.value.isEmpty ? null : userImgUrl.value,
               flyCallback: (FlyResponse response){
