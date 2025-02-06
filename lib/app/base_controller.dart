@@ -1279,8 +1279,8 @@ class BaseController {
     debugPrint("initializeBackupListeners");
     Mirrorfly.onBackupSuccess.listen((backUpPath) {
       debugPrint(
-          "onBackupSuccess==> $backUpPath isServerUploadRequired ==> ${BackupRestoreManager().isServerUploadRequired}");
-      if (BackupRestoreManager().isServerUploadRequired) {
+          "onBackupSuccess==> $backUpPath isServerUploadRequired ==> ${BackupRestoreManager.instance.isServerUploadRequired}");
+      if (BackupRestoreManager.instance.isServerUploadRequired) {
         if (Get.isRegistered<BackupController>()) {
           Get.find<BackupController>().remoteBackUpFileReady(backUpPath: backUpPath);
         }

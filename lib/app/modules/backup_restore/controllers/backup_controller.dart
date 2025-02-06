@@ -62,7 +62,7 @@ class BackupController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
 
-    backupRestoreManager = BackupRestoreManager();
+    backupRestoreManager = BackupRestoreManager.instance;
     backupRestoreManager
         .initialize(iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter")
         .then((isSuccess) {
@@ -87,7 +87,7 @@ class BackupController extends GetxController {
     /// Restoring the mail id in Android Backup Screen
     if (Platform.isAndroid) {
       var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty
-          ? (BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull()
+          ? (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email).checkNull()
           : SessionManagement.getBackUpAccount();
 
       if (previousBackupEmail.isNotEmpty) {
@@ -231,6 +231,7 @@ class BackupController extends GetxController {
           ? getTranslated("androidRemoteBackupSuccess")
           : getTranslated("iOSRemoteBackupSuccess"));
       checkForBackUpFiles();
+      BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
@@ -305,11 +306,11 @@ class BackupController extends GetxController {
   }
 
   Future<void> _switchAccount() async {
-    var newAccount = await BackupRestoreManager().switchGoogleAccount();
+    var newAccount = await BackupRestoreManager.instance.switchGoogleAccount();
     LogMessage.d("Backup Controller", "New Switched Account => $newAccount");
 
     backUpEmailId(newAccount?.email ??
-        BackupRestoreManager().getGoogleAccountSignedIn?.email);
+        BackupRestoreManager.instance.getGoogleAccountSignedIn?.email);
 
     if (newAccount?.email != null) {
       SessionManagement.setBackUpAccount(backUpEmailId.value);

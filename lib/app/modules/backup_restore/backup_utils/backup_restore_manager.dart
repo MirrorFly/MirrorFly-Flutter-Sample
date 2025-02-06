@@ -18,6 +18,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:workmanager/workmanager.dart';
 
 import '../../../data/utils.dart';
 import 'backup_utils.dart';
@@ -27,12 +28,10 @@ class BackupRestoreManager {
   BackupRestoreManager._internal();
 
   // Singleton instance
-  static final BackupRestoreManager _instance =
+  static final BackupRestoreManager instance =
       BackupRestoreManager._internal();
 
-  factory BackupRestoreManager() {
-    return _instance;
-  }
+
 
   final icloudSyncPlugin = IcloudStorageSync();
 
@@ -76,6 +75,8 @@ class BackupRestoreManager {
 
   get remoteBackupPath => _cloudBackUpDownloadPath;
 
+  Completer<void>? backupCompleter;
+
   Future<bool> initialize({required iCloudContainerID}) async {
     if (_isInitialized) {
       LogMessage.d("BackupRestoreManager", "Already initialized.");
@@ -88,6 +89,9 @@ class BackupRestoreManager {
     // _clientId = googleClientId;
     _backupFileName = "Backup_${SessionManagement.getUsername() ?? SessionManagement.getUserJID()?.split("@").first}";
     debugPrint("_backupFileName $_backupFileName");
+
+    /// WorkManager Initialisation
+    Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
     if (Platform.isAndroid) {
       // Fetch Google Previous Sign in
@@ -351,9 +355,9 @@ class BackupRestoreManager {
      return progressController.stream;
   }
 
-  Future<void> backupFile() async {
+ /* Future<void> backupFile() async {
     await Mirrorfly.startBackup(enableEncryption: true);
-  }
+  }*/
 
   Future<bool> _checkICloudAccess() async {
     try {
@@ -495,15 +499,33 @@ class BackupRestoreManager {
     }
   }
 
-  void startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) {
+  Future<void> startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) async {
     this.isServerUploadRequired = isServerUploadRequired;
     isEncryptionEnabled = enableEncryption;
-    Mirrorfly.startBackup(enableEncryption: enableEncryption);
+    /*Mirrorfly.startBackup(enableEncryption: enableEncryption);*/
+    LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
+    await Workmanager().cancelByUniqueName("backup-process");
+    Workmanager().registerOneOffTask(
+      "backup-process", /// Unique Task ID
+      "backupTask", /// Task Name
+      inputData: {
+        "isServerUploadRequired": isServerUploadRequired,
+        "enableEncryption": enableEncryption,
+      },
+    );
   }
 
   void restoreBackup({required String backupFilePath}) {
-    LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
-    Mirrorfly.restoreBackup(backupPath: backupFilePath);
+    /*LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
+    Mirrorfly.restoreBackup(backupPath: backupFilePath);*/
+    LogMessage.d("BackupRestoreManager", "Starting Restore WorkManager Task");
+    Workmanager().registerOneOffTask(
+      "restore-process", /// Unique Task ID
+      "restoreTask", /// Task Name
+      inputData: {
+        "backupFilePath": backupFilePath,
+      },
+    );
   }
 
   Future<String?> getGroupContainerIDPath() async {
@@ -724,6 +746,11 @@ class BackupRestoreManager {
       debugPrint("No active download to cancel.");
     }
   }
+
+  void completeWorkManagerTask() {
+    backupCompleter?.complete();
+    backupCompleter = null;
+  }
 }
 
 Stream<List<int>> trackProgress(
@@ -741,6 +768,32 @@ Stream<List<int>> trackProgress(
     ),
   );
 }
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    BackupRestoreManager.instance.backupCompleter = Completer<void>();
+    print("Native called background task: $task");
+    print("Native called background inputData: $inputData");
+    if (task == "backupTask") {
+      bool isServerUploadRequired = inputData?["isServerUploadRequired"];
+      bool enableEncryption = inputData?["enableEncryption"];
+      print("Background task: isServerUploadRequired $isServerUploadRequired");
+      print("Background task: enableEncryption $enableEncryption");
+      BackupRestoreManager.instance.isServerUploadRequired = isServerUploadRequired;
+      BackupRestoreManager.instance.isEncryptionEnabled = enableEncryption;
+      Mirrorfly.startBackup(enableEncryption: isServerUploadRequired);
+    }else if (task == "restoreTask"){
+      Mirrorfly.restoreBackup(backupPath: inputData?["backupFilePath"] ?? "");
+    }
+
+    await BackupRestoreManager.instance.backupCompleter?.future;
+
+    return Future.value(true);
+  });
+}
+
+
 
 
 class BackupFile {

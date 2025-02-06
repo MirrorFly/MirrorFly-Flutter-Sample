@@ -71,7 +71,7 @@ class RestoreController extends GetxController
     LogMessage.d(
         "Restore Controller", " => onInit Method called");
 
-    var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty ? (BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull() : SessionManagement.getBackUpAccount();
+    var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty ? (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email).checkNull() : SessionManagement.getBackUpAccount();
 
     if (previousBackupEmail.isNotEmpty){
       isAccountSelected(true);
@@ -128,8 +128,8 @@ class RestoreController extends GetxController
       animationController?.stop();
     }
     SessionManagement.setBackUpState(Constants.backupSkipped);
-    // if (BackupRestoreManager().getGoogleAccountSignedIn?.email != null) {
-    //   SessionManagement.setBackUpAccount((BackupRestoreManager().getGoogleAccountSignedIn?.email).checkNull());
+    // if (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email != null) {
+    //   SessionManagement.setBackUpAccount((BackupRestoreManager.instance.getGoogleAccountSignedIn?.email).checkNull());
     // }
     NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber});
   }
@@ -159,7 +159,7 @@ class RestoreController extends GetxController
 
   Future<void> checkForBackUpFiles() async {
     fetchingBackupDetails(true);
-    await BackupRestoreManager().checkBackUpFiles().then((backupFileDetails) {
+    await BackupRestoreManager.instance.checkBackUpFiles().then((backupFileDetails) {
       LogMessage.d(
           "Restore Controller", "Backup file Available => ${backupFileDetails?.toJson()}");
       if(backupFileDetails != null) {
@@ -185,16 +185,16 @@ class RestoreController extends GetxController
     }
 
     if (Platform.isAndroid) {
-      BackupRestoreManager().downloadAndroidBackupFile(backupFile.value).listen((progress){
+      BackupRestoreManager.instance.downloadAndroidBackupFile(backupFile.value).listen((progress){
         LogMessage.d(
             "Restore Controller", "Backup file Download Progress=> $progress");
         remoteDownloadProgress((progress / 100));
         // backupDownloadStarted(false);
       }, onDone: () {
-        String backUpPath = BackupRestoreManager().remoteBackupPath;
+        String backUpPath = BackupRestoreManager.instance.remoteBackupPath;
         backupDownloadStarted(false);
         backupRestoreStarted(true);
-        BackupRestoreManager().restoreBackup(backupFilePath: backUpPath);
+        BackupRestoreManager.instance.restoreBackup(backupFilePath: backUpPath);
       }, onError: (error) {
         LogMessage.d(
             "Restore Controller", "Backup file Download Failed=> $error");
@@ -204,26 +204,26 @@ class RestoreController extends GetxController
 
     } else {
       if (backupFile.value.iCloudRelativePath != null) {
-        BackupRestoreManager().startIcloudFileDownload(
+        BackupRestoreManager.instance.startIcloudFileDownload(
             relativePath: backupFile.value.iCloudRelativePath ?? '').listen((progress){
           remoteDownloadProgress((progress / 100));
         }, onDone: () {
-          String backUpPath = BackupRestoreManager().remoteBackupPath;
+          String backUpPath = BackupRestoreManager.instance.remoteBackupPath;
           LogMessage.d(
               "Restore Controller", "Backup file Downloaded => Restoring the messages==> ${backupFile.toJson()}");
           backupDownloadStarted(false);
           backupRestoreStarted(true);
-          BackupRestoreManager().restoreBackup(backupFilePath: backUpPath);
+          BackupRestoreManager.instance.restoreBackup(backupFilePath: backUpPath);
         });
 
         // LogMessage.d("Restore Controller", "download backup url: ${backupFile.value.filePath}");
-        // BackupRestoreManager().restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
-        /*BackupRestoreManager().getBackupUrl().then((backupPath){
+        // BackupRestoreManager.instance.restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
+        /*BackupRestoreManager.instance.getBackupUrl().then((backupPath){
           LogMessage.d("Restore Controller", "download backup url: $backupPath");
           final fullFilePath = backupPath != null ? "$backupPath/${backupFile.value.iCloudRelativePath}" : '';
 
           LogMessage.d("Restore Controller", "download full backup url: $fullFilePath");
-          BackupRestoreManager().restoreBackup(backupFilePath: fullFilePath);
+          BackupRestoreManager.instance.restoreBackup(backupFilePath: fullFilePath);
         });*/
 
       }else{
@@ -241,16 +241,16 @@ class RestoreController extends GetxController
 
   Future<void> pickAccount() async {
 
-    var accounts = await BackupRestoreManager().selectGoogleAccount();
+    var accounts = await BackupRestoreManager.instance.selectGoogleAccount();
     LogMessage.d(
         "Restore Controller", "pick Account => $accounts");
     if (accounts != null) {
       /*backUpEmailId(accounts.email);
       isAccountSelected(true);
-      if (BackupRestoreManager().isDriveApiInitialized) {
+      if (BackupRestoreManager.instance.isDriveApiInitialized) {
         checkForBackUpFiles();
       }else{
-        BackupRestoreManager().assignAccountAuth(accounts).then((isSuccess) {
+        BackupRestoreManager.instance.assignAccountAuth(accounts).then((isSuccess) {
           checkForBackUpFiles();
         });
       }*/
@@ -262,24 +262,23 @@ class RestoreController extends GetxController
   }
 
   switchAccount() async {
-    var newAccount = await BackupRestoreManager().switchGoogleAccount();
+    var newAccount = await BackupRestoreManager.instance.switchGoogleAccount();
     LogMessage.d(
         "Restore Controller", "New Switched Account => $newAccount");
 
-    backUpEmailId(newAccount?.email ?? BackupRestoreManager().getGoogleAccountSignedIn?.email);
+    backUpEmailId(newAccount?.email ?? BackupRestoreManager.instance.getGoogleAccountSignedIn?.email);
 
   }
 
   Future<void> checkCloudAccess() async {
-    await BackupRestoreManager().checkDriveAccess().then((isDriveAccessible) {
+    await BackupRestoreManager.instance.checkDriveAccess().then((isDriveAccessible) {
       LogMessage.d(
           "Restore Controller",
           "Drive Access Status => $isDriveAccessible");
       driveAccessible(isDriveAccessible);
 
       if (Platform.isAndroid) {
-        GoogleSignInAccount? googleSignInAccount = BackupRestoreManager()
-            .getGoogleAccountSignedIn;
+        GoogleSignInAccount? googleSignInAccount = BackupRestoreManager.instance.getGoogleAccountSignedIn;
         if (googleSignInAccount != null) {
           isAccountSelected(true);
           backUpEmailId(googleSignInAccount.email);
@@ -295,7 +294,7 @@ class RestoreController extends GetxController
 
   Future<void> initialiseBackUpProcess() async {
     DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
-    await BackupRestoreManager().initialize(
+    await BackupRestoreManager.instance.initialize(
         iCloudContainerID: "iCloud.com.mirrorfly.uikitflutter").then((isSuccess) {
       if (isSuccess) {
         checkCloudAccess();
@@ -328,6 +327,7 @@ class RestoreController extends GetxController
     remoteRestoreProgress(100);
     toToast(getTranslated("localRestoreSuccess"));
     restoreCompleted(true);
+    BackupRestoreManager.instance.completeWorkManagerTask();
   }
 
   void restoreFailed(event) {

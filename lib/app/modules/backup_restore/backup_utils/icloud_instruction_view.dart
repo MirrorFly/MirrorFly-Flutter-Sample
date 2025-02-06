@@ -30,7 +30,7 @@ class IcloudInstructionView extends StatelessWidget {
               const SizedBox(height: 15),
               Text(
                 getTranslated("iCloudTitleDesc"),
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               ListTile(
@@ -38,26 +38,26 @@ class IcloudInstructionView extends StatelessWidget {
                     assetName: restoreSetting, width: 30, height: 30),
                 title: Text(
                   getTranslated("openIphoneSettings"),
-                  style: TextStyle(fontSize: 12, color: Color(0xff767676)),
+                  style: const TextStyle(fontSize: 12, color: Color(0xff767676)),
                 ),
               ),
               ListTile(
                 leading: AppUtils.assetIcon(
                     assetName: restoreCloud, width: 30, height: 30),
                 title: Text(getTranslated("iCloudSignInDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
+                    style: const TextStyle(fontSize: 12, color: Color(0xff767676))),
               ),
               ListTile(
                 leading: AppUtils.assetIcon(
                     assetName: restoreCloud, width: 30, height: 30),
                 title: Text(getTranslated("iCloudDriveOnDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
+                    style: const TextStyle(fontSize: 12, color: Color(0xff767676))),
               ),
               ListTile(
                 leading: AppUtils.assetIcon(
                     assetName: restoreCloud, width: 30, height: 30),
                 title: Text(getTranslated("iCloudDriveMirrorFlyOnDesc"),
-                    style: TextStyle(fontSize: 12, color: Color(0xff767676))),
+                    style: const TextStyle(fontSize: 12, color: Color(0xff767676))),
               ),
               const SizedBox(height: 35),
               Container(
