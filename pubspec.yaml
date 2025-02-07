@@ -57,7 +57,7 @@ dependencies:
   http: ^1.2.2
   flutter_libphonenumber: ^2.3.3
   fading_edge_scrollview: ^4.1.1
-  mirrorfly_plugin: ^1.0.7-beta
+  mirrorfly_plugin: ^1.0.9+1
 
   #Packages Not Needed for UIKIT
   otp_text_field: ^1.1.3
