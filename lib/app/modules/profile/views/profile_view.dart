@@ -201,13 +201,11 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                   Text(getTranslated("mobileNumber"),
                         style: AppStyleConfig.profileViewStyle.mobileTextFieldStyle.titleStyle,
                         // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                      ),
-                      Obx(() {
-                        return TextField(
+                      ),TextField(
                           cursorColor: buttonBgColor,
                           controller: controller.profileMobile,
                           onChanged: (value) => controller.onMobileChange(value),
-                          enabled: controller.mobileEditAccess.value,
+                          enabled: false,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: getTranslated("enterMobileNumber"),
@@ -216,8 +214,7 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                           ),
                           style: AppStyleConfig.profileViewStyle.mobileTextFieldStyle.editTextStyle,
                           // style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
-                        );
-                      }),
+                        ),
                       const AppDivider(),
                       const SizedBox(
                         height: 20,

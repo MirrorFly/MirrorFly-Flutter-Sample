@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../extensions/extensions.dart';
@@ -67,11 +68,17 @@ class ProfileController extends GetxController {
         return;
       }
     }
-    checkAndEnableNotificationSound();
-    getProfile();
+
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
     // getMetaData();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    checkAndEnableNotificationSound();
+    getProfile();
   }
 
   Future<void> save({bool frmImage=false}) async {
@@ -288,10 +295,12 @@ class ProfileController extends GetxController {
       var jid = SessionManagement.getUserJID().checkNull();
       LogMessage.d("jid", jid);
       if (jid.isNotEmpty) {
+        DialogUtils.showLoading(message: getTranslated("pleaseWait"),dialogStyle: AppStyleConfig.dialogStyle);
         LogMessage.d("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         Mirrorfly.getUserProfile(jid: jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
           LogMessage.d("getUserProfile", response.toString());
+          DialogUtils.hideLoading();
           if(response.isSuccess) {
             insertDefaultStatusToUser();
             loading.value = false;
