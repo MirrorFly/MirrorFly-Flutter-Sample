@@ -80,9 +80,9 @@ android {
         }
         release {
             resValue("string", "app_name", "Mirrorfly Flutter")
-            shrinkResources false
-            debuggable true
-            minifyEnabled false
+            shrinkResources true
+//            debuggable false
+            minifyEnabled true
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
