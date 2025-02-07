@@ -4,7 +4,7 @@ part of 'utils.dart';
 class AppUtils{
   AppUtils._();
   static Future<bool> isNetConnected() async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    final bool isConnected = await InternetConnectionChecker.instance.hasConnection;
     return isConnected;
   }
 
