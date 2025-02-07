@@ -8,7 +8,6 @@ import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:is_lock_screen2/is_lock_screen2.dart';
 // import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -214,7 +213,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   handleAdminBlockedUserFromRegister() {}
 
   void startNetworkListen() {
-    final connectionChecker = InternetConnectionChecker();
+    final connectionChecker = InternetConnectionChecker.instance;
 
     listener = connectionChecker.onStatusChange.listen(
       (InternetConnectionStatus status) {
@@ -226,6 +225,10 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
           case InternetConnectionStatus.disconnected:
             LogMessage.d("network", 'You are disconnected from the internet.');
             networkDisconnected();
+            break;
+          case InternetConnectionStatus.slow:
+            LogMessage.d("network", 'Your internet connection is slow.');
+            networkConnected();
             break;
         }
       },
@@ -258,7 +261,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
-    fromLockScreen = await isLockScreen() ?? false;
+    fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }

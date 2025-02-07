@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
@@ -49,19 +50,18 @@ class SettingsController extends GetxController {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         DialogUtils.hideLoading();
-        if (response.isSuccess) {
-          // clearAllPreferences();
+        /*if (response.isSuccess) {
+          clearAllPreferences();
         } else {
           toToast(getTranslated("logoutFailed"));
           // Get.snackbar("Logout", "Logout Failed");
-        }
-      })/*.catchError((er) {
+        }*/
+        clearAllPreferences();
+      }).catchError((er) {
+        debugPrint("logoutOfChatSDK Catch Error==> $er");
         DialogUtils.hideLoading();
-        SessionManagement.clear().then((value) {
-          // SessionManagement.setToken(token);
-          NavUtils.offAllNamed(Routes.login);
-        });
-      })*/;
+        clearAllPreferences();
+      });
     } else {
       toToast(getTranslated("noInternetConnection"));
     }

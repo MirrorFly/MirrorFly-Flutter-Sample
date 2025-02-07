@@ -4,7 +4,7 @@ build_release_date: Jul 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment:
-  sdk: '>=2.19.1 <4.0.0'
+  sdk: ">=2.19.1 <4.0.0"
 
 dependencies:
   flutter:
@@ -40,12 +40,12 @@ dependencies:
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.8
   flutter_switch: ^0.3.2
-  qr_code_scanner: ^1.0.1
+#  qr_code_scanner: ^1.0.1
   yaml: ^3.1.2
   path: ^1.9.0
   camera: ^0.11.0+2
   video_player: ^2.9.1
-  internet_connection_checker: ^2.0.0
+  internet_connection_checker: ^3.0.1
   provider: ^6.1.2
   photo_manager: ^3.2.3
   oktoast: ^3.4.0
@@ -65,8 +65,7 @@ dependencies:
   firebase_auth: ^5.1.4
   firebase_app_installations: ^0.3.0+4
   firebase_messaging: ^15.0.4
-  flutter_local_notifications: ^17.2.2
-  is_lock_screen2: ^2.0.1
+  flutter_local_notifications: ^17.2.4
   flutter_app_badge: ^2.0.2
 
 dependency_overrides:
@@ -104,7 +103,3 @@ flutter:
           weight: 600
         - asset: fonts/sf_ui_display_thin.otf
           weight: 200
-
-
-
-

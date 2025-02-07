@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../app_style_config.dart';
 import '../../common/app_localizations.dart';
@@ -12,7 +12,7 @@ import '../../routes/route_settings.dart';
 
 class ScannerController extends GetxController {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
+  // QRViewController? controller;
 
   final loginQr = <String>[];
   final _webLogins = <WebLogin>[].obs;
@@ -21,26 +21,26 @@ class ScannerController extends GetxController {
 
   List<WebLogin> get webLogins => _webLogins;
 
-  void onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.resumeCamera();
-    controller.scannedDataStream.listen((scanData) {
-      loginWebChatViaQRCode(scanData.code);
-    });
-  }
+  // void onQRViewCreated(QRViewController controller) {
+  //   this.controller = controller;
+  //   controller.resumeCamera();
+  //   controller.scannedDataStream.listen((scanData) {
+  //     loginWebChatViaQRCode(scanData.code);
+  //   });
+  // }
 
   @override
   void dispose() {
-    if (controller != null) {
-      controller!.dispose();
-    }
+    // if (controller != null) {
+    //   controller!.dispose();
+    // }
     super.dispose();
   }
 
   @override
   void refresh() {
     super.refresh();
-    if (controller != null) {
+    // if (controller != null) {
       /*if (Platform.isAndroid) {
         controller!.pauseCamera();
       } else {
@@ -53,7 +53,7 @@ class ScannerController extends GetxController {
     LogMessage.d("barcode", barcode.toString());
     if (barcode != null) {
       if(await AppUtils.isNetConnected()) {
-        controller!.pauseCamera();
+        // controller!.pauseCamera();
         /*Mirrorfly.loginWebChatViaQRCode(barcode).then((value) {
           if (value != null) {
             SessionManagement.setWebChatLogin(value);
@@ -96,7 +96,7 @@ class ScannerController extends GetxController {
   }
 
   getWebLoginDetails() {
-    loginQr.clear();
+    // loginQr.clear();
     /*Mirrorfly.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
@@ -151,4 +151,4 @@ class ScannerController extends GetxController {
           child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
   }
-}
+
