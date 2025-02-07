@@ -88,10 +88,12 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                   ),
                   rightArrowIcon, () => {NavUtils.toNamed(Routes.dataUsageSetting)},
                 )),
-                chatListItem(Text(getTranslated("chatBackup"),
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400)), rightArrowIcon, () => {NavUtils.toNamed(Routes.backUpView)}),
+                if (Constants.isBackupFeatureEnabled) ...[
+                  chatListItem(Text(getTranslated("chatBackup"),
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400)), rightArrowIcon, () => {NavUtils.toNamed(Routes.backUpView)})
+                ],
                 // notificationItem(title: getTranslated("chatBackup"), subtitle: "", onTap: onTap)
                 /*Commented out, because this feature is NI*/
                 /* notificationItem(title: getTranslated("googleTranslationLabel"), subtitle: getTranslated("googleTranslationMessage"),on: controller.translationEnabled, onTap: controller.enableDisableTranslate),

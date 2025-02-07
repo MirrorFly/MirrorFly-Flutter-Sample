@@ -256,7 +256,7 @@ String getInitialRoute() {
     if (SessionManagement.getLogin()) {
       LogMessage.d("SessionManagement.getName()", SessionManagement.getName().toString());
       LogMessage.d("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
-      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty && SessionManagement.getBackUpState().checkNull().isNotEmpty) {
+      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty && (!Constants.isBackupFeatureEnabled || SessionManagement.getBackUpState().checkNull().isNotEmpty)) {
         if (Constants.enableContactSync) {
           // LogMessage.d("nonChatUsers", nonChatUsers.toString());
           LogMessage.d("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
@@ -275,11 +275,12 @@ String getInitialRoute() {
         }
       } else {
 
-        if (SessionManagement.getBackUpState().checkNull().isEmpty) {
+        if (Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isEmpty) {
           /// This condition handles the case where a number logs in and is redirected to the Chat Backup Page.
           /// If the app is closed before saving the backup state, reopening the app should show this to enter the backup state.
           return Routes.restoreBackup;
-        }else if (SessionManagement.getBackUpState().checkNull().isNotEmpty) {
+        }else if ((Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isNotEmpty) ||
+            (!Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isEmpty)) {
           /// This condition handles the case where a new number logs in and is redirected to the Profile Page.
           /// If the app is closed before saving the profile, reopening the app would cause an error.
           /// This condition prevents that error from occurring.

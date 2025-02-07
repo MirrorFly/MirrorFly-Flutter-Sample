@@ -125,8 +125,12 @@ class LoginController extends GetxController {
       if (value != null) {
         SessionManagement.setUserJID(value);
         DialogUtils.hideLoading();
-        NavUtils.offAllNamed(Routes.restoreBackup, arguments: {"mobile": mobileNumber.text.toString()});
-        // NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        if (Constants.isBackupFeatureEnabled) {
+          NavUtils.offAllNamed(Routes.restoreBackup,
+              arguments: {"mobile": mobileNumber.text.toString()});
+        }else {
+          NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        }
       }
     }).catchError((error) {
       debugPrint(error.message);
