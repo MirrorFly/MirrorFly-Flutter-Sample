@@ -499,5 +499,8 @@ class Constants {
 
   static const bool isBackupFeatureEnabled = false;
 
+  // Dummy OTP View
+  static const bool isOTPViewEnabled = false;
+
 }
 

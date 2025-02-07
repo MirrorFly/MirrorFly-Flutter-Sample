@@ -33,7 +33,6 @@ import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/views/local_contact_view.dart';
 import '../modules/login/views/country_list_view.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/login/views/otp_view.dart';
 import '../modules/media_preview/views/media_preview_view.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
@@ -66,8 +65,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
      case Routes.login:
       return MaterialPageRoute(builder: (_) => const LoginView(),settings: settings);
-    case Routes.otp:
-      return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
+    // case Routes.otp:
+    //   return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
     case Routes.scanner:
