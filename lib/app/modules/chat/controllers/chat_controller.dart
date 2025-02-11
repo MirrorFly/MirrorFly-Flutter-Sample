@@ -479,6 +479,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                     if (function != null) {
                       function();
                     }
+                  }else{
+                    toToast(response.errorMessage);
                   }
                 });
           },
@@ -1460,13 +1462,18 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                   Mirrorfly.unblockUser(
                       userJid: profile.jid!,
                       flyCallBack: (FlyResponse response) {
-                        debugPrint(response.toString());
-                        profile.isBlocked = false;
-                        isBlocked(false);
-                        getUnsentMessageOfAJid();
-                        setChatStatus();
-                        DialogUtils.hideLoading();
-                      toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
+                        if (response.isSuccess) {
+                          debugPrint(response.toString());
+                          profile.isBlocked = false;
+                          isBlocked(false);
+                          getUnsentMessageOfAJid();
+                          setChatStatus();
+                          DialogUtils.hideLoading();
+                          toToast(getTranslated("hasUnBlocked").replaceFirst(
+                              "%d", getName(profile)));
+                        }else{
+                          toToast(response.errorMessage);
+                        }
                       });
                 } else {
                 toToast(getTranslated("noInternetConnection"));
