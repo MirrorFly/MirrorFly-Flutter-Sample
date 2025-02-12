@@ -10,6 +10,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
+import '../../../data/permissions.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
@@ -185,22 +186,30 @@ class RestoreController extends GetxController
     }
 
     if (Platform.isAndroid) {
-      BackupRestoreManager.instance.downloadAndroidBackupFile(backupFile.value).listen((progress){
-        LogMessage.d(
-            "Restore Controller", "Backup file Download Progress=> $progress");
-        remoteDownloadProgress((progress / 100));
-        // backupDownloadStarted(false);
-      }, onDone: () {
-        String backUpPath = BackupRestoreManager.instance.remoteBackupPath;
-        backupDownloadStarted(false);
-        backupRestoreStarted(true);
-        BackupRestoreManager.instance.restoreBackup(backupFilePath: backUpPath);
-      }, onError: (error) {
-        LogMessage.d(
-            "Restore Controller", "Backup file Download Failed=> $error");
-        backupDownloadStarted(false);
-        backupRestoreStarted(false);
-      });
+      var permission = await AppPermission.getStoragePermission();
+      if (permission) {
+        BackupRestoreManager.instance.downloadAndroidBackupFile(
+            backupFile.value).listen((progress) {
+          LogMessage.d(
+              "Restore Controller",
+              "Backup file Download Progress=> $progress");
+          remoteDownloadProgress((progress / 100));
+          // backupDownloadStarted(false);
+        }, onDone: () {
+          String backUpPath = BackupRestoreManager.instance.remoteBackupPath;
+          backupDownloadStarted(false);
+          backupRestoreStarted(true);
+          BackupRestoreManager.instance.restoreBackup(
+              backupFilePath: backUpPath);
+        }, onError: (error) {
+          LogMessage.d(
+              "Restore Controller", "Backup file Download Failed=> $error");
+          backupDownloadStarted(false);
+          backupRestoreStarted(false);
+        });
+      }else{
+        toToast(getTranslated("backupPermissionDeniedToast"));
+      }
 
     } else {
       if (backupFile.value.iCloudRelativePath != null) {
