@@ -562,7 +562,7 @@
     "autoBackupIOSError" : "Sign In iCloud Drive to enable Auto Backup",
     "localBackupSuccess" : "Backup File Downloaded Successfully",
     "localRestoreSuccess" : "Backup File Restored Successfully",
-    "backupPermissionDeniedToast" : "Need Storage Permission for selecting the Backup file",
+    "backupPermissionDeniedToast" : "Need Storage Permission for Backup and Restore",
     "pleaseWaitAMoment" : "Please wait a moment",
     "restoreStatusInfo" : "Restoring",
     "uploadingStatusInfo" : "Uploading",

@@ -231,7 +231,7 @@ class BackupController extends GetxController {
           ? getTranslated("androidRemoteBackupSuccess")
           : getTranslated("iOSRemoteBackupSuccess"));
       checkForBackUpFiles();
-      BackupRestoreManager.instance.completeWorkManagerTask();
+      // BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);

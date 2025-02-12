@@ -338,7 +338,7 @@ class RestoreController extends GetxController
     remoteRestoreProgress(100);
     toToast(getTranslated("localRestoreSuccess"));
     restoreCompleted(true);
-    BackupRestoreManager.instance.completeWorkManagerTask();
+    // BackupRestoreManager.instance.completeWorkManagerTask();
   }
 
   void restoreFailed(event) {

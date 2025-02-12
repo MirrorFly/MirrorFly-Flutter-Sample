@@ -502,30 +502,31 @@ class BackupRestoreManager {
   Future<void> startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) async {
     this.isServerUploadRequired = isServerUploadRequired;
     isEncryptionEnabled = enableEncryption;
-    /*Mirrorfly.startBackup(enableEncryption: enableEncryption);*/
-    LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
-    await Workmanager().cancelByUniqueName("backup-process");
-    Workmanager().registerOneOffTask(
+    Mirrorfly.startBackup(enableEncryption: enableEncryption);
+    // LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
+    // await Workmanager().cancelByUniqueName("backup-process");
+    /*Workmanager().registerOneOffTask(
       "backup-process", /// Unique Task ID
       "backupTask", /// Task Name
       inputData: {
         "isServerUploadRequired": isServerUploadRequired,
         "enableEncryption": enableEncryption,
       },
-    );
+    );*/
+
   }
 
   void restoreBackup({required String backupFilePath}) {
-    /*LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
-    Mirrorfly.restoreBackup(backupPath: backupFilePath);*/
-    LogMessage.d("BackupRestoreManager", "Starting Restore WorkManager Task");
+    LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
+    Mirrorfly.restoreBackup(backupPath: backupFilePath);
+    /*LogMessage.d("BackupRestoreManager", "Starting Restore WorkManager Task");
     Workmanager().registerOneOffTask(
       "restore-process", /// Unique Task ID
       "restoreTask", /// Task Name
       inputData: {
         "backupFilePath": backupFilePath,
       },
-    );
+    );*/
   }
 
   Future<String?> getGroupContainerIDPath() async {

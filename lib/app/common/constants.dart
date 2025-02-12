@@ -497,7 +497,7 @@ class Constants {
   static const String backupEncryptedFileFormat = "crypto7";
   static const String backupRawFileFormat = "txt";
 
-  static const bool isBackupFeatureEnabled = false;
+  static const bool isBackupFeatureEnabled = true;
 
   // Dummy OTP View
   static const bool isOTPViewEnabled = false;
