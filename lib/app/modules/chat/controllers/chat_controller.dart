@@ -1913,14 +1913,27 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   infoPage() {
     setOnGoingUserGone();
+    saveUnsentMessage();
     if (profile.isGroupProfile ?? false) {
-      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value)async {
         if (value != null) {
+          messageController.clear();
           profile_(value as ProfileDetails);
+          getAvailableFeatures();
           isBlocked(profile.isBlocked);
+         if (Platform.isAndroid) {
+           unreadMessageTypeMessageId = "M${value.jid}";
+         } else if (Platform.isIOS) {
+           unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(value.jid.checkNull())}";
+         }
           debugPrint("value--> ${profile.isGroupProfile}");
           chatList.clear();
           _loadMessages();
+         getUnsentMessageOfAJid();
+        }else{
+          if( await Mirrorfly.hasNextMessages()){
+            _loadNextMessages();
+          }
         }
         checkAdminBlocked();
         memberOfGroup();

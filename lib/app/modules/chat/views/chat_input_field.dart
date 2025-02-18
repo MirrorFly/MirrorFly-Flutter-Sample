@@ -53,6 +53,7 @@ class ChatInputField extends StatelessWidget {
               return const Offstage();
             }
           }),
+          if(controller.profile.isGroupProfile.checkNull())
           MentionUsersList(
             tag,
             groupJid: jid.checkNull(),
