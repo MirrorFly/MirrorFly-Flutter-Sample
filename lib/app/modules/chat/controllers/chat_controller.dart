@@ -2397,7 +2397,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         break;
       }
       //Copy Validation
-      if (!canBeCopiedSet && (!message.isTextMessage())) {
+      if (!canBeCopiedSet && (!message.isTextMessage() && !(message.isMediaMessage() && message.mediaChatMessage!.mediaCaptionText.checkNull().isNotEmpty))) {
         canBeCopied(false);
         canBeCopiedSet = true;
       }
