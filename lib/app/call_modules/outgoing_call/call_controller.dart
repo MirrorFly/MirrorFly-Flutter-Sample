@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -253,10 +252,6 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   switchCamera() async {
-    //The below code is commented. The Camera switch not worked in iOS so uncommented and Nested in Platform Check
-    if(Platform.isIOS) {
-      cameraSwitch(!cameraSwitch.value);
-    }
     await Mirrorfly.switchCamera();
   }
 
