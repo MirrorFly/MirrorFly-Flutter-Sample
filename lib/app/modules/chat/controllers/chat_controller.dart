@@ -2920,7 +2920,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         if (firstVisibleItemIndex <= 1 && double.parse(itemPositions.first.itemLeadingEdge.toStringAsFixed(1)) <= 0) {
           // Scrolled to the Bottom
           debugPrint("reached Bottom yes load next messages");
-          _loadNextMessages();
+          _loadNextMessages(showLoading: false);
 
           ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
         } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
@@ -2931,7 +2931,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       } else if (Platform.isAndroid) {
         if (firstVisibleItemIndex == 0) {
           debugPrint("reached Bottom yes load next messages");
-          _loadNextMessages();
+          _loadNextMessages(showLoading: false);
         } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
           debugPrint("reached Top yes load previous msgs");
           _loadPreviousMessages();
