@@ -261,6 +261,7 @@ class MentionTagTextEditingController extends TextEditingController {
     int mentionsCountTillCursor,
     int indexCursor,
   ) {
+    if (value.length - _temp.length < 0) return;
     if (_temp.length - value.length != 1) return;
     if (mentionsCountTillCursor < 1) return;
 

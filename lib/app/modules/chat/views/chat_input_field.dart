@@ -250,9 +250,6 @@ class ChatInputField extends StatelessWidget {
                           color: Colors.blueAccent,
                           backgroundColor: Colors.transparent)),
                   controller: chatTaggerController,
-                  //                 initialMentions: const [
-                  // ('@Emily Johnson', User(id: 1, name: 'Emily Johnson'), null)
-                  // ],
                   onMention: (query) {
                     debugPrint("query : $query");
                     if (query != null) {
