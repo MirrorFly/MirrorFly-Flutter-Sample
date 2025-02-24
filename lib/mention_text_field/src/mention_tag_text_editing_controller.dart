@@ -129,9 +129,12 @@ class MentionTagTextEditingController extends TextEditingController {
     Object? data,
     Widget? stylingWidget,
   }) {
-    final indexCursor = selection.base.offset;
+    int indexCursor = selection.base.offset;
     final mentionSymbol = _mentionInput!.first;
-
+    if (indexCursor < 0 || indexCursor > text.length) {
+      indexCursor = text.length;
+      selection = TextSelection.collapsed(offset: indexCursor);
+    }
     final mention = mentionTagDecoration.showMentionStartSymbol
         ? "$mentionSymbol$label"
         : label;

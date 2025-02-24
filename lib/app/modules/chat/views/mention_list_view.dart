@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
@@ -28,6 +31,7 @@ class MentionUsersList extends NavViewStateful<MentionController> {
   @override
   void onInit() {
     controller.getGroupMembers(groupJid);
+    controller.initListeners();
     super.onInit();
   }
 
@@ -98,6 +102,9 @@ class MentionController extends GetxController {
   ///Show or Hide the mention user list in the view
   var showMentionUserList = false.obs;
 
+  StreamSubscription? _newMemberAddedSubscription;
+  StreamSubscription? _memberRemovedSubscription;
+
   var groupJid = "";
   void getGroupMembers(String groupJid) {
     this.groupJid = groupJid;
@@ -115,6 +122,43 @@ class MentionController extends GetxController {
       LogMessage.d("MentionController",
           "this is not a group so no need to get group members list");
     }
+  }
+
+  void initListeners() {
+    _newMemberAddedSubscription = Mirrorfly.onNewMemberAddedToGroup.listen((event) {
+      if (event != null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var newMemberJid = data["newMemberJid"] ?? "";
+        var addedByMemberJid = data["addedByMemberJid"] ?? "";
+        onNewMemberAddedToGroup(
+          groupJid: groupJid,
+          newMemberJid: newMemberJid,
+          addedByMemberJid: addedByMemberJid,
+        );
+      }
+    });
+
+    _memberRemovedSubscription = Mirrorfly.onMemberRemovedFromGroup.listen((event) {
+      if (event != null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var removedMemberJid = data["removedMemberJid"] ?? "";
+        var removedByMemberJid = data["removedByMemberJid"] ?? "";
+        onMemberRemovedFromGroup(
+          groupJid: groupJid,
+          removedMemberJid: removedMemberJid,
+          removedByMemberJid: removedByMemberJid,
+        );
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    _memberRemovedSubscription?.cancel();
+    _newMemberAddedSubscription?.cancel();
   }
 
   ///filter the group members from [groupMembers]
@@ -158,7 +202,7 @@ class MentionController extends GetxController {
     }
   }
 
-  void sortGroupMembers(List<ProfileDetails> list){
+  void sortGroupMembers(List<ProfileDetails>list){
     list.sort((a,b)=>a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
     groupMembers.value=(list);
     groupMembers.refresh();
