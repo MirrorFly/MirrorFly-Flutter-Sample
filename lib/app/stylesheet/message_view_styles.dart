@@ -8,6 +8,9 @@ class MessageTypingAreaStyle{
       color: Colors.white,
     ),
     this.textFieldStyle = const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),editTextHintStyle: TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 12)),
+    this.mentionTextStyle = const TextStyle(
+        color: Colors.blueAccent,
+        backgroundColor: Colors.transparent),
     this.dividerColor = const Color(0xff000000),
     this.sentIconColor = const Color(0xff4879F9),
     this.audioRecordIcon = const IconStyle(iconColor: Colors.white,bgColor:AppColor.primaryColor),
@@ -61,6 +64,7 @@ class MessageTypingAreaStyle{
   final UIKitIcon? iconSend;
   final ContactItemStyle mentionUserStyle;
   final Decoration mentionUserBgDecoration;
+  final TextStyle mentionTextStyle;
 
 
 }

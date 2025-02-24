@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/data/textutils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/mention_text_field/src/mention_tag_data.dart';
@@ -106,7 +107,7 @@ class MentionTagTextEditingController extends TextEditingController {
     for(var profile in profileDetails){
       String id = profile.jid.checkNull().split("@")[0];
       String name = profile.getName();
-      _mentions.add(MentionTagElement(mentionSymbol: '@', mention: name,data: id,stylingWidget: Text('@$name',style: const TextStyle(color: Colors.blueAccent),)));
+      _mentions.add(MentionTagElement(mentionSymbol: '@', mention: name,data: id,stylingWidget: Text('@$name',style: mentionTagDecoration.mentionTextStyle)));
       reformedText = reformedText.replaceFirst(
           "@[?]", Constants.mentionEscape);
     }
@@ -327,11 +328,12 @@ class MentionTagTextEditingController extends TextEditingController {
     final regexp = RegExp(
         '(?=${Constants.mentionEscape})|(?<=${Constants.mentionEscape})');
     final res = super.text.split(regexp);
-    final List tempList = List.from(_mentions);
+    final List<MentionTagElement> tempList = List.from(_mentions);
 
     return TextSpan(
       style: style,
-      children: res.map((e) {
+      children: buildTextSpanChildren(res,style,mentionTagDecoration,tempList)
+      /*children: res.map((e) {
         if (e == Constants.mentionEscape) {
           final mention = tempList.removeAt(0);
 
@@ -344,8 +346,29 @@ class MentionTagTextEditingController extends TextEditingController {
                 ),
           );
         }
-        return TextSpan(text: e, style: style);
-      }).toList(),
+        return TextSpan(children: TextUtils.parseEachLetterIntoTextSpan(e,style), style: style);
+      }).toList(),*/
     );
+  }
+  List<WidgetSpan> buildTextSpanChildren(List<String> res, TextStyle? style, MentionTagDecoration mentionTagDecoration, List<MentionTagElement> tempList) {
+    List<WidgetSpan> children = [];
+
+    for (var e in res) {
+      if (e == Constants.mentionEscape) {
+        final mention = tempList.removeAt(0);
+        if (mention.stylingWidget == null) {
+          children.addAll(TextUtils.parseEachLetterIntoWidgetSpan(
+            mention.mention,
+            mentionTagDecoration.mentionTextStyle,
+          ));
+        } else {
+          children.add(WidgetSpan(alignment: PlaceholderAlignment.middle,child: mention.stylingWidget!));
+        }
+      }else {
+        children.addAll(TextUtils.parseEachLetterIntoWidgetSpan(e, style));
+      }
+    }
+
+    return children;
   }
 }

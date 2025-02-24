@@ -239,16 +239,14 @@ class ChatInputField extends StatelessWidget {
           Expanded(
               child: Obx(() {
                 return MentionTagTextField(
-                  mentionTagDecoration: const MentionTagDecoration(
-                      mentionStart: ['@'],
+                  mentionTagDecoration: MentionTagDecoration(
+                      mentionStart: const ['@'],
                       mentionBreak: ' ',
                       allowDecrement: false,
                       allowEmbedding: false,
                       showMentionStartSymbol: false,
                       maxWords: null,
-                      mentionTextStyle: TextStyle(
-                          color: Colors.blueAccent,
-                          backgroundColor: Colors.transparent)),
+                      mentionTextStyle: messageTypingAreaStyle.mentionTextStyle),
                   controller: chatTaggerController,
                   onMention: (query) {
                     debugPrint("query : $query");
