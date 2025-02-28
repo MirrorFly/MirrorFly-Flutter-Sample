@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/permissions.dart';
@@ -1043,6 +1044,36 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           isAudioRecorded: isRecorded,
           audioDuration: duration);
       showBusyStatusAlert(disableBusyChatAndSend);
+    }
+  }
+
+
+
+  Future<void> sendMeetMessage({required String link,required int scheduledDateTime}) async{
+    if(await AppUtils.isNetConnected()) {
+
+      Mirrorfly.sendMessage(
+          messageParams: MessageParams.meet(
+            toJid: profile.jid.checkNull(),
+            topicId: topicId,
+            metaData: messageMetaData,
+            meetMessageParams: MeetMessage(
+                scheduledDateTime: scheduledDateTime,
+                link: Constants.webChatLogin + link,
+                title: ""),
+          ),
+          flyCallback: (response) {
+            if (response.isSuccess) {
+              LogMessage.d("meet Message", response.data);
+              // scrollToBottom();
+              // updateLastMessage(response.data);
+            } else {
+              LogMessage.d("sendMessage", response.errorMessage);
+              // showError(response.exception);
+            }
+          }).then((value) => NavUtils.back());
+    }else{
+      toToast(getTranslated("noInternetConnection"));
     }
   }
 

@@ -20,7 +20,7 @@ class DialogUtils {
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
-      return builder;
+      return SafeArea(child: builder);
     },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 

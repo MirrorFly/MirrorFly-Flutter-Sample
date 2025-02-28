@@ -55,7 +55,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.messageTextContent,
                           chatMessage.contactChatMessage?.contactName,
                           chatMessage.mediaChatMessage?.mediaFileName,
-                          chatMessage.mediaChatMessage,
+                          chatMessage.mediaChatMessage,chatMessage.meetChatMessage?.scheduledDateTime??0,
                           true,replyHeaderMessageViewStyle.contentTextStyle),
                     ),
                   ],
@@ -69,7 +69,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                       chatMessage.mediaChatMessage,
                       70, true,
                       chatMessage.locationChatMessage,
-                      replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius),
+                      replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -98,7 +98,7 @@ getReplyTitle(bool isMessageSentByMe, String senderUserName,TextStyle textStyle)
 }
 
 getReplyMessage(
-    String messageType, String? messageTextContent, String? contactName, String? mediaFileName, MediaChatMessage? mediaChatMessage, bool isReplying,TextStyle textStyle) {
+    String messageType, String? messageTextContent, String? contactName, String? mediaFileName, MediaChatMessage? mediaChatMessage,int timestamp ,bool isReplying,TextStyle textStyle) {
   debugPrint(messageType);
   switch (messageType) {
     case Constants.mText:
@@ -195,13 +195,27 @@ getReplyMessage(
           )),
         ],
       );
+    case Constants.mMeet:
+      return Row(
+        children: [
+          AppUtils.svgIcon(
+              icon: videoCamera,
+              width: 15,
+              colorFilter:const ColorFilter.mode(
+                  Color(0xff97A5C7), BlendMode.srcIn)),
+          const SizedBox(
+            width: 5,
+          ),
+          Expanded(child: Text(MessageUtils.getMeetMessage(timestamp),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
+        ],
+      );
     default:
       return const Offstage();
   }
 }
 
 getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, MediaChatMessage? mediaChatMessage, double size, bool isNotChatItem,
-    LocationChatMessage? locationChatMessage,IconStyle iconStyle,BorderRadius borderRadius) {
+    LocationChatMessage? locationChatMessage,IconStyle iconStyle,BorderRadius borderRadius,bool isSend) {
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
@@ -272,6 +286,15 @@ getReplyImageHolder(BuildContext context, ChatMessageModel chatMessageModel, Med
                 ),
               ),
             );
+    case Constants.mMeet:
+      return Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(color:isSend? Color(0xffE3E7F0):Colors.white),
+        child: AppUtils.assetIcon(
+          assetName: mirrorflySmall,
+          width: 30,
+          ),
+      );
     default:
       debugPrint("reply header--> DEFAULT");
       return SizedBox(
@@ -317,7 +340,7 @@ class ReplyMessageHeader extends StatelessWidget {
                         ?.contactName,
                     chatMessage.replyParentChatMessage?.mediaChatMessage
                         ?.mediaFileName,
-                    chatMessage.replyParentChatMessage?.mediaChatMessage,
+                    chatMessage.replyParentChatMessage?.mediaChatMessage,chatMessage.meetChatMessage?.scheduledDateTime ??0,
                     false,replyHeaderMessageViewStyle.contentTextStyle),
               ],
             ),
@@ -328,7 +351,7 @@ class ReplyMessageHeader extends StatelessWidget {
               chatMessage.replyParentChatMessage?.mediaChatMessage,
               55,
               false,
-              chatMessage.replyParentChatMessage?.locationChatMessage,replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius),
+              chatMessage.replyParentChatMessage?.locationChatMessage,replyHeaderMessageViewStyle.mediaIconStyle,replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe),
         ],
       ),
     );

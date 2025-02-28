@@ -522,5 +522,9 @@
     "invalidLink" : "Invalid link",
     "callEnded" : "Call Ended!",
     "wentWrong" : "Something went wrong. Please try again",
-    "couldNotProcess" : "Couldn't process the link. Please try again."
-  }
+    "couldNotProcess" : "Couldn't process the link. Please try again.",
+    "dateError" : "Please check your selected date and time",
+    "joinVideoMeet" : "Join video meeting",
+    "scheduleOn" : "Scheduled on "
+
+}

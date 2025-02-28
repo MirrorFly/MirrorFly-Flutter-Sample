@@ -119,7 +119,7 @@ class RecentChatItem extends StatelessWidget {
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == MessageType.isText && item.lastMessageContent.checkNull().isNotEmpty ||
                               item.lastMessageType != MessageType.isText) &&
-                          typingUserid.isEmpty
+                          typingUserid.isEmpty && item.lastMessageType != MessageType.isMeet
                       ? buildMessageIndicator()
                       : const Offstage()
                   : const Offstage(),
@@ -370,7 +370,7 @@ class RecentChatItem extends StatelessWidget {
                       ? Text(
                           chat.isMessageRecalled.value
                               ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                              :(chat.messageType == MessageType.meet.value)?  MessageUtils.getMeetMessage(chat.meetChatMessage?.scheduledDateTime??0):MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   chat.messageTextContent.checkNull(),
                           style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,

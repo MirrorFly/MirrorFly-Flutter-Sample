@@ -201,6 +201,7 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
+const String mMeetIcon = 'assets/logos/schedule_icon.svg';
 const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
 const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
@@ -419,6 +420,9 @@ class Constants {
   static const String mDocument = "DOCUMENT";
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
+
+  static const String mMeet = "MEET";
+
 
   static const String composing = "composing";
   static const String gone = "Gone";
