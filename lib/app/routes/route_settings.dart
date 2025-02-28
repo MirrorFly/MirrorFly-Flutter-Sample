@@ -68,10 +68,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-    case Routes.scanner:
-      return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
-    case Routes.webLoginResult:
-      return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
+    // case Routes.scanner:
+    //   return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
+    // case Routes.webLoginResult:
+    //   return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
     case Routes.createGroup:
       return MaterialPageRoute(builder: (_) => const GroupCreationView(),settings: settings);
     case Routes.groupInfo:
