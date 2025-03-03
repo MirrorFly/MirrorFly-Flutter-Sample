@@ -1,5 +1,6 @@
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
+import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../model/chat_message_model.dart';
 
@@ -30,6 +31,9 @@ class NotificationUtils{
       }
     }else if(message.isMessageRecalled.value.checkNull()){
       return deletedMessage;
+    }else if(Constants.mMeet == message.messageType){
+        var lastMessageMentionContent = MessageUtils.getMeetMessage(message.meetChatMessage?.scheduledDateTime??0);
+        return Constants.meetScheduleOn+lastMessageMentionContent;
     }else{
       return getMediaMessageContent(message);
     }

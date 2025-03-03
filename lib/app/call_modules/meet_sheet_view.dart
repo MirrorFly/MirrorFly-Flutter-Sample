@@ -218,7 +218,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                 width: double.infinity,
                 child: ElevatedButton(
                       onPressed: () {
-                        if(controller.scheduleTime.value.isBefore(DateTime.now())){
+                        if(controller.scheduleTime.value.isBefore(DateTime.now().subtract(const Duration(minutes: 1)))){
                           toToast(getTranslated("dateError"));
                         }else{
                           if (Get.isRegistered<ChatController>(tag:SessionManagement.getCurrentChatJID())) {

@@ -467,6 +467,7 @@ class Constants {
   static const String attachmentTypeAudio = "audio";
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
+  static const String meetScheduleOn = "Meet Scheduled on ";
 
 }
 

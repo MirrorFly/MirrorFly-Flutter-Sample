@@ -14,6 +14,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
 import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
+import '../../chat/controllers/google_calander.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class DashboardView extends NavViewStateful<DashboardController> {
@@ -367,7 +368,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
         tooltip: "New Chat",
         heroTag: "New Chat",
         onPressed: () {
-          controller.gotoContacts();
+          addEvent();
         },
         child:
         AppUtils.svgIcon(icon:
