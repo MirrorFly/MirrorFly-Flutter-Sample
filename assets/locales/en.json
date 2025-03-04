@@ -526,6 +526,7 @@
     "dateError" : "Please check your selected date and time",
     "joinVideoMeet" : "Join video meeting",
     "scheduleOn" : "Scheduled on ",
-    "meetScheduleOn" : "Meet Scheduled on "
+    "meetScheduleOn" : "Meet Scheduled on ",
+    "selectCalender" : "Select a Calendar "
 
 }

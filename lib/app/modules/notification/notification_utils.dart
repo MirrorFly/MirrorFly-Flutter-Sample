@@ -1,3 +1,5 @@
+import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
+
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
 import '../../data/utils.dart';
@@ -33,6 +35,7 @@ class NotificationUtils{
       return deletedMessage;
     }else if(Constants.mMeet == message.messageType){
         var lastMessageMentionContent = MessageUtils.getMeetMessage(message.meetChatMessage?.scheduledDateTime??0);
+        ScheduleCalender().addEvent(message.meetChatMessage!);
         return Constants.meetScheduleOn+lastMessageMentionContent;
     }else{
       return getMediaMessageContent(message);

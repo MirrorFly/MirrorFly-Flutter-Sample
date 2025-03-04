@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -1051,7 +1052,10 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   Future<void> sendMeetMessage({required String link,required int scheduledDateTime}) async{
     if(await AppUtils.isNetConnected()) {
-
+      String calenderId=await SessionManagement.getCalenderId("calenderId");
+      if(calenderId.isEmpty){
+        ScheduleCalender().selectCalendarId();
+      }
       Mirrorfly.sendMessage(
           messageParams: MessageParams.meet(
             toJid: profile.jid.checkNull(),
@@ -1065,8 +1069,8 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           flyCallback: (response) {
             if (response.isSuccess) {
               LogMessage.d("meet Message", response.data);
-              // scrollToBottom();
-              // updateLastMessage(response.data);
+              ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+            ScheduleCalender().addEvent(chatMessageModel.meetChatMessage!);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
               // showError(response.exception);

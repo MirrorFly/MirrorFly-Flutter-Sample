@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../extensions/extensions.dart';
@@ -14,7 +15,7 @@ import '../../../common/app_localizations.dart';
 import '../../../common/app_theme.dart';
 import '../../../data/utils.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
-import '../../chat/controllers/google_calander.dart';
+// import '../../chat/controllers/schedule_calender.dart';
 import '../../dashboard/controllers/dashboard_controller.dart';
 
 class DashboardView extends NavViewStateful<DashboardController> {
@@ -368,7 +369,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
         tooltip: "New Chat",
         heroTag: "New Chat",
         onPressed: () {
-          addEvent();
+          controller.gotoContacts();
         },
         child:
         AppUtils.svgIcon(icon:
