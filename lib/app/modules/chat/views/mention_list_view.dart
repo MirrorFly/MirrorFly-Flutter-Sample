@@ -101,6 +101,8 @@ class MentionController extends GetxController {
 
   ///Show or Hide the mention user list in the view
   var showMentionUserList = false.obs;
+  Rx<String> mTriggerCharacter="".obs;
+  Rx<String?> mQuery="".obs;
 
   StreamSubscription? _newMemberAddedSubscription;
   StreamSubscription? _memberRemovedSubscription;
@@ -131,11 +133,11 @@ class MentionController extends GetxController {
         var groupJid = data["groupJid"] ?? "";
         var newMemberJid = data["newMemberJid"] ?? "";
         var addedByMemberJid = data["addedByMemberJid"] ?? "";
-        onNewMemberAddedToGroup(
-          groupJid: groupJid,
-          newMemberJid: newMemberJid,
-          addedByMemberJid: addedByMemberJid,
-        );
+          onNewMemberAddedToGroup(
+            groupJid: groupJid,
+            newMemberJid: newMemberJid,
+            addedByMemberJid: addedByMemberJid,
+          );
       }
     });
 
@@ -167,8 +169,12 @@ class MentionController extends GetxController {
     if (query == null) {
       filteredItems.clear();
       showMentionUserList(false);
+      mTriggerCharacter("");
+      mQuery(null);
       return;
     }
+    mTriggerCharacter(triggerCharacter);
+    mQuery(query);
     if (triggerCharacter == '@') {
       var groupMembersWithoutMe = groupMembers.where((item) =>
       item.jid != SessionManagement.getUserJID()).toList();
@@ -206,6 +212,9 @@ class MentionController extends GetxController {
     list.sort((a,b)=>a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
     groupMembers.value=(list);
     groupMembers.refresh();
+    if(mQuery.value != null ) {
+      filterMentionUsers(mTriggerCharacter.value, mQuery.value);
+    }
   }
 
   void onNewMemberAddedToGroup({required String groupJid, required String newMemberJid, required String addedByMemberJid}) {
@@ -216,7 +225,9 @@ class MentionController extends GetxController {
           getProfileDetails(newMemberJid).then((value) {
             List<ProfileDetails> list = [];//groupMembers;
             list.addAll(groupMembers);
-            list.add(value);
+            if(!list.any((element) => element.jid ==value.jid,)) {
+              list.add(value);
+            }
             sortGroupMembers(list);
           });
         }
