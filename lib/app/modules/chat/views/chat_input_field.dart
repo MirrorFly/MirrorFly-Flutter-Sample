@@ -29,118 +29,122 @@ class ChatInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: messageTypingAreaStyle.bgColor, //Colors.white,
-      child: controller.isBlocked.value
-          ? userBlocked(context)
-          : controller.isMemberOfGroup
-          ? Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Obx(() {
-            if (controller.isReplying.value) {
-              return ReplyingMessageHeader(
-                chatMessage: controller.replyChatMessage,
-                onCancel: () =>
-                    controller.cancelReplyMessage(),
-                onClick: () {
-                  controller.navigateToMessage(
-                      controller.replyChatMessage);
-                },
-                replyBgColor: messageTypingAreaStyle.replyBgColor,
-              );
-            } else {
-              return const Offstage();
-            }
-          }),
-          if(controller.profile.isGroupProfile.checkNull())
-          MentionUsersList(
-            tag,
-            groupJid: jid.checkNull(),
-            mentionUserBgDecoration: messageTypingAreaStyle
-                .mentionUserBgDecoration,
-            mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,
-            chatTaggerController: chatTaggerController,
-            onListItemPressed: (profile) {
-              controller.onUserTagClicked(profile, chatTaggerController, tag);
-            },),
-          Divider(
-              height: 1,
-              thickness: 0.29,
-              color: messageTypingAreaStyle
-                  .dividerColor //textBlackColor,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  width: double.infinity,
-                  decoration: messageTypingAreaStyle.decoration,
-                  child: Obx(() {
-                    return messageTypingView(context);
-                  }),
-                ),
-              ),
-              Obx(() {
-                return controller.isAudioRecording
-                    .value == Constants.audioRecording
-                    ? InkWell(
-                  onTap: () {
-                    controller.stopRecording();
+    return Obx(() {
+      return Container(
+        color: messageTypingAreaStyle.bgColor, //Colors.white,
+        child: controller.isBlocked.value
+            ? userBlocked(context)
+            : controller.isMemberOfGroup
+            ? Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Obx(() {
+              if (controller.isReplying.value) {
+                return ReplyingMessageHeader(
+                  chatMessage: controller.replyChatMessage,
+                  onCancel: () =>
+                      controller.cancelReplyMessage(),
+                  onClick: () {
+                    controller.navigateToMessage(
+                        controller.replyChatMessage);
                   },
-                  child: RippleWidget(
-                    size: 50,
-                    rippleColor: messageTypingAreaStyle
-                        .rippleColor,
-                    child: CircleAvatar(
-                      backgroundColor: messageTypingAreaStyle
-                          .audioRecordIcon.bgColor,
-                      //const Color(0xff3276E2),
-                      radius: 48 / 2,
-                      child: messageTypingAreaStyle.iconRecord ??
-                          AppUtils.svgIcon(icon: audioMic,
-                            colorFilter: ColorFilter.mode(
-                                messageTypingAreaStyle.audioRecordIcon
-                                    .iconColor, BlendMode.srcIn),
-                          ),),
+                  replyBgColor: messageTypingAreaStyle.replyBgColor,
+                );
+              } else {
+                return const Offstage();
+              }
+            }),
+            if(controller.profile.isGroupProfile.checkNull())
+              MentionUsersList(
+                tag,
+                groupJid: jid.checkNull(),
+                mentionUserBgDecoration: messageTypingAreaStyle
+                    .mentionUserBgDecoration,
+                mentionUserStyle: messageTypingAreaStyle.mentionUserStyle,
+                chatTaggerController: chatTaggerController,
+                onListItemPressed: (profile) {
+                  controller.onUserTagClicked(
+                      profile, chatTaggerController, tag);
+                },),
+            Divider(
+                height: 1,
+                thickness: 0.29,
+                color: messageTypingAreaStyle
+                    .dividerColor //textBlackColor,
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: messageTypingAreaStyle.decoration,
+                    child: Obx(() {
+                      return messageTypingView(context);
+                    }),
                   ),
-                )
-                    : controller.isUserTyping.value ||
-                    controller.isAudioRecording.value ==
-                        Constants.audioRecordDone
-                    ? InkWell(
+                ),
+                Obx(() {
+                  return controller.isAudioRecording
+                      .value == Constants.audioRecording
+                      ? InkWell(
                     onTap: () {
+                      controller.stopRecording();
+                    },
+                    child: RippleWidget(
+                      size: 50,
+                      rippleColor: messageTypingAreaStyle
+                          .rippleColor,
+                      child: CircleAvatar(
+                        backgroundColor: messageTypingAreaStyle
+                            .audioRecordIcon.bgColor,
+                        //const Color(0xff3276E2),
+                        radius: 48 / 2,
+                        child: messageTypingAreaStyle.iconRecord ??
+                            AppUtils.svgIcon(icon: audioMic,
+                              colorFilter: ColorFilter.mode(
+                                  messageTypingAreaStyle.audioRecordIcon
+                                      .iconColor, BlendMode.srcIn),
+                            ),),
+                    ),
+                  )
+                      : controller.isUserTyping.value ||
                       controller.isAudioRecording.value ==
                           Constants.audioRecordDone
-                          ? controller
-                          .sendRecordedAudioMessage()
-                          : controller.sendMessage(
-                          controller.profile);
-                    },
-                    child: messageTypingAreaStyle.iconSend ?? AppUtils.svgIcon(
-                        icon: sendIcon,
-                        colorFilter: ColorFilter.mode(
-                            messageTypingAreaStyle.sentIconColor,
-                            BlendMode.srcIn)))
-                    : const Offstage();
-              }),
-              const SizedBox(
-                width: 5,
-              ),
-            ],
-          ),
-          controller.emojiLayout(
-              textEditingController: chatTaggerController,
-              sendTypingStatus: true),
-        ],
-      )
-          : !controller.availableFeatures.value
-          .isGroupChatAvailable.checkNull()
-          ? featureNotAvailable(context)
-          : userNoLonger(context),
-    );
+                      ? InkWell(
+                      onTap: () {
+                        controller.isAudioRecording.value ==
+                            Constants.audioRecordDone
+                            ? controller
+                            .sendRecordedAudioMessage()
+                            : controller.sendMessage(
+                            controller.profile);
+                      },
+                      child: messageTypingAreaStyle.iconSend ?? AppUtils
+                          .svgIcon(
+                          icon: sendIcon,
+                          colorFilter: ColorFilter.mode(
+                              messageTypingAreaStyle.sentIconColor,
+                              BlendMode.srcIn)))
+                      : const Offstage();
+                }),
+                const SizedBox(
+                  width: 5,
+                ),
+              ],
+            ),
+            controller.emojiLayout(
+                textEditingController: chatTaggerController,
+                sendTypingStatus: true),
+          ],
+        )
+            : !controller.availableFeatures.value
+            .isGroupChatAvailable.checkNull()
+            ? featureNotAvailable(context)
+            : userNoLonger(context),
+      );
+    });
   }
 
 
@@ -247,14 +251,15 @@ class ChatInputField extends StatelessWidget {
                       allowEmbedding: false,
                       showMentionStartSymbol: false,
                       maxWords: null,
-                      mentionTextStyle: messageTypingAreaStyle.mentionTextStyle),
+                      mentionTextStyle: messageTypingAreaStyle
+                          .mentionTextStyle),
                   controller: chatTaggerController,
                   onMention: (query) {
                     debugPrint("query : $query");
                     if (query != null) {
                       final searchInput = query.substring(1);
                       controller.filterMentionUsers('@', searchInput, tag);
-                    }else{
+                    } else {
                       controller.filterMentionUsers('@', null, tag);
                     }
                   },

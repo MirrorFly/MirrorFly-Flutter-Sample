@@ -1411,13 +1411,19 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                       userJid: profile.jid!,
                       flyCallBack: (FlyResponse response) {
                         debugPrint("$response");
-                        profile.isBlocked = true;
-                        isBlocked(true);
-                        setChatStatus();
-                        profile_.refresh();
-                        saveUnsentMessage();
-                        DialogUtils.hideLoading();
-                      toToast(getTranslated("hasBlocked").replaceFirst("%d", getName(profile)));
+                        if(response.isSuccess) {
+                          profile.isBlocked = true;
+                          isBlocked(true);
+                          setChatStatus();
+                          profile_.refresh();
+                          saveUnsentMessage();
+                          DialogUtils.hideLoading();
+                          toToast(getTranslated("hasBlocked").replaceFirst(
+                              "%d", getName(profile)));
+                        }else{
+                          DialogUtils.hideLoading();
+                          toToast(response.errorMessage);
+                        }
                       });
                 } else {
                 toToast(getTranslated("noInternetConnection"));
