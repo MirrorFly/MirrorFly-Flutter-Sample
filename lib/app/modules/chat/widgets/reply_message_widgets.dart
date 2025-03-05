@@ -57,7 +57,7 @@ class ReplyingMessageHeader extends StatelessWidget {
                           chatMessage.senderUserName.checkNull().isNotEmpty
                               ? chatMessage.senderUserName
                               : chatMessage.senderNickName,
-                          replyHeaderMessageViewStyle.titleTextStyle),
+                          replyHeaderMessageViewStyle.titleTextStyle,),
                     ),
                     const SizedBox(height: 8),
                     Padding(
@@ -158,7 +158,7 @@ class ReplyMessage extends StatelessWidget {
   final Color mentionUserTextColor;
   final Color linkColor;
   final Color mentionedMeBgColor;
-  final Int scheduledDateTime;
+  final int scheduledDateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +286,7 @@ class ReplyMessage extends StatelessWidget {
             const SizedBox(
               width: 5,
             ),
-            Expanded(child: Text(MessageUtils.getMeetMessage(timestamp),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
+            Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
           ],
         );
       default:
@@ -296,7 +296,7 @@ class ReplyMessage extends StatelessWidget {
 }
 
 getReplyTitle(
-    bool isMessageSentByMe, String senderUserName, TextStyle textStyle,bool isSend) {
+    bool isMessageSentByMe, String senderUserName, TextStyle textStyle) {
   return isMessageSentByMe
       ? Text(
           getTranslated("you"),
@@ -318,7 +318,7 @@ getReplyImageHolder(
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage,
     IconStyle iconStyle,
-    BorderRadius borderRadius) {
+    BorderRadius borderRadius,bool isSend) {
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
@@ -468,7 +468,7 @@ class ReplyMessageHeader extends StatelessWidget {
                 getReplyTitle(
                     chatMessage.replyParentChatMessage!.isMessageSentByMe,
                     chatMessage.replyParentChatMessage!.senderUserName,
-                    replyHeaderMessageViewStyle.titleTextStyle),
+                    replyHeaderMessageViewStyle.titleTextStyle,),
                 const SizedBox(height: 5),
                 ReplyMessage(
                   messageType: chatMessage.replyParentChatMessage!.messageType
@@ -515,7 +515,7 @@ class ReplyMessageHeader extends StatelessWidget {
               false,
               chatMessage.replyParentChatMessage?.locationChatMessage,
               replyHeaderMessageViewStyle.mediaIconStyle,
-              replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe,chatMessage.isMessageSentByMe),
+              replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe),
         ],
       ),
     );
