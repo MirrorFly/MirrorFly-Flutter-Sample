@@ -1,6 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:device_calendar/device_calendar.dart' as tz;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
@@ -40,45 +39,51 @@ class ScheduleCalender {
       debugPrint("No writable calendars found");
       return;
     }
+    debugPrint("calendarsResult $calendarsResult");
     if(writableCalendars.length == 1){
       await SessionManagement.setCalenderId(writableCalendars[0].id??"");
       await SessionManagement.setCalenderName(writableCalendars[0].name??"");
       return ;
     }
-    Calendar? calendar = (await showDialog(
-      context: NavUtils.currentContext,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(getTranslated("selectCalender")),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemCount: writableCalendars.length,
-              itemBuilder: (context, index) {
-                final calendar = writableCalendars[index];
-                String calendarName = calendar.name ?? "Unnamed";
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue, // Choose a color based on preference
-                    child: Text(
-                      calendarName[0].toUpperCase(), // First letter of calendar name
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    if(NavUtils.currentContext.mounted) {
+      Calendar? calendar = (await showDialog(
+        context: NavUtils.currentContext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(getTranslated("selectCalender")),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: writableCalendars.length,
+                itemBuilder: (context, index) {
+                  final calendar = writableCalendars[index];
+                  String calendarName = calendar.name ?? "Unnamed";
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      // Choose a color based on preference
+                      child: Text(
+                        calendarName[0].toUpperCase(),
+                        // First letter of calendar name
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  title: Text(calendarName),
-                  onTap: () => Navigator.pop(context, calendar),
-                );
-              },
+                    title: Text(calendarName),
+                    onTap: () => Navigator.pop(context, calendar),
+                  );
+                },
+              ),
             ),
-          ),
-        );
-      },
-    )) as Calendar?;
-    if (calendar != null) {
-      await SessionManagement.setCalenderId(calendar.id??"");
-      await SessionManagement.setCalenderName(calendar.name??"");
+          );
+        },
+      )) as Calendar?;
+      if (calendar != null) {
+        await SessionManagement.setCalenderId(calendar.id ?? "");
+        await SessionManagement.setCalenderName(calendar.name ?? "");
+      }
     }
   }
 
@@ -89,6 +94,7 @@ class ScheduleCalender {
     final startTime = DateTime.fromMillisecondsSinceEpoch(meetMessage.scheduledDateTime);
     final event = Event(
       calenderId,
+      eventId: meetMessage.messageId,
       title: meetMessage.title.isEmpty ? "" : meetMessage.title,
       description: meetMessage.link,
       // location: "Online - Click the link",

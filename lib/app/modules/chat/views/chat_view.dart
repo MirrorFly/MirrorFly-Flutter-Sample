@@ -17,8 +17,6 @@ import '../../../routes/route_settings.dart';
 import '../../../widgets/custom_action_bar_icons.dart';
 import '../../../widgets/marquee_text.dart';
 import '../controllers/chat_controller.dart';
-import '../controllers/schedule_calender.dart';
-import '../widgets/reply_message_widgets.dart';
 import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
@@ -148,7 +146,6 @@ class ChatView extends NavViewStateful<ChatController> {
                             parentWidgetWidth: controller.screenWidth,
                             parentWidgetHeight: controller.screenHeight,
                             onFabTap: ()async{
-                              await ScheduleCalender().requestCalendarPermission();
                               controller.showMeetBottomSheet(AppStyleConfig.chatPageStyle.instantScheduleMeetStyle.meetBottomSheetStyle);
                             },
                           ) : const Offstage();
