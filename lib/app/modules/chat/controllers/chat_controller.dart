@@ -1051,34 +1051,32 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
 
   Future<void> sendMeetMessage({required String link,required int scheduledDateTime}) async{
-    if(await AppUtils.isNetConnected()) {
-      String calenderId=await SessionManagement.getCalenderId("calenderId");
-      if(calenderId.isEmpty){
-        ScheduleCalender().selectCalendarId();
-      }
-      Mirrorfly.sendMessage(
-          messageParams: MessageParams.meet(
-            toJid: profile.jid.checkNull(),
-            topicId: topicId,
-            metaData: messageMetaData,
-            meetMessageParams: MeetMessage(
-                scheduledDateTime: scheduledDateTime,
-                link: Constants.webChatLogin + link,
-                title: ""),
-          ),
-          flyCallback: (response) {
-            if (response.isSuccess) {
-              LogMessage.d("meet Message", response.data);
-              ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
-            ScheduleCalender().addEvent(chatMessageModel.meetChatMessage!);
-            } else {
-              LogMessage.d("sendMessage", response.errorMessage);
-              // showError(response.exception);
-            }
-          }).then((value) => NavUtils.back());
-    }else{
-      toToast(getTranslated("noInternetConnection"));
+    String calenderId=await SessionManagement.getCalenderId("calenderId");
+    if(calenderId.isEmpty){
+      ScheduleCalender().selectCalendarId();
     }
+    Mirrorfly.sendMessage(
+        messageParams: MessageParams.meet(
+          toJid: profile.jid.checkNull(),
+          topicId: topicId,
+          metaData: messageMetaData,
+          meetMessageParams: MeetMessage(
+              scheduledDateTime: scheduledDateTime,
+              link: Constants.webChatLogin + link,
+              title: ""),
+        ),
+        flyCallback: (response) {
+          if (response.isSuccess) {
+            LogMessage.d("meet Message", response.data);
+            ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
+          ScheduleCalender().addEvent(chatMessageModel.meetChatMessage!);
+            scrollToBottom();
+            updateLastMessage(response.data);
+          } else {
+            LogMessage.d("sendMessage", response.errorMessage);
+            // showError(response.exception);
+          }
+        }).then((value) => NavUtils.back());
   }
 
   void isTyping([String? typingText]) {
