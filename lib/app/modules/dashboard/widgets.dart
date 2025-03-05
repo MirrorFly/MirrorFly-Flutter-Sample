@@ -340,12 +340,6 @@ class RecentChatItem extends StatelessWidget {
         builder: (context, data) {
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
-          // LogMessage.d("getMessageOfId future", "${chat.toJson()}");
-            if(chat.messageType =="MEET"){
-              return const SizedBox(
-                height: 15,
-              );
-            }
             return Row(
               children: [
                 checkSenderShouldShow(chat)
@@ -357,8 +351,8 @@ class RecentChatItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       )
-                    : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                    : const Offstage(),
+                chat.isMessageRecalled.value ? const Offstage() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0

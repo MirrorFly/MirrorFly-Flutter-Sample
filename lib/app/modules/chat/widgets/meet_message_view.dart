@@ -38,8 +38,16 @@ class MeetMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Flexible(
-                child: CustomTextView(text: chatMessage.meetChatMessage?.link ?? "", defaultTextStyle: textMessageViewStyle.textStyle, linkColor: textMessageViewStyle.urlMessageColor, mentionUserTextColor: textMessageViewStyle.mentionUserColor, searchQueryTextColor: textMessageViewStyle.highlightColor, mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,searchQueryString: search,)
-              ),
+                  child: CustomTextView(
+                    key: Key("message_view+${chatMessage.messageId}"),
+                text: chatMessage.meetChatMessage?.link ?? "",
+                defaultTextStyle: textMessageViewStyle.textStyle,
+                linkColor: textMessageViewStyle.urlMessageColor,
+                mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                searchQueryTextColor: textMessageViewStyle.highlightColor,
+                mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                searchQueryString: search,
+              )),
               const SizedBox(
                 width: 60,
               ),
