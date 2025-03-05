@@ -214,7 +214,7 @@ const String attachIcon = 'assets/logos/attach.svg';
 
 const String arrowDropDown = 'assets/calls/ic_arrow_down_red.svg';
 const String arrowUpIcon = 'assets/calls/ic_arrow_up_green.svg';
-const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg.svg';
+const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';
@@ -289,7 +289,7 @@ const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
 
-const String mediaBg = "assets/logos/ic_baloon.svg";
+const String mediaBg = "assets/logos/ic_baloon.png";
 
 //contact sync
 const String syncIcon = "assets/logos/sync.svg";
@@ -299,6 +299,8 @@ const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
 const String icBioBackground = "assets/logos/ic_bio_background.png";
 const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
+const String icJoinCallMirrorflyLogo = "assets/calls/ic_join_call_mirrorfly_logo.svg";
+const String icJoinCallEnded = "assets/calls/ic_join_call_ended.svg";
 
 
 //About us
@@ -326,14 +328,18 @@ toToast(String text) {
 }
 
 class Constants {
-  static MetaDataUserList? metaDataUserList = MetaDataUserList(key: "platform", value: ["flutter"]);
+  static String licenseKey = 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+  static String iOSContainerID = 'group.com.mirrorfly.flutter'; //group.com.mirrorfly.flutter
+  static bool chatHistoryEnable = true;
+  static bool enableDebugLog = true;
+  static MetaDataUserList? metaDataUserList;// = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
   static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
   static const String packageName = "com.contus.flycommons.";
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String emptyString = "";
-  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
+  static const String webChatLogin = 'https://chat-dev.infoprofile.io/';
   static const maxNameLength = 26;
   static const callNotificationId = 124;
 
@@ -344,6 +350,7 @@ class Constants {
   static const sessionLockTime = 32;//in Seconds
   static const pinExpiry = 31;//in Days
   static const pinAlert = pinExpiry-5;//in Days
+  static const String mentionEscape = '‡';
 
 
 

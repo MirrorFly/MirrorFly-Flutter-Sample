@@ -133,12 +133,29 @@ class ViewAllMediaController extends GetxController {
     });
   }
 
+  void navigateLink(String url) async {
+    if(MessageUtils.getCallLinkFromMessage(url).isNotEmpty) {
+      if(await AppUtils.isNetConnected()) {
+        var link = MessageUtils.getCallLinkFromMessage(url);
+        if (link.isNotEmpty) {
+          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+          });
+        }
+      }else{
+        toToast(getTranslated("noInternetConnection"));
+      }
+    }else{
+      AppUtils.launchWeb(Uri.parse(url));
+    }
+  }
+
   navigateMessage(ChatMessageModel linkChatItem) {
     // NavUtils.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
     NavUtils.back();
     NavUtils.back();
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().navigateToMessage(linkChatItem);
+    if (Get.isRegistered<ChatController>(tag: linkChatItem.chatUserJid)) {
+      Get.find<ChatController>(tag: linkChatItem.chatUserJid).navigateToMessage(linkChatItem);
     }
   }
 

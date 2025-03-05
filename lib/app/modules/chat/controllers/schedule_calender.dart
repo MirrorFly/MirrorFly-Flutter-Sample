@@ -2,12 +2,9 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:device_calendar/device_calendar.dart' as tz;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
-import 'package:path/path.dart';
-import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../data/utils.dart';
@@ -33,7 +30,7 @@ class ScheduleCalender {
     bool isGranted = await Permission.calendarFullAccess.isGranted;
     if (!isGranted) return;
     final calendarId = await SessionManagement.getCalenderId("calendarId");
-    // if (calendarId?.isNotEmpty ?? false) return;
+    if (calendarId?.isNotEmpty ?? false) return;
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     if (!(calendarsResult.isSuccess && calendarsResult.data?.isNotEmpty == true)) return;
     List<Calendar> writableCalendars = calendarsResult.data!

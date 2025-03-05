@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
@@ -6,7 +7,6 @@ import '../../../stylesheet/stylesheet.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
-import 'chat_widgets.dart';
 import 'media_message_overlay.dart';
 
 class DocumentMessageView extends StatelessWidget {
@@ -66,32 +66,18 @@ class DocumentMessageView extends StatelessWidget {
                     width: 12,
                   ),
                   Expanded(
-                    child: search.isEmpty
-                        ? Text(
-                      chatMessage.mediaChatMessage!.mediaFileName,
-                      style: docMessageViewStyle.fileTextStyle.textStyle,
-                      // style: const TextStyle(
-                      //   fontSize: 12,
-                      // ),
+                    child: CustomTextView(
+                      key: Key("message_view+${chatMessage.messageId}"),
+                      text: chatMessage.messageTextContent.checkNull(),
+                      defaultTextStyle: docMessageViewStyle.fileTextStyle.textStyle,
+                      linkColor: docMessageViewStyle.fileTextStyle.urlMessageColor,
+                      mentionUserTextColor: docMessageViewStyle.fileTextStyle.mentionUserColor,
+                      searchQueryTextColor: docMessageViewStyle.fileTextStyle.highlightColor,
+                      searchQueryString: search,
+                      mentionUserIds: chatMessage.mentionedUsersIds ?? [],
                       maxLines: 2,
-                    ) /*textMessageSpannableText(
-                            chatMessage.mediaChatMessage!.mediaFileName
-                                .checkNull(),
-                            maxLines: 2,
-                          )*/
-                        : chatSpannedText(
-                        chatMessage.mediaChatMessage!.mediaFileName
-                            .checkNull(),
-                        search,
-                        docMessageViewStyle.fileTextStyle.textStyle,
-                        // const TextStyle(
-                        //     color: Colors.black,
-                        //     fontWeight: FontWeight.w400),
-                        maxLines: 2,spanColor: docMessageViewStyle.fileTextStyle.highlightColor,), /*Text(
-                    chatMessage.mediaChatMessage!.mediaFileName,
-                    maxLines: 2,
-                        style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400),
-                  )*/
+                      mentionedMeBgColor: docMessageViewStyle.fileTextStyle.mentionedMeBgColor,
+                    )
                   ),
                   MediaMessageOverlay(chatMessage: chatMessage,downloadUploadViewStyle:  docMessageViewStyle.downloadUploadViewStyle,),
                 ],
@@ -119,7 +105,7 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred.value
-                      ? AppUtils.svgIcon(icon:starSmallIcon)
+                      ? docMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                       : const Offstage(),
                   const SizedBox(
                     width: 5,

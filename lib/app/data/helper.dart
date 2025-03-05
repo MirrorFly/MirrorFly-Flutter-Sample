@@ -9,7 +9,6 @@ import '../data/permissions.dart';
 import '../data/session_management.dart';
 import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../app_style_config.dart';
 import '../common/app_localizations.dart';
@@ -115,68 +114,7 @@ String getChatTime(BuildContext context, int? epochTime) {
 
 
 
-Future<void> launchInBrowser(String url) async {
-  if (await AppUtils.isNetConnected()) {
-    var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
-    final Uri toLaunch = Uri(scheme: 'https', host: webUrl);
-    if (!await launchUrl(
-      toLaunch,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw 'Could not launch $url';
-    }
-  } else {
-    toToast(getTranslated("noInternetConnection"));
-  }
-}
 
-Future<void> makePhoneCall(String phoneNumber) async {
-  final Uri launchUri = Uri(
-    scheme: 'tel',
-    path: phoneNumber,
-  );
-  // if (await canLaunch(launchUri.toString())) {
-  //   await launch(launchUri.toString());
-  // } else {
-  //   throw 'Could not launch $launchUri';
-  // }
-  // try {
-  //   var cellphone = '7192822224';
-  //   await launch('tel://$cellphone');
-  //
-  // }catch (e){
-  //   throw 'Could not launch $e';
-  // }
-  await launchUrl(launchUri);
-}
-
-launchCaller(String phoneNumber) async {
-  // var url = "tel:$phoneNumber";
-  // if (await canLaunch(url)) {
-  //   await launch(url);
-  // } else {
-  //   throw 'Could not launch $url';
-  // }
-  AppUtils.launchWeb(Uri(scheme: 'tel', path: phoneNumber));
-}
-
-Future<void> launchEmail(String emailID) async {
-  // String? encodeQueryParameters(Map<String, String> params) {
-  //   return params.entries
-  //       .map((MapEntry<String, String> e) =>
-  //   '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-  //       .join('&');
-  // }
-
-  final Uri emailLaunchUri = Uri(
-    scheme: 'mailto',
-    path: emailID,
-    // query: encodeQueryParameters(<String, String>{
-    //   'subject': 'Example Subject & Symbols are allowed!',
-    // }),
-  );
-  await launchUrl(emailLaunchUri);
-}
 
 class Triple {
   Triple(this.singleOrgroupJid, this.userId, this.typingStatus);
@@ -289,15 +227,6 @@ String getMemberName(ProfileDetails item) {
       return item.mobileNumber.checkNull();
     }*/
   }
-}
-
-bool isValidPhoneNumber(String s) {
-  if (s.length > 13 || s.length < 6) return false;
-  return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
-}
-
-bool hasMatch(String? value, String pattern) {
-  return (value == null) ? false : RegExp(pattern).hasMatch(value);
 }
 
 String getMobileNumberFromJid(String jid) {

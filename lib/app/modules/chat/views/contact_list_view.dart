@@ -156,7 +156,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                               )) : const Offstage(),
                               Column(
                             children: [
-                              controller.isPageLoading.value ? Expanded(child: Container()) : Expanded(
+                              Expanded(
                                 child: ListView.builder(
                                     itemCount: controller.scrollable.value
                                         ? controller.usersList.length + 1
@@ -178,7 +178,7 @@ ContactController createController({String? tag}) => Get.put(ContactController()
                                           checkValue: controller.selectedUsersJIDList.contains(item.jid),
                                           onCheckBoxChange: (value){
                                             controller.onListItemPressed(item);
-                                          },onListItemPressed: (){
+                                          },onListItemPressed: (profile){
                                             controller.onListItemPressed(item);
                                           },contactItemStyle: AppStyleConfig.contactListPageStyle.contactItemStyle,);
                                       } else {

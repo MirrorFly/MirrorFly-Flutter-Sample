@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import '../common/constants.dart';
 import '../data/helper.dart';
+import '../data/mention_utils.dart';
 import '../data/session_management.dart';
 import '../model/chat_message_model.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -35,14 +36,14 @@ extension FileFormatter on num {
 
 
 extension GetHelper on GetxController {
-  T get<T extends GetxController>() {
-    if (GetInstance().isRegistered<T>()) {
+  T get<T extends GetxController>({String? tag}) {
+    if (GetInstance().isRegistered<T>(tag: tag)) {
       LogMessage.d("Creating Controller: ", "$T found, use a old instance.");
-      return GetInstance().find<T>();
+      return GetInstance().find<T>(tag: tag);
     } else {
       LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
-      GetInstance().lazyPut<T>(()=>this as T); // Use the provided factory function to create a new instance
-      return GetInstance().find<T>();
+      GetInstance().lazyPut<T>(()=>this as T,tag: tag); // Use the provided factory function to create a new instance
+      return GetInstance().find<T>(tag: tag);
     }
   }
 }
@@ -88,16 +89,11 @@ abstract class NavViewStateful<T extends GetxController> extends StatefulWidget 
 }
 
 class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
-  // late T controller;
 
   @override
   void initState() {
     debugPrint("NavViewState key ${widget.tag}");
-    // if (NavUtils.previousRoute != Routes.chat || NavUtils.currentRoute != Routes.chat){
-      widget.createController(tag: widget.tag);
-    // }
-
-    // Get.put<T>(controller);
+    widget.createController(tag: widget.tag);
     super.initState();
     widget.onInit();
     LogMessage.d("NavViewState : initState", T.toString());
@@ -116,50 +112,89 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     return widget.build(context);
   }
 
-  // Widget buildPage(BuildContext context);
 }
 
-/*
-abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
-  const NavViewStateful({Key? key}) : super(key: key);
-
-  final String? tag = null;
-
-  T get controller => createController({String? tag}).get();
-  dynamic get arguments => NavUtils.arguments;
-
-  T createController({String? tag});
-
-  @override
-  NavViewState<NavViewStateful<T>, T> createState();
+extension Regexparesing on RegExp {
+  Iterable<RegExpMatch> matcher(String text){
+    return allMatches(text);
+  }
+  List<RegExpMatch> findMatchedPosition(String text){
+    var list = <RegExpMatch>[];
+    allMatches(text).forEach((match) {
+      list.add(match);
+    });
+    return list;
+  }
+}
+extension RegexpMatcharesing on RegExpMatch {
+  String string(){
+    return "groupNames : $groupNames, pattern : $pattern, start : $start, end : $end, input : $input";
+  }
 }
 
-abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxController> extends State<V> {
-  late T controller;
+extension MentionTagTextEditingControllerExtension on MentionTagTextEditingController{
+  String get formattedText {
+    const replaceString = "@[?]";
+    debugPrint(text);
 
-  @override
-  void initState() {
-    super.initState();
-    controller = widget.createController({String? tag});
-    // Initialize the controller
-    if (widget.tag == null) {
-      Get.put<T>(controller);
-    } else {
-      Get.put<T>(controller, tag: widget.tag);
-    }
+    return text.replaceAll(Constants.mentionEscape, replaceString);
   }
 
-  @override
-  void dispose() {
-    // Dispose of the controller
-    if (widget.tag == null) {
-      Get.delete<T>();
-    } else {
-      Get.delete<T>(tag: widget.tag);
-    }
-    super.dispose();
+  List<String> get getTags {
+    var tags = mentions;
+    // // Sort tags by startIndex to avoid overlapping replacements
+    // tags.sort((a, b) => a.startIndex.compareTo(b.startIndex));
+    return List<String>.from(tags.map((item)=>item));
   }
 
-  @override
-  Widget build(BuildContext context);
-}*/
+  /*setCustomText(String content,List<ProfileDetails> profileDetails){
+    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
+    debugPrint("setText : $allMatches");
+    int index = 0;
+    int lastMatchEnd = 0;
+    text="";
+    setText = text;
+    for (var currentMatch in allMatches) {
+      text += content.substring(lastMatchEnd,currentMatch.start+1);
+      // _rebuild(text);
+      setText = text;
+      String id = profileDetails[index].jid.checkNull().split("@")[0];
+      String name = profileDetails[index].getName();
+      addMention(label: name,data: id,stylingWidget: Text('@${name}',style: const TextStyle(color: Colors.blueAccent),));
+      lastMatchEnd = currentMatch.end;
+      index++;
+    }
+    if (lastMatchEnd < content.length) {
+      text += content.substring(lastMatchEnd);
+      setText = text;
+      // _rebuild(text);
+    }
+    print("setText : $text $getText");
+
+  }*/
+
+  List<(String, Object?, Widget?)> getInitialMentions(String content,List<ProfileDetails> profileDetails){
+    List<(String, Object?, Widget?)> tuples = [];
+    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
+    int index = 0;
+    int lastMatchEnd = 0;
+    var text="";
+    for (var currentMatch in allMatches) {
+      text += content.substring(lastMatchEnd,currentMatch.start+1);
+      String id = profileDetails[index].jid.checkNull().split("@")[0];
+      String name = profileDetails[index].getName();
+      tuples.add((name,id,Text('@$name',style: const TextStyle(color: Colors.blueAccent),)));
+      lastMatchEnd = currentMatch.end;
+      index++;
+    }
+    if (lastMatchEnd < content.length) {
+      text += content.substring(lastMatchEnd);
+    }
+    debugPrint("getInitialMentions : $content , $text , $tuples");
+    initialMentions = tuples;
+    return tuples;
+  }
+
+
+
+}

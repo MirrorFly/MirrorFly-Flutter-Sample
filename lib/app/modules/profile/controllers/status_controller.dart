@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
@@ -154,7 +155,12 @@ class StatusListController extends FullLifeCycleController with FullLifeCycleMix
             getStatusList();
           }
         }).catchError((er) {
-          toToast(er);
+          DialogUtils.hideLoading();
+          if(er is PlatformException) {
+            toToast(er.message.checkNull());
+          }else{
+            toToast(er.toString());
+          }
         });
     }else{
       toToast(getTranslated("noInternetConnection"));

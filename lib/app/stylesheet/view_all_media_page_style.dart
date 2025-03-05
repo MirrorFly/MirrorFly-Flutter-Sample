@@ -27,7 +27,7 @@ class GroupedMediaItemStyle{
   const GroupedMediaItemStyle({
     this.titleStyle = const TextStyle(fontWeight: FontWeight.w500,color: Color(0xff323232),fontSize: 14),
     this.mediaImageItemStyle = const MediaItemStyle(),
-    this.mediaVideoItemStyle = const MediaItemStyle(),
+    this.mediaVideoItemStyle = const MediaItemStyle(iconColor: AppColor.primaryColor,bgColor: Colors.white),
     this.mediaAudioItemStyle = const MediaItemStyle(bgColor: Color(0xff97A5C7)),
     this.documentItemStyle = const DocumentItemStyle(
       titleTextStyle: TextStyle(fontWeight: FontWeight.normal,color: Color(0xff181818),fontSize: 12),

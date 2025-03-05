@@ -156,7 +156,18 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
           }
         } else {
           debugPrint("not chat page");
-          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          if (NavUtils.currentRoute == Routes.forwardChat ||
+              NavUtils.currentRoute == Routes.chatInfo ||
+              NavUtils.currentRoute == Routes.groupInfo ||
+              NavUtils.currentRoute == Routes.messageInfo){
+            debugPrint("chat info page");
+            NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+            Future.delayed(const Duration(milliseconds: 500), () {
+              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            });
+          }else{
+            NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          }
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {
@@ -253,6 +264,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onPaused() async {
     hasPaused = true;
     LogMessage.d('LifeCycle', 'onPaused');
+    fromLockScreen = await Mirrorfly.isLockScreen();
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
@@ -265,9 +277,9 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onResumed() {
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
-    checkShouldShowPin();
     if(hasPaused) {
       hasPaused = false;
+      checkShouldShowPin();
       if (Constants.enableContactSync) {
         syncContacts();
       }
@@ -336,7 +348,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void presentPinPage() {
     if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
       NavUtils.toNamed(
-        Routes.pin,
+          Routes.pin, arguments: {"showBack": "false"}
       );
     }
   }

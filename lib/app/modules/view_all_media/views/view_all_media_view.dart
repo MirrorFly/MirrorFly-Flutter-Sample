@@ -175,7 +175,13 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
         controller.imageFromBase64String(
             item.mediaChatMessage!.mediaThumbImage, null, null),
         Center(
-          child: AppUtils.svgIcon(icon:videoWhite,colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),),
+          child: CircleAvatar(
+            backgroundColor: mediaItemStyle.bgColor,
+            radius: 12,
+            child: Center(
+              child: AppUtils.svgIcon(icon:playIcon,colorFilter: ColorFilter.mode(mediaItemStyle.iconColor, BlendMode.srcIn),height: 10),
+            ),
+          ),
         )
       ],
     );
@@ -323,7 +329,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
             children: [
               InkWell(
                 onTap: () {
-                  AppUtils.launchWeb(Uri.parse(item.linkMap!["url"]));
+                  controller.navigateLink(item.linkMap!["url"]);
                 },
                 child: Container(
                   decoration: linkItemStyle.innerDecoration,

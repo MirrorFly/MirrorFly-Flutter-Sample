@@ -42,9 +42,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   SessionManagement.onInit();
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   if (Platform.isAndroid) {
-    Mirrorfly.onMissedCall.listen((event) {
-      LogMessage.d("onMissedCall Background", event);
-    });
     PushNotifications.onMessage(message);
   }
 }
@@ -78,12 +75,12 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
-      chatHistoryEnable: true,
-      enableDebugLog: true,
+      licenseKey: Constants.licenseKey,
+      iOSContainerID: Constants.iOSContainerID,
+      chatHistoryEnable: Constants.chatHistoryEnable,
+      enableDebugLog: Constants.enableDebugLog,
       flyCallback: (response) async {
-        if (response.isSuccess) {//8825508012
+        if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
           LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
           Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
@@ -161,7 +158,7 @@ class _MyAppState extends State<MyApp> {
           case Routes.pin:
             return [MaterialPageRoute(
               settings: const RouteSettings(
-                name: Routes.pin,
+                name: Routes.pin, arguments: {"showBack": "false"}
               ),
               builder: (context) => const PinView(),
             )];

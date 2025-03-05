@@ -1,7 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -97,7 +101,7 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                 if (didPop) {
                   return;
                 }
-                NavUtils.back(result: "back");
+                NavUtils.back();
               },
               child: GestureDetector(
                 onTap: () => controller.hideKeyBoard(),
@@ -209,6 +213,16 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                 );
                         }),
                       ),
+                      MentionUsersList(
+                        Routes.galleryPicker,
+                        groupJid: controller.profile.jid.checkNull(),
+                        mentionUserBgDecoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle
+                            .mentionUserBgDecoration,
+                        mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,
+                        chatTaggerController:  controller.caption,
+                        onListItemPressed: (profile){
+                          controller.onUserTagClicked(profile,controller.caption,Routes.galleryPicker);
+                        },),
                       SizedBox(
                         width: NavUtils.size.width,
                         child: Column(
@@ -244,7 +258,8 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                       controller.showAdd
                                                   ? InkWell(
                                                       onTap: () {
-                                                        NavUtils.back();
+                                                        NavUtils.back(result: {"from": controller.pickerType,"filePath":controller.filePath,"captionMessage"
+                                                          :controller.captionMessage,"captionMessageMentions":controller.captionMessageMentions});
                                                       },
                                                       child: AppUtils.svgIcon(icon:
                                                           previewAddImg,colorFilter: ColorFilter.mode(AppStyleConfig.mediaSentPreviewPageStyle.iconColor, BlendMode.srcIn),),
@@ -268,26 +283,44 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                           child: Focus(
                                             onFocusChange: (isFocus) =>
                                                 controller.isFocused(isFocus),
-                                            child: TextFormField(
-                                              focusNode: controller.captionFocusNode,
-                                              controller: controller.caption,
-                                              onChanged: controller.onCaptionTyped,
-                                              style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
-                                              // style: const TextStyle(
-                                              //   color: Colors.white,
-                                              //   fontSize: 15,
-                                              // ),
-                                              maxLines: 6,
-                                              minLines: 1,
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: getTranslated("addCaption"),
-                                                hintStyle: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextHintStyle,
-                                                // hintStyle: const TextStyle(
-                                                //   color: previewTextColor,
-                                                //   fontSize: 15,
-                                                // ),
-                                              ),
+                                            child: MentionTagTextField(
+                                                  // key: textFieldKey,
+                                              onMention: (query) {
+                                                debugPrint("query : $query");
+                                                if (query != null) {
+                                                  final searchInput = query.substring(1);
+                                                  controller.filterMentionUsers('@', searchInput, Routes.galleryPicker);
+                                                }else{
+                                                  controller.filterMentionUsers('@', null, Routes.galleryPicker);
+                                                }
+                                              },
+                                              onChanged: (value){
+                                                controller.updateCaptionsArray();
+                                              },
+                                              mentionTagDecoration: const MentionTagDecoration(
+                                                  mentionStart: ['@'],
+                                                  mentionBreak: ' ',
+                                                  allowDecrement: false,
+                                                  allowEmbedding: false,
+                                                  showMentionStartSymbol: false,
+                                                  maxWords: null,
+                                                  mentionTextStyle: TextStyle(
+                                                      color: Colors.blueAccent,
+                                                      backgroundColor: Colors.transparent)),
+                                                  focusNode: controller.captionFocusNode,
+                                                  controller: controller.caption,
+                                                  style: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextStyle,
+                                                  maxLines: 4,
+                                                  minLines: 1,
+                                                  decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: getTranslated("addCaption"),
+                                                    hintStyle: AppStyleConfig.mediaSentPreviewPageStyle.textFieldStyle.editTextHintStyle,
+                                                    // hintStyle: const TextStyle(
+                                                    //   color: previewTextColor,
+                                                    //   fontSize: 15,
+                                                    // ),
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -299,31 +332,37 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                       ],
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.keyboard_arrow_right,
-                                        color: AppStyleConfig.mediaSentPreviewPageStyle.iconColor,
-                                        // color: Colors.white,
-                                        size: 13,
-                                      ),
-                                      Text(
-                                        controller.userName,
-                                        style: AppStyleConfig.mediaSentPreviewPageStyle.nameTextStyle,
-                                        // style: const TextStyle(
-                                        //     color: previewTextColor, fontSize: 13),
-                                      ),
-                                    ],
-                                  ),
+                                  KeyboardVisibilityBuilder(builder: (cxt,isKeyboardVisible){
+                                    return isKeyboardVisible ? const Offstage() :
+                                      Row(
+                                          children: [
+                                            Icon(
+                                              Icons.keyboard_arrow_right,
+                                              color: AppStyleConfig.mediaSentPreviewPageStyle.iconColor,
+                                              // color: Colors.white,
+                                              size: 13,
+                                            ),
+                                            Text(
+                                              controller.userName,
+                                              style: AppStyleConfig.mediaSentPreviewPageStyle.nameTextStyle,
+                                              // style: const TextStyle(
+                                              //     color: previewTextColor, fontSize: 13),
+                                            ),
+                                          ],
+                                      );
+                                    }),
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Obx(() {
-                              return controller.filePath.length > 1
-                                  ? SizedBox(
+                            KeyboardVisibilityBuilder(builder: (cxt,isKeyboardVisible){
+                              return isKeyboardVisible ? const Offstage() : Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Obx(() {
+                                    return controller.filePath.length > 1
+                                        ? SizedBox(
                                       height: 45,
                                       child: ListView.builder(
                                           scrollDirection: Axis.horizontal,
@@ -338,24 +377,24 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                           .currentPageIndex(index);
                                                       controller.pageViewController
                                                           .animateToPage(index,
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          1),
-                                                              curve: Curves.easeIn);
+                                                          duration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                              1),
+                                                          curve: Curves.easeIn);
                                                     },
                                                     child: Container(
                                                       width: 45,
                                                       height: 45,
                                                       decoration: controller
-                                                                  .currentPageIndex
-                                                                  .value ==
-                                                              index
+                                                          .currentPageIndex
+                                                          .value ==
+                                                          index
                                                           ? BoxDecoration(
-                                                              border: Border.all(
-                                                              color: Colors.blue,
-                                                              width: 1,
-                                                            ))
+                                                          border: Border.all(
+                                                            color: Colors.blue,
+                                                            width: 1,
+                                                          ))
                                                           : null,
                                                       margin: const EdgeInsets
                                                           .symmetric(horizontal: 1),
@@ -366,21 +405,24 @@ MediaPreviewController createController({String? tag}) => Get.put(MediaPreviewCo
                                                   );
                                                 }),
                                                 controller.filePath[index].type ==
-                                                        "image"
+                                                    "image"
                                                     ? const Offstage()
                                                     : Positioned(
-                                                        bottom: 4,
-                                                        left: 4,
-                                                        child: AppUtils.svgIcon(icon:
-                                                          videoCamera,
-                                                          width: 5,
-                                                          height: 5,
-                                                        )),
+                                                    bottom: 4,
+                                                    left: 4,
+                                                    child: AppUtils.svgIcon(icon:
+                                                    videoCamera,
+                                                      width: 5,
+                                                      height: 5,
+                                                    )),
                                               ],
                                             );
                                           }),
                                     )
-                                  : const Offstage();
+                                        : const Offstage();
+                                  }),
+                                ],
+                              );
                             }),
                             emojiLayout(),
                           ],

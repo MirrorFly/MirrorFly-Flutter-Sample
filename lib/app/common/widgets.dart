@@ -5,10 +5,10 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../common/app_localizations.dart';
 import '../data/session_management.dart';
 import '../extensions/extensions.dart';
-import '../modules/dashboard/widgets.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../data/utils.dart';
@@ -408,7 +408,17 @@ class MemberItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          searchTxt.isEmpty
+                          CustomTextView(
+                            text: name.checkNull(),
+                            defaultTextStyle: itemStyle.titleStyle,
+                            linkColor: Colors.blue,
+                            mentionUserTextColor: Colors.blue,
+                            searchQueryTextColor: itemStyle.spanTextColor,
+                            searchQueryString: searchTxt,
+                            maxLines: 1,
+                            mentionedMeBgColor: Colors.transparent,
+                          ),
+                          /*searchTxt.isEmpty
                               ? Text(
                                   name.checkNull(),
                                   style: itemStyle.titleStyle,
@@ -419,7 +429,7 @@ class MemberItem extends StatelessWidget {
                                   name.checkNull(),
                                   searchTxt,
                                   itemStyle.titleStyle,
-                                  itemStyle.spanTextColor),
+                                  itemStyle.spanTextColor),*/
                           Text(
                             status.checkNull(),
                             style: itemStyle.descriptionStyle,
