@@ -33,7 +33,7 @@ class LocationMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred.value
-                    ? AppUtils.svgIcon(icon:starSmallIcon)
+                    ? locationMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
                     : const Offstage(),
                 const SizedBox(
                   width: 5,

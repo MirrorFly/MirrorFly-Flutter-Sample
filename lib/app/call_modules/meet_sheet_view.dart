@@ -31,7 +31,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SafeArea(child: Padding(
       padding: const EdgeInsets.only(left: 30.0, right: 30),
       child: Obx(() {
         return Column(
@@ -236,7 +236,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
           ],
         );
       }),
-    );
+    ));
   }
 }
 

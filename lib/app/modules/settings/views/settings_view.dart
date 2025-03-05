@@ -42,9 +42,9 @@ class SettingsView extends NavView<SettingsController> {
                 getTranslated("starredMessages"), leading: staredMsgIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.starredMessages);
               }),
-              SettingListItem(title:
-                  getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
-                  NavUtils.toNamed(Routes.notification)),
+              // SettingListItem(title:
+              //     getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+              //     NavUtils.toNamed(Routes.notification)),
               SettingListItem(title:
                   getTranslated("blockedContacts"), leading: blockedIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.toNamed(Routes.blockedList)),

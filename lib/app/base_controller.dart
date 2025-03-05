@@ -44,6 +44,13 @@ import 'modules/view_all_media/controllers/view_all_media_controller.dart';
 
 class BaseController {
   static void initListeners() {
+    Mirrorfly.getCurrentCallDuration().then((value){
+      var startTime = value ?? 0;
+      if(startTime>0){
+        var difference = (DateTime.now().millisecondsSinceEpoch-startTime);
+        startTimer(time: difference);
+      }
+    });
     Mirrorfly.onMessageReceived.listen(onMessageReceived);
     Mirrorfly.onMessageStatusUpdated.listen(onMessageStatusUpdated);
     Mirrorfly.onMediaStatusUpdated.listen(onMediaStatusUpdated);
@@ -233,6 +240,15 @@ class BaseController {
             debugPrint("onCallStatusUpdated Inside Get.back");
             NavUtils.back();
           }*/
+          if (callMode.toLowerCase() == CallMode.meet){
+            /// This condition is added as the meet link,
+            /// when joining we will be receiving the "Attended" in call status update,
+            /// which makes the route to navigate to ongoing call screen.
+            /// But we will be redirecting to ongoing call screen manually
+            /// on clicking join now button in join_call_controller => joinCall() function
+            LogMessage.d("CallStatus Received for Meet link", statusUpdateReceived);
+            return;
+          }
           if (NavUtils.currentRoute != Routes.onGoingCallView && NavUtils.currentRoute !=
               Routes.participants) {
             debugPrint("onCallStatusUpdated ***opening cal page");
@@ -261,7 +277,10 @@ class BaseController {
               stopTimer();
             }
           } else {
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event");
+            debugPrint("#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils.currentRoute}");
+            if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
+              NavUtils.back();
+            }
           }
           break;
         case CallStatus.calling10s:
@@ -836,6 +855,9 @@ class BaseController {
 
   static void unblockedThisUser(String jid) {
     LogMessage.d("unblockedThisUser", jid.toString());
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).unblockedThisUser(jid);
     }
@@ -855,6 +877,9 @@ class BaseController {
 
   static void userBlockedMe(String jid) {
     LogMessage.d('userBlockedMe', jid.toString());
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
@@ -971,6 +996,10 @@ class BaseController {
   }
 
   static void userWentOffline(String jid) {
+    LogMessage.d("userWentOffline", "jid $jid");
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().setTypingStatus(jid, "", Constants.gone);
+    }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag).userWentOffline(jid);
     }
@@ -984,6 +1013,7 @@ class BaseController {
   static void usersWhoBlockedMeListFetched(result) {}
 
   static void onConnected(result) {
+    LogMessage.d('onConnected', result.toString());
     if(Get.isRegistered<ChatController>(tag: controllerTag)){
       Get.find<ChatController>(tag: controllerTag).onConnected();
     }
@@ -998,6 +1028,8 @@ class BaseController {
     }
     if(Get.isRegistered<JoinCallController>()){
       Get.find<JoinCallController>().onConnected();
+    }else{
+      LogMessage.d('onConnected', "JoinCallController not found");
     }
   }
 
@@ -1182,14 +1214,14 @@ class BaseController {
   }
 
   static Timer? timer;
-  static void startTimer() {
+  static void startTimer({int? time}) {
     // if (timer == null) {
     if (timer != null) {
       timer?.cancel();
     }
     timer = null;
     const oneSec = Duration(seconds: 1);
-    var startTime = DateTime.now();
+    var startTime = time != null ? DateTime.fromMillisecondsSinceEpoch(time) : DateTime.now();
     timer = Timer.periodic(
       oneSec,
       (Timer timer) {

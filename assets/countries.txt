@@ -251,7 +251,7 @@
     },
     {
         "name": "Cyprus",
-        "dial_code": "+537",
+        "dial_code": "+357",
         "code": "CY"
     },
     {

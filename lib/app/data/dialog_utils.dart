@@ -16,11 +16,15 @@ class DialogUtils {
   }
 
   static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
-    bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent}){
+    bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent, bool needKeyboardPadding = false}){
     return showModalBottomSheet(context: buildContext,
         routeSettings: _routeSettings,
         builder: (_){
-      return SafeArea(child: builder);
+      return needKeyboardPadding ? Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(NavUtils.currentContext).viewInsets.bottom),
+        child: builder,
+      ) : builder ;
     },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
   }
 
@@ -47,7 +51,7 @@ class DialogUtils {
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(width: 16),
-                  Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,),
+                  Expanded(child: Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,maxLines: 2,)),
                 ],
               ),
             ),
