@@ -475,6 +475,31 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
     ]);
   }
 
+  Future<void> setMeetBottomSheet()async{
+    bool? busyStatus;
+    if(!(profile.isGroupProfile.checkNull())){
+      busyStatus=await Mirrorfly.isBusyStatusEnabled();
+      debugPrint(busyStatus.toString());
+    }
+
+    if(busyStatus.checkNull()){
+    showBusyStatusAlert(()async{
+    await ScheduleCalender()
+        .requestCalendarPermission();
+   showMeetBottomSheet(
+    AppStyleConfig.chatPageStyle
+        .instantScheduleMeetStyle
+        .meetBottomSheetStyle);
+    });
+    }else {
+    await ScheduleCalender()
+        .requestCalendarPermission();
+  showMeetBottomSheet(
+    AppStyleConfig.chatPageStyle
+        .instantScheduleMeetStyle
+        .meetBottomSheetStyle);
+    }
+  }
   showBlockStatusAlert(Function? function) {
     DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
       TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
@@ -1072,7 +1097,6 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
 
   Future<void> sendMeetMessage({required String link,required int scheduledDateTime}) async{
-    if(await AppUtils.isNetConnected()) {
       String calenderId=await SessionManagement.getCalenderId("calenderId");
       if(calenderId.isEmpty){
         ScheduleCalender().selectCalendarId();
@@ -1092,14 +1116,14 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
               LogMessage.d("meet Message", response.data);
               ChatMessageModel chatMessageModel = sendMessageModelFromJson(response.data);
             ScheduleCalender().addEvent(chatMessageModel.meetChatMessage!);
+              scrollToBottom();
+              updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
               // showError(response.exception);
             }
           }).then((value) => NavUtils.back());
-    }else{
-      toToast(getTranslated("noInternetConnection"));
-    }
+
   }
 
   void isTyping([String? typingText]) {
@@ -2363,7 +2387,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
           return true;
         }
       } else {
-        if (chat.messageType == Constants.mLocation || chat.messageType == Constants.mContact) {
+        if (chat.messageType == Constants.mLocation || chat.messageType == Constants.mContact||chat.messageType ==Constants.mMeet) {
           return true;
         }
       }
@@ -3321,6 +3345,9 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
   //show meet bottom sheet
   Future<void> showMeetBottomSheet(MeetBottomSheetStyle meetBottomSheetStyle) async {
     if(await AppUtils.isNetConnected()) {
+      if(_audioTimer != null) {
+        stopRecording();
+      }
       DialogUtils.bottomSheet(
         MeetSheetView(title: getTranslated("instantMeet"),description: getTranslated("copyTheLink"),meetBottomSheetStyle: meetBottomSheetStyle,),
         ignoreSafeArea: true,

@@ -142,15 +142,14 @@ class ChatView extends NavViewStateful<ChatController> {
                           );
                         }),
                         Obx(() {
-                          return controller.ableToScheduleMeet ? FloatingFab(
+                          return controller.ableToScheduleMeet && !(controller.profile.isAdminBlocked.checkNull() || controller.profile.isBlocked.checkNull()) ? FloatingFab(
                             fabTheme: chatStyle
                                 .instantScheduleMeetStyle,
                             parentWidgetWidth: controller.screenWidth,
                             parentWidgetHeight: controller.screenHeight,
                             onFabTap: ()async{
-                              await ScheduleCalender().requestCalendarPermission();
-                              controller.showMeetBottomSheet(AppStyleConfig.chatPageStyle.instantScheduleMeetStyle.meetBottomSheetStyle);
-                            },
+                             await controller.setMeetBottomSheet();
+                              },
                           ) : const Offstage();
                         }),
                         Obx(() {

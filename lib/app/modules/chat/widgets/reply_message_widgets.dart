@@ -45,6 +45,7 @@ class ReplyingMessageHeader extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(5)),
           ),*/
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -419,10 +420,10 @@ getReplyImageHolder(
                 ),
               ),
             );
-    case Constants.mMeet:
-      return Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(color:isSend? Color(0xffE3E7F0):Colors.white),
+    case  Constants.mMeet:
+      return isNotChatItem?const Offstage(): Container(
+        padding:const EdgeInsets.all(10),
+        decoration: BoxDecoration(color:isSend?const Color(0xffE3E7F0):Colors.white),
         child: AppUtils.assetIcon(
           assetName: mirrorflySmall,
           width: 30,

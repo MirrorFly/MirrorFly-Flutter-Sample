@@ -172,6 +172,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                       onToggle: controller.meetLink.value.isEmpty
                           ? (v){}: (value) {
                         debugPrint(value.toString());
+                        controller.scheduleTime(DateTime.now());
                         controller.turnOnSchedule(value);
                       },
                     );

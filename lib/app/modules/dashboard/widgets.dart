@@ -340,12 +340,6 @@ class RecentChatItem extends StatelessWidget {
         builder: (context, data) {
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
-          // LogMessage.d("getMessageOfId future", "${chat.toJson()}");
-            if(chat.messageType =="MEET"){
-              return const SizedBox(
-                height: 15,
-              );
-            }
             return Row(
               children: [
                 checkSenderShouldShow(chat)
@@ -553,7 +547,7 @@ class RecentChatMessageItem extends StatelessWidget {
                           ),
                           Expanded(
                             child: CustomTextView(
-                              text: MessageUtils.forMessageTypeString(item.messageType,
+                              text: (item.messageType == MessageType.meet.value)? item.meetChatMessage!.link:MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.checkNull(),
                               defaultTextStyle: recentChatItemStyle.subtitleTextStyle,
