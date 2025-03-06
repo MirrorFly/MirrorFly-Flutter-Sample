@@ -11,6 +11,7 @@ import '../common/constants.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import '../modules/chat/controllers/schedule_calender.dart';
 import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
 
@@ -170,10 +171,8 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                           width: 1),
                       value: controller.turnOnSchedule.value,
                       onToggle: controller.meetLink.value.isEmpty
-                          ? (v){}: (value) {
-                        debugPrint(value.toString());
-                        controller.scheduleTime(DateTime.now());
-                        controller.turnOnSchedule(value);
+                          ? (v){}: (value) async {
+                        controller.scheduleToggle(value);
                       },
                     );
                   }),
@@ -293,7 +292,7 @@ class MeetLinkController extends GetxController {
       lastDate: DateTime(2100),
     );
 
-    if (dateValue != null) {
+    if (dateValue != null && context.mounted) {
       timeValue = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(hour:scheduleTime.value.hour, minute:scheduleTime.value.minute),
@@ -312,5 +311,10 @@ class MeetLinkController extends GetxController {
       scheduleTime(finalDateTime);
     }
 
+  }
+
+  Future<void> scheduleToggle(bool value) async {
+    await ScheduleCalender().requestCalendarPermission();
+    turnOnSchedule(value);
   }
 }

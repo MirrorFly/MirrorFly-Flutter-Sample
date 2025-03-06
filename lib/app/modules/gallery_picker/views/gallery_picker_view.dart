@@ -80,7 +80,7 @@ GalleryPickerController createController({String? tag}) => Get.put(GalleryPicker
                                     "captionMessage":controller.captionMessage,
                                     "captionMessageMentions":controller.captionMessageMentions,
                                   })?.then((value) {
-                                    if(value==null){
+                                    if(value==null && NavUtils.currentRoute != Routes.chat){
                                       NavUtils.back();
                                     }else{
                                       controller.captionMessage=value["captionMessage"];

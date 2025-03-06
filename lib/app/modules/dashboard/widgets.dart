@@ -351,8 +351,8 @@ class RecentChatItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       )
-                    : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                    : const Offstage(),
+                chat.isMessageRecalled.value ? const Offstage() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0

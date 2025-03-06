@@ -1197,6 +1197,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   onClearPressed() {
+    lastInputValue="";
     filteredRecentChatList.clear();
     chatMessages.clear();
     userList.clear();

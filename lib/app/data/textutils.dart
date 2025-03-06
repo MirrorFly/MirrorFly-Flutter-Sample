@@ -258,5 +258,39 @@ class TextUtils {
     // LogMessage.d("parseEachLetterIntoTextSpan", children);
     return children;
   }
+
+  static List<WidgetSpan> parseEachLetterIntoWidgetSpan(String? text,TextStyle? style){
+    final children = <WidgetSpan>[];
+    if(text == null){
+      return children;
+    }
+    final runes = text.runes;
+
+    for (int i = 0; i < runes.length; /* empty */ ) {
+      int current = runes.elementAt(i);
+
+      // we assume that everything that is not
+      // in Extended-ASCII set is an emoji...
+      final isEmoji = current > 255;
+      final shouldBreak = isEmoji
+          ? (x) => x <= 255
+          : (x) => x > 255;
+
+      final chunk = <int>[];
+      while (! shouldBreak(current)) {
+        chunk.add(current);
+        if (++i >= runes.length) break;
+        current = runes.elementAt(i);
+      }
+      // LogMessage.d("parseEachLetterIntoTextSpan", "chunk : $chunk, current : $current, fromCharCodes : ${String.fromCharCodes(chunk)}");
+      children.addAll(
+          String.fromCharCodes(chunk).characters.map((letter) =>
+              WidgetSpan(alignment: PlaceholderAlignment.middle,child: Text( letter, style: style, )))
+              .toList()
+      );
+    }
+    // LogMessage.d("parseEachLetterIntoTextSpan", children);
+    return children;
+  }
 }
 
