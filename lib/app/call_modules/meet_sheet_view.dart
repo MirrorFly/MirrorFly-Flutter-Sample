@@ -314,9 +314,7 @@ class MeetLinkController extends GetxController {
   }
 
   Future<void> scheduleToggle(bool value) async {
-    bool permissionGranted = await ScheduleCalender().requestCalendarPermission();
-    if(permissionGranted) {
-      turnOnSchedule(value);
-    }
+    await ScheduleCalender().requestCalendarPermission();
+    turnOnSchedule(value);
   }
 }
