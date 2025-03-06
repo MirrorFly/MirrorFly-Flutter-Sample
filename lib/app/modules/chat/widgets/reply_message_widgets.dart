@@ -421,8 +421,8 @@ getReplyImageHolder(
             );
     case Constants.mMeet:
       return Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(color:isSend? Color(0xffE3E7F0):Colors.white),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(color:isSend? const Color(0xffE3E7F0):Colors.white),
         child: AppUtils.assetIcon(
           assetName: mirrorflySmall,
           width: 30,

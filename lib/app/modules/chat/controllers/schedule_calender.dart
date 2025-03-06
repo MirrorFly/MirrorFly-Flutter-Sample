@@ -120,7 +120,7 @@ class ScheduleCalender {
     final endTime = startTime.add(const Duration(hours: 1));
     final result = await _deviceCalendarPlugin.retrieveEvents(
       calendarId,
-      RetrieveEventsParams(startDate: startTime.subtract(Duration(minutes: 1)), endDate: endTime.add(Duration(minutes: 1))),
+      RetrieveEventsParams(startDate: startTime.subtract(const Duration(minutes: 1)), endDate: endTime.add(const Duration(minutes: 1))),
     );
     if (!(result.isSuccess && result.data != null)) {
       debugPrint("Failed to retrieve events.");
