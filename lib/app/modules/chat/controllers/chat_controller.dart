@@ -1443,13 +1443,19 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
                       userJid: profile.jid!,
                       flyCallBack: (FlyResponse response) {
                         debugPrint("$response");
-                        profile.isBlocked = true;
-                        isBlocked(true);
-                        setChatStatus();
-                        profile_.refresh();
-                        saveUnsentMessage();
-                        DialogUtils.hideLoading();
-                      toToast(getTranslated("hasBlocked").replaceFirst("%d", getName(profile)));
+                        if(response.isSuccess) {
+                          profile.isBlocked = true;
+                          isBlocked(true);
+                          setChatStatus();
+                          profile_.refresh();
+                          saveUnsentMessage();
+                          DialogUtils.hideLoading();
+                          toToast(getTranslated("hasBlocked").replaceFirst(
+                              "%d", getName(profile)));
+                        }else{
+                          DialogUtils.hideLoading();
+                          toToast(response.errorMessage);
+                        }
                       });
                 } else {
                 toToast(getTranslated("noInternetConnection"));
@@ -1945,14 +1951,27 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   infoPage() {
     setOnGoingUserGone();
+    saveUnsentMessage();
     if (profile.isGroupProfile ?? false) {
-      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value)async {
         if (value != null) {
+          messageController.clear();
           profile_(value as ProfileDetails);
+          getAvailableFeatures();
           isBlocked(profile.isBlocked);
+         if (Platform.isAndroid) {
+           unreadMessageTypeMessageId = "M${value.jid}";
+         } else if (Platform.isIOS) {
+           unreadMessageTypeMessageId = "M_${getMobileNumberFromJid(value.jid.checkNull())}";
+         }
           debugPrint("value--> ${profile.isGroupProfile}");
           chatList.clear();
           _loadMessages();
+         getUnsentMessageOfAJid();
+        }else{
+          if( await Mirrorfly.hasNextMessages()){
+            _loadNextMessages();
+          }
         }
         checkAdminBlocked();
         memberOfGroup();
@@ -2429,7 +2448,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         break;
       }
       //Copy Validation
-      if (!canBeCopiedSet && (!message.isTextMessage())) {
+      if (!canBeCopiedSet && (!message.isTextMessage() && !(message.isMediaMessage() && message.mediaChatMessage!.mediaCaptionText.checkNull().isNotEmpty))) {
         canBeCopied(false);
         canBeCopiedSet = true;
       }
@@ -2952,7 +2971,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
         if (firstVisibleItemIndex <= 1 && double.parse(itemPositions.first.itemLeadingEdge.toStringAsFixed(1)) <= 0) {
           // Scrolled to the Bottom
           debugPrint("reached Bottom yes load next messages");
-          _loadNextMessages();
+          _loadNextMessages(showLoading: false);
 
           ///This is the bottom constraint changing to Top constraint and calling prevMessages bcz reversing the list view in display
         } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
@@ -2963,7 +2982,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
       } else if (Platform.isAndroid) {
         if (firstVisibleItemIndex == 0) {
           debugPrint("reached Bottom yes load next messages");
-          _loadNextMessages();
+          _loadNextMessages(showLoading: false);
         } else if (firstVisibleItemIndex + itemPositions.length >= chatList.length) {
           debugPrint("reached Top yes load previous msgs");
           _loadPreviousMessages();

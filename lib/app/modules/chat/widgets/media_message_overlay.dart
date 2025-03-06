@@ -36,9 +36,10 @@ class MediaMessageOverlay extends StatelessWidget {
         return FloatingActionButton.small(
           heroTag: chatMessage.messageId,
           onPressed: onVideo,
-          backgroundColor: Colors.white,
-          child: const Icon(
+          backgroundColor: downloadUploadViewStyle.iconStyle.bgColor,
+          child: Icon(
             Icons.play_arrow_rounded,
+            color: downloadUploadViewStyle.iconStyle.iconColor,
             // color: buttonBgColor,
           ),
         );
