@@ -40,11 +40,11 @@ class MentionTagDecoration {
   /// If this value is set to true onMention callback will return the string even if start symbol is in the middle of text.
   ///
   /// e.g. If textfield has "example@gmail.com", setting this property true will cause the onMention callback to return "@gmail.com".
-  /// By defualt this property is false, onMention callback won't return if mention start symbol is in the middle of text.
+  /// By default this property is false, onMention callback won't return if mention start symbol is in the middle of text.
   ///
   /// In short, false value will cause the onMention callback to give mentions only if mention start symbol has a space behind it.
   final bool allowEmbedding;
 
-  /// Wether to show mention start symbol with your mentions in the textfield or not.
+  /// Whether to show mention start symbol with your mentions in the textfield or not.
   final bool showMentionStartSymbol;
 }
