@@ -66,7 +66,7 @@ class ChatController extends FullLifeCycleController with FullLifeCycleMixin, Ge
 
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
-  late Timer? _audioTimer;
+   Timer? _audioTimer;
   var timerInit = "00:00".obs;
   DateTime? startTime;
 

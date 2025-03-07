@@ -315,6 +315,7 @@ class MeetLinkController extends GetxController {
 
   Future<void> scheduleToggle(bool value) async {
     await ScheduleCalender().requestCalendarPermission();
+    scheduleTime(DateTime.now());
     turnOnSchedule(value);
   }
 }

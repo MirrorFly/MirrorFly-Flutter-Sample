@@ -339,7 +339,7 @@ class Constants {
   static const String packageName = "com.contus.flycommons.";
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String emptyString = "";
-  static const String webChatLogin = 'https://chat-dev.infoprofile.io/';
+  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const maxNameLength = 26;
   static const callNotificationId = 124;
 
