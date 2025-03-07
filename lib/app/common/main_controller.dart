@@ -268,6 +268,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
+    fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }

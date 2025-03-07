@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
@@ -616,11 +617,13 @@ class BaseController {
       // debugPrint("basecontroller ArchivedChatListController registered");
       Get.find<ArchivedChatListController>().onMessageReceived(chatMessageModel);
     }
-
     if (Get.isRegistered<ViewAllMediaController>() &&
         chatMessageModel.isTextMessage() &&
         chatMessageModel.messageTextContent!.contains("http")) {
       Get.find<ViewAllMediaController>().onMessageReceived(chatMessageModel);
+    }
+    if(chatMessageModel.messageType==MessageType.meet.value){
+      ScheduleCalender().addEvent(chatMessageModel.meetChatMessage!);
     }
   }
 
@@ -682,7 +685,11 @@ class BaseController {
 
   static void onGroupProfileFetched(groupJid) {}
 
-  static void onNewGroupCreated(groupJid) {}
+  static void onNewGroupCreated(groupJid) {
+    // if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+    //   Get.find<ChatController>(tag: controllerTag).onUserAddedToGroup(groupJid: groupJid);
+    // }
+  }
 
   static void onGroupProfileUpdated(groupJid) {
     LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());

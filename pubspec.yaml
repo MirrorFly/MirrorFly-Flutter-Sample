@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 3.0.2+04
-build_release_date: Jul 2024
+version: 3.0.3+1
+build_release_date: Mar 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment:
@@ -57,6 +57,7 @@ dependencies:
   http: ^1.2.2
   flutter_libphonenumber: ^2.3.3
   fading_edge_scrollview: ^4.1.1
+  device_calendar: ^4.3.3
 #  mirrorfly_plugin: ^1.0.4
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
@@ -68,7 +69,8 @@ dependencies:
   firebase_app_installations: ^0.3.0+4
   firebase_messaging: ^15.0.4
   flutter_local_notifications: ^17.2.4
-  #is_lock_screen2: ^2.0.1
+  googleapis_auth: ^1.4.0
+#  is_lock_screen2: ^2.0.1
   flutter_app_badge: ^2.0.2
 
 dependency_overrides:

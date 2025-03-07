@@ -201,6 +201,7 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
+const String mMeetIcon = 'assets/logos/schedule_icon.svg';
 const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
 const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
@@ -338,7 +339,7 @@ class Constants {
   static const String packageName = "com.contus.flycommons.";
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String emptyString = "";
-  static const String webChatLogin = 'https://chat-dev.infoprofile.io/';
+  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const maxNameLength = 26;
   static const callNotificationId = 124;
 
@@ -369,6 +370,8 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const deletedMessage = "This message was deleted";
 
   static const List<int> defaultColorList = [
     0Xff9068BE,
@@ -427,6 +430,9 @@ class Constants {
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
 
+  static const String mMeet = "MEET";
+
+
   static const String composing = "composing";
   static const String gone = "Gone";
 
@@ -470,6 +476,7 @@ class Constants {
   static const String attachmentTypeAudio = "audio";
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
+  static const String meetScheduleOn = "Meet Scheduled on ";
 
 }
 

@@ -524,5 +524,11 @@
     "callEnded" : "Call Ended!",
     "wentWrong" : "Something went wrong. Please try again",
     "couldNotProcess" : "Couldn't process the link. Please try again.",
-    "returnToChat" : "Return to chat"
-  }
+    "returnToChat" : "Return to chat",
+    "dateError" : "Please check your selected date and time",
+    "joinVideoMeet" : "Join video meeting",
+    "scheduleOn" : "Scheduled on ",
+    "meetScheduleOn" : "Meet Scheduled on ",
+    "selectCalender" : "Select a Calendar "
+
+}

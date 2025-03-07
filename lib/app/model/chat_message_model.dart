@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
+import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
 import '../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart' show MessageMetaData;
 
@@ -49,6 +50,7 @@ class ChatMessageModel {
     required this.senderNickName,
     required this.senderUserJid,
     required this.senderUserName,
+    required this.meetChatMessage,
     required this.contactChatMessage, //
     required this.mediaChatMessage, //
     required this.locationChatMessage, //
@@ -83,6 +85,8 @@ class ChatMessageModel {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   LocationChatMessage? locationChatMessage;
+
+  MeetChatMessage? meetChatMessage;
   String topicId;
 
   // var isSelected = false.obs;
@@ -103,6 +107,7 @@ class ChatMessageModel {
           messageCustomField: json["messageCustomField"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
           messageId: json["messageId"],
           messageSentTime: json["messageSentTime"],
+          meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
           messageStatus: json["messageStatus"].toString().obs,
           isMessageEdited: json["isMessageEdited"].toString().toBool().obs,
           messageTextContent: json["messageTextContent"],

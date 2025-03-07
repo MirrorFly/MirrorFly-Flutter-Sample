@@ -38,8 +38,6 @@ import '../modules/preview_contact/views/preview_contact_view.dart';
 import '../modules/profile/views/add_status_view.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/status_list_view.dart';
-import '../modules/scanner/scanner_view.dart';
-import '../modules/scanner/web_login_result_view.dart';
 import '../modules/settings/views/app_lock/app_lock_settings_view.dart';
 import '../modules/settings/views/app_lock/pin_view.dart';
 import '../modules/settings/views/app_lock/set_pin_view.dart';
@@ -68,10 +66,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-    case Routes.scanner:
-      return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
-    case Routes.webLoginResult:
-      return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
+    // case Routes.scanner:
+    //   return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
+    // case Routes.webLoginResult:
+    //   return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
     case Routes.createGroup:
       return MaterialPageRoute(builder: (_) => const GroupCreationView(),settings: settings);
     case Routes.groupInfo:

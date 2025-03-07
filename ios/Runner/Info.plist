@@ -93,6 +93,10 @@
 	<true/>
     <key>NSAppleMusicUsageDescription</key>
     <string>We need access to Apple Music to share your music to your friends within MirrorFly.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>We need this permission to add event in calendar within Mirrorfly</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>We need this permission to add event in calendar within Mirrorfly</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

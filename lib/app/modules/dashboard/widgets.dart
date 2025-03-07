@@ -114,8 +114,8 @@ class RecentChatItem extends StatelessWidget {
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == MessageType.isText && item.lastMessageContent.checkNull().isNotEmpty ||
-                              item.lastMessageType != MessageType.isText && item.lastMessageType != "MEET") &&
-                          typingUserid.isEmpty
+                              item.lastMessageType != MessageType.isText) &&
+                          typingUserid.isEmpty && item.lastMessageType != MessageType.isMeet
                       ? buildMessageIndicator()
                       : const Offstage()
                   : const Offstage(),
@@ -340,12 +340,6 @@ class RecentChatItem extends StatelessWidget {
         builder: (context, data) {
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
-          // LogMessage.d("getMessageOfId future", "${chat.toJson()}");
-            if(chat.messageType =="MEET"){
-              return const SizedBox(
-                height: 15,
-              );
-            }
             return Row(
               children: [
                 checkSenderShouldShow(chat)
@@ -357,8 +351,8 @@ class RecentChatItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       )
-                    : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                    : const Offstage(),
+                chat.isMessageRecalled.value ? const Offstage() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0
@@ -370,7 +364,7 @@ class RecentChatItem extends StatelessWidget {
                   child: CustomTextView(
                     text: chat.isMessageRecalled.value
                         ? setRecalledMessageText(chat.isMessageSentByMe)
-                        : MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                        :(chat.messageType == MessageType.meet.value)?  MessageUtils.getMeetMessage(chat.meetChatMessage?.scheduledDateTime??0):MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                         chat.messageTextContent.checkNull(),
                     defaultTextStyle: recentChatItemStyle.subtitleTextStyle,
                     linkColor: recentChatItemStyle.linkColor,
@@ -553,7 +547,8 @@ class RecentChatMessageItem extends StatelessWidget {
                           ),
                           Expanded(
                             child: CustomTextView(
-                              text: MessageUtils.forMessageTypeString(item.messageType,
+                              key: Key("message_view+${item.messageId}"),
+                              text: (item.messageType == MessageType.meet.value)? item.meetChatMessage!.link:MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.checkNull(),
                               defaultTextStyle: recentChatItemStyle.subtitleTextStyle,
