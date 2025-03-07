@@ -3,6 +3,7 @@ import 'package:device_calendar/device_calendar.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/internal_models/chat_messages_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -31,6 +32,10 @@ class ScheduleCalender {
     final calendarId = await SessionManagement.getCalenderId("calendarId");
     if (calendarId?.isNotEmpty ?? false) return;
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
+    if(calendarsResult.hasErrors){
+      debugPrint("retrieveCalendars ${calendarsResult.errors.first.errorMessage}");
+      return;
+    }
     if (!(calendarsResult.isSuccess && calendarsResult.data?.isNotEmpty == true)) return;
     List<Calendar> writableCalendars = calendarsResult.data!
         .where((c) => !(c.isReadOnly ?? false) && c.name != "Holidays in India")
@@ -45,7 +50,38 @@ class ScheduleCalender {
       await SessionManagement.setCalenderName(writableCalendars[0].name??"");
       return ;
     }
-    if(NavUtils.currentContext.mounted) {
+    Calendar? calendar = await customDialog(writableCalendars: writableCalendars,content: SizedBox(
+      width: double.maxFinite,
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        itemCount: writableCalendars.length,
+        itemBuilder: (context, index) {
+          final calendar = writableCalendars[index];
+          String calendarName = calendar.name ?? "Unnamed";
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blue,
+              // Choose a color based on preference
+              child: Text(
+                calendarName[0].toUpperCase(),
+                // First letter of calendar name
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: Text(calendarName),
+            onTap: () => NavUtils.back(result: calendar),
+          );
+        },
+      ),
+    ), dialogStyle: const DialogStyle());
+    debugPrint("selected calendar $calendar");
+    if (calendar != null) {
+      await SessionManagement.setCalenderId(calendar.id ?? "");
+      await SessionManagement.setCalenderName(calendar.name ?? "");
+    }
+    /*if(NavUtils.currentContext.mounted) {
       Calendar? calendar = (await showDialog(
         context: NavUtils.currentContext,
         builder: (BuildContext context) {
@@ -84,7 +120,47 @@ class ScheduleCalender {
         await SessionManagement.setCalenderId(calendar.id ?? "");
         await SessionManagement.setCalenderName(calendar.name ?? "");
       }
-    }
+    }*/
+  }
+
+  static Future<Calendar?> customDialog(
+      {required List<Calendar> writableCalendars,required Widget content,DialogStyle dialogStyle = const DialogStyle()}) async {
+    return await DialogUtils.createDialog(AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      title: Text(getTranslated("selectCalender")),
+      content: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            return;
+          }
+          NavUtils.back(result: null);
+        },
+        child: content,
+      ),
+      /*actions: [
+        TextButton(
+            style: dialogStyle.buttonStyle,
+            onPressed: () {
+              NavUtils.back(result: false);
+              // notNowBtn();
+            },
+            child: Text(
+              getTranslated("notNow").toUpperCase(),
+              // style: const TextStyle(color: buttonBgColor),
+            )),
+        TextButton(
+            style: dialogStyle.buttonStyle,
+            onPressed: () {
+              NavUtils.back(result: true);
+              // continueBtn();
+            },
+            child: Text(
+              getTranslated("continue").toUpperCase(),
+              // style: const TextStyle(color: buttonBgColor),
+            ))
+      ],*/
+    ));
   }
 
   Future<void> addEvent(MeetChatMessage meetMessage) async {
@@ -94,10 +170,8 @@ class ScheduleCalender {
     final startTime = DateTime.fromMillisecondsSinceEpoch(meetMessage.scheduledDateTime);
     final event = Event(
       calenderId,
-      eventId: meetMessage.messageId,
       title: meetMessage.title.isEmpty ? "" : meetMessage.title,
       description: meetMessage.link,
-      // location: "Online - Click the link",
       start: toTZDateTime(startTime),
       end: toTZDateTime(startTime.add(const Duration(hours: 1))),
       reminders: [Reminder(minutes: 10)],
@@ -106,7 +180,7 @@ class ScheduleCalender {
     if (result!.isSuccess) {
       debugPrint("Event added successfully to calendar!");
     } else {
-      debugPrint("Failed to add event");
+      debugPrint("Failed to add event ${event.toJson()} ${result.errors.first.errorMessage}");
     }
   }
 

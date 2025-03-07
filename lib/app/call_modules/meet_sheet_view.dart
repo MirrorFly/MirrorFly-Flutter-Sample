@@ -11,7 +11,6 @@ import '../common/constants.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
-import '../modules/chat/controllers/schedule_calender.dart';
 import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
 
@@ -314,7 +313,6 @@ class MeetLinkController extends GetxController {
   }
 
   Future<void> scheduleToggle(bool value) async {
-    await ScheduleCalender().requestCalendarPermission();
     scheduleTime(DateTime.now());
     turnOnSchedule(value);
   }

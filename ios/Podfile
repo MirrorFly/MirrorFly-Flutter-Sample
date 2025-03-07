@@ -74,6 +74,7 @@ post_install do |installer|
         'PERMISSION_MEDIA_LIBRARY=1',
         'PERMISSION_NOTIFICATIONS=1',
         'PERMISSION_EVENTS=1',
+        'PERMISSION_EVENTS_FULL_ACCESS=1',
       ]
       # for latest Xcode 15
 #      xcconfig_path = config.base_configuration_reference.real_path
