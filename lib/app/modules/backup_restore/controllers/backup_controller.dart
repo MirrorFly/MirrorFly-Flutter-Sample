@@ -190,7 +190,7 @@ class BackupController extends GetxController {
         LogMessage.d("Backup Controller",
             "Backup selected file path => ${result.files.single.path}");
         isRestoreStarted(true);
-        Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
+        // Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
       } else {
         LogMessage.d("Backup Controller", "Restore file is not Selected");
       }

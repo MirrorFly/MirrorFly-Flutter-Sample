@@ -502,7 +502,7 @@ class BackupRestoreManager {
   Future<void> startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) async {
     this.isServerUploadRequired = isServerUploadRequired;
     isEncryptionEnabled = enableEncryption;
-    Mirrorfly.startBackup(enableEncryption: enableEncryption);
+    // Mirrorfly.startBackup(enableEncryption: enableEncryption);
     // LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
     // await Workmanager().cancelByUniqueName("backup-process");
     /*Workmanager().registerOneOffTask(
@@ -518,7 +518,7 @@ class BackupRestoreManager {
 
   void restoreBackup({required String backupFilePath}) {
     LogMessage.d("BackupRestoreManager", 'Restoring Backup: $backupFilePath');
-    Mirrorfly.restoreBackup(backupPath: backupFilePath);
+    // Mirrorfly.restoreBackup(backupPath: backupFilePath);
     /*LogMessage.d("BackupRestoreManager", "Starting Restore WorkManager Task");
     Workmanager().registerOneOffTask(
       "restore-process", /// Unique Task ID
@@ -783,9 +783,9 @@ void callbackDispatcher() {
       print("Background task: enableEncryption $enableEncryption");
       BackupRestoreManager.instance.isServerUploadRequired = isServerUploadRequired;
       BackupRestoreManager.instance.isEncryptionEnabled = enableEncryption;
-      Mirrorfly.startBackup(enableEncryption: isServerUploadRequired);
+      // Mirrorfly.startBackup(enableEncryption: isServerUploadRequired);
     }else if (task == "restoreTask"){
-      Mirrorfly.restoreBackup(backupPath: inputData?["backupFilePath"] ?? "");
+      // Mirrorfly.restoreBackup(backupPath: inputData?["backupFilePath"] ?? "");
     }
 
     await BackupRestoreManager.instance.backupCompleter?.future;
