@@ -26,7 +26,7 @@ class NotificationUtils{
   static Future<String> getMessageSummary(ChatMessageModel message) async {
     if(Constants.mText == message.messageType || Constants.mNotification == message.messageType  || Constants.mAutoText == message.messageType) {
       if (message.isMessageRecalled.value.checkNull()) {
-        return deletedMessage;
+        return deletedMessage.isNotEmpty?deletedMessage:Constants.deletedMessage;
       } else {
         var lastMessageMentionContent = message.messageTextContent.checkNull();
         if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
@@ -38,7 +38,7 @@ class NotificationUtils{
         return lastMessageMentionContent;
       }
     }else if(message.isMessageRecalled.value.checkNull()){
-      return deletedMessage;
+      return deletedMessage.isNotEmpty?deletedMessage:Constants.deletedMessage;
     }else if(Constants.mMeet == message.messageType){
         var lastMessageMentionContent = MessageUtils.getMeetMessage(message.meetChatMessage?.scheduledDateTime??0);
         ScheduleCalender().addEvent(message.meetChatMessage!);

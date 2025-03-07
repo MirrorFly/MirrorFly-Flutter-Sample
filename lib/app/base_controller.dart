@@ -685,7 +685,11 @@ class BaseController {
 
   static void onGroupProfileFetched(groupJid) {}
 
-  static void onNewGroupCreated(groupJid) {}
+  static void onNewGroupCreated(groupJid) {
+    // if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+    //   Get.find<ChatController>(tag: controllerTag).onUserAddedToGroup(groupJid: groupJid);
+    // }
+  }
 
   static void onGroupProfileUpdated(groupJid) {
     LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());

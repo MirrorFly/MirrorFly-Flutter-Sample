@@ -313,6 +313,7 @@ class MeetLinkController extends GetxController {
   }
 
   Future<void> scheduleToggle(bool value) async {
+    scheduleTime(DateTime.now());
     turnOnSchedule(value);
   }
 }

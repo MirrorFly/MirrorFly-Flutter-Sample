@@ -68,7 +68,7 @@ class ChatController extends FullLifeCycleController
 
   var isUserTyping = false.obs;
   var isAudioRecording = Constants.audioRecordInitial.obs;
-  late Timer? _audioTimer;
+   Timer? _audioTimer;
   var timerInit = "00:00".obs;
   DateTime? startTime;
 
@@ -1805,6 +1805,7 @@ class ChatController extends FullLifeCycleController
       filteredPosition.clear();
       if (searchedText.text.trim().isNotEmpty) {
         for (var i = 0; i < chatList.length; i++) {
+          if(!chatList[i].isMessageRecalled.value){
           if (chatList[i].messageType.toUpperCase() == Constants.mText &&
               chatList[i]
                   .messageTextContent
@@ -1835,6 +1836,11 @@ class ChatController extends FullLifeCycleController
                   .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
           } else if (chatList[i].messageType.toUpperCase() ==
+              Constants.mMeet  &&
+              chatList[i].meetChatMessage!.link.isNotEmpty &&
+              chatList[i].meetChatMessage!.link.startsWithTextInWords(searchedText.text.trim())) {
+            filteredPosition.add(i);
+          } else if (chatList[i].messageType.toUpperCase() ==
                   Constants.mContact &&
               chatList[i].contactChatMessage!.contactName.isNotEmpty &&
               chatList[i]
@@ -1842,6 +1848,7 @@ class ChatController extends FullLifeCycleController
                   .contactName
                   .startsWithTextInWords(searchedText.text.trim())) {
             filteredPosition.add(i);
+          }
           }
         }
       }
@@ -2398,6 +2405,9 @@ class ChatController extends FullLifeCycleController
       if (groupJid == profile.jid &&
           userJid == SessionManagement.getUserJID()) {
         //current user leave from the group
+        if(DialogUtils.isDialogOpen()){
+          NavUtils.back();
+        }
         _isMemberOfGroup(false);
       } else if (groupJid == profile.jid) {
         setChatStatus();
@@ -3159,6 +3169,11 @@ class ChatController extends FullLifeCycleController
     userUpdatedHisProfile(jid);
   }
 
+  void onUserAddedToGroup({required String groupJid,}){
+    if (profile.isGroupProfile.checkNull() &&profile.jid == groupJid) {
+          memberOfGroup();
+      }
+  }
   void onNewMemberAddedToGroup(
       {required String groupJid,
       required String newMemberJid,
@@ -3190,16 +3205,15 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void onMemberRemovedFromGroup(
+    void onMemberRemovedFromGroup(
       {required String groupJid,
       required String removedMemberJid,
       required String removedByMemberJid}) {
     if (profile.isGroupProfile.checkNull()) {
       if (profile.jid == groupJid) {
         debugPrint('onMemberRemovedFromGroup $removedMemberJid');
-        if (removedMemberJid != profile.jid) {
-          getParticipantsNameAsCsv(groupJid);
-        } else {
+        getParticipantsNameAsCsv(groupJid);
+        if (removedMemberJid == SessionManagement.getUserJID()) {
           //removed me
           onLeftFromGroup(groupJid: groupJid, userJid: removedMemberJid);
         }

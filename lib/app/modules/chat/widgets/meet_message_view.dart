@@ -57,7 +57,7 @@ class MeetMessageView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 5.0),
           child: MeetLinkView(
-            message: chatMessage.messageTextContent.checkNull(),
+            message: chatMessage.meetChatMessage?.link ??"",
             timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
             callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
           ),
@@ -99,7 +99,10 @@ class MeetMessageView extends StatelessWidget {
                   ),
                 )),
                 chatMessage.isMessageStarred.value
-                    ? AppUtils.svgIcon(icon: starSmallIcon)
+                    ? Padding(
+                      padding: const EdgeInsets.only(bottom:4.0),
+                      child: AppUtils.svgIcon(icon: starSmallIcon),
+                    )
                     : const Offstage(),
                 const SizedBox(
                   width: 5,
@@ -161,10 +164,9 @@ class MeetLinkView extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (await AppUtils.isNetConnected()) {
-          var link = MessageUtils.getCallLinkFromMessage(message);
-          if (link.isNotEmpty) {
+          if (message.isNotEmpty) {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+              "callLinkId": message.replaceAll(Constants.webChatLogin, "")
             });
           }
         } else {
