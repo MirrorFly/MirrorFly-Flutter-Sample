@@ -99,7 +99,10 @@ class MeetMessageView extends StatelessWidget {
                   ),
                 )),
                 chatMessage.isMessageStarred.value
-                    ? AppUtils.svgIcon(icon: starSmallIcon)
+                    ? Padding(
+                      padding: const EdgeInsets.only(bottom:4.0),
+                      child: AppUtils.svgIcon(icon: starSmallIcon),
+                    )
                     : const Offstage(),
                 const SizedBox(
                   width: 5,

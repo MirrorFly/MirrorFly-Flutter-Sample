@@ -547,6 +547,7 @@ class RecentChatMessageItem extends StatelessWidget {
                           ),
                           Expanded(
                             child: CustomTextView(
+                              key: Key("message_view+${item.messageId}"),
                               text: (item.messageType == MessageType.meet.value)? item.meetChatMessage!.link:MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.checkNull(),
