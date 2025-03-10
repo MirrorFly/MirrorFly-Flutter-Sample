@@ -3182,6 +3182,7 @@ class ChatController extends FullLifeCycleController
       if (profile.jid == groupJid) {
         debugPrint('onNewMemberAddedToGroup $newMemberJid');
         getParticipantsNameAsCsv(groupJid);
+        memberOfGroup();
       }
     }
     if (Get.isRegistered<MentionController>(tag: "chatView")) {
