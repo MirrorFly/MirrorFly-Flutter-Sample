@@ -131,7 +131,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             icon: widget.senderChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia)),
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
+                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.8),
                                         decoration: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.decoration : widget.receiverChatStyle.decoration,
                                         /*decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
