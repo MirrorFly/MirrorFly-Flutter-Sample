@@ -218,7 +218,7 @@ class BackupController extends GetxController {
     File backupFile = File(backupFilePath);
     int totalFileSize = backupFile.lengthSync();
 
-    backupTotalSize(MediaUtils.fileSize(totalFileSize));
+    backupTotalSize(MediaUtils.fileSize(totalFileSize, 2));
 
     LogMessage.d("Backup Controller", "Upload fileSize*** $totalFileSize");
     isRemoteUploadStarted(true);
