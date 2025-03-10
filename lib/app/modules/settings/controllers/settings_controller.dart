@@ -11,7 +11,6 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
-import 'package:flutter/material.dart';
 
 class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
