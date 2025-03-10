@@ -180,15 +180,14 @@ class RestoreController extends GetxController
       toToast(getTranslated("noInternetConnection"));
       return;
     }
-    backupDownloadStarted(true);
-    isBackupAnimationRunning(true);
-    if(animationController != null) {
-      animationController?.forward();
-    }
-
     if (Platform.isAndroid) {
       var permission = await AppPermission.getStoragePermission();
       if (permission) {
+        backupDownloadStarted(true);
+        isBackupAnimationRunning(true);
+        if(animationController != null) {
+          animationController?.forward();
+        }
         BackupRestoreManager.instance.downloadAndroidBackupFile(
             backupFile.value).listen((progress) {
           LogMessage.d(

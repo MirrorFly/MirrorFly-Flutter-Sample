@@ -287,7 +287,7 @@ class BackupRestoreManager {
         }
       } else {
         LogMessage.d("BackupRestoreManager getLatestFile",
-            "No file found with the name $backupFileName");
+            "No file found with the name $backupFileName.$fileFormat");
         return null;
       }
     } catch (e) {

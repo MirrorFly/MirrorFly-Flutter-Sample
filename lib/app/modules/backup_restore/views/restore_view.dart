@@ -324,28 +324,38 @@ class RestoreView extends NavViewStateful<RestoreController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Obx(() {
-              return controller.isIOS && !controller.isBackupFound.value ? const Offstage() : ElevatedButton(
-                style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                onPressed: controller.isBackupFound.value
-                    ? () => controller.startMessageRestore()
-                    : () => controller.nextScreen(),
-                child: Text(
-                  controller.isBackupFound.value
-                      ? getTranslated("restore")
-                      : getTranslated("next"),
-                ),
-              );
+              return controller.isIOS && !controller.isBackupFound.value
+                  ? const Offstage()
+                  : ElevatedButton(
+                      style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                      onPressed: controller.isBackupFound.value
+                          ? () => controller.startMessageRestore()
+                          : () => controller.nextScreen(),
+                      child: Text(
+                        controller.isBackupFound.value
+                            ? getTranslated("restore")
+                            : getTranslated("next"),
+                      ),
+                    );
             }),
-            const SizedBox(width: 20),
-            ElevatedButton(
-              style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-              onPressed: () {
-                controller.skipBackup();
-              },
-              child: Text(
-                getTranslated("skip"),
-              ),
-            ),
+            Obx(() {
+              return controller.isBackupFound.value
+                  ? const SizedBox(width: 20)
+                  : const Offstage();
+            }),
+            Obx(() {
+              return controller.isBackupFound.value
+                  ? ElevatedButton(
+                      style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+                      onPressed: () {
+                        controller.skipBackup();
+                      },
+                      child: Text(
+                        getTranslated("skip"),
+                      ),
+                    )
+                  : const Offstage();
+            }),
           ],
         ),
         const SizedBox(

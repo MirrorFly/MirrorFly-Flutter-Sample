@@ -87,7 +87,8 @@ class BackupController extends GetxController {
     /// Restoring the mail id in Android Backup Screen
     if (Platform.isAndroid) {
       var previousBackupEmail = SessionManagement.getBackUpAccount().isEmpty
-          ? (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email).checkNull()
+          ? (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email)
+              .checkNull()
           : SessionManagement.getBackUpAccount();
 
       if (previousBackupEmail.isNotEmpty) {
@@ -109,6 +110,10 @@ class BackupController extends GetxController {
         isBackupFound(backupFileDetails.fileId?.isNotEmpty);
         backUpFoundDate(backupFileDetails.fileCreatedDate);
         backUpFoundSize(backupFileDetails.fileSize);
+      }else{
+        isBackupFound(false);
+        backUpFoundDate('');
+        backUpFoundSize('');
       }
     });
   }
@@ -311,11 +316,15 @@ class BackupController extends GetxController {
 
     backUpEmailId(newAccount?.email ??
         BackupRestoreManager.instance.getGoogleAccountSignedIn?.email);
-
-    if (newAccount?.email != null) {
-      SessionManagement.setBackUpAccount(backUpEmailId.value);
-      SessionManagement.setBackUpState(Constants.backupAccountSelected);
-      checkForBackUpFiles();
+    if (newAccount != null) {
+      BackupRestoreManager.instance
+          .assignAccountAuth(newAccount)
+          .then((isSuccess) {
+        SessionManagement.setBackUpAccount(backUpEmailId.value);
+        SessionManagement.setBackUpState(Constants.backupAccountSelected);
+        driveAccessible(true);
+        checkForBackUpFiles();
+      });
     }
   }
 
