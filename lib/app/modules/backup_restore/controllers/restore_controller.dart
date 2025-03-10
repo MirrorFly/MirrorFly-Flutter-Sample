@@ -37,6 +37,7 @@ class RestoreController extends GetxController
   var isAccountSelected = false.obs;
   var backUpEmailId = ''.obs;
   bool get isAndroid => Platform.isAndroid;
+  bool get isIOS => Platform.isIOS;
 
   var driveAccessible = false.obs;
 

@@ -324,7 +324,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Obx(() {
-              return ElevatedButton(
+              return controller.isIOS && !controller.isBackupFound.value ? const Offstage() : ElevatedButton(
                 style: AppStyleConfig.loginPageStyle.loginButtonStyle,
                 onPressed: controller.isBackupFound.value
                     ? () => controller.startMessageRestore()
