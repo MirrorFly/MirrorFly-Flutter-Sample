@@ -43,6 +43,11 @@ const Color previewTextColor = Color(0xff7f7f7f);
 const Color callsSubText = Color(0Xff737373);
 const Color notificationAlertBg = Color(0xffEFF4FD);
 
+
+const Color backUpDbColor = Color(0xffFFFFFF);
+const Color backupPhoneColor = Color(0xff3276E2);
+const Color backupTimerColor = Color(0xffC4D1E0);
+
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
   static const Color bottomCallOptionBackground = Color(0xff162337);
@@ -302,6 +307,24 @@ const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
 const String icJoinCallMirrorflyLogo = "assets/calls/ic_join_call_mirrorfly_logo.svg";
 const String icJoinCallEnded = "assets/calls/ic_join_call_ended.svg";
 
+//Backup Restore
+const String backupTimer = "assets/backup_restore/backup_timer.svg";
+const String backupDatabase = "assets/backup_restore/database.svg";
+const String backupSmartPhone = "assets/backup_restore/smartphone.svg";
+
+const String backupAnimation1 = "assets/backup_restore/backup_animation_1.png";
+const String backupAnimation2 = "assets/backup_restore/backup_animation_2.png";
+const String backupAnimation3 = "assets/backup_restore/backup_animation_3.png";
+const String backupAnimation4 = "assets/backup_restore/backup_animation_4.png";
+const String backupAnimation5 = "assets/backup_restore/backup_animation_5.png";
+const String backupAnimation6 = "assets/backup_restore/backup_animation_6.png";
+
+const String backupHistoryIcon = "assets/backup_restore/backup_history.png";
+const String addAccountUser = "assets/backup_restore/add_account_user.svg";
+
+const String restoreCloud = "assets/backup_restore/restore_cloud.png";
+const String restoreSetting = "assets/backup_restore/restore_settings.png";
+
 
 //About us
 const String titleContactMsg = "Mirror Fly is a ready-to-go messaging solution for building enterprise-grade real-time chat IM applications that meet various degrees of requirements like team discussion, data sharing, task delegation and information handling on the go.";
@@ -477,6 +500,19 @@ class Constants {
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
   static const String meetScheduleOn = "Meet Scheduled on ";
+
+  //Backup State
+  static const String backupAccountSelected = "account_selected";
+  static const String backupSkipped = "backup_skip";
+  static const String backupCompleted = "backup_completed";
+
+  static const String backupEncryptedFileFormat = "crypto7";
+  static const String backupRawFileFormat = "txt";
+
+  static const bool isBackupFeatureEnabled = true;
+
+  // Dummy OTP View
+  static const bool isOTPViewEnabled = false;
 
 }
 

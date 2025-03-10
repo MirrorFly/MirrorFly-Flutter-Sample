@@ -796,9 +796,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void onCameraSwitch() {
-    LogMessage.d("onCameraSwitch", cameraSwitch.value);
     cameraSwitch(!cameraSwitch.value);
-    LogMessage.d("onCameraSwitchAfter", cameraSwitch.value);
   }
 
   void changedToAudioCall() {

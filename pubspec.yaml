@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 3.0.3+1
-build_release_date: Mar 2025
+version: 4.0.0+00
+build_release_date: Jul 2024
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment:
@@ -40,7 +40,6 @@ dependencies:
   keyboard_dismisser: ^3.0.0
   scrollable_positioned_list: ^0.3.8
   flutter_switch: ^0.3.2
-#  qr_code_scanner: ^1.0.1
   yaml: ^3.1.2
   path: ^1.9.0
   camera: ^0.10.6
@@ -59,6 +58,14 @@ dependencies:
   fading_edge_scrollview: ^4.1.1
   device_calendar: ^4.3.3
 #  mirrorfly_plugin: ^1.0.4
+
+  #BackUp and Restore
+  icloud_storage_sync: ^0.0.1
+  google_sign_in: ^6.2.2
+  googleapis_auth: ^1.6.0
+  googleapis: ^13.2.0
+
+
   mirrorfly_plugin:
     path: p078-mirrorfly-flutter-plugin
 
@@ -66,11 +73,9 @@ dependencies:
   otp_text_field: ^1.1.3
   firebase_core: ^3.3.0
   firebase_auth: ^5.1.4
-  firebase_app_installations: ^0.3.0+4
+  firebase_app_installations: ^0.3.0+4v
   firebase_messaging: ^15.0.4
   flutter_local_notifications: ^17.2.4
-  googleapis_auth: ^1.4.0
-#  is_lock_screen2: ^2.0.1
   flutter_app_badge: ^2.0.2
 
 dependency_overrides:
@@ -91,6 +96,7 @@ flutter:
     - assets/calls/
     - assets/animation/
     - assets/locales/
+    - assets/backup_restore/
     - pubspec.yaml
 
   fonts:
