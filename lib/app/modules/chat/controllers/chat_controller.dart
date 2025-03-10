@@ -533,17 +533,17 @@ class ChatController extends FullLifeCycleController
     await ScheduleCalender()
         .requestCalendarPermission();
    showMeetBottomSheet(
-    AppStyleConfig.chatPageStyle
+    meetBottomSheetStyle:AppStyleConfig.chatPageStyle
         .instantScheduleMeetStyle
-        .meetBottomSheetStyle);
+        .meetBottomSheetStyle,isEnableSchedule:true );
     });
     }else {
     await ScheduleCalender()
         .requestCalendarPermission();
-  showMeetBottomSheet(
-    AppStyleConfig.chatPageStyle
-        .instantScheduleMeetStyle
-        .meetBottomSheetStyle);
+    showMeetBottomSheet(
+        meetBottomSheetStyle:AppStyleConfig.chatPageStyle
+            .instantScheduleMeetStyle
+            .meetBottomSheetStyle,isEnableSchedule:true );
     }
   }
 
@@ -3819,7 +3819,8 @@ class ChatController extends FullLifeCycleController
 
   //show meet bottom sheet
   Future<void> showMeetBottomSheet(
-      MeetBottomSheetStyle meetBottomSheetStyle) async {
+      { MeetBottomSheetStyle? meetBottomSheetStyle,
+      bool?isEnableSchedule}) async {
     if (await AppUtils.isNetConnected()) {
       if (isAudioRecording.value == Constants.audioRecording) {
         stopRecording();
@@ -3828,7 +3829,8 @@ class ChatController extends FullLifeCycleController
         MeetSheetView(
           title: getTranslated("instantMeet"),
           description: getTranslated("copyTheLink"),
-          meetBottomSheetStyle: meetBottomSheetStyle,
+          meetBottomSheetStyle: meetBottomSheetStyle!,
+          isEnableSchedule: isEnableSchedule??false,
         ),
         ignoreSafeArea: true,
         backgroundColor: Colors.white,

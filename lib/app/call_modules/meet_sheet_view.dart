@@ -19,18 +19,22 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
       {super.key,
       required this.title,
       required this.description,
-      this.meetBottomSheetStyle = const MeetBottomSheetStyle()});
+      this.meetBottomSheetStyle = const MeetBottomSheetStyle(),
+      this.isEnableSchedule = false});
 
   final MeetBottomSheetStyle meetBottomSheetStyle;
   final String title;
   final String description;
+
+  final bool isEnableSchedule;
 
   @override
   createController({String? tag}) => Get.put(MeetLinkController());
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Padding(
+    return SafeArea(
+        child: Padding(
       padding: const EdgeInsets.only(left: 30.0, right: 30),
       child: Obx(() {
         return Column(
@@ -121,14 +125,16 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
               const SizedBox(
                 height: 10,
               ),
+              if(isEnableSchedule)
               Divider(
                 thickness: 1,
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withOpacity(0.1)
               ),
               const SizedBox(
                 height: 10,
               ),
             ],
+            if(isEnableSchedule)...[
             SizedBox(
               width: double.infinity,
               child: Row(
@@ -170,67 +176,80 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                           width: 1),
                       value: controller.turnOnSchedule.value,
                       onToggle: controller.meetLink.value.isEmpty
-                          ? (v){}: (value) async {
-                        controller.scheduleToggle(value);
-                      },
+                          ? (v) {}
+                          : (value) async {
+                              controller.scheduleToggle(value);
+                            },
                     );
                   }),
                 ],
               ),
             ),
             const SizedBox(
-              height: 20,
-            ),
-            if(controller.turnOnSchedule.value)...[
-            GestureDetector(
-              onTap: ()async{
-                await controller.dateTimePicker(context);
-              },
-              child: Container(
-                height: 40,
-                padding:const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.checkBoxBorder),
-                    borderRadius:const BorderRadius.all(Radius.circular(10))),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(DateFormat("dd/MM/yyyy").format(controller.scheduleTime.value),
-                        style: meetBottomSheetStyle.subTitleTextStyle
-                            .copyWith(color: AppColors.callerTitleBackground)),
-                   const VerticalDivider(color: AppColors.checkBoxBorder),
-                    Text(DateFormat("hh:mm a").format(controller.scheduleTime.value),
-                        style: meetBottomSheetStyle.subTitleTextStyle
-                            .copyWith(color: AppColors.callerTitleBackground)),
-                    const Spacer(),
-                    const Icon(
-                          Icons.calendar_month_outlined,
-                          color: Color(0Xff656565),
-                        )
-                  ],
+              height: 20
+            )],
+            if (controller.turnOnSchedule.value) ...[
+              GestureDetector(
+                onTap: () async {
+                  await controller.dateTimePicker(context);
+                },
+                child: Container(
+                  height: 40,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.checkBoxBorder),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                          DateFormat("dd/MM/yyyy")
+                              .format(controller.scheduleTime.value),
+                          style: meetBottomSheetStyle.subTitleTextStyle
+                              .copyWith(
+                                  color: AppColors.callerTitleBackground)),
+                      const VerticalDivider(color: AppColors.checkBoxBorder),
+                      Text(
+                          DateFormat("hh:mm a")
+                              .format(controller.scheduleTime.value),
+                          style: meetBottomSheetStyle.subTitleTextStyle
+                              .copyWith(
+                                  color: AppColors.callerTitleBackground)),
+                      const Spacer(),
+                      const Icon(
+                        Icons.calendar_month_outlined,
+                        color: Color(0Xff656565),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox( height: 20),
-            SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
+              const SizedBox(height: 20),
+              SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
                       onPressed: () {
-                        if(controller.scheduleTime.value.isBefore(DateTime.now().subtract(const Duration(minutes: 1)))){
+                        if (controller.scheduleTime.value.isBefore(
+                            DateTime.now()
+                                .subtract(const Duration(minutes: 1)))) {
                           toToast(getTranslated("dateError"));
-                        }else{
-                          if (Get.isRegistered<ChatController>(tag:SessionManagement.getCurrentChatJID())) {
-                            Get.find<ChatController>(tag: SessionManagement.getCurrentChatJID()).sendMeetMessage(link: controller.meetId.value, scheduledDateTime: controller.scheduleTime.value.millisecondsSinceEpoch);
+                        } else {
+                          if (Get.isRegistered<ChatController>(
+                              tag: SessionManagement.getCurrentChatJID())) {
+                            Get.find<ChatController>(
+                                    tag: SessionManagement.getCurrentChatJID())
+                                .sendMeetMessage(
+                                    link: controller.meetId.value,
+                                    scheduledDateTime: controller.scheduleTime
+                                        .value.millisecondsSinceEpoch);
                           }
                         }
                       },
                       style: meetBottomSheetStyle.joinMeetingButtonStyle,
-                      child: Text(getTranslated("scheduleMeeting")))
-                ),
-            const SizedBox(
-              height: 20
-            ),
-        ]
+                      child: Text(getTranslated("scheduleMeeting")))),
+              const SizedBox(height: 20),
+            ]
           ],
         );
       }),
@@ -240,7 +259,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
 
 class MeetLinkController extends GetxController {
   var meetLink = "".obs;
-  Rx<String> meetId="".obs;
+  Rx<String> meetId = "".obs;
   var turnOnSchedule = false.obs;
 
   Rx<DateTime> scheduleTime = DateTime.now().obs;
@@ -280,13 +299,13 @@ class MeetLinkController extends GetxController {
     }
   }
 
-  Future<void> dateTimePicker(BuildContext context)async{
+  Future<void> dateTimePicker(BuildContext context) async {
     TimeOfDay? timeValue;
 
     DateTime? dateValue = await showDatePicker(
       context: context,
       currentDate: scheduleTime.value,
-      initialDate:scheduleTime.value,
+      initialDate: scheduleTime.value,
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
@@ -294,7 +313,8 @@ class MeetLinkController extends GetxController {
     if (dateValue != null && context.mounted) {
       timeValue = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay(hour:scheduleTime.value.hour, minute:scheduleTime.value.minute),
+        initialTime: TimeOfDay(
+            hour: scheduleTime.value.hour, minute: scheduleTime.value.minute),
       );
     }
 
@@ -309,7 +329,6 @@ class MeetLinkController extends GetxController {
 
       scheduleTime(finalDateTime);
     }
-
   }
 
   Future<void> scheduleToggle(bool value) async {
