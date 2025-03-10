@@ -18,7 +18,7 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
-import 'package:workmanager/workmanager.dart';
+
 
 import '../../../data/utils.dart';
 import 'backup_utils.dart';
@@ -91,7 +91,7 @@ class BackupRestoreManager {
     debugPrint("_backupFileName $_backupFileName");
 
     /// WorkManager Initialisation
-    Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    // Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
     if (Platform.isAndroid) {
       // Fetch Google Previous Sign in
@@ -355,9 +355,6 @@ class BackupRestoreManager {
      return progressController.stream;
   }
 
- /* Future<void> backupFile() async {
-    await Mirrorfly.startBackup(enableEncryption: true);
-  }*/
 
   Future<bool> _checkICloudAccess() async {
     try {
@@ -770,29 +767,33 @@ Stream<List<int>> trackProgress(
   );
 }
 
-@pragma('vm:entry-point')
+/*@pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     BackupRestoreManager.instance.backupCompleter = Completer<void>();
     print("Native called background task: $task");
     print("Native called background inputData: $inputData");
-    if (task == "backupTask") {
-      bool isServerUploadRequired = inputData?["isServerUploadRequired"];
-      bool enableEncryption = inputData?["enableEncryption"];
-      print("Background task: isServerUploadRequired $isServerUploadRequired");
-      print("Background task: enableEncryption $enableEncryption");
-      BackupRestoreManager.instance.isServerUploadRequired = isServerUploadRequired;
-      BackupRestoreManager.instance.isEncryptionEnabled = enableEncryption;
-      Mirrorfly.startBackup(enableEncryption: isServerUploadRequired);
+    if (task == BackupRestoreManager.instance.iOSBackgroundProcessingTask) {
+      print("Native called background task: background Start backup");
+      // bool isServerUploadRequired = inputData?["isServerUploadRequired"];
+      // bool enableEncryption = inputData?["enableEncryption"];
+      // print("Background task: isServerUploadRequired $isServerUploadRequired");
+      // print("Background task: enableEncryption $enableEncryption");
+      // BackupRestoreManager.instance.isServerUploadRequired = this.isServerUploadRequired;
+      // BackupRestoreManager.instance.isEncryptionEnabled = enableEncryption;
+      Mirrorfly.startBackup(enableEncryption:  BackupRestoreManager.instance.isServerUploadRequired);
     }else if (task == "restoreTask"){
-      Mirrorfly.restoreBackup(backupPath: inputData?["backupFilePath"] ?? "");
+      print("Native called background task: background restore backup");
+      Mirrorfly.restoreBackup(backupPath: BackupRestoreManager.instance.backupFilePath);
+    }else{
+      print("Native called background task failed, No Task under this name is found: $task");
     }
 
     await BackupRestoreManager.instance.backupCompleter?.future;
 
     return Future.value(true);
   });
-}
+}*/
 
 
 
