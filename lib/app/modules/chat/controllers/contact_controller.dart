@@ -279,7 +279,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
       (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
-          metaDataUserList: Constants.metaDataUserList, //#metaData
+          // metaDataUserList: Constants.metaDataUserList, //#metaData
           flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
     } else {

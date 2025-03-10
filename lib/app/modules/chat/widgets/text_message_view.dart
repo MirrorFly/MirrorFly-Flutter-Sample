@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 
@@ -8,8 +9,6 @@ import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
-import '../../dashboard/widgets.dart';
-import 'chat_widgets.dart';
 
 class TextMessageView extends StatelessWidget {
   const TextMessageView({
@@ -38,15 +37,17 @@ class TextMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Flexible(
-                child: search.isEmpty
-                    ? textMessageSpannableText(chatMessage.messageTextContent ?? "",textMessageViewStyle.textStyle,textMessageViewStyle.urlMessageColor)
-                    : chatSpannedText(
-                  chatMessage.messageTextContent ?? "",
-                  search,
-                  textMessageViewStyle.textStyle,
-                    spanColor:textMessageViewStyle.highlightColor,urlColor: textMessageViewStyle.urlMessageColor
-                  //const TextStyle(fontSize: 14, color: textHintColor),
-                ),
+                  child: CustomTextView(
+                    key: Key("message_view+${chatMessage.messageId}"),
+                    text: chatMessage.messageTextContent.checkNull(),
+                    defaultTextStyle: textMessageViewStyle.textStyle,
+                    linkColor: textMessageViewStyle.urlMessageColor,
+                    mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                    searchQueryTextColor: textMessageViewStyle.highlightColor,
+                    searchQueryString: search,
+                    mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                    mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                  )
               ),
               const SizedBox(width: 60,),
             ],

@@ -165,7 +165,7 @@ class SenderChatBubbleStyle{
            color: Colors.black45,
          ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
              progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),
-         iconStyle: IconStyle(iconColor: Colors.white))
+             iconStyle: IconStyle(iconColor: AppColor.primaryColor,bgColor: Colors.white))
      ),
      this.audioMessageViewStyle = const AudioMessageViewStyle(
        decoration: BoxDecoration(
@@ -270,7 +270,7 @@ class ReceiverChatBubbleStyle{
           borderRadius: BorderRadius.all(Radius.circular(4)),
           color: Colors.black45,
         ),textStyle: TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 10),
-            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: Colors.white))
+            progressIndicatorThemeData: ProgressIndicatorThemeData(color: Colors.white,linearTrackColor: Colors.transparent),iconStyle: IconStyle(iconColor: AppColor.primaryColor,bgColor: Colors.white))
     ),
     this.audioMessageViewStyle = const AudioMessageViewStyle(
       decoration: BoxDecoration(

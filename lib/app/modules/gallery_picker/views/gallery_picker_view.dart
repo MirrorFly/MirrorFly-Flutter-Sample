@@ -75,11 +75,17 @@ GalleryPickerController createController({String? tag}) => Get.put(GalleryPicker
                                     "filePath": controller.pickedFile,
                                     "userName": controller.userName,
                                     'profile': controller.profile,
-                                    'caption': controller.textMessage,
                                     'from': 'gallery_pick',
-                                    'userJid': controller.userJid
+                                    'userJid': controller.userJid,
+                                    "captionMessage":controller.captionMessage,
+                                    "captionMessageMentions":controller.captionMessageMentions,
                                   })?.then((value) {
-                                    value != null ? NavUtils.back() : null;
+                                    if(value==null && NavUtils.currentRoute != Routes.chat){
+                                      NavUtils.back();
+                                    }else{
+                                      controller.captionMessage=value["captionMessage"];
+                                      controller.captionMessageMentions=value["captionMessageMentions"];
+                                    }
 
                                   });
                                 } else {

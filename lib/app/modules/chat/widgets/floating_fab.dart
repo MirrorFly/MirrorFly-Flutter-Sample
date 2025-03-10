@@ -72,9 +72,9 @@ class _FloatingFabState extends State<FloatingFab> {
 
     // Snap to the closest side (left or right)
     if (newX < widget.parentWidgetWidth.value / 2) {
-      newX = 5; // Snap to the left
+      newX = 15; // Snap to the left
     } else {
-      newX = widget.parentWidgetWidth.value - fabWidth - 5; // Snap to the right
+      newX = widget.parentWidgetWidth.value - fabWidth - 15; // Snap to the right
     }
 
     // Ensure the FAB stays within vertical bounds

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel, ContactChatMessage;
@@ -13,8 +13,6 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
-import '../../dashboard/widgets.dart';
-import 'chat_widgets.dart';
 
 class ContactMessageView extends StatelessWidget {
   const ContactMessageView({Key? key,
@@ -50,22 +48,19 @@ class ContactMessageView extends StatelessWidget {
                   width: 12,
                 ),
                 Expanded(
-                    child: search.isEmpty
-                        ? textMessageSpannableText(
-                        chatMessage.contactChatMessage!.contactName
-                            .checkNull(),contactMessageViewStyle.textMessageViewStyle.textStyle,contactMessageViewStyle.textMessageViewStyle.urlMessageColor,
-                        maxLines: 2)
-                        : chatSpannedText(
-                        chatMessage.contactChatMessage!.contactName,
-                        search,
-                        contactMessageViewStyle.textMessageViewStyle.textStyle,//const TextStyle(fontSize: 14, color: textHintColor),
-                        maxLines: 2,
-                        spanColor: contactMessageViewStyle.textMessageViewStyle.highlightColor,
-                    urlColor: contactMessageViewStyle.textMessageViewStyle.urlMessageColor) /*,Text(
-                  chatMessage.contactChatMessage!.contactName,
-                  maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                )*/
+                    child: CustomTextView(
+                      key: Key("message_view+${chatMessage.messageId}"),
+                      text: chatMessage.contactChatMessage!.contactName
+                          .checkNull(),
+                      defaultTextStyle: contactMessageViewStyle.textMessageViewStyle.textStyle,
+                      linkColor: contactMessageViewStyle.textMessageViewStyle.urlMessageColor,
+                      mentionUserTextColor: contactMessageViewStyle.textMessageViewStyle.mentionUserColor,
+                      searchQueryTextColor: contactMessageViewStyle.textMessageViewStyle.highlightColor,
+                      searchQueryString: search,
+                      mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                      maxLines: 2,
+                      mentionedMeBgColor: contactMessageViewStyle.textMessageViewStyle.mentionedMeBgColor,
+                    )
                 ),
               ],
             ),
@@ -151,8 +146,8 @@ class ContactMessageView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: (userJid != null && userJid.isNotEmpty)
-                              ? Text(getTranslated("message"))
-                              : Text(getTranslated("invite")),
+                              ? Text(getTranslated("message"),style: textStyle,)
+                              : Text(getTranslated("view"),style: textStyle,),
                         ))),
               ],
             ),
@@ -178,7 +173,8 @@ class ContactMessageView extends StatelessWidget {
   }
 
   showInvitePopup(ContactChatMessage contactChatMessage) {
-    DialogUtils.showButtonAlert(actions: [
+    NavUtils.toNamed(Routes.previewContact, arguments: {"previewContactList" : chatMessage.contactChatMessage?.contactPhoneNumbers,"contactName" : chatMessage.contactChatMessage?.contactName, "from": "chat", "userJid" : chatMessage.senderUserJid});
+    /*DialogUtils.showButtonAlert(actions: [
       ListTile(
         contentPadding: const EdgeInsets.only(left: 10),
         title: Text(getTranslated("inviteFriend"),
@@ -203,7 +199,7 @@ class ContactMessageView extends StatelessWidget {
           sendSMS(contactChatMessage.contactPhoneNumbers[0]);
         },
       ),
-    ]);
+    ]);*/
   }
 
   void sendSMS(String contactPhoneNumber) async {

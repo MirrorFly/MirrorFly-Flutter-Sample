@@ -8,6 +8,9 @@ class MessageTypingAreaStyle{
       color: Colors.white,
     ),
     this.textFieldStyle = const EditTextFieldStyle(editTextStyle: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),editTextHintStyle: TextStyle(fontWeight: FontWeight.w300, color: Color(0xff959595),fontSize: 12)),
+    this.mentionTextStyle = const TextStyle(
+        color: Colors.blueAccent,
+        backgroundColor: Colors.transparent),
     this.dividerColor = const Color(0xff000000),
     this.sentIconColor = const Color(0xff4879F9),
     this.audioRecordIcon = const IconStyle(iconColor: Colors.white,bgColor:AppColor.primaryColor),
@@ -31,6 +34,16 @@ class MessageTypingAreaStyle{
     this.iconAttachment,
     this.iconRecord,
     this.iconSend,
+    this.mentionUserStyle = const ContactItemStyle(
+        profileImageSize: Size(36, 36),
+        titleStyle: TextStyle(fontWeight: FontWeight.w600,color: Color(0xff181818),fontSize: 15),
+        dividerColor: Color(0xffEBEBEB)
+    ),
+    this.mentionUserBgDecoration = const BoxDecoration(
+      color: Colors.white,
+      border: Border(left: BorderSide(color: Color(0xffC1C1C1)),right: BorderSide(color: Color(0xffC1C1C1)),top: BorderSide(color: Color(0xffC1C1C1)),),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(8),
+      topRight: Radius.circular(8)),),
   });
   final EditTextFieldStyle textFieldStyle;
   final Decoration decoration;
@@ -49,6 +62,9 @@ class MessageTypingAreaStyle{
   final UIKitIcon? iconAttachment;
   final UIKitIcon? iconRecord;
   final UIKitIcon? iconSend;
+  final ContactItemStyle mentionUserStyle;
+  final Decoration mentionUserBgDecoration;
+  final TextStyle mentionTextStyle;
 
 
 }
@@ -79,13 +95,21 @@ class ReplyHeaderMessageViewStyle{
     this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600,color: Colors.black,fontSize: 11),
     this.contentTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 13),
     this.mediaIconStyle = const IconStyle(bgColor:Color(0xff7285B5),iconColor: Colors.white),
-    this.borderRadius = const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5))
+    this.borderRadius = const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+    this.searchHighLightColor = Colors.orange,
+    this.linkColor = const Color(0xff4879F9),
+    this.mentionUserColor = const Color(0xff4879F9),
+    this.mentionedMeBgColor = const Color(0XffD2E3FC),
   });
   final Decoration decoration;
   final TextStyle titleTextStyle;
   final TextStyle contentTextStyle;
   final IconStyle mediaIconStyle;
   final BorderRadius borderRadius;
+  final Color searchHighLightColor;
+  final Color linkColor;
+  final Color mentionUserColor;
+  final Color mentionedMeBgColor;
 }
 
 class LocationMessageViewStyle{
@@ -118,7 +142,10 @@ class TextMessageViewStyle{
   const TextMessageViewStyle({this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 14),
     this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff455E93),fontSize: 11),
     this.highlightColor = Colors.orange,//while searching a message to highlight the text
-    this.urlMessageColor = const Color(0xff4879F9),this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
+    this.urlMessageColor = const Color(0xff4879F9),
+    this.mentionUserColor = const Color(0xff4879F9),
+    this.mentionedMeBgColor = const Color(0XffD2E3FC),
+    this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
       color: Color(0xffD0D8EB),
     ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7)),
     this.iconFavourites,
@@ -127,6 +154,8 @@ class TextMessageViewStyle{
   final TextStyle timeTextStyle;
   final Color highlightColor;
   final Color urlMessageColor;
+  final Color mentionUserColor;
+  final Color mentionedMeBgColor;
   final CallLinkViewStyle callLinkViewStyle;
   final UIKitIcon? iconFavourites;
 }

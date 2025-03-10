@@ -183,6 +183,11 @@ class SessionManagement {
       await _preferences.setString("$prefix$key", value.toString());
     });
   }
+  static Future setCalenderId(String id) async => await _preferences.setString("calenderId",id);
+  static Future setCalenderName(String id) async => await _preferences.setString("calenderName",id);
+
+  static Future getCalenderId(String key) async =>  _preferences.get("calenderId")??"";
+  static Future getCalenderName(String key) async =>  _preferences.get("calenderName")??"";
 
   static Future setBool(String key, bool value) async => await _preferences.setBool("$prefix$key",value);
   static Future setString(String key,String value) async => await _preferences.setString("$prefix$key",value);

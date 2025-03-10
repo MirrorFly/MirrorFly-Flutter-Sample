@@ -206,6 +206,7 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
+const String mMeetIcon = 'assets/logos/schedule_icon.svg';
 const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
 const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
@@ -293,7 +294,7 @@ const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
 
-const String mediaBg = "assets/logos/ic_baloon.svg";
+const String mediaBg = "assets/logos/ic_baloon.png";
 
 //contact sync
 const String syncIcon = "assets/logos/sync.svg";
@@ -350,6 +351,10 @@ toToast(String text) {
 }
 
 class Constants {
+  static String licenseKey = 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+  static String iOSContainerID = 'group.com.mirrorfly.flutter'; //group.com.mirrorfly.flutter
+  static bool chatHistoryEnable = true;
+  static bool enableDebugLog = true;
   static MetaDataUserList? metaDataUserList;// = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
@@ -368,6 +373,7 @@ class Constants {
   static const sessionLockTime = 32;//in Seconds
   static const pinExpiry = 31;//in Days
   static const pinAlert = pinExpiry-5;//in Days
+  static const String mentionEscape = '‡';
 
 
 
@@ -387,6 +393,8 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const deletedMessage = "This message was deleted";
 
   static const List<int> defaultColorList = [
     0Xff9068BE,
@@ -445,6 +453,9 @@ class Constants {
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
 
+  static const String mMeet = "MEET";
+
+
   static const String composing = "composing";
   static const String gone = "Gone";
 
@@ -488,6 +499,7 @@ class Constants {
   static const String attachmentTypeAudio = "audio";
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
+  static const String meetScheduleOn = "Meet Scheduled on ";
 
   //Backup State
   static const String backupAccountSelected = "account_selected";

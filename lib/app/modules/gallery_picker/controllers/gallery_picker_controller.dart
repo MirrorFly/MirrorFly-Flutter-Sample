@@ -11,13 +11,23 @@ class GalleryPickerController extends GetxController {
   var pickedFile = <PickedAssetModel>[].obs;
   var userName = NavUtils.arguments['userName'];
   var textMessage = NavUtils.arguments['caption'];
+  var mentionedUsersIds = NavUtils.arguments['mentionedUsersIds'] as List<String>;
   var profile = NavUtils.arguments['profile'] as ProfileDetails;
   var userJid = NavUtils.arguments['userJid'];
   var maxPickImages = 10;
 
+  var captionMessage = <String>[].obs;
+  var captionMessageMentions = <List<String>>[];
+
   @override
   void onInit() {
     super.onInit();
+    if(textMessage != null) {
+      captionMessage.add(textMessage);
+    }
+    if(mentionedUsersIds.isNotEmpty) {
+      captionMessageMentions.add(mentionedUsersIds);
+    }
     pickedFile.clear();
     debugPrint("gallery picker controller --> $textMessage");
   }
@@ -25,6 +35,8 @@ class GalleryPickerController extends GetxController {
 
    addFile(List<PickedAssetModel> paths) {
      pickedFile(paths);
+     captionMessage.add("");
+     captionMessageMentions.add([]);
      pickedFile.refresh();
    }
    // addFile(List<PickedAssetModel> paths) {

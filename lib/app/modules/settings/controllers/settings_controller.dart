@@ -50,17 +50,9 @@ class SettingsController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
-        DialogUtils.hideLoading();
-        /*if (response.isSuccess) {
-          clearAllPreferences();
-        } else {
-          toToast(getTranslated("logoutFailed"));
-          // Get.snackbar("Logout", "Logout Failed");
-        }*/
         clearAllPreferences();
-      }).catchError((er) {
-        debugPrint("logoutOfChatSDK Catch Error==> $er");
-        DialogUtils.hideLoading();
+      }).catchError((ex){
+        LogMessage.d("logoutOfChatSDK", ex);
         clearAllPreferences();
       });
     } else {
@@ -80,6 +72,7 @@ class SettingsController extends GetxController {
       SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      DialogUtils.hideLoading();
       NavUtils.offAllNamed(Routes.login);
     });
   }

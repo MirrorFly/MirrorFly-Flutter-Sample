@@ -752,6 +752,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       clearAllChatSelection();
       toToast(getTranslated("chatsUnPinned"));
     }
+    reArrangeRecentChats();
+  }
+
+  void reArrangeRecentChats(){
+    try {
+      recentChats.sort((a, b) =>
+          b.lastMessageTime!.compareTo(a.lastMessageTime!));
+    }catch(e){
+      debugPrint(e.toString());
+    }
   }
 
   muteChats() {
@@ -1050,6 +1060,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   void setTypingStatus(String singleOrgroupJid, String userId, String typingStatus) {
+    LogMessage.d("setTypingStatus", "singleOrgroupJid : $singleOrgroupJid, userId : $userId, typingStatus: $typingStatus");
     var index = typingAndGoneStatus.indexWhere((it) => it.singleOrgroupJid == singleOrgroupJid && it.userId == userId);
     if (typingStatus.toLowerCase() == Constants.composing) {
       if (index.isNegative) {
@@ -1186,6 +1197,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   onClearPressed() {
+    lastInputValue="";
     filteredRecentChatList.clear();
     chatMessages.clear();
     userList.clear();

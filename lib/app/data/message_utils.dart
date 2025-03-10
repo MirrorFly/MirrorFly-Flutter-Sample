@@ -243,6 +243,12 @@ class MessageUtils{
         mLocationIcon,
           fit: BoxFit.contain,
         );
+      case Constants.mMeet:
+        return AppUtils.svgIcon(icon:
+        mMeetIcon,
+          colorFilter:const ColorFilter.mode(textColor, BlendMode.srcIn),
+          fit: BoxFit.contain,
+        );
       default:
         return const SizedBox();
     }
@@ -265,11 +271,21 @@ class MessageUtils{
         return "Contact";
       case Constants.mLocation:
         return "Location";
+        case Constants.mMeet:
+      return "Meet";
       default:
         return null;
     }
   }
 
+
+  static String getMeetMessage (int timestamp){
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    String formattedDate = DateFormat("MMM d, yyyy h:mm a").format(dateTime);
+    formattedDate = formattedDate.replaceAll("AM", "am").replaceAll("PM", "pm");
+   String message = getTranslated("scheduleOn")+formattedDate;
+    return message;
+  }
   static Future<File> writeImageTemp(dynamic bytes, String imageName) async {
     final dir = await getTemporaryDirectory();
     await dir.create(recursive: true);

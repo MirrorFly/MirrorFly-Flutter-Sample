@@ -54,7 +54,7 @@ class CallTimeoutController extends GetxController {
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
-            Mirrorfly.makeGroupVoiceCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
+            Mirrorfly.makeGroupVoiceCall(groupJid: groupId.value, toUserJidList: usersList, flyCallBack: (FlyResponse response) {
               NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
@@ -74,7 +74,7 @@ class CallTimeoutController extends GetxController {
           }else{
             var usersList = <String>[];
             for (var element in users) {if(element!=null) { usersList.add(element);}}
-            Mirrorfly.makeGroupVideoCall(toUserJidList: usersList, flyCallBack: (FlyResponse response) {
+            Mirrorfly.makeGroupVideoCall(groupJid: groupId.value, toUserJidList: usersList, flyCallBack: (FlyResponse response) {
               NavUtils.offNamed(
                   Routes.outGoingCallView, arguments: {"userJid": users});
             });
