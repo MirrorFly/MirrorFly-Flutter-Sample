@@ -338,24 +338,16 @@ class RestoreView extends NavViewStateful<RestoreController> {
                       ),
                     );
             }),
-            Obx(() {
-              return controller.isBackupFound.value
-                  ? const SizedBox(width: 20)
-                  : const Offstage();
-            }),
-            Obx(() {
-              return controller.isBackupFound.value
-                  ? ElevatedButton(
-                      style: AppStyleConfig.loginPageStyle.loginButtonStyle,
-                      onPressed: () {
-                        controller.skipBackup();
-                      },
-                      child: Text(
-                        getTranslated("skip"),
-                      ),
-                    )
-                  : const Offstage();
-            }),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              style: AppStyleConfig.loginPageStyle.loginButtonStyle,
+              onPressed: () {
+                controller.skipBackup();
+              },
+              child: Text(
+                getTranslated("skip"),
+              ),
+            ),
           ],
         ),
         const SizedBox(
