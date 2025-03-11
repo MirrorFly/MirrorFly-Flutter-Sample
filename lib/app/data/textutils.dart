@@ -24,7 +24,7 @@ class TextUtils {
     if (isValidPhoneNumber(text)) {
       return "mobile";
     }
-    if (text.isURL) {
+    if (text.trim().isURL) {
       return "website";
     }
     return "text";
@@ -48,8 +48,8 @@ class TextUtils {
       return parseEachLetterIntoTextSpan(
         text.checkNull(),
         underlineStyle,
-        recognizer: TapGestureRecognizer()
-          ..onTap = underlineStyle != null ? (){
+        recognizer: (text.checkNull().trim().isURL && MessageUtils.getCallLinkFromMessage(text.checkNull().trim()).isNotEmpty) ? null : TapGestureRecognizer()
+          ?..onTap = underlineStyle != null ? (){
             onTapForSpanText(text.checkNull());
           } : null,
       );

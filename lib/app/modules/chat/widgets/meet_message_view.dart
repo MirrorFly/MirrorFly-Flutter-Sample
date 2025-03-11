@@ -28,30 +28,44 @@ class MeetMessageView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
-          child: Row(
-            mainAxisSize: chatMessage.replyParentChatMessage == null
-                ? MainAxisSize.min
-                : MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Flexible(
-                  child: CustomTextView(
-                    key: Key("message_view+${chatMessage.messageId}"),
-                text: chatMessage.meetChatMessage?.link ?? "",
-                defaultTextStyle: textMessageViewStyle.textStyle,
-                linkColor: textMessageViewStyle.urlMessageColor,
-                mentionUserTextColor: textMessageViewStyle.mentionUserColor,
-                searchQueryTextColor: textMessageViewStyle.highlightColor,
-                mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
-                searchQueryString: search,
-              )),
-              const SizedBox(
-                width: 60,
-              ),
-            ],
+        GestureDetector(
+          onTap: () async {
+            if(await AppUtils.isNetConnected()) {
+              var link = MessageUtils.getCallLinkFromMessage(chatMessage.meetChatMessage?.link ?? "");
+              if (link.isNotEmpty) {
+                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                  "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+                });
+              }
+            }else{
+              toToast(getTranslated("noInternetConnection"));
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
+            child: Row(
+              mainAxisSize: chatMessage.replyParentChatMessage == null
+                  ? MainAxisSize.min
+                  : MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Flexible(
+                    child: CustomTextView(
+                      key: Key("message_view+${chatMessage.messageId}"),
+                  text: chatMessage.meetChatMessage?.link ?? "",
+                  defaultTextStyle: textMessageViewStyle.textStyle,
+                  linkColor: textMessageViewStyle.urlMessageColor,
+                  mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                  searchQueryTextColor: textMessageViewStyle.highlightColor,
+                  mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                  searchQueryString: search,
+                )),
+                const SizedBox(
+                  width: 60,
+                ),
+              ],
+            ),
           ),
         ),
         Padding(
