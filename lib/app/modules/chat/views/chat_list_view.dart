@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../common/app_localizations.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/chat/controllers/chat_controller.dart';
@@ -103,6 +104,8 @@ class _ChatListViewState extends State<ChatListView> {
                                   var chat = widget.chatList.indexWhere((element) => element.messageId == replyChat.messageId);
                                   if (!chat.isNegative) {
                                     widget.chatController.navigateToMessage(widget.chatList[chat], index: chat);
+                                  }else{
+                                    toToast(getTranslated("messageUnavailable"));
                                   }
                                 }
                               }
