@@ -317,6 +317,7 @@ class ReplyParentChatMessage {
     required this.locationChatMessage,
     required this.contactChatMessage,
     required this.mediaChatMessage,
+    required this.meetChatMessage,
     this.mentionedUsersIds,
   });
 
@@ -335,6 +336,7 @@ class ReplyParentChatMessage {
   ContactChatMessage? contactChatMessage;
   MediaChatMessage? mediaChatMessage;
   /// A list of userid associated with the mentioned Users.
+  MeetChatMessage? meetChatMessage;
   List<String>? mentionedUsersIds;
 
   factory ReplyParentChatMessage.fromJson(Map<String, dynamic> json) =>
@@ -359,6 +361,7 @@ class ReplyParentChatMessage {
         mediaChatMessage: json["mediaChatMessage"] == null
             ? null
             : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+        meetChatMessage:json['meetChatMessage'] == null ? null: MeetChatMessage.fromJson(json['meetChatMessage']),
         mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
       );
 
@@ -377,6 +380,7 @@ class ReplyParentChatMessage {
     "locationChatMessage": locationChatMessage?.toJson(),
     "contactChatMessage": contactChatMessage?.toJson(),
     "mediaChatMessage": mediaChatMessage?.toJson(),
+    "meetChatMessage":meetChatMessage?.toJson(),
     "mentionedUsersIds": mentionedUsersIds == null
         ? null
         : List<String>.from(mentionedUsersIds!.map((x) => x)),

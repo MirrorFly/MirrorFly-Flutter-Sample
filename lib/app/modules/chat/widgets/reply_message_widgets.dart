@@ -492,7 +492,7 @@ class ReplyMessageHeader extends StatelessWidget {
                   mentionUserTextColor: replyHeaderMessageViewStyle.mentionUserColor,
                   searchHighlightColor: replyHeaderMessageViewStyle.searchHighLightColor,
                   mentionedMeBgColor: replyHeaderMessageViewStyle.mentionedMeBgColor,
-                  scheduledDateTime: chatMessage.meetChatMessage?.scheduledDateTime ??0,
+                  scheduledDateTime: chatMessage.replyParentChatMessage?.meetChatMessage?.scheduledDateTime ??0,
                 )
                 // getReplyMessage(
                 //     chatMessage.replyParentChatMessage!.messageType,
