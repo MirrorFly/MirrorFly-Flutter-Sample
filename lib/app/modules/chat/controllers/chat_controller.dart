@@ -1236,11 +1236,17 @@ class ChatController extends FullLifeCycleController
     if (calenderId.isEmpty) {
       await ScheduleCalender().selectCalendarId();
     }
+    var replyMessageId = Constants.emptyString;
+    if (isReplying.value) {
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
     Mirrorfly.sendMessage(
         messageParams: MessageParams.meet(
           toJid: profile.jid.checkNull(),
           topicId: topicId,
           metaData: messageMetaData,
+          replyMessageId:replyMessageId,
           meetMessageParams: MeetMessage(
               scheduledDateTime: scheduledDateTime,
               link: Constants.webChatLogin + link,
