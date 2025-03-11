@@ -125,69 +125,65 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
               const SizedBox(
                 height: 10,
               ),
-              if(isEnableSchedule)
-              Divider(
-                thickness: 1,
-                color: Colors.black.withOpacity(0.1)
-              ),
+              if (isEnableSchedule)
+                Divider(thickness: 1, color: Colors.black.withOpacity(0.1)),
               const SizedBox(
                 height: 10,
               ),
             ],
-            if(isEnableSchedule)...[
-            SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Text(
-                    getTranslated("scheduleMeeting"),
-                    style:
-                        meetBottomSheetStyle.scheduleMeetToggleStyle.textStyle,
-                  )),
-                  Obx(() {
-                    return FlutterSwitch(
-                      width: 40.0,
-                      height: 20.0,
-                      valueFontSize: 12.0,
-                      toggleSize: 12.0,
-                      activeColor: meetBottomSheetStyle
-                          .scheduleMeetToggleStyle.toggleStyle.activeColor,
-                      //Colors.white,
-                      activeToggleColor: meetBottomSheetStyle
-                          .scheduleMeetToggleStyle
-                          .toggleStyle
-                          .activeToggleColor,
-                      //Colors.blue,
-                      inactiveToggleColor: meetBottomSheetStyle
-                          .scheduleMeetToggleStyle
-                          .toggleStyle
-                          .inactiveToggleColor,
-                      //Colors.grey,
-                      inactiveColor: meetBottomSheetStyle
-                          .scheduleMeetToggleStyle.toggleStyle.inactiveColor,
-                      //Colors.white,
-                      switchBorder: Border.all(
-                          color: controller.turnOnSchedule.value
-                              ? meetBottomSheetStyle.scheduleMeetToggleStyle
-                                  .toggleStyle.activeToggleColor
-                              : meetBottomSheetStyle.scheduleMeetToggleStyle
-                                  .toggleStyle.inactiveToggleColor,
-                          width: 1),
-                      value: controller.turnOnSchedule.value,
-                      onToggle: controller.meetLink.value.isEmpty
-                          ? (v) {}
-                          : (value) async {
-                              controller.scheduleToggle(value);
-                            },
-                    );
-                  }),
-                ],
+            if (isEnableSchedule) ...[
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                      getTranslated("scheduleMeeting"),
+                      style: meetBottomSheetStyle
+                          .scheduleMeetToggleStyle.textStyle,
+                    )),
+                    Obx(() {
+                      return FlutterSwitch(
+                        width: 40.0,
+                        height: 20.0,
+                        valueFontSize: 12.0,
+                        toggleSize: 12.0,
+                        activeColor: meetBottomSheetStyle
+                            .scheduleMeetToggleStyle.toggleStyle.activeColor,
+                        //Colors.white,
+                        activeToggleColor: meetBottomSheetStyle
+                            .scheduleMeetToggleStyle
+                            .toggleStyle
+                            .activeToggleColor,
+                        //Colors.blue,
+                        inactiveToggleColor: meetBottomSheetStyle
+                            .scheduleMeetToggleStyle
+                            .toggleStyle
+                            .inactiveToggleColor,
+                        //Colors.grey,
+                        inactiveColor: meetBottomSheetStyle
+                            .scheduleMeetToggleStyle.toggleStyle.inactiveColor,
+                        //Colors.white,
+                        switchBorder: Border.all(
+                            color: controller.turnOnSchedule.value
+                                ? meetBottomSheetStyle.scheduleMeetToggleStyle
+                                    .toggleStyle.activeToggleColor
+                                : meetBottomSheetStyle.scheduleMeetToggleStyle
+                                    .toggleStyle.inactiveToggleColor,
+                            width: 1),
+                        value: controller.turnOnSchedule.value,
+                        onToggle: controller.meetLink.value.isEmpty
+                            ? (v) {}
+                            : (value) async {
+                                controller.scheduleToggle(value);
+                              },
+                      );
+                    }),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20
-            )],
+              const SizedBox(height: 20)
+            ],
             if (controller.turnOnSchedule.value) ...[
               GestureDetector(
                 onTap: () async {
