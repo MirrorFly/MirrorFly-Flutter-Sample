@@ -140,7 +140,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                         child: Text(
                       getTranslated("scheduleMeeting"),
                       style: meetBottomSheetStyle
-                          .scheduleMeetToggleStyle.textStyle,
+                          .scheduleMeetToggleStyle.textStyle.copyWith(fontWeight: FontWeight.bold),
                     )),
                     Obx(() {
                       return FlutterSwitch(

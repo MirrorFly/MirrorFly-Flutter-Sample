@@ -109,7 +109,7 @@ class MeetMessageView extends StatelessWidget {
                     child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
-                    getTranslated("joinVideoMeet"),
+                    getTranslated("joinVideoMeet"),style:textMessageViewStyle.scheduleTextStyle,
                   ),
                 )),
                 chatMessage.isMessageStarred.value
@@ -193,20 +193,20 @@ class MeetLinkView extends StatelessWidget {
           minTileHeight: 60,
           title: Text(
             getTranslated("scheduleOn"),
-            style: callLinkViewStyle.textStyle,
+            style: callLinkViewStyle.textStyle.copyWith(color:callLinkViewStyle.scheduleTileColor,fontSize: 14,),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               formattedDate.replaceAll("AM", "am").replaceAll("PM", "pm"),
-              style: callLinkViewStyle.textStyle,
+              style: callLinkViewStyle.textStyle.copyWith(color:callLinkViewStyle.scheduleDateTimeColor,fontSize: 12,),
             ),
           ),
           trailing: AppUtils.svgIcon(
               icon: videoCamera,
               width: 30,
               colorFilter: ColorFilter.mode(
-                  callLinkViewStyle.iconColor, BlendMode.srcIn)),
+                  callLinkViewStyle.scheduleIconColor, BlendMode.srcIn)),
         ),
       ),
     );
