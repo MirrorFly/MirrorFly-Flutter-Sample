@@ -283,11 +283,11 @@ class ReplyMessage extends StatelessWidget {
                 icon: videoCamera,
                 width: 15,
                 colorFilter:const ColorFilter.mode(
-                    Color(0xff97A5C7), BlendMode.srcIn)),
+                    Color.fromRGBO(151, 165, 199, 1), BlendMode.srcIn)),
             const SizedBox(
               width: 5,
             ),
-            Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
+            Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime,isScheduleOn: false),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
           ],
         );
       default:

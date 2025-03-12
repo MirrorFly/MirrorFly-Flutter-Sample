@@ -79,7 +79,7 @@ class MessageContent extends StatelessWidget {
           contactMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.contactMessageViewStyle : receiverChatBubbleStyle.contactMessageViewStyle,
           decoration: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.decoration : receiverChatBubbleStyle.decoration,
         );
-      }else if (chatList[index].messageType.toUpperCase() == "MEET" ) {
+      }else if (chatList[index].messageType.toUpperCase() == Constants.mMeet ) {
         return MeetMessageView(
           chatMessage: chatMessage,
           search: search,

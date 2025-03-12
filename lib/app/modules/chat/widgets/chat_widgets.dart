@@ -11,6 +11,7 @@ import '../../../model/chat_message_model.dart';
 
 Widget messageNotAvailableWidget(ChatMessageModel chatMessage) {
   return Container(
+    width: double.infinity,
     padding: const EdgeInsets.all(12),
     margin: const EdgeInsets.all(2),
     decoration: BoxDecoration(
