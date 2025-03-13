@@ -21,7 +21,7 @@ Widget lockItem(
           const SizedBox(
             height: 4,
           ),
-          Text(
+          subtitle.isEmpty ? const Offstage() : Text(
             subtitle,
             style: const TextStyle(fontSize: 13, color: textColor),
           ),

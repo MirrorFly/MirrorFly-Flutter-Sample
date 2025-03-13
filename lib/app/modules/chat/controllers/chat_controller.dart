@@ -548,42 +548,34 @@ class ChatController extends FullLifeCycleController
   }
 
   showBlockStatusAlert(Function? function) {
-    DialogUtils.showAlert(
-        dialogStyle: AppStyleConfig.dialogStyle,
-        message: getTranslated("unBlockToSendMsg"),
-        actions: [
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () {
-                NavUtils.back();
-              },
-              child: Text(
-                getTranslated("cancel").toUpperCase(),
-              )),
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () async {
-                NavUtils.back();
-                Mirrorfly.unblockUser(
-                    userJid: profile.jid!,
-                    flyCallBack: (FlyResponse response) {
-                      if (response.isSuccess) {
-                        debugPrint(response.toString());
-                        profile.isBlocked = false;
-                        isBlocked(false);
-                        DialogUtils.hideLoading();
-                        toToast(getTranslated("hasUnBlocked")
-                            .replaceFirst("%d", getName(profile)));
-                        if (function != null) {
-                          function();
-                        }
-                      }
-                    });
-              },
-              child: Text(
-                getTranslated("unblock").toUpperCase(),
-              )),
-        ]);
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+          onPressed: () {
+            NavUtils.back();
+          },
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+          onPressed: () async {
+            NavUtils.back();
+            Mirrorfly.unblockUser(
+                userJid: profile.jid!,
+                flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
+                    debugPrint(response.toString());
+                    profile.isBlocked = false;
+                    isBlocked(false);
+                    DialogUtils.hideLoading();
+                    toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
+                    if (function != null) {
+                      function();
+                    }
+                  }else{
+                    toToast(response.errorMessage);
+                  }
+                });
+          },
+          child: Text(getTranslated("unblock").toUpperCase(), )),
+    ]);
   }
 
   disableBusyChatAndSend() async {
@@ -1757,47 +1749,41 @@ class ChatController extends FullLifeCycleController
 
   unBlockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      DialogUtils.showAlert(
-          dialogStyle: AppStyleConfig.dialogStyle,
-          message:
-              getTranslated("unBlockUser").replaceFirst("%d", getName(profile)),
-          actions: [
-            TextButton(
-                style: AppStyleConfig.dialogStyle.buttonStyle,
-                onPressed: () {
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () {
+              NavUtils.back();
+            },
+            child: Text(getTranslated("cancel").toUpperCase(), )),
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () async {
+              await AppUtils.isNetConnected().then((isConnected) {
+                if (isConnected) {
                   NavUtils.back();
-                },
-                child: Text(
-                  getTranslated("cancel").toUpperCase(),
-                )),
-            TextButton(
-                style: AppStyleConfig.dialogStyle.buttonStyle,
-                onPressed: () async {
-                  await AppUtils.isNetConnected().then((isConnected) {
-                    if (isConnected) {
-                      NavUtils.back();
-                      // DialogUtils.showLoading(message: "Unblocking User");
-                      Mirrorfly.unblockUser(
-                          userJid: profile.jid!,
-                          flyCallBack: (FlyResponse response) {
-                            debugPrint(response.toString());
-                            profile.isBlocked = false;
-                            isBlocked(false);
-                            getUnsentMessageOfAJid();
-                            setChatStatus();
-                            DialogUtils.hideLoading();
-                            toToast(getTranslated("hasUnBlocked")
-                                .replaceFirst("%d", getName(profile)));
-                          });
-                    } else {
-                      toToast(getTranslated("noInternetConnection"));
-                    }
-                  });
-                },
-                child: Text(
-                  getTranslated("unblock").toUpperCase(),
-                )),
-          ]);
+                  // DialogUtils.showLoading(message: "Unblocking User");
+                  Mirrorfly.unblockUser(
+                      userJid: profile.jid!,
+                      flyCallBack: (FlyResponse response) {
+                        if (response.isSuccess) {
+                          debugPrint(response.toString());
+                          profile.isBlocked = false;
+                          isBlocked(false);
+                          getUnsentMessageOfAJid();
+                          setChatStatus();
+                          DialogUtils.hideLoading();
+                          toToast(getTranslated("hasUnBlocked").replaceFirst(
+                              "%d", getName(profile)));
+                        }else{
+                          toToast(response.errorMessage);
+                        }
+                      });
+                } else {
+                toToast(getTranslated("noInternetConnection"));
+                }
+              });
+            },
+            child: Text(getTranslated("unblock").toUpperCase(), )),
+      ]);
     });
   }
 

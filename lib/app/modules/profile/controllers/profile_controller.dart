@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart' as libphonenumber;
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../extensions/extensions.dart';
@@ -67,11 +68,17 @@ class ProfileController extends GetxController {
         return;
       }
     }
-    checkAndEnableNotificationSound();
-    getProfile();
+
     //profileStatus.value="I'm Mirror fly user";
     // await askStoragePermission();
     // getMetaData();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    checkAndEnableNotificationSound();
+    getProfile();
   }
 
   Future<void> save({bool frmImage=false}) async {
@@ -111,7 +118,7 @@ class ProfileController extends GetxController {
             var unformatted = formattedNumber['national_number'];//profileMobile.text.replaceAll(" ", "").replaceAll("+", "");
             // var unformatted = profileMobile.text;
             Mirrorfly.updateMyProfile(name: profileName.text.toString(), email: profileEmail.text.toString(),
-                mobile: unformatted,
+                mobile: "${SessionManagement.getCountryCode().checkNull()}$unformatted",
                 status: profileStatus.value.toString(),
                 image: userImgUrl.value.isEmpty ? null : userImgUrl.value,
               flyCallback: (FlyResponse response){
@@ -288,10 +295,12 @@ class ProfileController extends GetxController {
       var jid = SessionManagement.getUserJID().checkNull();
       LogMessage.d("jid", jid);
       if (jid.isNotEmpty) {
+        DialogUtils.showLoading(message: getTranslated("pleaseWait"),dialogStyle: AppStyleConfig.dialogStyle);
         LogMessage.d("jid.isNotEmpty", jid.isNotEmpty.toString());
         loading.value = true;
         Mirrorfly.getUserProfile(jid: jid,fetchFromServer: await AppUtils.isNetConnected(),flyCallback:(FlyResponse response){
           LogMessage.d("getUserProfile", response.toString());
+          DialogUtils.hideLoading();
           if(response.isSuccess) {
             insertDefaultStatusToUser();
             loading.value = false;
@@ -323,14 +332,15 @@ class ProfileController extends GetxController {
                 SessionManagement.setUserImage(Constants.emptyString);
                 changed((from == Routes.login));
                 name(data.data!.name.toString());
-                var userProfileData = ProData(
-                    email: profileEmail.text.toString(),
-                    image: userImgUrl.value,
-                    mobileNumber: data.data!.mobileNumber.checkNull(),
-                    nickName: profileName.text,
-                    name: profileName.text,
-                    status: profileStatus.value);
-                SessionManagement.setCurrentUser(userProfileData);
+
+                // var userProfileData = ProData(
+                //     email: profileEmail.text.toString(),
+                //     image: userImgUrl.value,
+                //     mobileNumber: data.data!.mobileNumber.checkNull(),
+                //     nickName: profileName.text,
+                //     name: profileName.text,
+                //     status: profileStatus.value);
+                // SessionManagement.setCurrentUser(userProfileData);
                 update();
               }
             } else {

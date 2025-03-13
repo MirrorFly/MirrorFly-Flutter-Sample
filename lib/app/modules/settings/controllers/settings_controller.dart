@@ -11,6 +11,7 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 
+
 class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
   RxString version = "".obs;

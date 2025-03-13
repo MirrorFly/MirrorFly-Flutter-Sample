@@ -33,7 +33,7 @@ class RecalledMessageView extends StatelessWidget {
                   width: 15,
                   height: 15,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Text(
                   chatMessage.isMessageSentByMe
                       ? getTranslated("youDeletedThisMessage")
@@ -45,7 +45,7 @@ class RecalledMessageView extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            width: 10,
+            width: 8,
           ),
           Row(
             children: [

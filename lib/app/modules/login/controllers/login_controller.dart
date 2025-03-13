@@ -21,6 +21,7 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
+import '../views/otp_view.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -99,7 +100,17 @@ class LoginController extends GetxController {
     } else {
       if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
         // phoneAuth();
-        registerAccount();
+        if (Constants.isOTPViewEnabled) {
+          DialogUtils.bottomSheet(
+            OtpView(controller: this),
+            ignoreSafeArea: true,
+            isScrollControlled: true,
+            enableDrag: false,
+          );
+        }else{
+          registerAccount();
+        }
+        // NavUtils.toNamed(Routes.otp);
       }else{
         toToast(getTranslated("plsEnterValidMobileNumber"));
       }
@@ -125,10 +136,15 @@ class LoginController extends GetxController {
       if (value != null) {
         SessionManagement.setUserJID(value);
         DialogUtils.hideLoading();
-        NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        if (Constants.isBackupFeatureEnabled) {
+          NavUtils.offAllNamed(Routes.restoreBackup,
+              arguments: {"mobile": mobileNumber.text.toString()});
+        }else {
+          NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        }
       }
     }).catchError((error) {
-      debugPrint(error.message);
+      debugPrint(error);
     });
   }
 
@@ -453,13 +469,26 @@ class LoginController extends GetxController {
           onPressed: () {
             NavUtils.back();
             isForceRegister = true;
-            registerUser();
+            // registerUser();
+            registerAccount();
           },
           child: Text(getTranslated("continue"), )),
     ]);
   }
 
   gotoLogin() {
-    NavUtils.offAllNamed(Routes.login);
+    // Future.delayed(const Duration(milliseconds: 500),(){
+    //   NavUtils.offAllNamed(Routes.login);
+    // });
+
+    NavUtils.back();
+  }
+
+  void verifyDummyOTP() {
+    if (smsCode.length == 6 && smsCode == "123456") {
+      registerAccount();
+    } else {
+      toToast(getTranslated("inValidOTP"));
+    }
   }
 }
