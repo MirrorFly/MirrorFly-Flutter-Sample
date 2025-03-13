@@ -81,46 +81,6 @@ class ScheduleCalender {
       await SessionManagement.setCalenderId(calendar.id ?? "");
       await SessionManagement.setCalenderName(calendar.name ?? "");
     }
-    /*if(NavUtils.currentContext.mounted) {
-      Calendar? calendar = (await showDialog(
-        context: NavUtils.currentContext,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(getTranslated("selectCalender")),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                itemCount: writableCalendars.length,
-                itemBuilder: (context, index) {
-                  final calendar = writableCalendars[index];
-                  String calendarName = calendar.name ?? "Unnamed";
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue,
-                      // Choose a color based on preference
-                      child: Text(
-                        calendarName[0].toUpperCase(),
-                        // First letter of calendar name
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    title: Text(calendarName),
-                    onTap: () => Navigator.pop(context, calendar),
-                  );
-                },
-              ),
-            ),
-          );
-        },
-      )) as Calendar?;
-      if (calendar != null) {
-        await SessionManagement.setCalenderId(calendar.id ?? "");
-        await SessionManagement.setCalenderName(calendar.name ?? "");
-      }
-    }*/
   }
 
   static Future<Calendar?> customDialog(
@@ -138,28 +98,6 @@ class ScheduleCalender {
         },
         child: content,
       ),
-      /*actions: [
-        TextButton(
-            style: dialogStyle.buttonStyle,
-            onPressed: () {
-              NavUtils.back(result: false);
-              // notNowBtn();
-            },
-            child: Text(
-              getTranslated("notNow").toUpperCase(),
-              // style: const TextStyle(color: buttonBgColor),
-            )),
-        TextButton(
-            style: dialogStyle.buttonStyle,
-            onPressed: () {
-              NavUtils.back(result: true);
-              // continueBtn();
-            },
-            child: Text(
-              getTranslated("continue").toUpperCase(),
-              // style: const TextStyle(color: buttonBgColor),
-            ))
-      ],*/
     ));
   }
 
@@ -170,7 +108,7 @@ class ScheduleCalender {
     final startTime = DateTime.fromMillisecondsSinceEpoch(meetMessage.scheduledDateTime);
     final event = Event(
       calenderId,
-      title: meetMessage.title.isEmpty ? "" : meetMessage.title,
+      title: meetMessage.title.isEmpty ? "Flutter-Mirrorfly-Meet" : meetMessage.title,
       description: meetMessage.link,
       start: toTZDateTime(startTime),
       end: toTZDateTime(startTime.add(const Duration(hours: 1))),

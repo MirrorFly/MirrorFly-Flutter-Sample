@@ -230,6 +230,8 @@ class ViewAllMediaController extends GetxController {
       textContent = message.messageTextContent!;
     } else if (message.isImageMessage()) {
       textContent = message.mediaChatMessage!.mediaCaptionText;
+    } else if (message.isMeetMessage()) {
+      textContent = (message.meetChatMessage?.link).checkNull();
     } else {
       textContent = Constants.emptyString;
     }

@@ -150,8 +150,8 @@ class _ChatListViewState extends State<ChatListView> {
                                                   index: index,textStyle: widget.receiverChatStyle.participantNameTextStyle,),
                                             ],
                                             widget.chatList[index].isThisAReplyMessage
-                                                ? widget.chatList[index].replyParentChatMessage == null
-                                                    ? messageNotAvailableWidget(widget.chatList[index])
+                                                ?( widget.chatList[index].replyParentChatMessage == null || widget.chatList[index].replyParentChatMessage!.isMessageRecalled ||widget.chatList[index].replyParentChatMessage!.isMessageDeleted)
+                                                ? messageNotAvailableWidget(widget.chatList[index])
                                                     : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
                                                 : const Offstage(),
                                             MessageContent(

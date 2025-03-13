@@ -345,13 +345,15 @@ class RecentChatItem extends StatelessWidget {
                 checkSenderShouldShow(chat)
                     ? Flexible(
                         child: Text(
-                          "${chat.senderUserName.checkNull()}:",
+                          chat.senderUserName.checkNull(),
                           style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.clip,
                         ),
                       )
                     : const Offstage(),
+                if(checkSenderShouldShow(chat))
+                Text(": ", style: recentChatItemStyle.subtitleTextStyle),
                 chat.isMessageRecalled.value ? const Offstage() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
@@ -361,6 +363,7 @@ class RecentChatItem extends StatelessWidget {
                           : 0.0,
                 ),
                 Expanded(
+                  flex: 2,
                   child: CustomTextView(
                     text: chat.isMessageRecalled.value
                         ? setRecalledMessageText(chat.isMessageSentByMe)

@@ -279,12 +279,16 @@ class MessageUtils{
   }
 
 
-  static String getMeetMessage (int timestamp){
+  static String getMeetMessage (int timestamp, {bool isScheduleOn = true}){
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     String formattedDate = DateFormat("MMM d, yyyy h:mm a").format(dateTime);
     formattedDate = formattedDate.replaceAll("AM", "am").replaceAll("PM", "pm");
    String message = getTranslated("scheduleOn")+formattedDate;
-    return message;
+   if(isScheduleOn) {
+      return message;
+    }else{
+     return formattedDate;
+   }
   }
   static Future<File> writeImageTemp(dynamic bytes, String imageName) async {
     final dir = await getTemporaryDirectory();
