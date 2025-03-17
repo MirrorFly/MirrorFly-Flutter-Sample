@@ -554,6 +554,41 @@ class BaseController {
         Get.find<DashboardController>().onCallLogsCleared();
       }
     });
+
+    Mirrorfly.onMessageDeleted.listen((event) {
+      LogMessage.d("onMessageDeleted", event);
+
+    });
+
+    Mirrorfly.onAllChatsCleared.listen((event) {
+      LogMessage.d("onAllChatsCleared", event);
+    });
+
+    Mirrorfly.onChatCleared.listen((event) {
+      LogMessage.d("onChatCleared", event);
+    });
+
+    Mirrorfly.onArchiveUnArchiveChats.listen((event) {
+      LogMessage.d("onArchiveUnArchiveChats", event);
+    });
+
+
+    Mirrorfly.onArchivedSettingsUpdated.listen((event) {
+      LogMessage.d("onArchivedSettingsUpdated", event);
+    });
+
+    Mirrorfly.onUpdateMuteSettings.listen((event) {
+      LogMessage.d("onUpdateMuteSettings", event);
+    });
+
+    // Mirrorfly.onWebLogout.listen((event){
+    //   LogMessage.d("onWebLogout", event);
+    // });
+
+    Mirrorfly.onChatMuteStatusUpdated.listen((event) {
+      LogMessage.d("onChatMuteStatusUpdated", event);
+    });
+
     initializeBackupListeners();
   }
 
@@ -680,7 +715,9 @@ class BaseController {
 
   static void onGroupProfileFetched(groupJid) {}
 
-  static void onNewGroupCreated(groupJid) {}
+  static void onNewGroupCreated(groupJid) {
+    LogMessage.d("flutter onNewGroupCreated", groupJid.toString());
+  }
 
   static void onGroupProfileUpdated(groupJid) {
     LogMessage.d("flutter GroupProfileUpdated", groupJid.toString());
