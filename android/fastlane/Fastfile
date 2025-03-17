@@ -15,7 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "schedule meet bug fix-#FLUTTER-1773,#FLUTTER-1775,#FLUTTER-1778,#FLUTTER-1777,#FLUTTER-1779,#FLUTTER-1788,#FLUTTER-1785,#FLUTTER-1782,#FLUTTER-1787,#FLUTTER-1786,#FLUTTER-1783,#FLUTTER-1781,#FLUTTER-1784,#FLUTTER-1789,#FLUTTER-1791"
+  change_Log = "Mention feature sanity - #FLUTTER-1742"
 
 
   desc "Upload dev version to distributes in firebase"
