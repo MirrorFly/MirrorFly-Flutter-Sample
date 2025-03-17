@@ -74,7 +74,7 @@ class BackupView extends NavViewStateful<BackupController> {
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
               child: Text(
-                getTranslated("lastBackUpDesc"),
+                controller.isAndroid ? getTranslated("lastBackUpAndroidDesc") : getTranslated("lastBackUpiOSDesc"),
                 style: const TextStyle(color: Color(0xff767676)),
               ),
             ),
