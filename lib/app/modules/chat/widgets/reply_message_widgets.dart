@@ -341,11 +341,8 @@ getReplyImageHolder(
           width: size,
           height: size,
           child: ImageCacheManager.getImage(
-              isReply
-                  ? mediaChatMessage!.mediaThumbImage
-                  : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                      .checkNull(),
-              chatMessageModel.messageId,
+               mediaChatMessage!.mediaThumbImage,
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),
@@ -368,11 +365,9 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(
-              isReply
-                  ? mediaChatMessage!.mediaThumbImage
-                  : chatMessageModel.mediaChatMessage!.mediaThumbImage,
-              chatMessageModel.messageId,
+          child:  ImageCacheManager.getImage(
+              mediaChatMessage!.mediaThumbImage,
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),

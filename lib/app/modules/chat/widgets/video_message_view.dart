@@ -68,10 +68,14 @@ class VideoMessageView extends StatelessWidget {
                     : () {
                   onVideoClick();
                 },
-                child: ClipRRect(
-                  borderRadius: videoMessageViewStyle.videoBorderRadius,
-                  child: ImageCacheManager.getImage(
-                      mediaMessage.mediaThumbImage, chatMessage.messageId),
+                child: SizedBox(
+                  width:NavUtils.width * 0.60,
+                  height: NavUtils.height *0.4,
+                  child: ClipRRect(
+                    borderRadius: videoMessageViewStyle.videoBorderRadius,
+                    child: ImageCacheManager.getImage(
+                        mediaMessage.mediaThumbImage, chatMessage.messageId),
+                  ),
                 ),
               ),
               Positioned(
