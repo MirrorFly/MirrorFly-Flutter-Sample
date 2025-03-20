@@ -3586,7 +3586,14 @@ class ChatController extends FullLifeCycleController
       {bool removeFromList = true}) {
     Mirrorfly.markAsReadDeleteUnreadSeparator(jid: profile.jid.checkNull());
     if (removeFromList && !separatorPosition.isNegative) {
-      chatList.removeAt(separatorPosition);
+
+      /// Commented the below as the QA posted Unread separator should display
+      /// after the screen is loaded with new message - (FLUTTER-1807)
+      /// On Analysing, the next message is called sometimes when the screen is loaded,
+      /// So the unread separator is removed.
+      /// Now, when opening 2nd time, SDK will remove the unread separator.
+
+      // chatList.removeAt(separatorPosition);
     }
   }
 
