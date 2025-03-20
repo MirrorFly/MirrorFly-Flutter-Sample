@@ -80,6 +80,7 @@ dependencies:
 
 dependency_overrides:
   web: ^1.0.0
+  geolocator_android: 4.6.1
 
 dev_dependencies: 
   flutter_lints: 2.0.1
