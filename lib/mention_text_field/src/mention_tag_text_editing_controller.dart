@@ -349,8 +349,8 @@ class MentionTagTextEditingController extends TextEditingController {
 
     return TextSpan(
       style: style,
-      children: buildTextSpanChildren(res,style,mentionTagDecoration,tempList)
-      /*children: res.map((e) {
+      // children: buildTextSpanChildren(res,style,mentionTagDecoration,tempList)
+      children: res.map((e) {
         if (e == Constants.mentionEscape) {
           final mention = tempList.removeAt(0);
 
@@ -364,7 +364,7 @@ class MentionTagTextEditingController extends TextEditingController {
           );
         }
         return TextSpan(children: TextUtils.parseEachLetterIntoTextSpan(e,style), style: style);
-      }).toList(),*/
+      }).toList()
     );
   }
   List<WidgetSpan> buildTextSpanChildren(List<String> res, TextStyle? style, MentionTagDecoration mentionTagDecoration, List<MentionTagElement> tempList) {
