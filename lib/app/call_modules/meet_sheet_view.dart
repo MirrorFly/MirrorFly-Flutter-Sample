@@ -283,12 +283,14 @@ class MeetLinkController extends GetxController {
   Future<void> dateTimePicker(BuildContext context)async{
     TimeOfDay? timeValue;
 
+    DateTime lastSelectableDate = DateTime(DateTime.now().year + 25, 12, 31);
+
     DateTime? dateValue = await showDatePicker(
       context: context,
       currentDate: scheduleTime.value,
       initialDate:scheduleTime.value,
       firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
+      lastDate: lastSelectableDate,
     );
 
     if (dateValue != null && context.mounted) {
