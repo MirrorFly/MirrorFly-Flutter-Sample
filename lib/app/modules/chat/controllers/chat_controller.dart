@@ -1258,7 +1258,7 @@ class ChatController extends FullLifeCycleController
             LogMessage.d("sendMessage", response.errorMessage);
             // showError(response.exception);
           }
-        }).then((value) => NavUtils.back());
+        })/*.then((value) => NavUtils.back())*/;
   }
 
   void isTyping([String? typingText]) {
