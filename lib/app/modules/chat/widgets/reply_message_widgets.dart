@@ -277,17 +277,25 @@ class ReplyMessage extends StatelessWidget {
           ],
         );
       case Constants.mMeet:
-        return Row(
+        return Column(
           children: [
-            AppUtils.svgIcon(
-                icon: videoCamera,
-                width: 15,
-                colorFilter:const ColorFilter.mode(
-                    Color(0xff97A5C7), BlendMode.srcIn)),
-            const SizedBox(
-              width: 5,
+            Row(
+              children: [
+                AppUtils.svgIcon(
+                    icon: videoCamera,
+                    width: 15,
+                    colorFilter:const ColorFilter.mode(
+                        Color(0xff97A5C7), BlendMode.srcIn)),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false, maxLines: 2,)),
+                const SizedBox(
+                  width: 5,
+                ),
+              ],
             ),
-            Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
+            const SizedBox(height: 5,),
           ],
         );
       default:
@@ -452,6 +460,7 @@ class ReplyMessageHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
+      width: NavUtils.width * 0.60,
       decoration: replyHeaderMessageViewStyle.decoration,
       /*decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -466,6 +475,7 @@ class ReplyMessageHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 5),
                 getReplyTitle(
                     chatMessage.replyParentChatMessage!.isMessageSentByMe,
                     chatMessage.replyParentChatMessage!.senderUserName,
