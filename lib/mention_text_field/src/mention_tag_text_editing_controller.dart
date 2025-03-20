@@ -20,12 +20,25 @@ class MentionTagTextEditingController extends TextEditingController {
   }
 
   void _updateCursorPostion() {
-    if(selection.base.offset.isNegative){
+    if (selection.base.offset.isNegative) {
       return;
     }
     _cursorPosition = selection.base.offset;
-    if (_indexMentionEnd == null) return;
-    if (_cursorPosition - _indexMentionEnd! == 1) {
+    if (_indexMentionStart == null || _indexMentionEnd == null) return;
+
+    String textBeforeCursor = text.substring(0, _cursorPosition);
+
+    // Find the last '@' in the text before the cursor
+    int mentionStart = textBeforeCursor.lastIndexOf('@');
+
+    if (mentionStart != -1 &&
+        _cursorPosition >= mentionStart &&
+        _cursorPosition <= _indexMentionEnd!) {
+      _indexMentionStart = mentionStart; // Update mention start dynamically
+      // if (_cursorPosition >= _indexMentionStart! &&
+      //     _indexMentionStart <= _indexMentionEnd!) {
+      // if (_cursorPosition - _indexMentionEnd! == 1 ||
+      //     _cursorPosition == _indexMentionEnd) {
       onChanged(super.text);
     } else if (_cursorPosition - _indexMentionEnd! != 1) {
       _updateOnMention(null);
@@ -34,6 +47,7 @@ class MentionTagTextEditingController extends TextEditingController {
 
   late int _cursorPosition;
   int? _indexMentionEnd;
+  int? _indexMentionStart;
 
   final List<MentionTagElement> _mentions = [];
 
@@ -335,8 +349,8 @@ class MentionTagTextEditingController extends TextEditingController {
 
     return TextSpan(
       style: style,
-      children: buildTextSpanChildren(res,style,mentionTagDecoration,tempList)
-      /*children: res.map((e) {
+      // children: buildTextSpanChildren(res,style,mentionTagDecoration,tempList)
+      children: res.map((e) {
         if (e == Constants.mentionEscape) {
           final mention = tempList.removeAt(0);
 
@@ -350,7 +364,7 @@ class MentionTagTextEditingController extends TextEditingController {
           );
         }
         return TextSpan(children: TextUtils.parseEachLetterIntoTextSpan(e,style), style: style);
-      }).toList(),*/
+      }).toList()
     );
   }
   List<WidgetSpan> buildTextSpanChildren(List<String> res, TextStyle? style, MentionTagDecoration mentionTagDecoration, List<MentionTagElement> tempList) {
