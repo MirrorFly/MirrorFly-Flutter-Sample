@@ -1,2 +1,1 @@
-1.Mention Feature
-https://ctproduct.atlassian.net/browse/EWE-3
+Mention feature sanity issue - #FLUTTER-1810
