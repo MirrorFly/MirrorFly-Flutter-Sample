@@ -24,58 +24,58 @@ class MeetMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
-          child: Row(
-            mainAxisSize: chatMessage.replyParentChatMessage == null
-                ? MainAxisSize.min
-                : MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Flexible(
-                  child: CustomTextView(
-                    key: Key("message_view+${chatMessage.messageId}"),
-                text: chatMessage.meetChatMessage?.link ?? "",
-                defaultTextStyle: textMessageViewStyle.textStyle,
-                linkColor: textMessageViewStyle.urlMessageColor,
-                mentionUserTextColor: textMessageViewStyle.mentionUserColor,
-                searchQueryTextColor: textMessageViewStyle.highlightColor,
-                mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
-                searchQueryString: search,
-              )),
-              const SizedBox(
-                width: 60,
-              ),
-            ],
+    return InkWell(
+      onTap: () async {
+        if (await AppUtils.isNetConnected()) {
+          var link = chatMessage.meetChatMessage!.link.checkNull();
+          if (link.isNotEmpty) {
+            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+            });
+          }
+        } else {
+          toToast(getTranslated("noInternetConnection"));
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
+            child: Row(
+              mainAxisSize: chatMessage.replyParentChatMessage == null
+                  ? MainAxisSize.min
+                  : MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Flexible(
+                    child: CustomTextView(
+                      key: Key("message_view+${chatMessage.messageId}"),
+                  text: chatMessage.meetChatMessage?.link ?? "",
+                  defaultTextStyle: textMessageViewStyle.textStyle,
+                  linkColor: textMessageViewStyle.urlMessageColor,
+                  mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                  searchQueryTextColor: textMessageViewStyle.highlightColor,
+                  mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                  searchQueryString: search,
+                )),
+                const SizedBox(
+                  width: 60,
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
-          child: MeetLinkView(
-            message: chatMessage.meetChatMessage?.link ??"",
-            timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
-            callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: MeetLinkView(
+              message: chatMessage.meetChatMessage?.link ??"",
+              timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
+              callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+            ),
           ),
-        ),
-        InkWell(
-          onTap: () async {
-            if (await AppUtils.isNetConnected()) {
-              var link = chatMessage.meetChatMessage!.link.checkNull();
-              if (link.isNotEmpty) {
-                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                  "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-                });
-              }
-            } else {
-              toToast(getTranslated("noInternetConnection"));
-            }
-          },
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.only(right: 4.0, bottom: 2),
             child: Row(
               mainAxisSize: chatMessage.replyParentChatMessage == null
@@ -140,8 +140,8 @@ class MeetMessageView extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
