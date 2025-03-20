@@ -446,10 +446,16 @@ class ReplyMessageHeader extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
 
+  getReplyType(){
+    String replyType= chatMessage.replyParentChatMessage?.messageType ??"";
+    String type= chatMessage.messageType ??"";
+    return ((type==Constants.mFile||type==Constants.mVideo||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
+  }
   @override
   Widget build(BuildContext context) {
     LogMessage.d("ReplyMessageHeader", chatMessage.toJson());
     return Container(
+      width: getReplyType()?NavUtils.width * 0.59:null,
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
       decoration: replyHeaderMessageViewStyle.decoration,
