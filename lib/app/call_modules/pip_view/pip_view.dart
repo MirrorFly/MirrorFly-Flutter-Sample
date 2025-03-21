@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_widgets.dart';
-import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
@@ -13,13 +13,13 @@ import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 
-class PIPView extends NavViewStateful<CallController> {
+class PIPView extends NavViewStateful<PipViewController> {
   const PIPView({super.key,
     required this.style,});
   final PIPViewStyle style;
 
   @override
-  CallController createController({String? tag}) => Get.put(CallController());
+  PipViewController createController({String? tag}) => Get.put(PipViewController());
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +88,7 @@ class MirrorflyPIPItem extends StatelessWidget {
   final double height;
   final CallUserList item;
   final CallUserTileStyle userStyle;
-  final CallController controller;
+  final PipViewController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +133,7 @@ class UserCallStatusView extends StatelessWidget {
   final double width;
   final double height;
   final CallUserList item;
-  final CallController controller;
+  final PipViewController controller;
   final CallUserTileStyle style;
 
   @override
@@ -217,7 +217,7 @@ class SpeakingIndicatorItem extends StatelessWidget {
 
   final CallUserList item;
   final CallUserTileStyle style;
-  final CallController controller;
+  final PipViewController controller;
 
   @override
   Widget build(BuildContext context) {

@@ -247,7 +247,7 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                                 FlPiP().enable(
                                     android: FlPiPAndroidConfig(
                                       rect: Rect.fromLTWH(NavUtils.width * 0.7,
-                                          NavUtils.height * 0.7, 435, 811),//378, 748
+                                          NavUtils.height * 0.7, 380, 811),//378, 748
                                       createNewEngine: true,
                                       closeIconPath: "assets/logos/close.png"
                                     ),
