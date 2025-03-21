@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
@@ -26,68 +24,62 @@ class _FloatingFabState extends State<FloatingFab> {
       .obs; // Initial position when dragging starts
   RxBool isDragging = false.obs;
   late double screenHeight;
-  RxDouble lastFabHeight=0.0.obs;
-
-  late StreamSubscription _heightListener;
-
 
   @override
-  void initState() {
-    super.initState();
-   _heightListener = widget.parentWidgetHeight.listen((value) {
-      if (value != 0.0 &&( value < position.value.dy||((value-position.value.dy)<50))) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          lastFabHeight(position.value.dy);
-          Offset newOffset = Offset(position.value.dx, widget.parentWidgetHeight/2);
-          updatePosition(newOffset); // Update the position
-        });
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      const double fabHeight = 56.0;
+      final double screenHeight = widget.parentWidgetHeight.value;
+      final double screenWidth = widget.parentWidgetWidth.value;
+
+      double displayBottom = position.value.dy;
+      if(widget.parentWidgetHeight.value !=0.0){
+        final double screenMid = screenHeight / 2;
+
+        final double fabScreenBottom = screenHeight - displayBottom - fabHeight;
+
+        // Move up only if FAB is in lower half and keyboard covers it
+        if (keyboardHeight > 0 &&
+            position.value.dy > screenMid &&
+            fabScreenBottom < keyboardHeight + 20) {
+          displayBottom = screenHeight - keyboardHeight - 20 - fabHeight;
+        }
+
+        // Fix the clamp crash by ensuring maxClamp is >= 0
+        double maxClamp = screenHeight - fabHeight;
+        maxClamp = maxClamp < 0 ? 0.0 : maxClamp;
+        displayBottom = displayBottom.clamp(0.0, maxClamp-10);
       }
-      if(lastFabHeight.value != 0.0){
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Offset newOffset = Offset(position.value.dx, lastFabHeight.value);
-          updatePosition(newOffset); // Update the position
-        });
-      }
+      return (widget.parentWidgetHeight.value ==0.0)? SizedBox():AnimatedPositioned(
+        duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
+        right: position.value.dx.clamp(0.0, screenWidth - fabHeight),
+        bottom: displayBottom,
+        child: GestureDetector(
+          onPanStart: (details) => isDragging(true),
+          onPanUpdate: (details) {
+            if (!isDragging.value) return;
+            double newX = position.value.dx - details.delta.dx;
+            double newY = position.value.dy - details.delta.dy;
+
+            newX = newX.clamp(0.0, screenWidth - fabHeight);
+            newY = newY.clamp(0.0, screenHeight - fabHeight);
+
+            position(Offset(newX, newY));
+          },
+          onPanEnd: (details) {
+            isDragging(false);
+            updatePosition(position.value);
+          },
+          child: buildFab(),
+        ),
+      );
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _heightListener.cancel();
-  }
-  @override
-  Widget build(BuildContext context) {
-        return Obx(() {
-          return AnimatedPositioned(
-            duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
-            right: position.value.dx,
-            bottom: position.value.dy,
-            child: GestureDetector(
-              onPanStart: (details) {
-                isDragging(true);
-                lastFabHeight(0.0);
-                // startPosition = position;
-              },
-              onPanUpdate: (details) {
-                if (!isDragging.value) return;
-        
-                position(Offset(position.value.dx - details.delta.dx,
-                    position.value.dy - details.delta.dy));
-              },
-              onPanEnd: (details) {
-                if (!isDragging.value) return;
-                // setState(() {
-                isDragging(false);
-                // });
-                updatePosition(position.value);
-              },
-              child: buildFab(),
-            ));
 
-      }
-    );
-  }
+
+
 
   void updatePosition(Offset newOffset) {
     double fabWidth = 56.0;
@@ -126,7 +118,7 @@ class _FloatingFabState extends State<FloatingFab> {
       child: FloatingActionButton(
         onPressed: widget.onFabTap,
         child: widget.fabTheme.iconMeet ?? AppUtils.svgIcon(icon:
-          meetSchedule,
+        meetSchedule,
           width: widget.fabTheme.meetFabStyle.iconSize,
           colorFilter: ColorFilter.mode(widget.fabTheme.meetFabStyle.foregroundColor ?? Colors.white, BlendMode.srcIn),
         ),
