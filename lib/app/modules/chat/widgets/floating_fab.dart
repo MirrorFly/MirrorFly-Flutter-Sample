@@ -28,27 +28,44 @@ class _FloatingFabState extends State<FloatingFab> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      const double fabHeight = 56.0;
+      final double screenHeight = widget.parentWidgetHeight.value;
+      final double screenWidth = widget.parentWidgetWidth.value;
+
+      double displayBottom = position.value.dy;
+      final double screenMid = screenHeight / 2;
+
+      final double fabScreenBottom = screenHeight - displayBottom - fabHeight;
+
+      // Move up only if FAB is in lower half and keyboard covers it
+      if (keyboardHeight > 0 && position.value.dy > screenMid && fabScreenBottom < keyboardHeight + 20) {
+        displayBottom = screenHeight - keyboardHeight - 20 - fabHeight;
+      }
+
+      // Fix the clamp crash by ensuring maxClamp is >= 0
+      double maxClamp = screenHeight - fabHeight;
+      maxClamp = maxClamp < 0 ? 0.0 : maxClamp;
+      displayBottom = displayBottom.clamp(0.0, maxClamp);
+
       return AnimatedPositioned(
         duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
-        right: position.value.dx,
-        bottom: position.value.dy,
+        right: position.value.dx.clamp(0.0, screenWidth - fabHeight),
+        bottom: displayBottom,
         child: GestureDetector(
-          onPanStart: (details) {
-            isDragging(true);
-            // startPosition = position;
-
-          },
+          onPanStart: (details) => isDragging(true),
           onPanUpdate: (details) {
             if (!isDragging.value) return;
+            double newX = position.value.dx - details.delta.dx;
+            double newY = position.value.dy - details.delta.dy;
 
-            position(Offset(position.value.dx - details.delta.dx,
-                position.value.dy - details.delta.dy));
+            newX = newX.clamp(0.0, screenWidth - fabHeight);
+            newY = newY.clamp(0.0, screenHeight - fabHeight);
+
+            position(Offset(newX, newY));
           },
           onPanEnd: (details) {
-            if (!isDragging.value) return;
-            // setState(() {
             isDragging(false);
-            // });
             updatePosition(position.value);
           },
           child: buildFab(),
@@ -56,6 +73,10 @@ class _FloatingFabState extends State<FloatingFab> {
       );
     });
   }
+
+
+
+
 
   void updatePosition(Offset newOffset) {
     double fabWidth = 56.0;
