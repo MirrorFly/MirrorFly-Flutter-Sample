@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
@@ -24,37 +26,67 @@ class _FloatingFabState extends State<FloatingFab> {
       .obs; // Initial position when dragging starts
   RxBool isDragging = false.obs;
   late double screenHeight;
+  RxDouble lastFabHeight=0.0.obs;
+
+  late StreamSubscription _heightListener;
+
 
   @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      return AnimatedPositioned(
-        duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
-        right: position.value.dx,
-        bottom: position.value.dy,
-        child: GestureDetector(
-          onPanStart: (details) {
-            isDragging(true);
-            // startPosition = position;
-
-          },
-          onPanUpdate: (details) {
-            if (!isDragging.value) return;
-
-            position(Offset(position.value.dx - details.delta.dx,
-                position.value.dy - details.delta.dy));
-          },
-          onPanEnd: (details) {
-            if (!isDragging.value) return;
-            // setState(() {
-            isDragging(false);
-            // });
-            updatePosition(position.value);
-          },
-          child: buildFab(),
-        ),
-      );
+  void initState() {
+    super.initState();
+   _heightListener = widget.parentWidgetHeight.listen((value) {
+      if (value != 0.0 &&( value < position.value.dy||((value-position.value.dy)<50))) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          lastFabHeight(position.value.dy);
+          Offset newOffset = Offset(position.value.dx, widget.parentWidgetHeight/2);
+          updatePosition(newOffset); // Update the position
+        });
+      }
+      if(lastFabHeight.value != 0.0){
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Offset newOffset = Offset(position.value.dx, lastFabHeight.value);
+          updatePosition(newOffset); // Update the position
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _heightListener.cancel();
+  }
+  @override
+  Widget build(BuildContext context) {
+        return Obx(() {
+          return AnimatedPositioned(
+            duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
+            right: position.value.dx,
+            bottom: position.value.dy,
+            child: GestureDetector(
+              onPanStart: (details) {
+                isDragging(true);
+                lastFabHeight(0.0);
+                // startPosition = position;
+              },
+              onPanUpdate: (details) {
+                if (!isDragging.value) return;
+        
+                position(Offset(position.value.dx - details.delta.dx,
+                    position.value.dy - details.delta.dy));
+              },
+              onPanEnd: (details) {
+                if (!isDragging.value) return;
+                // setState(() {
+                isDragging(false);
+                // });
+                updatePosition(position.value);
+              },
+              child: buildFab(),
+            ));
+
+      }
+    );
   }
 
   void updatePosition(Offset newOffset) {

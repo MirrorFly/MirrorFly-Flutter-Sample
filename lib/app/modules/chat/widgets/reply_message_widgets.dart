@@ -449,7 +449,7 @@ class ReplyMessageHeader extends StatelessWidget {
   getReplyType(){
     String replyType= chatMessage.replyParentChatMessage?.messageType ??"";
     String type= chatMessage.messageType ??"";
-    return ((type==Constants.mFile||type==Constants.mVideo||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
+    return ((type==Constants.mFile||type==Constants.mVideo||type==Constants.mDocument||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
   }
   @override
   Widget build(BuildContext context) {
