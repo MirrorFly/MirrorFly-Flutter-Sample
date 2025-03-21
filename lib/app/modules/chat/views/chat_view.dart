@@ -120,10 +120,10 @@ class ChatView extends NavViewStateful<ChatController> {
                           )
                               : LayoutBuilder(
                               builder: (context, constraints) {
-                                debugPrint(
-                                    "list view constraints $constraints");
-                                controller.screenWidth(constraints.maxWidth);
-                                controller.screenHeight(constraints.maxHeight);
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  controller.screenWidth(constraints.maxWidth);
+                                  controller.screenHeight(constraints.maxHeight);
+                                });
                                 return ChatListView(
                                   chatController: controller,
                                   chatList: controller.chatList,
