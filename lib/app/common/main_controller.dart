@@ -101,7 +101,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
             badge: true,
             sound: true,
           );
-    } else if (Platform.isAndroid) {
+    } else if (Platform.isAndroid && !(await Permission.notification.status.isGranted)) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
