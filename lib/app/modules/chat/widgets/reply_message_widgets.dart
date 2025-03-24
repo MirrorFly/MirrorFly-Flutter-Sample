@@ -296,7 +296,6 @@ class ReplyMessage extends StatelessWidget {
               ],
             ),
           ],
-            const SizedBox(height: 5,),
         );
       default:
         return const Offstage();
