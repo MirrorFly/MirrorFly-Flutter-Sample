@@ -228,15 +228,24 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                       onPressed: () {
                         if (!controller.scheduleTime.value.isAfter(DateTime.now().subtract(Duration(seconds: DateTime.now().second)))) {
                           toToast(getTranslated("dateError"));
-                        } else {
-                          if (Get.isRegistered<ChatController>(
-                              tag: SessionManagement.getCurrentChatJID())) {
-                            Get.find<ChatController>(
-                                    tag: SessionManagement.getCurrentChatJID())
-                                .sendMeetMessage(
-                                    link: controller.meetId.value,
-                                    scheduledDateTime: controller.scheduleTime
-                                        .value.millisecondsSinceEpoch);
+                        }else{
+                          if (Get.isRegistered<ChatController>(tag:SessionManagement.getCurrentChatJID())) {
+                            /// Assigning the controller values here due to the
+                            /// controller will be destroyed/closed when NavUtils.back() is called.
+                            /// Moving NavUtils.back() will create bottom sheet to stay too long in screen
+                            /// Hence QA clicked two times and the meet is scheduled two times (#FLUTTER-1804)
+                            final meetLink = controller.meetId.value;
+                            final scheduleTime = controller.scheduleTime
+                                .value.millisecondsSinceEpoch;
+                            NavUtils.back();
+                            Future.delayed(const Duration(milliseconds: 400), ()
+                            {
+                              Get.find<ChatController>(
+                                  tag: SessionManagement.getCurrentChatJID())
+                                  .sendMeetMessage(
+                                  link: meetLink,
+                                  scheduledDateTime: scheduleTime);
+                            });
                           }
                         }
                       },
@@ -296,12 +305,14 @@ class MeetLinkController extends GetxController {
   Future<void> dateTimePicker(BuildContext context) async {
     TimeOfDay? timeValue;
 
+    DateTime lastSelectableDate = DateTime(DateTime.now().year + 25, 12, 31);
+
     DateTime? dateValue = await showDatePicker(
       context: context,
       currentDate: scheduleTime.value,
-      initialDate: scheduleTime.value,
+      initialDate:scheduleTime.value,
       firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
+      lastDate: lastSelectableDate,
     );
 
     if (dateValue != null && context.mounted) {
@@ -323,6 +334,7 @@ class MeetLinkController extends GetxController {
 
       scheduleTime(finalDateTime);
     }
+
   }
 
   Future<void> scheduleToggle(bool value) async {

@@ -24,24 +24,24 @@ class MeetMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () async {
-            if(await AppUtils.isNetConnected()) {
-              var link = MessageUtils.getCallLinkFromMessage(chatMessage.meetChatMessage?.link ?? "");
-              if (link.isNotEmpty) {
-                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                  "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-                });
-              }
-            }else{
-              toToast(getTranslated("noInternetConnection"));
-            }
-          },
-          child: Padding(
+    return InkWell(
+      onTap: () async {
+        if (await AppUtils.isNetConnected()) {
+          var link = chatMessage.meetChatMessage!.link.checkNull();
+          if (link.isNotEmpty) {
+            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+            });
+          }
+        } else {
+          toToast(getTranslated("noInternetConnection"));
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
             padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
             child: Row(
               mainAxisSize: chatMessage.replyParentChatMessage == null
@@ -67,29 +67,15 @@ class MeetMessageView extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
-          child: MeetLinkView(
-            message: chatMessage.meetChatMessage?.link ??"",
-            timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
-            callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: MeetLinkView(
+              message: chatMessage.meetChatMessage?.link ??"",
+              timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
+              callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+            ),
           ),
-        ),
-        InkWell(
-          onTap: () async {
-            if (await AppUtils.isNetConnected()) {
-              var link = chatMessage.meetChatMessage!.link.checkNull();
-              if (link.isNotEmpty) {
-                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                  "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-                });
-              }
-            } else {
-              toToast(getTranslated("noInternetConnection"));
-            }
-          },
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.only(right: 4.0, bottom: 2),
             child: Row(
               mainAxisSize: chatMessage.replyParentChatMessage == null
@@ -154,8 +140,8 @@ class MeetMessageView extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

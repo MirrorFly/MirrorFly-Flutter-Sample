@@ -1256,7 +1256,7 @@ class ChatController extends FullLifeCycleController
             LogMessage.d("sendMessage", response.errorMessage);
             // showError(response.exception);
           }
-        }).then((value) => NavUtils.back());
+        })/*.then((value) => NavUtils.back())*/;
   }
 
   void isTyping([String? typingText]) {
@@ -3174,6 +3174,7 @@ class ChatController extends FullLifeCycleController
       if (profile.jid == groupJid) {
         debugPrint('onNewMemberAddedToGroup $newMemberJid');
         getParticipantsNameAsCsv(groupJid);
+        memberOfGroup();
       }
     }
     if (Get.isRegistered<MentionController>(tag: "chatView")) {
@@ -3577,7 +3578,14 @@ class ChatController extends FullLifeCycleController
       {bool removeFromList = true}) {
     Mirrorfly.markAsReadDeleteUnreadSeparator(jid: profile.jid.checkNull());
     if (removeFromList && !separatorPosition.isNegative) {
-      chatList.removeAt(separatorPosition);
+
+      /// Commented the below as the QA posted Unread separator should display
+      /// after the screen is loaded with new message - (FLUTTER-1807)
+      /// On Analysing, the next message is called sometimes when the screen is loaded,
+      /// So the unread separator is removed.
+      /// Now, when opening 2nd time, SDK will remove the unread separator.
+
+      // chatList.removeAt(separatorPosition);
     }
   }
 
