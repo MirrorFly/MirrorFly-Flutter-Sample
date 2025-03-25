@@ -7,7 +7,6 @@ import 'package:mirrorfly_plugin/message_params.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/route_settings.dart';
 import 'caption_message_view.dart';
 import 'image_cache_manager.dart';
 import 'media_message_overlay.dart';

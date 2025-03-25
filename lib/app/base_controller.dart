@@ -280,7 +280,9 @@ class BaseController {
               stopTimer();
             }
           } else {
-            debugPrint("#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils.currentRoute}");
+            debugPrint(
+                "#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils
+                    .currentRoute}");
             // if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
             //   NavUtils.back();
             // }

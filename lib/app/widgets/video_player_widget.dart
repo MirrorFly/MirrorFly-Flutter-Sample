@@ -22,7 +22,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late Future<void> _initializeVideoPlayerFuture;
   // bool _isPlaying = false;
   bool isStopped = false;
-  double _sliderValue = 0.0;
+  // double _sliderValue = 0.0;
 
   @override
   void initState() {
@@ -30,8 +30,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     _controller = VideoPlayerController.file(File(widget.videoPath))
       ..addListener(() {
         setState(() {
-          _sliderValue =
-              _controller.value.position.inSeconds.toDouble();
+          // _sliderValue =
+          //     _controller.value.position.inSeconds.toDouble();
           isStopped = _controller.value.isCompleted;
         });
       });

@@ -296,7 +296,7 @@ class BackupRestoreManager {
     }
   }
 
-  Future<Stream<int>> uploadBackupFile({required String filePath, required int fileSize}) async {
+  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
      final StreamController<int> progressController = StreamController<int>();
      if (Platform.isAndroid) {
       uploadFileToGoogleDrive(filePath, fileSize, progressController);
@@ -315,27 +315,8 @@ class BackupRestoreManager {
 
       LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
       
-      /// Delete the existing iCloud file and then proceed to upload
 
-      List<CloudFiles> iCloudFiles =
-          await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
-
-      if (iCloudFiles.isNotEmpty) {
-        LogMessage.d("BackupRestoreManager", "Deleting the iCLoud Files");
-        List<String> relativePaths = iCloudFiles
-            .where((file) => file.relativePath != null)
-            .map((file) => file.relativePath!)
-            .toList();
-
-
-        await icloudSyncPlugin.deleteMultipleFileToICloud(
-            containerId: _iCloudContainerID, relativePathList: relativePaths);
-      }else{
-        LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
-      }
-      
-      ///
-
+      checkAndDeleteExistingBackup();
 
       LogMessage.d("BackupRestoreManager", "Starting the upload to the iCLoud Drive");
       try {
@@ -771,6 +752,29 @@ class BackupRestoreManager {
   void completeWorkManagerTask() {
     backupCompleter?.complete();
     backupCompleter = null;
+  }
+
+  Future<void> checkAndDeleteExistingBackup() async {
+    /// Delete the existing iCloud file and then proceed to upload
+
+    List<CloudFiles> iCloudFiles =
+        await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+
+    if (iCloudFiles.isNotEmpty) {
+      LogMessage.d("BackupRestoreManager", "Deleting the iCLoud Files");
+      List<String> relativePaths = iCloudFiles
+          .where((file) => file.relativePath != null)
+          .map((file) => file.relativePath!)
+          .toList();
+
+
+      await icloudSyncPlugin.deleteMultipleFileToICloud(
+          containerId: _iCloudContainerID, relativePathList: relativePaths);
+    }else{
+      LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
+    }
+
+    ///
   }
 }
 
