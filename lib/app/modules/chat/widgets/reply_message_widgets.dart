@@ -347,12 +347,11 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(
-              isReply
+          child: ImageCacheManager.getImage(isReply
                   ? mediaChatMessage!.mediaThumbImage
                   : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                      .checkNull(),
-              chatMessageModel.messageId,
+                  .checkNull(),
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),
@@ -375,11 +374,12 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(
+          child:  ImageCacheManager.getImage(
               isReply
                   ? mediaChatMessage!.mediaThumbImage
-                  : chatMessageModel.mediaChatMessage!.mediaThumbImage,
-              chatMessageModel.messageId,
+                  : chatMessageModel.mediaChatMessage!.mediaThumbImage
+                  .checkNull(),
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),

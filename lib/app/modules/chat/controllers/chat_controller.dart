@@ -2577,8 +2577,10 @@ class ChatController extends FullLifeCycleController
             "filePath": [file],
             "userName": profile.name!,
             'profile': profile,
-            'caption': messageController.formattedText,
-            'mentionedUsersIds': messageController.getTags,
+            // 'caption': messageController.formattedText,
+            // 'mentionedUsersIds': messageController.getTags,
+            "captionMessage":[messageController.formattedText],
+            "captionMessageMentions":[messageController.getTags],
             'showAdd': false,
             'from': 'camera_pick',
             'userJid': profile.jid

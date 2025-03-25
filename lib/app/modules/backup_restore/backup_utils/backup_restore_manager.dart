@@ -195,7 +195,7 @@ class BackupRestoreManager {
         return BackupFile(
             fileId: iCloudFile.id.toString(),
             fileName: iCloudFile.title,
-            fileSize: MediaUtils.fileSize(iCloudFile.sizeInBytes),
+            fileSize: MediaUtils.fileSize(iCloudFile.sizeInBytes, 2),
             fileCreatedDate:
                 BackupUtils().formatDateTime(iCloudFile.lastSyncDt.toString()),
         iCloudRelativePath: iCloudFile.relativePath, filePath: iCloudFile.filePath);
@@ -277,7 +277,7 @@ class BackupRestoreManager {
           return BackupFile(
               fileId: latestFile?.id,
               fileName: latestFile?.name,
-              fileSize: MediaUtils.fileSize(int.parse(latestFile?.size ?? "0")),
+              fileSize: MediaUtils.fileSize(int.parse(latestFile?.size ?? "0"), 2),
               fileCreatedDate: BackupUtils()
                   .formatDateTime(latestFile!.createdTime.toString()));
         }else{

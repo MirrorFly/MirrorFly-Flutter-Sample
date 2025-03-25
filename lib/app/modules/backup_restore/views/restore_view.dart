@@ -270,12 +270,18 @@ class RestoreView extends NavViewStateful<RestoreController> {
         ),
         Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Text(
-            controller.isAndroid
-                ? getTranslated("restoreDescAndroid")
-                : getTranslated("restoreDescIos"),
-            textAlign: TextAlign.center,
-          ),
+          child: controller.isAndroid
+              ? Text(
+                  getTranslated("restoreDescAndroid"),
+                  textAlign: TextAlign.center,
+                )
+              : Obx(() {
+                  return Text(
+                      controller.driveAccessible.value ?
+                    getTranslated("restoreDescIos") : getTranslated("iCloudNotLoggedIn"),
+                    textAlign: TextAlign.center,
+                  );
+                }),
         ),
         controller.isAndroid
             ? ListTile(
