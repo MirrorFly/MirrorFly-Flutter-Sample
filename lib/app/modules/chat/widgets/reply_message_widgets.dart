@@ -455,7 +455,7 @@ class ReplyMessageHeader extends StatelessWidget {
 
   bool getReplyType(){
     String replyType= chatMessage.replyParentChatMessage?.messageType ??"";
-    String type= chatMessage.messageType ??"";
+    String type= chatMessage.messageType;
     return !chatMessage.isMessageRecalled.value&&((type==Constants.mFile||type==Constants.mVideo||type==Constants.mDocument||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
   }
   @override
