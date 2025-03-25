@@ -37,16 +37,30 @@ class TextMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Flexible(
-                  child: CustomTextView(
-                    key: Key("message_view+${chatMessage.messageId}"),
-                    text: chatMessage.messageTextContent.checkNull(),
-                    defaultTextStyle: textMessageViewStyle.textStyle,
-                    linkColor: textMessageViewStyle.urlMessageColor,
-                    mentionUserTextColor: textMessageViewStyle.mentionUserColor,
-                    searchQueryTextColor: textMessageViewStyle.highlightColor,
-                    searchQueryString: search,
-                    mentionUserIds: chatMessage.mentionedUsersIds ?? [],
-                    mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                  child: GestureDetector(
+                    onTap:(MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull()).isNotEmpty)? () async {
+                      if(await AppUtils.isNetConnected()) {
+                        var link = MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull());
+                        if (link.isNotEmpty) {
+                          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                            "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+                          });
+                        }
+                      }else{
+                        toToast(getTranslated("noInternetConnection"));
+                      }
+                    }:null,
+                    child: CustomTextView(
+                      key: Key("message_view+${chatMessage.messageId}"),
+                      text: chatMessage.messageTextContent.checkNull(),
+                      defaultTextStyle: textMessageViewStyle.textStyle,
+                      linkColor: textMessageViewStyle.urlMessageColor,
+                      mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                      searchQueryTextColor: textMessageViewStyle.highlightColor,
+                      searchQueryString: search,
+                      mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                      mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                    ),
                   )
               ),
               const SizedBox(width: 60,),
