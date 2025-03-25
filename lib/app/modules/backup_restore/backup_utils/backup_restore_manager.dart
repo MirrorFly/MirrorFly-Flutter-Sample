@@ -296,7 +296,7 @@ class BackupRestoreManager {
     }
   }
 
-  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
+  Future<Stream<int>> uploadBackupFile({required String filePath, required int fileSize}) async {
      final StreamController<int> progressController = StreamController<int>();
      if (Platform.isAndroid) {
       uploadFileToGoogleDrive(filePath, fileSize, progressController);
@@ -313,8 +313,31 @@ class BackupRestoreManager {
         debugPrint("File exists, proceeding with upload.");
       }
 
-      debugPrint("Container ID to upload $_iCloudContainerID");
+      LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
+      
+      /// Delete the existing iCloud file and then proceed to upload
 
+      List<CloudFiles> iCloudFiles =
+          await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+
+      if (iCloudFiles.isNotEmpty) {
+        LogMessage.d("BackupRestoreManager", "Deleting the iCLoud Files");
+        List<String> relativePaths = iCloudFiles
+            .where((file) => file.relativePath != null)
+            .map((file) => file.relativePath!)
+            .toList();
+
+
+        await icloudSyncPlugin.deleteMultipleFileToICloud(
+            containerId: _iCloudContainerID, relativePathList: relativePaths);
+      }else{
+        LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
+      }
+      
+      ///
+
+
+      LogMessage.d("BackupRestoreManager", "Starting the upload to the iCLoud Drive");
       try {
         icloudSyncPlugin.upload(
           containerId: _iCloudContainerID,
