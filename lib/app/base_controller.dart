@@ -279,12 +279,23 @@ class BaseController {
             if (Get.find<CallController>().callList.length <= 1) {
               stopTimer();
             }
-          }
-          else {
+          } else {
             debugPrint("#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils.currentRoute}");
-            if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
-              NavUtils.back();
+            // if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
+            //   NavUtils.back();
+            // }
+          }
+
+          if (Get.isRegistered<OutgoingCallController>()) {
+            debugPrint("Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+
+            Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
+
+            if (Get.find<CallController>().callList.length <= 1) {
+              stopTimer();
             }
+          } else {
+            debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
           }
 
           break;
@@ -563,6 +574,41 @@ class BaseController {
         Get.find<DashboardController>().onCallLogsCleared();
       }
     });
+
+    Mirrorfly.onMessageDeleted.listen((event) {
+      LogMessage.d("onMessageDeleted", event);
+
+    });
+
+    Mirrorfly.onAllChatsCleared.listen((event) {
+      LogMessage.d("onAllChatsCleared", event);
+    });
+
+    Mirrorfly.onChatCleared.listen((event) {
+      LogMessage.d("onChatCleared", event);
+    });
+
+    Mirrorfly.onArchiveUnArchiveChats.listen((event) {
+      LogMessage.d("onArchiveUnArchiveChats", event);
+    });
+
+
+    Mirrorfly.onArchivedSettingsUpdated.listen((event) {
+      LogMessage.d("onArchivedSettingsUpdated", event);
+    });
+
+    Mirrorfly.onUpdateMuteSettings.listen((event) {
+      LogMessage.d("onUpdateMuteSettings", event);
+    });
+
+    // Mirrorfly.onWebLogout.listen((event){
+    //   LogMessage.d("onWebLogout", event);
+    // });
+
+    Mirrorfly.onChatMuteStatusUpdated.listen((event) {
+      LogMessage.d("onChatMuteStatusUpdated", event);
+    });
+
     initializeBackupListeners();
   }
 

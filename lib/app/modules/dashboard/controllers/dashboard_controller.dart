@@ -765,7 +765,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   }
 
   muteChats() {
-    if (selectedChats.length == 1) {
+    /*if (selectedChats.length == 1) {
       _itemMute(0);
       clearAllChatSelection();
     } else {
@@ -774,11 +774,13 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         _itemMute(key);
       });
       clearAllChatSelection();
-    }
+    }*/
+    _itemMute();
+    clearAllChatSelection();
   }
 
   unMuteChats() {
-    if (selectedChats.length == 1) {
+    /*if (selectedChats.length == 1) {
       _itemUnMute(0);
       clearAllChatSelection();
     } else {
@@ -787,19 +789,22 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
         _itemUnMute(key);
       });
       clearAllChatSelection();
-    }
+    }*/
+    _itemUnMute();
+    clearAllChatSelection();
   }
 
   markAsRead() {
     if (selectedChats.length == 1) {
-      _itemUnMute(0);
+      _itemUnMute();
       clearAllChatSelection();
       toToast(getTranslated("chatMarkedAsRead"));
     } else {
       selected(false);
-      selectedChats.asMap().forEach((key, value) {
+      /*selectedChats.asMap().forEach((key, value) {
         _itemUnMute(key);
-      });
+      });*/
+      _itemMute();
       clearAllChatSelection();
       toToast(getTranslated("chatsMarkedAsRead"));
     }
@@ -862,18 +867,36 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     recentChats.insert(nxtIndex, change);
   }
 
-  _itemMute(int index) {
-    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
-    var chatIndex =
-        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    recentChats[chatIndex].isMuted = (true);
+  _itemMute() {
+    // Deprecated Method
+    // Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
+    // var chatIndex =
+    //     recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    // recentChats[chatIndex].isMuted = (true);
+    // New Method to Mute
+    Mirrorfly.updateChatMuteStatusList(jidList: selectedChats.toList(), muteStatus: true);
+    for (var jid in selectedChats) {
+      var chatIndex = recentChats.indexWhere((element) => jid == element.jid);
+      if (!chatIndex.isNegative) {
+        recentChats[chatIndex].isMuted = true;
+      }
+    }
   }
 
-  _itemUnMute(int index) {
-    var chatIndex =
-        recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    recentChats[chatIndex].isMuted = (false);
-    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
+  _itemUnMute() {
+    // Deprecated Method
+    // var chatIndex =
+    //     recentChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    // recentChats[chatIndex].isMuted = (false);
+    // Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
+    // New Method to UnMute
+    Mirrorfly.updateChatMuteStatusList(jidList: selectedChats.toList(), muteStatus: false);
+    for (var jid in selectedChats) {
+      var chatIndex = recentChats.indexWhere((element) => jid == element.jid);
+      if (!chatIndex.isNegative) {
+        recentChats[chatIndex].isMuted = false;
+      }
+    }
   }
 
   /*_itemRead(int index){
