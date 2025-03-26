@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
+import '../../../data/permissions.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 
@@ -28,7 +29,7 @@ class MeetMessageView extends StatelessWidget {
       onTap: () async {
         if (await AppUtils.isNetConnected()) {
           var link = chatMessage.meetChatMessage!.link.checkNull();
-          if (link.isNotEmpty) {
+          if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
               "callLinkId": link.replaceAll(Constants.webChatLogin, "")
             });
@@ -164,7 +165,7 @@ class MeetLinkView extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (await AppUtils.isNetConnected()) {
-          if (message.isNotEmpty) {
+          if (message.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
               "callLinkId": message.replaceAll(Constants.webChatLogin, "")
             });

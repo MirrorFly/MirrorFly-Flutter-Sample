@@ -27,6 +27,11 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
   var callLinkId = "";
 
   var subscribeSuccess = false.obs;
+
+  // var audioPermissionGranted = false.obs;
+  // var videoPermissionGranted = false.obs;
+  var meetInitialised = false.obs;
+
   var displayStatus = getTranslated("connectingPleaseWait");
 
   @override
@@ -34,14 +39,21 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
     super.onInit();
     Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
-    // checkPermission().then((v){
-      initializeCall();
-    // });
 
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    checkPermission().then((v){
+      Future.delayed(const Duration(milliseconds: 500), (){
+        initializeCall();
+      });
+    });
+  }
+
   /// check permission and set Mute Status
-  Future<void> checkPermission() async {
+  Future<bool> checkPermission() async {
     var audioPermission = await AppPermission.askAudioCallPermissions();
     var videoPermission = await AppPermission.checkAndRequestPermissions(
         permissions: [Permission.camera],
@@ -50,8 +62,12 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
         permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
     muted(!audioPermission);
     videoMuted(!videoPermission);
-    Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
-    Mirrorfly.muteVideo(status: videoMuted.value, flyCallBack: (_){});
+    // audioPermissionGranted(audioPermission);
+    // videoPermissionGranted(videoPermission);
+    // Mirrorfly.muteAudio(status: muted.value, flyCallBack: (_){});
+    // Mirrorfly.muteVideo(status: videoMuted.value, flyCallBack: (_){});
+
+    return audioPermission && videoPermission;
   }
 
   // initialize the meet or join via link call
@@ -63,6 +79,8 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
         if(res.hasError){
           showError(res.exception);
         }
+      }else{
+        meetInitialised(true);
       }
       checkPermission().then((v){
         startVideoCapture();
@@ -245,16 +263,21 @@ class JoinCallController extends FullLifeCycleController with FullLifeCycleMixin
 
   var connected = false;
   void onDisconnected() {
+    debugPrint("#MirrorFlyCall Method call OnDisConnected");
     connected=false;
     displayStatus = getTranslated("noInternetConnection");
     subscribeSuccess(false);
+    if(meetInitialised.value) {
+      disposePreview();
+      meetInitialised(false);
+    }
   }
 
   void onConnected() {
     connected=true;
     displayStatus = getTranslated("connectingPleaseWait");
     //if network connected then reinitialize call
-    initializeCall();
+    // initializeCall();
   }
 
 }

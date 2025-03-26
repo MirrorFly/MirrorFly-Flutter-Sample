@@ -8,6 +8,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../common/app_localizations.dart';
 import '../common/constants.dart';
+import '../data/permissions.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
@@ -292,7 +293,7 @@ class MeetLinkController extends GetxController {
 
   Future<void> joinCall() async {
     if (await AppUtils.isNetConnected()) {
-      if (meetLink.isNotEmpty) {
+      if (meetLink.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
         NavUtils.offNamed(Routes.joinCallPreview, arguments: {
           "callLinkId": meetLink.replaceAll(Constants.webChatLogin, "")
         });

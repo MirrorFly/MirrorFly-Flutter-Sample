@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
+import '../../../data/permissions.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 
@@ -41,7 +42,7 @@ class TextMessageView extends StatelessWidget {
                     onTap:(MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull()).isNotEmpty)? () async {
                       if(await AppUtils.isNetConnected()) {
                         var link = MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull());
-                        if (link.isNotEmpty) {
+                        if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
                           NavUtils.toNamed(Routes.joinCallPreview, arguments: {
                             "callLinkId": link.replaceAll(Constants.webChatLogin, "")
                           });
@@ -130,7 +131,7 @@ class CallLinkView extends StatelessWidget{
       onTap: () async {
         if(await AppUtils.isNetConnected()) {
           var link = MessageUtils.getCallLinkFromMessage(message);
-          if (link.isNotEmpty) {
+          if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
               "callLinkId": link.replaceAll(Constants.webChatLogin, "")
             });
