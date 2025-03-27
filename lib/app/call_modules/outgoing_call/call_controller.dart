@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../app_style_config.dart';
@@ -74,9 +76,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var getMaxCallUsersCount = 8;
 
   var joinViaLink = false;
+  // static const EventChannel _eventChannel = EventChannel('fl_pip/foreground');
   @override
   Future<void> onInit() async {
     super.onInit();
+    // startListening();
     enterFullScreen();
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -155,6 +159,20 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       }
     });
   }
+
+  /*void startListening() {
+    _eventChannel.receiveBroadcastStream().listen(
+          (event) {
+        print("Received event: $event");
+      },
+      onError: (error) {
+        print("Error: $error");
+      },
+      onDone: () {
+        print("Stream closed");
+      },
+    );
+  }*/
 
   var calleeNames = <String>[].obs;
   Future outGoingUsers() async {
@@ -1182,5 +1200,24 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       pinnedUserJid(userJid);
       callList.swap(index, itemToReplace);
     }
+  }
+
+  void goToPIP() {
+    NavUtils.back();
+    PictureInPicture.startPiP(pipWidget: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(13)),
+        child: PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle)));
+    PictureInPicture.updatePiPParams(
+      pipParams: const PiPParams(
+        pipWindowWidth: 135,
+        pipWindowHeight: 270,
+        bottomSpace: 20,
+        leftSpace: 20,
+        rightSpace: 20,
+        topSpace: 20,
+        movable: true,
+        resizable: true,
+        initialCorner: PIPViewCorner.bottomRight,
+      ),
+    );
   }
 }

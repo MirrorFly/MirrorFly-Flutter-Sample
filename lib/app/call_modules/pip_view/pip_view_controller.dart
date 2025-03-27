@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:fl_pip/fl_pip.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/base_controller.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
+import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 class PipViewController extends FullLifeCycleController with FullLifeCycleMixin, CallEventListeners {
@@ -139,6 +142,16 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     hasPaused = true;
   }
 
+  void enterPIPMode() async{
+    if (Platform.isAndroid && (await Mirrorfly.isOnGoingCall()).checkNull()) {
+      // AndroidPIP().enterPipMode(aspectRatio: const [16,9]);
+      FlPiP().enable(
+          ios: const FlPiPiOSConfig(),
+          android: FlPiPAndroidConfig(
+              aspectRatio: Rational(NavUtils.width.toInt(),NavUtils.height.toInt())));
+    }
+  }
+
   @override
   Future<void> onResumed() async {
     ///when notification drawer was dragged then app goes inactive,when closes the drawer its trigger onResume
@@ -151,5 +164,17 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       // }
     }
   }
+
+  void expandPIP() {
+    PictureInPicture.stopPiP();
+    NavUtils.toNamed(AppPages.onGoingCall);
+  }
+
+  void stopPIP() {
+    enterPIPMode();
+    // PictureInPicture.stopPiP();
+  }
+
+  await(Future<bool?> onGoingCall) {}
 
 }

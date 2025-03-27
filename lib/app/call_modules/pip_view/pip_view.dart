@@ -1,4 +1,3 @@
-import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
@@ -30,41 +29,51 @@ class PIPView extends NavViewStateful<PipViewController> {
           SizedBox(
             width: style.width,
             height: style.height,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(13)),
-              child: Obx(() {
-                return ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemCount: controller.callList.length <= 2
-                      ? controller.callList.length
-                      : 2,
-                  itemBuilder: (cxt, index) {
-                    var item = controller.callList[index];
-                    debugPrint("PIPView Obx callList : ${item.toJson()}");
-                    return MirrorflyPIPItem(
-                      width: style.width,
-                      height: style.height/2,
-                      item: item,
-                      userStyle: style.userTileStyle,
-                      controller: controller,
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(
-                      height: 0.2,
-                      color: Colors.grey,
-                    );
-                  },
-                );
-              }),
-            ),
+            child: Obx(() {
+              return ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: controller.callList.length <= 2
+                    ? controller.callList.length
+                    : 2,
+                itemBuilder: (cxt, index) {
+                  var item = controller.callList[index];
+                  debugPrint("PIPView Obx callList : ${item.toJson()}");
+                  return MirrorflyPIPItem(
+                    width: style.width,
+                    height: style.height/2,
+                    item: item,
+                    userStyle: style.userTileStyle,
+                    controller: controller,
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Divider(
+                    height: 0.2,
+                    color: Colors.grey,
+                  );
+                },
+              );
+            }),
           ),
           Positioned(
               left: 0,
               top: 0,
               child: IconButton(
-                  onPressed: FlPiP().disable,
+                  onPressed: (){
+                    controller.expandPIP();
+                  },
+                  icon: const Icon(
+                    Icons.expand,
+                    color: Colors.white,
+                  ))),
+          Positioned(
+              right: 0,
+              top: 0,
+              child: IconButton(
+                  onPressed: (){
+                    controller.stopPIP();
+                  },
                   icon: const Icon(
                     Icons.clear,
                     color: Colors.white,

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app_style_config.dart';
@@ -243,17 +242,7 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                             child: IconButton(
                               splashRadius: 24,
                               onPressed: () async {
-                                NavUtils.back();
-                                FlPiP().enable(
-                                    android: FlPiPAndroidConfig(
-                                      rect: Rect.fromLTWH(NavUtils.width * 0.7,
-                                          NavUtils.height * 0.7, 380, 811),//378, 748
-                                      createNewEngine: true,
-                                      closeIconPath: "assets/logos/close.png"
-                                    ),
-                                    ios: const FlPiPiOSConfig(
-                                        createNewEngine: true,
-                                        packageName: null));
+                                controller.goToPIP();
                               },
                               icon: Icon(
                                 Icons.keyboard_arrow_down,

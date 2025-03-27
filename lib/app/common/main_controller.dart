@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badge/flutter_app_badge.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -255,6 +257,31 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   @override
   void onInactive() {
     LogMessage.d('LifeCycle', 'onInactive');
+    enterPIPMode();
+
+  }
+
+  void enterPIPMode() async{
+    if (Platform.isAndroid && (await Mirrorfly.isOnGoingCall()).checkNull()) {
+      // AndroidPIP().enterPipMode(aspectRatio: const [16,9]);
+      PictureInPicture.updatePiPParams(
+        pipParams: const PiPParams(
+          pipWindowWidth: 135,
+          pipWindowHeight: 270,
+          bottomSpace: 0,
+          leftSpace: 0,
+          rightSpace: 0,
+          topSpace: 0,
+          movable: true,
+          resizable: true,
+          initialCorner: PIPViewCorner.bottomRight,
+        ),
+      );
+      FlPiP().enable(
+          ios: const FlPiPiOSConfig(),
+          android: FlPiPAndroidConfig(
+              aspectRatio: Rational(NavUtils.width.toInt(),NavUtils.height.toInt())));
+    }
   }
 
   bool fromLockScreen = false;
