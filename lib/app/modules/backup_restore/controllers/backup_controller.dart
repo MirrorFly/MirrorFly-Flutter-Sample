@@ -7,7 +7,6 @@ import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
-import 'package:mirrorfly_plugin/flychat.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 import '../../../app_style_config.dart';
@@ -195,7 +194,7 @@ class BackupController extends GetxController {
         LogMessage.d("Backup Controller",
             "Backup selected file path => ${result.files.single.path}");
         isRestoreStarted(true);
-        Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
+        // Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
       } else {
         LogMessage.d("Backup Controller", "Restore file is not Selected");
       }

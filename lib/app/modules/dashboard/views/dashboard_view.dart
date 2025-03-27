@@ -311,14 +311,14 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 controller.gotoSettings();
                                               },
                                             ),
-                                            /*CustomAction(
+                                            CustomAction(
                                               visibleWidget: const Icon(Icons.web),
                                               overflowWidget: Text(getTranslated("web"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                               keyValue: 'Web',
                                               onItemClick: () => controller.webLogin(),
-                                            ),*/
+                                            ),
                                           ]),
                                     ],
                                   );

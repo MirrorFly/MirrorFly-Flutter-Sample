@@ -115,7 +115,7 @@ class _ChatListViewState extends State<ChatListView> {
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
                                 color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
-                                margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
+                                margin: const EdgeInsets.only(left: 10, right: 14, top: 5, bottom: 10),
                                 child: Align(
                                   alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
                                   child: Row(

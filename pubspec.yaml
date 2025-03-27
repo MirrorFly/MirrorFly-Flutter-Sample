@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 3.0.3+7
+version: 4.0.1+01
 build_release_date: Mar 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -64,6 +64,8 @@ dependencies:
   google_sign_in: ^6.2.2
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0
+
+  qr_code_scanner_plus: ^2.0.10+1
 
 
   mirrorfly_plugin:

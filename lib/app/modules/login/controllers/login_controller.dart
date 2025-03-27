@@ -380,7 +380,7 @@ class LoginController extends GetxController {
         fcmToken: SessionManagement.getToken().checkNull(),
         isForceRegister: isForceRegister,
         // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
-        flyCallback: (FlyResponse response) {
+        flyCallback: (FlyResponse response) async {
           if (response.isSuccess) {
             if (response.hasData) {
               var userData = registerModelFromJson(response.data); //message
@@ -400,8 +400,14 @@ class LoginController extends GetxController {
 
               ///if its not set then error comes in contact sync delete from phonebook.
               SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
+              if (!Constants.chatHistoryEnable){
+                await Mirrorfly.getAllGroups(fetchFromServer: true, flyCallBack: (FlyResponse response) {
+                  LogMessage.d("Login Controller getAllGroups", response.data);
+                });
+              }
               setUserJID(userData.data!.username!);
             }
+
           } else {
             debugPrint("issue===> ${response.errorMessage.toString()}");
             hideLoading();

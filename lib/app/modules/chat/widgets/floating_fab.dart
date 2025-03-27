@@ -19,7 +19,7 @@ class FloatingFab extends StatefulWidget {
 }
 
 class _FloatingFabState extends State<FloatingFab> {
-  Rx<Offset> position = const Offset(10, 15).obs;
+  Rx<Offset> position = const Offset(10, 70).obs;
   Rx<Offset> startPosition = const Offset(0, 0)
       .obs; // Initial position when dragging starts
   RxBool isDragging = false.obs;

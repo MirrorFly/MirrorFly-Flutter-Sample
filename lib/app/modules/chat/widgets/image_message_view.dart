@@ -40,12 +40,16 @@ class _ImageMessageViewState extends State<ImageMessageView> {
           Stack(
             alignment: Alignment.center,
             children: [
-              ClipRRect(
-                borderRadius: widget.imageMessageViewStyle.imageBorderRadius,
-                child: Obx(() {
-                  return getImage(
-                      mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId);
-                }),
+              SizedBox(
+                width:NavUtils.width * 0.60,
+                height: NavUtils.height *0.4,
+                child: ClipRRect(
+                  borderRadius: widget.imageMessageViewStyle.imageBorderRadius,
+                  child: Obx(() {
+                    return getImage(
+                        mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId);
+                  }),
+                ),
               ),
               MediaMessageOverlay(chatMessage: widget.chatMessage,downloadUploadViewStyle: widget.imageMessageViewStyle.downloadUploadViewStyle,),
               mediaMessage.mediaCaptionText.checkNull().isEmpty

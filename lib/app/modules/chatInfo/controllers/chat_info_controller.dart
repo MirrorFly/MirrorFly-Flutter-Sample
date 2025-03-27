@@ -68,7 +68,8 @@ class ChatInfoController extends GetxController {
     if(muteable.value) {
       LogMessage.d("change", value.toString());
       mute(value);
-      Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
+      // Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
+      Mirrorfly.updateChatMuteStatusList(jidList: [profile.jid.checkNull()], muteStatus: value);
       notifyDashboardUI();
     }
   }
