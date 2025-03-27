@@ -133,7 +133,7 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
       }
     });
     pageNumber = 1;
-
+    getWebLoginDetails();
     Mirrorfly.syncCallLogs().then((isSuccess){
       debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
     });
@@ -2100,6 +2100,24 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
   void onCallLogsCleared() {
     callLogList.clear();
     _callLogList.clear();
+  }
+
+  var showWebLoginDetails = false;
+  void getWebLoginDetails(){
+    Mirrorfly.getWebLoginDetails().then((value) {
+      if (value != null) {
+        var list = webLoginFromJson(value);
+        showWebLoginDetails=list.isNotEmpty;
+      }else{
+        showWebLoginDetails = false;
+      }
+    }).catchError((onError){
+      showWebLoginDetails=false;
+    });
+  }
+
+  void onWebLogout(List<String> socketIdList) {
+    getWebLoginDetails();
   }
 }
 

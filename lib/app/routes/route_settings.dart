@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/web_login_result_view.dart';
 import '../model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
@@ -67,10 +69,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     //   return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-    // case Routes.scanner:
-    //   return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
-    // case Routes.webLoginResult:
-    //   return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
+    case Routes.scanner:
+      return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
+    case Routes.webLoginResult:
+      return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
     case Routes.createGroup:
       return MaterialPageRoute(builder: (_) => const GroupCreationView(),settings: settings);
     case Routes.groupInfo:
