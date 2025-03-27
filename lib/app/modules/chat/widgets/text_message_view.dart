@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
-import '../../../data/permissions.dart';
-import '../../../extensions/extensions.dart';
-import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 class TextMessageView extends StatelessWidget {
-  const TextMessageView({
-    Key? key,
-    required this.chatMessage,
-    this.search = "",
-    this.textMessageViewStyle = const TextMessageViewStyle()
-  }) : super(key: key);
+  const TextMessageView(
+      {Key? key,
+      required this.chatMessage,
+      this.search = "",
+      this.textMessageViewStyle = const TextMessageViewStyle()})
+      : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
   final TextMessageViewStyle textMessageViewStyle;
@@ -39,43 +38,56 @@ class TextMessageView extends StatelessWidget {
             children: [
               Flexible(
                   child: GestureDetector(
-                    onTap:(MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull()).isNotEmpty)? () async {
-                      if(await AppUtils.isNetConnected()) {
-                        var link = MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull());
-                        if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
-                          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                            "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-                          });
+                onTap: (MessageUtils.getCallLinkFromMessage(
+                            chatMessage.messageTextContent.checkNull())
+                        .isNotEmpty)
+                    ? () async {
+                        if (await AppUtils.isNetConnected()) {
+                          var link = MessageUtils.getCallLinkFromMessage(
+                              chatMessage.messageTextContent.checkNull());
+                          if (link.isNotEmpty) {
+                            NavUtils.toNamed(Routes.joinCallPreview,
+                                arguments: {
+                                  "callLinkId": link.replaceAll(
+                                      Constants.webChatLogin, "")
+                                });
+                          }
+                        } else {
+                          toToast(getTranslated("noInternetConnection"));
                         }
-                      }else{
-                        toToast(getTranslated("noInternetConnection"));
                       }
-                    }:null,
-                    child: CustomTextView(
-                      key: Key("message_view+${chatMessage.messageId}"),
-                      text: chatMessage.messageTextContent.checkNull(),
-                      defaultTextStyle: textMessageViewStyle.textStyle,
-                      linkColor: textMessageViewStyle.urlMessageColor,
-                      mentionUserTextColor: textMessageViewStyle.mentionUserColor,
-                      searchQueryTextColor: textMessageViewStyle.highlightColor,
-                      searchQueryString: search,
-                      mentionUserIds: chatMessage.mentionedUsersIds ?? [],
-                      mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
-                    ),
-                  )
+                    : null,
+                child: CustomTextView(
+                  key: Key("message_view+${chatMessage.messageId}"),
+                  text: chatMessage.messageTextContent.checkNull(),
+                  defaultTextStyle: textMessageViewStyle.textStyle,
+                  linkColor: textMessageViewStyle.urlMessageColor,
+                  mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                  searchQueryTextColor: textMessageViewStyle.highlightColor,
+                  searchQueryString: search,
+                  mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                  mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                ),
+              )),
+              const SizedBox(
+                width: 60,
               ),
-              const SizedBox(width: 60,),
             ],
           ),
         ),
-        if(MessageUtils.getCallLinkFromMessage(chatMessage.messageTextContent.checkNull()).isNotEmpty)...[
+        if (MessageUtils.getCallLinkFromMessage(
+                chatMessage.messageTextContent.checkNull())
+            .isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.only(bottom: 5.0),
-            child: CallLinkView(message:chatMessage.messageTextContent.checkNull(),callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,),
+            child: CallLinkView(
+              message: chatMessage.messageTextContent.checkNull(),
+              callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+            ),
           )
         ],
         Padding(
-          padding: const EdgeInsets.only(right: 4.0,bottom: 2),
+          padding: const EdgeInsets.only(right: 4.0, bottom: 2),
           child: Row(
             mainAxisSize: chatMessage.replyParentChatMessage == null
                 ? MainAxisSize.min
@@ -84,7 +96,8 @@ class TextMessageView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               chatMessage.isMessageStarred.value
-                  ? textMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
+                  ? textMessageViewStyle.iconFavourites ??
+                      AppUtils.svgIcon(icon: starSmallIcon)
                   : const Offstage(),
               const SizedBox(
                 width: 5,
@@ -97,11 +110,15 @@ class TextMessageView extends StatelessWidget {
               const SizedBox(
                 width: 5,
               ),
-              if (chatMessage.isMessageEdited.value) ... [
-                Text(getTranslated("edited"), //style: const TextStyle(fontSize: 11)
+              if (chatMessage.isMessageEdited.value) ...[
+                Text(
+                  getTranslated(
+                      "edited"), //style: const TextStyle(fontSize: 11)
                   style: textMessageViewStyle.timeTextStyle,
                 ),
-                const SizedBox(width: 5,),
+                const SizedBox(
+                  width: 5,
+                ),
               ],
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),
@@ -120,8 +137,9 @@ class TextMessageView extends StatelessWidget {
   }
 }
 
-class CallLinkView extends StatelessWidget{
-  const CallLinkView({super.key, required this.message,required this.callLinkViewStyle});
+class CallLinkView extends StatelessWidget {
+  const CallLinkView(
+      {super.key, required this.message, required this.callLinkViewStyle});
   final String message;
   final CallLinkViewStyle callLinkViewStyle;
 
@@ -129,14 +147,14 @@ class CallLinkView extends StatelessWidget{
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        if(await AppUtils.isNetConnected()) {
+        if (await AppUtils.isNetConnected()) {
           var link = MessageUtils.getCallLinkFromMessage(message);
-          if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
+          if (link.isNotEmpty) {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
               "callLinkId": link.replaceAll(Constants.webChatLogin, "")
             });
           }
-        }else{
+        } else {
           toToast(getTranslated("noInternetConnection"));
         }
       },
@@ -146,15 +164,30 @@ class CallLinkView extends StatelessWidget{
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            AppUtils.assetIcon(assetName:mirrorflySmall,width: 24,),
-            const SizedBox(width: 8,),
-            Expanded(child: Text(getTranslated("joinVideoCall"),style: callLinkViewStyle.textStyle,)),
-            const SizedBox(width: 8,),
-            AppUtils.svgIcon(icon:videoCamera,width: 18,colorFilter: ColorFilter.mode(callLinkViewStyle.iconColor, BlendMode.srcIn),)
+            AppUtils.assetIcon(
+              assetName: mirrorflySmall,
+              width: 24,
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Expanded(
+                child: Text(
+              getTranslated("joinVideoCall"),
+              style: callLinkViewStyle.textStyle,
+            )),
+            const SizedBox(
+              width: 8,
+            ),
+            AppUtils.svgIcon(
+              icon: videoCamera,
+              width: 18,
+              colorFilter: ColorFilter.mode(
+                  callLinkViewStyle.iconColor, BlendMode.srcIn),
+            )
           ],
         ),
       ),
     );
   }
-
 }
