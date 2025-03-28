@@ -2102,17 +2102,16 @@ class DashboardController extends FullLifeCycleController with FullLifeCycleMixi
     _callLogList.clear();
   }
 
-  var showWebLoginDetails = false;
   void getWebLoginDetails(){
     Mirrorfly.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
-        showWebLoginDetails=list.isNotEmpty;
+        SessionManagement.setWebChatLogin(list.isNotEmpty);
       }else{
-        showWebLoginDetails = false;
+        SessionManagement.setWebChatLogin(false);
       }
     }).catchError((onError){
-      showWebLoginDetails=false;
+      SessionManagement.setWebChatLogin(false);
     });
   }
 
