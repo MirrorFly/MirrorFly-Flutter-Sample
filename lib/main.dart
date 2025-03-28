@@ -8,8 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
 import 'app/modules/chat/views/chat_view.dart';
