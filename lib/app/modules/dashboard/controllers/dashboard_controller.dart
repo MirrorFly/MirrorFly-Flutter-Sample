@@ -27,7 +27,7 @@ import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
 
 class DashboardController extends FullLifeCycleController with FullLifeCycleMixin, GetTickerProviderStateMixin {
-  var availableFeatures = Get.find<MainController>().availableFeature;
+  var availableFeatures = AvailableFeatures().obs;
   var chatLimit = 20;
   var recentChats = <RecentChatData>[].obs;
   var archivedChats = <RecentChatData>[].obs;
