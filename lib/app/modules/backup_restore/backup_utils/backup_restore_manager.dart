@@ -237,7 +237,7 @@ class BackupRestoreManager {
             drive.Media(trackedStream, fileSize),
       );
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
-      toToast(getTranslated("backUpSuccess"));
+      toToast(getTranslated("androidRemoteBackupSuccess"));
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().serverUploadSuccess();
       }
