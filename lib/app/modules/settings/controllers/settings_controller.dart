@@ -66,7 +66,9 @@ class SettingsController extends GetxController {
     var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
     var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
     var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
-    await BackupRestoreManager.instance.googleSignIn.signOut();
+   if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
+      await BackupRestoreManager.instance.googleSignIn.signOut();
+    }
     SessionManagement.clear().then((value) {
       SessionManagement.setToken(token);
       SessionManagement.setBool(Constants.cameraPermissionAsked, cameraPermissionAsked);
