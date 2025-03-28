@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import '../../common/constants.dart';
 import '../../modules/scanner/scanner_controller.dart';
 
 import '../../extensions/extensions.dart';
 
-class ScannerView extends NavView<ScannerController> {
+class ScannerView extends NavViewStateful<ScannerController> {
   const ScannerView({Key? key}) : super(key: key);
 
   @override
- ScannerController createController({String? tag}) => ScannerController();
+ ScannerController createController({String? tag}) => Get.put(ScannerController());
 
   @override
   Widget build(BuildContext context) {
-    // var scanArea = (NavUtils.size.width < 400 ||
-    //     NavUtils.size.height < 400)
-    //     ? 150.0
-    //     : 300.0;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Scan code'),
