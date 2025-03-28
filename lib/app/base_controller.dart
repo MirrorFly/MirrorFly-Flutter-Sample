@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
@@ -339,6 +340,8 @@ class BaseController {
           }
           if (Get.isRegistered<OutgoingCallController>()) {
             Get.find<OutgoingCallController>().connected(callMode, userJid, callType, callStatus);
+          }else{
+            debugPrint("#Mirrorfly call OutgoingCallController not registered for connected event");
           }
           if (Get.isRegistered<CallController>()) {
             Get.find<CallController>().connected(callMode, userJid, callType, callStatus);
@@ -527,6 +530,8 @@ class BaseController {
       var muteStatus = jsonDecode(event);
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
+
+      LogMessage.d("Get.isRegistered<CallController>()", "${Get.isRegistered<CallController>()}");
       if (Get.isRegistered<OutgoingCallController>()) {
         if (muteEvent == MuteStatus.remoteAudioMute || muteEvent == MuteStatus.remoteAudioUnMute) {
           Get.find<OutgoingCallController>().audioMuteStatusChanged(muteEvent, userJid);
@@ -603,9 +608,7 @@ class BaseController {
       LogMessage.d("onUpdateMuteSettings", event);
     });
 
-    // Mirrorfly.onWebLogout.listen((event){
-    //   LogMessage.d("onWebLogout", event);
-    // });
+    Mirrorfly.onWebLogout.listen(onWebLogout);
 
     Mirrorfly.onChatMuteStatusUpdated.listen((event) {
       LogMessage.d("onChatMuteStatusUpdated", event);
@@ -1405,5 +1408,18 @@ class BaseController {
         Get.find<RestoreController>().restoreBackupProgress(event);
       }
     });
+  }
+
+  static void onWebLogout(response){
+    LogMessage.d("onWebLogout",response);
+    //{"socketIdList":["8mXojaLkd4CC773aAAFh"]}
+    var data = json.decode(response.toString());
+    var socketIdList = List<String>.from((data["socketIdList"] ?? "").map((x) => x.toString()));
+    if(Get.isRegistered<DashboardController>()){
+      Get.find<DashboardController>().onWebLogout(socketIdList);
+    }
+    if(Get.isRegistered<ScannerController>()){
+      Get.find<ScannerController>().onWebLogout(socketIdList);
+    }
   }
 }

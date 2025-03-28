@@ -581,5 +581,8 @@
     "downloadingBackup" : "Downloading Backup File",
     "iOSRemoteBackupSuccess" : "iCloud Backup Successful",
     "androidRemoteBackupSuccess" : "Google Drive Backup Successful",
-    "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?"
+    "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?",
+    "webSettings": "Web Settings",
+    "lastLogin": "Last Login",
+    "logoutFromAllComputers": "LOGOUT FROM ALL COMPUTERS"
   }

@@ -17,7 +17,7 @@ class ScannerController extends GetxController {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
 
-  final loginQr = <String>[];
+  var loginQr = <String>[];
   final _webLogins = <WebLogin>[].obs;
 
   set webLogins(value) => _webLogins.value = value;
@@ -74,10 +74,9 @@ class ScannerController extends GetxController {
             SessionManagement.setWebChatLogin(true);
             NavUtils.back();
           } else {
-
+            controller?.resumeCamera();
+            toToast(response.errorMessage);
           }
-        }).catchError((er) {
-          controller!.resumeCamera();
         });
       }else{
         toToast(getTranslated("noInternetConnection"));
@@ -91,10 +90,10 @@ class ScannerController extends GetxController {
       DialogUtils.progressLoading();
       // Mirrorfly.webLoginDetailsCleared();
       Mirrorfly.logoutWebUser(logins: loginQr).then((value) {
-        DialogUtils.hideLoading();
+        // DialogUtils.hideLoading();
         if (value != null && value) {
-          SessionManagement.setWebChatLogin(false);
-          NavUtils.back();
+          // SessionManagement.setWebChatLogin(false);
+          // NavUtils.back();
         }
       });
     }else{
@@ -108,10 +107,9 @@ class ScannerController extends GetxController {
     Mirrorfly.getWebLoginDetails().then((value) {
       if (value != null) {
         var list = webLoginFromJson(value);
+        /*[{"id":1,"lastLoginTime":"Thu, 27 Mar 2025 12:46:31 pm","osName":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36","qrUniqeToken":"eM8xrgDqNNxuW5WWAAEx","webBrowserName":"Chrome 134.0.0.0"}]*/
         _webLogins(list);
-        for (var element in list) {
-          loginQr.add(element.qrUniqeToken);
-        }
+        loginQr = List<String>.from(list.map((e) => e.qrUniqeToken));
       }
     });
   }
@@ -139,6 +137,7 @@ class ScannerController extends GetxController {
 
   addLogin() {
     // Mirrorfly.webLoginDetailsCleared();
+    gotScannedData=true;
     NavUtils.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
@@ -158,5 +157,15 @@ class ScannerController extends GetxController {
           },
           child: Text(getTranslated("yes").toUpperCase(), )),
     ]);
+  }
+
+  void onWebLogout(List<String> socketIdList) {
+    _webLogins.removeWhere((e)=>socketIdList.contains(e.qrUniqeToken));
+    loginQr.removeWhere((e)=>socketIdList.contains(e));
+    DialogUtils.hideLoading();
+    if(_webLogins.isEmpty){
+      SessionManagement.setWebChatLogin(false);
+      NavUtils.back();
+    }
   }
 }
