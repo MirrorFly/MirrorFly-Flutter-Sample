@@ -476,6 +476,7 @@ class ChatController extends FullLifeCycleController
                 updateLastMessage(response.data);
               } else {
                 LogMessage.d("sendMessage", response.errorMessage);
+                showError(response.exception);
               }
             });
       }
@@ -666,6 +667,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -1029,6 +1031,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -1256,7 +1259,7 @@ class ChatController extends FullLifeCycleController
             updateLastMessage(response.data);
           } else {
             LogMessage.d("sendMessage", response.errorMessage);
-            // showError(response.exception);
+            showError(response.exception);
           }
         }).then((value) => NavUtils.back());
   }
