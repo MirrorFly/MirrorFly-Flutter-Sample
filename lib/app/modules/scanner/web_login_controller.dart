@@ -98,12 +98,19 @@ class WebLoginController extends GetxController {
   }
 
   void onWebLogout(List<String> socketIdList) {
-    _webLogins.removeWhere((e)=>socketIdList.contains(e.qrUniqeToken));
-    loginQr.removeWhere((e)=>socketIdList.contains(e));
-    DialogUtils.hideLoading();
-    if(_webLogins.isEmpty){
-      SessionManagement.setWebChatLogin(false);
-      NavUtils.back();
+    var webLoginIndex = _webLogins.indexWhere((webLogin) =>
+        socketIdList.contains(webLogin.qrUniqeToken));
+    if (!webLoginIndex.isNegative) {
+      _webLogins.removeWhere((e) => socketIdList.contains(e.qrUniqeToken));
+      loginQr.removeWhere((e) => socketIdList.contains(e));
+      DialogUtils.hideLoading();
+      if (_webLogins.isEmpty) {
+        SessionManagement.setWebChatLogin(false);
+        LogMessage.d("WebLogin", "Moving back to the screen");
+        NavUtils.back();
+      }
+    } else {
+      LogMessage.d("WebLogin", "Socket ID is already removed");
     }
   }
 }
