@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
-import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
@@ -24,7 +23,7 @@ class TextUtils {
     if (isValidPhoneNumber(text)) {
       return "mobile";
     }
-    if (text.trim().isURL) {
+    if (isValidURL(text.trim())) {
       return "website";
     }
     return "text";
@@ -44,18 +43,23 @@ class TextUtils {
     debugPrint("getTextSpan $text");
     if (isEmail(text.checkNull().trim()) ||
         isValidPhoneNumber(text.checkNull().trim()) ||
-        text.checkNull().trim().isURL) {
+        isValidURL(text.checkNull().trim())) {
       return parseEachLetterIntoTextSpan(
         text.checkNull(),
         underlineStyle,
-        recognizer: (text.checkNull().trim().isURL && MessageUtils.getCallLinkFromMessage(text.checkNull().trim()).isNotEmpty) ? null : TapGestureRecognizer()
-          ?..onTap = underlineStyle != null ? (){
+        recognizer: (isValidURL(text.checkNull().trim()) &&
+            MessageUtils.getCallLinkFromMessage(text.checkNull().trim())
+                .isNotEmpty)
+            ? null
+            : TapGestureRecognizer()
+          ?..onTap = underlineStyle != null
+              ? () {
             onTapForSpanText(text.checkNull());
-          } : null,
+          }
+              : null,
       );
     } else {
-      return parseEachLetterIntoTextSpan(
-          text.checkNull(), normalStyle);
+      return parseEachLetterIntoTextSpan(text.checkNull(), normalStyle);
     }
   }
 
@@ -155,17 +159,28 @@ class TextUtils {
   /// Launches a URL in the browser.
   ///
   /// [url] - The URL to open.
+
   static Future<void> launchInBrowser(String url) async {
     if (await AppUtils.isNetConnected()) {
-      var webUrl = url.replaceAll("http://", "").replaceAll("https://", "");
-      final Uri toLaunch = Uri(scheme: 'https', host: webUrl);
-      if (!await launchUrl(toLaunch, mode: LaunchMode.externalApplication)) {
-        throw 'Could not launch $url';
+      try {
+        final Uri toLaunch = Uri.parse(url.trim());
+
+        if (toLaunch.scheme != 'http' && toLaunch.scheme != 'https') {
+          throw 'Unsupported URL scheme: ${toLaunch.scheme}';
+        }
+
+        final launched = await launchUrl(toLaunch, mode: LaunchMode.externalApplication);
+        if (!launched) {
+          throw 'Could not launch $url';
+        }
+      } catch (e) {
+        throw 'Invalid URL: $url';
       }
     } else {
       toToast(getTranslated("noInternetConnection"));
     }
   }
+
 
   /// Initiates a phone call to the given number.
   ///
@@ -206,6 +221,19 @@ class TextUtils {
   static bool isValidPhoneNumber(String s) {
     if (s.length > 13 || s.length < 6) return false;
     return hasMatch(s, r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$');
+  }
+
+  /// Checks if the given string is a valid URL.
+  ///
+  /// [url] - The string to validate as a URL.
+  /// Returns `true` if the string is a valid HTTP, HTTPS, or www-prefixed URL; `false` otherwise.
+  static bool isValidURL(String url) {
+    final RegExp urlPattern = RegExp(
+      r"^(https?:\/\/[^\s]+|www\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$",
+      caseSensitive: false,
+    );
+
+    return urlPattern.hasMatch(url);
   }
 
   /// Determines if a given value matches the specified pattern.
