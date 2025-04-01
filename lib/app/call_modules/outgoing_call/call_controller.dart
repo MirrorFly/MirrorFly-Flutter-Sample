@@ -1209,7 +1209,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     PictureInPicture.updatePiPParams(
       pipParams: const PiPParams(
         pipWindowWidth: 135,
-        pipWindowHeight: 270,
+        pipWindowHeight: 300,
         bottomSpace: 20,
         leftSpace: 20,
         rightSpace: 20,

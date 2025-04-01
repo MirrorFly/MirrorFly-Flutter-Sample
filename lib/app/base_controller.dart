@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
@@ -281,6 +282,9 @@ class BaseController {
             if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
               NavUtils.back();
             }
+          }
+          if(Get.isRegistered<PipViewController>()){
+            Get.find<PipViewController>().callDisconnected();
           }
           break;
         case CallStatus.calling10s:

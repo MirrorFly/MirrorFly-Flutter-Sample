@@ -10,6 +10,7 @@ import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -257,30 +258,33 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   @override
   void onInactive() {
     LogMessage.d('LifeCycle', 'onInactive');
-    enterPIPMode();
-
+    onUserLeaveHint();
+    // goingInActive();
+    // enterOrExitPIPMode();
   }
 
-  void enterPIPMode() async{
-    if (Platform.isAndroid && (await Mirrorfly.isOnGoingCall()).checkNull()) {
-      // AndroidPIP().enterPipMode(aspectRatio: const [16,9]);
-      PictureInPicture.updatePiPParams(
-        pipParams: const PiPParams(
-          pipWindowWidth: 135,
-          pipWindowHeight: 270,
-          bottomSpace: 0,
-          leftSpace: 0,
-          rightSpace: 0,
-          topSpace: 0,
-          movable: true,
-          resizable: true,
-          initialCorner: PIPViewCorner.bottomRight,
-        ),
-      );
-      FlPiP().enable(
-          ios: const FlPiPiOSConfig(),
-          android: FlPiPAndroidConfig(
-              aspectRatio: Rational(NavUtils.width.toInt(),NavUtils.height.toInt())));
+  void enterOrExitPIPMode() async{
+    if(Platform.isAndroid) {
+      if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
+        PictureInPicture.updatePiPParams(
+          pipParams: const PiPParams(
+            pipWindowWidth: 135,
+            pipWindowHeight: 300,
+            bottomSpace: 0,
+            leftSpace: 0,
+            rightSpace: 0,
+            topSpace: 0,
+            movable: true,
+            resizable: true,
+            initialCorner: PIPViewCorner.bottomRight,
+          ),
+        );
+        FlPiP().enable(
+            ios: const FlPiPiOSConfig(),
+            android: FlPiPAndroidConfig(
+                aspectRatio: Rational(
+                    NavUtils.width.toInt(), NavUtils.height.toInt())));
+      }
     }
   }
 
@@ -299,9 +303,41 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
+  // While going Background
+  // onInactive
+  // onHidden
+  // onPaused
+
+  // While going Foreground
+  // onHidden
+  // onInactive
+  // onResumed
+
+  // While going Notification drawer
+  // onInactive
+
+  // While back from Notification drawer
+  // onResumed
+
+  // While Call Received
+  // onInactive
+  // onHidden
+  // onPaused
+
+  // After Accepted the call
+  // onHidden
+  // onInactive
+  // onResumed
+  // onInactive
+  // onResumed
+  // onInactive
+  // onResumed
 
   @override
   void onResumed() {
+    onHide=false;
+    _leaveHintTimer?.cancel();
+    isUserLeavingApp = false;
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     if(hasPaused) {
@@ -312,6 +348,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       }
       unreadMissedCallCount();
     }
+    // enterOrExitPIPMode();
   }
 
   void syncContacts() async {
@@ -392,9 +429,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     availableFeature(features);
   }
 
+  var onHide = false;
   @override
   void onHidden() {
     LogMessage.d('LifeCycle', 'onHidden');
+    onHide=true;
   }
 
   unreadMissedCallCount() async {
@@ -446,5 +485,24 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().markConversationReadNotifyUI(jid);
     }
+  }
+
+  Timer? _leaveHintTimer;
+  bool isUserLeavingApp = false;
+
+  void goingInActive(){
+    _leaveHintTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!isUserLeavingApp) return;
+      onUserLeaveHint();
+    });
+    isUserLeavingApp = true;
+  }
+
+  void onUserLeaveHint(){
+    debugPrint("User is leaving the app (onUserLeaveHint equivalent)");
+    if(Get.isRegistered<PipViewController>()){
+      Get.find<PipViewController>().hideOptions();
+    }
+    enterOrExitPIPMode();
   }
 }

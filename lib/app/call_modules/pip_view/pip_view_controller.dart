@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fl_pip/fl_pip.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
@@ -20,9 +21,11 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
 
   var callList = List<CallUserList>.empty(growable: true).obs;
   var availableAudioList = List<AudioDevices>.empty(growable: true).obs;
+  var isPIPActive = false.obs;
 
   @override
   Future<void> onInit() async {
+    checkPIP();
     Mirrorfly.setCallEventListener(this);
     try {
       var value = await Mirrorfly.getCallUsersList();
@@ -33,6 +36,8 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     }
     super.onInit();
   }
+
+
 
 
 
@@ -133,7 +138,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
 
   @override
   void onInactive() {
-    // TODO: implement onInactive
+    // checkPIP();
   }
 
   var hasPaused = false;
@@ -163,6 +168,16 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       //   FlPiP().disable();
       // }
     }
+    checkPIP();
+  }
+
+  Future<void> checkPIP() async {
+    debugPrint("checkPIP");
+    isPIPActive((await FlPiP().isActive)?.status == PiPStatus.enabled);
+  }
+
+  void hideOptions(){
+    isPIPActive(true);
   }
 
   void expandPIP() {
@@ -171,10 +186,14 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   }
 
   void stopPIP() {
-    enterPIPMode();
-    // PictureInPicture.stopPiP();
+    // enterPIPMode();
+    PictureInPicture.stopPiP();
   }
 
-  await(Future<bool?> onGoingCall) {}
+  void callDisconnected() {
+    PictureInPicture.stopPiP();
+    FlPiP().toggle(AppState.foreground);
+  }
+
 
 }

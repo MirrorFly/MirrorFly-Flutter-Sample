@@ -1,3 +1,4 @@
+import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/audio_level_animation.dart';
@@ -22,62 +23,69 @@ class PIPView extends NavViewStateful<PipViewController> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("PIPView build : ${controller.callList.toJson()}");
+    debugPrint("PIPView build : ${controller.callList.toJson()} NavUtils : ${NavUtils.width} , ${NavUtils.height}");
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            width: style.width,
-            height: style.height,
-            child: Obx(() {
-              return ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                itemCount: controller.callList.length <= 2
-                    ? controller.callList.length
-                    : 2,
-                itemBuilder: (cxt, index) {
-                  var item = controller.callList[index];
-                  debugPrint("PIPView Obx callList : ${item.toJson()}");
-                  return MirrorflyPIPItem(
-                    width: style.width,
-                    height: style.height/2,
+          Obx(() {
+            return ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemCount: controller.callList.length <= 2
+                  ? controller.callList.length
+                  : 2,
+              itemBuilder: (cxt, index) {
+                var item = controller.callList[index];
+                debugPrint("PIPView Obx callList : ${item.toJson()}");
+                return AspectRatio(
+                  aspectRatio: Rational(
+                      NavUtils.width.toInt(), (NavUtils.height/2).toInt()).aspectRatio,
+                  child: MirrorflyPIPItem(
+                    // width: style.width,
+                    // height: style.height/2,
                     item: item,
                     userStyle: style.userTileStyle,
                     controller: controller,
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(
-                    height: 0.2,
-                    color: Colors.grey,
-                  );
-                },
-              );
-            }),
-          ),
-          Positioned(
-              left: 0,
-              top: 0,
-              child: IconButton(
-                  onPressed: (){
-                    controller.expandPIP();
-                  },
-                  icon: const Icon(
-                    Icons.expand,
-                    color: Colors.white,
-                  ))),
-          Positioned(
-              right: 0,
-              top: 0,
-              child: IconButton(
-                  onPressed: (){
-                    controller.stopPIP();
-                  },
-                  icon: const Icon(
-                    Icons.clear,
-                    color: Colors.white,
-                  )))
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(
+                  height: 0.2,
+                  color: Colors.grey,
+                );
+              },
+            );
+          }),
+          Obx((){
+            return Visibility(
+              visible: !controller.isPIPActive.value,
+              child: Positioned(
+                right: 0,
+                top: 0,
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: (){
+                          controller.expandPIP();
+                        },
+                        icon: const Icon(
+                          Icons.open_in_full,
+                          color: Colors.white,
+                        )),
+                    IconButton(
+                        onPressed: (){
+                          controller.stopPIP();
+                        },
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Colors.white,
+                        ))
+                  ],
+                ),
+              ),
+            );
+          })
         ],
       ),
     );
@@ -87,14 +95,14 @@ class PIPView extends NavViewStateful<PipViewController> {
 class MirrorflyPIPItem extends StatelessWidget {
   const MirrorflyPIPItem(
       {super.key,
-        required this.width,
-        required this.height,
+        // required this.width,
+        // required this.height,
         required this.item,
         required this.userStyle,
         required this.controller});
 
-  final double width;
-  final double height;
+  // final double width;
+  // final double height;
   final CallUserList item;
   final CallUserTileStyle userStyle;
   final PipViewController controller;
@@ -105,26 +113,23 @@ class MirrorflyPIPItem extends StatelessWidget {
       children: [
         Obx(() {
           return (item.userJid?.value).checkNull().isNotEmpty
-              ? SizedBox(
-            width: width,
-            height: height,
-            child: MirrorFlyView(
-              key: UniqueKey(),
-              userJid: (item.userJid?.value).checkNull(),
-              viewBgColor: userStyle.backgroundColor,
-              profileSize: userStyle.profileImageSize,
-            ).setBorderRadius(userStyle.borderRadius),
-          )
+              ? MirrorFlyView(
+                key: UniqueKey(),
+                userJid: (item.userJid?.value).checkNull(),
+                viewBgColor: userStyle.backgroundColor,
+                profileSize: userStyle.profileImageSize,
+              ).setBorderRadius(userStyle.borderRadius)
               : Container(
-            width: width,
-            height: height,
+            width: double.infinity,
+            height: double.infinity,
             color: userStyle.backgroundColor,
             decoration: BoxDecoration(borderRadius: userStyle.borderRadius),
           );
         }),
         SpeakingIndicatorItem(item: item, style: userStyle, controller: controller),
         MirrorflyUsernameView(item: item, style: userStyle),
-        UserCallStatusView(width: width,height: height,item: item, controller: controller, style: userStyle),
+        UserCallStatusView(//width: width,height: height,
+            item: item, controller: controller, style: userStyle),
       ],
     );
   }
@@ -133,14 +138,14 @@ class MirrorflyPIPItem extends StatelessWidget {
 class UserCallStatusView extends StatelessWidget {
   const UserCallStatusView({
     super.key,
-    required this.width, required this.height,
+    // required this.width, required this.height,
     required this.style,
     required this.item,
     required this.controller,
   });
 
-  final double width;
-  final double height;
+  // final double width;
+  // final double height;
   final CallUserList item;
   final PipViewController controller;
   final CallUserTileStyle style;
@@ -166,8 +171,8 @@ class UserCallStatusView extends StatelessWidget {
             ),
           ],
         ),
-        width: width,
-        height: height,
+        width: double.infinity,
+        height: double.infinity,
         child: Center(
             child: Text(
               getTileCallStatus(item.callStatus?.value,
