@@ -163,7 +163,11 @@ class TextUtils {
   static Future<void> launchInBrowser(String url) async {
     if (await AppUtils.isNetConnected()) {
       try {
-        final Uri toLaunch = Uri.parse(url.trim());
+        String processedUrl = url.toLowerCase().trim();
+        if (!processedUrl.startsWith('http://') && !processedUrl.startsWith('https://')) {
+          processedUrl = 'https://$processedUrl';
+        }
+        final Uri toLaunch = Uri.parse(processedUrl);
 
         if (toLaunch.scheme != 'http' && toLaunch.scheme != 'https') {
           throw 'Unsupported URL scheme: ${toLaunch.scheme}';
