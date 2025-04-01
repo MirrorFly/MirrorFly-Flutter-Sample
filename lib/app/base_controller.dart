@@ -7,7 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
-import 'package:mirror_fly_demo/app/modules/scanner/scanner_controller.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
@@ -1418,8 +1418,8 @@ class BaseController {
     if(Get.isRegistered<DashboardController>()){
       Get.find<DashboardController>().onWebLogout(socketIdList);
     }
-    if(Get.isRegistered<ScannerController>()){
-      Get.find<ScannerController>().onWebLogout(socketIdList);
+    if(Get.isRegistered<WebLoginController>()){
+      Get.find<WebLoginController>().onWebLogout(socketIdList);
     }
   }
 }
