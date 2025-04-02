@@ -34,6 +34,10 @@ class WebLoginController extends GetxController {
         if (value != null && value) {
           // SessionManagement.setWebChatLogin(false);
           // NavUtils.back();
+          toToast(getTranslated("qaWebLogoutSuccess"));
+        }else{
+          DialogUtils.hideLoading();
+          toToast(getTranslated("qaWebLogoutFailure"));
         }
       });
     }else{
