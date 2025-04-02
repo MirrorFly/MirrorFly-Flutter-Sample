@@ -1203,9 +1203,16 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   }
 
   void goToPIP() {
-    NavUtils.back();
-    PictureInPicture.startPiP(pipWidget: ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(13)),
-        child: PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle)));
+    if(NavUtils.canPop) {
+      NavUtils.back();
+    } else {
+      NavUtils.offNamed(NavUtils.defaultRouteName);
+    }
+    PictureInPicture.startPiP(pipWidget: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(13)),
+        child: PIPView(
+          style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle,
+          pipTag: "pipView",)));
     PictureInPicture.updatePiPParams(
       pipParams: const PiPParams(
         pipWindowWidth: 135,

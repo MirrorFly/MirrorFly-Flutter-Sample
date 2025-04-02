@@ -283,6 +283,9 @@ class BaseController {
               NavUtils.back();
             }
           }
+          if(Get.isRegistered<PipViewController>(tag: "pipView")){
+            Get.find<PipViewController>(tag: "pipView").callDisconnected();
+          }
           if(Get.isRegistered<PipViewController>()){
             Get.find<PipViewController>().callDisconnected();
           }

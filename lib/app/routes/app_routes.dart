@@ -59,6 +59,7 @@ abstract class Routes {
   static const participants = _Paths.participants;
   static const groupParticipants = _Paths.groupParticipants;
   static const callInfo = _Paths.callInfo;
+  static const pipView = _Paths.pipView;
 
 }
 
@@ -120,5 +121,6 @@ abstract class _Paths {
   static const participants = '/participants';
   static const groupParticipants = '/groupParticipants';
   static const callInfo = '/call-info';
+  static const pipView = '/pipView';
 
 }

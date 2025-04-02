@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
+import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -255,18 +256,28 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     LogMessage.d('LifeCycle', 'onDetached');
   }
 
+  final deBouncer = DeBouncer(milliseconds: 600);
   @override
   void onInactive() {
     LogMessage.d('LifeCycle', 'onInactive');
-    onUserLeaveHint();
-    // goingInActive();
+    // deBouncerncer.cancel();
+    // deBouncer.run((){
+    //   goingInActive();
+    // });
+    goingInActive();
     // enterOrExitPIPMode();
   }
 
   void enterOrExitPIPMode() async{
-    if(Platform.isAndroid) {
+
+    LogMessage.d("PIPView", "hasHidden : $hasHidden");
+    if(Platform.isAndroid && !hasHidden) {
+      LogMessage.d("PIPView", PictureInPicture.isActive);
       if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
-        PictureInPicture.updatePiPParams(
+        LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+        PictureInPicture.stopPiP();
+        NavUtils.toNamed(Routes.pipView);
+        /*updatePiPParams(
           pipParams: const PiPParams(
             pipWindowWidth: 135,
             pipWindowHeight: 300,
@@ -278,12 +289,38 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
             resizable: true,
             initialCorner: PIPViewCorner.bottomRight,
           ),
-        );
+        );*/
+
         FlPiP().enable(
             ios: const FlPiPiOSConfig(),
             android: FlPiPAndroidConfig(
                 aspectRatio: Rational(
                     NavUtils.width.toInt(), NavUtils.height.toInt())));
+      }else if(NavUtils.currentRoute == Routes.onGoingCallView){
+        LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
+        NavUtils.offNamed(Routes.pipView);
+        FlPiP().enable(
+            ios: const FlPiPiOSConfig(),
+            android: FlPiPAndroidConfig(
+                aspectRatio: Rational(
+                    NavUtils.width.toInt(), NavUtils.height.toInt())));
+      }
+    }
+  }
+
+  Future<void> updatePIPView() async {
+    if(Platform.isAndroid) {
+      LogMessage.d("PIPView", NavUtils.currentRoute);
+      if (NavUtils.currentRoute == Routes.pipView) {
+        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+          LogMessage.d("PIPView", "offNamed onGoingCallView");
+          NavUtils.offNamed(Routes.onGoingCallView);
+        } else {
+          //Assume call ended so closing the pip view
+          LogMessage.d(
+              "PIPView", "Assuming call ended so closing the pip view");
+          NavUtils.back();
+        }
       }
     }
   }
@@ -335,7 +372,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
 
   @override
   void onResumed() {
-    onHide=false;
+    hasHidden=false;
     _leaveHintTimer?.cancel();
     isUserLeavingApp = false;
     LogMessage.d('LifeCycle', 'onResumed');
@@ -349,6 +386,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       unreadMissedCallCount();
     }
     // enterOrExitPIPMode();
+    updatePIPView();
   }
 
   void syncContacts() async {
@@ -429,11 +467,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     availableFeature(features);
   }
 
-  var onHide = false;
+  var hasHidden = false;
   @override
   void onHidden() {
     LogMessage.d('LifeCycle', 'onHidden');
-    onHide=true;
+    hasHidden=true;
   }
 
   unreadMissedCallCount() async {
@@ -499,7 +537,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   void onUserLeaveHint(){
+    LogMessage.d('LifeCycle', 'onUserLeaveHint');
     debugPrint("User is leaving the app (onUserLeaveHint equivalent)");
+    if(Get.isRegistered<PipViewController>(tag: "pipView")){
+      Get.find<PipViewController>(tag: "pipView").hideOptions();
+    }
     if(Get.isRegistered<PipViewController>()){
       Get.find<PipViewController>().hideOptions();
     }

@@ -14,16 +14,17 @@ import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly_view.dart';
 
 class PIPView extends NavViewStateful<PipViewController> {
-  const PIPView({super.key,
-    required this.style,});
+  const PIPView({Key? key, required this.style,this.pipTag})
+      : super(key: key, tag: pipTag);
   final PIPViewStyle style;
+  final String? pipTag;
 
   @override
-  PipViewController createController({String? tag}) => Get.put(PipViewController());
+  PipViewController createController({String? tag}) => Get.put(PipViewController(),tag: tag);
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("PIPView build : ${controller.callList.toJson()} NavUtils : ${NavUtils.width} , ${NavUtils.height}");
+    debugPrint("PIPView build : NavUtils : ${NavUtils.width} , ${NavUtils.height}");
     return Scaffold(
       body: Stack(
         children: [
