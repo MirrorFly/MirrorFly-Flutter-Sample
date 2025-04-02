@@ -75,10 +75,14 @@ class WebLoginController extends GetxController {
     }
   }
 
-  addLogin() {
+  addLogin() async {
+    if (await AppUtils.isNetConnected()) {
     NavUtils.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
+    } else {
+    toToast(getTranslated("noInternetConnection"));
+    }
   }
 
   logoutWeb() {
