@@ -478,5 +478,8 @@ class Constants {
   static const String attachmentTypeLocation = "location";
   static const String meetScheduleOn = "Meet Scheduled on ";
 
+  //PIP
+  static const int pipWidgetWidth = 135;
+  static const int pipWidgetHeight = 300;
 }
 

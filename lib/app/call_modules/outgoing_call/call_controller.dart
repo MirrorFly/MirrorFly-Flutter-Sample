@@ -1214,9 +1214,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle,
           pipTag: "pipView",)));
     PictureInPicture.updatePiPParams(
-      pipParams: const PiPParams(
-        pipWindowWidth: 135,
-        pipWindowHeight: 300,
+      pipParams: PiPParams(
+        pipWindowWidth: (Constants.pipWidgetWidth.toDouble()),
+        pipWindowHeight: (Constants.pipWidgetHeight.toDouble()),
         bottomSpace: 20,
         leftSpace: 20,
         rightSpace: 20,
