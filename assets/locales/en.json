@@ -584,5 +584,7 @@
     "restoreAndroidAccountSwitch": "Are you sure want to switch the backup account?",
     "webSettings": "Web Settings",
     "lastLogin": "Last Login",
-    "logoutFromAllComputers": "LOGOUT FROM ALL COMPUTERS"
+    "logoutFromAllComputers": "LOGOUT FROM ALL COMPUTERS",
+    "qaWebLogoutSuccess": "All web sessions have been logged out successfully",
+    "qaWebLogoutFailure": "Failed to log out web sessions. Please try again"
   }

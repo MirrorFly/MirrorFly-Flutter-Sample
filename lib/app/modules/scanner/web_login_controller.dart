@@ -34,6 +34,10 @@ class WebLoginController extends GetxController {
         if (value != null && value) {
           // SessionManagement.setWebChatLogin(false);
           // NavUtils.back();
+          toToast(getTranslated("qaWebLogoutSuccess"));
+        }else{
+          DialogUtils.hideLoading();
+          toToast(getTranslated("qaWebLogoutFailure"));
         }
       });
     }else{
@@ -75,10 +79,14 @@ class WebLoginController extends GetxController {
     }
   }
 
-  addLogin() {
+  addLogin() async {
+    if (await AppUtils.isNetConnected()) {
     NavUtils.toNamed(Routes.scanner)?.then((value) {
       getWebLoginDetails();
     });
+    } else {
+    toToast(getTranslated("noInternetConnection"));
+    }
   }
 
   logoutWeb() {
