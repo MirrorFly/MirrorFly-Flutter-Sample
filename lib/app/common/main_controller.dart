@@ -275,35 +275,28 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       LogMessage.d("PIPView", PictureInPicture.isActive);
       if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
         LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
-        PictureInPicture.stopPiP();
-        NavUtils.toNamed(Routes.pipView);
-        /*updatePiPParams(
-          pipParams: const PiPParams(
-            pipWindowWidth: 135,
-            pipWindowHeight: 300,
-            bottomSpace: 0,
-            leftSpace: 0,
-            rightSpace: 0,
-            topSpace: 0,
-            movable: true,
-            resizable: true,
-            initialCorner: PIPViewCorner.bottomRight,
-          ),
-        );*/
-
         FlPiP().enable(
             ios: const FlPiPiOSConfig(),
             android: FlPiPAndroidConfig(
                 aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt())));
+                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+                      if(onValue) {
+                        PictureInPicture.stopPiP();
+                        NavUtils.toNamed(Routes.pipView);
+                      }
+        });
       }else if(NavUtils.currentRoute == Routes.onGoingCallView){
         LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
-        NavUtils.offNamed(Routes.pipView);
         FlPiP().enable(
             ios: const FlPiPiOSConfig(),
             android: FlPiPAndroidConfig(
                 aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt())));
+                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+          LogMessage.d("PIPView", " FlPiP enable $onValue");
+          if(onValue){
+            NavUtils.offNamed(Routes.pipView);
+          }
+        });
       }
     }
   }
