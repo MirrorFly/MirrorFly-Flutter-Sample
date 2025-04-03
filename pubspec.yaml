@@ -1,6 +1,6 @@
 name: mirror_fly_demo
-version: 4.0.1+02
-build_release_date: Mar 2025
+version: 4.0.0+08
+build_release_date: Apr 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
 environment:
@@ -84,7 +84,12 @@ dependency_overrides:
   web: ^1.0.0
   geolocator_android: 4.6.1
 
-dev_dependencies: 
+  # https://github.com/Baseflow/flutter-permission-handler/issues/1450#issuecomment-2673836556
+  # For latest Permission Issue, Need Xcode 16+
+  permission_handler_apple: 9.4.5
+
+
+dev_dependencies:
   flutter_lints: 2.0.1
   flutter_test: 
     sdk: flutter

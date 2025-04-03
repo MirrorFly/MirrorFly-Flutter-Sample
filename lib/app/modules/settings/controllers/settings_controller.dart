@@ -10,6 +10,7 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
+import '../../backup_restore/backup_utils/backup_restore_manager.dart';
 
 
 class SettingsController extends GetxController {
@@ -59,12 +60,15 @@ class SettingsController extends GetxController {
     }
   }
 
-  void clearAllPreferences(){
+  void clearAllPreferences()async{
     var token = SessionManagement.getToken().checkNull();
     var cameraPermissionAsked = SessionManagement.getBool(Constants.cameraPermissionAsked);
     var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
     var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
     var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+   if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
+      await BackupRestoreManager.instance.googleSignIn.signOut();
+    }
     SessionManagement.clear().then((value) {
       SessionManagement.setToken(token);
       SessionManagement.setBool(Constants.cameraPermissionAsked, cameraPermissionAsked);

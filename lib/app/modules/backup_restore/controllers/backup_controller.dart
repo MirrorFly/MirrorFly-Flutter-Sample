@@ -231,16 +231,16 @@ class BackupController extends GetxController {
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
-      toToast(Platform.isAndroid
-          ? getTranslated("androidRemoteBackupSuccess")
-          : getTranslated("iOSRemoteBackupSuccess"));
+      if(Platform.isIOS){
+        getTranslated("iOSRemoteBackupSuccess");
+      }
       checkForBackUpFiles();
       // BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
       LogMessage.d("Backup Controller", "Upload Backup File Error => $error");
-    });
+    },cancelOnError: true);
   }
 
   void serverUploadSuccess() {

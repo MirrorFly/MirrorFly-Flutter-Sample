@@ -214,7 +214,10 @@ class ArchivedChatListController extends GetxController {
     LogMessage.d("chat", value.toString());
     if (value.isNotEmpty) {
       var data = recentChatDataFromJson(value);
-      return data;
+      if(data.isChatArchived.checkNull()) {
+        return data;
+      }
+      return null;
     } else {
       return null;
     }

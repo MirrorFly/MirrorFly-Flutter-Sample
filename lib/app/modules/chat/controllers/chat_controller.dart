@@ -476,6 +476,7 @@ class ChatController extends FullLifeCycleController
                 updateLastMessage(response.data);
               } else {
                 LogMessage.d("sendMessage", response.errorMessage);
+                showError(response.exception);
               }
             });
       }
