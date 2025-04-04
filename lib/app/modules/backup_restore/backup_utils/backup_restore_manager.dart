@@ -776,6 +776,18 @@ class BackupRestoreManager {
 
     ///
   }
+
+  void cancelBackup() {
+    Mirrorfly.cancelBackup();
+  }
+
+  void cancelRestore() {
+    Mirrorfly.cancelRestore();
+  }
+
+  void cancelRemoteBackupUpload() {
+
+  }
 }
 
 Stream<List<int>> trackProgress(
