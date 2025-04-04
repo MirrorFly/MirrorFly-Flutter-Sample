@@ -26,6 +26,7 @@ class PIPView extends NavViewStateful<PipViewController> {
   Widget build(BuildContext context) {
     debugPrint("PIPView build : NavUtils : ${NavUtils.width} , ${NavUtils.height}");
     return Scaffold(
+        resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Obx(() {
