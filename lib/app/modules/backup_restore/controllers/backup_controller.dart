@@ -195,6 +195,7 @@ class BackupController extends GetxController {
             "Backup selected file path => ${result.files.single.path}");
         isRestoreStarted(true);
         // Mirrorfly.restoreBackup(backupPath: result.files.single.path ?? "");
+        backupRestoreManager.restoreBackup(backupFilePath: result.files.single.path ?? "");
       } else {
         LogMessage.d("Backup Controller", "Restore file is not Selected");
       }
@@ -374,5 +375,27 @@ class BackupController extends GetxController {
       },
       barrierDismissible: false,
     );
+  }
+
+  void cancelLocalProcess() {
+
+    if(isLocalBackupStarted.value) {
+      backupRestoreManager.cancelBackup();
+    }
+
+    if (isRestoreStarted.value){
+      backupRestoreManager.cancelRestore();
+    }
+
+  }
+
+  void cancelRemoteProcess() {
+    if (isRemoteBackupStarted.value) {
+      backupRestoreManager.cancelBackup();
+    }
+
+    if (isRemoteUploadStarted.value){
+      backupRestoreManager.cancelRemoteBackupUpload();
+    }
   }
 }

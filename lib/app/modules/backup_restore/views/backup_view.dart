@@ -74,7 +74,9 @@ class BackupView extends NavViewStateful<BackupController> {
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
               child: Text(
-                controller.isAndroid ? getTranslated("lastBackUpAndroidDesc") : getTranslated("lastBackUpiOSDesc"),
+                controller.isAndroid
+                    ? getTranslated("lastBackUpAndroidDesc")
+                    : getTranslated("lastBackUpiOSDesc"),
                 style: const TextStyle(color: Color(0xff767676)),
               ),
             ),
@@ -130,9 +132,9 @@ class BackupView extends NavViewStateful<BackupController> {
                                           100,
                                     ),
                                   ),
-                                  /* IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {}),*/
+                                  IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: ()=> controller.cancelRemoteProcess()),
                                 ],
                               ),
                               const SizedBox(
@@ -287,7 +289,7 @@ class BackupView extends NavViewStateful<BackupController> {
                               ),
                               IconButton(
                                   icon: const Icon(Icons.close),
-                                  onPressed: () {}),
+                                  onPressed: () => controller.cancelLocalProcess()),
                             ],
                           ),
                           Row(

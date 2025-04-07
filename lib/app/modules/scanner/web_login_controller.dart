@@ -30,7 +30,7 @@ class WebLoginController extends GetxController {
   logoutWebUser() async {
     if(await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
-      Mirrorfly.logoutWebUser(logins: loginQr).then((value) {
+      Mirrorfly.logoutWebUser().then((value) {
         if (value != null && value) {
           // SessionManagement.setWebChatLogin(false);
           // NavUtils.back();
