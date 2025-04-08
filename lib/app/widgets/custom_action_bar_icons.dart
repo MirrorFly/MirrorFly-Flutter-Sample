@@ -120,6 +120,7 @@ class _CustomActionBarIconsState extends State<CustomActionBarIcons> with Widget
               data: widget.popupMenuThemeData,
               child: PopupMenuButton(
                 key: _menuKey,
+                routeSettings: const RouteSettings(name: '/PopupMenu'),
                 icon: AppUtils.svgIcon(icon:moreIcon, width: 3.66, height: 16.31,colorFilter:ColorFilter.mode(widget.popupMenuThemeData.iconColor ?? Colors.black, BlendMode.srcIn),),
                 onCanceled: (){
                   _context = null;

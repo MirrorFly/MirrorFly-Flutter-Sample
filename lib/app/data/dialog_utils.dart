@@ -182,7 +182,7 @@ class DialogUtils {
 
   // Method to check if any dialog is open
   static bool isDialogOpen() {
-    return NavUtils.currentRoute == '/dialog';
+    return NavUtils.currentRoute == '/dialog' || NavUtils.currentRoute == '/PopupMenu';
   }
 
   // Method to show a feature unavailable alert
