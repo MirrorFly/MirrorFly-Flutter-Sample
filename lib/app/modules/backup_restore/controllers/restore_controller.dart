@@ -129,6 +129,20 @@ class RestoreController extends GetxController
     if(animationController != null){
       animationController?.stop();
     }
+
+    if (backupDownloadStarted.value) {
+      BackupRestoreManager.instance.cancelDownload();
+      backupDownloadStarted(false);
+      LogMessage.d("Restore Controller", "Backup Download cancelled while skip");
+    } else if (backupRestoreStarted.value) {
+      BackupRestoreManager.instance.cancelRestore();
+      backupRestoreStarted(false);
+      LogMessage.d("Restore Controller", "Backup Restore cancelled while skip");
+    } else {
+      LogMessage.d(
+          "Restore Controller", "No backup restore initiated while skip");
+    }
+
     SessionManagement.setBackUpState(Constants.backupSkipped);
     // if (BackupRestoreManager.instance.getGoogleAccountSignedIn?.email != null) {
     //   SessionManagement.setBackUpAccount((BackupRestoreManager.instance.getGoogleAccountSignedIn?.email).checkNull());
@@ -228,7 +242,10 @@ class RestoreController extends GetxController
         });*/
 
         LogMessage.d("Restore Controller", "download backup url: ${backupFile.value.filePath}");
-        BackupRestoreManager.instance.restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
+
+        Future.delayed(const Duration(seconds: 3)).then((_) {
+          BackupRestoreManager.instance.restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
+        });
         /*BackupRestoreManager.instance.getBackupUrl().then((backupPath){
           LogMessage.d("Restore Controller", "download backup url: $backupPath");
           final fullFilePath = backupPath != null ? "$backupPath/${backupFile.value.iCloudRelativePath}" : '';
