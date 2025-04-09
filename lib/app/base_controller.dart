@@ -285,9 +285,11 @@ class BaseController {
           }
           if(Get.isRegistered<PipViewController>(tag: "pipView")){
             Get.find<PipViewController>(tag: "pipView").callDisconnected();
+            stopTimer();
           }
           if(Get.isRegistered<PipViewController>()){
             Get.find<PipViewController>().callDisconnected();
+            stopTimer();
           }
           break;
         case CallStatus.calling10s:
