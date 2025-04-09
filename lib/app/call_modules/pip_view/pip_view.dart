@@ -24,73 +24,78 @@ class PIPView extends NavViewStateful<PipViewController> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("PIPView build : NavUtils : ${NavUtils.width} , ${NavUtils.height}");
+    // debugPrint("PIPView build : NavUtils : ${NavUtils.width} , ${NavUtils.height}");
     return Scaffold(
         resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          Obx(() {
-            return ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: controller.callList.length <= 2
-                  ? controller.callList.length
-                  : 2,
-              itemBuilder: (cxt, index) {
-                var item = controller.callList[index];
-                debugPrint("PIPView Obx callList : ${item.toJson()}");
-                return AspectRatio(
-                  aspectRatio: Rational(
-                     (Constants.pipWidgetWidth.toInt()), ((Constants.pipWidgetHeight).toInt()~/2)).aspectRatio,
-                  child: MirrorflyPIPItem(
-                    item: item,
-                    userStyle: style.userTileStyle,
-                    controller: controller,
+      body: LayoutBuilder(
+        builder: (context,cons) {
+          // debugPrint("PIPView build : cons : ${cons.maxWidth} , ${cons.maxHeight}");
+          return Stack(
+            children: [
+              Obx(() {
+                return ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  itemCount: controller.callList.length <= 2
+                      ? controller.callList.length
+                      : 2,
+                  itemBuilder: (cxt, index) {
+                    var item = controller.callList[index];
+                    debugPrint("PIPView Obx callList : ${item.toJson()}");
+                    return AspectRatio(
+                      aspectRatio: Rational(
+                         (cons.maxWidth.toInt()), ((cons.maxHeight).toInt()~/2)).aspectRatio,
+                      child: MirrorflyPIPItem(
+                        item: item,
+                        userStyle: style.userTileStyle,
+                        controller: controller,
+                      ),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const Divider(
+                      height: 0.2,
+                      color: Colors.grey,
+                    );
+                  },
+                );
+              }),
+              Obx((){
+                return Visibility(
+                  visible: !controller.isPIPActive.value,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          onPressed: (){
+                            controller.expandPIP();
+                          },
+                          icon: const Icon(
+                            Icons.open_in_full,
+                            color: Colors.white,
+                          )),
+                    ],
                   ),
                 );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(
-                  height: 0.2,
-                  color: Colors.grey,
+              }),
+              Obx((){
+                var count = controller.callList.length - 2;
+                return count.isLowerThan(1) ? const Offstage() : Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: CircleAvatar(
+                    backgroundColor: style.countBgColor,
+                    radius: 9,
+                    child: Text(
+                      "+$count",
+                      style: style.countStyle,
+                    ),
+                  ),
                 );
-              },
-            );
-          }),
-          Obx((){
-            return Visibility(
-              visible: !controller.isPIPActive.value,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: (){
-                        controller.expandPIP();
-                      },
-                      icon: const Icon(
-                        Icons.open_in_full,
-                        color: Colors.white,
-                      )),
-                ],
-              ),
-            );
-          }),
-          Obx((){
-            var count = controller.callList.length - 2;
-            return count.isLowerThan(1) ? const Offstage() : Positioned(
-              right: 8,
-              bottom: 8,
-              child: CircleAvatar(
-                backgroundColor: style.countBgColor,
-                radius: 9,
-                child: Text(
-                  "+$count",
-                  style: style.countStyle,
-                ),
-              ),
-            );
-          })
-        ],
+              })
+            ],
+          );
+        }
       ),
     );
   }

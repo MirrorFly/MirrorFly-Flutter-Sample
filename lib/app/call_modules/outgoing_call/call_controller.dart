@@ -1219,8 +1219,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           pipTag: "pipView",)));
     PictureInPicture.updatePiPParams(
       pipParams: PiPParams(
-        pipWindowWidth: (Constants.pipWidgetWidth.toDouble()),
-        pipWindowHeight: (Constants.pipWidgetHeight.toDouble()),
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,//taking 80 percent of the width
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.8,//taking 80 percent of the height
         bottomSpace: 20,
         leftSpace: 20,
         rightSpace: 20,
