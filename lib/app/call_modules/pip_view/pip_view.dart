@@ -60,28 +60,32 @@ class PIPView extends NavViewStateful<PipViewController> {
           Obx((){
             return Visibility(
               visible: !controller.isPIPActive.value,
-              child: Positioned(
-                right: 0,
-                top: 0,
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: (){
-                          controller.expandPIP();
-                        },
-                        icon: const Icon(
-                          Icons.open_in_full,
-                          color: Colors.white,
-                        )),
-                    IconButton(
-                        onPressed: (){
-                          controller.stopPIP();
-                        },
-                        icon: const Icon(
-                          Icons.clear,
-                          color: Colors.white,
-                        ))
-                  ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                      onPressed: (){
+                        controller.expandPIP();
+                      },
+                      icon: const Icon(
+                        Icons.open_in_full,
+                        color: Colors.white,
+                      )),
+                ],
+              ),
+            );
+          }),
+          Obx((){
+            var count = controller.callList.length - 2;
+            return count.isLowerThan(1) ? const Offstage() : Positioned(
+              right: 8,
+              bottom: 8,
+              child: CircleAvatar(
+                backgroundColor: style.countBgColor,
+                radius: 9,
+                child: Text(
+                  "+$count",
+                  style: style.countStyle,
                 ),
               ),
             );

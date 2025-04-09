@@ -328,7 +328,7 @@ toToast(String text) {
 }
 
 class Constants {
-  static String licenseKey = 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+  static String licenseKey = '2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
   static String iOSContainerID = 'group.com.mirrorfly.flutter'; //group.com.mirrorfly.flutter
   static bool chatHistoryEnable = true;
   static bool enableDebugLog = true;
@@ -342,6 +342,7 @@ class Constants {
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static const maxNameLength = 26;
   static const callNotificationId = 124;
+  static const getMaxCallUsersCount = 8;
 
   static const appSession = 'app_session';
   static const changedPinAt = 'pin_changed_at';

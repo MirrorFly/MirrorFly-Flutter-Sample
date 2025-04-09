@@ -79,6 +79,8 @@ class PIPViewStyle {
   final BorderRadiusGeometry borderRadius;
   final CallUserTileStyle userTileStyle;
   final IconStyle closeIconStyle;
+  final TextStyle countStyle;
+  final Color countBgColor;
 
   const PIPViewStyle(
       {this.width = 135,
@@ -95,5 +97,7 @@ class PIPViewStyle {
         callStatusTextStyle: TextStyle(
             fontWeight: FontWeight.w300, color: Colors.white, fontSize: 10)
       ),
+        this.countStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.white,fontSize: 8,),
+        this.countBgColor = AppColor.primaryColor,
       this.closeIconStyle = const IconStyle(iconColor: Colors.white)});
 }

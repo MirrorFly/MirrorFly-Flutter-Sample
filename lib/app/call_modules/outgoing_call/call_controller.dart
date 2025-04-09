@@ -73,7 +73,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var groupId = ''.obs;
 
   TabController? tabController;
-  var getMaxCallUsersCount = 8;
+
 
   var joinViaLink = false;
   // static const EventChannel _eventChannel = EventChannel('fl_pip/foreground');
@@ -1073,7 +1073,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     var indexValid =
         callList.indexWhere((element) => element.userJid?.value == userJid);
     LogMessage.d("callController", "indexValid : $indexValid jid : $userJid");
-    if (indexValid.isNegative && callList.length != getMaxCallUsersCount) {
+    if (indexValid.isNegative && callList.length != Constants.getMaxCallUsersCount) {
       callList.insert(
           callList.length - 1,
           CallUserList(
@@ -1100,9 +1100,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var indexValid =
               callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d("callController",
-              "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : $getMaxCallUsersCount");
+              "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : ${Constants.getMaxCallUsersCount}");
           if (indexValid.isNegative &&
-              callList.length != getMaxCallUsersCount) {
+              callList.length != Constants.getMaxCallUsersCount) {
             callList.insert(
                 callList.length - 1,
                 CallUserList(
@@ -1208,6 +1208,10 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       NavUtils.offNamed(NavUtils.defaultRouteName);
     }
+    startPIP();
+  }
+
+  void startPIP(){
     PictureInPicture.startPiP(pipWidget: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(13)),
         child: PIPView(
