@@ -346,6 +346,7 @@ class BackupRestoreManager {
                   debugPrint("Upload completed successfully.");
                   progressController.add(100); // Mark 100% completion
                   progressController.close();
+                  toToast(getTranslated("iOSRemoteBackupSuccess"));
                 });
               },
               cancelOnError: true,
@@ -743,7 +744,7 @@ class BackupRestoreManager {
     yield* downloadProgress.stream;
   }
 
-  void cancelAndroidBackupDownload() {
+  void _cancelAndroidBackupDownload() {
     if (_gDriveDownloadSubscription != null) {
       _gDriveDownloadSubscription?.cancel();
       _gDriveDownloadSubscription = null;
@@ -839,6 +840,14 @@ class BackupRestoreManager {
       }
     }else{
       debugPrint("G-drive/iCloud upload cancel failed");
+    }
+  }
+
+  void cancelRemoteDownload() {
+    if (Platform.isAndroid) {
+      _cancelAndroidBackupDownload();
+    } else {
+      debugPrint("Remote Download process is not supported for the current platform");
     }
   }
 
