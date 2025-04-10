@@ -239,6 +239,7 @@ class BackupRestoreManager {
       );
       if (_isgDriveUploadCancelled) {
         LogMessage.d("BackupRestoreManager", "Upload was cancelled.");
+        toToast(getTranslated("backupCancel"));
         return;
       }
 
