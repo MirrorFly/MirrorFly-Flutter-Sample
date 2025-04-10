@@ -70,7 +70,10 @@ class BackupRestoreManager {
   bool get isDriveApiInitialized => driveApi != null;
 
   StreamSubscription<List<int>>? _gDriveDownloadSubscription;
-  StreamController<List<int>>? _uploadStreamController;
+
+  StreamSubscription<double>? _icloudUploadSubscription;
+
+  StreamController<List<int>>? _gDriveUploadStreamController;
   bool _isUploadCancelled = false;
 
   String _cloudBackUpDownloadPath = "";
@@ -327,7 +330,7 @@ class BackupRestoreManager {
           containerId: _iCloudContainerID,
           filePath: file.path,
           onProgress: (progressStream) {
-            progressStream.listen(
+            _icloudUploadSubscription = progressStream.listen(
               (progress) {
                 debugPrint("Uploading to server progress: $progress");
                 progressController.add(progress.floor());
@@ -375,6 +378,7 @@ class BackupRestoreManager {
     }
   }
 
+  /// This is not used as the iCloud url itself supported by SDK for Restore.
   Stream<int> startIcloudFileDownload({required String relativePath}) async*{
     StreamController<int> iCloudProgressController = StreamController<int>();
     _cloudBackUpDownloadPath = "";
@@ -819,10 +823,23 @@ class BackupRestoreManager {
   }
 
   void cancelRemoteBackupUpload() {
-    _isUploadCancelled = true;
-    _uploadStreamController?.close();
+    if(Platform.isAndroid && _gDriveUploadStreamController != null) {
+      _isUploadCancelled = true;
+      _gDriveUploadStreamController?.close();
+      _gDriveUploadStreamController = null;
+      debugPrint("G-drive upload cancelled");
+    }else if (Platform.isIOS && _icloudUploadSubscription != null) {
+      try {
+        _icloudUploadSubscription?.cancel();
+        _icloudUploadSubscription = null;
+        debugPrint("iCloud upload cancelled");
+      } catch (e) {
+        debugPrint("Error cancelling iCloud upload: $e");
+      }
+    }else{
+      debugPrint("G-drive/iCloud upload cancel failed");
+    }
   }
-
 
   Stream<List<int>> trackProgress(
       Stream<List<int>> inputStream,
@@ -832,7 +849,7 @@ class BackupRestoreManager {
     int uploadedBytes = 0;
 
     final controller = StreamController<List<int>>();
-    _uploadStreamController = controller;
+    _gDriveUploadStreamController = controller;
 
     inputStream.listen(
           (chunk) {
