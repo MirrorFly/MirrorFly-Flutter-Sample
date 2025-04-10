@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/material.dart';
@@ -11,14 +12,14 @@ import 'package:mirror_fly_demo/app/data/utils.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirror_fly_demo/app/model/call_user_list.dart';
 import 'package:mirror_fly_demo/app/routes/app_pages.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
-class PipViewController extends FullLifeCycleController with FullLifeCycleMixin, CallEventListeners,ProfileEventListeners {
-
+class PipViewController extends FullLifeCycleController
+    with FullLifeCycleMixin, CallEventListeners, ProfileEventListeners {
   final String tag = "PipViewController";
 
-  get isOneToOneCall =>
-      callList.length <= 2;
+  get isOneToOneCall => callList.length <= 2;
 
   var callList = List<CallUserList>.empty(growable: true).obs;
   var availableAudioList = List<AudioDevices>.empty(growable: true).obs;
@@ -34,47 +35,53 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       var value = await Mirrorfly.getCallUsersList();
       final callUserList = callUserListFromJson(value);
       callUserList.sort((a, b) {
-        final aPriority = prioritizedStatuses.contains(a.callStatus!.value) ? 0 : 1;
-        final bPriority = prioritizedStatuses.contains(b.callStatus!.value) ? 0 : 1;
+        final aPriority =
+            prioritizedStatuses.contains(a.callStatus!.value) ? 0 : 1;
+        final bPriority =
+            prioritizedStatuses.contains(b.callStatus!.value) ? 0 : 1;
         return aPriority.compareTo(bPriority);
       });
       callList(callUserList);
-    }catch(e){
-      LogMessage.d("PipView",e);
+    } catch (e) {
+      LogMessage.d("PipView", e);
     }
     super.onInit();
   }
 
-
-
-
-
   @override
-  void onCallAction(String userJid, String callMode, String callType, String callAction) {
-    switch(callAction){
-      case CallAction.videoCallConversionRequest : {
-        //videoCallConversionRequest
-        break;
-      }
-      case CallAction.inviteUsers : {
-        onUserInvite(callMode, userJid, callType);
-        break;
-      }
-      case CallAction.remoteBusy : {
-        remoteBusy(callMode, userJid, callType, callAction);
-        break;
-      }
-      case CallAction.remoteOtherBusy : {
-        remoteOtherBusy(callMode, userJid, callType, callAction);
-        break;
-      }
-      case CallAction.remoteEngaged : {
-        remoteEngaged(userJid,callMode, callType);
-        break;
-      }
-
+  void onCallAction(
+      String userJid, String callMode, String callType, String callAction) {
+    switch (callAction) {
+      case CallAction.videoCallConversionRequest:
+        {
+          videoCallConversionRequest();
+          break;
+        }
+      case CallAction.inviteUsers:
+        {
+          onUserInvite(callMode, userJid, callType);
+          break;
+        }
+      case CallAction.remoteBusy:
+        {
+          remoteBusy(callMode, userJid, callType, callAction);
+          break;
+        }
+      case CallAction.remoteOtherBusy:
+        {
+          remoteOtherBusy(callMode, userJid, callType, callAction);
+          break;
+        }
+      case CallAction.remoteEngaged:
+        {
+          remoteEngaged(userJid, callMode, callType);
+          break;
+        }
     }
+  }
 
+  Future<void> videoCallConversionRequest() async {
+      movePIPToOngoingCallView();
   }
 
   @override
@@ -93,24 +100,32 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   }
 
   @override
-  void onCallStatusUpdated(String userJid, String callMode, String callType, String callStatus) {
+  void onCallStatusUpdated(
+      String userJid, String callMode, String callType, String callStatus) {
     updateStatus(userJid, callStatus);
-    switch(callStatus){
-      case CallStatus.disconnected : {
-        callDisconnected();
-      }
-      case CallStatus.callTimeout : {
-        var userJids = userJid.split(",");
-        debugPrint("#Mirrorfly Call timeout userJids $userJids");
-        removeUsersInCall(userJids,callStatus);
-      }
-      case CallStatus.userLeft : {
-        onUserLeft(callMode, userJid, callType);
-      }
-      case CallStatus.userJoined : {
-        onUserJoined(callMode, userJid, callType, callStatus);
-      }
-
+    switch (callStatus) {
+      case CallStatus.disconnected:
+        {
+          callDisconnected();
+          break;
+        }
+      case CallStatus.callTimeout:
+        {
+          var userJids = userJid.split(",");
+          debugPrint("#Mirrorfly Call timeout userJids $userJids");
+          removeUsersInCall(userJids, callStatus);
+          break;
+        }
+      case CallStatus.userLeft:
+        {
+          onUserLeft(callMode, userJid, callType);
+          break;
+        }
+      case CallStatus.userJoined:
+        {
+          onUserJoined(callMode, userJid, callType, callStatus);
+          break;
+        }
     }
   }
 
@@ -120,13 +135,14 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   }
 
   @override
-  void onMissedCall(String userJid, String groupId, bool isOneToOneCall, String callType, List<String> userList) {
+  void onMissedCall(String userJid, String groupId, bool isOneToOneCall,
+      String callType, List<String> userList) {
     // TODO: implement onMissedCall
   }
 
   @override
   void onMuteStatusUpdated(String userJid, String muteEvent) {
-    audioMuteStatusChanged(muteEvent,userJid);
+    audioMuteStatusChanged(muteEvent, userJid);
   }
 
   @override
@@ -142,9 +158,10 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   var speakingUsers = <SpeakingUsers>[].obs;
   @override
   void onUserSpeaking(String userJid, int audioLevel) {
-    LogMessage.d("onUserSpeaking","userJid: $userJid, audioLevel : $audioLevel");
+    LogMessage.d(
+        "onUserSpeaking", "userJid: $userJid, audioLevel : $audioLevel");
     var index = speakingUsers.indexWhere(
-            (element) => element.userJid.toString() == userJid.toString());
+        (element) => element.userJid.toString() == userJid.toString());
     // LogMessage.d("speakingUsers indexWhere", "$index");
     if (index.isNegative) {
       speakingUsers
@@ -158,7 +175,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
 
   int audioLevel(String userJid) {
     var index =
-    speakingUsers.indexWhere((element) => element.userJid == userJid);
+        speakingUsers.indexWhere((element) => element.userJid == userJid);
     var value = index.isNegative ? -1 : speakingUsers[index].audioLevel.value;
     // debugPrint("speakingUsers Audio level $value");
     return value;
@@ -168,7 +185,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   void onUserStoppedSpeaking(String userJid) {
     Future.delayed(const Duration(milliseconds: 300), () {
       var index =
-      speakingUsers.indexWhere((element) => element.userJid == userJid);
+          speakingUsers.indexWhere((element) => element.userJid == userJid);
       if (!index.isNegative) {
         speakingUsers[index].audioLevel(0);
       }
@@ -215,7 +232,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     isPIPActive((await FlPiP().isActive)?.status == PiPStatus.enabled);
   }
 
-  void hideOptions(){
+  void hideOptions() {
     isPIPActive(true);
   }
 
@@ -234,18 +251,36 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     FlPiP().toggle(AppState.foreground);
   }
 
-  Future<void> removeUsersInCall(List<String> userJids, String callStatus) async {
-    callList.removeWhere((element) => userJids.contains(element.userJid!.value));
+  Future<void> movePIPToOngoingCallView() async {
+    if (Platform.isAndroid) {
+      LogMessage.d("PIPView", PictureInPicture.isActive);
+      if(PictureInPicture.isActive) {
+        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+            LogMessage.d(tag, "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+            PictureInPicture.stopPiP();
+            NavUtils.toNamed(Routes.onGoingCallView);
+        }
+      }else{
+        FlPiP().toggle(AppState.foreground);
+      }
+    }
+  }
+
+  Future<void> removeUsersInCall(
+      List<String> userJids, String callStatus) async {
+    callList
+        .removeWhere((element) => userJids.contains(element.userJid!.value));
     speakingUsers.removeWhere((element) => userJids.contains(element.userJid));
     for (var userJid in userJids) {
-      getProfileDetails(userJid).then((user){
+      getProfileDetails(userJid).then((user) {
         debugPrint("removeUser callStatus $userJid ${user.getName()}");
       });
     }
   }
+
   void audioMuteStatusChanged(String muteEvent, String userJid) {
     var callUserIndex =
-    callList.indexWhere((element) => element.userJid!.value == userJid);
+        callList.indexWhere((element) => element.userJid!.value == userJid);
     if (!callUserIndex.isNegative) {
       debugPrint("index $callUserIndex");
       callList[callUserIndex]
@@ -264,13 +299,14 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       String callStatus) async {
     LogMessage.d(tag, " onUserJoined $userJid from joinViaLink");
     var isAudioMuted =
-    (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
+        (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
     var isVideoMuted =
-    (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
+        (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
     var indexValid =
-    callList.indexWhere((element) => element.userJid?.value == userJid);
+        callList.indexWhere((element) => element.userJid?.value == userJid);
     LogMessage.d(tag, "indexValid : $indexValid jid : $userJid");
-    if (indexValid.isNegative && callList.length != Constants.getMaxCallUsersCount) {
+    if (indexValid.isNegative &&
+        callList.length != Constants.getMaxCallUsersCount) {
       callList.insert(
           callList.length - 1,
           CallUserList(
@@ -287,14 +323,13 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       if (value.isNotEmpty) {
         var userJids = value;
         for (var jid in userJids) {
-          LogMessage.d(
-              tag, "before ${callUserListToJson(callList)}");
+          LogMessage.d(tag, "before ${callUserListToJson(callList)}");
           var isAudioMuted =
-          (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
+              (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
           var isVideoMuted =
-          (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
+              (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
           var indexValid =
-          callList.indexWhere((element) => element.userJid?.value == jid);
+              callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d(tag,
               "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : ${Constants.getMaxCallUsersCount}");
           if (indexValid.isNegative &&
@@ -306,8 +341,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
                     isAudioMuted: isAudioMuted,
                     isVideoMuted: isVideoMuted,
                     callStatus: CallStatus.calling.obs));
-            LogMessage.d(
-                tag, "after ${callUserListToJson(callList)}");
+            LogMessage.d(tag, "after ${callUserListToJson(callList)}");
           } else {
             LogMessage.d(tag, "User already in the list");
           }
@@ -341,6 +375,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     // users.remove(userJid);//out going call view
     remoteBusy(callMode, userJid, callType, callAction);
   }
+
   Future<void> remoteEngaged(
       String userJid, String callMode, String callType) async {
     var data = await getProfileDetails(userJid);
@@ -355,9 +390,10 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
       removeUser(callMode, userJid, callType);
     }
   }
+
   void videoMuteStatusChanged(String muteEvent, String userJid) {
     var callUserIndex =
-    callList.indexWhere((element) => element.userJid!.value == userJid);
+        callList.indexWhere((element) => element.userJid!.value == userJid);
     if (!callUserIndex.isNegative) {
       debugPrint("index $callUserIndex");
       callList[callUserIndex]
@@ -367,6 +403,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
           "#Mirrorfly call User Not Found in list to video mute the status");
     }
   }
+
   void onUserLeft(String callMode, String userJid, String callType) {
     if (callList.length > 2 &&
         !callList
@@ -391,22 +428,21 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
     debugPrint("after removeUser ${callList.length}");
     debugPrint(
         "removeUser ${callList.indexWhere((element) => element.userJid.toString() == userJid)}");
-
   }
 
-  void updateStatus(String userJid,String callStatus){
+  void updateStatus(String userJid, String callStatus) {
     if (callList.isEmpty) {
       debugPrint("skipping statusUpdate as list is empty");
       return;
     }
 
     var indexOfItem =
-    callList.indexWhere((element) => element.userJid!.value == userJid);
+        callList.indexWhere((element) => element.userJid!.value == userJid);
 
     /// check the index is valid or not
     if (!indexOfItem.isNegative && callStatus != CallStatus.disconnected) {
-      debugPrint(
-          "indexOfItem of call status update $indexOfItem $callStatus");
+      debugPrint("indexOfItem of call status update $indexOfItem $callStatus");
+
       /// update the current status of the user in the list
       callList[indexOfItem].callStatus?.value = (callStatus);
     }
@@ -415,7 +451,7 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   Future<void> updateProfile(String jid) async {
     if (jid.isNotEmpty) {
       var callListIndex =
-      callList.indexWhere((element) => element.userJid!.value == jid);
+          callList.indexWhere((element) => element.userJid!.value == jid);
       if (!callListIndex.isNegative) {
         callList[callListIndex].userJid!("");
         callList[callListIndex].userJid!(jid);
@@ -492,5 +528,4 @@ class PipViewController extends FullLifeCycleController with FullLifeCycleMixin,
   void userUpdatedHisProfile(String jid) {
     updateProfile(jid);
   }
-
 }

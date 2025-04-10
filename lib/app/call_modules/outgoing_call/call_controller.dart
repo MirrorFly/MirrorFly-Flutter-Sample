@@ -77,6 +77,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   var joinViaLink = false;
   // static const EventChannel _eventChannel = EventChannel('fl_pip/foreground');
+  var myJid  = SessionManagement.getUserJID();
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -131,6 +132,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         pinnedUserJid(callUserList.first.userJid!.value);
         pinnedUser(callUserList.first);
       }
+      Mirrorfly.isCallConversionRequestAvailable().then((value){
+        if(value.checkNull()){
+          videoCallConversionRequest(callList.where((item)=>item.userJid!.value != myJid).first.userJid!.value);
+        }
+      });
     });
 
     await Mirrorfly.getCallType().then((value) => callType(value));
