@@ -214,9 +214,7 @@ class BackupRestoreManager {
     LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
     try {
       File backupFile = File(filePath);
-      // int fileSize = backupFile.lengthSync();
 
-      // Prepare the file metadata
       var driveFile = drive.File();
       driveFile.name = backupFile.path.split('/').last;
 
@@ -224,9 +222,6 @@ class BackupRestoreManager {
         backupFile.openRead(),
         fileSize,
             (progress) {
-          // backupController.updateProgress(progress);
-          // LogMessage.d("BackupRestoreManager",
-          //     "Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
           progressController.add((progress * 100).floor());
         },
       );
@@ -241,7 +236,7 @@ class BackupRestoreManager {
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().serverUploadSuccess();
       }
-      progressController.add(100); // Mark upload as complete
+      progressController.add(100);
       progressController.close();
     } catch (e) {
       LogMessage.d(
@@ -298,6 +293,9 @@ class BackupRestoreManager {
 
   Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
      final StreamController<int> progressController = StreamController<int>();
+
+     checkAndDeleteExistingBackup();
+
      if (Platform.isAndroid) {
       uploadFileToGoogleDrive(filePath, fileSize, progressController);
     } else if (Platform.isIOS) {
@@ -314,9 +312,6 @@ class BackupRestoreManager {
       }
 
       LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
-      
-
-      checkAndDeleteExistingBackup();
 
       LogMessage.d("BackupRestoreManager", "Starting the upload to the iCLoud Drive");
       try {
@@ -755,11 +750,12 @@ class BackupRestoreManager {
   }
 
   Future<void> checkAndDeleteExistingBackup() async {
+    if (Platform.isAndroid){
+      await deleteBackupFiles();
+    }else if (Platform.isIOS){
     /// Delete the existing iCloud file and then proceed to upload
-
     List<CloudFiles> iCloudFiles =
         await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
-
     if (iCloudFiles.isNotEmpty) {
       LogMessage.d("BackupRestoreManager", "Deleting the iCLoud Files");
       List<String> relativePaths = iCloudFiles
@@ -770,12 +766,46 @@ class BackupRestoreManager {
 
       await icloudSyncPlugin.deleteMultipleFileToICloud(
           containerId: _iCloudContainerID, relativePathList: relativePaths);
+    }
     }else{
       LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
     }
-
-    ///
   }
+
+  Future<void> deleteBackupFiles() async {
+    String fileFormat = isEncryptionEnabled
+        ? Constants.backupEncryptedFileFormat
+        : Constants.backupRawFileFormat;
+
+    try {
+      // Query all backup files with the matching name
+      final fileList = await driveApi?.files.list(
+        q: "'me' in owners and name contains '$backupFileName.' and name contains '.$fileFormat'",
+        spaces: 'drive',
+        $fields: 'files(id, name)',
+      );
+
+      if (fileList != null && fileList.files!.isNotEmpty) {
+        for (var file in fileList.files!) {
+          try {
+            await driveApi?.files.delete(file.id!);
+            LogMessage.d("BackupRestoreManager deleteBackupFiles",
+                "Deleted backup file: ${file.name}");
+          } catch (deleteError) {
+            LogMessage.d("BackupRestoreManager deleteBackupFiles",
+                "Error deleting file ${file.name}: $deleteError");
+          }
+        }
+      } else {
+        LogMessage.d("BackupRestoreManager deleteBackupFiles",
+            "No backup files found for deletion with format .$fileFormat");
+      }
+    } catch (e) {
+      LogMessage.d("BackupRestoreManager deleteBackupFiles",
+          "Error listing/deleting backup files: $e");
+    }
+  }
+
 
   void cancelBackup() {
     Mirrorfly.cancelBackup();
