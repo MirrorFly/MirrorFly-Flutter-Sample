@@ -74,7 +74,7 @@ class BackupRestoreManager {
   StreamSubscription<double>? _icloudUploadSubscription;
 
   StreamController<List<int>>? _gDriveUploadStreamController;
-  bool _isUploadCancelled = false;
+  bool _isgDriveUploadCancelled = false;
 
   String _cloudBackUpDownloadPath = "";
 
@@ -237,8 +237,9 @@ class BackupRestoreManager {
         uploadMedia:
             drive.Media(trackedStream, fileSize),
       );
-      if (_isUploadCancelled) {
+      if (_isgDriveUploadCancelled) {
         LogMessage.d("BackupRestoreManager", "Upload was cancelled.");
+        toToast(getTranslated("backupCancel"));
         return;
       }
 
@@ -510,6 +511,7 @@ class BackupRestoreManager {
   Future<void> startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) async {
     this.isServerUploadRequired = isServerUploadRequired;
     isEncryptionEnabled = enableEncryption;
+    _isgDriveUploadCancelled = false;
     Mirrorfly.startBackup(enableEncryption: enableEncryption);
     // LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
     // await Workmanager().cancelByUniqueName("backup-process");
@@ -824,7 +826,7 @@ class BackupRestoreManager {
 
   void cancelRemoteBackupUpload() {
     if(Platform.isAndroid && _gDriveUploadStreamController != null) {
-      _isUploadCancelled = true;
+      _isgDriveUploadCancelled = true;
       _gDriveUploadStreamController?.close();
       _gDriveUploadStreamController = null;
       debugPrint("G-drive upload cancelled");
@@ -861,7 +863,7 @@ class BackupRestoreManager {
 
     inputStream.listen(
           (chunk) {
-        if (_isUploadCancelled) {
+        if (_isgDriveUploadCancelled) {
           controller.close(); // cancel the stream
           return;
         }
@@ -872,7 +874,7 @@ class BackupRestoreManager {
         controller.add(chunk);
       },
       onDone: () {
-        if (!_isUploadCancelled) {
+        if (!_isgDriveUploadCancelled) {
           controller.close();
         }
       },
