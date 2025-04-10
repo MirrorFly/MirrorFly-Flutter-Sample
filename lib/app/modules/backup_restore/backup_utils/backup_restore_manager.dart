@@ -347,6 +347,7 @@ class BackupRestoreManager {
                   debugPrint("Upload completed successfully.");
                   progressController.add(100); // Mark 100% completion
                   progressController.close();
+                  toToast(getTranslated("iOSRemoteBackupSuccess"));
                 });
               },
               cancelOnError: true,
