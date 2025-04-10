@@ -302,10 +302,10 @@ class BackupRestoreManager {
     }
   }
 
-  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
+  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) async* {
      final StreamController<int> progressController = StreamController<int>();
 
-     checkAndDeleteExistingBackup();
+     await checkAndDeleteExistingBackup();
 
      if (Platform.isAndroid) {
       uploadFileToGoogleDrive(filePath, fileSize, progressController);
@@ -317,7 +317,7 @@ class BackupRestoreManager {
       if (!file.existsSync()) {
         progressController.addError(Exception("File does not exist at the given path: $filePath"));
         progressController.close();
-        return progressController.stream;
+        yield* progressController.stream;
       } else {
         debugPrint("File exists, proceeding with upload.");
       }
@@ -363,7 +363,7 @@ class BackupRestoreManager {
       progressController.addError(Exception("Platform not supported"));
       progressController.close();
     }
-     return progressController.stream;
+     yield* progressController.stream;
   }
 
 
@@ -773,9 +773,10 @@ class BackupRestoreManager {
           .map((file) => file.relativePath!)
           .toList();
 
-
       await icloudSyncPlugin.deleteMultipleFileToICloud(
           containerId: _iCloudContainerID, relativePathList: relativePaths);
+
+      LogMessage.d("BackupRestoreManager", "Deletion completed on the iCLoud Files");
     }
     }else{
       LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
