@@ -131,7 +131,7 @@ class RestoreController extends GetxController
     }
 
     if (backupDownloadStarted.value) {
-      BackupRestoreManager.instance.cancelDownload();
+     BackupRestoreManager.instance.cancelRemoteDownload();
       backupDownloadStarted(false);
       LogMessage.d("Restore Controller", "Backup Download cancelled while skip");
     } else if (backupRestoreStarted.value) {
