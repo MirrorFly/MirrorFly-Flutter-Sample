@@ -216,7 +216,7 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> uploadFileToGoogleDrive(String filePath,int fileSize, StreamController<int> progressController) async {
+  Future<void> uploadFileToGoogleDrive(String filePath,int fileSize, StreamController<int> progressController, List<String> existingFileIds) async {
     LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
     try {
       File backupFile = File(filePath);
@@ -241,14 +241,28 @@ class BackupRestoreManager {
         LogMessage.d("BackupRestoreManager", "Upload was cancelled.");
         return;
       }
-
+      final uploadedFileId = response?.id;
+      progressController.add(100);
+      progressController.close();
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
       toToast(getTranslated("androidRemoteBackupSuccess"));
+
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().serverUploadSuccess();
       }
-      progressController.add(100);
-      progressController.close();
+
+      if (uploadedFileId != null) {
+        final filesToDelete = existingFileIds.where((id) => id != uploadedFileId).toList();
+        for (final fileId in filesToDelete) {
+          try {
+            await driveApi?.files.delete(fileId);
+            LogMessage.d("BackupRestoreManager", "Deleted old backup file: $fileId");
+          } catch (e) {
+            LogMessage.d("BackupRestoreManager", "Error deleting old file $fileId: $e");
+          }
+        }
+      }
+
     } catch (e) {
       LogMessage.d(
           "BackupRestoreManager", "Error uploading to Google Drive: $e");
@@ -305,10 +319,22 @@ class BackupRestoreManager {
   Stream<int> uploadBackupFile({required String filePath, required int fileSize}) async* {
      final StreamController<int> progressController = StreamController<int>();
 
-     await checkAndDeleteExistingBackup();
+     List<String> existingBackupFileIds = [];
+
+     // await checkAndDeleteExistingBackup();
 
      if (Platform.isAndroid) {
-      uploadFileToGoogleDrive(filePath, fileSize, progressController);
+       final fileList = await driveApi?.files.list(
+         q: "'me' in owners and name contains '$backupFileName.'",
+         spaces: 'drive',
+         $fields: 'files(id, name)',
+       );
+
+       if (fileList != null && fileList.files != null) {
+         existingBackupFileIds = fileList.files!.map((f) => f.id!).toList();
+       }
+
+      await uploadFileToGoogleDrive(filePath, fileSize, progressController, existingBackupFileIds);
     } else if (Platform.isIOS) {
       debugPrint("Filepath to upload in drive $filePath");
       // final file = File(filePath.replaceFirst('file://', ''));
@@ -318,9 +344,22 @@ class BackupRestoreManager {
         progressController.addError(Exception("File does not exist at the given path: $filePath"));
         progressController.close();
         yield* progressController.stream;
+        return;
       } else {
         debugPrint("File exists, proceeding with upload.");
       }
+
+      List<String> existingRelativePaths = [];
+
+      final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+      if (iCloudFiles.isNotEmpty) {
+        existingRelativePaths = iCloudFiles
+            .where((f) => f.relativePath != null)
+            .map((f) => f.relativePath!)
+            .toList();
+      }
+
+      _icloudUploadSubscription = null;
 
       LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
 
@@ -342,11 +381,22 @@ class BackupRestoreManager {
               },
               onDone: () {
                 ///Delay is added here, as the iCloud Process some time to update the latest file
-                Future.delayed(const Duration(seconds: 1), () {
+                Future.delayed(const Duration(seconds: 1), () async {
                   debugPrint("Upload completed successfully.");
                   progressController.add(100); // Mark 100% completion
                   progressController.close();
                   toToast(getTranslated("iOSRemoteBackupSuccess"));
+
+                  // Delete old iCloud files except this one
+                  final newFileName = file.uri.pathSegments.last;
+                  existingRelativePaths.removeWhere((p) => p.endsWith(newFileName));
+                  if (existingRelativePaths.isNotEmpty) {
+                    await icloudSyncPlugin.deleteMultipleFileToICloud(
+                      containerId: _iCloudContainerID,
+                      relativePathList: existingRelativePaths,
+                    );
+                  }
+
                 });
               },
               cancelOnError: true,
