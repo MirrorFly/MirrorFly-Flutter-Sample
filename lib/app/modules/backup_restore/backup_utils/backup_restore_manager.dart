@@ -69,13 +69,16 @@ class BackupRestoreManager {
 
   bool get isDriveApiInitialized => driveApi != null;
 
-  StreamSubscription<List<int>>? _downloadSubscription;
+  StreamSubscription<List<int>>? _gDriveDownloadSubscription;
+  StreamController<List<int>>? _uploadStreamController;
+  bool _isUploadCancelled = false;
 
   String _cloudBackUpDownloadPath = "";
 
   get remoteBackupPath => _cloudBackUpDownloadPath;
 
   Completer<void>? backupCompleter;
+
 
   Future<bool> initialize({required iCloudContainerID}) async {
     if (_isInitialized) {
@@ -231,6 +234,11 @@ class BackupRestoreManager {
         uploadMedia:
             drive.Media(trackedStream, fileSize),
       );
+      if (_isUploadCancelled) {
+        LogMessage.d("BackupRestoreManager", "Upload was cancelled.");
+        return;
+      }
+
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
       toToast(getTranslated("androidRemoteBackupSuccess"));
       if (Get.isRegistered<BackupController>()) {
@@ -509,7 +517,6 @@ class BackupRestoreManager {
         "enableEncryption": enableEncryption,
       },
     );*/
-
   }
 
   void restoreBackup({required String backupFilePath}) {
@@ -558,9 +565,6 @@ class BackupRestoreManager {
           "Error while accessing Backup Directory, Directory path is not found, Creating the Directory");
     }
     return backupDirectory.path;
-
-
-
   }
 
   void destroy() {
@@ -694,7 +698,7 @@ class BackupRestoreManager {
         final sink = file.openWrite();
 
         // Stream the file data and write to disk
-        response.stream.listen(
+        _gDriveDownloadSubscription = response.stream.listen(
               (chunk) {
             sink.add(chunk);
             downloadedSize += chunk.length;
@@ -734,10 +738,10 @@ class BackupRestoreManager {
     yield* downloadProgress.stream;
   }
 
-  void cancelDownload() {
-    if (_downloadSubscription != null) {
-      _downloadSubscription?.cancel();
-      _downloadSubscription = null;
+  void cancelAndroidBackupDownload() {
+    if (_gDriveDownloadSubscription != null) {
+      _gDriveDownloadSubscription?.cancel();
+      _gDriveDownloadSubscription = null;
       debugPrint("Download canceled.");
     } else {
       debugPrint("No active download to cancel.");
@@ -778,7 +782,6 @@ class BackupRestoreManager {
         : Constants.backupRawFileFormat;
 
     try {
-      // Query all backup files with the matching name
       final fileList = await driveApi?.files.list(
         q: "'me' in owners and name contains '$backupFileName.' and name contains '.$fileFormat'",
         spaces: 'drive',
@@ -816,25 +819,52 @@ class BackupRestoreManager {
   }
 
   void cancelRemoteBackupUpload() {
-
+    _isUploadCancelled = true;
+    _uploadStreamController?.close();
   }
-}
 
-Stream<List<int>> trackProgress(
-    Stream<List<int>> stream, int totalBytes, Function(double) onProgress) {
-  int uploadedBytes = 0;
 
-  return stream.transform(
-    StreamTransformer<List<int>, List<int>>.fromHandlers(
-      handleData: (chunk, sink) {
+  Stream<List<int>> trackProgress(
+      Stream<List<int>> inputStream,
+      int totalBytes,
+      Function(double) onProgress,
+      ) {
+    int uploadedBytes = 0;
+
+    final controller = StreamController<List<int>>();
+    _uploadStreamController = controller;
+
+    inputStream.listen(
+          (chunk) {
+        if (_isUploadCancelled) {
+          controller.close(); // cancel the stream
+          return;
+        }
+
         uploadedBytes += chunk.length;
         double progress = uploadedBytes / totalBytes;
-        onProgress(progress); // Update progress
-        sink.add(chunk); // Pass chunk to the next stream
+        onProgress(progress);
+        controller.add(chunk);
       },
-    ),
-  );
+      onDone: () {
+        if (!_isUploadCancelled) {
+          controller.close();
+        }
+      },
+      onError: (error) {
+        controller.addError(error);
+        controller.close();
+      },
+      cancelOnError: true,
+    );
+
+    return controller.stream;
+  }
+
 }
+
+
+
 
 /*@pragma('vm:entry-point')
 void callbackDispatcher() {
