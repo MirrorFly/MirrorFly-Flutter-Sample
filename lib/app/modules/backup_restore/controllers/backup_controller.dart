@@ -232,9 +232,9 @@ class BackupController extends GetxController {
     }, onDone: () {
       isRemoteBackupStarted(false);
       isRemoteUploadStarted(false);
-      if(Platform.isIOS){
-        getTranslated("iOSRemoteBackupSuccess");
-      }
+      // if(Platform.isIOS){
+      //   getTranslated("iOSRemoteBackupSuccess");
+      // }
       checkForBackUpFiles();
       // BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
@@ -390,6 +390,9 @@ class BackupController extends GetxController {
   }
 
   void cancelRemoteProcess() {
+    isRemoteBackupStarted(false);
+    isRemoteUploadStarted(false);
+    toToast(getTranslated("backupCancel"));
     if (isRemoteBackupStarted.value) {
       backupRestoreManager.cancelBackup();
     }

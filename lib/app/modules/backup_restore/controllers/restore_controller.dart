@@ -266,7 +266,10 @@ class RestoreController extends GetxController
   }
 
   Future<void> pickAccount() async {
-
+    if (!await AppUtils.isNetConnected()) {
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
     var accounts = await BackupRestoreManager.instance.selectGoogleAccount();
     LogMessage.d(
         "Restore Controller", "pick Account => $accounts");
