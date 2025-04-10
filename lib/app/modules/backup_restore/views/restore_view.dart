@@ -420,7 +420,7 @@ class RestoreView extends NavViewStateful<RestoreController> {
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: LinearProgressIndicator(
-            value: controller.remoteRestoreProgress.value / 100,
+            value:controller.backupDownloadStarted.value?controller.remoteDownloadProgress/100 :controller.remoteRestoreProgress.value / 100,
           ),
         ),
         Obx(() {

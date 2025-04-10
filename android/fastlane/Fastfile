@@ -15,7 +15,7 @@ platform :android do
   appID_UAT = "1:719522206274:android:df54ba1969d80aeba2d3db"
 
   # DEV Release Notes
-  change_Log = "QR Web login Bug Fix - #FLUTTER-1828, #FLUTTER-1831"
+  change_Log = "QR Web login Bug Fix - #FLUTTER-1839 #FLUTTER-1838"
 
 
   desc "Upload dev version to distributes in firebase"
