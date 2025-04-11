@@ -349,16 +349,6 @@ class BackupRestoreManager {
         debugPrint("File exists, proceeding with upload.");
       }
 
-      List<String> existingRelativePaths = [];
-
-      final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
-      if (iCloudFiles.isNotEmpty) {
-        existingRelativePaths = iCloudFiles
-            .where((f) => f.relativePath != null)
-            .map((f) => f.relativePath!)
-            .toList();
-      }
-
       _icloudUploadSubscription = null;
 
       LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
@@ -387,15 +377,38 @@ class BackupRestoreManager {
                   progressController.close();
                   toToast(getTranslated("iOSRemoteBackupSuccess"));
 
-                  // Delete old iCloud files except this one
+                  List<String> existingRelativePaths = [];
+
+                  final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+                  LogMessage.d("BackupRestoreManager", "iCloudFiles found under the container ID ${iCloudFiles.length}");
+
+                  iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+                      .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+
                   final newFileName = file.uri.pathSegments.last;
-                  existingRelativePaths.removeWhere((p) => p.endsWith(newFileName));
+
+                  final CloudFiles? latestFile = iCloudFiles.firstWhereOrNull(
+                        (file) => file.relativePath != null && file.relativePath!.endsWith(newFileName),
+                  );
+
+                  existingRelativePaths = iCloudFiles
+                      .where((file) =>
+                  file.relativePath != null &&
+                      file.relativePath!.endsWith(newFileName) &&
+                      file != latestFile)
+                      .map((file) => file.relativePath!)
+                      .toList();
+
                   if (existingRelativePaths.isNotEmpty) {
                     await icloudSyncPlugin.deleteMultipleFileToICloud(
                       containerId: _iCloudContainerID,
                       relativePathList: existingRelativePaths,
                     );
+                  }else{
+                    LogMessage.d("BackupRestoreManager", "iCloudFiles old files are not found to delete");
                   }
+
+
 
                 });
               },
