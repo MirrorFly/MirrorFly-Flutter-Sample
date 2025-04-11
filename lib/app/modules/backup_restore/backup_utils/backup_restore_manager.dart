@@ -69,13 +69,19 @@ class BackupRestoreManager {
 
   bool get isDriveApiInitialized => driveApi != null;
 
-  StreamSubscription<List<int>>? _downloadSubscription;
+  StreamSubscription<List<int>>? _gDriveDownloadSubscription;
+
+  StreamSubscription<double>? _icloudUploadSubscription;
+
+  StreamController<List<int>>? _gDriveUploadStreamController;
+  bool _isgDriveUploadCancelled = false;
 
   String _cloudBackUpDownloadPath = "";
 
   get remoteBackupPath => _cloudBackUpDownloadPath;
 
   Completer<void>? backupCompleter;
+
 
   Future<bool> initialize({required iCloudContainerID}) async {
     if (_isInitialized) {
@@ -210,13 +216,11 @@ class BackupRestoreManager {
     }
   }
 
-  Future<void> uploadFileToGoogleDrive(String filePath,int fileSize, StreamController<int> progressController) async {
+  Future<void> uploadFileToGoogleDrive(String filePath,int fileSize, StreamController<int> progressController, List<String> existingFileIds) async {
     LogMessage.d("BackupRestoreManager", "uploadFileToGoogleDrive Started");
     try {
       File backupFile = File(filePath);
-      // int fileSize = backupFile.lengthSync();
 
-      // Prepare the file metadata
       var driveFile = drive.File();
       driveFile.name = backupFile.path.split('/').last;
 
@@ -224,9 +228,7 @@ class BackupRestoreManager {
         backupFile.openRead(),
         fileSize,
             (progress) {
-          // backupController.updateProgress(progress);
-          // LogMessage.d("BackupRestoreManager",
-          //     "Upload Progress: ${(progress * 100).toStringAsFixed(2)}%");
+              LogMessage.d("BackupRestoreManager", "upload Started $progress");
           progressController.add((progress * 100).floor());
         },
       );
@@ -236,13 +238,40 @@ class BackupRestoreManager {
         uploadMedia:
             drive.Media(trackedStream, fileSize),
       );
+      if (_isgDriveUploadCancelled) {
+        LogMessage.d("BackupRestoreManager", "Upload was cancelled.");
+        return;
+      }
+      final uploadedFileId = response?.id;
+      progressController.add(100);
+      progressController.close();
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
       toToast(getTranslated("androidRemoteBackupSuccess"));
+
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().serverUploadSuccess();
       }
-      progressController.add(100); // Mark upload as complete
-      progressController.close();
+
+      if (uploadedFileId != null) {
+        final filesToDelete = existingFileIds.where((id) => id != uploadedFileId).toList();
+        if (filesToDelete.isNotEmpty) {
+          for (final fileId in filesToDelete) {
+            try {
+              await driveApi?.files.delete(fileId);
+
+              LogMessage.d(
+                  "BackupRestoreManager", "Deleted old backup file: $fileId");
+            } catch (e) {
+              LogMessage.d("BackupRestoreManager",
+                  "Error deleting old file $fileId: $e");
+            }
+          }
+        }else{
+          LogMessage.d(
+              "BackupRestoreManager", "No backup files found to delete");
+        }
+      }
+
     } catch (e) {
       LogMessage.d(
           "BackupRestoreManager", "Error uploading to Google Drive: $e");
@@ -296,10 +325,24 @@ class BackupRestoreManager {
     }
   }
 
-  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) {
+  Stream<int> uploadBackupFile({required String filePath, required int fileSize}) async* {
      final StreamController<int> progressController = StreamController<int>();
+
+     List<String> existingBackupFileIds = [];
+
+     // await checkAndDeleteExistingBackup();
+
      if (Platform.isAndroid) {
-      uploadFileToGoogleDrive(filePath, fileSize, progressController);
+       final fileList = await driveApi?.files.list(
+         q: "'me' in owners and name contains '$backupFileName.'",
+         spaces: 'drive',
+         $fields: 'files(id, name)',
+       );
+
+       if (fileList != null && fileList.files != null) {
+         existingBackupFileIds = fileList.files!.map((f) => f.id!).toList();
+       }
+       uploadFileToGoogleDrive(filePath, fileSize, progressController, existingBackupFileIds);
     } else if (Platform.isIOS) {
       debugPrint("Filepath to upload in drive $filePath");
       // final file = File(filePath.replaceFirst('file://', ''));
@@ -308,15 +351,15 @@ class BackupRestoreManager {
       if (!file.existsSync()) {
         progressController.addError(Exception("File does not exist at the given path: $filePath"));
         progressController.close();
-        return progressController.stream;
+        yield* progressController.stream;
+        return;
       } else {
         debugPrint("File exists, proceeding with upload.");
       }
 
-      LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
-      
+      _icloudUploadSubscription = null;
 
-      checkAndDeleteExistingBackup();
+      LogMessage.d("BackupRestoreManager", "Container ID to upload $_iCloudContainerID");
 
       LogMessage.d("BackupRestoreManager", "Starting the upload to the iCLoud Drive");
       try {
@@ -324,7 +367,7 @@ class BackupRestoreManager {
           containerId: _iCloudContainerID,
           filePath: file.path,
           onProgress: (progressStream) {
-            progressStream.listen(
+            _icloudUploadSubscription = progressStream.listen(
               (progress) {
                 debugPrint("Uploading to server progress: $progress");
                 progressController.add(progress.floor());
@@ -336,10 +379,45 @@ class BackupRestoreManager {
               },
               onDone: () {
                 ///Delay is added here, as the iCloud Process some time to update the latest file
-                Future.delayed(const Duration(seconds: 1), () {
+                Future.delayed(const Duration(seconds: 1), () async {
                   debugPrint("Upload completed successfully.");
                   progressController.add(100); // Mark 100% completion
                   progressController.close();
+                  toToast(getTranslated("iOSRemoteBackupSuccess"));
+
+                  List<String> existingRelativePaths = [];
+
+                  final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+                  LogMessage.d("BackupRestoreManager", "iCloudFiles found under the container ID ${iCloudFiles.length}");
+
+                  iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+                      .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+
+                  final newFileName = file.uri.pathSegments.last;
+
+                  final CloudFiles? latestFile = iCloudFiles.firstWhereOrNull(
+                        (file) => file.relativePath != null && file.relativePath!.endsWith(newFileName),
+                  );
+
+                  existingRelativePaths = iCloudFiles
+                      .where((file) =>
+                  file.relativePath != null &&
+                      file.relativePath!.endsWith(newFileName) &&
+                      file != latestFile)
+                      .map((file) => file.relativePath!)
+                      .toList();
+
+                  if (existingRelativePaths.isNotEmpty) {
+                    await icloudSyncPlugin.deleteMultipleFileToICloud(
+                      containerId: _iCloudContainerID,
+                      relativePathList: existingRelativePaths,
+                    );
+                  }else{
+                    LogMessage.d("BackupRestoreManager", "iCloudFiles old files are not found to delete");
+                  }
+
+
+
                 });
               },
               cancelOnError: true,
@@ -356,7 +434,7 @@ class BackupRestoreManager {
       progressController.addError(Exception("Platform not supported"));
       progressController.close();
     }
-     return progressController.stream;
+     yield* progressController.stream;
   }
 
 
@@ -372,6 +450,7 @@ class BackupRestoreManager {
     }
   }
 
+  /// This is not used as the iCloud url itself supported by SDK for Restore.
   Stream<int> startIcloudFileDownload({required String relativePath}) async*{
     StreamController<int> iCloudProgressController = StreamController<int>();
     _cloudBackUpDownloadPath = "";
@@ -503,6 +582,7 @@ class BackupRestoreManager {
   Future<void> startBackup({bool isServerUploadRequired = false, bool enableEncryption = true}) async {
     this.isServerUploadRequired = isServerUploadRequired;
     isEncryptionEnabled = enableEncryption;
+    _isgDriveUploadCancelled = false;
     Mirrorfly.startBackup(enableEncryption: enableEncryption);
     // LogMessage.d("BackupRestoreManager", "Starting Backup WorkManager Task");
     // await Workmanager().cancelByUniqueName("backup-process");
@@ -514,7 +594,6 @@ class BackupRestoreManager {
         "enableEncryption": enableEncryption,
       },
     );*/
-
   }
 
   void restoreBackup({required String backupFilePath}) {
@@ -563,9 +642,6 @@ class BackupRestoreManager {
           "Error while accessing Backup Directory, Directory path is not found, Creating the Directory");
     }
     return backupDirectory.path;
-
-
-
   }
 
   void destroy() {
@@ -699,7 +775,7 @@ class BackupRestoreManager {
         final sink = file.openWrite();
 
         // Stream the file data and write to disk
-        response.stream.listen(
+        _gDriveDownloadSubscription = response.stream.listen(
               (chunk) {
             sink.add(chunk);
             downloadedSize += chunk.length;
@@ -739,10 +815,10 @@ class BackupRestoreManager {
     yield* downloadProgress.stream;
   }
 
-  void cancelDownload() {
-    if (_downloadSubscription != null) {
-      _downloadSubscription?.cancel();
-      _downloadSubscription = null;
+  void _cancelAndroidBackupDownload() {
+    if (_gDriveDownloadSubscription != null) {
+      _gDriveDownloadSubscription?.cancel();
+      _gDriveDownloadSubscription = null;
       debugPrint("Download canceled.");
     } else {
       debugPrint("No active download to cancel.");
@@ -755,11 +831,12 @@ class BackupRestoreManager {
   }
 
   Future<void> checkAndDeleteExistingBackup() async {
+    if (Platform.isAndroid){
+      await deleteBackupFiles();
+    }else if (Platform.isIOS){
     /// Delete the existing iCloud file and then proceed to upload
-
     List<CloudFiles> iCloudFiles =
         await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
-
     if (iCloudFiles.isNotEmpty) {
       LogMessage.d("BackupRestoreManager", "Deleting the iCLoud Files");
       List<String> relativePaths = iCloudFiles
@@ -767,15 +844,49 @@ class BackupRestoreManager {
           .map((file) => file.relativePath!)
           .toList();
 
-
       await icloudSyncPlugin.deleteMultipleFileToICloud(
           containerId: _iCloudContainerID, relativePathList: relativePaths);
+
+      LogMessage.d("BackupRestoreManager", "Deletion completed on the iCLoud Files");
+    }
     }else{
       LogMessage.d("BackupRestoreManager", "No iCloud Files Found to delete");
     }
-
-    ///
   }
+
+  Future<void> deleteBackupFiles() async {
+    String fileFormat = isEncryptionEnabled
+        ? Constants.backupEncryptedFileFormat
+        : Constants.backupRawFileFormat;
+
+    try {
+      final fileList = await driveApi?.files.list(
+        q: "'me' in owners and name contains '$backupFileName.' and name contains '.$fileFormat'",
+        spaces: 'drive',
+        $fields: 'files(id, name)',
+      );
+
+      if (fileList != null && fileList.files!.isNotEmpty) {
+        for (var file in fileList.files!) {
+          try {
+            await driveApi?.files.delete(file.id!);
+            LogMessage.d("BackupRestoreManager deleteBackupFiles",
+                "Deleted backup file: ${file.name}");
+          } catch (deleteError) {
+            LogMessage.d("BackupRestoreManager deleteBackupFiles",
+                "Error deleting file ${file.name}: $deleteError");
+          }
+        }
+      } else {
+        LogMessage.d("BackupRestoreManager deleteBackupFiles",
+            "No backup files found for deletion with format .$fileFormat");
+      }
+    } catch (e) {
+      LogMessage.d("BackupRestoreManager deleteBackupFiles",
+          "Error listing/deleting backup files: $e");
+    }
+  }
+
 
   void cancelBackup() {
     Mirrorfly.cancelBackup();
@@ -786,25 +897,73 @@ class BackupRestoreManager {
   }
 
   void cancelRemoteBackupUpload() {
-
+    if(Platform.isAndroid && _gDriveUploadStreamController != null) {
+      _isgDriveUploadCancelled = true;
+      _gDriveUploadStreamController?.close();
+      _gDriveUploadStreamController = null;
+      debugPrint("G-drive upload cancelled");
+    }else if (Platform.isIOS && _icloudUploadSubscription != null) {
+      try {
+        _icloudUploadSubscription?.cancel();
+        _icloudUploadSubscription = null;
+        debugPrint("iCloud upload cancelled");
+      } catch (e) {
+        debugPrint("Error cancelling iCloud upload: $e");
+      }
+    }else{
+      debugPrint("G-drive/iCloud upload cancel failed");
+    }
   }
-}
 
-Stream<List<int>> trackProgress(
-    Stream<List<int>> stream, int totalBytes, Function(double) onProgress) {
-  int uploadedBytes = 0;
+  void cancelRemoteDownload() {
+    if (Platform.isAndroid) {
+      _cancelAndroidBackupDownload();
+    } else {
+      debugPrint("Remote Download process is not supported for the current platform");
+    }
+  }
 
-  return stream.transform(
-    StreamTransformer<List<int>, List<int>>.fromHandlers(
-      handleData: (chunk, sink) {
+  Stream<List<int>> trackProgress(
+      Stream<List<int>> inputStream,
+      int totalBytes,
+      Function(double) onProgress,
+      ) {
+    int uploadedBytes = 0;
+
+    final controller = StreamController<List<int>>();
+    _gDriveUploadStreamController = controller;
+
+    inputStream.listen(
+          (chunk) {
+        if (_isgDriveUploadCancelled) {
+          controller.close(); // cancel the stream
+          return;
+        }
+
         uploadedBytes += chunk.length;
         double progress = uploadedBytes / totalBytes;
-        onProgress(progress); // Update progress
-        sink.add(chunk); // Pass chunk to the next stream
+        onProgress(progress);
+        controller.add(chunk);
       },
-    ),
-  );
+      onDone: () {
+        if (!_isgDriveUploadCancelled) {
+          controller.close();
+        }
+      },
+      onError: (error) {
+        controller.addError(error);
+        controller.close();
+      },
+      cancelOnError: true,
+    );
+
+    return controller.stream;
+  }
+
 }
+
+
+
 
 /*@pragma('vm:entry-point')
 void callbackDispatcher() {

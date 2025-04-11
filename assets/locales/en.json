@@ -542,8 +542,8 @@
     "googleAccount": "Google Account",
     "googleAccountEmail": "Mail ID",
     "scheduleBackUp": "Scheduled your backup",
-    "restoreDescAndroid": "Restore your messages and media from Google Drive. If you don't restore now, you wont be able to restore later.",
-    "restoreDescIos": "Restore your messages and media from iCloud Drive. If you don't restore now, you want be able to restore later.",
+    "restoreDescAndroid": "Restore your messages and media from Google Drive. If you don't restore now, you won't be able to restore later.",
+    "restoreDescIos": "Restore your messages and media from iCloud Drive. If you don't restore now, you won't be able to restore later.",
     "iCloudNotLoggedIn": "In order to check and restore messages from iCloud backups, please sign in with your iCloud account.",
     "addAccount": "Add account",
     "addGoogleAccount": "Add Google account",
@@ -586,5 +586,6 @@
     "lastLogin": "Last Login",
     "logoutFromAllComputers": "LOGOUT FROM ALL COMPUTERS",
     "qaWebLogoutSuccess": "All web sessions have been logged out successfully",
-    "qaWebLogoutFailure": "Failed to log out web sessions. Please try again"
+    "qaWebLogoutFailure": "Failed to log out web sessions. Please try again",
+    "backupCancel":"Backup Cancelled"
   }
