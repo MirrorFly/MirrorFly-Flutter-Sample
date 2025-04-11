@@ -253,13 +253,21 @@ class BackupRestoreManager {
 
       if (uploadedFileId != null) {
         final filesToDelete = existingFileIds.where((id) => id != uploadedFileId).toList();
-        for (final fileId in filesToDelete) {
-          try {
-            await driveApi?.files.delete(fileId);
-            LogMessage.d("BackupRestoreManager", "Deleted old backup file: $fileId");
-          } catch (e) {
-            LogMessage.d("BackupRestoreManager", "Error deleting old file $fileId: $e");
+        if (filesToDelete.isNotEmpty) {
+          for (final fileId in filesToDelete) {
+            try {
+              await driveApi?.files.delete(fileId);
+
+              LogMessage.d(
+                  "BackupRestoreManager", "Deleted old backup file: $fileId");
+            } catch (e) {
+              LogMessage.d("BackupRestoreManager",
+                  "Error deleting old file $fileId: $e");
+            }
           }
+        }else{
+          LogMessage.d(
+              "BackupRestoreManager", "No backup files found to delete");
         }
       }
 
