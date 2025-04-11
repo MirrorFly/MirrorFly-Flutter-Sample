@@ -228,6 +228,7 @@ class BackupRestoreManager {
         backupFile.openRead(),
         fileSize,
             (progress) {
+              LogMessage.d("BackupRestoreManager", "upload Started $progress");
           progressController.add((progress * 100).floor());
         },
       );

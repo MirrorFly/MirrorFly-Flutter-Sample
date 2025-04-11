@@ -390,9 +390,6 @@ class BackupController extends GetxController {
   }
 
   void cancelRemoteProcess() {
-    isRemoteBackupStarted(false);
-    isRemoteUploadStarted(false);
-    toToast(getTranslated("backupCancel"));
     if (isRemoteBackupStarted.value) {
       backupRestoreManager.cancelBackup();
     }
@@ -400,5 +397,9 @@ class BackupController extends GetxController {
     if (isRemoteUploadStarted.value){
       backupRestoreManager.cancelRemoteBackupUpload();
     }
+
+    isRemoteBackupStarted(false);
+    isRemoteUploadStarted(false);
+    toToast(getTranslated("backupCancel"));
   }
 }
