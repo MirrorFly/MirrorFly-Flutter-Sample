@@ -342,8 +342,7 @@ class BackupRestoreManager {
        if (fileList != null && fileList.files != null) {
          existingBackupFileIds = fileList.files!.map((f) => f.id!).toList();
        }
-
-      await uploadFileToGoogleDrive(filePath, fileSize, progressController, existingBackupFileIds);
+       uploadFileToGoogleDrive(filePath, fileSize, progressController, existingBackupFileIds);
     } else if (Platform.isIOS) {
       debugPrint("Filepath to upload in drive $filePath");
       // final file = File(filePath.replaceFirst('file://', ''));
