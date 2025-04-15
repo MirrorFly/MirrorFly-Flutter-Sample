@@ -252,15 +252,18 @@ class PipViewController extends FullLifeCycleController
   }
 
   Future<void> movePIPToOngoingCallView() async {
-    if (Platform.isAndroid) {
-      LogMessage.d("PIPView", PictureInPicture.isActive);
-      if(PictureInPicture.isActive) {
-        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-            LogMessage.d(tag, "stopPiP ${NavUtils.currentRoute} toNamed pipView");
-            PictureInPicture.stopPiP();
-            NavUtils.toNamed(Routes.onGoingCallView);
-        }
+    LogMessage.d("PIPView", PictureInPicture.isActive);
+    if(PictureInPicture.isActive) {
+      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+          LogMessage.d(tag, "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+          PictureInPicture.stopPiP();
+          NavUtils.toNamed(Routes.onGoingCallView);
       }else{
+        PictureInPicture.stopPiP();
+        LogMessage.d(tag, "isOnGoingCall not available so closing pip view");
+      }
+    }else{
+      if (Platform.isAndroid) {
         FlPiP().toggle(AppState.foreground);
       }
     }
