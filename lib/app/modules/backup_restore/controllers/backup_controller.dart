@@ -235,7 +235,12 @@ class BackupController extends GetxController {
       // if(Platform.isIOS){
       //   getTranslated("iOSRemoteBackupSuccess");
       // }
-      checkForBackUpFiles();
+      // DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle, title: "Fetching Backup Details");
+      // Future.delayed(const Duration(seconds: 3),(){
+        checkForBackUpFiles();
+        // DialogUtils.hideLoading();
+      // });
+
       // BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
       isRemoteBackupStarted(false);

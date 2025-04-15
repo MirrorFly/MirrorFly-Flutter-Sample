@@ -41,9 +41,9 @@ class BackupRestoreManager {
 
   var _iCloudContainerID = '';
 
-  final _iCloudRelativePath = 'Backups/MirrorFlyFlutter/UserData/';
-
-  get iCloudRelativePath => _iCloudRelativePath;
+  // final _iCloudRelativePath = 'Backups/MirrorFlyFlutter/UserData/';
+  //
+  // get iCloudRelativePath => _iCloudRelativePath;
 
   bool _isInitialized = false;
 
@@ -178,6 +178,12 @@ class BackupRestoreManager {
           await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
       LogMessage.d("BackupRestoreManager",
           "iCloudFiles found under the container ID ${iCloudFiles.length}");
+
+      /*if (iCloudFiles.isNotEmpty) {
+        iCloudFiles.forEach((iCloudFile) {
+          debugPrint("iCloud File Name => ${iCloudFile.title} path => ${iCloudFile.relativePath}");
+        });
+      }*/
       // Sort the files by modificationDate in descending order
       iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
           .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
@@ -208,6 +214,12 @@ class BackupRestoreManager {
       } else {
         LogMessage.d("BackupRestoreManager",
             "iCloudFiles found under the container ID not found");
+        /*if (iCloudFiles.isNotEmpty) {
+          for (var iCloudFile in iCloudFiles) {
+            debugPrint("iCloud File Name => ${iCloudFile.title} path => ${iCloudFile.relativePath}");
+          }
+        }*/
+
         return null;
       }
     } else {
@@ -363,6 +375,31 @@ class BackupRestoreManager {
 
       LogMessage.d("BackupRestoreManager", "Starting the upload to the iCLoud Drive");
       try {
+
+        /*final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+        LogMessage.d("BackupRestoreManager", "iCloudFiles found under the container ID ${iCloudFiles.length}");
+
+        iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+            .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+
+        final newFileName = file.uri.pathSegments.last;
+
+        final CloudFiles? latestFile = iCloudFiles.firstWhereOrNull(
+              (file) => file.relativePath != null && file.relativePath!.endsWith(newFileName),
+        );
+
+        if (latestFile != null && latestFile.relativePath != ""){
+          String fileFormat = isEncryptionEnabled
+              ? Constants.backupEncryptedFileFormat
+              : Constants.backupRawFileFormat;
+          LogMessage.d("BackupRestoreManager", "iCloudFiles file Exists under the same name, path=> ${latestFile.relativePath} title => ${latestFile.title}");
+
+          try{
+            await icloudSyncPlugin.rename(containerId: _iCloudContainerID, relativePath: latestFile.relativePath ?? "", newName: "old_backup_file.$fileFormat");
+          }catch (e){
+            debugPrint("Exception while renaming the file $e");
+          }
+        }*/
         icloudSyncPlugin.upload(
           containerId: _iCloudContainerID,
           filePath: file.path,
@@ -385,39 +422,42 @@ class BackupRestoreManager {
                   progressController.close();
                   toToast(getTranslated("iOSRemoteBackupSuccess"));
 
-                  List<String> existingRelativePaths = [];
+                  /*final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
 
-                  final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
+                  if (iCloudFiles.isNotEmpty) {
+                    for (var iCloudFile in iCloudFiles) {
+                      debugPrint("iCloud File Name => ${iCloudFile.title} path => ${iCloudFile.relativePath}");
+                    }
+                  }
+
                   LogMessage.d("BackupRestoreManager", "iCloudFiles found under the container ID ${iCloudFiles.length}");
 
-                  iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
-                      .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+                  *//*iCloudFiles.sort((a, b) => (b.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+                      .compareTo(a.lastSyncDt ?? DateTime.fromMillisecondsSinceEpoch(0)));*//*
 
-                  final newFileName = file.uri.pathSegments.last;
+                  String fileFormat = isEncryptionEnabled
+                      ? Constants.backupEncryptedFileFormat
+                      : Constants.backupRawFileFormat;
 
                   final CloudFiles? latestFile = iCloudFiles.firstWhereOrNull(
-                        (file) => file.relativePath != null && file.relativePath!.endsWith(newFileName),
+                        (file) => file.relativePath != null && file.relativePath!.endsWith("old_backup_file.$fileFormat"),
                   );
 
-                  existingRelativePaths = iCloudFiles
-                      .where((file) =>
-                  file.relativePath != null &&
-                      file.relativePath!.endsWith(newFileName) &&
-                      file != latestFile)
-                      .map((file) => file.relativePath!)
-                      .toList();
-
-                  if (existingRelativePaths.isNotEmpty) {
-                    await icloudSyncPlugin.deleteMultipleFileToICloud(
+                  if (latestFile != null && latestFile.relativePath!.isNotEmpty) {
+                    LogMessage.d("BackupRestoreManager", "iCloudFiles deleting the old file ${latestFile.relativePath} title=> ${latestFile.title}");
+                    await icloudSyncPlugin.delete(
                       containerId: _iCloudContainerID,
-                      relativePathList: existingRelativePaths,
+                      relativePath: latestFile.relativePath ?? "",
                     );
                   }else{
                     LogMessage.d("BackupRestoreManager", "iCloudFiles old files are not found to delete");
                   }
 
-
-
+                  Future.delayed(const Duration(seconds: 8), (){
+                    LogMessage.d("BackupRestoreManager", "iCloudFiles files check after 8 seconds");
+                    checkBackUpFiles();
+                  });
+*/
                 });
               },
               cancelOnError: true,
