@@ -587,5 +587,6 @@
     "logoutFromAllComputers": "LOGOUT FROM ALL COMPUTERS",
     "qaWebLogoutSuccess": "All web sessions have been logged out successfully",
     "qaWebLogoutFailure": "Failed to log out web sessions. Please try again",
-    "backupCancel":"Backup Cancelled"
+    "backupCancel":"Backup Cancelled",
+    "restoreCompleted": "Restored successfully"
   }

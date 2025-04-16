@@ -428,7 +428,8 @@ class RestoreView extends NavViewStateful<RestoreController> {
               ? Text(
                   "${getTranslated("downloadingBackup")} (${controller.remoteDownloadProgress}%)")
               : Text(
-                  "${getTranslated("restoringMessages")} (${controller.remoteRestoreProgress}%)");
+              "${getTranslated(controller.restoreCompleted.value ? 'restoreCompleted' : 'restoringMessages')} (${controller.remoteRestoreProgress}%)"
+          );
         }),
         const SizedBox(
           height: 25,
