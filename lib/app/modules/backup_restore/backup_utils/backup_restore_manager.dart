@@ -259,7 +259,7 @@ class BackupRestoreManager {
       progressController.close();
       LogMessage.d("BackupRestoreManager", "Uploaded file ID: ${response?.id}");
       toToast(getTranslated("androidRemoteBackupSuccess"));
-
+      deleteFile(filePath);
       if (Get.isRegistered<BackupController>()) {
         Get.find<BackupController>().serverUploadSuccess();
       }
@@ -421,6 +421,7 @@ class BackupRestoreManager {
                   progressController.add(100); // Mark 100% completion
                   progressController.close();
                   toToast(getTranslated("iOSRemoteBackupSuccess"));
+                  deleteFile(filePath);
 
                   /*final iCloudFiles = await icloudSyncPlugin.getCloudFiles(containerId: _iCloudContainerID);
 
@@ -999,6 +1000,25 @@ class BackupRestoreManager {
 
     return controller.stream;
   }
+
+  /// The backup file is generated when clicking on the Backup Now button
+  /// Once the Backup File is uploaded successfully, we are deleting the generated backup file
+  /// As the backup now function only focus on remote upload
+  Future<void> deleteFile(String path) async {
+    final file = File(path);
+
+    if (await file.exists()) {
+      try {
+        await file.delete();
+        LogMessage.d("BackupRestoreManager",'File deleted: $path');
+      } catch (e) {
+        LogMessage.d("BackupRestoreManager", 'Error deleting file: $e');
+      }
+    } else {
+      LogMessage.d("BackupRestoreManager",'File does not exist: $path');
+    }
+  }
+
 
 }
 
