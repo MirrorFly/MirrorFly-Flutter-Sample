@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
@@ -134,25 +135,36 @@ class BackupRestoreManager {
 
   Future<bool> assignAccountAuth(GoogleSignInAccount account) async {
     // Get authentication credentials
-    final GoogleSignInAuthentication auth = await account.authentication;
-    LogMessage.d("BackupRestoreManager", "GoogleSignInAuthentication $auth");
-    // Create authenticated HTTP client
-    final authClient = authenticatedClient(
-      Client(),
-      AccessCredentials(
-        AccessToken('Bearer', auth.accessToken!, DateTime.now().toUtc()),
-        null, // No refresh token needed for a single use
-        ['https://www.googleapis.com/auth/drive.file'],
-      ),
-    );
-    LogMessage.d("BackupRestoreManager", "authClient $authClient");
+    try {
+      final GoogleSignInAuthentication auth = await account.authentication;
+      LogMessage.d("BackupRestoreManager", "GoogleSignInAuthentication $auth");
+      // Create authenticated HTTP client
+      final authClient = authenticatedClient(
+        Client(),
+        AccessCredentials(
+          AccessToken('Bearer', auth.accessToken!, DateTime.now().toUtc()),
+          null, // No refresh token needed for a single use
+          ['https://www.googleapis.com/auth/drive.file'],
+        ),
+      );
+      LogMessage.d("BackupRestoreManager", "authClient $authClient");
 
-    // Initialize Google Drive API
-    driveApi = drive.DriveApi(authClient);
+      // Initialize Google Drive API
+      driveApi = drive.DriveApi(authClient);
 
-    LogMessage.d("BackupRestoreManager", "driveApi $driveApi");
+      LogMessage.d("BackupRestoreManager", "driveApi $driveApi");
 
-    return true;
+      return true;
+    } on PlatformException catch (e){
+      debugPrint("Auth token could not be recovered. Trying re-authentication... Details => $e");
+      // Optionally force sign out and let user sign in again
+      await GoogleSignIn().signOut();
+      return false;
+    } catch (e) {
+      debugPrint("Unknown error during Google authentication: $e");
+      await GoogleSignIn().signOut();
+      return false;
+    }
   }
 
   Future<bool> checkDriveAccess() async {
@@ -1019,6 +1031,26 @@ class BackupRestoreManager {
     }
   }
 
+  Future<bool> checkIfAccountIsValid() async {
+    try {
+      final account = await googleSignIn.signInSilently();
+      if (account != null) {
+        // Try fetching the auth token to verify validity
+        final auth = await account.authentication;
+        debugPrint("Account is valid: ${account.email}");
+        debugPrint("Access token: ${auth.accessToken}");
+        return true;
+      } else {
+        debugPrint("No valid account found. User may have signed out or account was removed.");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Account check failed: $e");
+      // Optionally force re-auth
+      await googleSignIn.signOut();
+      return false;
+    }
+  }
 
 }
 
