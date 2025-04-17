@@ -229,7 +229,7 @@ class RestoreController extends GetxController
       if (backupFile.value.iCloudRelativePath != null) {
         backupDownloadStarted(false);
         backupRestoreStarted(true);
-        /*BackupRestoreManager.instance.startIcloudFileDownload(
+        BackupRestoreManager.instance.startIcloudFileDownload(
             relativePath: backupFile.value.iCloudRelativePath ?? '').listen((progress){
           remoteDownloadProgress((progress / 100));
         }, onDone: () {
@@ -239,10 +239,10 @@ class RestoreController extends GetxController
           backupDownloadStarted(false);
           backupRestoreStarted(true);
           BackupRestoreManager.instance.restoreBackup(backupFilePath: backUpPath);
-        });*/
+        });
 
-        LogMessage.d("Restore Controller", "download backup url: ${backupFile.value.filePath}");
-        BackupRestoreManager.instance.restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
+        // LogMessage.d("Restore Controller", "download backup url: ${backupFile.value.filePath}");
+        // BackupRestoreManager.instance.restoreBackup(backupFilePath: backupFile.value.filePath ?? "");
 
         /*BackupRestoreManager.instance.getBackupUrl().then((backupPath){
           LogMessage.d("Restore Controller", "download backup url: $backupPath");

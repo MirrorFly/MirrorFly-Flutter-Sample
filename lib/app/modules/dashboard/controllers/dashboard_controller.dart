@@ -2321,6 +2321,10 @@ class DashboardController extends FullLifeCycleController
   void onWebLogout(List<String> socketIdList) {
     getWebLoginDetails();
   }
+
+  void updateArchiveChat() {
+    getArchivedChatsList();
+  }
 }
 
 class MyController extends GetxController {

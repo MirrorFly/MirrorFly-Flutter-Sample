@@ -68,7 +68,7 @@ class DocumentMessageView extends StatelessWidget {
                   Expanded(
                     child: CustomTextView(
                       key: Key("message_view+${chatMessage.messageId}"),
-                      text: chatMessage.messageTextContent.checkNull(),
+                      text: chatMessage.mediaChatMessage!.mediaFileName.checkNull(),
                       defaultTextStyle: docMessageViewStyle.fileTextStyle.textStyle,
                       linkColor: docMessageViewStyle.fileTextStyle.urlMessageColor,
                       mentionUserTextColor: docMessageViewStyle.fileTextStyle.mentionUserColor,
