@@ -357,21 +357,40 @@ class LoginController extends GetxController {
     //   toToast(getTranslated("noInternetConnection"));
     // }
   }
-  void initializeSDK(){
-    showLoading();
-    Mirrorfly.initializeSDK(
-        licenseKey: Constants.licenseKey,
-        iOSContainerID: Constants.iOSContainerID,
-        chatHistoryEnable: Constants.chatHistoryEnable,
-        enableDebugLog: Constants.enableDebugLog,
-        flyCallback: (response) async {
-      if (response.isSuccess) {
-          login();
-      }else{
-        hideLoading();
-        toToast(response.errorMessage.toString());
-      }
-      });
+  Future<void> initializeSDK() async {
+    var builder = Constants.chatBuilder;
+    if(Constants.useDeprecatedInit) {
+      //We no need to re init the SDK because Sdk init success from main.dart file since this method is doesn't need internet for the first time.
+      // showLoading();
+      // await Mirrorfly.init(baseUrl: builder.domainBaseUrl,
+      //     licenseKey: builder.licenseKey,
+      //     iOSContainerID: builder.iOSContainerID,
+      //     enableDebugLog: builder.enableDebugLog,
+      //     enableMobileNumberLogin: builder.enableMobileNumberLogin,
+      //     chatHistoryEnable: builder.chatHistoryEnable,
+      //     storageFolderName: builder.storageFolderName,
+      //     isTrialLicenceKey: builder.isTrialLicenceKey
+      // );
+      // login();
+    }else {
+      showLoading();
+      Mirrorfly.initializeSDK(
+          licenseKey: builder.licenseKey,
+          iOSContainerID: builder.iOSContainerID,
+          chatHistoryEnable: builder.chatHistoryEnable,
+          enableDebugLog: builder.enableDebugLog,
+          storageFolderName: builder.storageFolderName,
+          enablePrivateStorage: Constants.enablePrivateStorage,
+          enableMobileNumberLogin: builder.enableMobileNumberLogin,
+          flyCallback: (response) async {
+            if (response.isSuccess) {
+              login();
+            } else {
+              hideLoading();
+              toToast(response.errorMessage.toString());
+            }
+          });
+    }
   }
 
   void login(){
@@ -400,7 +419,7 @@ class LoginController extends GetxController {
 
               ///if its not set then error comes in contact sync delete from phonebook.
               SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-              if (!Constants.chatHistoryEnable){
+              if (!Constants.chatBuilder.chatHistoryEnable){
                 await Mirrorfly.getAllGroups(fetchFromServer: true, flyCallBack: (FlyResponse response) {
                   LogMessage.d("Login Controller getAllGroups", response.data);
                 });

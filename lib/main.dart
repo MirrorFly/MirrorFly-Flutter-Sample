@@ -114,38 +114,80 @@ Future<void> main() async {
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   await SessionManagement.onInit();
-  Mirrorfly.initializeSDK(
-      licenseKey: Constants.licenseKey,
-      iOSContainerID: Constants.iOSContainerID,
-      chatHistoryEnable: Constants.chatHistoryEnable,
-      enableDebugLog: Constants.enableDebugLog,
-      flyCallback: (response) async {
-        if (response.isSuccess) {
-          LogMessage.d("onSuccess", response.message);
-          LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
-          Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
-            LogMessage.d("Mirrorfly.isPrivateStorageEnabledOrNot", value.toString());
-          });
-        } else {
-          LogMessage.d("onFailure", response.errorMessage.toString());
-        }
-        /// check is on going call,
-        /// When a call is received and disconnected before being attended,
-        /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
-        /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
-        /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
-        /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+  initializeSDK(Constants.useDeprecatedInit,builder: Constants.chatBuilder);
+}
 
-        isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
+  if(useOld) {
+    if(builder.domainBaseUrl.isEmpty || builder.licenseKey.isEmpty){
+      throw(Exception("base url and licenseKey must need for use old method"));
+    }
+    await Mirrorfly.init(baseUrl: builder.domainBaseUrl,
+        licenseKey: builder.licenseKey,
+        iOSContainerID: builder.iOSContainerID,
+        enableDebugLog: builder.enableDebugLog,
+        enableMobileNumberLogin: builder.enableMobileNumberLogin,
+        chatHistoryEnable: builder.chatHistoryEnable,
+        storageFolderName: builder.storageFolderName,
+        isTrialLicenceKey: builder.isTrialLicenceKey
+    );
 
-        ///
-        /// This method will give response from Native Android, iOS will return empty by default.
-        /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
-        /// This value will be set in Android Plugin side and response will be returned here.
-        ///
-        appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
-        runApp(const MyApp());
-      });
+    /// check is on going call,
+    /// When a call is received and disconnected before being attended,
+    /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+    /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+    /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+    /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+    isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+
+    ///
+    /// This method will give response from Native Android, iOS will return empty by default.
+    /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
+    /// This value will be set in Android Plugin side and response will be returned here.
+    ///
+    appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
+    runApp(const MyApp());
+  }else{
+    if(builder.licenseKey.isEmpty){
+      throw(Exception("licenseKey must need for use new method"));
+    }
+    Mirrorfly.initializeSDK(
+        licenseKey: builder.licenseKey,
+        iOSContainerID: builder.iOSContainerID,
+        chatHistoryEnable: builder.chatHistoryEnable,
+        enableDebugLog: builder.enableDebugLog,
+        storageFolderName: builder.storageFolderName,
+        enablePrivateStorage: Constants.enablePrivateStorage,
+        enableMobileNumberLogin: builder.enableMobileNumberLogin,
+        flyCallback: (response) async {
+          if (response.isSuccess) {
+            LogMessage.d("onSuccess", response.message);
+            LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
+            Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
+              LogMessage.d("Mirrorfly.isPrivateStorageEnabledOrNot", value.toString());
+            });
+          } else {
+            LogMessage.d("onFailure", response.errorMessage.toString());
+          }
+          /// check is on going call,
+          /// When a call is received and disconnected before being attended,
+          /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+          /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+          /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+          /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+          isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+
+          ///
+          /// This method will give response from Native Android, iOS will return empty by default.
+          /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
+          /// This value will be set in Android Plugin side and response will be returned here.
+          ///
+          appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
+          runApp(const MyApp());
+        });
+  }
 }
 
 class MyApp extends StatefulWidget {
