@@ -44,7 +44,7 @@ class PIPView extends NavViewStateful<PipViewController> {
                     debugPrint("PIPView Obx callList : ${item.toJson()}");
                     return AspectRatio(
                       aspectRatio: Rational(
-                         (cons.maxWidth.toInt()), ((cons.maxHeight).toInt()~/2)).aspectRatio,
+                         (cons.maxWidth.toInt()), controller.callList.length <2 ? (cons.maxHeight).toInt() : ((cons.maxHeight).toInt()~/2)).aspectRatio,
                       child: MirrorflyPIPItem(
                         item: item,
                         userStyle: style.userTileStyle,
