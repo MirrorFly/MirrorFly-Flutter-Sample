@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -270,8 +271,8 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
 
   void enterOrExitPIPMode() async{
 
-    LogMessage.d("PIPView", "hasHidden : $hasHidden");
-    if(Platform.isAndroid && !hasHidden) {
+    LogMessage.d("PIPView", "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
+    if(Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
       LogMessage.d("PIPView", PictureInPicture.isActive);
       if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
         LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
