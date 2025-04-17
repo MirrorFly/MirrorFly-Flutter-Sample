@@ -49,27 +49,32 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   final unreadCallCount = 0.obs;
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
-    /*Mirrorfly.isOnGoingCall().then((value){
-      if(value.checkNull()){
-        NavUtils.toNamed(Routes.onGoingCallView);
-      }
-    });*/
-    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
-      googleMapKey = value;
-      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
-    });
+
     //presentPinPage();
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
     BaseController.initListeners();
+
+    startNetworkListen();
+
+  }
+
+  @override
+  Future<void> onReady() async {
+    super.onReady();
+
+    debugPrint("#Mirrorfly Notification -> Main Controller push onResume");
+    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
+      googleMapKey = value;
+      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+    });
     mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
     currentAuthToken(SessionManagement.getAuthToken().checkNull());
     getCurrentAuthToken();
     //getAuthToken();
-    startNetworkListen();
 
     getAvailableFeatures();
 
@@ -80,6 +85,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
+
   }
 
   Future<void> _isAndroidPermissionGranted() async {

@@ -106,6 +106,7 @@ class MentionController extends GetxController {
 
   StreamSubscription? _newMemberAddedSubscription;
   StreamSubscription? _memberRemovedSubscription;
+  StreamSubscription? _memberLeftSubscription;
 
   var groupJid = "";
   void getGroupMembers(String groupJid) {
@@ -154,6 +155,18 @@ class MentionController extends GetxController {
         );
       }
     });
+
+    _memberLeftSubscription = Mirrorfly.onLeftFromGroup.listen((event) {
+      if (event != null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var leftUserJid = data["leftUserJid"] ?? "";
+        onMemberRemovedFromGroup(
+          groupJid: groupJid,
+          removedMemberJid: leftUserJid,
+        );
+      }
+    });
   }
 
   @override
@@ -161,6 +174,7 @@ class MentionController extends GetxController {
     super.onClose();
     _memberRemovedSubscription?.cancel();
     _newMemberAddedSubscription?.cancel();
+    _memberLeftSubscription?.cancel();
   }
 
   ///filter the group members from [groupMembers]
@@ -235,7 +249,7 @@ class MentionController extends GetxController {
     }
   }
 
-  void onMemberRemovedFromGroup({required String groupJid, required String removedMemberJid, required String removedByMemberJid}) {
+  void onMemberRemovedFromGroup({required String groupJid, required String removedMemberJid,String? removedByMemberJid}) {
     if(this.groupJid==groupJid) {
         var index = groupMembers.indexWhere((element) => element.jid == removedMemberJid);
         var filterIndex = filteredItems.indexWhere((element) => element.jid == removedMemberJid);

@@ -534,57 +534,49 @@ class ChatController extends FullLifeCycleController
     await ScheduleCalender()
         .requestCalendarPermission();
    showMeetBottomSheet(
-    AppStyleConfig.chatPageStyle
+    meetBottomSheetStyle:AppStyleConfig.chatPageStyle
         .instantScheduleMeetStyle
-        .meetBottomSheetStyle);
+        .meetBottomSheetStyle,isEnableSchedule:true );
     });
     }else {
     await ScheduleCalender()
         .requestCalendarPermission();
-  showMeetBottomSheet(
-    AppStyleConfig.chatPageStyle
-        .instantScheduleMeetStyle
-        .meetBottomSheetStyle);
+    showMeetBottomSheet(
+        meetBottomSheetStyle:AppStyleConfig.chatPageStyle
+            .instantScheduleMeetStyle
+            .meetBottomSheetStyle,isEnableSchedule:true );
     }
   }
 
   showBlockStatusAlert(Function? function) {
-    DialogUtils.showAlert(
-        dialogStyle: AppStyleConfig.dialogStyle,
-        message: getTranslated("unBlockToSendMsg"),
-        actions: [
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () {
-                NavUtils.back();
-              },
-              child: Text(
-                getTranslated("cancel").toUpperCase(),
-              )),
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () async {
-                NavUtils.back();
-                Mirrorfly.unblockUser(
-                    userJid: profile.jid!,
-                    flyCallBack: (FlyResponse response) {
-                      if (response.isSuccess) {
-                        debugPrint(response.toString());
-                        profile.isBlocked = false;
-                        isBlocked(false);
-                        DialogUtils.hideLoading();
-                        toToast(getTranslated("hasUnBlocked")
-                            .replaceFirst("%d", getName(profile)));
-                        if (function != null) {
-                          function();
-                        }
-                      }
-                    });
-              },
-              child: Text(
-                getTranslated("unblock").toUpperCase(),
-              )),
-        ]);
+    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+          onPressed: () {
+            NavUtils.back();
+          },
+          child: Text(getTranslated("cancel").toUpperCase(), )),
+      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+          onPressed: () async {
+            NavUtils.back();
+            Mirrorfly.unblockUser(
+                userJid: profile.jid!,
+                flyCallBack: (FlyResponse response) {
+                  if (response.isSuccess) {
+                    debugPrint(response.toString());
+                    profile.isBlocked = false;
+                    isBlocked(false);
+                    DialogUtils.hideLoading();
+                    toToast(getTranslated("hasUnBlocked").replaceFirst("%d", getName(profile)));
+                    if (function != null) {
+                      function();
+                    }
+                  }else{
+                    toToast(response.errorMessage);
+                  }
+                });
+          },
+          child: Text(getTranslated("unblock").toUpperCase(), )),
+    ]);
   }
 
   disableBusyChatAndSend() async {
@@ -1239,11 +1231,17 @@ class ChatController extends FullLifeCycleController
     if (calenderId.isEmpty) {
       await ScheduleCalender().selectCalendarId();
     }
+    var replyMessageId = Constants.emptyString;
+    if (isReplying.value) {
+      replyMessageId = replyChatMessage.messageId;
+    }
+    isReplying(false);
     Mirrorfly.sendMessage(
         messageParams: MessageParams.meet(
           toJid: profile.jid.checkNull(),
           topicId: topicId,
           metaData: messageMetaData,
+          replyMessageId:replyMessageId,
           meetMessageParams: MeetMessage(
               scheduledDateTime: scheduledDateTime,
               link: Constants.webChatLogin + link,
@@ -1261,7 +1259,7 @@ class ChatController extends FullLifeCycleController
             LogMessage.d("sendMessage", response.errorMessage);
             showError(response.exception);
           }
-        }).then((value) => NavUtils.back());
+        })/*.then((value) => NavUtils.back())*/;
   }
 
   void isTyping([String? typingText]) {
@@ -1754,47 +1752,41 @@ class ChatController extends FullLifeCycleController
 
   unBlockUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      DialogUtils.showAlert(
-          dialogStyle: AppStyleConfig.dialogStyle,
-          message:
-              getTranslated("unBlockUser").replaceFirst("%d", getName(profile)),
-          actions: [
-            TextButton(
-                style: AppStyleConfig.dialogStyle.buttonStyle,
-                onPressed: () {
+      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", getName(profile)), actions: [
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () {
+              NavUtils.back();
+            },
+            child: Text(getTranslated("cancel").toUpperCase(), )),
+        TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () async {
+              await AppUtils.isNetConnected().then((isConnected) {
+                if (isConnected) {
                   NavUtils.back();
-                },
-                child: Text(
-                  getTranslated("cancel").toUpperCase(),
-                )),
-            TextButton(
-                style: AppStyleConfig.dialogStyle.buttonStyle,
-                onPressed: () async {
-                  await AppUtils.isNetConnected().then((isConnected) {
-                    if (isConnected) {
-                      NavUtils.back();
-                      // DialogUtils.showLoading(message: "Unblocking User");
-                      Mirrorfly.unblockUser(
-                          userJid: profile.jid!,
-                          flyCallBack: (FlyResponse response) {
-                            debugPrint(response.toString());
-                            profile.isBlocked = false;
-                            isBlocked(false);
-                            getUnsentMessageOfAJid();
-                            setChatStatus();
-                            DialogUtils.hideLoading();
-                            toToast(getTranslated("hasUnBlocked")
-                                .replaceFirst("%d", getName(profile)));
-                          });
-                    } else {
-                      toToast(getTranslated("noInternetConnection"));
-                    }
-                  });
-                },
-                child: Text(
-                  getTranslated("unblock").toUpperCase(),
-                )),
-          ]);
+                  // DialogUtils.showLoading(message: "Unblocking User");
+                  Mirrorfly.unblockUser(
+                      userJid: profile.jid!,
+                      flyCallBack: (FlyResponse response) {
+                        if (response.isSuccess) {
+                          debugPrint(response.toString());
+                          profile.isBlocked = false;
+                          isBlocked(false);
+                          getUnsentMessageOfAJid();
+                          setChatStatus();
+                          DialogUtils.hideLoading();
+                          toToast(getTranslated("hasUnBlocked").replaceFirst(
+                              "%d", getName(profile)));
+                        }else{
+                          toToast(response.errorMessage);
+                        }
+                      });
+                } else {
+                toToast(getTranslated("noInternetConnection"));
+                }
+              });
+            },
+            child: Text(getTranslated("unblock").toUpperCase(), )),
+      ]);
     });
   }
 
@@ -2588,8 +2580,10 @@ class ChatController extends FullLifeCycleController
             "filePath": [file],
             "userName": profile.name!,
             'profile': profile,
-            'caption': messageController.formattedText,
-            'mentionedUsersIds': messageController.getTags,
+            // 'caption': messageController.formattedText,
+            // 'mentionedUsersIds': messageController.getTags,
+            "captionMessage":[messageController.formattedText],
+            "captionMessageMentions":[messageController.getTags],
             'showAdd': false,
             'from': 'camera_pick',
             'userJid': profile.jid
@@ -3597,7 +3591,14 @@ class ChatController extends FullLifeCycleController
       {bool removeFromList = true}) {
     Mirrorfly.markAsReadDeleteUnreadSeparator(jid: profile.jid.checkNull());
     if (removeFromList && !separatorPosition.isNegative) {
-      chatList.removeAt(separatorPosition);
+
+      /// Commented the below as the QA posted Unread separator should display
+      /// after the screen is loaded with new message - (FLUTTER-1807)
+      /// On Analysing, the next message is called sometimes when the screen is loaded,
+      /// So the unread separator is removed.
+      /// Now, when opening 2nd time, SDK will remove the unread separator.
+
+      // chatList.removeAt(separatorPosition);
     }
   }
 
@@ -3831,7 +3832,8 @@ class ChatController extends FullLifeCycleController
 
   //show meet bottom sheet
   Future<void> showMeetBottomSheet(
-      MeetBottomSheetStyle meetBottomSheetStyle) async {
+      { MeetBottomSheetStyle? meetBottomSheetStyle,
+      bool?isEnableSchedule}) async {
     if (await AppUtils.isNetConnected()) {
       if (isAudioRecording.value == Constants.audioRecording) {
         stopRecording();
@@ -3840,7 +3842,8 @@ class ChatController extends FullLifeCycleController
         MeetSheetView(
           title: getTranslated("instantMeet"),
           description: getTranslated("copyTheLink"),
-          meetBottomSheetStyle: meetBottomSheetStyle,
+          meetBottomSheetStyle: meetBottomSheetStyle!,
+          isEnableSchedule: isEnableSchedule??false,
         ),
         ignoreSafeArea: true,
         backgroundColor: Colors.white,

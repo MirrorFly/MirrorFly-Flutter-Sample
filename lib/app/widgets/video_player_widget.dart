@@ -20,9 +20,9 @@ class VideoPlayerWidget extends StatefulWidget {
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
-  bool _isPlaying = false;
+  // bool _isPlaying = false;
   bool isStopped = false;
-  double _sliderValue = 0.0;
+  // double _sliderValue = 0.0;
 
   @override
   void initState() {
@@ -30,8 +30,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     _controller = VideoPlayerController.file(File(widget.videoPath))
       ..addListener(() {
         setState(() {
-          _sliderValue =
-              _controller.value.position.inSeconds.toDouble();
+          // _sliderValue =
+          //     _controller.value.position.inSeconds.toDouble();
           isStopped = _controller.value.isCompleted;
         });
       });
@@ -57,7 +57,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.dispose();
   }
 
-  void _playPause() {
+  /*void _playPause() {
     setState(() {
       if (_controller.value.isPlaying) {
         _controller.pause();
@@ -89,7 +89,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     });
     final Duration newPosition = Duration(seconds: value.toInt());
     _controller.seekTo(newPosition);
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   ),
-                  _buildControls(),
+                  // _buildControls(),
+                  _playIcon(widget.videoPath),
                 ],
               );
             } else {
@@ -119,7 +120,25 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }
 
-  Widget _buildControls() {
+  Widget _playIcon(String videoPath) {
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Spacer(),
+        FloatingActionButton(
+          onPressed: ()=> AppUtils.openDocument(videoPath),
+          backgroundColor: buttonBgColor,
+          child: const Icon(
+            Icons.play_arrow,
+            color: Colors.white,
+          ),
+        ),
+        const Spacer(),
+      ]
+    );
+  }
+  /*Widget _buildControls() {
     final position = _controller.value.position;
     final duration = _controller.value.duration;
 
@@ -182,6 +201,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         ),
       ],
     );
-  }
+  }*/
 }
 

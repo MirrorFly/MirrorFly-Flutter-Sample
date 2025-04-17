@@ -145,6 +145,7 @@ class TextMessageViewStyle{
     this.urlMessageColor = const Color(0xff4879F9),
     this.mentionUserColor = const Color(0xff4879F9),
     this.mentionedMeBgColor = const Color(0XffD2E3FC),
+    this.scheduleTextStyle=const TextStyle(fontSize: 13,color: Color.fromRGBO(0,0,0,1),fontWeight: FontWeight.normal),
     this.callLinkViewStyle = const CallLinkViewStyle(decoration: BoxDecoration(
       color: Color(0xffD0D8EB),
     ),textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),iconColor: Color(0xff97A5C7)),
@@ -152,6 +153,8 @@ class TextMessageViewStyle{
   });
   final TextStyle textStyle;
   final TextStyle timeTextStyle;
+
+  final TextStyle scheduleTextStyle;
   final Color highlightColor;
   final Color urlMessageColor;
   final Color mentionUserColor;
@@ -286,11 +289,16 @@ class CallLinkViewStyle{
     ),
     this.textStyle = const TextStyle(fontWeight: FontWeight.normal, color: Colors.black,fontSize: 12),
     this.iconColor = const Color(0xff97A5C7),
+    this.scheduleTileColor=const  Color.fromRGBO(122, 134, 165, 1),
+    this.scheduleDateTimeColor=const Color.fromRGBO(60, 81, 139, 1),
+    this.scheduleIconColor =const Color.fromRGBO(151, 165, 199, 1),
   });
   final Decoration decoration;
   final TextStyle textStyle;
   final Color iconColor;
-
+  final Color scheduleTileColor;
+  final Color scheduleDateTimeColor;
+  final Color scheduleIconColor;
 }
 
 class IconStyle{

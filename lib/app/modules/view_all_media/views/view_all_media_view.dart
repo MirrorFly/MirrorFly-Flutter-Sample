@@ -388,6 +388,8 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
                       horizontal: 10.0, vertical: 2.0),
                   child: Row(
                     children: [
+                      if((item.chatMessage.meetChatMessage?.link ??"").isNotEmpty)
+                        Icon(Icons.calendar_month_sharp,size: 15,color:linkItemStyle.linkTextStyle.color),
                       Expanded(
                         child: Text(
                           (item.chatMessage.isTextMessage())
@@ -396,7 +398,7 @@ ViewAllMediaController createController({String? tag}) => Get.put(ViewAllMediaCo
                                       item.chatMessage.isVideoMessage())
                                   ? item.chatMessage.mediaChatMessage!
                                       .mediaCaptionText
-                                  : Constants.emptyString,
+                                  :(item.chatMessage.meetChatMessage?.link).checkNull().isNotEmpty? item.chatMessage.meetChatMessage?.link??"":Constants.emptyString,
                           // style: const TextStyle(fontSize: 13, color: Color(0xff7889B3)),
                           style: linkItemStyle.linkTextStyle,
                           overflow: TextOverflow.ellipsis,

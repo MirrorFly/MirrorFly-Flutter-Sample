@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
-import '../../../extensions/extensions.dart';
-import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
+import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
+import '../../../stylesheet/stylesheet.dart';
 
 class MeetMessageView extends StatelessWidget {
   const MeetMessageView(
@@ -24,58 +24,58 @@ class MeetMessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
-          child: Row(
-            mainAxisSize: chatMessage.replyParentChatMessage == null
-                ? MainAxisSize.min
-                : MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Flexible(
-                  child: CustomTextView(
-                    key: Key("message_view+${chatMessage.messageId}"),
-                text: chatMessage.meetChatMessage?.link ?? "",
-                defaultTextStyle: textMessageViewStyle.textStyle,
-                linkColor: textMessageViewStyle.urlMessageColor,
-                mentionUserTextColor: textMessageViewStyle.mentionUserColor,
-                searchQueryTextColor: textMessageViewStyle.highlightColor,
-                mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
-                searchQueryString: search,
-              )),
-              const SizedBox(
-                width: 60,
-              ),
-            ],
+    return InkWell(
+      onTap: () async {
+        if (await AppUtils.isNetConnected()) {
+          var link = chatMessage.meetChatMessage!.link.checkNull();
+          if (link.isNotEmpty) {
+            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+            });
+          }
+        } else {
+          toToast(getTranslated("noInternetConnection"));
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 9, 5, 2),
+            child: Row(
+              mainAxisSize: chatMessage.replyParentChatMessage == null
+                  ? MainAxisSize.min
+                  : MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Flexible(
+                    child: CustomTextView(
+                  key: Key("message_view+${chatMessage.messageId}"),
+                  text: chatMessage.meetChatMessage?.link ?? "",
+                  defaultTextStyle: textMessageViewStyle.textStyle,
+                  linkColor: textMessageViewStyle.urlMessageColor,
+                  mentionUserTextColor: textMessageViewStyle.mentionUserColor,
+                  searchQueryTextColor: textMessageViewStyle.highlightColor,
+                  mentionedMeBgColor: textMessageViewStyle.mentionedMeBgColor,
+                  searchQueryString: search,
+                )),
+                const SizedBox(
+                  width: 60,
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
-          child: MeetLinkView(
-            message: chatMessage.meetChatMessage?.link ??"",
-            timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
-            callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: MeetLinkView(
+              message: chatMessage.meetChatMessage?.link ?? "",
+              timestamp: chatMessage.meetChatMessage?.scheduledDateTime ?? 0,
+              callLinkViewStyle: textMessageViewStyle.callLinkViewStyle,
+            ),
           ),
-        ),
-        InkWell(
-          onTap: () async {
-            if (await AppUtils.isNetConnected()) {
-              var link = chatMessage.meetChatMessage!.link.checkNull();
-              if (link.isNotEmpty) {
-                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                  "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-                });
-              }
-            } else {
-              toToast(getTranslated("noInternetConnection"));
-            }
-          },
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.only(right: 4.0, bottom: 2),
             child: Row(
               mainAxisSize: chatMessage.replyParentChatMessage == null
@@ -96,13 +96,14 @@ class MeetMessageView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
                     getTranslated("joinVideoMeet"),
+                    style: textMessageViewStyle.scheduleTextStyle,
                   ),
                 )),
                 chatMessage.isMessageStarred.value
                     ? Padding(
-                      padding: const EdgeInsets.only(bottom:4.0),
-                      child: AppUtils.svgIcon(icon: starSmallIcon),
-                    )
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: AppUtils.svgIcon(icon: starSmallIcon),
+                      )
                     : const Offstage(),
                 const SizedBox(
                   width: 5,
@@ -140,8 +141,8 @@ class MeetMessageView extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -179,20 +180,26 @@ class MeetLinkView extends StatelessWidget {
           minTileHeight: 60,
           title: Text(
             getTranslated("scheduleOn"),
-            style: callLinkViewStyle.textStyle,
+            style: callLinkViewStyle.textStyle.copyWith(
+              color: callLinkViewStyle.scheduleTileColor,
+              fontSize: 14,
+            ),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               formattedDate.replaceAll("AM", "am").replaceAll("PM", "pm"),
-              style: callLinkViewStyle.textStyle,
+              style: callLinkViewStyle.textStyle.copyWith(
+                color: callLinkViewStyle.scheduleDateTimeColor,
+                fontSize: 12,
+              ),
             ),
           ),
           trailing: AppUtils.svgIcon(
               icon: videoCamera,
               width: 30,
               colorFilter: ColorFilter.mode(
-                  callLinkViewStyle.iconColor, BlendMode.srcIn)),
+                  callLinkViewStyle.scheduleIconColor, BlendMode.srcIn)),
         ),
       ),
     );

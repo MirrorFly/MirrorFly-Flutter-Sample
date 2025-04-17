@@ -277,17 +277,24 @@ class ReplyMessage extends StatelessWidget {
           ],
         );
       case Constants.mMeet:
-        return Row(
+        return Column(
           children: [
-            AppUtils.svgIcon(
-                icon: videoCamera,
-                width: 15,
-                colorFilter:const ColorFilter.mode(
-                    Color(0xff97A5C7), BlendMode.srcIn)),
-            const SizedBox(
-              width: 5,
+            Row(
+              children: [
+                AppUtils.svgIcon(
+                    icon: videoCamera,
+                    width: 15,
+                    colorFilter:const ColorFilter.mode(
+                        Color.fromRGBO(151, 165, 199, 1), BlendMode.srcIn)),
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false, maxLines: 2,)),
+                const SizedBox(
+                  width: 5,
+                ),
+              ],
             ),
-            Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false)),
           ],
         );
       default:
@@ -340,12 +347,11 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(
-              isReply
+          child: ImageCacheManager.getImage(isReply
                   ? mediaChatMessage!.mediaThumbImage
                   : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                      .checkNull(),
-              chatMessageModel.messageId,
+                  .checkNull(),
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),
@@ -368,11 +374,12 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(
+          child:  ImageCacheManager.getImage(
               isReply
                   ? mediaChatMessage!.mediaThumbImage
-                  : chatMessageModel.mediaChatMessage!.mediaThumbImage,
-              chatMessageModel.messageId,
+                  : chatMessageModel.mediaChatMessage!.mediaThumbImage
+                  .checkNull(),
+              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
               size,
               size),
         ),
@@ -446,12 +453,19 @@ class ReplyMessageHeader extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
 
+  bool getReplyType(){
+    String replyType= chatMessage.replyParentChatMessage?.messageType ??"";
+    String type= chatMessage.messageType;
+    return !chatMessage.isMessageRecalled.value&&((type==Constants.mFile||type==Constants.mVideo||type==Constants.mDocument||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
+  }
   @override
   Widget build(BuildContext context) {
     LogMessage.d("ReplyMessageHeader", chatMessage.toJson());
     return Container(
+      width:(getReplyType()?NavUtils.width * 0.59:null),
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
+      // width: NavUtils.width * 0.60,
       decoration: replyHeaderMessageViewStyle.decoration,
       /*decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -466,6 +480,7 @@ class ReplyMessageHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 5),
                 getReplyTitle(
                     chatMessage.replyParentChatMessage!.isMessageSentByMe,
                     chatMessage.replyParentChatMessage!.senderUserName,
@@ -492,7 +507,7 @@ class ReplyMessageHeader extends StatelessWidget {
                   mentionUserTextColor: replyHeaderMessageViewStyle.mentionUserColor,
                   searchHighlightColor: replyHeaderMessageViewStyle.searchHighLightColor,
                   mentionedMeBgColor: replyHeaderMessageViewStyle.mentionedMeBgColor,
-                  scheduledDateTime: chatMessage.meetChatMessage?.scheduledDateTime ??0,
+                  scheduledDateTime: chatMessage.replyParentChatMessage?.meetChatMessage?.scheduledDateTime ??0,
                 )
                 // getReplyMessage(
                 //     chatMessage.replyParentChatMessage!.messageType,

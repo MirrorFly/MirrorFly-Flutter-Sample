@@ -7,7 +7,6 @@ import 'package:mirrorfly_plugin/message_params.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../model/chat_message_model.dart';
-import '../../../routes/route_settings.dart';
 import 'caption_message_view.dart';
 import 'image_cache_manager.dart';
 import 'media_message_overlay.dart';
@@ -37,9 +36,11 @@ class VideoMessageView extends StatelessWidget {
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                       MediaUploadStatus.isMediaUploaded ||
                   chatMessage.isMessageSentByMe)) {
-            NavUtils.toNamed(Routes.videoPlay, arguments: {
+            /*NavUtils.toNamed(Routes.videoPlay, arguments: {
               "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
-            });
+            });*/
+            // openVideoFile(videoPath: chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
+            AppUtils.openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
           } else {
             debugPrint("file is video but condition failed");
           }
@@ -66,10 +67,14 @@ class VideoMessageView extends StatelessWidget {
                     : () {
                   onVideoClick();
                 },
-                child: ClipRRect(
-                  borderRadius: videoMessageViewStyle.videoBorderRadius,
-                  child: ImageCacheManager.getImage(
-                      mediaMessage.mediaThumbImage, chatMessage.messageId),
+                child: SizedBox(
+                  width: NavUtils.width * 0.6,
+                  height: NavUtils.width * 0.8,
+                  child: ClipRRect(
+                    borderRadius: videoMessageViewStyle.videoBorderRadius,
+                    child: ImageCacheManager.getImage(
+                        mediaMessage.mediaThumbImage, chatMessage.messageId),
+                  ),
                 ),
               ),
               Positioned(

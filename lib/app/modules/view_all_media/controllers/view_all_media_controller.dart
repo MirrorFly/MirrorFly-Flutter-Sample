@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../common/app_localizations.dart';
+import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -137,7 +138,7 @@ class ViewAllMediaController extends GetxController {
     if(MessageUtils.getCallLinkFromMessage(url).isNotEmpty) {
       if(await AppUtils.isNetConnected()) {
         var link = MessageUtils.getCallLinkFromMessage(url);
-        if (link.isNotEmpty) {
+        if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
           NavUtils.toNamed(Routes.joinCallPreview, arguments: {
             "callLinkId": link.replaceAll(Constants.webChatLogin, "")
           });
@@ -230,6 +231,8 @@ class ViewAllMediaController extends GetxController {
       textContent = message.messageTextContent!;
     } else if (message.isImageMessage()) {
       textContent = message.mediaChatMessage!.mediaCaptionText;
+    } else if (message.isMeetMessage()) {
+      textContent = (message.meetChatMessage?.link).checkNull();
     } else {
       textContent = Constants.emptyString;
     }

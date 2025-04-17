@@ -115,7 +115,7 @@ class _ChatListViewState extends State<ChatListView> {
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
                                 color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
-                                margin: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 10),
+                                margin: const EdgeInsets.only(left: 10, right: 14, top: 5, bottom: 10),
                                 child: Align(
                                   alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
                                   child: Row(
@@ -131,7 +131,7 @@ class _ChatListViewState extends State<ChatListView> {
                                             icon: widget.senderChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia)),
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.75),
+                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.8),
                                         decoration: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.decoration : widget.receiverChatStyle.decoration,
                                         /*decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
@@ -150,8 +150,8 @@ class _ChatListViewState extends State<ChatListView> {
                                                   index: index,textStyle: widget.receiverChatStyle.participantNameTextStyle,),
                                             ],
                                             widget.chatList[index].isThisAReplyMessage
-                                                ? widget.chatList[index].replyParentChatMessage == null
-                                                    ? messageNotAvailableWidget(widget.chatList[index])
+                                                ?( widget.chatList[index].replyParentChatMessage == null || widget.chatList[index].replyParentChatMessage!.isMessageRecalled ||widget.chatList[index].replyParentChatMessage!.isMessageDeleted)
+                                                ? messageNotAvailableWidget(widget.chatList[index])
                                                     : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
                                                 : const Offstage(),
                                             MessageContent(

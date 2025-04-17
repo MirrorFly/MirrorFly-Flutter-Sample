@@ -122,8 +122,10 @@ class ChatView extends NavViewStateful<ChatController> {
                               builder: (context, constraints) {
                                 debugPrint(
                                     "list view constraints $constraints");
-                                controller.screenWidth(constraints.maxWidth);
-                                controller.screenHeight(constraints.maxHeight);
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  controller.screenWidth(constraints.maxWidth);
+                                  controller.screenHeight(constraints.maxHeight);
+                                });
                                 return ChatListView(
                                   chatController: controller,
                                   chatList: controller.chatList,
@@ -138,17 +140,6 @@ class ChatView extends NavViewStateful<ChatController> {
                                       .notificationMessageViewStyle,);
                               }
                           );
-                        }),
-                        Obx(() {
-                          return controller.ableToScheduleMeet && !(controller.profile.isAdminBlocked.checkNull() || controller.profile.isBlocked.checkNull()||controller.isBlocked.value) && !controller.profile.isDeletedContact() ? FloatingFab(
-                            fabTheme: chatStyle
-                                .instantScheduleMeetStyle,
-                            parentWidgetWidth: controller.screenWidth,
-                            parentWidgetHeight: controller.screenHeight,
-                            onFabTap: ()async{
-                             await controller.setMeetBottomSheet();
-                              },
-                          ) : const Offstage();
                         }),
                         Obx(() {
                           return Visibility(
@@ -185,6 +176,17 @@ class ChatView extends NavViewStateful<ChatController> {
                               ),
                             ),
                           );
+                        }),
+                        Obx(() {
+                          return controller.ableToScheduleMeet && !(controller.profile.isAdminBlocked.checkNull() || controller.profile.isBlocked.checkNull()||controller.isBlocked.value) && !controller.profile.isDeletedContact() ? FloatingFab(
+                            fabTheme: chatStyle
+                                .instantScheduleMeetStyle,
+                            parentWidgetWidth: controller.screenWidth,
+                            parentWidgetHeight: controller.screenHeight,
+                            onFabTap: ()async{
+                              await controller.setMeetBottomSheet();
+                            },
+                          ) : const Offstage();
                         }),
                         if (Constants.enableContactSync) ...[
                           Obx(() {

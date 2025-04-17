@@ -93,7 +93,7 @@ android {
 //            debuggable true //do not un comment this Dart init error
             minifyEnabled true
             signingConfig signingConfigs.config
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

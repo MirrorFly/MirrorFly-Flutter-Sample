@@ -73,7 +73,7 @@ class MediaMessageOverlay extends StatelessWidget {
               .checkNull()
               .isNotEmpty) {
             if (!MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
-              if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploaded) {
+              if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploaded || chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploadedNotAvailable) {
                 status = MediaDownloadStatus.isMediaNotDownloaded; // for uploaded and deleted in local
               } else {
                 status = -1;

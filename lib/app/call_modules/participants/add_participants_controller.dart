@@ -184,7 +184,7 @@ class AddParticipantsController extends GetxController with GetSingleTickerProvi
   }
 
   _scrollListener() {
-    if (scrollController.hasClients) {
+    if (scrollController.hasClients && !joinViaLink) {
       if (scrollController.position.extentAfter <= 0 && isPageLoading.value == false) {
         if (scrollable.value) {
           //isPageLoading.value = true;

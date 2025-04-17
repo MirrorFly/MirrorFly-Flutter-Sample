@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
+import 'package:mirror_fly_demo/app/modules/scanner/web_login_result_view.dart';
 import '../model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
@@ -13,6 +16,7 @@ import '../call_modules/outgoing_call/outgoing_call_view.dart';
 import '../call_modules/participants/participants_view.dart';
 import '../modules/admin_blocked/adminblockedview.dart';
 import '../modules/archived_chats/archived_chat_list_view.dart';
+import '../modules/backup_restore/views/backup_view.dart';
 import '../modules/busy_status/views/add_busy_status_view.dart';
 import '../modules/busy_status/views/busy_status_view.dart';
 import '../modules/camera_pick/views/camera_pick_view.dart';
@@ -33,7 +37,6 @@ import '../modules/image_view/views/image_view_view.dart';
 import '../modules/local_contact/views/local_contact_view.dart';
 import '../modules/login/views/country_list_view.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/login/views/otp_view.dart';
 import '../modules/media_preview/views/media_preview_view.dart';
 import '../modules/message_info/views/message_info_view.dart';
 import '../modules/preview_contact/views/preview_contact_view.dart';
@@ -64,14 +67,14 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
      case Routes.login:
       return MaterialPageRoute(builder: (_) => const LoginView(),settings: settings);
-    case Routes.otp:
-      return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
+    // case Routes.otp:
+    //   return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
       return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-    // case Routes.scanner:
-    //   return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
-    // case Routes.webLoginResult:
-    //   return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
+    case Routes.scanner:
+      return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
+    case Routes.webLoginResult:
+      return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
     case Routes.createGroup:
       return MaterialPageRoute(builder: (_) => const GroupCreationView(),settings: settings);
     case Routes.groupInfo:
@@ -156,6 +159,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
     case Routes.addProfileStatus:
       return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
+    case Routes.restoreBackup:
+      return MaterialPageRoute(builder: (_) => const RestoreView(),settings: settings);
+     case Routes.backUpView:
+      return MaterialPageRoute(builder: (_) => const BackupView(),settings: settings);
 
     //calls
     case Routes.joinCallPreview:

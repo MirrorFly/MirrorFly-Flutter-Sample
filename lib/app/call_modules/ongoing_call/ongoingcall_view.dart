@@ -2,18 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorfly_view.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 import '../../app_style_config.dart';
 import '../../call_modules/call_utils.dart';
 import '../../call_modules/call_widgets.dart';
 import '../../call_modules/outgoing_call/call_controller.dart';
-import '../../extensions/extensions.dart';
-import '../../stylesheet/stylesheet.dart';
-import 'package:mirrorfly_plugin/mirrorfly_view.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
 import '../../common/constants.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
+import '../../extensions/extensions.dart';
+import '../../stylesheet/stylesheet.dart';
 
 class OnGoingCallView extends NavViewStateful<CallController> {
   const OnGoingCallView({super.key});
@@ -35,9 +35,10 @@ class OnGoingCallView extends NavViewStateful<CallController> {
         child: SafeArea(
           bottom: Platform.isAndroid,
           child: Container(
-            decoration: AppStyleConfig.ongoingCallPageStyle.backgroundDecoration,
+            decoration:
+                AppStyleConfig.ongoingCallPageStyle.backgroundDecoration,
             child: Scaffold(
-              backgroundColor: Colors.transparent,//AppColors.callBg,
+              backgroundColor: Colors.transparent, //AppColors.callBg,
               body: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -47,21 +48,37 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                       child: Stack(
                         children: [
                           Obx(() {
-                            debugPrint("controller.pinnedUserJid ${controller.pinnedUserJid}");
-                            return controller.pinnedUserJid.value.isNotEmpty && controller.layoutSwitch.value
+                            debugPrint(
+                                "controller.pinnedUserJid ${controller.pinnedUserJid}");
+                            return controller.pinnedUserJid.value.isNotEmpty &&
+                                    controller.layoutSwitch.value
                                 ? MirrorFlyView(
                                     key: UniqueKey(),
                                     userJid: controller.pinnedUserJid.value,
                                     alignProfilePictureCenter: false,
-                                    showSpeakingRipple: controller.callType.value == CallType.audio,
-                                    viewBgColor: AppStyleConfig.ongoingCallPageStyle.pinnedCallUserTileStyle.backgroundColor,//AppColors.audioCallerBackground,
-                                    profileSize: AppStyleConfig.ongoingCallPageStyle.pinnedCallUserTileStyle.profileImageSize,
+                                    showSpeakingRipple:
+                                        controller.callType.value ==
+                                            CallType.audio,
+                                    viewBgColor: AppStyleConfig
+                                        .ongoingCallPageStyle
+                                        .pinnedCallUserTileStyle
+                                        .backgroundColor, //AppColors.audioCallerBackground,
+                                    profileSize: AppStyleConfig
+                                        .ongoingCallPageStyle
+                                        .pinnedCallUserTileStyle
+                                        .profileImageSize,
+                                    mirror: controller.pinnedUserJid.value ==
+                                        SessionManagement.getUserJID(),
                                     onClick: () {
                                       // if(controller.callType.value==CallType.video) {
-                                      controller.isVisible(!controller.isVisible.value);
+                                      controller.isVisible(
+                                          !controller.isVisible.value);
                                       // }
                                     },
-                                  ).setBorderRadius(AppStyleConfig.ongoingCallPageStyle.pinnedCallUserTileStyle.borderRadius)
+                                  ).setBorderRadius(AppStyleConfig
+                                    .ongoingCallPageStyle
+                                    .pinnedCallUserTileStyle
+                                    .borderRadius)
                                 : const Offstage();
                           }),
                           Obx(() {
@@ -113,10 +130,10 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                                                         .pinnedUserJid.value
                                                         .checkNull(),
                                                     controller.isOneToOneCall),
-                                                style: AppStyleConfig
-                                                    .ongoingCallPageStyle
-                                                    .pinnedCallUserTileStyle
-                                                    .callStatusTextStyle,
+                                        style: AppStyleConfig
+                                            .ongoingCallPageStyle
+                                            .pinnedCallUserTileStyle
+                                            .callStatusTextStyle,
                                                 // style: const TextStyle(color: Colors.white),
                                               ),
                                               const SizedBox(
@@ -172,11 +189,11 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                               }),
                               Obx(() {
                                 return !controller.layoutSwitch.value
-                                    ? Expanded(
-                                        child: buildGridItem(
-                                            controller,
-                                            AppStyleConfig.ongoingCallPageStyle
-                                                .gridCallUserTileStyle))
+                            ? Expanded(
+                                child: buildGridItem(
+                                    controller,
+                                    AppStyleConfig.ongoingCallPageStyle
+                                        .gridCallUserTileStyle))
                                     : const Offstage();
                               }),
                             ],
@@ -221,8 +238,8 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                               bottom: controller.isVisible.value ? 0.0 : -170,
                               left: 0.0,
                               right: 0.0,
-                              child: buildCallOptions(AppStyleConfig
-                                  .ongoingCallPageStyle.actionButtonsStyle),
+                      child: buildCallOptions(AppStyleConfig
+                          .ongoingCallPageStyle.actionButtonsStyle),
                             );
                           }),
                           Obx(() {
