@@ -15,7 +15,7 @@ import '../../../data/utils.dart';
 import '../backup_utils/backup_restore_manager.dart';
 import '../backup_utils/backup_utils.dart';
 
-class BackupController extends GetxController {
+class BackupController extends FullLifeCycleController with FullLifeCycleMixin{
   bool get isAndroid => Platform.isAndroid;
 
   var driveAccessible = false.obs;
@@ -57,6 +57,7 @@ class BackupController extends GetxController {
 
   var backUpEmailId = ''.obs;
 
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -75,6 +76,11 @@ class BackupController extends GetxController {
       } else {
         LogMessage.d("Backup Controller",
             "Sign In to Drive/Console to access the drive");
+        driveAccessible(false);
+        isBackupFound(false);
+        backUpEmailId('');
+        backUpFoundSize('');
+        backUpFoundDate('');
       }
     });
 
@@ -235,7 +241,12 @@ class BackupController extends GetxController {
       // if(Platform.isIOS){
       //   getTranslated("iOSRemoteBackupSuccess");
       // }
-      checkForBackUpFiles();
+      // DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle, title: "Fetching Backup Details");
+      // Future.delayed(const Duration(seconds: 3),(){
+        checkForBackUpFiles();
+        // DialogUtils.hideLoading();
+      // });
+
       // BackupRestoreManager.instance.completeWorkManagerTask();
     }, onError: (error) {
       isRemoteBackupStarted(false);
@@ -402,4 +413,42 @@ class BackupController extends GetxController {
     isRemoteUploadStarted(false);
     toToast(getTranslated("backupCancel"));
   }
+
+  @override
+  void onDetached() {
+
+  }
+
+  @override
+  void onHidden() {
+
+  }
+
+  @override
+  void onInactive() {
+
+  }
+
+  @override
+  void onPaused() {
+
+  }
+
+  @override
+  void onResumed() {
+    if (driveAccessible.value || backUpEmailId.isNotEmpty || isBackupFound.value){
+      backupRestoreManager.checkIfAccountIsValid().then((isValid) {
+        LogMessage.d("Backup Controller", "checkIfAccountIsValid => $isValid");
+        if (!isValid){
+          driveAccessible(false);
+          isBackupFound(false);
+          backUpEmailId('');
+          backUpFoundSize('');
+          backUpFoundDate('');
+        }
+      });
+    }
+  }
+
+
 }

@@ -606,6 +606,9 @@ class BaseController {
 
     Mirrorfly.onArchiveUnArchiveChats.listen((event) {
       LogMessage.d("onArchiveUnArchiveChats", event);
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>().updateArchiveChat();
+      }
     });
 
 
