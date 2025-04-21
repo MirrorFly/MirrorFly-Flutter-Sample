@@ -258,7 +258,7 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                             top: 0,
                             child: IconButton(
                               splashRadius: 24,
-                              onPressed: () async {
+                              onPressed: () {
                                 controller.goToPIP();
                               },
                               icon: Icon(

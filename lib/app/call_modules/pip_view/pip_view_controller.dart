@@ -24,6 +24,7 @@ class PipViewController extends FullLifeCycleController
   var callList = List<CallUserList>.empty(growable: true).obs;
   var availableAudioList = List<AudioDevices>.empty(growable: true).obs;
   var isPIPActive = false.obs;
+  var showExpand = false.obs;
   final prioritizedStatuses = [CallStatus.connected, CallStatus.reconnected];
 
   @override
