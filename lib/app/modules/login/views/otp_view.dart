@@ -8,18 +8,20 @@ import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 
 import '../../../common/constants.dart';
-import '../../../extensions/extensions.dart';
 
-class OtpView extends NavViewStateful<LoginController> {
-  const OtpView({Key? key}) : super(key: key);
+class OtpView extends StatefulWidget {
+  final LoginController controller;
+  const OtpView({super.key, required this.controller});
 
   @override
-LoginController createController({String? tag}) => Get.put(LoginController());
+  State<StatefulWidget> createState() => _OtpView();
+}
 
+class _OtpView extends State<OtpView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
@@ -30,14 +32,13 @@ LoginController createController({String? tag}) => Get.put(LoginController());
           title: Text(getTranslated("verify")),
           centerTitle: true,
           automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
         ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(10.0),
-              height: NavUtils
-                  .size
-                  .height - 80,
+              height: NavUtils.size.height - 80,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +51,7 @@ LoginController createController({String? tag}) => Get.put(LoginController());
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: AppUtils.svgIcon(icon:registerIcon),
+                          child: AppUtils.svgIcon(icon: registerIcon),
                         ),
                         Text(
                           getTranslated("verifyOTP"),
@@ -59,7 +60,8 @@ LoginController createController({String? tag}) => Get.put(LoginController());
                               fontSize: 20, fontWeight: FontWeight.w600),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0, right: 8, left: 8),
+                          padding: const EdgeInsets.only(
+                              top: 8.0, right: 8, left: 8),
                           child: Text(
                             getTranslated("otpMessage"),
                             textAlign: TextAlign.center,
@@ -74,97 +76,104 @@ LoginController createController({String? tag}) => Get.put(LoginController());
                   ),
                   Expanded(
                       child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      OTPTextField(
+                          controller: widget.controller.otpController,
+                          length: 6,
+                          width: NavUtils.size.width,
+                          textFieldAlignment: MainAxisAlignment.center,
+                          margin: const EdgeInsets.all(4),
+                          fieldWidth: 40,
+                          fieldStyle: FieldStyle.box,
+                          outlineBorderRadius: 10,
+                          style: const TextStyle(fontSize: 16),
+                          otpFieldStyle: OtpFieldStyle(),
+                          onChanged: (String pin) {
+                            widget.controller.smsCode = (pin);
+                          }),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      Obx(() {
+                        return Visibility(
+                          visible: widget.controller.verifyVisible.value,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: buttonBgColor,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 10),
+                                textStyle: const TextStyle(
+                                    fontSize: 13, fontWeight: FontWeight.w500),
+                                shape: const StadiumBorder()),
+                            onPressed: () {
+                              // controller.verifyOTP();
+                              widget.controller.verifyDummyOTP();
+                            },
+                            child: Text(
+                              getTranslated("verifyOTP"),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          OTPTextField(
-                              controller: controller.otpController,
-                              length: 6,
-                              width: NavUtils.size.width,
-                              textFieldAlignment: MainAxisAlignment.center,
-                              margin: const EdgeInsets.all(4),
-                              fieldWidth: 40,
-                              fieldStyle: FieldStyle.box,
-                              outlineBorderRadius: 10,
-                              style: const TextStyle(fontSize: 16),
-                              otpFieldStyle: OtpFieldStyle(),
-                              onChanged: (String pin) {
-                                controller.smsCode = (pin);
-                              }),
-                          const SizedBox(
-                            height: 25,
+                          // Obx(() {
+                          //   return
+                          InkWell(
+                            onTap: //controller.timeout.value ? () {
+                                () {
+                              widget.controller.gotoLogin();
+                            },
+                            //} : controller.gotoLogin(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                getTranslated("changeNumber"),
+                                style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          // }),
+                          /*Container(
+                            color: dividerColor,
+                            width: 1,
+                            height: 15,
                           ),
                           Obx(() {
-                            return Visibility(
-                              visible: controller.verifyVisible.value,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: buttonBgColor,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40, vertical: 10),
-                                    textStyle: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500),
-                                    shape: const StadiumBorder()),
-                                onPressed: () {
-                                  controller.verifyOTP();
-                                },
+                            return InkWell(
+                              onTap: widget.controller.timeout.value
+                                  ? () {
+                                      widget.controller.resend();
+                                    }
+                                  : null,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  getTranslated("verifyOTP"),style: const TextStyle(color: Colors.white),
+                                  widget.controller.timeout.value
+                                      ? getTranslated("resendOTP")
+                                      : '00:${widget.controller.seconds.value.toStringAsFixed(0).padLeft(2, '0')}',
+                                  style: const TextStyle(
+                                      color: textHintColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
                                 ),
                               ),
                             );
-                          }),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Obx(() {
-                              //   return
-                          InkWell(
-                                  onTap: //controller.timeout.value ? () {
-                              (){controller.gotoLogin();},
-                                  //} : controller.gotoLogin(),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      getTranslated("changeNumber"),
-                                      style: const TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ),
-                              // }),
-                              Container(
-                                color: dividerColor,
-                                width: 1,
-                                height: 15,
-                              ),
-                              Obx(() {
-                                return InkWell(
-                                  onTap: controller.timeout.value ? () {
-                                    controller.resend();
-                                  } : null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      controller.timeout.value ? getTranslated("resendOTP") : '00:${controller.seconds.value.toStringAsFixed(0).padLeft(2,'0')}',
-                                      style: const TextStyle(
-                                          color: textHintColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
+                          }),*/
                         ],
-                      ))
+                      ),
+                    ],
+                  ))
                 ],
               ),
             ),

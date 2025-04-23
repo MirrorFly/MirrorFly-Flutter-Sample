@@ -64,7 +64,7 @@ class VideoPreviewController extends GetxController {
 
    sendVideoMessage() async{
      // if(await AppUtils.isNetConnected()) {
-       var response = await Get.find<ChatController>().sendVideoMessage(videoPath, caption.text , "");
+       var response = await Get.find<ChatController>().sendVideoMessage(videoPath, caption.text , "",[]);
        debugPrint("Preview View ==> $response");
        if(response != null){
          NavUtils.back();

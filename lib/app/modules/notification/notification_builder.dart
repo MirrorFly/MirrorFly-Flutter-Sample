@@ -37,7 +37,8 @@ class NotificationBuilder {
     }
     // var isMessageRecalled = message.isMessageRecalled.checkNull();
     debugPrint("inside if notification");
-    lastMessageContent.write(NotificationUtils.getMessageSummary(message));
+    var getContent = await NotificationUtils.getMessageSummary(message);
+    lastMessageContent.write(getContent);
     lastMessageTime = (message.messageSentTime.toString().length > 13)
         ? message.messageSentTime ~/ 1000
         : message.messageSentTime;

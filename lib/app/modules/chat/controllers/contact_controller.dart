@@ -47,11 +47,12 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     super.onInit();
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     scrollController.addListener(_scrollListener);
+    isPageLoading(true);
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
-      isPageLoading(true);
       fetchUsers(false);
     } else {
       toToast(getTranslated("noInternetConnection"));
+      isPageLoading(false);
     }
     //Mirrorfly.syncContacts(true);
     //Mirrorfly.getRegisteredUsers(true).then((value) => LogMessage.d("registeredUsers", value.toString()));
@@ -106,7 +107,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
     if (scrollController.hasClients) {
       if (scrollController.position.extentAfter <= 0 && isPageLoading.value == false) {
         if (scrollable.value) {
-          isPageLoading.value = true;
+          // isPageLoading.value = true;
           LogMessage.d("usersList.length ${usersList.length} ~/ 20", (usersList.length ~/ 20));
           pageNum = (usersList.length ~/ 20) + 1;
           fetchUsers(false);
@@ -278,7 +279,7 @@ class ContactController extends FullLifeCycleController with FullLifeCycleMixin 
 
       (!Constants.enableContactSync)
           ? Mirrorfly.getUserList(page: pageNum, search: _searchText,
-          metaDataUserList: Constants.metaDataUserList, //#metaData
+          // metaDataUserList: Constants.metaDataUserList, //#metaData
           flyCallback: callback)
           : Mirrorfly.getRegisteredUsers(fetchFromServer: false, flyCallback: callback);
     } else {

@@ -32,5 +32,7 @@ extension ChatmessageParsing on ChatMessageModel {
 
   bool isFileMessage() => messageType == Constants.mDocument;
 
+  bool isMeetMessage() => messageType == Constants.mMeet;
+
   bool isNotificationMessage() => messageType.toUpperCase() == Constants.mNotification;
 }

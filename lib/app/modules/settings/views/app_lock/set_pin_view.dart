@@ -26,73 +26,78 @@ AppLockController createController({String? tag}) => AppLockController();
         automaticallyImplyLeading: true,
         backgroundColor: const Color(0XffF2F2F2),
       ),
-      body: SingleChildScrollView(
-        child: Obx(() {
-          return Column(
-            children: [
-              Visibility(visible: controller.modifyPin.value,
-                  child: passwordField(title: getTranslated("enterOldPIN"),
-                      controller: controller.oldPin,
-                      secure: controller.oldPinSecure.value,
-                      focusNode: controller.oldPinFocus,
-                      textAction: TextInputAction.next,
-                      eyeTap: () {
-                    controller.oldPinSecure(!controller.oldPinSecure.value);
-                      }, onSubmit: (String value) {
-                    controller.newPinFocus.requestFocus();
-                      })),
-              Visibility(
-                visible: controller.modifyPin.value,
-                child: const SizedBox(
-                  height: 10,
-                ),
-              ),
-              passwordField(title: getTranslated("enterNewPIN"),
-                  controller: controller.newPin,
-                  secure: controller.newPinSecure.value,
-                  focusNode: controller.newPinFocus,
-                  textAction: TextInputAction.next,
-                  eyeTap: () {
-                    controller.newPinSecure(!controller.newPinSecure.value);
-                  }, onSubmit: (String value) {
-                    controller.confirmPinFocus.requestFocus();
-                  }),
-              const SizedBox(
-                height: 10,
-              ),
-              passwordField(title: getTranslated("confirmNewPIN"),
-                  controller: controller.confirmPin,
-                  secure: controller.confirmPinSecure.value,
-                  focusNode: controller.confirmPinFocus,
-                  textAction: TextInputAction.done,
-                  eyeTap: () {
-                    controller.confirmPinSecure(!controller.confirmPinSecure.value);
-                  }, onSubmit: (String value) {
-                    controller.confirmPinFocus.unfocus();
-                  }),
-              const SizedBox(
-                height: 40,
-              ),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonBgColor,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 15),
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 15.0),
-                      shape: const StadiumBorder()),
-                  onPressed: () {
-                    controller.savePin();
-                  },
-                  child: Text(
-                    getTranslated("save"),style: const TextStyle(color: Colors.white),
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Obx(() {
+            return Column(
+              children: [
+                Visibility(visible: controller.modifyPin.value,
+                    child: passwordField(title: getTranslated("enterOldPIN"),
+                        controller: controller.oldPin,
+                        secure: controller.oldPinSecure.value,
+                        focusNode: controller.oldPinFocus,
+                        textAction: TextInputAction.next,
+                        eyeTap: () {
+                      controller.oldPinSecure(!controller.oldPinSecure.value);
+                        }, onSubmit: (String value) {
+                      controller.newPinFocus.requestFocus();
+                        })),
+                Visibility(
+                  visible: controller.modifyPin.value,
+                  child: const SizedBox(
+                    height: 10,
                   ),
                 ),
-              ),
-            ],
-          );
-        }),
+                passwordField(title: getTranslated("enterNewPIN"),
+                    controller: controller.newPin,
+                    secure: controller.newPinSecure.value,
+                    focusNode: controller.newPinFocus,
+                    textAction: TextInputAction.next,
+                    eyeTap: () {
+                      controller.newPinSecure(!controller.newPinSecure.value);
+                    }, onSubmit: (String value) {
+                      controller.confirmPinFocus.requestFocus();
+                    }),
+                const SizedBox(
+                  height: 10,
+                ),
+                passwordField(title: getTranslated("confirmNewPIN"),
+                    controller: controller.confirmPin,
+                    secure: controller.confirmPinSecure.value,
+                    focusNode: controller.confirmPinFocus,
+                    textAction: TextInputAction.done,
+                    eyeTap: () {
+                      controller.confirmPinSecure(!controller.confirmPinSecure.value);
+                    }, onSubmit: (String value) {
+                      controller.confirmPinFocus.unfocus();
+                    }),
+                const SizedBox(
+                  height: 40,
+                ),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: buttonBgColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 15.0),
+                        shape: const StadiumBorder()),
+                    onPressed: () {
+                      controller.savePin();
+                    },
+                    child: Text(
+                      getTranslated("save"),style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }),
+        ),
       ),
     );
   }

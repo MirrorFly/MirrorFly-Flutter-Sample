@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorfly_view.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
+
 import '../../app/call_modules/audio_level_animation.dart';
 import '../../app/call_modules/call_utils.dart';
 import '../../app/call_modules/outgoing_call/call_controller.dart';
@@ -9,9 +12,6 @@ import '../../app/common/widgets.dart';
 import '../../app/data/session_management.dart';
 import '../../app/data/utils.dart';
 import '../../app/extensions/extensions.dart';
-import 'package:mirrorfly_plugin/mirrorfly_view.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
-
 import '../stylesheet/stylesheet.dart';
 
 Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
@@ -22,17 +22,17 @@ Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
     clipOval: true,
     errorWidget: item.isGroupProfile.checkNull()
         ? ClipOval(
-      child: AppUtils.assetIcon(assetName:
-        groupImg,
-        height: size,
-        width: size,
-        fit: BoxFit.cover,
-      ),
-    )
+            child: AppUtils.assetIcon(
+              assetName: groupImg,
+              height: size,
+              width: size,
+              fit: BoxFit.cover,
+            ),
+          )
         : ProfileTextImage(
-      text: item.getName(),
-      radius: size / 2,
-    ),
+            text: item.getName(),
+            radius: size / 2,
+          ),
     isGroup: item.isGroupProfile.checkNull(),
     blocked: item.isBlockedMe.checkNull() || item.isAdminBlocked.checkNull(),
     unknown: (!item.isItSavedContact.checkNull() || item.isDeletedContact()),
@@ -40,7 +40,13 @@ Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
 }
 
 class SpeakingDots extends StatefulWidget {
-  const SpeakingDots({Key? key, required this.audioLevel, required this.bgColor, this.radius = 14, this.dotsColor = Colors.white}) : super(key: key);
+  const SpeakingDots(
+      {Key? key,
+      required this.audioLevel,
+      required this.bgColor,
+      this.radius = 14,
+      this.dotsColor = Colors.white})
+      : super(key: key);
   final double radius;
   final int audioLevel;
   final Color bgColor;
@@ -88,7 +94,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -97,7 +105,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       const SizedBox(
         width: 2,
@@ -106,7 +116,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -130,7 +142,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -139,7 +153,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.30,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -150,7 +166,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -159,7 +177,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -168,7 +188,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.50,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -179,7 +201,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -188,7 +212,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -197,7 +223,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.70,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
@@ -208,7 +236,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -217,7 +247,9 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
       SizedBox(
         width: widget.radius * 0.20,
@@ -226,13 +258,15 @@ class _SpeakingDotsState extends State<SpeakingDots> {
         width: widget.radius * 0.30,
         height: widget.radius * 0.90,
         decoration: BoxDecoration(
-            color: widget.dotsColor, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(widget.radius * 0.4)),
+            color: widget.dotsColor,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(widget.radius * 0.4)),
       ),
     ];
   }
 }
 
-Widget buildListItem(CallController controller,CallUserTileStyle style) {
+Widget buildListItem(CallController controller, CallUserTileStyle style) {
   var callListLength = controller.callList.length;
   debugPrint("callListLength --> $callListLength");
   return SizedBox(
@@ -247,122 +281,146 @@ Widget buildListItem(CallController controller,CallUserTileStyle style) {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           debugPrint(
-              "ListBuilder ${controller.callList.length} userJid ${controller.callList[index]
-                  .userJid} pinned ${controller.pinnedUserJid.value}");
-          return controller.callList[index].userJid!.value != controller.pinnedUserJid.value
+              "ListBuilder ${controller.callList.length} userJid ${controller.callList[index].userJid} pinned ${controller.pinnedUserJid.value}");
+          return controller.callList[index].userJid!.value !=
+                  controller.pinnedUserJid.value
               ? Container(
-              height: 135,
-              width: 100,
-              margin: const EdgeInsets.only(left: 10),
-              child: Stack(
-                children: [
-                  MirrorFlyView(
-                    key: UniqueKey(),
-                    userJid: controller.callList[index].userJid?.value ?? "",
-                    viewBgColor: style.backgroundColor,//AppColors.callerTitleBackground,
-                    profileSize: style.profileImageSize,
-                    onClick: (){
-                      //swap View
-                      controller.swap(index);
-                    },
-                  ).setBorderRadius(style.borderRadius),
-                  Obx(() {
-                    return Positioned(
+                  height: 135,
+                  width: 100,
+                  margin: const EdgeInsets.only(left: 10),
+                  child: Stack(
+                    children: [
+                      MirrorFlyView(
+                        key: UniqueKey(),
+                        userJid:
+                            controller.callList[index].userJid?.value ?? "",
+                        viewBgColor: style
+                            .backgroundColor, //AppColors.callerTitleBackground,
+                        profileSize: style.profileImageSize,
+                        mirror: controller.callList[index].userJid?.value ==
+                            SessionManagement.getUserJID(),
+                        onClick: () {
+                          //swap View
+                          controller.swap(index);
+                        },
+                      ).setBorderRadius(style.borderRadius),
+                      Obx(() {
+                        return Positioned(
                           top: 8,
-                      right: 8,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (controller.callList[index].isAudioMuted.value) ...[
-                            CircleAvatar(
-                              radius: 10,
-                              backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
-                              child: AppUtils.svgIcon(icon: callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
-                            ),
-                          ],
-                          if (controller.speakingUsers.isNotEmpty &&
-                                !controller.callList[index].isAudioMuted.value &&
-                                !controller.audioLevel(controller.callList[index].userJid!.value).isNegative) ...[
+                          right: 8,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (controller
+                                  .callList[index].isAudioMuted.value) ...[
+                                CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: style.muteActionStyle
+                                      .activeBgColor, //AppColors.audioMutedIconBgColor,
+                                  child: AppUtils.svgIcon(
+                                    icon: callMutedIcon,
+                                    colorFilter: ColorFilter.mode(
+                                        style.muteActionStyle.activeIconColor,
+                                        BlendMode.srcIn),
+                                  ),
+                                ),
+                              ],
+                              if (controller.speakingUsers.isNotEmpty &&
+                                  !controller
+                                      .callList[index].isAudioMuted.value &&
+                                  !controller
+                                      .audioLevel(controller
+                                          .callList[index].userJid!.value)
+                                      .isNegative) ...[
                                 AudioLevelAnimation(
                                   radius: 9,
-                                  audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
-                                  bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
-                                  dotsColor: style.speakingIndicatorStyle.activeIconColor,
+                                  audioLevel: controller.audioLevel(controller
+                                      .callList[index].userJid!.value),
+                                  bgColor: style.speakingIndicatorStyle
+                                      .activeBgColor, //AppColors.speakingBg,
+                                  dotsColor: style
+                                      .speakingIndicatorStyle.activeIconColor,
                                 )
-                         ],
-                        ],
-                      ),
-                    );
-                  }),
-                  Positioned(
-                    left: 8,
-                    bottom: 8,
-                    right: 8,
-                    child: Obx(() {
-                      return FutureBuilder<String>(
-                          future: CallUtils.getNameOfJid(controller.callList[index].userJid!.value.checkNull()),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasError && snapshot.data
-                                .checkNull()
-                                .isNotEmpty) {
-                              return Text(
-                                snapshot.data.checkNull(),
-                                style: style.nameTextStyle,
-                                /*style: const TextStyle(
+                              ],
+                            ],
+                          ),
+                        );
+                      }),
+                      Positioned(
+                        left: 8,
+                        bottom: 8,
+                        right: 8,
+                        child: Obx(() {
+                          return FutureBuilder<String>(
+                              future: CallUtils.getNameOfJid(controller
+                                  .callList[index].userJid!.value
+                                  .checkNull()),
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasError &&
+                                    snapshot.data.checkNull().isNotEmpty) {
+                                  return Text(
+                                    snapshot.data.checkNull(),
+                                    style: style.nameTextStyle,
+                                    /*style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                 ),*/
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          });
-                    }),
-                  ),
-                  Obx(() {
-                    debugPrint(
-                        "getUserJID ${controller.callList[index].userJid} ${controller.callList[index]
-                            .callStatus} current user ${controller.callList[index].userJid!.value ==
-                            SessionManagement.getUserJID()}");
-                    return (getTileCallStatus(
-                        controller.callList[index].callStatus?.value,
-                        controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall)
-                        .isNotEmpty)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color:
-                        Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              });
+                        }),
                       ),
-                      width: 100,
-                      height: 135,
-                      child: Center(
-                          child: Text(
-                            getTileCallStatus(controller.callList[index].callStatus?.value,
-                                controller.callList[index].userJid!.value.checkNull(), controller.isOneToOneCall),
-                            style: style.callStatusTextStyle,
-                            // style: const TextStyle(color: Colors.white),
-                          )),
-                    )
-                        : const Offstage();
-                  }),
-                ],
-              ))
+                      Obx(() {
+                        debugPrint(
+                            "getUserJID ${controller.callList[index].userJid} ${controller.callList[index].callStatus} current user ${controller.callList[index].userJid!.value == SessionManagement.getUserJID()}");
+                        return (getTileCallStatus(
+                                    controller
+                                        .callList[index].callStatus?.value,
+                                    controller.callList[index].userJid!.value
+                                        .checkNull(),
+                                    controller.isOneToOneCall)
+                                .isNotEmpty)
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(
+                                      0.5), // Adjust the color and opacity as needed
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                width: 100,
+                                height: 135,
+                                child: Center(
+                                    child: Text(
+                                  getTileCallStatus(
+                                      controller
+                                          .callList[index].callStatus?.value,
+                                      controller.callList[index].userJid!.value
+                                          .checkNull(),
+                                      controller.isOneToOneCall),
+                                  style: style.callStatusTextStyle,
+                                  // style: const TextStyle(color: Colors.white),
+                                )),
+                              )
+                            : const Offstage();
+                      }),
+                    ],
+                  ))
               : const Offstage();
         }),
   );
 }
 
-Widget buildGridItem(CallController controller,CallUserTileStyle style) {
+Widget buildGridItem(CallController controller, CallUserTileStyle style) {
   return GestureDetector(
     onTap: () {
       if (controller.callType.value == CallType.video) {
@@ -373,11 +431,12 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: controller.callList.length > 2 ? 2 : 1, // number of items in each row
+          crossAxisCount: controller.callList.length > 2
+              ? 2
+              : 1, // number of items in each row
           mainAxisSpacing: 4.0, // spacing between rows
           crossAxisSpacing: 2.0, // spacing between columns
-          childAspectRatio: controller.callList.length == 2 ? 1.23 : 1.0
-      ),
+          childAspectRatio: controller.callList.length == 2 ? 1.23 : 1.0),
       padding: const EdgeInsets.all(8.0),
       // padding around the grid
       itemCount: controller.callList.length,
@@ -386,16 +445,18 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
         return Stack(
           children: [
             MirrorFlyView(
-              key: UniqueKey(),
-              userJid: controller.callList[index].userJid?.value ?? "",
-              viewBgColor: style.backgroundColor,//AppColors.callerTitleBackground,
-              profileSize: style.profileImageSize,
-              onClick: (){
-                // if(controller.callType.value==CallType.video) {
+                key: UniqueKey(),
+                userJid: controller.callList[index].userJid?.value ?? "",
+                viewBgColor:
+                    style.backgroundColor, //AppColors.callerTitleBackground,
+                profileSize: style.profileImageSize,
+                mirror: controller.callList[index].userJid?.value ==
+                    SessionManagement.getUserJID(),
+                onClick: () {
+                  // if(controller.callType.value==CallType.video) {
                   controller.isVisible(!controller.isVisible.value);
-                // }
-              }
-            ).setBorderRadius(style.borderRadius),
+                  // }
+                }).setBorderRadius(style.borderRadius),
             Obx(() {
               return Positioned(
                 top: 8,
@@ -407,17 +468,28 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                     if (controller.callList[index].isAudioMuted.value) ...[
                       CircleAvatar(
                         radius: 10,
-                        backgroundColor: style.muteActionStyle.activeBgColor,//AppColors.audioMutedIconBgColor,
-                        child: AppUtils.svgIcon(icon:callMutedIcon,colorFilter: ColorFilter.mode(style.muteActionStyle.activeIconColor, BlendMode.srcIn),),
+                        backgroundColor: style.muteActionStyle
+                            .activeBgColor, //AppColors.audioMutedIconBgColor,
+                        child: AppUtils.svgIcon(
+                          icon: callMutedIcon,
+                          colorFilter: ColorFilter.mode(
+                              style.muteActionStyle.activeIconColor,
+                              BlendMode.srcIn),
+                        ),
                       ),
                     ],
                     if (controller.speakingUsers.isNotEmpty &&
                         !controller.callList[index].isAudioMuted.value &&
-                        !controller.audioLevel(controller.callList[index].userJid!.value).isNegative) ...[
+                        !controller
+                            .audioLevel(
+                                controller.callList[index].userJid!.value)
+                            .isNegative) ...[
                       AudioLevelAnimation(
                         radius: 12,
-                        audioLevel: controller.audioLevel(controller.callList[index].userJid!.value),
-                        bgColor: style.speakingIndicatorStyle.activeBgColor,//AppColors.speakingBg,
+                        audioLevel: controller.audioLevel(
+                            controller.callList[index].userJid!.value),
+                        bgColor: style.speakingIndicatorStyle
+                            .activeBgColor, //AppColors.speakingBg,
                         dotsColor: style.speakingIndicatorStyle.activeIconColor,
                       ),
                     ],
@@ -432,9 +504,11 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
               child: Obx(() {
                 // debugPrint("name changed ${controller.callList[index].userJid}");
                 return FutureBuilder<String>(
-                    future: CallUtils.getNameOfJid(controller.callList[index].userJid!.value.checkNull()),
+                    future: CallUtils.getNameOfJid(
+                        controller.callList[index].userJid!.value.checkNull()),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasError && snapshot.data.checkNull().isNotEmpty) {
+                      if (!snapshot.hasError &&
+                          snapshot.data.checkNull().isNotEmpty) {
                         return Text(
                           snapshot.data.checkNull(),
                           style: style.nameTextStyle,
@@ -453,13 +527,16 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
             Obx(() {
               debugPrint(
                   "getUserJID ${controller.callList[index].userJid} ${controller.callList[index].callStatus} current user ${controller.callList[index].userJid!.value == SessionManagement.getUserJID()}");
-              return (getTileCallStatus(controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(),
+              return (getTileCallStatus(
+                          controller.callList[index].callStatus?.value,
+                          controller.callList[index].userJid!.value.checkNull(),
                           controller.isOneToOneCall)
                       .isNotEmpty)
                   ? Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5), // Adjust the color and opacity as needed
+                          color: Colors.black.withOpacity(
+                              0.5), // Adjust the color and opacity as needed
                           borderRadius: BorderRadius.circular(10.0),
                           boxShadow: [
                             BoxShadow(
@@ -471,10 +548,13 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
                         ),
                         child: Center(
                             child: Text(
-                          getTileCallStatus(controller.callList[index].callStatus?.value, controller.callList[index].userJid!.value.checkNull(),
+                          getTileCallStatus(
+                              controller.callList[index].callStatus?.value,
+                              controller.callList[index].userJid!.value
+                                  .checkNull(),
                               controller.isOneToOneCall),
-                              style: style.callStatusTextStyle,
-                              // style: const TextStyle(color: Colors.white),
+                          style: style.callStatusTextStyle,
+                          // style: const TextStyle(color: Colors.white),
                         )),
                       ),
                     )
@@ -487,7 +567,8 @@ Widget buildGridItem(CallController controller,CallUserTileStyle style) {
   );
 }
 
-String getTileCallStatus(String? callStatus, String userjid, bool isOnetoOneCall) {
+String getTileCallStatus(
+    String? callStatus, String userjid, bool isOnetoOneCall) {
   debugPrint("getTileCallStatus $callStatus isOnetoOneCall $isOnetoOneCall");
   switch (callStatus) {
     case CallStatus.connected:
@@ -503,11 +584,19 @@ String getTileCallStatus(String? callStatus, String userjid, bool isOnetoOneCall
     case CallStatus.callingAfter10s:
       return '';
     case CallStatus.connecting:
-      return userjid == SessionManagement.getUserJID() ? "" : "${getTranslated("connectingCall")}…";
+      return userjid == SessionManagement.getUserJID()
+          ? ""
+          : "${getTranslated("connectingCall")}…";
     case CallStatus.ringing:
-      return userjid == SessionManagement.getUserJID() ? "" : "${getTranslated("ringing")}…";
+      return userjid == SessionManagement.getUserJID()
+          ? ""
+          : "${getTranslated("ringing")}…";
     case CallStatus.calling:
-      return userjid == SessionManagement.getUserJID() ? "" : isOnetoOneCall ? "" : "${getTranslated("calling")}…";
+      return userjid == SessionManagement.getUserJID()
+          ? ""
+          : isOnetoOneCall
+              ? ""
+              : "${getTranslated("calling")}…";
     case CallStatus.onHold:
       return "${getTranslated("callOnHold")}…";
     case CallStatus.reconnecting:

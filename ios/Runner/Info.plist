@@ -33,7 +33,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>app-1-695832127329-ios-f8b6b0fab296a800</string>
+                <string>app-1-695832127329-ios-f8b6b0fab296a800</string>
+				<string>app-1-235373697524-ios-2d40908026b55394a0c1a1</string>
 			</array>
 		</dict>
 	</array>
@@ -92,6 +93,10 @@
 	<true/>
     <key>NSAppleMusicUsageDescription</key>
     <string>We need access to Apple Music to share your music to your friends within MirrorFly.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>We need this permission to add event in calendar within Mirrorfly</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>We need this permission to add event in calendar within Mirrorfly</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

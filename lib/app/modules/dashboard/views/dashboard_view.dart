@@ -24,7 +24,6 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
 
   @override
   Widget build(BuildContext context) {
-    // Mirrorfly.setEventListener(this);
     return FocusDetector(
         onFocusGained: () {
           debugPrint('onFocusGained');
@@ -122,7 +121,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.chatInfo();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconInfo ?? AppUtils.svgIcon(icon:infoIcon,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Info',
                                               ),
                                               overflowWidget: Text(getTranslated("info"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -137,7 +136,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.currentTab.value == 0 ? controller.deleteChats() : controller.deleteCallLog();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconDelete ?? AppUtils.svgIcon(icon:delete,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Delete',
                                               ),
                                               overflowWidget: Text(getTranslated("delete"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -156,7 +155,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.pinChats();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconPin ?? AppUtils.svgIcon(icon:pin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Pin',
                                               ),
                                               overflowWidget: Text(getTranslated("pin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -171,7 +170,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.unPinChats();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconUnPin ?? AppUtils.svgIcon(icon:unpin,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnPin',
                                               ),
                                               overflowWidget: Text(getTranslated("unPin"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -186,7 +185,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.muteChats();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconMute ?? AppUtils.svgIcon(icon:mute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Mute',
                                               ),
                                               overflowWidget: Text(getTranslated("mute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -201,7 +200,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.unMuteChats();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconUnMute ?? AppUtils.svgIcon(icon:unMute,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'UnMute',
                                               ),
                                               overflowWidget: Text(getTranslated("unMute"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -216,7 +215,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.archiveChats();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                                                icon: AppStyleConfig.dashBoardPageStyle.archivedTileStyle.iconArchive ?? AppUtils.svgIcon(icon:archive,colorFilter: ColorFilter.mode(Theme.of(context).appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
                                                 tooltip: 'Archive',
                                               ),
                                               overflowWidget: Text(getTranslated("archived"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
@@ -249,7 +248,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 onPressed: () {
                                                   controller.gotoSearch();
                                                 },
-                                                icon: AppUtils.svgIcon(icon:
+                                                icon: AppStyleConfig.dashBoardPageStyle.recentChatAppBarStyle.iconSearch ?? AppUtils.svgIcon(icon:
                                                   searchIcon,
                                                   width: 18,
                                                   height: 18,
@@ -312,14 +311,14 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 controller.gotoSettings();
                                               },
                                             ),
-                                            /*CustomAction(
+                                            CustomAction(
                                               visibleWidget: const Icon(Icons.web),
                                               overflowWidget: Text(getTranslated("web"),style:AppStyleConfig.dashBoardPageStyle.popupMenuThemeData.textStyle),
                                               showAsAction:
                                                   controller.selected.value || controller.isSearching.value ? ShowAsAction.gone : ShowAsAction.never,
                                               keyValue: 'Web',
                                               onItemClick: () => controller.webLogin(),
-                                            ),*/
+                                            ),
                                           ]),
                                     ],
                                   );

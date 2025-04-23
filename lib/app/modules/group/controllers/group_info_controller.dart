@@ -199,7 +199,8 @@ class GroupInfoController extends GetxController {
       if (muteable.value) {
         LogMessage.d("change", value.toString());
         _mute(value);
-        Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
+        // Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
+        Mirrorfly.updateChatMuteStatusList(jidList: [profile.jid.checkNull()], muteStatus: value);
         notifyDashboardUI();
       }
     }else{
@@ -221,7 +222,7 @@ class GroupInfoController extends GetxController {
   }
 
   void sortGroupMembers(List<ProfileDetails> list){
-    list.sort((a, b) => (a.jid==SessionManagement.getUserJID()) ? 1 : (b.jid==SessionManagement.getUserJID()) ? -1 : 0);
+    list.sort((a,b)=>a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
     groupMembers.value=(list);
     groupMembers.refresh();
   }

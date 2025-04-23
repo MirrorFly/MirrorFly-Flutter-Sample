@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../common/app_localizations.dart';
+import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -133,12 +134,29 @@ class ViewAllMediaController extends GetxController {
     });
   }
 
+  void navigateLink(String url) async {
+    if(MessageUtils.getCallLinkFromMessage(url).isNotEmpty) {
+      if(await AppUtils.isNetConnected()) {
+        var link = MessageUtils.getCallLinkFromMessage(url);
+        if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
+          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+          });
+        }
+      }else{
+        toToast(getTranslated("noInternetConnection"));
+      }
+    }else{
+      AppUtils.launchWeb(Uri.parse(url));
+    }
+  }
+
   navigateMessage(ChatMessageModel linkChatItem) {
     // NavUtils.toNamed(Routes.chat,parameters: {'isFromStarred':'true',"userJid":linkChatItem.chatUserJid,"messageId":linkChatItem.messageId});
     NavUtils.back();
     NavUtils.back();
-    if (Get.isRegistered<ChatController>()) {
-      Get.find<ChatController>().navigateToMessage(linkChatItem);
+    if (Get.isRegistered<ChatController>(tag: linkChatItem.chatUserJid)) {
+      Get.find<ChatController>(tag: linkChatItem.chatUserJid).navigateToMessage(linkChatItem);
     }
   }
 
@@ -213,6 +231,8 @@ class ViewAllMediaController extends GetxController {
       textContent = message.messageTextContent!;
     } else if (message.isImageMessage()) {
       textContent = message.mediaChatMessage!.mediaCaptionText;
+    } else if (message.isMeetMessage()) {
+      textContent = (message.meetChatMessage?.link).checkNull();
     } else {
       textContent = Constants.emptyString;
     }

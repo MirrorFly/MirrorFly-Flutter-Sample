@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import '../extensions/extensions.dart';
 
 NotificationMessageModel notificationModelFromJson(String str) =>
@@ -31,8 +32,8 @@ class NotificationMessageModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "chatMessage": chatMessage?.toJson(),
-      };
+    "chatMessage": chatMessage?.toJson(),
+  };
 }
 
 class MessageCustomField {
@@ -52,12 +53,12 @@ class MessageStatus {
   });
 
   factory MessageStatus.fromJson(Map<String, dynamic> json) => MessageStatus(
-        status: json["status"],
-      );
+    status: json["status"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-      };
+    "status": status,
+  };
 }
 
 class ChatMessage {
@@ -79,6 +80,8 @@ class ChatMessage {
     required this.messageStatus,
     required this.messageTextContent,
     required this.messageType,
+    this.metaData = const [],
+    this.mentionedUsersIds,
     required this.replyParentChatMessage,
     required this.senderNickName,
     required this.senderUserJid,
@@ -106,6 +109,9 @@ class ChatMessage {
   RxString messageStatus;
   String? messageTextContent;
   String messageType;
+  List<MessageMetaData> metaData;
+  /// A list of userid associated with the mentioned Users.
+  List<String>? mentionedUsersIds;
   ReplyParentChatMessage? replyParentChatMessage;
   String senderNickName;
   String senderUserJid;
@@ -117,41 +123,47 @@ class ChatMessage {
 
   // var isSelected = false.obs;
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) =>
-      ChatMessage(
-          chatUserJid: json["chatUserJid"],
-          contactType: json["contactType"],
-          isItCarbonMessage: json["isItCarbonMessage"],
-          isItSavedContact: json["isItSavedContact"],
-          isMessageDeleted: json["isMessageDeleted"],
-          isMessageRecalled: json["isMessageRecalled"].toString().toBool().obs,
-          isMessageSentByMe: json["isMessageSentByMe"],
-          isMessageStarred: json["isMessageStarred"].toString().toBool().obs,
-          isSelected: json["isSelected"].toString().toBool().obs,
-          isThisAReplyMessage: json["isThisAReplyMessage"],
-          messageChatType: json["messageChatType"],
-          messageCustomField: json["messageCustomField"] == null ? null : MessageCustomField.fromJson(json["messageCustomField"]),
-          messageId: json["messageId"],
-          messageSentTime: json["messageSentTime"],
-          messageStatus: json["messageStatus"].toString().obs,
-          messageTextContent: json["messageTextContent"],
-          messageType: json["messageType"],
-          replyParentChatMessage: json["replyParentChatMessage"] == null
-              ? null
-              : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
-          senderNickName: json["senderNickName"],
-          senderUserJid: json["senderUserJid"],
-          senderUserName: json["senderUserName"],
-          contactChatMessage: json["contactChatMessage"] == null
-              ? null
-              : ContactChatMessage.fromJson(json["contactChatMessage"]),
-          mediaChatMessage: json["mediaChatMessage"] == null
-              ? null
-              : MediaChatMessage.fromJson(json["mediaChatMessage"]),
-          locationChatMessage: json["locationChatMessage"] == null
-              ? null
-              : LocationChatMessage.fromJson(json["locationChatMessage"]),
-          topicId: json["topicId"]);
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+      chatUserJid: json["chatUserJid"],
+      contactType: json["contactType"],
+      isItCarbonMessage: json["isItCarbonMessage"],
+      isItSavedContact: json["isItSavedContact"],
+      isMessageDeleted: json["isMessageDeleted"],
+      isMessageRecalled: json["isMessageRecalled"].toString().toBool().obs,
+      isMessageSentByMe: json["isMessageSentByMe"],
+      isMessageStarred: json["isMessageStarred"].toString().toBool().obs,
+      isSelected: json["isSelected"].toString().toBool().obs,
+      isThisAReplyMessage: json["isThisAReplyMessage"],
+      messageChatType: json["messageChatType"],
+      messageCustomField: json["messageCustomField"] == null
+          ? null
+          : MessageCustomField.fromJson(json["messageCustomField"]),
+      messageId: json["messageId"],
+      messageSentTime: json["messageSentTime"],
+      messageStatus: json["messageStatus"].toString().obs,
+      messageTextContent: json["messageTextContent"],
+      messageType: json["messageType"],
+      metaData: json["metaData"] == null
+          ? []
+          : List<MessageMetaData>.from(
+          json["metaData"]!.map((x) => MessageMetaData.fromJson(x))),
+      mentionedUsersIds: json["mentionedUsersIds"] == null ? []  : List<String>.from(json["mentionedUsersIds"].map((x) => x)),
+      replyParentChatMessage: json["replyParentChatMessage"] == null
+          ? null
+          : ReplyParentChatMessage.fromJson(json["replyParentChatMessage"]),
+      senderNickName: json["senderNickName"],
+      senderUserJid: json["senderUserJid"],
+      senderUserName: json["senderUserName"],
+      contactChatMessage: json["contactChatMessage"] == null
+          ? null
+          : ContactChatMessage.fromJson(json["contactChatMessage"]),
+      mediaChatMessage: json["mediaChatMessage"] == null
+          ? null
+          : MediaChatMessage.fromJson(json["mediaChatMessage"]),
+      locationChatMessage: json["locationChatMessage"] == null
+          ? null
+          : LocationChatMessage.fromJson(json["locationChatMessage"]),
+      topicId: json["topicId"]);
 
   Map<String, dynamic> toJson() => {
     "chatUserJid": chatUserJid,
@@ -171,6 +183,10 @@ class ChatMessage {
     "messageStatus": messageStatus.value,
     "messageTextContent": messageTextContent,
     "messageType": messageType,
+    "metaData": metaData,
+    "mentionedUsersIds": mentionedUsersIds == null
+        ? null
+        : List<String>.from(mentionedUsersIds!.map((x) => x)),
     "replyParentChatMessage":
     replyParentChatMessage ?? replyParentChatMessage?.toJson(),
     "senderNickName": senderNickName,
@@ -196,16 +212,22 @@ class ContactChatMessage {
     required this.messageId,
   });
 
-  factory ContactChatMessage.fromJson(Map<String, dynamic> json) => ContactChatMessage(
-    contactName: json["contactName"],
-    contactPhoneNumbers: json["contactPhoneNumbers"] == null ? [] : List<String>.from(json["contactPhoneNumbers"]!.map((x) => x)),
-    isChatAppUser: json["isChatAppUser"] == null ? [] : List<bool>.from(json["isChatAppUser"]!.map((x) => x)),
-    messageId: json["messageId"],
-  );
+  factory ContactChatMessage.fromJson(Map<String, dynamic> json) =>
+      ContactChatMessage(
+        contactName: json["contactName"],
+        contactPhoneNumbers: json["contactPhoneNumbers"] == null
+            ? []
+            : List<String>.from(json["contactPhoneNumbers"]!.map((x) => x)),
+        isChatAppUser: json["isChatAppUser"] == null
+            ? []
+            : List<bool>.from(json["isChatAppUser"]!.map((x) => x)),
+        messageId: json["messageId"],
+      );
 
   Map<String, dynamic> toJson() => {
     "contactName": contactName,
-    "contactPhoneNumbers": List<dynamic>.from(contactPhoneNumbers.map((x) => x)),
+    "contactPhoneNumbers":
+    List<dynamic>.from(contactPhoneNumbers.map((x) => x)),
     "isChatAppUser": List<dynamic>.from(isChatAppUser.map((x) => x)),
     "messageId": messageId,
   };
@@ -224,12 +246,13 @@ class LocationChatMessage {
     required this.messageId,
   });
 
-  factory LocationChatMessage.fromJson(Map<String, dynamic> json) => LocationChatMessage(
-    latitude: json["latitude"]?.toDouble(),
-    longitude: json["longitude"]?.toDouble(),
-    mapLocationUrl: json["mapLocationUrl"],
-    messageId: json["messageId"],
-  );
+  factory LocationChatMessage.fromJson(Map<String, dynamic> json) =>
+      LocationChatMessage(
+        latitude: json["latitude"]?.toDouble(),
+        longitude: json["longitude"]?.toDouble(),
+        mapLocationUrl: json["mapLocationUrl"],
+        messageId: json["messageId"],
+      );
 
   Map<String, dynamic> toJson() => {
     "latitude": latitude,
@@ -275,19 +298,21 @@ class MediaChatMessage {
       MediaChatMessage(
           isAudioRecorded: json["isAudioRecorded"],
           mediaCaptionText: json["mediaCaptionText"],
-          mediaDownloadStatus: int.parse(json["mediaDownloadStatus"].toString()).obs,
+          mediaDownloadStatus:
+          int.parse(json["mediaDownloadStatus"].toString()).obs,
           mediaDuration: json["mediaDuration"],
           mediaFileName: json["mediaFileName"],
           mediaFileSize: json["mediaFileSize"],
           mediaLocalStoragePath: json["mediaLocalStoragePath"].toString().obs,
-          mediaProgressStatus: int.parse(json["mediaProgressStatus"].toString()).obs,
+          mediaProgressStatus:
+          int.parse(json["mediaProgressStatus"].toString()).obs,
           mediaThumbImage: json["mediaThumbImage"],
-          mediaUploadStatus: int.parse(json["mediaUploadStatus"].toString()).obs,
+          mediaUploadStatus:
+          int.parse(json["mediaUploadStatus"].toString()).obs,
           messageId: json["messageId"],
           messageType: json["messageType"],
           isPlaying: false,
-          currentPos: 0
-      );
+          currentPos: 0);
 
   Map<String, dynamic> toJson() => {
     "isAudioRecorded": isAudioRecorded,

@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
 import 'app/modules/chat/views/chat_view.dart';
@@ -42,9 +43,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   SessionManagement.onInit();
   debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
   if (Platform.isAndroid) {
-    Mirrorfly.onMissedCall.listen((event) {
-      LogMessage.d("onMissedCall Background", event);
-    });
     PushNotifications.onMessage(message);
   }
 }
@@ -78,12 +76,12 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   Mirrorfly.initializeSDK(
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp', //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter', //group.com.mirrorfly.flutter
-      chatHistoryEnable: true,
-      enableDebugLog: true,
+      licenseKey: Constants.licenseKey,
+      iOSContainerID: Constants.iOSContainerID,
+      chatHistoryEnable: Constants.chatHistoryEnable,
+      enableDebugLog: Constants.enableDebugLog,
       flyCallback: (response) async {
-        if (response.isSuccess) {//8825508012
+        if (response.isSuccess) {
           LogMessage.d("onSuccess", response.message);
           LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
           Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
@@ -161,7 +159,7 @@ class _MyAppState extends State<MyApp> {
           case Routes.pin:
             return [MaterialPageRoute(
               settings: const RouteSettings(
-                name: Routes.pin,
+                name: Routes.pin, arguments: {"showBack": "false"}
               ),
               builder: (context) => const PinView(),
             )];
@@ -171,6 +169,13 @@ class _MyAppState extends State<MyApp> {
                 name: Routes.profile,
               ),
               builder: (context) => const ProfileView(),
+            )];
+          case Routes.restoreBackup:
+            return [MaterialPageRoute(
+              settings: const RouteSettings(
+                name: Routes.restoreBackup,
+              ),
+              builder: (context) => const RestoreView(),
             )];
           case Routes.chat:
             return [MaterialPageRoute(
@@ -246,7 +251,9 @@ String getInitialRoute() {
   }
   if (!SessionManagement.adminBlocked()) {
     if (SessionManagement.getLogin()) {
-      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
+      LogMessage.d("SessionManagement.getName()", SessionManagement.getName().toString());
+      LogMessage.d("SessionManagement.getMobileNumber()", SessionManagement.getMobileNumber().toString());
+      if (SessionManagement.getName().checkNull().isNotEmpty && SessionManagement.getMobileNumber().checkNull().isNotEmpty && (!Constants.isBackupFeatureEnabled || SessionManagement.getBackUpState().checkNull().isNotEmpty)) {
         if (Constants.enableContactSync) {
           // LogMessage.d("nonChatUsers", nonChatUsers.toString());
           LogMessage.d("SessionManagement.isContactSyncDone()", SessionManagement.isContactSyncDone().toString());
@@ -264,10 +271,16 @@ String getInitialRoute() {
           return Routes.dashboard;
         }
       } else {
-        /// This condition handles the case where a new number logs in and is redirected to the Profile Page.
-        /// If the app is closed before saving the profile, reopening the app would cause an error.
-        /// This condition prevents that error from occurring.
-        if (SessionManagement.getMobileNumber().checkNull().isNotEmpty) {
+
+        if (Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isEmpty) {
+          /// This condition handles the case where a number logs in and is redirected to the Chat Backup Page.
+          /// If the app is closed before saving the backup state, reopening the app should show this to enter the backup state.
+          return Routes.restoreBackup;
+        }else if ((Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isNotEmpty) ||
+            (!Constants.isBackupFeatureEnabled && SessionManagement.getBackUpState().checkNull().isEmpty)) {
+          /// This condition handles the case where a new number logs in and is redirected to the Profile Page.
+          /// If the app is closed before saving the profile, reopening the app would cause an error.
+          /// This condition prevents that error from occurring.
           return Routes.profile;
         }else{
           SessionManagement.clear().then((value) {

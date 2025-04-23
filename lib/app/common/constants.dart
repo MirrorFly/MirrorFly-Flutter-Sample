@@ -43,6 +43,11 @@ const Color previewTextColor = Color(0xff7f7f7f);
 const Color callsSubText = Color(0Xff737373);
 const Color notificationAlertBg = Color(0xffEFF4FD);
 
+
+const Color backUpDbColor = Color(0xffFFFFFF);
+const Color backupPhoneColor = Color(0xff3276E2);
+const Color backupTimerColor = Color(0xffC4D1E0);
+
 class AppColors{
   static const Color callerBackground = Color(0xff152134);
   static const Color bottomCallOptionBackground = Color(0xff162337);
@@ -201,6 +206,7 @@ const String zipImage = 'assets/logos/zip.svg';
 const String rarImage = 'assets/logos/rar.svg';
 const String mImageIcon = 'assets/logos/image.svg';
 const String mLocationIcon = 'assets/logos/location_chat.svg';
+const String mMeetIcon = 'assets/logos/schedule_icon.svg';
 const String mVideoIcon = 'assets/logos/ic_video.svg';
 const String mAudioIcon = 'assets/logos/noun_Audio_3408360.svg';
 const String mAudioRecordIcon = 'assets/logos/record_reply_preview.svg';
@@ -213,7 +219,7 @@ const String attachIcon = 'assets/logos/attach.svg';
 
 const String arrowDropDown = 'assets/calls/ic_arrow_down_red.svg';
 const String arrowUpIcon = 'assets/calls/ic_arrow_up_green.svg';
-const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg.svg';
+const String arrowDownIcon = 'assets/calls/ic_arrow_down_green.svg';
 
 const String phoneCall = 'assets/logos/phonecall.svg';
 const String videoCall = 'assets/logos/videocall.svg';
@@ -288,7 +294,7 @@ const String forwardMedia = "assets/logos/forward_media.svg";
 const String arrowDown = "assets/logos/arrow_down.svg";
 const String arrowUp = "assets/logos/arrow_up.svg";
 
-const String mediaBg = "assets/logos/ic_baloon.svg";
+const String mediaBg = "assets/logos/ic_baloon.png";
 
 //contact sync
 const String syncIcon = "assets/logos/sync.svg";
@@ -298,6 +304,26 @@ const String emailContactIcon = "assets/logos/emailcontact_icon.svg";
 
 const String icBioBackground = "assets/logos/ic_bio_background.png";
 const String icDeleteIcon = "assets/logos/ic_delete_icon.svg";
+const String icJoinCallMirrorflyLogo = "assets/calls/ic_join_call_mirrorfly_logo.svg";
+const String icJoinCallEnded = "assets/calls/ic_join_call_ended.svg";
+
+//Backup Restore
+const String backupTimer = "assets/backup_restore/backup_timer.svg";
+const String backupDatabase = "assets/backup_restore/database.svg";
+const String backupSmartPhone = "assets/backup_restore/smartphone.svg";
+
+const String backupAnimation1 = "assets/backup_restore/backup_animation_1.png";
+const String backupAnimation2 = "assets/backup_restore/backup_animation_2.png";
+const String backupAnimation3 = "assets/backup_restore/backup_animation_3.png";
+const String backupAnimation4 = "assets/backup_restore/backup_animation_4.png";
+const String backupAnimation5 = "assets/backup_restore/backup_animation_5.png";
+const String backupAnimation6 = "assets/backup_restore/backup_animation_6.png";
+
+const String backupHistoryIcon = "assets/backup_restore/backup_history.png";
+const String addAccountUser = "assets/backup_restore/add_account_user.svg";
+
+const String restoreCloud = "assets/backup_restore/restore_cloud.png";
+const String restoreSetting = "assets/backup_restore/restore_settings.png";
 
 
 //About us
@@ -325,7 +351,11 @@ toToast(String text) {
 }
 
 class Constants {
-  static MetaDataUserList? metaDataUserList = MetaDataUserList(key: "platform", value: ["flutter"]);
+  static String licenseKey = 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+  static String iOSContainerID = 'group.com.mirrorfly.flutter'; //group.com.mirrorfly.flutter
+  static bool chatHistoryEnable = false;
+  static bool enableDebugLog = true;
+  static MetaDataUserList? metaDataUserList;// = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
   static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
@@ -343,6 +373,7 @@ class Constants {
   static const sessionLockTime = 32;//in Seconds
   static const pinExpiry = 31;//in Days
   static const pinAlert = pinExpiry-5;//in Days
+  static const String mentionEscape = '‡';
 
 
 
@@ -362,6 +393,8 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
+
+  static const deletedMessage = "This message was deleted";
 
   static const List<int> defaultColorList = [
     0Xff9068BE,
@@ -420,6 +453,9 @@ class Constants {
   static const String mFile = "FILE";
   static const String mNotification = "NOTIFICATION";
 
+  static const String mMeet = "MEET";
+
+
   static const String composing = "composing";
   static const String gone = "Gone";
 
@@ -463,6 +499,20 @@ class Constants {
   static const String attachmentTypeAudio = "audio";
   static const String attachmentTypeContact = "contact";
   static const String attachmentTypeLocation = "location";
+  static const String meetScheduleOn = "Meet Scheduled on ";
+
+  //Backup State
+  static const String backupAccountSelected = "account_selected";
+  static const String backupSkipped = "backup_skip";
+  static const String backupCompleted = "backup_completed";
+
+  static const String backupEncryptedFileFormat = "crypto7";
+  static const String backupRawFileFormat = "txt";
+
+  static const bool isBackupFeatureEnabled = true;
+
+  // Dummy OTP View
+  static const bool isOTPViewEnabled = false;
 
 }
 

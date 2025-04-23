@@ -1,10 +1,13 @@
 
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
+import 'package:mirror_fly_demo/app/data/mention_utils.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../extensions/extensions.dart';
@@ -23,14 +26,14 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   var userName = NavUtils.arguments['userName'];
   var profile = NavUtils.arguments['profile'] as ProfileDetails;
 
-  TextEditingController caption = TextEditingController();
+  MentionTagTextEditingController caption = MentionTagTextEditingController();
 
   var filePath = <PickedAssetModel>[].obs;
 
   var pickerType = Constants.camera.obs;
 
-  var captionMessage = <String>[].obs;
-  var textMessage = NavUtils.arguments['caption'];
+  var captionMessage = (NavUtils.arguments['captionMessage'] as List<String>).obs;
+  var captionMessageMentions = (NavUtils.arguments['captionMessageMentions'] as List<List<String>>).obs;
   var from = NavUtils.arguments['from'];
   var userJid = NavUtils.arguments['userJid'];
   var showAdd = NavUtils.arguments['showAdd'] ?? true;
@@ -54,50 +57,20 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
       // if(pickerType.value == Constants.gallery) {
         debugPrint("pickerType inside gallery type");
         filePath(NavUtils.arguments['filePath']);
-      // }else{
-      //   debugPrint("pickerType inside camera type");
-      //   cameraFilePath(NavUtils.arguments['filePath']);
-      // }
-      var index = 0;
-      for(var _ in filePath){
-        if(index == 0 && textMessage != null){
-          captionMessage.add(textMessage);
-          index = index + 1;
-        }else {
-          captionMessage.add("");
-        }
-      }
+      LogMessage.d("initial ","text: ${captionMessage.join(",")}, tags: ${captionMessageMentions.join(",")}");
       // _loadFiles();
     });
-
-    if(textMessage != null){
-      caption.text = textMessage;
+    if(captionMessage.isNotEmpty) {
+      setMediaCaptionText(captionMessage[0], captionMessageMentions[0]);
     }
     captionFocusNode.addListener(() {
       if (captionFocusNode.hasFocus) {
         showEmoji(false);
+      }else{
+        showOrHideTagListView(false, Routes.galleryPicker);
       }
     });
   }
-
-  /*Future<void> _loadFiles() async {
-    int index = 0;
-    for (var pickedAssetModel in filePath) {
-      try {
-        File? file = await _getFileFromAsset(pickedAssetModel);
-        if (file != null) {
-          imageCache[index] = file;
-        }
-      } catch (e) {
-        debugPrint("Failed to load file: $e");
-      }
-      index++;
-    }
-  }
-
-  Future<File?> _getFileFromAsset(PickedAssetModel pickedAssetModel) async {
-    return await pickedAssetModel.asset?.file;
-  }*/
 
   checkCacheFile(int index){
     if (imageCache.containsKey(index)) {
@@ -112,22 +85,6 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     return imageCache[index];
   }
 
-  // Future<File?> getFile(int index) async {
-  //   if (imageCache.containsKey(index)) {
-  //     return imageCache[index];
-  //   } else if(pickerType.value == Constants.gallery){
-  //     debugPrint("getFile inside gallery file type");
-  //     File? file = await filePath[index].asset?.file;
-  //     if (file != null) {
-  //       imageCache[index] = file;
-  //     }
-  //     return file;
-  //   }else{
-  //     debugPrint("getFile inside camera file type");
-  //     imageCache[index] = filePath[index].file!;
-  //     return filePath[index].file;
-  //   }
-  // }
   Future<File?> getFile(int index) async {
     if (imageCache.containsKey(index)) {
       return imageCache[index];
@@ -150,10 +107,14 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     }
   }
   onChanged() {
-    // count(139 - addStatusController.text.length);
+    updateCaptionsArray();
+  }
 
-    //Adding the below code, to send the emoji in caption text
-    captionMessage[currentPageIndex.value] = caption.text.toString();
+  void onUserTagClicked(ProfileDetails profile,MentionTagTextEditingController controller,String tag){
+    // controller.addTag(id: profile.jid.checkNull().split("@")[0], name: profile.getName());
+    controller.addMention(label: profile.getName(),data: profile.jid.checkNull().split("@")[0],stylingWidget: Text('@${profile.getName()}',style: const TextStyle(color: Colors.blueAccent),));
+    showOrHideTagListView(false, tag);
+    updateCaptionsArray();
   }
 
   Future<void> sendMedia() async {
@@ -173,7 +134,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending image");
           await Get.find<ChatController>(tag: userJid).sendImageMessage(
-              imageCache[i]?.path, captionMessage[i], "");
+              imageCache[i]?.path, captionMessage[i], "",captionMessageMentions[i]);
         } else if (data.type == 'video') {
           if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
@@ -181,7 +142,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending video");
           await Get.find<ChatController>(tag: userJid).sendVideoMessage(
-              imageCache[i]!.path, captionMessage[i], "");
+              imageCache[i]!.path, captionMessage[i], "",captionMessageMentions[i]);
         }
         i++;
       });
@@ -204,27 +165,61 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     var provider = Get.find<GalleryPickerController>().provider;
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
-    captionMessage.removeAt(currentPageIndex.value);
+    removeCaptionsArray(currentPageIndex.value);
     if(currentPageIndex.value > 0) {
       currentPageIndex(currentPageIndex.value - 1);
       LogMessage.d("currentPageIndex.value.toDouble()", currentPageIndex.value.toDouble());
       pageViewController.animateToPage(currentPageIndex.value, duration: const Duration(milliseconds: 5), curve: Curves.easeInOut);
-      caption.text = captionMessage[currentPageIndex.value];
+      setMediaCaptionText(captionMessage[currentPageIndex.value],captionMessageMentions[currentPageIndex.value]);
     }else if (currentPageIndex.value == 0){
-      caption.text = captionMessage[currentPageIndex.value];
+      setMediaCaptionText(captionMessage[currentPageIndex.value],captionMessageMentions[currentPageIndex.value]);
+    }
+  }
+
+  Future<void> setMediaCaptionText(String content,List<String> mentionedUsersIds) async {
+    LogMessage.d("setMediaCaptionText $content",mentionedUsersIds);
+    if(content.isNotEmpty) {
+      var profileDetails = await MentionUtils.getProfileDetailsOfUsername(
+          mentionedUsersIds);
+      caption.setCustomText(content, profileDetails);
+    }else{
+      caption.setCustomText(Constants.emptyString, []);
     }
   }
 
   void onMediaPreviewPageChanged(int value) {
     LogMessage.d("onMediaPreviewPageChanged ",value.toString());
-    currentPageIndex(value);
-    caption.text = captionMessage[value];
     captionFocusNode.unfocus();
+    currentPageIndex(value);
+    setMediaCaptionText(captionMessage[value],captionMessageMentions[value]);
   }
 
   void onCaptionTyped(String value) {
-    LogMessage.d("onCaptionTyped ",captionMessage.length);
-    captionMessage[currentPageIndex.value] = value;
+    LogMessage.d("onCaptionTyped ","index: ${currentPageIndex.value}, text: ${caption.formattedText}, tags: ${caption.getTags}");
+    // updateCaptionsArray();
+  }
+
+  void updateCaptionsArray(){
+    LogMessage.d("updateCaptionsArray ","index: ${currentPageIndex.value}, text: ${caption.formattedText}, tags: ${caption.getTags}");
+    captionMessage[currentPageIndex.value] = caption.formattedText;
+    captionMessageMentions[currentPageIndex.value] = caption.getTags;
+  }
+
+  void removeCaptionsArray(int index){
+    captionMessage.removeAt(index);
+    captionMessageMentions.removeAt(index);
+  }
+
+  void filterMentionUsers(String triggerCharacter,String? query,String tag) {
+    if (Get.isRegistered<MentionController>(tag: tag)) {
+      Get.find<MentionController>(tag: tag).filterMentionUsers(triggerCharacter, query);
+    }
+  }
+
+  void showOrHideTagListView(bool show,String tag){
+    if (Get.isRegistered<MentionController>(tag: tag)) {
+      Get.find<MentionController>(tag: tag).showOrHideTagListView(show);
+    }
   }
 
   @override

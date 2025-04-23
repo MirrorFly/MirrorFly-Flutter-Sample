@@ -21,6 +21,7 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
+import '../views/otp_view.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -99,7 +100,17 @@ class LoginController extends GetxController {
     } else {
       if(await validMobileNumber(selectedCountry.value.dialCode!,mobileNumber.text)) {
         // phoneAuth();
-        registerAccount();
+        if (Constants.isOTPViewEnabled) {
+          DialogUtils.bottomSheet(
+            OtpView(controller: this),
+            ignoreSafeArea: true,
+            isScrollControlled: true,
+            enableDrag: false,
+          );
+        }else{
+          registerAccount();
+        }
+        // NavUtils.toNamed(Routes.otp);
       }else{
         toToast(getTranslated("plsEnterValidMobileNumber"));
       }
@@ -121,18 +132,19 @@ class LoginController extends GetxController {
   }
 
   setUserJID(String username) {
-    if (!Mirrorfly.isChatHistoryEnabled && Platform.isAndroid) {
-      debugPrint("recentChatList Calling getAllGroups");
-      Mirrorfly.getAllGroups(fetchFromServer: true,flyCallBack: (_){}); // chat history enabled so this no longer need
-    }
     Mirrorfly.getJid(username: username).then((value) {
       if (value != null) {
         SessionManagement.setUserJID(value);
         DialogUtils.hideLoading();
-        NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        if (Constants.isBackupFeatureEnabled) {
+          NavUtils.offAllNamed(Routes.restoreBackup,
+              arguments: {"mobile": mobileNumber.text.toString()});
+        }else {
+          NavUtils.offAllNamed(Routes.profile, arguments: {"mobile": mobileNumber.text.toString(), "from": Routes.login});
+        }
       }
     }).catchError((error) {
-      debugPrint(error.message);
+      debugPrint(error);
     });
   }
 
@@ -318,6 +330,7 @@ class LoginController extends GetxController {
   }
 
   registerAccount() async {
+    LogMessage.d("Mirrorfly.isSDKInitialized", Mirrorfly.isSDKInitialized);
     if (await AppUtils.isNetConnected()) {
       if (mobileNumber.text.length < 5) {
         toToast(getTranslated("mobileNumberTooShort"));
@@ -331,56 +344,86 @@ class LoginController extends GetxController {
         return;
       }
       // if(mobileNumber.text.length > 9) {
+      if(!Mirrorfly.isSDKInitialized){
+        initializeSDK();
+        return;
+      }
       showLoading();
-      var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
-      Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
-          fcmToken: SessionManagement.getToken().checkNull(),
-          isForceRegister: isForceRegister,
-          // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
-          flyCallback: (FlyResponse response) {
-              if (response.isSuccess) {
-                if (response.hasData) {
-                  var userData = registerModelFromJson(response.data); //message
-                  SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
-                  SessionManagement.setUser(userData.data!);
-                  SessionManagement.setUserIdentifier(userIdentifier);
-                  SessionManagement.setAdminBlocked(false);
-                  SessionManagement.setAuthToken(userData.data!.token.checkNull());
-                  if (Get.isRegistered<MainController>()) {
-                    Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
-                  }
-                  // Mirrorfly.setNotificationSound(true);
-                  // SessionManagement.setNotificationSound(true);
-                  // userData.data.
-                  enableArchive();
-                  Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
-
-                  ///if its not set then error comes in contact sync delete from phonebook.
-                  SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
-                  setUserJID(userData.data!.username!);
-                }
-              } else {
-                debugPrint("issue===> ${response.errorMessage.toString()}");
-                hideLoading();
-                if (response.exception?.code == "403") {
-                  debugPrint("issue 403 ===> ${response.errorMessage }");
-                  NavUtils.offAllNamed(Routes.adminBlocked);
-                } else if (response.exception?.code  == "405") {
-                  debugPrint("issue 405 ===> ${response.errorMessage }");
-                  sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
-                } else {
-                  debugPrint("issue else code ===> ${response.exception?.code }");
-                  debugPrint("issue else ===> ${response.errorMessage }");
-                  toToast(getErrorDetails(response));
-                }
-              }
-            });
+      login();
     } else {
       toToast(getTranslated("noInternetConnection"));
     }
     // } else {
     //   toToast(getTranslated("noInternetConnection"));
     // }
+  }
+  void initializeSDK(){
+    showLoading();
+    Mirrorfly.initializeSDK(
+        licenseKey: Constants.licenseKey,
+        iOSContainerID: Constants.iOSContainerID,
+        chatHistoryEnable: Constants.chatHistoryEnable,
+        enableDebugLog: Constants.enableDebugLog,
+        flyCallback: (response) async {
+      if (response.isSuccess) {
+          login();
+      }else{
+        hideLoading();
+        toToast(response.errorMessage.toString());
+      }
+      });
+  }
+
+  void login(){
+    var userIdentifier = countryCode!.replaceAll('+', '') + mobileNumber.text;
+    Mirrorfly.login(userIdentifier: countryCode!.replaceAll('+', '') + mobileNumber.text,
+        fcmToken: SessionManagement.getToken().checkNull(),
+        isForceRegister: isForceRegister,
+        // identifierMetaData: [IdentifierMetaData(key: "platform", value: "flutter")],//#metaData
+        flyCallback: (FlyResponse response) async {
+          if (response.isSuccess) {
+            if (response.hasData) {
+              var userData = registerModelFromJson(response.data); //message
+              SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
+              SessionManagement.setUser(userData.data!);
+              SessionManagement.setUserIdentifier(userIdentifier);
+              SessionManagement.setAdminBlocked(false);
+              SessionManagement.setAuthToken(userData.data!.token.checkNull());
+              if (Get.isRegistered<MainController>()) {
+                Get.find<MainController>().currentAuthToken(userData.data!.token.checkNull());
+              }
+              // Mirrorfly.setNotificationSound(true);
+              // SessionManagement.setNotificationSound(true);
+              // userData.data.
+              enableArchive();
+              Mirrorfly.setRegionCode(regionCode:regionCode ?? 'IN');
+
+              ///if its not set then error comes in contact sync delete from phonebook.
+              SessionManagement.setCountryCode((countryCode ?? "").replaceAll('+', ''));
+              if (!Constants.chatHistoryEnable){
+                await Mirrorfly.getAllGroups(fetchFromServer: true, flyCallBack: (FlyResponse response) {
+                  LogMessage.d("Login Controller getAllGroups", response.data);
+                });
+              }
+              setUserJID(userData.data!.username!);
+            }
+
+          } else {
+            debugPrint("issue===> ${response.errorMessage.toString()}");
+            hideLoading();
+            if (response.exception?.code == "403") {
+              debugPrint("issue 403 ===> ${response.errorMessage }");
+              NavUtils.offAllNamed(Routes.adminBlocked);
+            } else if (response.exception?.code  == "405") {
+              debugPrint("issue 405 ===> ${response.errorMessage }");
+              sessionExpiredDialogShow(getTranslated("maximumLoginReached"));
+            } else {
+              debugPrint("issue else code ===> ${response.exception?.code }");
+              debugPrint("issue else ===> ${response.errorMessage }");
+              toToast(getErrorDetails(response));
+            }
+          }
+        });
   }
 
   void enableArchive() async {
@@ -432,13 +475,26 @@ class LoginController extends GetxController {
           onPressed: () {
             NavUtils.back();
             isForceRegister = true;
-            registerUser();
+            // registerUser();
+            registerAccount();
           },
           child: Text(getTranslated("continue"), )),
     ]);
   }
 
   gotoLogin() {
-    NavUtils.offAllNamed(Routes.login);
+    // Future.delayed(const Duration(milliseconds: 500),(){
+    //   NavUtils.offAllNamed(Routes.login);
+    // });
+
+    NavUtils.back();
+  }
+
+  void verifyDummyOTP() {
+    if (smsCode.length == 6 && smsCode == "123456") {
+      registerAccount();
+    } else {
+      toToast(getTranslated("inValidOTP"));
+    }
   }
 }
