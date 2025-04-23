@@ -140,6 +140,18 @@ class SessionManagement {
     await _preferences.setBool('${prefix}show_alert', false);
   }
 
+  static void setBackUpState(String backUpState) async {
+    await _preferences.setString("${prefix}backUpState", backUpState);
+  }
+
+  static void setBackUpFrequency(String backUpState) async {
+    await _preferences.setString("${prefix}backUpFrequency", backUpState);
+  }
+
+  static void setBackUpAccount(String backUpAccount) async {
+    await _preferences.setString("${prefix}backUpAccount", backUpAccount);
+  }
+
   static Future clear()async{
     // await _preferences.clear();
     final keys = _preferences.getKeys();
@@ -171,6 +183,11 @@ class SessionManagement {
       await _preferences.setString("$prefix$key", value.toString());
     });
   }
+  static Future setCalenderId(String id) async => await _preferences.setString("calenderId",id);
+  static Future setCalenderName(String id) async => await _preferences.setString("calenderName",id);
+
+  static Future getCalenderId(String key) async =>  _preferences.get("calenderId")??"";
+  static Future getCalenderName(String key) async =>  _preferences.get("calenderName")??"";
 
   static Future setBool(String key, bool value) async => await _preferences.setBool("$prefix$key",value);
   static Future setString(String key,String value) async => await _preferences.setString("$prefix$key",value);
@@ -215,4 +232,7 @@ class SessionManagement {
   static int lastPinChangedAt() => _preferences.getInt("$prefix${Constants.changedPinAt}") ?? DateTime.now().millisecondsSinceEpoch;
   static bool showAlert() => _preferences.getBool('${prefix}show_alert') ?? true;
   // static String getTopicId() =>  Constants.enableTopic ? Constants.topicId/*_preferences.getString('${prefix}topicId')*/ ?? ("5d3788c1-78ef-4158-a92b-a48f092da0b9") : "";
+  static String getBackUpState() => _preferences.getString('${prefix}backUpState') ?? "";
+  static String getBackUpAccount() => _preferences.getString('${prefix}backUpAccount') ?? "";
+  static String getBackUpFrequency() => _preferences.getString('${prefix}backUpFrequency') ?? "";
 }

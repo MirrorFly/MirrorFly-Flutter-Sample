@@ -11,11 +11,11 @@ import '../../../extensions/extensions.dart';
 import '../../../routes/route_settings.dart';
 import 'about/about_and_help_view.dart';
 
-class SettingsView extends NavView<SettingsController> {
+class SettingsView extends NavViewStateful<SettingsController> {
   const SettingsView({Key? key}) : super(key: key);
 
   @override
-  SettingsController createController({String? tag}) => SettingsController();
+  SettingsController createController({String? tag}) => Get.put(SettingsController());
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +42,9 @@ class SettingsView extends NavView<SettingsController> {
                 getTranslated("starredMessages"), leading: staredMsgIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () {
                 NavUtils.toNamed(Routes.starredMessages);
               }),
-              SettingListItem(title:
-                  getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
-                  NavUtils.toNamed(Routes.notification)),
+              // SettingListItem(title:
+              //     getTranslated("notifications"), leading: notificationIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
+              //     NavUtils.toNamed(Routes.notification)),
               SettingListItem(title:
                   getTranslated("blockedContacts"), leading: blockedIcon, trailing: rightArrowIcon,listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle, onTap: () =>
                   NavUtils.toNamed(Routes.blockedList)),

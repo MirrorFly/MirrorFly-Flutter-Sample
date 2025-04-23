@@ -24,6 +24,11 @@ class ParticipantsView extends NavViewStateful<AddParticipantsController> {
 AddParticipantsController createController({String? tag}) => Get.put(AddParticipantsController());
 
   @override
+  void onInit() {
+    controller.intiTab();
+    super.onInit();
+  }
+  @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarTheme,
@@ -69,7 +74,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                                 ]),
                             actions: [
                               Visibility(
-                                visible:controller.currentTab.value==1,
+                                visible:controller.currentTab.value==1 && !controller.joinViaLink,
                                 child: IconButton(
                                   onPressed: () {
                                     if(controller.isSearching.value){
@@ -133,7 +138,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
 
   Widget callParticipantsView(BuildContext context,ParticipantItemStyle style) {
     return Obx(() {
-      return ListView.builder(
+      return controller.callList.length > 1 ? ListView.builder(
           shrinkWrap: true,
           itemCount: controller.callList.length,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -201,7 +206,10 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                       ],
                     ),
                   );
-          });
+          }): Center(child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Text(getTranslated("noContactsFound"),),
+      ),);
     });
   }
 
@@ -245,7 +253,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
             child: Stack(
               children: [
                 Visibility(
-                    visible: !controller.isPageLoading.value && controller.usersList.isEmpty,
+                    visible: !controller.joinViaLink && !controller.isPageLoading.value && controller.usersList.isEmpty,
                     child: Center(child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20.0),
                       child: Text(getTranslated("noContactsFound"),style: noData,),
@@ -280,7 +288,7 @@ AddParticipantsController createController({String? tag}) => Get.put(AddParticip
                                 checkValue: controller.selectedUsersJIDList.contains(item.jid),
                                 onCheckBoxChange: (value){
                                   controller.onListItemPressed(item);
-                                },onListItemPressed: (){
+                                },onListItemPressed: (profile){
                                   controller.onListItemPressed(item);
                                 },contactItemStyle: style,);
                             } else {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'common/constants.dart';
+import 'data/utils.dart';
 import 'stylesheet/stylesheet.dart';
 
 class AppStyleConfig{
@@ -104,6 +106,12 @@ class AppStyleConfig{
       })
   );
 
+  static final CallLinkErrorViewStyle callLinkErrorViewStyle = CallLinkErrorViewStyle(logoWidget: AppUtils.svgIcon(icon: icJoinCallMirrorflyLogo),
+      callIcon : CircleAvatar(backgroundColor: Colors.white.withOpacity(0.3),radius: 33,child: AppUtils.svgIcon(icon: icJoinCallEnded),),
+      callEndedTextStyle : const TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 15),
+      callEndedMessageTextStyle : const TextStyle(fontWeight: FontWeight.w500,color: Colors.white, fontSize: 13),
+      returnToChatButtonStyle : _defaultButtonStyle);
+
   static LoginPageStyle _loginPageStyle = LoginPageStyle(loginButtonStyle: _defaultButtonStyle);
   static ProfileViewStyle _profileViewStyle = ProfileViewStyle(buttonStyle: _defaultButtonStyle);
   static DashBoardPageStyle _dashBoardPageStyle = DashBoardPageStyle(meetBottomSheetStyle: MeetBottomSheetStyle(joinMeetingButtonStyle: _joinMeetButtonStyle));
@@ -129,7 +137,7 @@ class AppStyleConfig{
   static LocalContactPreviewPageStyle _localContactPreviewPageStyle = const LocalContactPreviewPageStyle();
   static LocationSentPageStyle _locationSentPageStyle = const LocationSentPageStyle();
   static MediaSentPreviewPageStyle _mediaSentPreviewPageStyle = const MediaSentPreviewPageStyle();
-  static JoinCallPreviewPageStyle _joinCallPreviewPageStyle = JoinCallPreviewPageStyle(joinCallButtonStyle: _joinCallButtonStyle);
+  static JoinCallPreviewPageStyle _joinCallPreviewPageStyle = JoinCallPreviewPageStyle(joinCallButtonStyle: _joinCallButtonStyle,callLinkErrorViewStyle: callLinkErrorViewStyle);
 
   static LoginPageStyle loginPageStyle = _loginPageStyle;
   static ProfileViewStyle profileViewStyle = _profileViewStyle;

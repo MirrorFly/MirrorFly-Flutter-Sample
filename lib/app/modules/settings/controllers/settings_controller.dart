@@ -10,6 +10,8 @@ import '../../../common/constants.dart';
 import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
+import '../../backup_restore/backup_utils/backup_restore_manager.dart';
+
 
 class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
@@ -48,37 +50,32 @@ class SettingsController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
-        DialogUtils.hideLoading();
-        if (response.isSuccess) {
-          // clearAllPreferences();
-        } else {
-          toToast(getTranslated("logoutFailed"));
-          // Get.snackbar("Logout", "Logout Failed");
-        }
-      })/*.catchError((er) {
-        DialogUtils.hideLoading();
-        SessionManagement.clear().then((value) {
-          // SessionManagement.setToken(token);
-          NavUtils.offAllNamed(Routes.login);
-        });
-      })*/;
+        clearAllPreferences();
+      }).catchError((ex){
+        LogMessage.d("logoutOfChatSDK", ex);
+        clearAllPreferences();
+      });
     } else {
       toToast(getTranslated("noInternetConnection"));
     }
   }
 
-  void clearAllPreferences(){
+  void clearAllPreferences()async{
     var token = SessionManagement.getToken().checkNull();
     var cameraPermissionAsked = SessionManagement.getBool(Constants.cameraPermissionAsked);
     var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
     var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
     var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+   if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
+      await BackupRestoreManager.instance.googleSignIn.signOut();
+    }
     SessionManagement.clear().then((value) {
       SessionManagement.setToken(token);
       SessionManagement.setBool(Constants.cameraPermissionAsked, cameraPermissionAsked);
       SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      DialogUtils.hideLoading();
       NavUtils.offAllNamed(Routes.login);
     });
   }

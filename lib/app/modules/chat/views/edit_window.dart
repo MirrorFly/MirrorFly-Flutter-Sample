@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/data/mention_utils.dart';
+import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
+import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
+import 'package:mirrorfly_plugin/logmessage.dart';
 import '../../../common/app_localizations.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/chat/controllers/chat_controller.dart';
@@ -24,9 +28,12 @@ class EditMessageScreen extends StatefulWidget {
 
 class _EditMessageScreenState extends State<EditMessageScreen> {
   FocusNode textFocusNode = FocusNode();
+  String? get messageToEdit => ((widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText)?.replaceAll("@[?]", Constants.mentionEscape);
+  final tag = "editWindow";
   @override
   void initState() {
     super.initState();
+    setEditMessageText();
     widget.chatController.setOnGoingUserGone();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       textFocusNode.requestFocus();
@@ -40,6 +47,13 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
     });
   }
 
+  void setEditMessageText() async {
+    var messageToEdit = (widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
+    var profileDetails = await MentionUtils.getProfileDetailsOfUsername(widget.chatItem.mentionedUsersIds ?? []);
+    widget.chatController.editMessageController.setCustomText(messageToEdit ?? "",profileDetails);
+    LogMessage.d("setEditMessageText", widget.chatController.editMessageController.getTags);
+  }
+
   @override
   void dispose() {
     widget.chatController.setOnGoingUserAvail();
@@ -49,9 +63,6 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    var messageToEdit = (widget.chatItem.messageType == Constants.mText || widget.chatItem.messageType == Constants.mAutoText) ? widget.chatItem.messageTextContent : widget.chatItem.mediaChatMessage?.mediaCaptionText;
-    widget.chatController.editMessageController.text = messageToEdit ?? "";
-    widget.chatController.editMessageText(messageToEdit);
     return Theme(
       data: Theme.of(context).copyWith(
           appBarTheme: AppStyleConfig.chatPageStyle.appBarTheme
@@ -119,18 +130,34 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Container(
+                child: /*ChatInputField(
+                  messageTypingAreaStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle,
+                  controller: widget.chatController,
+                  chatTaggerController: widget.chatController.editMessageController,
+                  onChanged: (text)=>widget.chatController.editMessageText(text),
+                  focusNode: textFocusNode,
+                )*/
+                Container(
                   color: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.bgColor,//Colors.white,
                   padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: Column(
                     children: [
+                      MentionUsersList(
+                        tag,
+                        groupJid: widget.chatController.profile.jid.checkNull(),
+                        mentionUserBgDecoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle
+                            .mentionUserBgDecoration,
+                        mentionUserStyle: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.mentionUserStyle,chatTaggerController:  widget.chatController.messageController,
+                      onListItemPressed: (profile){
+                        widget.chatController.onUserTagClicked(profile,widget.chatController.editMessageController,tag);
+                      },),
                       IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Flexible(
                               child: Container(
-                                  padding: const EdgeInsets.only(left: 10),
+                                  padding: const EdgeInsets.only(left: 10,right: 10),
                                   margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                                   width: double.infinity,
                                   decoration: AppStyleConfig.chatPageStyle.messageTypingAreaStyle.decoration,
@@ -157,8 +184,27 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                           thumbVisibility: true, // Always show the scrollbar, optional
                                           thickness: 4.0, // Set the thickness of the scrollbar
                                           radius: const Radius.circular(20),
-                                          child: TextField(
+                                          child: MentionTagTextField(
+                                            mentionTagDecoration: const MentionTagDecoration(
+                                                mentionStart: ['@'],
+                                                mentionBreak: ' ',
+                                                allowDecrement: false,
+                                                allowEmbedding: false,
+                                                showMentionStartSymbol: false,
+                                                maxWords: null,
+                                                mentionTextStyle: TextStyle(
+                                                    color: Colors.blueAccent,
+                                                    backgroundColor: Colors.transparent)),
                                             focusNode: textFocusNode,
+                                            onMention: (query) {
+                                              debugPrint("query : $query");
+                                              if (query != null) {
+                                                final searchInput = query.substring(1);
+                                                widget.chatController.filterMentionUsers('@',searchInput,tag);
+                                              }else{
+                                                widget.chatController.filterMentionUsers('@',null,tag);
+                                              }
+                                            },
                                             onChanged: (text) {
                                               widget.chatController.editMessageText(text);
                                             },
@@ -166,12 +212,12 @@ class _EditMessageScreenState extends State<EditMessageScreen> {
                                             // style: const TextStyle(fontWeight: FontWeight.w400),
                                             keyboardType: TextInputType.multiline,
                                             minLines: 1,
-                                            maxLines: 5,
+                                            maxLines: 4,
                                             controller: widget.chatController.editMessageController,
                                             // focusNode: controller.focusNode,
                                           decoration: InputDecoration(hintText: getTranslated("startTypingPlaceholder"), border: InputBorder.none,hintStyle:  AppStyleConfig.chatPageStyle.messageTypingAreaStyle.textFieldStyle.editTextHintStyle, contentPadding: EdgeInsets.zero),
                                         ),
-                                      ),
+                                                                              ),
                                       ),
                                     ],
                                   )),

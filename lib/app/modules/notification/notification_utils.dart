@@ -1,5 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/data/mention_utils.dart';
+
+import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
+
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
+import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../model/chat_message_model.dart';
 
@@ -17,19 +23,26 @@ class NotificationUtils{
   * @param message Instance on ChatMessage in NotificationMessageModel
   * @return String Summary of the message
   * */
-  static String getMessageSummary(ChatMessageModel message){
-    if(Constants.mText == message.messageType || Constants.mNotification == message.messageType) {
+  static Future<String> getMessageSummary(ChatMessageModel message) async {
+    if(Constants.mText == message.messageType || Constants.mNotification == message.messageType  || Constants.mAutoText == message.messageType) {
       if (message.isMessageRecalled.value.checkNull()) {
-        return deletedMessage;
+        return deletedMessage.isNotEmpty?deletedMessage:Constants.deletedMessage;
       } else {
         var lastMessageMentionContent = message.messageTextContent.checkNull();
-        /*if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
+        if(message.mentionedUsersIds!=null && message.mentionedUsersIds!.isNotEmpty){
+          var profileDetails = await MentionUtils.getProfileDetailsOfUsername(message.mentionedUsersIds!);
+          var formattedString = MentionUtils.replaceMentionedUserText(null,lastMessageMentionContent,message.mentionedUsersIds!,profileDetails,null,null,null,const Color(0XffD2E3FC));
           //need to work on mentions
-        }*/
+          return formattedString.toPlainText();
+        }
         return lastMessageMentionContent;
       }
     }else if(message.isMessageRecalled.value.checkNull()){
-      return deletedMessage;
+      return deletedMessage.isNotEmpty?deletedMessage:Constants.deletedMessage;
+    }else if(Constants.mMeet == message.messageType){
+        var lastMessageMentionContent = MessageUtils.getMeetMessage(message.meetChatMessage?.scheduledDateTime??0);
+        ScheduleCalender().addEvent(message.meetChatMessage!);
+        return Constants.meetScheduleOn+lastMessageMentionContent;
     }else{
       return getMediaMessageContent(message);
     }

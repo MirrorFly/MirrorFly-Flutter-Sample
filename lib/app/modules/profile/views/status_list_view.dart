@@ -55,6 +55,7 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
+                    controller.onChanged();
                     NavUtils.toNamed(Routes.addProfileStatus, arguments: {
                       "status": controller.selectedStatus.value
                     })?.then((value) {

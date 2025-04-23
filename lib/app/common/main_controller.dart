@@ -8,8 +8,6 @@ import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:is_lock_screen2/is_lock_screen2.dart';
-// import 'package:is_lock_screen/is_lock_screen.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -46,27 +44,32 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   final unreadCallCount = 0.obs;
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
-    /*Mirrorfly.isOnGoingCall().then((value){
-      if(value.checkNull()){
-        NavUtils.toNamed(Routes.onGoingCallView);
-      }
-    });*/
-    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
-      googleMapKey = value;
-      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
-    });
+
     //presentPinPage();
     debugPrint("#Mirrorfly Notification -> Main Controller push init");
     PushNotifications.init();
     BaseController.initListeners();
+
+    startNetworkListen();
+
+  }
+
+  @override
+  Future<void> onReady() async {
+    super.onReady();
+
+    debugPrint("#Mirrorfly Notification -> Main Controller push onResume");
+    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
+      googleMapKey = value;
+      LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+    });
     mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
     currentAuthToken(SessionManagement.getAuthToken().checkNull());
     getCurrentAuthToken();
     //getAuthToken();
-    startNetworkListen();
 
     getAvailableFeatures();
 
@@ -77,6 +80,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
+
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -158,7 +162,18 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
           }
         } else {
           debugPrint("not chat page");
-          NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          if (NavUtils.currentRoute == Routes.forwardChat ||
+              NavUtils.currentRoute == Routes.chatInfo ||
+              NavUtils.currentRoute == Routes.groupInfo ||
+              NavUtils.currentRoute == Routes.messageInfo){
+            debugPrint("chat info page");
+            NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+            Future.delayed(const Duration(milliseconds: 500), () {
+              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+            });
+          }else{
+            NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          }
         }
       } else {
         if (Get.isRegistered<DashboardController>()) {
@@ -255,10 +270,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onPaused() async {
     hasPaused = true;
     LogMessage.d('LifeCycle', 'onPaused');
+    fromLockScreen = await Mirrorfly.isLockScreen();
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
     debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
-    fromLockScreen = await isLockScreen() ?? false;
+    fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
@@ -267,9 +283,9 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void onResumed() {
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
-    checkShouldShowPin();
     if(hasPaused) {
       hasPaused = false;
+      checkShouldShowPin();
       if (Constants.enableContactSync) {
         syncContacts();
       }
@@ -338,7 +354,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void presentPinPage() {
     if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
       NavUtils.toNamed(
-        Routes.pin,
+          Routes.pin, arguments: {"showBack": "false"}
       );
     }
   }

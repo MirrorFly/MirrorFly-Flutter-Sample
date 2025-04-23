@@ -214,7 +214,10 @@ class ArchivedChatListController extends GetxController {
     LogMessage.d("chat", value.toString());
     if (value.isNotEmpty) {
       var data = recentChatDataFromJson(value);
-      return data;
+      if(data.isChatArchived.checkNull()) {
+        return data;
+      }
+      return null;
     } else {
       return null;
     }
@@ -302,17 +305,35 @@ class ArchivedChatListController extends GetxController {
   }
 
   _itemMute(int index) {
-    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
-    var chatIndex =
-        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    archivedChats[chatIndex].isMuted = (true);
+    // Deprecated Method
+    // Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: true);
+    // var chatIndex =
+    //     archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    // archivedChats[chatIndex].isMuted = (true);
+    // New Method to Mute
+    Mirrorfly.updateChatMuteStatusList(jidList: selectedChats.toList(), muteStatus: true);
+    for (var jid in selectedChats) {
+      var chatIndex = archivedChats.indexWhere((element) => jid == element.jid);
+      if (!chatIndex.isNegative) {
+        archivedChats[chatIndex].isMuted = true;
+      }
+    }
   }
 
   _itemUnMute(int index) {
-    var chatIndex =
-        archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
-    archivedChats[chatIndex].isMuted = (false);
-    Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
+    // Deprecated Method
+    // var chatIndex =
+    //     archivedChats.indexWhere((element) => selectedChats[index] == element.jid); //selectedChatsPosition[index];
+    // archivedChats[chatIndex].isMuted = (false);
+    // Mirrorfly.updateChatMuteStatus(jid: selectedChats[index], muteStatus: false);
+    // New Method to Un Mute
+    Mirrorfly.updateChatMuteStatusList(jidList: selectedChats.toList(), muteStatus: false);
+    for (var jid in selectedChats) {
+      var chatIndex = archivedChats.indexWhere((element) => jid == element.jid);
+      if (!chatIndex.isNegative) {
+        archivedChats[chatIndex].isMuted = false;
+      }
+    }
   }
 
   deleteChats() {

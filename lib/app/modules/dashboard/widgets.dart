@@ -1,10 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import '../../common/app_localizations.dart';
 import '../../data/helper.dart';
 import '../../extensions/extensions.dart';
-import '../../routes/route_settings.dart';
 import '../../stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -102,24 +101,21 @@ class RecentChatItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          spanTxt.isEmpty
-              ? Text(
-                  getRecentName(item),
-                  style: recentChatItemStyle.titleTextStyle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                )
-              : spannableText(
-                  getRecentName(item),
-                  //item.profileName.checkNull(),
-                  spanTxt,
-                  recentChatItemStyle.titleTextStyle,recentChatItemStyle.spanTextColor),
+          CustomTextView(
+            text: item.getName().checkNull(),
+            defaultTextStyle: recentChatItemStyle.titleTextStyle,
+            linkColor: Colors.blue,
+            mentionUserTextColor: Colors.blue,
+            searchQueryTextColor: recentChatItemStyle.spanTextColor,
+            searchQueryString: spanTxt,
+            maxLines: 1,mentionedMeBgColor:recentChatItemStyle.mentionedMeBgColor
+          ),
           Row(
             children: [
               item.isLastMessageSentByMe.checkNull() && !isForwardMessage && !item.isLastMessageRecalledByUser.checkNull()
                   ? (item.lastMessageType == MessageType.isText && item.lastMessageContent.checkNull().isNotEmpty ||
                               item.lastMessageType != MessageType.isText) &&
-                          typingUserid.isEmpty
+                          typingUserid.isEmpty && item.lastMessageType != MessageType.isMeet
                       ? buildMessageIndicator()
                       : const Offstage()
                   : const Offstage(),
@@ -276,7 +272,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildMuteIconVisibility() {
     return Visibility(
         visible: !archiveEnabled && item.isMuted! && !isForwardMessage,
-        child: AppUtils.svgIcon(icon:
+        child:  recentChatItemStyle.iconMute ?? AppUtils.svgIcon(icon:
           mute,
           width: 13,
           height: 13,
@@ -286,7 +282,7 @@ class RecentChatItem extends StatelessWidget {
   Visibility buildPinIconVisibility() {
     return Visibility(
         visible: !item.isChatArchived! && item.isChatPinned! && !isForwardMessage,
-        child: AppUtils.svgIcon(icon:
+        child: recentChatItemStyle.iconPin ?? AppUtils.svgIcon(icon:
           pin,
           width: 18,
           height: 18,
@@ -342,7 +338,6 @@ class RecentChatItem extends StatelessWidget {
         key: ValueKey(item.lastMessageId),
         future: getMessageOfId(item.lastMessageId.checkNull()),
         builder: (context, data) {
-          // LogMessage.d("getMessageOfId future", "${item.lastMessageId.checkNull()} : ${data.data?.messageId}");
           if (data.hasData && data.data != null && !data.hasError) {
             var chat = data.data!;
             return Row(
@@ -350,14 +345,16 @@ class RecentChatItem extends StatelessWidget {
                 checkSenderShouldShow(chat)
                     ? Flexible(
                         child: Text(
-                          "${chat.senderUserName.checkNull()}:",
+                          chat.senderUserName.checkNull(),
                           style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.clip,
                         ),
                       )
-                    : const SizedBox.shrink(),
-                chat.isMessageRecalled.value ? const SizedBox.shrink() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
+                    : const Offstage(),
+                if(checkSenderShouldShow(chat))
+                Text(": ", style: recentChatItemStyle.subtitleTextStyle),
+                chat.isMessageRecalled.value ? const Offstage() : MessageUtils.forMessageTypeIcon(chat.messageType, chat.mediaChatMessage),
                 SizedBox(
                   width: chat.isMessageRecalled.value
                       ? 0.0
@@ -366,23 +363,21 @@ class RecentChatItem extends StatelessWidget {
                           : 0.0,
                 ),
                 Expanded(
-                  child: spanTxt.isEmpty
-                      ? Text(
-                          chat.isMessageRecalled.value
-                              ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
-                                  chat.messageTextContent.checkNull(),
-                          style: recentChatItemStyle.subtitleTextStyle,//Theme.of(context).textTheme.titleSmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      : spannableText(
-                          chat.isMessageRecalled.value
-                              ? setRecalledMessageText(chat.isMessageSentByMe)
-                              : MessageUtils.forMessageTypeString(chat.messageType.checkNull(), content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
-                                  chat.messageTextContent.checkNull(),
-                          spanTxt,
-                      recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor)//Theme.of(context).textTheme.titleSmall),
+                  flex: 2,
+                  child: CustomTextView(
+                    text: chat.isMessageRecalled.value
+                        ? setRecalledMessageText(chat.isMessageSentByMe)
+                        :(chat.messageType == MessageType.meet.value)?  MessageUtils.getMeetMessage(chat.meetChatMessage?.scheduledDateTime??0):MessageUtils.forMessageTypeString(chat.messageType, content: chat.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                        chat.messageTextContent.checkNull(),
+                    defaultTextStyle: recentChatItemStyle.subtitleTextStyle,
+                    linkColor: recentChatItemStyle.linkColor,
+                    mentionUserTextColor: recentChatItemStyle.mentionUserColor,
+                    searchQueryTextColor: recentChatItemStyle.spanTextColor,
+                    searchQueryString: spanTxt,
+                    mentionUserIds: chat.mentionedUsersIds ?? [],
+                    maxLines: 1,
+                      mentionedMeBgColor:recentChatItemStyle.mentionedMeBgColor
+                  )
                 ),
               ],
             );
@@ -461,7 +456,7 @@ class RecentChatMessageItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var unreadMessageCount = "0";
     return InkWell(
-      onTap:()=>onTap,
+      onTap:()=>onTap(),
       child: Row(
         children: [
           Container(
@@ -554,15 +549,28 @@ class RecentChatMessageItem extends StatelessWidget {
                                 : 0.0,
                           ),
                           Expanded(
-                            child:
-                            MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
+                            child: CustomTextView(
+                              key: Key("message_view+${item.messageId}"),
+                              text: (item.messageType == MessageType.meet.value)? item.meetChatMessage!.link:MessageUtils.forMessageTypeString(item.messageType,
+                                  content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
+                                  item.messageTextContent.checkNull(),
+                              defaultTextStyle: recentChatItemStyle.subtitleTextStyle,
+                              linkColor: recentChatItemStyle.linkColor,
+                              mentionUserTextColor: recentChatItemStyle.mentionUserColor,
+                              searchQueryTextColor: recentChatItemStyle.spanTextColor,
+                              searchQueryString: searchTxt,
+                              mentionUserIds: item.mentionedUsersIds ?? [],
+                              maxLines: 1,mentionedMeBgColor: recentChatItemStyle.mentionedMeBgColor,
+                            )
+                             /*MessageUtils.forMessageTypeString(item.messageType, content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ==
                                 null
-                                ? spannableText(
+                                ?
+                            spannableText(
                               item.messageTextContent.toString(),
                               searchTxt,
                               recentChatItemStyle.subtitleTextStyle,recentChatItemStyle.spanTextColor,
-                            )
-                                : Text(
+                            ) :
+                            Text(
                               MessageUtils.forMessageTypeString(item.messageType,
                                   content: item.mediaChatMessage?.mediaCaptionText.checkNull()) ??
                                   item.messageTextContent.toString(),
@@ -570,7 +578,7 @@ class RecentChatMessageItem extends StatelessWidget {
                               style: recentChatItemStyle.subtitleTextStyle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                            ),
+                            ),*/
                           ),
                         ],
                       ),
@@ -588,7 +596,7 @@ class RecentChatMessageItem extends StatelessWidget {
 }
 
 
-Widget spannableText(String text, String spannableText, TextStyle? style,Color? spanTextColor) {
+/*Widget spannableText(String text, String spannableText, TextStyle? style,Color? spanTextColor) {
   var startIndex = text.toLowerCase().indexOf(spannableText.toLowerCase());
   var endIndex = startIndex + spannableText.length;
   if (startIndex != -1 && endIndex != -1) {
@@ -601,7 +609,7 @@ Widget spannableText(String text, String spannableText, TextStyle? style,Color? 
     return Text.rich(
       TextSpan(
           text: startText,
-          children: [TextSpan(text: colorText, style: TextStyle(color: spanTextColor)/*const TextStyle(color: Colors.blue)*/), TextSpan(text: endText, style: style)],
+          children: [TextSpan(text: colorText, style: TextStyle(color: spanTextColor)*//*const TextStyle(color: Colors.blue)*//*), TextSpan(text: endText, style: style)],
           style: style),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -609,102 +617,8 @@ Widget spannableText(String text, String spannableText, TextStyle? style,Color? 
   } else {
     return Text(text, style: style, maxLines: 1, overflow: TextOverflow.ellipsis);
   }
-}
+}*/
 
-String spannableTextType(String text) {
-  if (RegExp(Constants.emailPattern, multiLine: false).hasMatch(text)) {
-    return "email";
-  }
-  // if (RegExp(Constants.mobilePattern).hasMatch(text) &&
-  //     !RegExp(Constants.textPattern).hasMatch(text)) {
-  //   return "mobile";
-  // }
-  if (isValidPhoneNumber(text)) {
-    return "mobile";
-  }
-  if (text.isURL) {
-    return "website";
-  }
-  // if (RegExp(Constants.websitePattern).hasMatch(text)) {
-  //   return "website";
-  // }
-  // if (Uri.parse(text).isAbsolute) {
-  /*if (Uri.parse(text).host.isNotEmpty) {
-    return "website";
-  }*/
-  return "text";
-}
-
-bool isCountryCode(String text) {
-  if (RegExp(Constants.countryCodePattern).hasMatch(text)) {
-    return true;
-  }
-  return false;
-}
-
-Widget textMessageSpannableText(String message, TextStyle? textStyle,Color urlColor,{int? maxLines,}) {
-  //final GlobalKey textKey = GlobalKey();
-  TextStyle? underlineStyle = textStyle?.copyWith(color: urlColor,decoration: TextDecoration.underline,decorationColor: urlColor);//const TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Colors.blueAccent);
-  TextStyle? normalStyle = textStyle;//const TextStyle(fontSize: 14, color: textHintColor);
-  var prevValue = "";
-  return Text.rich(
-    customTextSpan(message, prevValue, normalStyle, underlineStyle),
-    maxLines: maxLines,
-    overflow: maxLines == null ? null : TextOverflow.ellipsis,
-  );
-}
-
-TextSpan customTextSpan(String message, String prevValue, TextStyle? normalStyle, TextStyle? underlineStyle) {
-  return TextSpan(
-    children: message.split(" ").map((e) {
-      if (isCountryCode(e)) {
-        prevValue = e;
-      } else if (prevValue != "" && spannableTextType(e) == "mobile") {
-        e = "$prevValue $e";
-        prevValue = "";
-      }
-      return TextSpan(
-          text: "$e ",
-          style: spannableTextType(e) == "text" ? normalStyle : underlineStyle,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              onTapForSpanText(e);
-            });
-    }).toList(),
-  );
-}
-
-onTapForSpanText(String e) {
-  var stringType = spannableTextType(e);
-  debugPrint("Text span click");
-  if (stringType == "website") {
-    if(e.startsWith(Constants.webChatLogin)){
-      AppUtils.isNetConnected().then((value){
-        if(value) {
-          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-            "callLinkId": e.replaceAll(Constants.webChatLogin, "")
-          });
-        }else{
-          toToast(getTranslated("noInternetConnection"));
-        }
-      });
-    }else {
-      launchInBrowser(e);
-    }
-    // return;
-  } else if (stringType == "mobile") {
-    makePhoneCall(e);
-    // launchCaller(e);
-    // return;
-  } else if (stringType == "email") {
-    debugPrint("email click");
-    launchEmail(e);
-    // return;
-  } else {
-    debugPrint("no condition match");
-  }
-  // return;
-}
 
 Widget callLogTime(String time, int? callState,TextStyle? textStyle) {
   return Row(

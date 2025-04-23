@@ -70,9 +70,32 @@ class ArchivedTileStyle {
         this.countTextStyle = const TextStyle(
             fontWeight: FontWeight.w600,
             color: Color(0xff4879F9),
-            fontSize: 12)});
+            fontSize: 12),
+      this.iconArchive});
   final TextStyle textStyle;
   final TextStyle countTextStyle;
+  final UIKitIcon? iconArchive;
+}
+
+class RecentChatAppBarStyle{
+  const RecentChatAppBarStyle(
+      {this.iconSearch,
+      this.iconInfo,
+      this.iconDelete,
+      this.iconPin,
+      this.iconUnPin,
+      this.iconMute,
+      this.iconUnMute,
+      this.iconArchive});
+
+  final UIKitIcon? iconSearch;
+  final UIKitIcon? iconInfo;
+  final UIKitIcon? iconDelete;
+  final UIKitIcon? iconPin;
+  final UIKitIcon? iconUnPin;
+  final UIKitIcon? iconMute;
+  final UIKitIcon? iconUnMute;
+  final UIKitIcon? iconArchive;
 }
 
 class RecentChatItemStyle {
@@ -80,27 +103,38 @@ class RecentChatItemStyle {
       {this.profileImageSize = const Size(48, 48),
         this.titleTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: Color(0xff181818),fontSize: 16),
         this.subtitleTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 14),
-        this.spanTextColor = Colors.blue,
+        this.spanTextColor = Colors.orange,//const Color(0xff4879F9),
+        this.mentionedMeBgColor = const Color(0XffD2E3FC),//const Color(0xff4879F9),
         this.typingTextStyle = const TextStyle(fontWeight: FontWeight.w600, color: AppColor.primaryColor,fontSize: 14),
         this.timeTextStyle = const TextStyle(fontWeight: FontWeight.normal, color: Color(0xff767676),fontSize: 12),
         this.unreadCountBgColor = const Color(0xff4879F9),
         this.unreadCountTextStyle = const TextStyle(fontWeight: FontWeight.normal,color: Colors.white,fontSize: 8,),
         this.dividerColor = const Color(0XffE2E2E2),
         this.unreadColor = const Color(0xff4879F9),
+        this.linkColor = const Color(0xff4879F9),
+        this.mentionUserColor = const Color(0xff4879F9),
         this.selectedBgColor = Colors.black12,
-        this.unselectedBgColor = Colors.transparent});
+        this.unselectedBgColor = Colors.transparent,
+        this.iconMute,
+        this.iconPin,
+      });
   final Size profileImageSize;
   final TextStyle titleTextStyle;
   final TextStyle subtitleTextStyle;
   final Color spanTextColor;
+  final Color mentionedMeBgColor;
   final TextStyle typingTextStyle;
   final TextStyle timeTextStyle;
   final Color unreadCountBgColor;
   final TextStyle unreadCountTextStyle;
   final Color dividerColor;
   final Color unreadColor;
+  final Color linkColor;
+  final Color mentionUserColor;
   final Color selectedBgColor;
   final Color unselectedBgColor;
+  final UIKitIcon? iconMute;
+  final UIKitIcon? iconPin;
 }
 
 class CallHistoryItemStyle{
