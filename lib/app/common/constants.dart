@@ -351,7 +351,7 @@ toToast(String text) {
 }
 
 class Constants {
-  static String licenseKey = 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp'; //ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
+  static String licenseKey = 'xxx';
   static String iOSContainerID = 'group.com.mirrorfly.flutter'; //group.com.mirrorfly.flutter
   static bool chatHistoryEnable = false;
   static bool enableDebugLog = true;
