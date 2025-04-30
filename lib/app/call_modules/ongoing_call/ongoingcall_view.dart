@@ -67,8 +67,7 @@ class OnGoingCallView extends NavViewStateful<CallController> {
                                         .ongoingCallPageStyle
                                         .pinnedCallUserTileStyle
                                         .profileImageSize,
-                                    mirror: controller.pinnedUserJid.value ==
-                                        SessionManagement.getUserJID(),
+                                    // mirror: !(controller.pinnedUserJid.value == SessionManagement.getUserJID() && controller.currentCameraPosition.value == CameraPosition.backCamera),
                                     onClick: () {
                                       // if(controller.callType.value==CallType.video) {
                                       controller.isVisible(

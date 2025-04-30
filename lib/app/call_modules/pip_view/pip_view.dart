@@ -133,6 +133,7 @@ class MirrorflyPIPItem extends StatelessWidget {
                 userJid: (item.userJid?.value).checkNull(),
                 viewBgColor: userStyle.backgroundColor,
                 profileSize: userStyle.profileImageSize,
+            // mirror: !((item.userJid?.value).checkNull() == controller.currentUserJid && controller.currentCameraPosition.value == CameraPosition.backCamera),
               ).setBorderRadius(userStyle.borderRadius)
               : Container(
             width: double.infinity,
