@@ -107,22 +107,26 @@ class ChatController extends FullLifeCycleController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
-  final _isMemberOfGroup = false.obs;
+  final RxnBool _isMemberOfGroup = RxnBool(null);
 
-  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
-
-  bool get isMemberOfGroup => profile.isGroupProfile ?? false
-      ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
-      : true;
+  bool? get isMemberOfGroup {
+    if (profile.isGroupProfile == true) {
+      if (!availableFeatures.value.isGroupChatAvailable.checkNull()) {
+        return false;
+      }
+      return _isMemberOfGroup.value; // could be true, false, or null
+    } else {
+      return true;
+    }
+  }
 
   bool get ableToCall => profile.isGroupProfile.checkNull()
-      ? isMemberOfGroup
+      ? isMemberOfGroup.checkNull()
       : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
 
   bool get ableToScheduleMeet => profile.isGroupProfile ?? false
       ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
+          _isMemberOfGroup.value.checkNull()
       : true;
   // var profileDetail = Profile();
 
@@ -2917,7 +2921,7 @@ class ChatController extends FullLifeCycleController
           !profile.isAdminBlocked.checkNull() &&
           isWithinLast15Minutes(message.messageSentTime) &&
           message.messageStatus.value != 'N' &&
-          (profile.isGroupProfile.checkNull() ? isMemberOfGroup : true) &&
+          (profile.isGroupProfile.checkNull() ? isMemberOfGroup.checkNull() : true) &&
           (message.messageType == Constants.mText ||
               message.messageType == Constants.mAutoText ||
               (message.messageType == Constants.mImage &&
@@ -3327,7 +3331,7 @@ class ChatController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          if (isMemberOfGroup) {
+          if (isMemberOfGroup.checkNull()) {
             NavUtils.toNamed(Routes.groupParticipants, arguments: {
               "groupId": profile.jid,
               "callType": CallType.audio
