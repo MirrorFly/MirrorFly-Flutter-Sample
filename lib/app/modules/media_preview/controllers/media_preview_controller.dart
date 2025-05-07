@@ -165,6 +165,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     var provider = Get.find<GalleryPickerController>().provider;
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
+    imageCache.removeWhere((i,v) => i == currentPageIndex.value);
     removeCaptionsArray(currentPageIndex.value);
     if(currentPageIndex.value > 0) {
       currentPageIndex(currentPageIndex.value - 1);
