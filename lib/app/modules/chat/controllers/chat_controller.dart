@@ -690,11 +690,9 @@ class ChatController extends FullLifeCycleController
       limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: Platform.isAndroid
-          ? starredChatMessageId != null
+      exclude:  starredChatMessageId != null
               ? false
-              : true
-          : true /*starredChatMessageId == null*/,
+              : true,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
