@@ -57,7 +57,7 @@ dependencies:
   flutter_libphonenumber: ^2.3.3
   fading_edge_scrollview: ^4.1.1
   device_calendar: ^4.3.3
-#  mirrorfly_plugin: ^1.0.4
+  mirrorfly_plugin: ^1.4.0
 
   #BackUp and Restore
   icloud_storage_sync: ^0.0.1
@@ -68,8 +68,8 @@ dependencies:
   qr_code_scanner_plus: ^2.0.10+1
 
 
-  mirrorfly_plugin:
-    path: p078-mirrorfly-flutter-plugin
+#  mirrorfly_plugin:
+#    path: ../p078-mirrorfly-flutter-plugin
 
   #Packages Not Needed for UIKIT
   otp_text_field: ^1.1.3

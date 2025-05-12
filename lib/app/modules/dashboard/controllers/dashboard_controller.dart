@@ -2325,6 +2325,22 @@ class DashboardController extends FullLifeCycleController
   void updateArchiveChat() {
     getArchivedChatsList();
   }
+
+  Future<void> deleteGroup({required String groupJid, required String groupName}) async {
+
+    LogMessage.d("Dashboard Controller deleteGroup", "groupJid -> $groupJid , groupName-> $groupName");
+
+    var chatIndex = recentChats.indexWhere((element) =>
+    groupJid == element.jid);
+
+    if (!chatIndex.isNegative) {
+      LogMessage.d("Dashboard Controller", "chat found chatIndex-> $chatIndex");
+      recentChats.removeAt(chatIndex);
+    }else{
+      LogMessage.d("Dashboard Controller deleteGroup", "Group is not found groupJid -> $groupJid , groupName-> $groupName");
+    }
+
+  }
 }
 
 class MyController extends GetxController {

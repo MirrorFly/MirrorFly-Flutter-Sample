@@ -99,6 +99,15 @@ class BaseController {
       }
     });
     Mirrorfly.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
+    Mirrorfly.onSuperAdminDeleteGroup.listen((event) {
+      if(event!=null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var groupName = data["groupName"] ?? "";
+        onSuperAdminDeleteGroup(groupJid: groupJid, groupName: groupName);
+      }
+
+    });
     Mirrorfly.onLeftFromGroup.listen((event) {
       if (event != null) {
         var data = json.decode(event.toString());
@@ -815,6 +824,33 @@ class BaseController {
 
   static void onMemberRemovedAsAdmin(event) {
     debugPrint('onMemberRemovedAsAdmin $event');
+  }
+
+  static void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+    debugPrint('onSuperAdminDeleteGroup groupJid - $groupJid groupName- $groupName');
+    if (Get.isRegistered<GroupInfoController>()) {
+      debugPrint('onSuperAdminDeleteGroup GroupInfoController registered');
+      Get.find<GroupInfoController>().onSuperAdminDeleteGroup(
+          groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup Group Info Controller not Found');
+    }
+
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      debugPrint('onSuperAdminDeleteGroup ChatController registered');
+      Get.find<ChatController>(tag: controllerTag).onSuperAdminDeleteGroup(groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup ChatController with tag $controllerTag not Found');
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      debugPrint('onSuperAdminDeleteGroup DashboardController registered');
+      Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup ChatController with tag $controllerTag not Found');
+    }
   }
 
   static void onLeftFromGroup({required String groupJid, required String userJid}) {

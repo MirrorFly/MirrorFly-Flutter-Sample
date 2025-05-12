@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
@@ -467,7 +468,8 @@ class ChatController extends FullLifeCycleController
                 replyMessageId: replyMessageId,
                 mentionedUsersIds: messageController.getTags,
                 topicId: topicId,
-                metaData: messageMetaData, //#metaData
+                messageSecurityMode: MessageSecurityMode.disabled,
+                metaData: messageMetaData,
                 textMessageParams: TextMessageParams(
                     messageText: messageController.formattedText.trim())),
             flyCallback: (response) {
@@ -2406,6 +2408,22 @@ class ChatController extends FullLifeCycleController
         _isMemberOfGroup(false);
       } else if (groupJid == profile.jid) {
         setChatStatus();
+      }
+    }
+  }
+
+  void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+    LogMessage.d("ChatController", "onSuperAdminDeleteGroup groupJid $groupJid, groupName $groupName");
+    if (profile.isGroupProfile ?? false) {
+      if (groupJid == profile.jid) {
+        LogMessage.d("ChatController", "onSuperAdminDeleteGroup deleting group");
+        if(Get.isRegistered<DashboardController>()){
+          Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+        }
+        _isMemberOfGroup(false);
+        NavUtils.back();
+      } else {
+        LogMessage.d("onSuperAdminDeleteGroup", "Group has been deleted, current chat controller is not the deleted group");
       }
     }
   }
