@@ -294,8 +294,12 @@ class BaseController {
 
             Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
 
-            if (Get.find<CallController>().callList.length <= 1) {
-              stopTimer();
+            if (Get.isRegistered<CallController>()) {
+              if (Get.find<CallController>().callList.length <= 1) {
+                stopTimer();
+              }
+            } else {
+              debugPrint("#Mirrorfly call CallController not registered for disconnect event");
             }
           } else {
             debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
