@@ -2740,9 +2740,9 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
+        if ((chat.mediaChatMessage?.mediaDownloadStatus.value ==
                     MediaDownloadStatus.mediaDownloaded.value ||
-                chat.mediaChatMessage!.mediaUploadStatus.value ==
+                chat.mediaChatMessage?.mediaUploadStatus.value ==
                     MediaUploadStatus.mediaUploaded.value) &&
             (checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value
                 .checkNull()))) {
