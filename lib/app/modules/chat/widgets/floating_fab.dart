@@ -49,9 +49,12 @@ class _FloatingFabState extends State<FloatingFab> {
         // Fix the clamp crash by ensuring maxClamp is >= 0
         double maxClamp = screenHeight - fabHeight;
         maxClamp = maxClamp < 0 ? 0.0 : maxClamp;
-        displayBottom = displayBottom.clamp(0.0, maxClamp-10);
+        debugPrint("maxClamp : $maxClamp");
+        if(maxClamp>=11) {
+          displayBottom = displayBottom.clamp(0.0, maxClamp - 10);
+        }
       }
-      return (widget.parentWidgetHeight.value ==0.0)? SizedBox():AnimatedPositioned(
+      return (widget.parentWidgetHeight.value ==0.0)? const SizedBox():AnimatedPositioned(
         duration: isDragging.value ? Duration.zero : const Duration(milliseconds: 250),
         right: position.value.dx.clamp(0.0, screenWidth - fabHeight),
         bottom: displayBottom,

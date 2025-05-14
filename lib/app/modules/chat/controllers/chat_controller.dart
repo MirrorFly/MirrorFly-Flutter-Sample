@@ -661,6 +661,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -1024,6 +1025,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -1257,7 +1259,7 @@ class ChatController extends FullLifeCycleController
             updateLastMessage(response.data);
           } else {
             LogMessage.d("sendMessage", response.errorMessage);
-            // showError(response.exception);
+            showError(response.exception);
           }
         })/*.then((value) => NavUtils.back())*/;
   }
@@ -3342,6 +3344,10 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
@@ -3384,6 +3390,10 @@ class ChatController extends FullLifeCycleController
 
   void makeVideoCall() async {
     closeKeyBoard();
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {

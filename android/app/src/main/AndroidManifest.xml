@@ -1,105 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_CALENDAR"/>
-    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
-
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- android 13 permission-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- android 13 permission -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" /><!--Need for enable or disable Proximity sensor -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/><!-- Request legacy Bluetooth permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /><!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Need for enable or disable Proximity sensor -->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- Needed only if your app communicates with already-paired Bluetooth devices. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /><!--AudioManager#startBluetoothSco() requires MODIFY_AUDIO_SETTINGS permission.-->
 
-   <application
+    <application
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher">
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
+            android:allowBackup="false"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
+            android:hardwareAccelerated="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:allowBackup="false"
             android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
-            tools:overrideLibrary="io.github.ponnamkarthik.toast.fluttertoast"
-            tools:ignore="LockedOrientationActivity">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
+            tools:ignore="LockedOrientationActivity"
+            android:supportsPictureInPicture="true"
+            tools:overrideLibrary="io.github.ponnamkarthik.toast.fluttertoast">
+
+            <!--
+                 Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+                 to determine the Window background behind the Flutter UI.
+            -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!--
+ Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+        -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <!--<meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="xxx"/>-->
-       <meta-data
-           android:name="com.google.android.geo.API_KEY"
-           android:value="xxx" />
+        <!--
+<meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCe4m08a3eMvInU8LBxAjAyEIyG-Kj_Ayw" />
+        <meta-data
+            android:name="com.google.android.geo.API_THUMP_KEY"
+            android:value="AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ" />
+        <meta-data
+            android:name="com.google.android.geo.API_TRANSLATE_KEY"
+            android:value="AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0" />
+        <meta-data
+            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+            android:value="true" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
 
-       <meta-data
-           android:name="com.google.android.geo.API_THUMP_KEY"
-           android:value="xxx" />
-       <meta-data
-           android:name="com.google.android.geo.API_TRANSLATE_KEY"
-           android:value="xxx" />
-       <meta-data
-           android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-           android:value="true" />
-       <meta-data
-           android:name="com.google.firebase.messaging.default_notification_icon"
-           android:resource="@drawable/ic_notification" />
-       <meta-data
-           android:name="com.google.firebase.messaging.default_notification_color"
-           android:resource="@color/colorAccent" />
-       <provider
-           android:name="androidx.core.content.FileProvider"
-           android:authorities="${applicationId}.fileProvider"
-           android:exported="false"
-           android:grantUriPermissions="true"
-           tools:replace="android:authorities">
-           <meta-data
-               android:name="android.support.FILE_PROVIDER_PATHS"
-               android:resource="@xml/filepaths"
-               tools:replace="android:resource" />
-       </provider>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
+        </provider>
        <!-- Provide required visibility configuration for API level 30 and above -->
 
     </application>

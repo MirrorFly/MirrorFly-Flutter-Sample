@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
@@ -310,6 +311,14 @@ class BaseController {
             debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
           }
 
+          if(Get.isRegistered<PipViewController>(tag: "pipView")){
+            Get.find<PipViewController>(tag: "pipView").callDisconnected();
+            stopTimer();
+          }
+          if(Get.isRegistered<PipViewController>()){
+            Get.find<PipViewController>().callDisconnected();
+            stopTimer();
+          }
           break;
         case CallStatus.calling10s:
           break;

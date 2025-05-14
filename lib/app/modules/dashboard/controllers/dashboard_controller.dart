@@ -1898,15 +1898,14 @@ class DashboardController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
+    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-          debugPrint("#Mirrorfly Call You are on another call");
-          toToast(getTranslated("msgOngoingCallAlert"));
-        } else {
-          Mirrorfly.makeVideoCall(
-              toUserJid: fromUser.checkNull(),
-              flyCallBack: (FlyResponse response) {
+        Mirrorfly.makeVideoCall(toUserJid: fromUser.checkNull(), flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
                   //setOnGoingUserGone();
                   NavUtils.toNamed(Routes.outGoingCallView, arguments: {
@@ -1915,7 +1914,6 @@ class DashboardController extends FullLifeCycleController
                   })?.then((value) => setOnGoingUserAvail());
                 }
               });
-        }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
