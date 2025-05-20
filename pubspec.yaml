@@ -71,7 +71,7 @@ dependencies:
 
 
   mirrorfly_plugin:
-    path: p078-mirrorfly-flutter-plugin
+    path: ../p078-mirrorfly-flutter-plugin
 
   #Packages Not Needed for UIKIT
   otp_text_field: ^1.1.3

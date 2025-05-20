@@ -356,22 +356,22 @@ class Constants {
   // Dummy OTP View
   static const bool isOTPViewEnabled = false;
   static ChatBuilder chatBuilder = ChatBuilder(
-      domainBaseUrl: "",
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',//ckIjaccWBoMNvxdbql8LJ2dmKqT5bp//2sdgNtr3sFBSM3bYRa7RKDPEiB38Xo
-      iOSContainerID: 'group.com.mirrorfly.flutter',
+      domainBaseUrl: "https://your_domain_base_url/api/v1/",
+      licenseKey: 'xxxx',
+      iOSContainerID: 'YOUR_APPGROUP_ID',
       chatHistoryEnable: true,
       enableDebugLog: true,
       storageFolderName: "Mirrorfly Flutter",
       isTrialLicenceKey: false
   );
   static bool enablePrivateStorage = false;
-  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';//https://webchat-uikit-qa.contus.us/
+  static const String webChatLogin = 'https://YOUR_WEB_APP_URL';
 
 
   static MetaDataUserList? metaDataUserList;// = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
   static const bool enableTopic = false;
-  static const String topicId = enableTopic ? "5d3788c1-78ef-4158-a92b-a48f092da0b9" : "";//Mirrorfly Topic id
+  static const String topicId = enableTopic ? "XXX" : "";//Mirrorfly Topic id
   static const String packageName = "com.contus.flycommons.";
   static const String package = 'com.mirrorfly.uikit_flutter';
   static const String emptyString = "";
