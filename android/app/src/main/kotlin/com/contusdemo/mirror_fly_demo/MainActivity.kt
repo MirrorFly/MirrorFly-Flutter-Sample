@@ -11,10 +11,9 @@ import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.util.GeneratedPluginRegister
+import fl.pip.FlPiPActivity
 
-
-class MainActivity : FlutterActivity() {
-    //protected val stickyService: Intent by lazy { Intent(this, AndroidPlugin::class.java) }
+class MainActivity : FlPiPActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         // Handle the splash screen transition.

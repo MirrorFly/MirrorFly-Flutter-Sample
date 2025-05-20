@@ -57,6 +57,8 @@ dependencies:
   flutter_libphonenumber: ^2.3.3
   fading_edge_scrollview: ^4.1.1
   device_calendar: ^4.3.3
+  fl_pip: ^3.2.1
+  flutter_in_app_pip: ^1.7.4
 #  mirrorfly_plugin: ^1.0.4
 
   #BackUp and Restore
