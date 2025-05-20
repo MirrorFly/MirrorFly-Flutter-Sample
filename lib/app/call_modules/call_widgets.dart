@@ -297,8 +297,7 @@ Widget buildListItem(CallController controller, CallUserTileStyle style) {
                         viewBgColor: style
                             .backgroundColor, //AppColors.callerTitleBackground,
                         profileSize: style.profileImageSize,
-                        mirror: controller.callList[index].userJid?.value ==
-                            SessionManagement.getUserJID(),
+                        // mirror: !(controller.callList[index].userJid?.value == SessionManagement.getUserJID() && controller.currentCameraPosition.value == CameraPosition.backCamera),
                         onClick: () {
                           //swap View
                           controller.swap(index);
@@ -450,8 +449,7 @@ Widget buildGridItem(CallController controller, CallUserTileStyle style) {
                 viewBgColor:
                     style.backgroundColor, //AppColors.callerTitleBackground,
                 profileSize: style.profileImageSize,
-                mirror: controller.callList[index].userJid?.value ==
-                    SessionManagement.getUserJID(),
+                // mirror: controller.callList[index].userJid?.value == SessionManagement.getUserJID(),
                 onClick: () {
                   // if(controller.callType.value==CallType.video) {
                   controller.isVisible(!controller.isVisible.value);

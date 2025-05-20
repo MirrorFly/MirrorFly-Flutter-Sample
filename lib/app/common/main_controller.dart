@@ -2,12 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:fl_pip/fl_pip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badge/flutter_app_badge.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
+import 'package:mirror_fly_demo/app/common/de_bouncer.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -107,7 +112,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
             badge: true,
             sound: true,
           );
-    } else if (Platform.isAndroid) {
+    } else if (Platform.isAndroid && !(await Permission.notification.status.isGranted)) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
@@ -258,9 +263,66 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     LogMessage.d('LifeCycle', 'onDetached');
   }
 
+  final deBouncer = DeBouncer(milliseconds: 600);
   @override
   void onInactive() {
     LogMessage.d('LifeCycle', 'onInactive');
+    // deBouncerncer.cancel();
+    // deBouncer.run((){
+    //   goingInActive();
+    // });
+    goingInActive();
+    // enterOrExitPIPMode();
+  }
+
+  void enterOrExitPIPMode() async{
+
+    LogMessage.d("PIPView", "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
+    if(Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
+      LogMessage.d("PIPView", PictureInPicture.isActive);
+      if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
+        LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+        FlPiP().enable(
+            ios: const FlPiPiOSConfig(),
+            android: FlPiPAndroidConfig(
+                aspectRatio: Rational(
+                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+                      if(onValue) {
+                        PictureInPicture.stopPiP();
+                        NavUtils.toNamed(Routes.pipView);
+                      }
+        });
+      }else if(NavUtils.currentRoute == Routes.onGoingCallView){
+        LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
+        FlPiP().enable(
+            ios: const FlPiPiOSConfig(),
+            android: FlPiPAndroidConfig(
+                aspectRatio: Rational(
+                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+          LogMessage.d("PIPView", " FlPiP enable $onValue");
+          if(onValue){
+            NavUtils.offNamed(Routes.pipView);
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> updatePIPView() async {
+    if(Platform.isAndroid) {
+      LogMessage.d("PIPView", NavUtils.currentRoute);
+      if (NavUtils.currentRoute == Routes.pipView) {
+        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+          LogMessage.d("PIPView", "offNamed onGoingCallView");
+          NavUtils.offNamed(Routes.onGoingCallView);
+        } else {
+          //Assume call ended so closing the pip view
+          LogMessage.d(
+              "PIPView", "Assuming call ended so closing the pip view");
+          NavUtils.back();
+        }
+      }
+    }
   }
 
   bool fromLockScreen = false;
@@ -278,9 +340,41 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
+  // While going Background
+  // onInactive
+  // onHidden
+  // onPaused
+
+  // While going Foreground
+  // onHidden
+  // onInactive
+  // onResumed
+
+  // While going Notification drawer
+  // onInactive
+
+  // While back from Notification drawer
+  // onResumed
+
+  // While Call Received
+  // onInactive
+  // onHidden
+  // onPaused
+
+  // After Accepted the call
+  // onHidden
+  // onInactive
+  // onResumed
+  // onInactive
+  // onResumed
+  // onInactive
+  // onResumed
 
   @override
   void onResumed() {
+    hasHidden=false;
+    _leaveHintTimer?.cancel();
+    isUserLeavingApp = false;
     LogMessage.d('LifeCycle', 'onResumed');
     NotificationBuilder.cancelNotifications();
     if(hasPaused) {
@@ -291,6 +385,8 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       }
       unreadMissedCallCount();
     }
+    // enterOrExitPIPMode();
+    updatePIPView();
   }
 
   void syncContacts() async {
@@ -371,9 +467,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     availableFeature(features);
   }
 
+  var hasHidden = false;
   @override
   void onHidden() {
     LogMessage.d('LifeCycle', 'onHidden');
+    hasHidden=true;
   }
 
   unreadMissedCallCount() async {
@@ -425,5 +523,28 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().markConversationReadNotifyUI(jid);
     }
+  }
+
+  Timer? _leaveHintTimer;
+  bool isUserLeavingApp = false;
+
+  void goingInActive(){
+    _leaveHintTimer = Timer(const Duration(milliseconds: 300), () {
+      if (!isUserLeavingApp) return;
+      onUserLeaveHint();
+    });
+    isUserLeavingApp = true;
+  }
+
+  void onUserLeaveHint(){
+    LogMessage.d('LifeCycle', 'onUserLeaveHint');
+    debugPrint("User is leaving the app (onUserLeaveHint equivalent)");
+    if(Get.isRegistered<PipViewController>(tag: "pipView")){
+      Get.find<PipViewController>(tag: "pipView").hideOptions();
+    }
+    if(Get.isRegistered<PipViewController>()){
+      Get.find<PipViewController>().hideOptions();
+    }
+    enterOrExitPIPMode();
   }
 }
