@@ -501,27 +501,18 @@ makeVideoCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeature
     toToast(getTranslated("noInternetConnection"));
     return;
   }
-  // if (await AppUtils.isNetConnected()) {
-    if (await AppPermission.askVideoCallPermissions()) {
-      // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-      //   debugPrint("#Mirrorfly Call You are on another call");
-      //   toToast(getTranslated("msgOngoingCallAlert"));
-      // } else {
-        Mirrorfly.makeVideoCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
-          if (response.isSuccess) {
-            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [profile.value.jid],
-              "callType": CallType.video
-            });
-          }
-        });
-      // }
-    } else {
-      LogMessage.d("askVideoCallPermissions", "false");
-    }
-  // } else {
-  //   toToast(getTranslated("noInternetConnection"));
-  // }
+  if (await AppPermission.askVideoCallPermissions()) {
+      Mirrorfly.makeVideoCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
+        if (response.isSuccess) {
+          NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+            "userJid": [profile.value.jid],
+            "callType": CallType.video
+          });
+        }
+      });
+  } else {
+    LogMessage.d("askVideoCallPermissions", "false");
+  }
 }
 
 String getCallLogDuration(int startTime, int endTime) {
