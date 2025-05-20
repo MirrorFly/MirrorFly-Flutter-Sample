@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../model/chat_message_model.dart';
@@ -154,7 +155,7 @@ class PushNotifications {
 
   static void notificationPermission() async{
     FirebaseMessaging messaging = FirebaseMessaging.instance;
-    if(Platform.isAndroid) {
+    if(Platform.isAndroid && !(await Permission.notification.status.isGranted)) {
       var permission = await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();

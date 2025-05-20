@@ -45,7 +45,6 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   PageController pageViewController = PageController(initialPage: 0, keepPage: false);
 
   final Map<int, File> imageCache = {};
-  final Map<int, File> imageCache1 = {};
 
   @override
   void onInit() {
@@ -165,6 +164,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     var provider = Get.find<GalleryPickerController>().provider;
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
+    imageCache.removeWhere((k,v)=>k == currentPageIndex.value);
     removeCaptionsArray(currentPageIndex.value);
     if(currentPageIndex.value > 0) {
       currentPageIndex(currentPageIndex.value - 1);

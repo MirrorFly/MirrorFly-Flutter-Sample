@@ -97,12 +97,21 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     super.initState();
     widget.onInit();
     LogMessage.d("NavViewState : initState", T.toString());
+    // LogMessage.d("NavViewState : isRegistered", {Get.isRegistered<T>()});
+    // LogMessage.d("NavViewState : isRegistered tag", {Get.isRegistered<T>(tag: widget.tag)});
+
   }
 
   @override
   void dispose() {
     widget.onDispose();
-    Get.delete<T>(tag: widget.tag);
+    // LogMessage.d("NavViewState : dispose isRegistered", {Get.isRegistered<T>()});
+    // LogMessage.d("NavViewState : dispose isRegistered tag", {Get.isRegistered<T>(tag: widget.tag)});
+    if(widget.tag!=null) {
+      Get.delete<T>(tag: widget.tag);
+    }else{
+      Get.delete<T>();
+    }
     super.dispose();
     LogMessage.d("NavViewState : dispose key: ${widget.tag}", T.toString());
   }
