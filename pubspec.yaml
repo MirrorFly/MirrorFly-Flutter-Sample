@@ -46,7 +46,7 @@ dependencies:
   video_player: ^2.9.1
   internet_connection_checker: ^1.0.0+1
   provider: ^6.1.2
-  photo_manager: ^3.2.3
+  photo_manager: 3.2.3
   oktoast: ^3.4.0
   share_plus: ^10.1.3
   flutter_inappwebview: ^6.0.0
