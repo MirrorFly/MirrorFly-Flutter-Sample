@@ -161,8 +161,29 @@ class ChatController extends FullLifeCycleController
       []; //[MessageMetaData(key: "platform", value: "flutter")];
   final ChatViewArguments? arguments;
 
-  var screenWidth = 0.0.obs;
-  var screenHeight = 0.0.obs;
+/*  var screenWidth = 0.0.obs;
+  var screenHeight = 0.0.obs;*/
+  Rx<Offset> fabPosition = Offset.zero.obs;
+  RxBool isDraggingFab = false.obs;
+
+  RxDouble screenWidth = 0.0.obs;
+  RxDouble screenHeight = 0.0.obs;
+  RxDouble  fabHeight = 60.0.obs;
+  RxDouble  margin = 16.0.obs;
+  RxDouble  safeTop = 10.0.obs;
+
+  void updateFabPosition(Offset newOffset) {
+    double fabWidth = 56.0;
+    double fabHeight = 56.0;
+
+    double newX = newOffset.dx.clamp(0.0, screenWidth.value - fabWidth);
+    double newY = newOffset.dy.clamp(0.0, screenHeight.value - fabHeight - 16);
+
+    newX = newX < screenWidth.value / 2 ? 15 : screenWidth.value - fabWidth - 15;
+    newY = newY.clamp(5, screenHeight.value - fabHeight - 16);
+
+    fabPosition.value = Offset(newX, newY);
+  }
   @override
   Future<void> onInit() async {
     // arguments = NavUtils.arguments as ChatViewArguments;
