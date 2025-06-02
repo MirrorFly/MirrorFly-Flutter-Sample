@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
@@ -107,22 +108,26 @@ class ChatController extends FullLifeCycleController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
-  final _isMemberOfGroup = false.obs;
+  final RxnBool _isMemberOfGroup = RxnBool(null);
 
-  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
-
-  bool get isMemberOfGroup => profile.isGroupProfile ?? false
-      ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
-      : true;
+  bool? get isMemberOfGroup {
+    if (profile.isGroupProfile == true) {
+      if (!availableFeatures.value.isGroupChatAvailable.checkNull()) {
+        return false;
+      }
+      return _isMemberOfGroup.value; // could be true, false, or null
+    } else {
+      return true;
+    }
+  }
 
   bool get ableToCall => profile.isGroupProfile.checkNull()
-      ? isMemberOfGroup
+      ? isMemberOfGroup.checkNull()
       : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
 
   bool get ableToScheduleMeet => profile.isGroupProfile ?? false
       ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
+          _isMemberOfGroup.value.checkNull()
       : true;
   // var profileDetail = Profile();
 
@@ -463,7 +468,8 @@ class ChatController extends FullLifeCycleController
                 replyMessageId: replyMessageId,
                 mentionedUsersIds: messageController.getTags,
                 topicId: topicId,
-                metaData: messageMetaData, //#metaData
+                messageSecurityMode: MessageSecurityMode.disabled,
+                metaData: messageMetaData,
                 textMessageParams: TextMessageParams(
                     messageText: messageController.formattedText.trim())),
             flyCallback: (response) {
@@ -687,11 +693,9 @@ class ChatController extends FullLifeCycleController
       limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: Platform.isAndroid
-          ? starredChatMessageId != null
+      exclude:  starredChatMessageId != null
               ? false
-              : true
-          : true /*starredChatMessageId == null*/,
+              : true,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
@@ -2410,6 +2414,22 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+    LogMessage.d("ChatController", "onSuperAdminDeleteGroup groupJid $groupJid, groupName $groupName");
+    if (profile.isGroupProfile ?? false) {
+      if (groupJid == profile.jid) {
+        LogMessage.d("ChatController", "onSuperAdminDeleteGroup deleting group");
+        if(Get.isRegistered<DashboardController>()){
+          Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+        }
+        _isMemberOfGroup(false);
+        NavUtils.back();
+      } else {
+        LogMessage.d("onSuperAdminDeleteGroup", "Group has been deleted, current chat controller is not the deleted group");
+      }
+    }
+  }
+
   void setTypingStatus(
       String singleOrgroupJid, String userId, String typingStatus) {
     if (profile.jid.checkNull() == singleOrgroupJid) {
@@ -2722,9 +2742,9 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
+        if ((chat.mediaChatMessage?.mediaDownloadStatus.value ==
                     MediaDownloadStatus.mediaDownloaded.value ||
-                chat.mediaChatMessage!.mediaUploadStatus.value ==
+                chat.mediaChatMessage?.mediaUploadStatus.value ==
                     MediaUploadStatus.mediaUploaded.value) &&
             (checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value
                 .checkNull()))) {
@@ -2919,7 +2939,7 @@ class ChatController extends FullLifeCycleController
           !profile.isAdminBlocked.checkNull() &&
           isWithinLast15Minutes(message.messageSentTime) &&
           message.messageStatus.value != 'N' &&
-          (profile.isGroupProfile.checkNull() ? isMemberOfGroup : true) &&
+          (profile.isGroupProfile.checkNull() ? isMemberOfGroup.checkNull() : true) &&
           (message.messageType == Constants.mText ||
               message.messageType == Constants.mAutoText ||
               (message.messageType == Constants.mImage &&
@@ -3333,7 +3353,7 @@ class ChatController extends FullLifeCycleController
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          if (isMemberOfGroup) {
+          if (isMemberOfGroup.checkNull()) {
             NavUtils.toNamed(Routes.groupParticipants, arguments: {
               "groupId": profile.jid,
               "callType": CallType.audio

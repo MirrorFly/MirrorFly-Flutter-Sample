@@ -522,7 +522,11 @@ class Constants {
   static const String backupEncryptedFileFormat = "crypto7";
   static const String backupRawFileFormat = "txt";
 
-  //PIP
+  static const bool isBackupFeatureEnabled = true;
+
+  // Dummy OTP View
+  static const bool isOTPViewEnabled = false;
+
   static const int pipWidgetWidth = 135;
   static const int pipWidgetHeight = 300;
 }
