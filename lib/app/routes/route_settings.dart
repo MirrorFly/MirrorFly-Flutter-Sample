@@ -97,8 +97,13 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.chatSearch:
       return MaterialPageRoute(builder: (_) => ChatSearchView(),settings: settings);
     case Routes.locationSent:
-      return MaterialPageRoute(builder: (_) => const LocationSentView(),settings: settings);
-    case Routes.contacts:
+      // MaterialPageRoute changed to PageRouteBuilder due to animation issue on the locationSent and chat page return
+      return PageRouteBuilder(
+        settings: settings,
+        pageBuilder: (context, animation, secondaryAnimation) => LocationSentView(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: Duration.zero, // disables animation on pop
+      );    case Routes.contacts:
       return MaterialPageRoute(builder: (_) => const ContactListView(),settings: settings);
     case Routes.settings:
       return MaterialPageRoute(builder: (_) => const SettingsView(),settings: settings);

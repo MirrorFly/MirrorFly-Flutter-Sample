@@ -44,7 +44,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   FocusNode captionFocusNode = FocusNode();
   PageController pageViewController = PageController(initialPage: 0, keepPage: false);
 
-  final Map<int, File> imageCache = {};
+  final Map<int, File> mediaFileCache = {};
 
   @override
   void onInit() {
@@ -72,7 +72,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
 
   checkCacheFile(int index){
-    if (imageCache.containsKey(index)) {
+    if (mediaFileCache.containsKey(index)) {
       debugPrint("returning true");
       return true;
     }
@@ -81,12 +81,12 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
   }
 
   getCacheFile(int index){
-    return imageCache[index];
+    return mediaFileCache[index];
   }
 
   Future<File?> getFile(int index) async {
-    if (imageCache.containsKey(index)) {
-      return imageCache[index];
+    if (mediaFileCache.containsKey(index)) {
+      return mediaFileCache[index];
     } else {
       File? file;
       try {
@@ -97,7 +97,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           file = filePath[index].file;
         }
         if (file != null) {
-          imageCache[index] = file;
+          mediaFileCache[index] = file;
         }
       } catch (e) {
         debugPrint("Error loading file for index $index: $e");
@@ -133,7 +133,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending image");
           await Get.find<ChatController>(tag: userJid).sendImageMessage(
-              imageCache[i]?.path, captionMessage[i], "",captionMessageMentions[i]);
+              mediaFileCache[i]?.path, captionMessage[i], "",captionMessageMentions[i]);
         } else if (data.type == 'video') {
           if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
@@ -141,7 +141,7 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
           }
           debugPrint("sending video");
           await Get.find<ChatController>(tag: userJid).sendVideoMessage(
-              imageCache[i]!.path, captionMessage[i], "",captionMessageMentions[i]);
+              mediaFileCache[i]!.path, captionMessage[i], "",captionMessageMentions[i]);
         }
         i++;
       });
@@ -164,7 +164,13 @@ class MediaPreviewController extends FullLifeCycleController with FullLifeCycleM
     var provider = Get.find<GalleryPickerController>().provider;
     provider.unPick(currentPageIndex.value);
     filePath.removeAt(currentPageIndex.value);
-    imageCache.removeWhere((k,v)=>k == currentPageIndex.value);
+
+    mediaFileCache.clear();
+    for (var i = 0; i <= filePath.length; i++) {
+      getFile(i);
+    }
+
+    LogMessage.d("mediaFileCache : ", mediaFileCache);
     removeCaptionsArray(currentPageIndex.value);
     if(currentPageIndex.value > 0) {
       currentPageIndex(currentPageIndex.value - 1);

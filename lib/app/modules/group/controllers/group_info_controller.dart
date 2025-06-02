@@ -686,4 +686,14 @@ class GroupInfoController extends GetxController {
       memberOfGroup();
     }
   }
+
+  void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+
+    LogMessage.d("Group Info Controller", "onSuperAdminDeleteGroup groupJid $groupJid, groupName $groupName");
+    if(Get.isRegistered<DashboardController>()){
+      LogMessage.d("DashboardController found", "Deleting Groups");
+      Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+    }
+    NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+  }
 }
