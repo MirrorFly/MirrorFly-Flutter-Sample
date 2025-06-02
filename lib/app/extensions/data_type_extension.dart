@@ -40,4 +40,8 @@ extension BooleanParsing on bool? {
   bool checkNull() {
     return this ?? false;
   }
+
+  bool isNull() {
+    return this == null ? true : false;
+  }
 }
