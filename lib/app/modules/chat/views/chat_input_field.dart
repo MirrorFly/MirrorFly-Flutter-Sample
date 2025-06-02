@@ -32,9 +32,9 @@ class ChatInputField extends StatelessWidget {
     return Obx(() {
       return Container(
         color: messageTypingAreaStyle.bgColor, //Colors.white,
-        child: controller.isBlocked.value
+        child: controller.isMemberOfGroup.isNull() ? const Offstage() : controller.isBlocked.value
             ? userBlocked(context)
-            : controller.isMemberOfGroup
+            : controller.isMemberOfGroup.checkNull()
             ? Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

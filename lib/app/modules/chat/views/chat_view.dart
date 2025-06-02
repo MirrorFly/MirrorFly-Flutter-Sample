@@ -42,105 +42,95 @@ class ChatView extends NavViewStateful<ChatController> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-          appBarTheme: chatStyle.appBarTheme
-      ),
+      data: Theme.of(context).copyWith(appBarTheme: chatStyle.appBarTheme),
       child: Scaffold(
-          appBar: !((controller.arguments?.disableAppBar).checkNull())
-              ? getAppBar(context)
-              : null,
-          body: SafeArea(
-            child: Container(
-              width: NavUtils.width,
-              height: NavUtils.height,
-              decoration: AppStyleConfig
-                  .chatPageStyle.chatPageBackgroundDecoration ?? BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(chatBgIcon, package: iconPackageName),
-                  fit: BoxFit.cover,
+        appBar: !((controller.arguments?.disableAppBar).checkNull())
+            ? getAppBar(context)
+            : null,
+        body: SafeArea(
+          child: Container(
+            width: NavUtils.width,
+            height: NavUtils.height,
+            decoration: AppStyleConfig.chatPageStyle.chatPageBackgroundDecoration ??
+                BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(chatBgIcon, package: iconPackageName),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: PopScope(
-                canPop: false,
-                onPopInvokedWithResult: (didPop, result) {
-                  if (didPop) {
-                    return;
-                  }
-                  LogMessage.d(
-                      "viewInsets", "${NavUtils.defaultRouteName} : ${MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom}, NavUtils.canPop : ${NavUtils.canPop}, selected : ${controller.isSelected.value},  emoji : ${controller.showEmoji.value}");
-                  if (controller.showEmoji.value) {
-                    controller.showEmoji(false);
-                  } else if (MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom > 0.0) {
-                    //FocusManager.instance.primaryFocus?.unfocus();
-                    controller.focusNode.unfocus();
-                  } else if (!NavUtils.canPop) {
-                    // controller.saveUnsentMessage();
-                    NavUtils.offAllNamed(NavUtils.defaultRouteName);
-                    // Navigator.pop(context);
-                    // NavUtils.back();
-                  } else if (controller.isSelected.value) {
-                    controller.clearAllChatSelection();
-                  } else {
-                    NavUtils.back();
-                  }
-                },
-                child: Column(
-                  children: [
-                    Obx(() {
-                      return Visibility(
-                          visible: controller.topic.value.topicName != null,
-                          child: Container(
-                              width: NavUtils.width,
-                              decoration: BoxDecoration(
-                                color: Theme
-                                    .of(context)
-                                    .primaryColor,
-                                borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(8),
-                                    bottomRight: Radius.circular(8)),
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                controller.topic.value.topicName.checkNull(),
-                                textAlign: TextAlign.center,
-                              )));
-                    }),
-                    Expanded(child: Stack(
+            child: PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) {
+                if (didPop) return;
+
+                if (controller.showEmoji.value) {
+                  controller.showEmoji(false);
+                } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
+                  controller.focusNode.unfocus();
+                } else if (!NavUtils.canPop) {
+                  NavUtils.offAllNamed(NavUtils.defaultRouteName);
+                } else if (controller.isSelected.value) {
+                  controller.clearAllChatSelection();
+                } else {
+                  NavUtils.back();
+                }
+              },
+              child: Column(
+                children: [
+                  Obx(() {
+                    return Visibility(
+                      visible: controller.topic.value.topicName != null,
+                      child: Container(
+                        width: NavUtils.width,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: Text(
+                          controller.topic.value.topicName.checkNull(),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }),
+                  Expanded(
+                    child: Stack(
                       children: [
                         Obx(() {
                           return controller.chatLoading.value
-                              ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
+                              ? const Center(child: CircularProgressIndicator())
                               : LayoutBuilder(
-                              builder: (context, constraints) {
-                                debugPrint(
-                                    "list view constraints $constraints");
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  controller.screenWidth(constraints.maxWidth);
-                                  controller.screenHeight(constraints.maxHeight);
-                                });
-                                return ChatListView(
-                                  chatController: controller,
-                                  chatList: controller.chatList,
-                                  senderChatStyle: chatStyle
-                                      .senderChatBubbleStyle,
-                                  receiverChatStyle: AppStyleConfig
-                                      .chatPageStyle.receiverChatBubbleStyle,
-                                  chatSelectedColor: AppStyleConfig
-                                      .chatPageStyle.chatSelectionBgColor,
-                                  notificationMessageViewStyle: AppStyleConfig
-                                      .chatPageStyle
-                                      .notificationMessageViewStyle,);
-                              }
+                            builder: (context, constraints) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                controller.screenWidth(constraints.maxWidth);
+                                controller.screenHeight(constraints.maxHeight);
+
+                                if (controller.fabPosition.value == Offset.zero) {
+                                  final safeBottom = constraints.maxHeight - controller.fabHeight.value - controller.margin.value;
+                                  final defaultY = safeBottom;
+                                  final defaultX = constraints.maxWidth - controller.fabHeight.value - controller.margin.value;
+
+                                  controller.fabPosition(Offset(defaultX, defaultY));
+                                }
+
+                              });
+
+                              return ChatListView(
+                                chatController: controller,
+                                chatList: controller.chatList,
+                                senderChatStyle: chatStyle.senderChatBubbleStyle,
+                                receiverChatStyle: AppStyleConfig.chatPageStyle.receiverChatBubbleStyle,
+                                chatSelectedColor: AppStyleConfig.chatPageStyle.chatSelectionBgColor,
+                                notificationMessageViewStyle: AppStyleConfig.chatPageStyle.notificationMessageViewStyle,
+                              );
+                            },
                           );
                         }),
+
                         Obx(() {
                           return Visibility(
                             visible: controller.showHideRedirectToLatest.value,
@@ -154,23 +144,18 @@ class ChatView extends NavViewStateful<ChatController> {
                                       ? CircleAvatar(
                                     radius: 8,
                                     child: Text(
-                                      returnFormattedCount(
-                                          controller.unreadCount.value),
-                                      style: const TextStyle(
-                                          fontSize: 9, color: Colors.white),
+                                      returnFormattedCount(controller.unreadCount.value),
+                                      style: const TextStyle(fontSize: 9, color: Colors.white),
                                     ),
                                   )
                                       : const SizedBox.shrink(),
                                   IconButton(
-                                    icon: AppUtils.assetIcon(assetName:
-                                      redirectLastMessage,
+                                    icon: AppUtils.assetIcon(
+                                      assetName: redirectLastMessage,
                                       width: 32,
                                       height: 32,
                                     ),
-                                    onPressed: () {
-                                      //scroll to end
-                                      controller.scrollToEnd();
-                                    },
+                                    onPressed: controller.scrollToEnd,
                                   ),
                                 ],
                               ),
@@ -181,72 +166,67 @@ class ChatView extends NavViewStateful<ChatController> {
                           return controller.ableToScheduleMeet && !(controller.profile.isAdminBlocked.checkNull() || controller.profile.isBlocked.checkNull()||controller.isBlocked.value) && !controller.profile.isDeletedContact() ? FloatingFab(
                             fabTheme: chatStyle
                                 .instantScheduleMeetStyle,
-                            parentWidgetWidth: controller.screenWidth,
-                            parentWidgetHeight: controller.screenHeight,
                             onFabTap: ()async{
                               await controller.setMeetBottomSheet();
                             },
+                            controller: controller,
                           ) : const Offstage();
                         }),
+
                         if (Constants.enableContactSync) ...[
                           Obx(() {
-                            return !controller.profile.isItSavedContact
-                                .checkNull()
+                            return !controller.profile.isItSavedContact.checkNull()
                                 ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const SizedBox(
-                                  width: 8,
-                                ),
+                                const SizedBox(width: 8),
                                 buttonNotSavedContact(
-                                    text: getTranslated("add"),
-                                    onClick: () {
-                                      controller.saveContact();
-                                    }),
-                                const SizedBox(
-                                  width: 8,
+                                  text: getTranslated("add"),
+                                  onClick: controller.saveContact,
                                 ),
+                                const SizedBox(width: 8),
                                 buttonNotSavedContact(
-                                    text: controller.profile.isBlocked
-                                        .checkNull()
-                                        ? getTranslated("unblock")
-                                        : getTranslated("block"),
-                                    onClick: () {
-                                      if (controller.profile.isBlocked
-                                          .checkNull()) {
-                                        controller.unBlockUser();
-                                      } else {
-                                        controller.blockUser();
-                                      }
-                                    }),
-                                const SizedBox(
-                                  width: 8,
+                                  text: controller.profile.isBlocked.checkNull()
+                                      ? getTranslated("unblock")
+                                      : getTranslated("block"),
+                                  onClick: () {
+                                    if (controller.profile.isBlocked.checkNull()) {
+                                      controller.unBlockUser();
+                                    } else {
+                                      controller.blockUser();
+                                    }
+                                  },
                                 ),
+                                const SizedBox(width: 8),
                               ],
                             )
                                 : const SizedBox.shrink();
-                          })
+                          }),
                         ],
-
                       ],
-                    )),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      // child: Obx(() {
-                        child: ChatInputField(
-                          jid: controller.arguments!.chatJid.checkNull(),
-                          messageTypingAreaStyle: chatStyle
-                            .messageTypingAreaStyle,controller: controller,chatTaggerController: controller.messageController,
-                        onChanged: (text) => controller.isTyping(text),focusNode: controller.focusNode,)
-                      // }),
                     ),
-                  ],
-                ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ChatInputField(
+                      jid: controller.arguments!.chatJid.checkNull(),
+                      messageTypingAreaStyle: chatStyle.messageTypingAreaStyle,
+                      controller: controller,
+                      chatTaggerController: controller.messageController,
+                      onChanged: (text) => controller.isTyping(text),
+                      focusNode: controller.focusNode,
+                    ),
+                  ),
+                ],
               ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
+
+
 
   Widget buttonNotSavedContact(
       {required String text, required Function()? onClick}) =>
