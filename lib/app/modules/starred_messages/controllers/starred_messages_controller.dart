@@ -84,7 +84,7 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       });
     }
   }
-  void onMessageStatusUpdated(chatMessageModel) {
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     final index = starredChatList.indexWhere(
             (message) => message.messageId == chatMessageModel.messageId);
     debugPrint("Message Status Update index of $index");
@@ -92,6 +92,13 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
       starredChatList[index].messageStatus = chatMessageModel.messageStatus;
       starredChatList.refresh();
     }
+  }
+
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = starredChatList.indexWhere((message) => message.messageId == messageId);
+    starredChatList[indexToBeReplaced].isMessageRecalled.value = true;
+    starredChatList.refresh();
   }
 
   void onMessageEdited(ChatMessageModel editedChatMessage) {

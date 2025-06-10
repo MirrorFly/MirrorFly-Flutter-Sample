@@ -208,6 +208,13 @@ class ArchivedChatListController extends GetxController {
     updateArchiveRecentChat(chatMessageModel.chatUserJid);
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced =
+    archivedChats.indexWhere((message) => message.lastMessageId == messageId);
+    archivedChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
+    archivedChats.refresh();
+  }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {
     var value = await Mirrorfly.getRecentChatOf(jid: jid);
