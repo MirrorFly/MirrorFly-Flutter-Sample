@@ -212,8 +212,11 @@ class ArchivedChatListController extends GetxController {
       {required String messageId}) async {
     final int indexToBeReplaced =
     archivedChats.indexWhere((message) => message.lastMessageId == messageId);
-    archivedChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
-    archivedChats.refresh();
+    debugPrint("#ArchiveChatList onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      archivedChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
+      archivedChats.refresh();
+    }
   }
 
   Future<RecentChatData?> getRecentChatOfJid(String jid) async {

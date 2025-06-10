@@ -1113,10 +1113,13 @@ class DashboardController extends FullLifeCycleController
 
   Future<void> onMessageDeleted(
       {required String messageId}) async {
-    final int indexToBeReplaced =
-        recentChats.indexWhere((message) => message.lastMessageId == messageId);
-    recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
-    recentChats.refresh();
+    final int indexToBeReplaced = 
+    recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
+      recentChats.refresh();
+    }
   }
 
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {

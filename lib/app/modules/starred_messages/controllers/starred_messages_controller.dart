@@ -97,8 +97,11 @@ class StarredMessagesController extends FullLifeCycleController with FullLifeCyc
   Future<void> onMessageDeleted(
       {required String messageId}) async {
     final int indexToBeReplaced = starredChatList.indexWhere((message) => message.messageId == messageId);
-    starredChatList[indexToBeReplaced].isMessageRecalled.value = true;
-    starredChatList.refresh();
+    debugPrint("#StarredMessageController onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      starredChatList[indexToBeReplaced].isMessageRecalled.value = true;
+      starredChatList.refresh();
+    }
   }
 
   void onMessageEdited(ChatMessageModel editedChatMessage) {
