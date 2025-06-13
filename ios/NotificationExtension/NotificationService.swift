@@ -17,7 +17,7 @@ class NotificationService: UNNotificationServiceExtension {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         
-        MirrorFlyNotification().handleNotification(notificationRequest: request, contentHandler: contentHandler, containerID: "group.com.mirrorfly.flutter", licenseKey: "xxx")
+        MirrorFlyNotification().handleNotification(notificationRequest: request, contentHandler: contentHandler, containerID: "group.com.mirrorfly.flutter", licenseKey: "ckIjaccWBoMNvxdbql8LJ2dmKqT5bp")
         
     }
 
