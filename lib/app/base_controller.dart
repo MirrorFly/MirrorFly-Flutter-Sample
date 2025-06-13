@@ -665,6 +665,25 @@ class BaseController {
 
     Mirrorfly.onChatMuteStatusUpdated.listen((event) {
       LogMessage.d("onChatMuteStatusUpdated", event);
+      final Map<String, dynamic>? json = jsonDecode(event);
+      final bool? muteStatus = json?['muteStatus'];
+      final List<String>? jidList =
+          (json?['jidList'] as List?)?.map((e) => e.toString()).toList();
+
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<ChatInfoController>()) {
+        Get.find<ChatInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<GroupInfoController>()) {
+        Get.find<GroupInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
     });
 
     initializeBackupListeners();
