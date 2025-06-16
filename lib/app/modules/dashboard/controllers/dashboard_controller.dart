@@ -2350,6 +2350,15 @@ class DashboardController extends FullLifeCycleController
     }
 
   }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("DashboardController onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    recentChats.where((chat) => jidList.contains(chat.jid)).forEach((chat) {
+      chat.isMuted = muteStatus;
+    });
+    recentChats.refresh();
+  }
 }
 
 class MyController extends GetxController {

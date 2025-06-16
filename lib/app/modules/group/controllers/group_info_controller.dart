@@ -201,7 +201,7 @@ class GroupInfoController extends GetxController {
         _mute(value);
         // Mirrorfly.updateChatMuteStatus(jid:profile.jid.checkNull(), muteStatus: value);
         Mirrorfly.updateChatMuteStatusList(jidList: [profile.jid.checkNull()], muteStatus: value);
-        notifyDashboardUI();
+       // notifyDashboardUI();
       }
     }else{
       toToast(getTranslated("youAreNoLonger"));
@@ -695,5 +695,14 @@ class GroupInfoController extends GetxController {
       Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
     }
     NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+  }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("GroupInfoController onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    if (jidList.contains(profile.jid)) {
+      profile.isMuted = muteStatus;
+      _mute(muteStatus);
+    }
   }
 }
