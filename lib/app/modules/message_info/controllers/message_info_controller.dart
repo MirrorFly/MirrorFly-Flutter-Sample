@@ -192,6 +192,13 @@ class MessageInfoController extends GetxController {
     }
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    if (chatMessage[0].messageId == messageId) {
+      chatMessage[0].isMessageRecalled.value = true;
+    }
+  }
+
   void onMessageEdited(ChatMessageModel editedChatMessage) {
     if(editedChatMessage.messageId == chatMessage[0].messageId){
       chatMessage[0]=editedChatMessage;

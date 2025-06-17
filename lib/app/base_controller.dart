@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -604,9 +605,36 @@ class BaseController {
       }
     });
 
-    Mirrorfly.onMessageDeleted.listen((event) {
+    Mirrorfly.onMessageDeleted.listen((event) async {
       LogMessage.d("onMessageDeleted", event);
-
+      final Map<String, dynamic> rawJson = jsonDecode(event);
+      final List<String>? messageIds = (rawJson['messageIds'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList();
+      if (messageIds != null) {
+        for (String id in messageIds) {
+          if (Get.isRegistered<DashboardController>()) {
+            Get.find<DashboardController>().onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+            Get.find<ChatController>(tag: controllerTag)
+                .onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<ArchivedChatListController>()) {
+            Get.find<ArchivedChatListController>()
+                .onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<MessageInfoController>()) {
+            Get.find<MessageInfoController>().onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<StarredMessagesController>()) {
+            Get.find<StarredMessagesController>()
+                .onMessageDeleted(messageId: id);
+          }
+        }
+      } else {
+        LogMessage.d("Invalid message delete event format", event);
+      }
     });
 
     Mirrorfly.onAllChatsCleared.listen((event) {
@@ -637,6 +665,25 @@ class BaseController {
 
     Mirrorfly.onChatMuteStatusUpdated.listen((event) {
       LogMessage.d("onChatMuteStatusUpdated", event);
+      final Map<String, dynamic>? json = jsonDecode(event);
+      final bool? muteStatus = json?['muteStatus'];
+      final List<String>? jidList =
+          (json?['jidList'] as List?)?.map((e) => e.toString()).toList();
+
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<ChatInfoController>()) {
+        Get.find<ChatInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<GroupInfoController>()) {
+        Get.find<GroupInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
     });
 
     initializeBackupListeners();

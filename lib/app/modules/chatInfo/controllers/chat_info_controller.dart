@@ -70,7 +70,7 @@ class ChatInfoController extends GetxController {
       mute(value);
       // Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
       Mirrorfly.updateChatMuteStatusList(jidList: [profile.jid.checkNull()], muteStatus: value);
-      notifyDashboardUI();
+      // notifyDashboardUI();
     }
   }
 
@@ -176,6 +176,15 @@ class ChatInfoController extends GetxController {
   void notifyDashboardUI(){
     if(Get.isRegistered<DashboardController>()){
       Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
+  }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("ChatInfo onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    if (jidList.contains(profile.jid)) {
+      profile.isMuted = muteStatus;
+      mute(muteStatus);
     }
   }
 }

@@ -1111,6 +1111,17 @@ class DashboardController extends FullLifeCycleController
     updateRecentChat(jid: chatMessageModel.chatUserJid, newInsertable: true);
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = 
+    recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
+      recentChats.refresh();
+    }
+  }
+
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     final index = recentChats.indexWhere(
         (message) => message.lastMessageId == chatMessageModel.messageId);
@@ -2338,6 +2349,15 @@ class DashboardController extends FullLifeCycleController
       LogMessage.d("Dashboard Controller deleteGroup", "Group is not found groupJid -> $groupJid , groupName-> $groupName");
     }
 
+  }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("DashboardController onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    recentChats.where((chat) => jidList.contains(chat.jid)).forEach((chat) {
+      chat.isMuted = muteStatus;
+    });
+    recentChats.refresh();
   }
 }
 
