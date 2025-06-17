@@ -2350,6 +2350,16 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = chatList.indexWhere((message) => message.messageId == messageId);
+    debugPrint("#ChatController onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      chatList[indexToBeReplaced].isMessageRecalled.value = true;
+      chatList.refresh();
+    }
+  }
+
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(

@@ -357,7 +357,7 @@ class Constants {
   static const bool isOTPViewEnabled = false;
   static ChatBuilder chatBuilder = ChatBuilder(
       domainBaseUrl: "https://your_domain_base_url/api/v1/",
-      licenseKey: 'xxxx',
+      licenseKey: 'YOUR_LICENSE_KEY',
       iOSContainerID: 'YOUR_APPGROUP_ID',
       chatHistoryEnable: true,
       enableDebugLog: true,
