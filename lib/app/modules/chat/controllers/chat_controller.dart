@@ -3138,6 +3138,11 @@ class ChatController extends FullLifeCycleController
   @override
   void onInactive() {
     LogMessage.d("LifeCycle", "chat onInactive");
+    final isAttached = newScrollController?.isAttached ?? false;
+    if (isAttached) {
+      newScrollController = null;
+    }
+    newItemPositionsListener = null;
   }
 
   void userUpdatedHisProfile(String jid) {

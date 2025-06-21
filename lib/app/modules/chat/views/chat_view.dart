@@ -27,10 +27,14 @@ class ChatView extends NavViewStateful<ChatController> {
 
   @override
   ChatController createController({String? tag}) {
-    debugPrint("ChatView createController");
-    final arguments = chatViewArguments ??
-        NavUtils.arguments as ChatViewArguments;
-    return Get.put(ChatController(arguments), tag: tag);
+    if (!Get.isRegistered<ChatController>(tag: tag)) {
+      final arguments = chatViewArguments ?? NavUtils.arguments as ChatViewArguments;
+      LogMessage.d("ChatView: ", "createController with tag: $tag}" );
+      return Get.put(ChatController(arguments), tag: tag);
+    } else {
+      LogMessage.d("ChatView: ", "existing controller with tag: $tag}" );
+      return Get.find<ChatController>(tag: tag);
+    }
   }
 
   /*@override
@@ -41,6 +45,10 @@ class ChatView extends NavViewStateful<ChatController> {
 
   @override
   Widget build(BuildContext context) {
+    LogMessage.d("SetTypingStatus build", "Called with: $tag");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    });
     return Theme(
       data: Theme.of(context).copyWith(appBarTheme: chatStyle.appBarTheme),
       child: Scaffold(
