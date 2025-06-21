@@ -45,10 +45,6 @@ class ChatView extends NavViewStateful<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    LogMessage.d("SetTypingStatus build", "Called with: $tag");
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-
-    });
     return Theme(
       data: Theme.of(context).copyWith(appBarTheme: chatStyle.appBarTheme),
       child: Scaffold(
