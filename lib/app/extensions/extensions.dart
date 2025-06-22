@@ -110,7 +110,7 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     // LogMessage.d("NavViewState : dispose isRegistered tag", {Get.isRegistered<T>(tag: widget.tag)});
 
     ///
-    /// If the tag is different, it means we are navigating to a different chat,
+    /// If the tag is different, it means we are navigating to a different chat
     /// controller so we can safely dispose the existing controller.
     ///
     /// If the tag is the same, it means the app was backgrounded and brought
@@ -121,11 +121,9 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     final nextArgs = NavUtils.arguments as ChatViewArguments?;
     final bool isSameTag = widget.tag == nextArgs?.chatJid;
 
-    if (widget.tag != null) {
-      if (!isSameTag) {
+    if (widget.tag != null && !isSameTag) {
         LogMessage.d("NavViewState: ", "dispose controller: ${T.toString()} with key: ${widget.tag}" );
         Get.delete<T>(tag: widget.tag);
-      }
     } else {
       LogMessage.d("NavViewState: ", "dispose controller ${T.toString()}");
       Get.delete<T>();
