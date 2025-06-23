@@ -27,10 +27,14 @@ class ChatView extends NavViewStateful<ChatController> {
 
   @override
   ChatController createController({String? tag}) {
-    debugPrint("ChatView createController");
-    final arguments = chatViewArguments ??
-        NavUtils.arguments as ChatViewArguments;
-    return Get.put(ChatController(arguments), tag: tag);
+    if (!Get.isRegistered<ChatController>(tag: tag)) {
+      final arguments = chatViewArguments ?? NavUtils.arguments as ChatViewArguments;
+      LogMessage.d("ChatView: ", "createController with tag: $tag}" );
+      return Get.put(ChatController(arguments), tag: tag);
+    } else {
+      LogMessage.d("ChatView: ", "existing controller with tag: $tag}" );
+      return Get.find<ChatController>(tag: tag);
+    }
   }
 
   /*@override
