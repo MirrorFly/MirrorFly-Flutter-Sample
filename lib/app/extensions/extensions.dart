@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/model/arguments.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import '../common/constants.dart';
 import '../data/helper.dart';
@@ -107,13 +108,41 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     widget.onDispose();
     // LogMessage.d("NavViewState : dispose isRegistered", {Get.isRegistered<T>()});
     // LogMessage.d("NavViewState : dispose isRegistered tag", {Get.isRegistered<T>(tag: widget.tag)});
-    if(widget.tag!=null) {
-      Get.delete<T>(tag: widget.tag);
-    }else{
+
+    ///
+    /// If the tag is different, it means we are navigating to a different chat
+    /// controller so we can safely dispose the existing controller.
+    ///
+    /// If the tag is the same, it means the app was backgrounded and brought
+    /// back via notification *to the same chat*, so we **should not dispose**
+    /// the controller to prevent 'controller not found' or unregistered errors.
+    ///
+
+    final dynamic navArgs = NavUtils.arguments;
+    final ChatViewArguments? nextArgs = navArgs is ChatViewArguments ? navArgs : null;
+    LogMessage.d("NavViewState: ", "nextArgs?.chatJid: ${nextArgs?.chatJid}" );
+    final bool isSameTag = widget.tag == nextArgs?.chatJid;
+    LogMessage.d("NavViewState: ", "widget.tag: ${widget.tag}" );
+
+    if (widget.tag != null) {
+      bool isControllerAvailable = Get.isRegistered<T>(tag: widget.tag);
+      LogMessage.d("NavViewState: ",
+          "isControllerAvailable: ${T.toString()} with key: ${widget.tag} : $isControllerAvailable");
+      if (!isSameTag && isControllerAvailable) {
+        LogMessage.d("NavViewState: ",
+            "dispose controller: ${T.toString()} with key: ${widget.tag}");
+        Get.delete<T>(tag: widget.tag);
+        SessionManagement.setCurrentChatJID(
+            nextArgs?.chatJid ?? Constants.emptyString);
+      } else {
+        LogMessage.d("NavViewState: ",
+            "isSameTag ==> no need to dispose the controller || $T controller not registered");
+      }
+    } else {
+      LogMessage.d("NavViewState: ", "dispose controller ${T.toString()}");
       Get.delete<T>();
     }
     super.dispose();
-    LogMessage.d("NavViewState : dispose key: ${widget.tag}", T.toString());
   }
 
   @override
