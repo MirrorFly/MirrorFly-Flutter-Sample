@@ -118,12 +118,20 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
     /// the controller to prevent 'controller not found' or unregistered errors.
     ///
 
-    final nextArgs = NavUtils.arguments as ChatViewArguments?;
+    final dynamic navArgs = NavUtils.arguments;
+    final ChatViewArguments? nextArgs = navArgs is ChatViewArguments ? navArgs : null;
+    LogMessage.d("NavViewState: nextArgs?.chatJid", "${nextArgs?.chatJid}" );
     final bool isSameTag = widget.tag == nextArgs?.chatJid;
+    LogMessage.d("NavViewState: widget.tag", "${widget.tag}" );
 
-    if (widget.tag != null && !isSameTag) {
+    if (widget.tag != null) {
+      if (!isSameTag) {
         LogMessage.d("NavViewState: ", "dispose controller: ${T.toString()} with key: ${widget.tag}" );
         Get.delete<T>(tag: widget.tag);
+        SessionManagement.setCurrentChatJID(nextArgs?.chatJid ?? Constants.emptyString);
+      } else {
+        LogMessage.d("NavViewState: ", "isSameTag ==> no need to dispose the controller" );
+      }
     } else {
       LogMessage.d("NavViewState: ", "dispose controller ${T.toString()}");
       Get.delete<T>();
