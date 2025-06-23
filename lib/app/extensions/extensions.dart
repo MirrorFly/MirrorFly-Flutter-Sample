@@ -120,17 +120,23 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
     final dynamic navArgs = NavUtils.arguments;
     final ChatViewArguments? nextArgs = navArgs is ChatViewArguments ? navArgs : null;
-    LogMessage.d("NavViewState: nextArgs?.chatJid", "${nextArgs?.chatJid}" );
+    LogMessage.d("NavViewState: ", "nextArgs?.chatJid: ${nextArgs?.chatJid}" );
     final bool isSameTag = widget.tag == nextArgs?.chatJid;
-    LogMessage.d("NavViewState: widget.tag", "${widget.tag}" );
+    LogMessage.d("NavViewState: ", "widget.tag: ${widget.tag}" );
 
     if (widget.tag != null) {
-      if (!isSameTag) {
-        LogMessage.d("NavViewState: ", "dispose controller: ${T.toString()} with key: ${widget.tag}" );
+      bool isControllerAvailable = Get.isRegistered<T>(tag: widget.tag);
+      LogMessage.d("NavViewState: ",
+          "isControllerAvailable: ${T.toString()} with key: ${widget.tag} : $isControllerAvailable");
+      if (!isSameTag && isControllerAvailable) {
+        LogMessage.d("NavViewState: ",
+            "dispose controller: ${T.toString()} with key: ${widget.tag}");
         Get.delete<T>(tag: widget.tag);
-        SessionManagement.setCurrentChatJID(nextArgs?.chatJid ?? Constants.emptyString);
+        SessionManagement.setCurrentChatJID(
+            nextArgs?.chatJid ?? Constants.emptyString);
       } else {
-        LogMessage.d("NavViewState: ", "isSameTag ==> no need to dispose the controller" );
+        LogMessage.d("NavViewState: ",
+            "isSameTag ==> no need to dispose the controller || $T controller not registered");
       }
     } else {
       LogMessage.d("NavViewState: ", "dispose controller ${T.toString()}");
