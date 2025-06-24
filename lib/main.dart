@@ -122,20 +122,16 @@ Future<void> main() async {
 }
 
 void setTranslations() async {
-  String jsonString = await rootBundle.loadString('assets/locales/ta.json');
-  final Map<String, dynamic> jsonMap = json.decode(jsonString);
-  final Map<String, String> stringMap = jsonMap.map(
-        (key, value) => MapEntry(key, value.toString()),
-  );
-  Mirrorfly.setTranslations(stringSet: stringMap, flyCallback: (res) {
-    if (res.isSuccess) {
-      LogMessage.d("Translations", res.isSuccess);
-    } else {
-      LogMessage.d("Translations", res.errorMessage);
-    }
-  });
+  Mirrorfly.setTranslations(
+      fileName: "ta.json",
+      flyCallback: (res) {
+        if (res.isSuccess) {
+          LogMessage.d("Translations", res.isSuccess);
+        } else {
+          LogMessage.d("Translations", res.message);
+        }
+      });
 }
-
 
 Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
   if(useOld) {
