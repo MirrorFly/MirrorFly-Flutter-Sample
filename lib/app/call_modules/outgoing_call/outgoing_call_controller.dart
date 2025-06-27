@@ -326,7 +326,7 @@ class OutgoingCallController extends GetxController
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if (response.isSuccess) {
         callList.clear();
-        NavUtils.back();
+        // NavUtils.back();
       }
     });
   }
