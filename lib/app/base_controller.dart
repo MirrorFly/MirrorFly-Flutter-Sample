@@ -211,6 +211,7 @@ class BaseController {
     Mirrorfly.onCallStatusUpdated.listen((event) {
       // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
       debugPrint("#MirrorflyCall onCallStatusUpdated --> $event");
+      print("MNK() onCallStatusUpdated event: $event");
 
       var statusUpdateReceived = jsonDecode(event);
       var callMode = statusUpdateReceived["callMode"].toString();
@@ -280,7 +281,7 @@ class BaseController {
           break;
 
         case CallStatus.disconnected:
-          if (Get.isRegistered<CallController>()) {
+            if (Get.isRegistered<CallController>()) {
             /*Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType);*/ //commenting because when call disconnected we no need to check anything
 
@@ -299,31 +300,41 @@ class BaseController {
             //   NavUtils.back();
             // }
           }
+          // On Android, remoteBusy and disconnected events can arrive almost simultaneously.
+          // Because GetX unregisters controllers asynchronously, Get.isRegistered<T>() may still return true briefly after NavUtils.back().
+          // This can cause multiple pop() calls, leaving the navigation stack empty (black screen).
+          Future.delayed(const Duration(milliseconds: 250), () {
+            if (Get.isRegistered<OutgoingCallController>()) {
+              debugPrint(
+                  "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
 
-          if (Get.isRegistered<OutgoingCallController>()) {
-            debugPrint("Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+              if (Get.isRegistered<OutgoingCallController>()) {
+                Get.find<OutgoingCallController>()
+                    .userDisconnection(callMode, userJid, callType);
+              }
 
-            Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
-
-            if (Get.isRegistered<CallController>()) {
-              if (Get.find<CallController>().callList.length <= 1) {
-                stopTimer();
+              if (Get.isRegistered<CallController>()) {
+                if (Get.find<CallController>().callList.length <= 1) {
+                  stopTimer();
+                }
+              } else {
+                debugPrint(
+                    "#Mirrorfly call CallController not registered for disconnect event");
               }
             } else {
-              debugPrint("#Mirrorfly call CallController not registered for disconnect event");
+              debugPrint(
+                  "#Mirrorfly call Outgoing call controller not registered for disconnect event");
             }
-          } else {
-            debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
-          }
 
-          if(Get.isRegistered<PipViewController>(tag: "pipView")){
-            Get.find<PipViewController>(tag: "pipView").callDisconnected();
-            stopTimer();
-          }
-          if(Get.isRegistered<PipViewController>()){
-            Get.find<PipViewController>().callDisconnected();
-            stopTimer();
-          }
+            if (Get.isRegistered<PipViewController>(tag: "pipView")) {
+              Get.find<PipViewController>(tag: "pipView").callDisconnected();
+              stopTimer();
+            }
+            if (Get.isRegistered<PipViewController>()) {
+              Get.find<PipViewController>().callDisconnected();
+              stopTimer();
+            }
+          });
           break;
         case CallStatus.calling10s:
           break;
@@ -435,12 +446,19 @@ class BaseController {
           }
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:
+          print("MNK() CallAction.remoteBusy triggered");
           {
             if (Get.isRegistered<OutgoingCallController>()) {
+              print("MNK() CallAction.remoteBusy OutgoingCallController");
               Get.find<OutgoingCallController>().remoteBusy(callMode, userJid, callType, callAction);
+            } else {
+              print("MNK() CallAction.remoteBusy OutgoingCallController not registered");
             }
             if (Get.isRegistered<CallController>()) {
+              print("MNK() CallAction.remoteBusy CallController");
               Get.find<CallController>().remoteBusy(callMode, userJid, callType, callAction);
+            } else {
+              print("MNK() CallAction.remoteBusy CallController not registered");
             }
             break;
           }

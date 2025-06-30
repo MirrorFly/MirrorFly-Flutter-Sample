@@ -47,7 +47,7 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                   borderRadius: widget.imageMessageViewStyle.imageBorderRadius,
                   child: Obx(() {
                     return getImage(
-                        mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId, widget.chatMessage.isMediaDownloaded());
+                        mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId, widget.chatMessage);
                   }),
                 ),
               ),
@@ -105,12 +105,19 @@ class _ImageMessageViewState extends State<ImageMessageView> {
   bool get wantKeepAlive => true;*/
 }
 
-getImage(RxString mediaLocalStoragePath, String mediaThumbImage, BuildContext context, String mediaFileName, bool isSelected, String messageId, bool isMediaDownloaded) {
+getImage(
+    RxString mediaLocalStoragePath,
+    String mediaThumbImage,
+    BuildContext context,
+    String mediaFileName,
+    bool isSelected,
+    String messageId,
+    ChatMessageModel chatMessage) {
   debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
-  // isMediaDownloaded conditional check is for the media download in android once
+  // chatMessage.isMediaDownloading() conditional check is for the media download or uploaded in android once
   // after deleting it from local, the isMediaExists returns true but the file is empty,
   // error Image error builder, so we added.
-  if (MediaUtils.isMediaExists(mediaLocalStoragePath.value) && isMediaDownloaded) {
+  if (MediaUtils.isMediaExists(mediaLocalStoragePath.value) && !chatMessage.isMediaDownloading()) {
     return InkWell(
         onTap: isSelected
             ? null
