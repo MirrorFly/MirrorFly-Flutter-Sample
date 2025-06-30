@@ -211,7 +211,6 @@ class BaseController {
     Mirrorfly.onCallStatusUpdated.listen((event) {
       // {"callMode":"OneToOne","userJid":"","callType":"video","callStatus":"Attended"}
       debugPrint("#MirrorflyCall onCallStatusUpdated --> $event");
-      print("MNK() onCallStatusUpdated event: $event");
 
       var statusUpdateReceived = jsonDecode(event);
       var callMode = statusUpdateReceived["callMode"].toString();
@@ -446,19 +445,12 @@ class BaseController {
           }
         //if we called on user B, the user B is decline the call then this will be triggered in Android
         case CallAction.remoteBusy:
-          print("MNK() CallAction.remoteBusy triggered");
           {
             if (Get.isRegistered<OutgoingCallController>()) {
-              print("MNK() CallAction.remoteBusy OutgoingCallController");
               Get.find<OutgoingCallController>().remoteBusy(callMode, userJid, callType, callAction);
-            } else {
-              print("MNK() CallAction.remoteBusy OutgoingCallController not registered");
             }
             if (Get.isRegistered<CallController>()) {
-              print("MNK() CallAction.remoteBusy CallController");
               Get.find<CallController>().remoteBusy(callMode, userJid, callType, callAction);
-            } else {
-              print("MNK() CallAction.remoteBusy CallController not registered");
             }
             break;
           }
