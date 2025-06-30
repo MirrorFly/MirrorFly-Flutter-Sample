@@ -30,7 +30,7 @@ class PIPView extends NavViewStateful<PipViewController> {
       body: LayoutBuilder(
         builder: (context,cons) {
           // debugPrint("PIPView build : cons : ${cons.maxWidth} , ${cons.maxHeight}");
-          return InkWell(
+          return GestureDetector(
             onTap: (){
               controller.showExpand(!controller.showExpand.value);
             },
@@ -64,6 +64,10 @@ class PIPView extends NavViewStateful<PipViewController> {
                     },
                   );
                 }),
+                GestureDetector(onTap: (){
+                  controller.showExpand(!controller.showExpand.value);
+                },
+                    child: Container(color: Colors.transparent,)),
                 Obx((){
                   return Visibility(
                     visible: !controller.isPIPActive.value && controller.showExpand.value,
