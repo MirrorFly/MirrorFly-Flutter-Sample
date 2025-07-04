@@ -299,10 +299,6 @@ class BaseController {
             //   NavUtils.back();
             // }
           }
-          // On Android, remoteBusy and disconnected events can arrive almost simultaneously.
-          // Because GetX unregisters controllers asynchronously, Get.isRegistered<T>() may still return true briefly after NavUtils.back().
-          // This can cause multiple pop() calls, leaving the navigation stack empty (black screen).
-          Future.delayed(const Duration(milliseconds: 250), () {
             if (Get.isRegistered<OutgoingCallController>()) {
               debugPrint(
                   "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
@@ -333,7 +329,6 @@ class BaseController {
               Get.find<PipViewController>().callDisconnected();
               stopTimer();
             }
-          });
           break;
         case CallStatus.calling10s:
           break;
