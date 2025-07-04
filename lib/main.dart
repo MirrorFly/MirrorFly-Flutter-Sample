@@ -10,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mirror_fly_demo/app/common/fly_translations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
@@ -118,12 +117,12 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   initializeSDK(Constants.useDeprecatedInit,builder: Constants.chatBuilder);
-  setTranslations();
+  // setTranslations();
 }
 
 void setTranslations() async {
   Mirrorfly.setTranslations(
-      fileName: "ta.json",
+      fileNameOrPath: "ta.json",
       flyCallback: (res) {
         if (res.isSuccess) {
           LogMessage.d("Translations", res.isSuccess);
