@@ -3210,6 +3210,7 @@ class ChatController extends FullLifeCycleController
 
   void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
+    typingList.clear();
     setChatStatus();
   }
 
