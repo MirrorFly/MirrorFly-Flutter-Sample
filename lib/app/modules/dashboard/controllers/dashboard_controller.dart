@@ -1641,6 +1641,7 @@ class DashboardController extends FullLifeCycleController
       }
     }
     checkContactSyncPermission();
+    typingAndGoneStatus.clear();
     // fetchCallLogList();
   }
 
