@@ -284,9 +284,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
         LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
         FlPiP().enable(
             ios: const FlPiPiOSConfig(),
-            android: FlPiPAndroidConfig(
-                aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+            android: const FlPiPAndroidConfig()).then((onValue){
                       if(onValue) {
                         PictureInPicture.stopPiP();
                         NavUtils.toNamed(Routes.pipView);
@@ -296,9 +294,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
         LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
         FlPiP().enable(
             ios: const FlPiPiOSConfig(),
-            android: FlPiPAndroidConfig(
-                aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+            android: const FlPiPAndroidConfig()).then((onValue){
           LogMessage.d("PIPView", " FlPiP enable $onValue");
           if(onValue){
             NavUtils.offNamed(Routes.pipView);

@@ -397,6 +397,7 @@ class ChatController extends FullLifeCycleController
   }
 
   showAttachmentsView(BuildContext context) async {
+    await hideEmojiKeyboardWhenClickOnAttachments();
     var busyStatus = !profile.isGroupProfile.checkNull()
         ? await Mirrorfly.isBusyStatusEnabled()
         : false;
@@ -406,6 +407,11 @@ class ChatController extends FullLifeCycleController
     } else {
       //show busy status popup
       showBusyStatusAlert(showBottomSheetAttachment);
+    }
+  }
+  Future<void> hideEmojiKeyboardWhenClickOnAttachments() async {
+    if (showEmoji.value) {
+      showEmoji(!showEmoji.value);
     }
   }
 
@@ -3204,6 +3210,7 @@ class ChatController extends FullLifeCycleController
 
   void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
+    typingList.clear();
     setChatStatus();
   }
 

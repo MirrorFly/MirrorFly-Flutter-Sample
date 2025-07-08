@@ -73,40 +73,38 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!--
-<meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCfG5u1-XDZhWD8vOZGK5hTKyqsVOjHSSM"/>
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCe4m08a3eMvInU8LBxAjAyEIyG-Kj_Ayw" />
-        <meta-data
-            android:name="com.google.android.geo.API_THUMP_KEY"
-            android:value="AIzaSyBaKkrQnLT4nacpKblIE5d4QK6GpaX5luQ" />
-        <meta-data
-            android:name="com.google.android.geo.API_TRANSLATE_KEY"
-            android:value="AIzaSyCdwzAZR6tx8KB-2dMn0KzSI1V0LpsYdH0" />
-        <meta-data
-            android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-            android:value="true" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
+       <!--<meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="xxx"/>-->
+       <meta-data
+           android:name="com.google.android.geo.API_KEY"
+           android:value="xxx" />
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"
-                tools:replace="android:resource" />
-        </provider>
+       <meta-data
+           android:name="com.google.android.geo.API_THUMP_KEY"
+           android:value="xxx" />
+       <meta-data
+           android:name="com.google.android.geo.API_TRANSLATE_KEY"
+           android:value="xxx" />
+       <meta-data
+           android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
+           android:value="true" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_icon"
+           android:resource="@drawable/ic_notification" />
+       <meta-data
+           android:name="com.google.firebase.messaging.default_notification_color"
+           android:resource="@color/colorAccent" />
+       <provider
+           android:name="androidx.core.content.FileProvider"
+           android:authorities="${applicationId}.fileProvider"
+           android:exported="false"
+           android:grantUriPermissions="true"
+           tools:replace="android:authorities">
+           <meta-data
+               android:name="android.support.FILE_PROVIDER_PATHS"
+               android:resource="@xml/filepaths"
+               tools:replace="android:resource" />
+       </provider>
        <!-- Provide required visibility configuration for API level 30 and above -->
 
     </application>

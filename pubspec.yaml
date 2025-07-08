@@ -106,6 +106,7 @@ flutter:
     - assets/calls/
     - assets/animation/
     - assets/locales/
+    - assets/i18n/
     - assets/backup_restore/
     - pubspec.yaml
 

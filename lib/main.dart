@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -115,7 +117,20 @@ Future<void> main() async {
 
   await SessionManagement.onInit();
   initializeSDK(Constants.useDeprecatedInit,builder: Constants.chatBuilder);
+  // setTranslations();
 }
+
+// void setTranslations() async {
+//   Mirrorfly.setTranslations(
+//       fileNameOrPath: "ta.json",
+//       flyCallback: (res) {
+//         if (res.isSuccess) {
+//           LogMessage.d("Translations", res.isSuccess);
+//         } else {
+//           LogMessage.d("Translations", res.message);
+//         }
+//       });
+// }
 
 Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
   if(useOld) {

@@ -280,7 +280,7 @@ class BaseController {
           break;
 
         case CallStatus.disconnected:
-          if (Get.isRegistered<CallController>()) {
+            if (Get.isRegistered<CallController>()) {
             /*Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType);*/ //commenting because when call disconnected we no need to check anything
 
@@ -299,31 +299,36 @@ class BaseController {
             //   NavUtils.back();
             // }
           }
+            if (Get.isRegistered<OutgoingCallController>()) {
+              debugPrint(
+                  "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
 
-          if (Get.isRegistered<OutgoingCallController>()) {
-            debugPrint("Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+              if (Get.isRegistered<OutgoingCallController>()) {
+                Get.find<OutgoingCallController>()
+                    .userDisconnection(callMode, userJid, callType);
+              }
 
-            Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
-
-            if (Get.isRegistered<CallController>()) {
-              if (Get.find<CallController>().callList.length <= 1) {
-                stopTimer();
+              if (Get.isRegistered<CallController>()) {
+                if (Get.find<CallController>().callList.length <= 1) {
+                  stopTimer();
+                }
+              } else {
+                debugPrint(
+                    "#Mirrorfly call CallController not registered for disconnect event");
               }
             } else {
-              debugPrint("#Mirrorfly call CallController not registered for disconnect event");
+              debugPrint(
+                  "#Mirrorfly call Outgoing call controller not registered for disconnect event");
             }
-          } else {
-            debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
-          }
 
-          if(Get.isRegistered<PipViewController>(tag: "pipView")){
-            Get.find<PipViewController>(tag: "pipView").callDisconnected();
-            stopTimer();
-          }
-          if(Get.isRegistered<PipViewController>()){
-            Get.find<PipViewController>().callDisconnected();
-            stopTimer();
-          }
+            if (Get.isRegistered<PipViewController>(tag: "pipView")) {
+              Get.find<PipViewController>(tag: "pipView").callDisconnected();
+              stopTimer();
+            }
+            if (Get.isRegistered<PipViewController>()) {
+              Get.find<PipViewController>().callDisconnected();
+              stopTimer();
+            }
           break;
         case CallStatus.calling10s:
           break;
