@@ -120,17 +120,17 @@ Future<void> main() async {
   // setTranslations();
 }
 
-void setTranslations() async {
-  Mirrorfly.setTranslations(
-      fileNameOrPath: "ta.json",
-      flyCallback: (res) {
-        if (res.isSuccess) {
-          LogMessage.d("Translations", res.isSuccess);
-        } else {
-          LogMessage.d("Translations", res.message);
-        }
-      });
-}
+// void setTranslations() async {
+//   Mirrorfly.setTranslations(
+//       fileNameOrPath: "ta.json",
+//       flyCallback: (res) {
+//         if (res.isSuccess) {
+//           LogMessage.d("Translations", res.isSuccess);
+//         } else {
+//           LogMessage.d("Translations", res.message);
+//         }
+//       });
+// }
 
 Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
   if(useOld) {
