@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
@@ -107,22 +108,26 @@ class ChatController extends FullLifeCycleController
 
   var selectedChatList = List<ChatMessageModel>.empty(growable: true).obs;
 
-  final _isMemberOfGroup = false.obs;
+  final RxnBool _isMemberOfGroup = RxnBool(null);
 
-  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
-
-  bool get isMemberOfGroup => profile.isGroupProfile ?? false
-      ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
-      : true;
+  bool? get isMemberOfGroup {
+    if (profile.isGroupProfile == true) {
+      if (!availableFeatures.value.isGroupChatAvailable.checkNull()) {
+        return false;
+      }
+      return _isMemberOfGroup.value; // could be true, false, or null
+    } else {
+      return true;
+    }
+  }
 
   bool get ableToCall => profile.isGroupProfile.checkNull()
-      ? isMemberOfGroup
+      ? isMemberOfGroup.checkNull()
       : (!profile.isBlocked.checkNull() && !profile.isAdminBlocked.checkNull());
 
   bool get ableToScheduleMeet => profile.isGroupProfile ?? false
       ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value
+          _isMemberOfGroup.value.checkNull()
       : true;
   // var profileDetail = Profile();
 
@@ -156,8 +161,29 @@ class ChatController extends FullLifeCycleController
       []; //[MessageMetaData(key: "platform", value: "flutter")];
   final ChatViewArguments? arguments;
 
-  var screenWidth = 0.0.obs;
-  var screenHeight = 0.0.obs;
+/*  var screenWidth = 0.0.obs;
+  var screenHeight = 0.0.obs;*/
+  Rx<Offset> fabPosition = Offset.zero.obs;
+  RxBool isDraggingFab = false.obs;
+
+  RxDouble screenWidth = 0.0.obs;
+  RxDouble screenHeight = 0.0.obs;
+  RxDouble  fabHeight = 60.0.obs;
+  RxDouble  margin = 16.0.obs;
+  RxDouble  safeTop = 10.0.obs;
+
+  void updateFabPosition(Offset newOffset) {
+    double fabWidth = 56.0;
+    double fabHeight = 56.0;
+
+    double newX = newOffset.dx.clamp(0.0, screenWidth.value - fabWidth);
+    double newY = newOffset.dy.clamp(0.0, screenHeight.value - fabHeight - 16);
+
+    newX = newX < screenWidth.value / 2 ? 15 : screenWidth.value - fabWidth - 15;
+    newY = newY.clamp(5, screenHeight.value - fabHeight - 16);
+
+    fabPosition.value = Offset(newX, newY);
+  }
   @override
   Future<void> onInit() async {
     // arguments = NavUtils.arguments as ChatViewArguments;
@@ -371,6 +397,7 @@ class ChatController extends FullLifeCycleController
   }
 
   showAttachmentsView(BuildContext context) async {
+    await hideEmojiKeyboardWhenClickOnAttachments();
     var busyStatus = !profile.isGroupProfile.checkNull()
         ? await Mirrorfly.isBusyStatusEnabled()
         : false;
@@ -380,6 +407,11 @@ class ChatController extends FullLifeCycleController
     } else {
       //show busy status popup
       showBusyStatusAlert(showBottomSheetAttachment);
+    }
+  }
+  Future<void> hideEmojiKeyboardWhenClickOnAttachments() async {
+    if (showEmoji.value) {
+      showEmoji(!showEmoji.value);
     }
   }
 
@@ -463,7 +495,8 @@ class ChatController extends FullLifeCycleController
                 replyMessageId: replyMessageId,
                 mentionedUsersIds: messageController.getTags,
                 topicId: topicId,
-                metaData: messageMetaData, //#metaData
+                messageSecurityMode: MessageSecurityMode.disabled,
+                metaData: messageMetaData,
                 textMessageParams: TextMessageParams(
                     messageText: messageController.formattedText.trim())),
             flyCallback: (response) {
@@ -659,6 +692,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -686,11 +720,9 @@ class ChatController extends FullLifeCycleController
       limit: 20,
       topicId: topicId,
       messageId: starredChatMessageId,
-      exclude: Platform.isAndroid
-          ? starredChatMessageId != null
+      exclude:  starredChatMessageId != null
               ? false
-              : true
-          : true /*starredChatMessageId == null*/,
+              : true,
       ascendingOrder: starredChatMessageId != null,
     ) //message
         .then((value) {
@@ -1022,6 +1054,7 @@ class ChatController extends FullLifeCycleController
               updateLastMessage(response.data);
             } else {
               LogMessage.d("sendMessage", response.errorMessage);
+              showError(response.exception);
             }
           });
     } else {
@@ -1255,7 +1288,7 @@ class ChatController extends FullLifeCycleController
             updateLastMessage(response.data);
           } else {
             LogMessage.d("sendMessage", response.errorMessage);
-            // showError(response.exception);
+            showError(response.exception);
           }
         })/*.then((value) => NavUtils.back())*/;
   }
@@ -2323,6 +2356,16 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = chatList.indexWhere((message) => message.messageId == messageId);
+    debugPrint("#ChatController onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      chatList[indexToBeReplaced].isMessageRecalled.value = true;
+      chatList.refresh();
+    }
+  }
+
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     if (chatMessageModel.chatUserJid == profile.jid) {
       final index = chatList.indexWhere(
@@ -2404,6 +2447,22 @@ class ChatController extends FullLifeCycleController
         _isMemberOfGroup(false);
       } else if (groupJid == profile.jid) {
         setChatStatus();
+      }
+    }
+  }
+
+  void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+    LogMessage.d("ChatController", "onSuperAdminDeleteGroup groupJid $groupJid, groupName $groupName");
+    if (profile.isGroupProfile ?? false) {
+      if (groupJid == profile.jid) {
+        LogMessage.d("ChatController", "onSuperAdminDeleteGroup deleting group");
+        if(Get.isRegistered<DashboardController>()){
+          Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+        }
+        _isMemberOfGroup(false);
+        NavUtils.back();
+      } else {
+        LogMessage.d("onSuperAdminDeleteGroup", "Group has been deleted, current chat controller is not the deleted group");
       }
     }
   }
@@ -2720,9 +2779,9 @@ class ChatController extends FullLifeCycleController
   bool forwardMessageVisibility(ChatMessageModel chat) {
     if (!chat.isMessageRecalled.value && !chat.isMessageDeleted) {
       if (chat.isMediaMessage()) {
-        if ((chat.mediaChatMessage!.mediaDownloadStatus.value ==
+        if ((chat.mediaChatMessage?.mediaDownloadStatus.value ==
                     MediaDownloadStatus.mediaDownloaded.value ||
-                chat.mediaChatMessage!.mediaUploadStatus.value ==
+                chat.mediaChatMessage?.mediaUploadStatus.value ==
                     MediaUploadStatus.mediaUploaded.value) &&
             (checkFile(chat.mediaChatMessage!.mediaLocalStoragePath.value
                 .checkNull()))) {
@@ -2917,7 +2976,7 @@ class ChatController extends FullLifeCycleController
           !profile.isAdminBlocked.checkNull() &&
           isWithinLast15Minutes(message.messageSentTime) &&
           message.messageStatus.value != 'N' &&
-          (profile.isGroupProfile.checkNull() ? isMemberOfGroup : true) &&
+          (profile.isGroupProfile.checkNull() ? isMemberOfGroup.checkNull() : true) &&
           (message.messageType == Constants.mText ||
               message.messageType == Constants.mAutoText ||
               (message.messageType == Constants.mImage &&
@@ -3085,6 +3144,11 @@ class ChatController extends FullLifeCycleController
   @override
   void onInactive() {
     LogMessage.d("LifeCycle", "chat onInactive");
+    final isAttached = newScrollController?.isAttached ?? false;
+    if (isAttached) {
+      newScrollController = null;
+    }
+    newItemPositionsListener = null;
   }
 
   void userUpdatedHisProfile(String jid) {
@@ -3146,6 +3210,7 @@ class ChatController extends FullLifeCycleController
 
   void onDisconnected() {
     LogMessage.d('networkDisconnected', 'false');
+    typingList.clear();
     setChatStatus();
   }
 
@@ -3324,10 +3389,14 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {
-          if (isMemberOfGroup) {
+          if (isMemberOfGroup.checkNull()) {
             NavUtils.toNamed(Routes.groupParticipants, arguments: {
               "groupId": profile.jid,
               "callType": CallType.audio
@@ -3366,6 +3435,10 @@ class ChatController extends FullLifeCycleController
 
   void makeVideoCall() async {
     closeKeyBoard();
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (profile.isGroupProfile.checkNull()) {

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
@@ -99,6 +101,15 @@ class BaseController {
       }
     });
     Mirrorfly.onMemberRemovedAsAdmin.listen(onMemberRemovedAsAdmin);
+    Mirrorfly.onSuperAdminDeleteGroup.listen((event) {
+      if(event!=null) {
+        var data = json.decode(event.toString());
+        var groupJid = data["groupJid"] ?? "";
+        var groupName = data["groupName"] ?? "";
+        onSuperAdminDeleteGroup(groupJid: groupJid, groupName: groupName);
+      }
+
+    });
     Mirrorfly.onLeftFromGroup.listen((event) {
       if (event != null) {
         var data = json.decode(event.toString());
@@ -269,7 +280,7 @@ class BaseController {
           break;
 
         case CallStatus.disconnected:
-          if (Get.isRegistered<CallController>()) {
+            if (Get.isRegistered<CallController>()) {
             /*Get.find<CallController>().callDisconnected(
                 callMode, userJid, callType);*/ //commenting because when call disconnected we no need to check anything
 
@@ -288,19 +299,36 @@ class BaseController {
             //   NavUtils.back();
             // }
           }
+            if (Get.isRegistered<OutgoingCallController>()) {
+              debugPrint(
+                  "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
 
-          if (Get.isRegistered<OutgoingCallController>()) {
-            debugPrint("Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+              if (Get.isRegistered<OutgoingCallController>()) {
+                Get.find<OutgoingCallController>()
+                    .userDisconnection(callMode, userJid, callType);
+              }
 
-            Get.find<OutgoingCallController>().userDisconnection(callMode, userJid, callType);
+              if (Get.isRegistered<CallController>()) {
+                if (Get.find<CallController>().callList.length <= 1) {
+                  stopTimer();
+                }
+              } else {
+                debugPrint(
+                    "#Mirrorfly call CallController not registered for disconnect event");
+              }
+            } else {
+              debugPrint(
+                  "#Mirrorfly call Outgoing call controller not registered for disconnect event");
+            }
 
-            if (Get.find<CallController>().callList.length <= 1) {
+            if (Get.isRegistered<PipViewController>(tag: "pipView")) {
+              Get.find<PipViewController>(tag: "pipView").callDisconnected();
               stopTimer();
             }
-          } else {
-            debugPrint("#Mirrorfly call Outgoing call controller not registered for disconnect event");
-          }
-
+            if (Get.isRegistered<PipViewController>()) {
+              Get.find<PipViewController>().callDisconnected();
+              stopTimer();
+            }
           break;
         case CallStatus.calling10s:
           break;
@@ -582,9 +610,36 @@ class BaseController {
       }
     });
 
-    Mirrorfly.onMessageDeleted.listen((event) {
+    Mirrorfly.onMessageDeleted.listen((event) async {
       LogMessage.d("onMessageDeleted", event);
-
+      final Map<String, dynamic> rawJson = jsonDecode(event);
+      final List<String>? messageIds = (rawJson['messageIds'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList();
+      if (messageIds != null) {
+        for (String id in messageIds) {
+          if (Get.isRegistered<DashboardController>()) {
+            Get.find<DashboardController>().onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+            Get.find<ChatController>(tag: controllerTag)
+                .onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<ArchivedChatListController>()) {
+            Get.find<ArchivedChatListController>()
+                .onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<MessageInfoController>()) {
+            Get.find<MessageInfoController>().onMessageDeleted(messageId: id);
+          }
+          if (Get.isRegistered<StarredMessagesController>()) {
+            Get.find<StarredMessagesController>()
+                .onMessageDeleted(messageId: id);
+          }
+        }
+      } else {
+        LogMessage.d("Invalid message delete event format", event);
+      }
     });
 
     Mirrorfly.onAllChatsCleared.listen((event) {
@@ -615,6 +670,25 @@ class BaseController {
 
     Mirrorfly.onChatMuteStatusUpdated.listen((event) {
       LogMessage.d("onChatMuteStatusUpdated", event);
+      final Map<String, dynamic>? json = jsonDecode(event);
+      final bool? muteStatus = json?['muteStatus'];
+      final List<String>? jidList =
+          (json?['jidList'] as List?)?.map((e) => e.toString()).toList();
+
+      if (Get.isRegistered<DashboardController>()) {
+        Get.find<DashboardController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<ChatInfoController>()) {
+        Get.find<ChatInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
+
+      if (Get.isRegistered<GroupInfoController>()) {
+        Get.find<GroupInfoController>()
+            .onChatMuteStatusUpdated(muteStatus: muteStatus, jidList: jidList);
+      }
     });
 
     initializeBackupListeners();
@@ -811,6 +885,33 @@ class BaseController {
 
   static void onMemberRemovedAsAdmin(event) {
     debugPrint('onMemberRemovedAsAdmin $event');
+  }
+
+  static void onSuperAdminDeleteGroup({required String groupJid, required String groupName}) {
+    debugPrint('onSuperAdminDeleteGroup groupJid - $groupJid groupName- $groupName');
+    if (Get.isRegistered<GroupInfoController>()) {
+      debugPrint('onSuperAdminDeleteGroup GroupInfoController registered');
+      Get.find<GroupInfoController>().onSuperAdminDeleteGroup(
+          groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup Group Info Controller not Found');
+    }
+
+    if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      debugPrint('onSuperAdminDeleteGroup ChatController registered');
+      Get.find<ChatController>(tag: controllerTag).onSuperAdminDeleteGroup(groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup ChatController with tag $controllerTag not Found');
+    }
+    if (Get.isRegistered<DashboardController>()) {
+      debugPrint('onSuperAdminDeleteGroup DashboardController registered');
+      Get.find<DashboardController>().deleteGroup(groupJid: groupJid, groupName: groupName);
+      return;
+    }else{
+      debugPrint('onSuperAdminDeleteGroup ChatController with tag $controllerTag not Found');
+    }
   }
 
   static void onLeftFromGroup({required String groupJid, required String userJid}) {

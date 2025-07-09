@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/app_style_config.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_result_view.dart';
@@ -95,8 +97,13 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.chatSearch:
       return MaterialPageRoute(builder: (_) => ChatSearchView(),settings: settings);
     case Routes.locationSent:
-      return MaterialPageRoute(builder: (_) => const LocationSentView(),settings: settings);
-    case Routes.contacts:
+      // MaterialPageRoute changed to PageRouteBuilder due to animation issue on the locationSent and chat page return
+      return PageRouteBuilder(
+        settings: settings,
+        pageBuilder: (context, animation, secondaryAnimation) => LocationSentView(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: Duration.zero, // disables animation on pop
+      );    case Routes.contacts:
       return MaterialPageRoute(builder: (_) => const ContactListView(),settings: settings);
     case Routes.settings:
       return MaterialPageRoute(builder: (_) => const SettingsView(),settings: settings);
@@ -177,6 +184,8 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const GroupParticipantsView(),settings: settings);
     case Routes.callInfo:
       return MaterialPageRoute(builder: (_) => const CallInfoView(),settings: settings);
+    case Routes.pipView:
+      return MaterialPageRoute(builder: (_) => PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),settings: settings);
     default:
       if (settings.name!.startsWith(Routes.dashboard)) {
         return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
