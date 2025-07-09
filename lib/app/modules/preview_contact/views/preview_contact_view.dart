@@ -75,9 +75,13 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                                         contactItem.contactNo[childIndex];
                                     var style = AppStyleConfig.localContactPreviewPageStyle.listItemStyle;
                                     return ListTile(
-                                      onTap: () {
-                                        controller.changeStatus(phoneItem);
-                                      },
+                                      onTap: contactItem.contactNo.length > 1 &&
+                                              controller.from != "chat"
+                                          ? () {
+                                              controller
+                                                  .changeStatus(phoneItem);
+                                            }
+                                          : null,
                                       title: Text(
                                         phoneItem.mobNo,
                                         style: style.titleTextStyle,

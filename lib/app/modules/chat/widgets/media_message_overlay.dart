@@ -80,7 +80,17 @@ class MediaMessageOverlay extends StatelessWidget {
                 //status = MediaDownloadStatus.isMediaNotDownloaded;
               }
             } else {
-              status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
+
+              status = MediaUploadStatus.isMediaUploaded;
+              /// the below code is commented,
+              /// As the file is sent by me
+              /// and it is available in media local storage path
+              /// and also available in device storage.
+              /// But in iOS SDK, the media upload status is changed to not uploaded,
+              /// -- when messages are backed up in iCloud and restored, the media will show as Download(which is correct)
+              /// -- and after download, if we fetch the message list again, the status will be not uploaded
+              /// -- even though it is downloaded and available in our device storage. So given the static status as above.
+              // status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
             }
           } else {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;

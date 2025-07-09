@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../app_style_config.dart';
@@ -71,14 +73,17 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
   var groupId = ''.obs;
 
   TabController? tabController;
-  var getMaxCallUsersCount = 8;
+
 
   var joinViaLink = false;
 
   var isCallDisconnectedClicked = false;
+  // static const EventChannel _eventChannel = EventChannel('fl_pip/foreground');
+  var myJid  = SessionManagement.getUserJID();
   @override
   Future<void> onInit() async {
     super.onInit();
+    // startListening();
     enterFullScreen();
     tabController = TabController(length: 2, vsync: this);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -129,6 +134,11 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         pinnedUserJid(callUserList.first.userJid!.value);
         pinnedUser(callUserList.first);
       }
+      Mirrorfly.isCallConversionRequestAvailable().then((value){
+        if(value.checkNull()){
+          videoCallConversionRequest(callList.where((item)=>item.userJid!.value != myJid).first.userJid!.value);
+        }
+      });
     });
 
     await Mirrorfly.getCallType().then((value) => callType(value));
@@ -157,6 +167,20 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       }
     });
   }
+
+  /*void startListening() {
+    _eventChannel.receiveBroadcastStream().listen(
+          (event) {
+        print("Received event: $event");
+      },
+      onError: (error) {
+        print("Error: $error");
+      },
+      onDone: () {
+        print("Stream closed");
+      },
+    );
+  }*/
 
   var calleeNames = <String>[].obs;
   Future outGoingUsers() async {
@@ -342,7 +366,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     } else {
       debugPrint("#Disconnect previous route is empty");
       // NavUtils.offNamed(getInitialRoute());
-      NavUtils.offNamed(NavUtils.defaultRouteName);
+      if (NavUtils.currentRoute != Routes.dashboard) {
+        NavUtils.offNamed(NavUtils.defaultRouteName);
+      }
     }
   }
 
@@ -1070,7 +1096,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     var indexValid =
         callList.indexWhere((element) => element.userJid?.value == userJid);
     LogMessage.d("callController", "indexValid : $indexValid jid : $userJid");
-    if (indexValid.isNegative && callList.length != getMaxCallUsersCount) {
+    if (indexValid.isNegative && callList.length != Constants.getMaxCallUsersCount) {
       callList.insert(
           callList.length - 1,
           CallUserList(
@@ -1097,9 +1123,9 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
           var indexValid =
               callList.indexWhere((element) => element.userJid?.value == jid);
           LogMessage.d("callController",
-              "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : $getMaxCallUsersCount");
+              "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : ${Constants.getMaxCallUsersCount}");
           if (indexValid.isNegative &&
-              callList.length != getMaxCallUsersCount) {
+              callList.length != Constants.getMaxCallUsersCount) {
             callList.insert(
                 callList.length - 1,
                 CallUserList(
@@ -1197,5 +1223,35 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       pinnedUserJid(userJid);
       callList.swap(index, itemToReplace);
     }
+  }
+
+  void goToPIP() {
+    if(NavUtils.canPop) {
+      NavUtils.back();
+    } else {
+      NavUtils.offNamed(NavUtils.defaultRouteName);
+    }
+    startPIP();
+  }
+
+  void startPIP(){
+    PictureInPicture.startPiP(pipWidget: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(13)),
+        child: PIPView(
+          style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle,
+          pipTag: "pipView",)));
+    PictureInPicture.updatePiPParams(
+      pipParams: PiPParams(
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,//taking 80 percent of the width
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.8,//taking 80 percent of the height
+        bottomSpace: 20,
+        leftSpace: 20,
+        rightSpace: 20,
+        topSpace: 20,
+        movable: true,
+        resizable: true,
+        initialCorner: PIPViewCorner.bottomRight,
+      ),
+    );
   }
 }

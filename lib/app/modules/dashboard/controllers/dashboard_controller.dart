@@ -1111,6 +1111,17 @@ class DashboardController extends FullLifeCycleController
     updateRecentChat(jid: chatMessageModel.chatUserJid, newInsertable: true);
   }
 
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = 
+    recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+    if (!indexToBeReplaced.isNegative) {
+      recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
+      recentChats.refresh();
+    }
+  }
+
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
     final index = recentChats.indexWhere(
         (message) => message.lastMessageId == chatMessageModel.messageId);
@@ -1630,6 +1641,7 @@ class DashboardController extends FullLifeCycleController
       }
     }
     checkContactSyncPermission();
+    typingAndGoneStatus.clear();
     // fetchCallLogList();
   }
 
@@ -1898,15 +1910,14 @@ class DashboardController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
+    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-          debugPrint("#Mirrorfly Call You are on another call");
-          toToast(getTranslated("msgOngoingCallAlert"));
-        } else {
-          Mirrorfly.makeVideoCall(
-              toUserJid: fromUser.checkNull(),
-              flyCallBack: (FlyResponse response) {
+        Mirrorfly.makeVideoCall(toUserJid: fromUser.checkNull(), flyCallBack: (FlyResponse response) {
                 if (response.isSuccess) {
                   //setOnGoingUserGone();
                   NavUtils.toNamed(Routes.outGoingCallView, arguments: {
@@ -1915,7 +1926,6 @@ class DashboardController extends FullLifeCycleController
                   })?.then((value) => setOnGoingUserAvail());
                 }
               });
-        }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
@@ -2324,6 +2334,31 @@ class DashboardController extends FullLifeCycleController
 
   void updateArchiveChat() {
     getArchivedChatsList();
+  }
+
+  Future<void> deleteGroup({required String groupJid, required String groupName}) async {
+
+    LogMessage.d("Dashboard Controller deleteGroup", "groupJid -> $groupJid , groupName-> $groupName");
+
+    var chatIndex = recentChats.indexWhere((element) =>
+    groupJid == element.jid);
+
+    if (!chatIndex.isNegative) {
+      LogMessage.d("Dashboard Controller", "chat found chatIndex-> $chatIndex");
+      recentChats.removeAt(chatIndex);
+    }else{
+      LogMessage.d("Dashboard Controller deleteGroup", "Group is not found groupJid -> $groupJid , groupName-> $groupName");
+    }
+
+  }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("DashboardController onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    recentChats.where((chat) => jidList.contains(chat.jid)).forEach((chat) {
+      chat.isMuted = muteStatus;
+    });
+    recentChats.refresh();
   }
 }
 

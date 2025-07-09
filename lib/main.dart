@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
@@ -35,6 +38,44 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'app/routes/route_settings.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
+
+/*@pragma('vm:entry-point')
+Future<void> pipMain() async {
+  debugPrint("vm:entry-point : pipMain");
+  WidgetsFlutterBinding.ensureInitialized();
+  await SessionManagement.onInit();
+  if (!kIsWeb) {
+    await Firebase.initializeApp();
+  }
+  Get.put<MainController>(MainController());
+  // final PiPStatusInfo? result = await FlPiP().isActive;
+  // debugPrint(" FlPiP().isActive : ${result?.isCreateNewEngine}");
+  runApp(ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(13)),
+    child: MaterialApp(
+      navigatorKey: navigatorKey,
+      theme: MirrorFlyAppTheme.theme,
+      debugShowCheckedModeBanner: false,
+      locale: AppLocalizations.defaultLocale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      navigatorObservers: [
+        MirrorFlyNavigationObserver()
+      ],
+      home: PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle,),
+    ),
+  ));
+  // main();
+}*/
+
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -54,7 +95,7 @@ MirrorflyNotificationAppLaunchDetails? appLaunchDetails;
 
 /// check is on going call
 bool isOnGoingCall = false;
-final navigatorKey = GlobalKey<NavigatorState>();
+
 late ChatViewArguments chatViewArg;
 late DashboardViewArguments dashboardViewArg;
 Future<void> main() async {
@@ -75,38 +116,93 @@ Future<void> main() async {
   notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   await SessionManagement.onInit();
-  Mirrorfly.initializeSDK(
-      licenseKey: Constants.licenseKey,
-      iOSContainerID: Constants.iOSContainerID,
-      chatHistoryEnable: Constants.chatHistoryEnable,
-      enableDebugLog: Constants.enableDebugLog,
-      flyCallback: (response) async {
-        if (response.isSuccess) {
-          LogMessage.d("onSuccess", response.message);
-          LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
-          Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
-            LogMessage.d("Mirrorfly.isPrivateStorageEnabledOrNot", value.toString());
-          });
-        } else {
-          LogMessage.d("onFailure", response.errorMessage.toString());
-        }
-        /// check is on going call,
-        /// On iOS, this is set to false by default. When a call is received and disconnected before being attended,
-        /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
-        /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
-        /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
-        /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+  initializeSDK(Constants.useDeprecatedInit,builder: Constants.chatBuilder);
+  // setTranslations();
+}
 
-        isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+// void setTranslations() async {
+//   Mirrorfly.setTranslations(
+//       fileNameOrPath: "ta.json",
+//       flyCallback: (res) {
+//         if (res.isSuccess) {
+//           LogMessage.d("Translations", res.isSuccess);
+//         } else {
+//           LogMessage.d("Translations", res.message);
+//         }
+//       });
+// }
 
-        ///
-        /// This method will give response from Native Android, iOS will return empty by default.
-        /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
-        /// This value will be set in Android Plugin side and response will be returned here.
-        ///
-        appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
-        runApp(const MyApp());
-      });
+Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
+  if(useOld) {
+    if(builder.domainBaseUrl.isEmpty || builder.licenseKey.isEmpty){
+      throw(Exception("base url and licenseKey must need for use old method"));
+    }
+    await Mirrorfly.init(baseUrl: builder.domainBaseUrl,
+        licenseKey: builder.licenseKey,
+        iOSContainerID: builder.iOSContainerID,
+        enableDebugLog: builder.enableDebugLog,
+        enableMobileNumberLogin: builder.enableMobileNumberLogin,
+        chatHistoryEnable: builder.chatHistoryEnable,
+        storageFolderName: builder.storageFolderName,
+        isTrialLicenceKey: builder.isTrialLicenceKey
+    );
+
+    /// check is on going call,
+    /// When a call is received and disconnected before being attended,
+    /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+    /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+    /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+    /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+    isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+
+    ///
+    /// This method will give response from Native Android, iOS will return empty by default.
+    /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
+    /// This value will be set in Android Plugin side and response will be returned here.
+    ///
+    appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
+    runApp(const MyApp());
+  }else{
+    if(builder.licenseKey.isEmpty){
+      throw(Exception("licenseKey must need for use new method"));
+    }
+    Mirrorfly.initializeSDK(
+        licenseKey: builder.licenseKey,
+        iOSContainerID: builder.iOSContainerID,
+        chatHistoryEnable: builder.chatHistoryEnable,
+        enableDebugLog: builder.enableDebugLog,
+        storageFolderName: builder.storageFolderName,
+        enablePrivateStorage: Constants.enablePrivateStorage,
+        enableMobileNumberLogin: builder.enableMobileNumberLogin,
+        flyCallback: (response) async {
+          if (response.isSuccess) {
+            LogMessage.d("onSuccess", response.message);
+            LogMessage.d("Mirrorfly.isPrivateStorageEnabled", Mirrorfly.isPrivateStorageEnabled.toString());
+            Mirrorfly.isPrivateStorageEnabledOrNot().then((value) {
+              LogMessage.d("Mirrorfly.isPrivateStorageEnabledOrNot", value.toString());
+            });
+          } else {
+            LogMessage.d("onFailure", response.errorMessage.toString());
+          }
+          /// check is on going call,
+          /// When a call is received and disconnected before being attended,
+          /// the VOIP push wakes the app, causing Mirrorfly.isOnGoingCall() to return true, and the value is stored.
+          /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
+          /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
+          /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+
+          isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+
+          ///
+          /// This method will give response from Native Android, iOS will return empty by default.
+          /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
+          /// This value will be set in Android Plugin side and response will be returned here.
+          ///
+          appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
+          runApp(const MyApp());
+        });
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -130,7 +226,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return PiPMaterialApp(
       title: "MirrorFly",
       navigatorKey: navigatorKey,
       theme: MirrorFlyAppTheme.theme,
@@ -183,7 +279,7 @@ class _MyAppState extends State<MyApp> {
                 name: Routes.chat,
                 arguments: chatViewArg,
               ),
-              builder: (context) => ChatView(),
+              builder: (context) => ChatView(chatViewArguments: chatViewArg),
             )];
           case Routes.dashboard:
             return [

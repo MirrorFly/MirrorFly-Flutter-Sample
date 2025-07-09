@@ -81,7 +81,7 @@ LocationController createController({String? tag}) => Get.put(LocationController
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 16.0),
-                      child: FloatingActionButton.small(onPressed: (){
+                        child: FloatingActionButton.small(heroTag : "locationSent", onPressed: (){
                         if(controller.location.value.latitude!=0){
                           //sent Location Message
                           Navigator.pop(context, controller.location.value);

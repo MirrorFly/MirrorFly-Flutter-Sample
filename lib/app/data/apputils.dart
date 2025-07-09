@@ -155,4 +155,14 @@ class AppUtils{
     );
   }
 
+  static Size getSizeFromAspectRatio(double width,double height){
+    var rational = Rational(width.toInt(), height.toInt());
+    LogMessage.d("findPIPSize", "${rational.aspectRatio}");
+    var calWidth = width * rational.aspectRatio;
+    var calHeight = height * rational.aspectRatio;
+    LogMessage.d("findPIPSize", "aspectRatio : ${rational.aspectRatio}");
+    LogMessage.d("findPIPSize", "width : $width , calWidth : $calWidth");
+    LogMessage.d("findPIPSize", "height : $height , calHeight : $calHeight");
+    return Size(calWidth, calHeight);
+  }
 }
