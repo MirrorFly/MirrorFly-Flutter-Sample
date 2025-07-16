@@ -152,6 +152,7 @@ class AddParticipantsController extends GetxController with GetSingleTickerProvi
     var filteredList =
         mainUsersList.where((item) => item.getName().toLowerCase().contains(_searchText.trim())).toList();
     usersList(filteredList);
+    isPageLoading(false);
   }
 
   clearSearch() {
