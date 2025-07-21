@@ -1060,7 +1060,7 @@ class BaseController {
     }
   }
 
-  static void userBlockedMe(String jid) {
+  static void userBlockedMe(String jid) async{
     LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
@@ -1079,6 +1079,11 @@ class BaseController {
     }
     if (Get.isRegistered<AddParticipantsController>()) {
       Get.find<AddParticipantsController>().userBlockedMe(jid);
+    }
+    if (Get.isRegistered<CallController>()) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+        Get.find<CallController>().disconnectCall();
+      }
     }
   }
 
