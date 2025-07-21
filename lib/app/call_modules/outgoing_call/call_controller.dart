@@ -17,6 +17,7 @@ import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../model/call_user_list.dart';
 import '../../routes/route_settings.dart';
+import 'call_swap_state.dart';
 
 class CallController extends GetxController with GetTickerProviderStateMixin {
   final RxBool isVisible = true.obs;
@@ -167,6 +168,15 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
         pinnedUserJid(firstAttendedCallUser.userJid!.value);
       }
     });
+    if (CallViewState.isSwapped && CallViewState.swappedUserJid != null) {
+      int currentPinnedIndex = callList.indexWhere((element) =>
+      element.userJid?.value == CallViewState.swappedUserJid);
+
+      if (currentPinnedIndex != -1 && pinnedUserJid.value != CallViewState.swappedUserJid) {
+        // Restore swap only if pinned user is different from saved swapped user
+        swap(currentPinnedIndex);
+      }
+    }
   }
 
   /*void startListening() {
@@ -1224,6 +1234,8 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
       var userJid = itemToRemove.userJid?.value;
       pinnedUserJid(userJid);
       callList.swap(index, itemToReplace);
+      CallViewState.isSwapped = true;
+      CallViewState.swappedUserJid = userJid;
     }
   }
 
