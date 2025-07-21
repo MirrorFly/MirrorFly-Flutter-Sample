@@ -321,14 +321,16 @@ class BaseController {
                   "#Mirrorfly call Outgoing call controller not registered for disconnect event");
             }
 
-            if (Get.isRegistered<PipViewController>(tag: "pipView")) {
-              Get.find<PipViewController>(tag: "pipView").callDisconnected();
-              stopTimer();
-            }
-            if (Get.isRegistered<PipViewController>()) {
-              Get.find<PipViewController>().callDisconnected();
-              stopTimer();
-            }
+            // Command the below line because we have handle the below functionality in the pip view controller
+
+            // if (Get.isRegistered<PipViewController>(tag: "pipView")) {
+            //   Get.find<PipViewController>(tag: "pipView").callDisconnected();
+            //   stopTimer();
+            // }
+            // if (Get.isRegistered<PipViewController>()) {
+            //   Get.find<PipViewController>().callDisconnected();
+            //   stopTimer();
+            // }
           break;
         case CallStatus.calling10s:
           break;

@@ -1,5 +1,6 @@
 
 import 'package:flutter/services.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -50,9 +51,11 @@ class SettingsController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
+        PictureInPicture.stopPiP();
         clearAllPreferences();
       }).catchError((ex){
         LogMessage.d("logoutOfChatSDK", ex);
+        PictureInPicture.stopPiP();
         clearAllPreferences();
       });
     } else {
