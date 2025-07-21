@@ -14,6 +14,7 @@ import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
 import 'call_modules/outgoing_call/call_controller.dart';
+import 'call_modules/outgoing_call/call_swap_state.dart';
 import 'call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'call_modules/participants/add_participants_controller.dart';
 import 'common/app_localizations.dart';
@@ -1426,6 +1427,9 @@ class BaseController {
 
   static void stopTimer() {
     debugPrint("baseController stopTimer");
+    CallViewState.isSwapped = false;
+    CallViewState.swappedUserJid = null;
+
     if (timer == null) {
       debugPrint("baseController Timer is null");
     }
