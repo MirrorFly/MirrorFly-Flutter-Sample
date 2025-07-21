@@ -3389,6 +3389,7 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch,true);
     if((await Mirrorfly.isOnGoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
@@ -3435,6 +3436,7 @@ class ChatController extends FullLifeCycleController
 
   void makeVideoCall() async {
     closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch, true);
     if((await Mirrorfly.isOnGoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;

@@ -406,7 +406,7 @@ class Constants {
   static const cameraPermissionAsked = "camera_permission_asked_before";
   static const readPhoneStatePermissionAsked = "read_phone_state_asked_before";
   static const bluetoothPermissionAsked = "bluetooth_permission_asked_before";
-
+ static const layoutSwitch = "layout_switch";
   static const deletedMessage = "This message was deleted";
 
   static const List<int> defaultColorList = [

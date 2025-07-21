@@ -372,6 +372,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     _leaveHintTimer?.cancel();
     isUserLeavingApp = false;
     LogMessage.d('LifeCycle', 'onResumed');
+    SessionManagement.setBool(Constants.layoutSwitch, true);
     NotificationBuilder.cancelNotifications();
     if(hasPaused) {
       hasPaused = false;

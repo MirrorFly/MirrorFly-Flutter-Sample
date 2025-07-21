@@ -66,6 +66,7 @@ class SettingsController extends GetxController {
     var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
     var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
     var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+    var screenLayoutAsked = SessionManagement.getBool(Constants.layoutSwitch);
    if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
       await BackupRestoreManager.instance.googleSignIn.signOut();
     }
@@ -75,6 +76,7 @@ class SettingsController extends GetxController {
       SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      SessionManagement.setBool(Constants.layoutSwitch, screenLayoutAsked);
       DialogUtils.hideLoading();
       NavUtils.offAllNamed(Routes.login);
     });

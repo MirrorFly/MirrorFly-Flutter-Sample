@@ -86,6 +86,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
     // startListening();
     enterFullScreen();
     tabController = TabController(length: 2, vsync: this);
+    layoutSwitch.value = SessionManagement.getBool(Constants.layoutSwitch);
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     debugPrint("#Mirrorfly Call Controller onInit");
     groupId(await Mirrorfly.getCallGroupJid());
@@ -313,6 +314,7 @@ class CallController extends GetxController with GetTickerProviderStateMixin {
 
   void changeLayout() {
     layoutSwitch(!layoutSwitch.value);
+    SessionManagement.setBool(Constants.layoutSwitch, layoutSwitch.value);
   }
 
   void disconnectCall() {
