@@ -23,6 +23,7 @@ import 'common/constants.dart';
 import 'data/helper.dart';
 import 'data/session_management.dart';
 import 'extensions/extensions.dart';
+import 'model/call_user_list.dart';
 import 'modules/backup_restore/controllers/backup_controller.dart';
 import 'modules/backup_restore/controllers/restore_controller.dart';
 import 'modules/chat/controllers/chat_controller.dart';
@@ -1065,9 +1066,31 @@ class BaseController {
   static void userBlockedMe(String jid) async{
     LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<DashboardController>()) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+          var callerList = await Mirrorfly.getCallUsersList();
+          final callUserList = callUserListFromJson(callerList);
+          if(callUserList.length <= 2){
+            final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+            if(blockedUser != null){
+                CallController().disconnectCall();
+            }
+          }
+
+      }
       Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
     }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+        var callerList = await Mirrorfly.getCallUsersList();
+        final callUserList = callUserListFromJson(callerList);
+        if(callUserList.length <= 2){
+          final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+          if(blockedUser != null){
+            CallController().disconnectCall();
+          }
+        }
+        Get.find<CallController>().disconnectCall();
+      }
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
@@ -1084,9 +1107,31 @@ class BaseController {
     }
     if (Get.isRegistered<CallController>()) {
       if((await Mirrorfly.isOnGoingCall()).checkNull()){
-        Get.find<CallController>().disconnectCall();
+       var callerList = await Mirrorfly.getCallUsersList();
+       final callUserList = callUserListFromJson(callerList);
+      if(callUserList.length <= 2){
+        final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+        if(blockedUser != null){
+          Get.find<CallController>().disconnectCall();
+        }
       }
     }
+
+    }
+    if (Get.isRegistered<PipViewController>()) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+        var callerList = await Mirrorfly.getCallUsersList();
+        final callUserList = callUserListFromJson(callerList);
+        if(callUserList.length <= 2){
+          final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+          if(blockedUser != null){
+            CallController().disconnectCall();
+          }
+        }
+
+      }
+    }
+
   }
 
   static void userCameOnline(String jid) {
