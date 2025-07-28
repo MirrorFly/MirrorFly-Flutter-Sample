@@ -27,7 +27,7 @@ class AppPermission {
     }
     if (sdkVersion < 33 && Platform.isAndroid) {
       final permission = await Permission.storage.status;
-      if (permission != PermissionStatus.granted &&
+      if (permission != PermissionStatus.granted && permission !=PermissionStatus.limited &&
           permission != PermissionStatus.permanentlyDenied) {
         const newPermission = Permission.storage;
         var deniedPopupValue = await mirrorFlyPermissionDialog(
@@ -35,7 +35,7 @@ class AppPermission {
         if (deniedPopupValue) {
           isShowing=true;
           var newp = await newPermission.request();
-          if (newp.isGranted) {
+          if (newp.isGranted|| newp.isLimited) {
             isShowing=false;
             return true;
           } else {
@@ -55,9 +55,21 @@ class AppPermission {
           isShowing=false;
           return newPermission.status.isGranted;
         }
+      }else if(permission == PermissionStatus.permanentlyDenied){
+        LogMessage.d("mirrorfly permission", "Photo permission permanently denied");
+        var popupValue = await customPermissionDialog(
+          icon: filePermission,
+          content: deniedContent ?? getPermissionAlertMessage("storage"),
+          dialogStyle: AppStyleConfig.dialogStyle,
+        );
+        if (popupValue) {
+          await openAppSettings();
+        }
+        isShowing = false;
+        return false;
       } else {
         isShowing=false;
-        return permission.isGranted;
+        return (permission.isGranted||permission.isLimited);
       }
     } else if (Platform.isIOS) {
       final photos = await Permission.photos.status;
@@ -69,9 +81,9 @@ class AppPermission {
         // Permission.audio
       ];
       if ((photos != PermissionStatus.granted &&
-              photos != PermissionStatus.permanentlyDenied) ||
+          photos != PermissionStatus.permanentlyDenied && photos != PermissionStatus.limited) ||
           (storage != PermissionStatus.granted &&
-              storage != PermissionStatus.permanentlyDenied)) {
+              storage != PermissionStatus.permanentlyDenied && storage !=PermissionStatus.limited)) {
         LogMessage.d("showing mirrorfly popup", "");
         var deniedPopupValue = await mirrorFlyPermissionDialog(
             icon: filePermission, content: permissionContent ?? getTranslated("filePermissionContent"),dialogStyle: AppStyleConfig.dialogStyle);
@@ -81,7 +93,7 @@ class AppPermission {
           PermissionStatus? photo = newp[Permission.photos];
           PermissionStatus? storage = newp[Permission.storage];
           // var audio = await newPermission[2].isGranted;
-          if (photo!.isGranted && storage!.isGranted) {
+          if ((photo!.isGranted||photo!.isLimited) && (storage!.isGranted||storage!.isLimited) ) {
             isShowing=false;
             return true;
           } else if (photo.isPermanentlyDenied ||
@@ -91,25 +103,34 @@ class AppPermission {
                 content: deniedContent ?? getPermissionAlertMessage("storage"),dialogStyle: AppStyleConfig.dialogStyle);
             if (popupValue) {
               openAppSettings();
-              isShowing=false;
-              return false;
-            } else {
-              isShowing=false;
-              return false;
             }
+            isShowing=false;
+            return false;
           } else {
             isShowing=false;
             return false;
           }
-        } else {
+        }else {
           isShowing=false;
-          return false; //PermissionStatus.denied;
+          return false;
         }
+      }else if(photos == PermissionStatus.permanentlyDenied || storage == PermissionStatus.permanentlyDenied){
+        LogMessage.d("mirrorfly permission", "Photo permission permanently denied");
+        var popupValue = await customPermissionDialog(
+          icon: filePermission,
+          content: deniedContent ?? getPermissionAlertMessage("storage"),
+          dialogStyle: AppStyleConfig.dialogStyle,
+        );
+        if (popupValue) {
+          await openAppSettings();
+        }
+        isShowing = false;
+        return false;
       } else {
         isShowing=false;
         LogMessage.d("showing mirrorfly popup",
             "${photos.isGranted} ${storage.isGranted}");
-        return (photos.isGranted && storage.isGranted);
+        return ((photos.isGranted||photos.isLimited) && (storage.isGranted||storage.isLimited));
         // ? photos
         // : photos;
       }
@@ -129,11 +150,11 @@ class AppPermission {
       Permission.mediaLibrary,
       // Permission.audio
     ];
-    if ((photos != PermissionStatus.granted &&
-            photos != PermissionStatus.permanentlyDenied) ||
-        (videos != PermissionStatus.granted &&
+    if ((photos != PermissionStatus.granted && photos != PermissionStatus.limited &&
+        photos != PermissionStatus.permanentlyDenied) ||
+        (videos != PermissionStatus.granted && videos != PermissionStatus.limited &&
             videos != PermissionStatus.permanentlyDenied) ||
-        (mediaLibrary != PermissionStatus.granted &&
+        (mediaLibrary != PermissionStatus.granted && mediaLibrary != PermissionStatus.limited &&
             mediaLibrary != PermissionStatus.permanentlyDenied)) {
       LogMessage.d("showing mirrorfly popup", "");
       var deniedPopupValue = await mirrorFlyPermissionDialog(
@@ -145,7 +166,7 @@ class AppPermission {
         PermissionStatus? video = newp[Permission.videos];
         PermissionStatus? mediaLibrary = newp[Permission.mediaLibrary];
         // var audio = await newPermission[2].isGranted;
-        if (photo!.isGranted && video!.isGranted && mediaLibrary!.isGranted) {
+        if ((photo!.isGranted || photo!.isLimited) && (video!.isGranted || video!.isLimited) && (mediaLibrary!.isGranted|| mediaLibrary!.isLimited)) {
           isShowing=false;
           return true;
         } else if (photo.isPermanentlyDenied ||
@@ -170,11 +191,23 @@ class AppPermission {
         isShowing=false;
         return false; //PermissionStatus.denied;
       }
-    } else {
+    } else if(photos.isPermanentlyDenied || videos.isPermanentlyDenied || mediaLibrary.isPermanentlyDenied){
+      isShowing = true;
+      var popupValue = await customPermissionDialog(
+        icon: filePermission,
+        content: getPermissionAlertMessage("storage"),
+        dialogStyle: AppStyleConfig.dialogStyle,
+      );
+      isShowing = false;
+      if(popupValue){
+        openAppSettings();
+      }
+      return false;
+    }else {
       isShowing=false;
       LogMessage.d("showing mirrorfly popup",
           "${photos.isGranted} ${videos.isGranted} ${mediaLibrary.isGranted}");
-      return (photos.isGranted && videos.isGranted && mediaLibrary.isGranted);
+      return ((photos.isGranted || photos.isLimited)&& (videos.isGranted||videos.isLimited) && (mediaLibrary.isGranted||mediaLibrary.isLimited));
       // ? photos
       // : photos;
     }
