@@ -1123,15 +1123,15 @@ class DashboardController extends FullLifeCycleController
   }
 
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
-    final index = recentChats.indexWhere(
-        (message) => message.lastMessageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
-    if (!index.isNegative) {
-      // updateRecentChat(chatMessageModel.chatUserJid);
-      recentChats[index].lastMessageStatus =
-          chatMessageModel.messageStatus.value;
-      recentChats.refresh();
-    }
+    // final index = recentChats.indexWhere(
+    //     (message) => message.lastMessageId == chatMessageModel.messageId);
+    // debugPrint("Message Status Update index of search $index");
+    // if (!index.isNegative) {
+      updateRecentChat(jid: chatMessageModel.chatUserJid,changePosition: false);
+    //   recentChats[index].lastMessageStatus =
+    //       chatMessageModel.messageStatus.value;
+    //   recentChats.refresh();
+    // }
   }
 
   void markConversationReadNotifyUI(String jid) {
