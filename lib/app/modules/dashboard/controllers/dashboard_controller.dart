@@ -1629,7 +1629,8 @@ class DashboardController extends FullLifeCycleController
       hasPaused = false;
       LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
       getRecentChatList();
-      fetchCallLogList();
+      // fetchCallLogList();
+      onCallLogUpdate(false);
     }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
@@ -2026,11 +2027,29 @@ class DashboardController extends FullLifeCycleController
       if (search.text.trim().isNotEmpty) {
         filteredCallLog(search.text.trim());
       } else {
-        var res = await Mirrorfly.getLocalCallLogs();
-        var list = callLogListFromJson(res);
-        _callLogList.clear();
-        callLogList.clear();
-        _callLogList.addAll(list.data!);
+        // var res = await Mirrorfly.getLocalCallLogs();
+        // var list = callLogListFromJson(res);
+
+        // _callLogList.addAll(list.data!);
+        loading.value = true;
+        pageNumber =1;
+
+        Mirrorfly.getCallLogsList(
+            currentPage: pageNumber,
+            flyCallBack: (FlyResponse response) {
+              loading.value = false;
+              if (response.isSuccess && response.hasData) {
+                var list = callLogListFromJson(response.data);
+                totalPages = list.totalPages!;
+                _callLogList.clear();
+                callLogList.clear();
+                // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+                if (list.data != null) {
+                  _callLogList.addAll(list.data!);
+                  isLastPage.value = list.data!.isEmpty;
+                }
+              }
+            });
       }
 
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
