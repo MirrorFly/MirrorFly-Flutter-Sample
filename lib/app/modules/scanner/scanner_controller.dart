@@ -65,7 +65,6 @@ class ScannerController extends GetxController {
     }
   }
 
-
   loginWebChatViaQRCode(String? barcode) async {
     LogMessage.d("barcode", barcode.toString());
     if (barcode != null) {
@@ -94,12 +93,11 @@ class ScannerController extends GetxController {
   focusGained(bool isFocusGained) {
     debugPrint('ScannerController focusGained: $isFocusGained');
     if (controller != null) {
-      if(isFocusGained) {
+      if (isFocusGained) {
         debugPrint('ScannerController camera resumeCamera:');
         safeResumeCamera();
-      }else{
+      } else {
         debugPrint('ScannerController camera stopCamera:');
-
       }
     }
   }
@@ -119,5 +117,87 @@ class ScannerController extends GetxController {
         debugPrint("Camera resume error: $e");
       }
     }
+  }
+
+  logoutWebUser() async {
+    if (await AppUtils.isNetConnected()) {
+      DialogUtils.progressLoading();
+      /*Mirrorfly.webLoginDetailsCleared();
+      Mirrorfly.logoutWebUser(loginQr).then((value) {
+        DialogUtils.hideLoading();
+        if (value != null && value) {
+          SessionManagement.setWebChatLogin(false);
+          NavUtils.back();
+        }
+      });*/
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  getWebLoginDetails() {
+    loginQr.clear();
+    /*Mirrorfly.getWebLoginDetails().then((value) {
+      if (value != null) {
+        var list = webLoginFromJson(value);
+        _webLogins(list);
+        for (var element in list) {
+          loginQr.add(element.qrUniqeToken);
+        }
+      }
+    });*/
+  }
+
+  getImageForBrowser(WebLogin item) {
+    var name = item.webBrowserName.toLowerCase();
+    if (name.contains("chrome")) {
+      return icChrome;
+    } else if (name.contains("edge")) {
+      return icEdgeBrowser;
+    } else if (name.contains("firefox")) {
+      return icMozilla;
+    } else if (name.contains("safari")) {
+      return icSafari;
+    } else if (name.contains("ie")) {
+      return icIe;
+    } else if (name.contains("opera")) {
+      return icOpera;
+    } else if (name.contains("uc")) {
+      return icUc;
+    } else {
+      return icDefaultBrowser;
+    }
+  }
+
+  addLogin() {
+    // Mirrorfly.webLoginDetailsCleared();
+    NavUtils.toNamed(Routes.scanner)?.then((value) {
+      getWebLoginDetails();
+    });
+  }
+
+  logoutWeb() {
+    DialogUtils.showAlert(
+        dialogStyle: AppStyleConfig.dialogStyle,
+        message: getTranslated("logoutConfirmation"),
+        actions: [
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: () {
+                NavUtils.back();
+              },
+              child: Text(
+                getTranslated("no").toUpperCase(),
+              )),
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: () {
+                NavUtils.back();
+                logoutWebUser();
+              },
+              child: Text(
+                getTranslated("yes").toUpperCase(),
+              )),
+        ]);
   }
 }

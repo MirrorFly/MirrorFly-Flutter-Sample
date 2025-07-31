@@ -10,9 +10,17 @@ class AnimatedFloatingAction extends StatefulWidget {
   final Color? foregroundColor;
   final Function() audioCallOnPressed;
   final Function() videoCallOnPressed;
+
   // final List<Widget> icons;
 
-  const AnimatedFloatingAction({super.key, required this.tooltip, required this.icon, required this.audioCallOnPressed, required this.videoCallOnPressed, required this.backgroundColor, required this.foregroundColor});
+  const AnimatedFloatingAction(
+      {super.key,
+      required this.tooltip,
+      required this.icon,
+      required this.audioCallOnPressed,
+      required this.videoCallOnPressed,
+      required this.backgroundColor,
+      required this.foregroundColor});
 
   @override
   AnimatedFloatingActionState createState() => AnimatedFloatingActionState();
@@ -23,6 +31,7 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
   bool isOpened = false;
   late AnimationController _animationController;
   late Animation<Color?> _buttonColor;
+
   // late Animation<double> _animateIcon;
   late Animation<double> _translateButton;
   final Curve _curve = Curves.easeOut;
@@ -30,8 +39,8 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
 
   @override
   initState() {
-    _animationController =
-    AnimationController(vsync: this, duration: const Duration(milliseconds: 500))
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500))
       ..addListener(() {
         setState(() {});
       });
@@ -125,44 +134,60 @@ class AnimatedFloatingActionState extends State<AnimatedFloatingAction>
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-     children: [
-       Transform(
-         transform: Matrix4.translationValues(
-           0.0,
-           _translateButton.value * 2.0,
-           0.0,
-         ),
-         child: FloatingActionButton.small(heroTag:"videoCall",onPressed: (){
-           animate();
-           widget.videoCallOnPressed();
-         },backgroundColor:widget.backgroundColor,child: AppUtils.svgIcon(icon:
-           videoCallSmallIcon,
-           width: 18,
-           height: 18,
-           colorFilter: ColorFilter.mode(widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
-           fit: BoxFit.contain,
-         ),),
-       ),
-       Transform(
-         transform: Matrix4.translationValues(
-           0.0,
-           _translateButton.value,
-           0.0,
-         ),
-         child: FloatingActionButton.small(heroTag:"audioCall",onPressed: (){
-           animate();
-           widget.audioCallOnPressed();
-         },backgroundColor:widget.backgroundColor,child: AppUtils.svgIcon(icon:
-           audioCallSmallIcon,
-           width: 18,
-           height: 18,
-           colorFilter: ColorFilter.mode(widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
-           fit: BoxFit.contain,
-         ),),
-       ),
-       isOpened ? const Offstage() : const SizedBox(height: 8,),
-       toggleWidget()
-     ],
+      children: [
+        Transform(
+          transform: Matrix4.translationValues(
+            0.0,
+            _translateButton.value * 2.0,
+            0.0,
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "videoCall",
+            onPressed: () {
+              animate();
+              widget.videoCallOnPressed();
+            },
+            backgroundColor: widget.backgroundColor,
+            child: AppUtils.svgIcon(
+              icon: videoCallSmallIcon,
+              width: 18,
+              height: 18,
+              colorFilter: ColorFilter.mode(
+                  widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        Transform(
+          transform: Matrix4.translationValues(
+            0.0,
+            _translateButton.value,
+            0.0,
+          ),
+          child: FloatingActionButton.small(
+            heroTag: "audioCall",
+            onPressed: () {
+              animate();
+              widget.audioCallOnPressed();
+            },
+            backgroundColor: widget.backgroundColor,
+            child: AppUtils.svgIcon(
+              icon: audioCallSmallIcon,
+              width: 18,
+              height: 18,
+              colorFilter: ColorFilter.mode(
+                  widget.foregroundColor ?? Colors.white, BlendMode.srcIn),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        isOpened
+            ? const Offstage()
+            : const SizedBox(
+                height: 8,
+              ),
+        toggleWidget()
+      ],
     );
   }
 }

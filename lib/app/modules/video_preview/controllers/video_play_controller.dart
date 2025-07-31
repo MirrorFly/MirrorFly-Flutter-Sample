@@ -1,18 +1,16 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../data/utils.dart';
 // import 'package:video_player/video_player.dart';
 
-class VideoPlayController extends GetxController{
-
+class VideoPlayController extends GetxController {
   var videoPath = "".obs;
+
   // late VideoPlayerController videoPlayerController;
   var isInitialized = false.obs;
   var isPlaying = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -33,15 +31,15 @@ class VideoPlayController extends GetxController{
     // videoPlayerController.dispose();
   }
 
-  // togglePlay() {
-  //   if(videoPlayerController.value.isPlaying){
-  //     // videoPlayerController.pause();
-  //     isPlaying(false);
-  //   }else{
-  //
-  //     isPlaying(true);
-  //     // videoPlayerController.play();
-  //
-  //   }
-  // }
+// togglePlay() {
+//   if(videoPlayerController.value.isPlaying){
+//     // videoPlayerController.pause();
+//     isPlaying(false);
+//   }else{
+//
+//     isPlaying(true);
+//     // videoPlayerController.play();
+//
+//   }
+// }
 }
