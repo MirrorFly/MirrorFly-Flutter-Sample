@@ -19,49 +19,78 @@ class AdminBlockedView extends StatelessWidget {
         onFinish(context);
         return;
       },
-      child: SafeArea(child: Container(
+      child: SafeArea(
+          child: Container(
         color: Colors.white,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 55.0,left: 55.0),
-                child: AppUtils.assetIcon(assetName:icLogo),
+                padding: const EdgeInsets.only(right: 55.0, left: 55.0),
+                child: AppUtils.assetIcon(assetName: icLogo),
               ),
               Padding(
-                padding: const EdgeInsets.only(top:20.0),
-                child: AppUtils.svgIcon(icon:icAdminBlocked),
+                padding: const EdgeInsets.only(top: 20.0),
+                child: AppUtils.svgIcon(icon: icAdminBlocked),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("adminBlockedMessage"),style: const TextStyle(decoration: TextDecoration.none,color: textColorBlack,fontSize: 18.0,fontWeight: FontWeight.w600),textAlign: TextAlign.center,),
+                padding:
+                    const EdgeInsets.only(top: 15.0, right: 55.0, left: 55.0),
+                child: Text(
+                  getTranslated("adminBlockedMessage"),
+                  style: const TextStyle(
+                      decoration: TextDecoration.none,
+                      color: textColorBlack,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("adminBlockedMessageLabel"),style: const TextStyle(decoration: TextDecoration.none,color: textColor,fontSize: 16.0,fontWeight: FontWeight.w200),textAlign: TextAlign.center,),
+                padding:
+                    const EdgeInsets.only(top: 10.0, right: 55.0, left: 55.0),
+                child: Text(
+                  getTranslated("adminBlockedMessageLabel"),
+                  style: const TextStyle(
+                      decoration: TextDecoration.none,
+                      color: textColor,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w200),
+                  textAlign: TextAlign.center,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 10.0,right: 55.0,left: 55.0),
-                child: Text(getTranslated("supportMail"),style: const TextStyle(decoration: TextDecoration.underline,color: buttonBgColor,fontSize: 16.0,fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                padding:
+                    const EdgeInsets.only(top: 10.0, right: 55.0, left: 55.0),
+                child: Text(
+                  getTranslated("supportMail"),
+                  style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: buttonBgColor,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 15.0,right: 55.0,left: 55.0),
+                padding:
+                    const EdgeInsets.only(top: 15.0, right: 55.0, left: 55.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: buttonBgColor,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 10),
                       textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                          fontSize: 14, fontWeight: FontWeight.w500),
                       shape: const StadiumBorder()),
                   onPressed: () {
                     onFinish(context);
                   },
                   child: Text(
                     getTranslated("ok"),
-                    style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, color: Colors.white),
                   ),
                 ),
               ),
@@ -72,8 +101,9 @@ class AdminBlockedView extends StatelessWidget {
     );
   }
 
-  onFinish(BuildContext context){
+  onFinish(BuildContext context) {
     // NavUtils.offAllNamed(Routes.login);
-    Navigator.pushNamedAndRemoveUntil(context, Routes.login, (Route<dynamic> route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+        context, Routes.login, (Route<dynamic> route) => false);
   }
 }

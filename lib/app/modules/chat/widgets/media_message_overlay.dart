@@ -11,7 +11,15 @@ import '../../../model/chat_message_model.dart';
 import '../../../stylesheet/stylesheet.dart';
 
 class MediaMessageOverlay extends StatelessWidget {
-  const MediaMessageOverlay({super.key, required this.chatMessage, this.onAudio, this.onVideo, this.progress, this.downloadUploadViewStyle = const DownloadUploadViewStyle(),});
+  const MediaMessageOverlay({
+    super.key,
+    required this.chatMessage,
+    this.onAudio,
+    this.onVideo,
+    this.progress,
+    this.downloadUploadViewStyle = const DownloadUploadViewStyle(),
+  });
+
   final ChatMessageModel chatMessage;
   final Function()? onAudio;
   final Function()? onVideo;
@@ -20,18 +28,25 @@ class MediaMessageOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    debugPrint("getImageOverlay media exists ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
+    debugPrint(
+        "getImageOverlay media exists ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value)}");
 
     debugPrint("isMediaDownloading ${chatMessage.isMediaDownloading()}");
     debugPrint("isMediaUploading ${chatMessage.isMediaUploading()}");
 
-    debugPrint("#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
-    debugPrint("#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
+    debugPrint(
+        "#Media upload status ${chatMessage.mediaChatMessage!.mediaUploadStatus.value}");
+    debugPrint(
+        "#Media download status ${chatMessage.mediaChatMessage!.mediaDownloadStatus.value}");
 
-    debugPrint("#Media if condition ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !(chatMessage.isMessageSentByMe && !chatMessage.isUploadFailed()))}");
+    debugPrint(
+        "#Media if condition ${MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !(chatMessage.isMessageSentByMe && !chatMessage.isUploadFailed()))}");
 
-    if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) && (!chatMessage.isMediaDownloading() && !chatMessage.isMediaUploading() && !(chatMessage.isMessageSentByMe && chatMessage.isUploadFailed()))) {
+    if (MediaUtils.isMediaExists(
+            chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+        (!chatMessage.isMediaDownloading() &&
+            !chatMessage.isMediaUploading() &&
+            !(chatMessage.isMessageSentByMe && chatMessage.isUploadFailed()))) {
       if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
         return FloatingActionButton.small(
           heroTag: chatMessage.messageId,
@@ -52,36 +67,50 @@ class MediaMessageOverlay extends StatelessWidget {
                   height: 30,
                   width: 30,
                   padding: const EdgeInsets.all(7),
-                  child: AppUtils.svgIcon(icon:
-                    chatMessage.mediaChatMessage!.isPlaying ? pauseIcon : playIcon,
+                  child: AppUtils.svgIcon(
+                    icon: chatMessage.mediaChatMessage!.isPlaying
+                        ? pauseIcon
+                        : playIcon,
                     height: 17,
-                    colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
-                  ))
-          ),
+                    colorFilter: ColorFilter.mode(
+                        downloadUploadViewStyle.iconStyle.iconColor,
+                        BlendMode.srcIn),
+                  ))),
         ); //const Icon(Icons.play_arrow_sharp);
       } else {
         return const Offstage();
       }
     } else {
       var status = 0;
-      if(chatMessage.isMessageSentByMe){
-        if(chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploading || chatMessage.mediaChatMessage!.mediaDownloadStatus.value == MediaDownloadStatus.isMediaDownloading ){
-          status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploading) ? MediaUploadStatus.isMediaUploading : MediaDownloadStatus.isMediaDownloading;
-        }else {
-          if (chatMessage.mediaChatMessage!
-              .mediaLocalStoragePath.value
+      if (chatMessage.isMessageSentByMe) {
+        if (chatMessage.mediaChatMessage!.mediaUploadStatus.value ==
+                MediaUploadStatus.isMediaUploading ||
+            chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
+                MediaDownloadStatus.isMediaDownloading) {
+          status = (chatMessage.mediaChatMessage!.mediaUploadStatus.value ==
+                  MediaUploadStatus.isMediaUploading)
+              ? MediaUploadStatus.isMediaUploading
+              : MediaDownloadStatus.isMediaDownloading;
+        } else {
+          if (chatMessage.mediaChatMessage!.mediaLocalStoragePath.value
               .checkNull()
               .isNotEmpty) {
-            if (!MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
-              if (chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploaded || chatMessage.mediaChatMessage!.mediaUploadStatus.value == MediaUploadStatus.isMediaUploadedNotAvailable) {
-                status = MediaDownloadStatus.isMediaNotDownloaded; // for uploaded and deleted in local
+            if (!MediaUtils.isMediaExists(chatMessage
+                .mediaChatMessage!.mediaLocalStoragePath.value
+                .checkNull())) {
+              if (chatMessage.mediaChatMessage!.mediaUploadStatus.value ==
+                      MediaUploadStatus.isMediaUploaded ||
+                  chatMessage.mediaChatMessage!.mediaUploadStatus.value ==
+                      MediaUploadStatus.isMediaUploadedNotAvailable) {
+                status = MediaDownloadStatus
+                    .isMediaNotDownloaded; // for uploaded and deleted in local
               } else {
                 status = -1;
                 //status = MediaDownloadStatus.isMediaNotDownloaded;
               }
             } else {
-
               status = MediaUploadStatus.isMediaUploaded;
+
               /// the below code is commented,
               /// As the file is sent by me
               /// and it is available in media local storage path
@@ -96,7 +125,7 @@ class MediaMessageOverlay extends StatelessWidget {
             status = chatMessage.mediaChatMessage!.mediaUploadStatus.value;
           }
         }
-      }else{
+      } else {
         status = chatMessage.mediaChatMessage!.mediaDownloadStatus.value;
       }
       debugPrint("mediaStatus : $status  messageId ${chatMessage.messageId}");
@@ -106,11 +135,14 @@ class MediaMessageOverlay extends StatelessWidget {
         case MediaDownloadStatus.isMediaDownloaded:
         case MediaUploadStatus.isMediaUploaded:
         case MediaDownloadStatus.isStorageNotEnough:
-          if (!MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value.checkNull())) {
+          if (!MediaUtils.isMediaExists(chatMessage
+              .mediaChatMessage!.mediaLocalStoragePath.value
+              .checkNull())) {
             return InkWell(
               child: downloadView(
                   chatMessage.mediaChatMessage!.mediaFileSize,
-                  chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
+                  chatMessage.messageType.toUpperCase(),
+                  downloadUploadViewStyle),
               onTap: () {
                 downloadMedia(chatMessage.messageId);
               },
@@ -121,18 +153,16 @@ class MediaMessageOverlay extends StatelessWidget {
         case MediaDownloadStatus.isMediaDownloadedNotAvailable:
         case MediaUploadStatus.isMediaUploadedNotAvailable:
           return InkWell(
-            child: downloadView(
-                chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
+            child: downloadView(chatMessage.mediaChatMessage!.mediaFileSize,
+                chatMessage.messageType.toUpperCase(), downloadUploadViewStyle),
             onTap: () {
               downloadMedia(chatMessage.messageId);
             },
           );
         case MediaDownloadStatus.isMediaNotDownloaded:
           return InkWell(
-            child: downloadView(
-                chatMessage.mediaChatMessage!.mediaFileSize,
-                chatMessage.messageType.toUpperCase(),downloadUploadViewStyle),
+            child: downloadView(chatMessage.mediaChatMessage!.mediaFileSize,
+                chatMessage.messageType.toUpperCase(), downloadUploadViewStyle),
             onTap: () {
               downloadMedia(chatMessage.messageId);
             },
@@ -143,27 +173,31 @@ class MediaMessageOverlay extends StatelessWidget {
                 debugPrint("upload Media ==> ${chatMessage.messageId}");
                 uploadMedia(chatMessage.messageId);
               },
-              child: uploadView(chatMessage.messageType.toUpperCase(),downloadUploadViewStyle));
+              child: uploadView(chatMessage.messageType.toUpperCase(),
+                  downloadUploadViewStyle));
         case MediaDownloadStatus.isMediaDownloading:
         case MediaUploadStatus.isMediaUploading:
           return Obx(() {
-            return InkWell(onTap: () {
-              cancelMediaUploadOrDownload(chatMessage.messageId);
-            }, child: downloadingOrUploadingView(chatMessage.messageType,
-                chatMessage.mediaChatMessage!.mediaProgressStatus.value,downloadUploadViewStyle)
-            );
+            return InkWell(
+                onTap: () {
+                  cancelMediaUploadOrDownload(chatMessage.messageId);
+                },
+                child: downloadingOrUploadingView(
+                    chatMessage.messageType,
+                    chatMessage.mediaChatMessage!.mediaProgressStatus.value,
+                    downloadUploadViewStyle));
           });
         default:
           return InkWell(
               onTap: () {
                 toToast(getTranslated("mediaDoesNotExist"));
               },
-              child: uploadView(chatMessage.messageType.toUpperCase(),downloadUploadViewStyle));
+              child: uploadView(chatMessage.messageType.toUpperCase(),
+                  downloadUploadViewStyle));
       }
     }
   }
 }
-
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
@@ -177,7 +211,9 @@ void downloadMedia(String messageId) async {
   debugPrint("media download click");
   debugPrint("media download click--> $messageId");
   if (await AppUtils.isNetConnected()) {
-    var permission = await AppPermission.getStoragePermission(permissionContent: getTranslated("writeStoragePermissionContent"),deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
+    var permission = await AppPermission.getStoragePermission(
+        permissionContent: getTranslated("writeStoragePermissionContent"),
+        deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
     if (permission) {
       debugPrint("media permission granted");
       Mirrorfly.downloadMedia(messageId: messageId);
@@ -189,100 +225,110 @@ void downloadMedia(String messageId) async {
   }
 }
 
-
-
-Widget uploadView(String messageType,DownloadUploadViewStyle downloadUploadViewStyle) {
+Widget uploadView(
+    String messageType, DownloadUploadViewStyle downloadUploadViewStyle) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
-        height: 30,
-        width: 30,
-        decoration: downloadUploadViewStyle.decoration,
-        /*decoration: BoxDecoration(
+            height: 30,
+            width: 30,
+            decoration: downloadUploadViewStyle.decoration,
+            /*decoration: BoxDecoration(
             border: Border.all(color: borderColor),
             borderRadius: BorderRadius.circular(3)),*/
-        padding: const EdgeInsets.all(7),
-        child: AppUtils.svgIcon(icon:
-          uploadIcon,
-          colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
-        ))
+            padding: const EdgeInsets.all(7),
+            child: AppUtils.svgIcon(
+              icon: uploadIcon,
+              colorFilter: ColorFilter.mode(
+                  downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
+            ))
         : Container(
-        height: 35,
-        width: 90,
-        decoration: downloadUploadViewStyle.decoration,
-        /*decoration: const BoxDecoration(
+            height: 35,
+            width: 90,
+            decoration: downloadUploadViewStyle.decoration,
+            /*decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           color: Colors.black45,
         ),*/
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppUtils.svgIcon(icon:uploadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              getTranslated("retry").toUpperCase(),
-              style: downloadUploadViewStyle.textStyle,
-              // style: const TextStyle(color: Colors.white, fontSize: 10),
-            ),
-          ],
-        )),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppUtils.svgIcon(
+                    icon: uploadIcon,
+                    colorFilter: ColorFilter.mode(
+                        downloadUploadViewStyle.iconStyle.iconColor,
+                        BlendMode.srcIn)),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  getTranslated("retry").toUpperCase(),
+                  style: downloadUploadViewStyle.textStyle,
+                  // style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ],
+            )),
   );
 }
 
-
-Widget downloadView(int mediaFileSize, String messageType,DownloadUploadViewStyle downloadUploadViewStyle) {
+Widget downloadView(int mediaFileSize, String messageType,
+    DownloadUploadViewStyle downloadUploadViewStyle) {
   return Padding(
-    padding: messageType == 'AUDIO' ? const EdgeInsets.symmetric(horizontal: 8.0) : const EdgeInsets.only(left: 8),
+    padding: messageType == 'AUDIO'
+        ? const EdgeInsets.symmetric(horizontal: 8.0)
+        : const EdgeInsets.only(left: 8),
     child: messageType == 'AUDIO' || messageType == 'DOCUMENT'
         ? Container(
-        height: 28,
-        width: 28,
-        decoration: downloadUploadViewStyle.decoration,
-        // decoration: BoxDecoration(
-        //     border: Border.all(color: borderColor),
-        //     borderRadius: BorderRadius.circular(3)),
-        padding: const EdgeInsets.all(7),
-        child: AppUtils.svgIcon(icon:
-          downloadIcon,
-          colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)
-        ))
+            height: 28,
+            width: 28,
+            decoration: downloadUploadViewStyle.decoration,
+            // decoration: BoxDecoration(
+            //     border: Border.all(color: borderColor),
+            //     borderRadius: BorderRadius.circular(3)),
+            padding: const EdgeInsets.all(7),
+            child: AppUtils.svgIcon(
+                icon: downloadIcon,
+                colorFilter: ColorFilter.mode(
+                    downloadUploadViewStyle.iconStyle.iconColor,
+                    BlendMode.srcIn)))
         : Container(
-        height: 31,
-        width: 90,
-        decoration: downloadUploadViewStyle.decoration,
-        /*decoration: BoxDecoration(
+            height: 31,
+            width: 90,
+            decoration: downloadUploadViewStyle.decoration,
+            /*decoration: BoxDecoration(
           border: Border.all(
             color: textColor,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5)),
           color: Colors.black38,
         ),*/
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppUtils.svgIcon(icon:downloadIcon,colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn)),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              MediaUtils.fileSize(mediaFileSize),
-              style: downloadUploadViewStyle.textStyle,
-              // style: const TextStyle(color: Colors.white, fontSize: 10),
-            ),
-          ],
-        )),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppUtils.svgIcon(
+                    icon: downloadIcon,
+                    colorFilter: ColorFilter.mode(
+                        downloadUploadViewStyle.iconStyle.iconColor,
+                        BlendMode.srcIn)),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  MediaUtils.fileSize(mediaFileSize),
+                  style: downloadUploadViewStyle.textStyle,
+                  // style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ],
+            )),
   );
 }
 
-
 void cancelMediaUploadOrDownload(String messageId) {
   AppUtils.isNetConnected().then((value) {
-    if(value){
+    if (value) {
       Mirrorfly.cancelMediaUploadOrDownload(messageId: messageId);
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -290,9 +336,11 @@ void cancelMediaUploadOrDownload(String messageId) {
   });
 }
 
-downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewStyle downloadUploadViewStyle) {
+downloadingOrUploadingView(String messageType, int progress,
+    DownloadUploadViewStyle downloadUploadViewStyle) {
   debugPrint('downloadingOrUploadingView progress $progress');
-  if (messageType == MessageType.audio.value || messageType == MessageType.document.value) {
+  if (messageType == MessageType.audio.value ||
+      messageType == MessageType.document.value) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
@@ -310,10 +358,12 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
               alignment: Alignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AppUtils.svgIcon(icon:
-                  downloading,
+                AppUtils.svgIcon(
+                  icon: downloading,
                   fit: BoxFit.contain,
-                  colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                      downloadUploadViewStyle.iconStyle.iconColor,
+                      BlendMode.srcIn),
                   // colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
                 ),
                 Align(
@@ -349,10 +399,12 @@ downloadingOrUploadingView(String messageType, int progress,DownloadUploadViewSt
             alignment: Alignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppUtils.svgIcon(icon:
-                downloading,
+              AppUtils.svgIcon(
+                icon: downloading,
                 fit: BoxFit.contain,
-                colorFilter: ColorFilter.mode(downloadUploadViewStyle.iconStyle.iconColor, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                    downloadUploadViewStyle.iconStyle.iconColor,
+                    BlendMode.srcIn),
               ),
               Align(
                 alignment: Alignment.bottomCenter,

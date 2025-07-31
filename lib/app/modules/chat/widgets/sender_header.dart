@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/message_params.dart';
@@ -6,13 +5,14 @@ import 'package:mirrorfly_plugin/message_params.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
-
 /// [SenderHeader] This widget is used for displaying the UserName in the Message Widgets.
 class SenderHeader extends StatelessWidget {
-  const SenderHeader({Key? key,
-    required this.isGroupProfile,
-    required this.chatList,
-    required this.index, required this.textStyle})
+  const SenderHeader(
+      {Key? key,
+      required this.isGroupProfile,
+      required this.chatList,
+      required this.index,
+      required this.textStyle})
       : super(key: key);
   final bool? isGroupProfile;
   final List<ChatMessageModel> chatList;
@@ -25,8 +25,9 @@ class SenderHeader extends StatelessWidget {
       var currentMessage = messageList[position];
       var previousMessage = messageList[preposition];
       if (currentMessage.isMessageSentByMe !=
-          previousMessage.isMessageSentByMe ||
-          previousMessage.messageType.toUpperCase() == MessageType.isNotification ||
+              previousMessage.isMessageSentByMe ||
+          previousMessage.messageType.toUpperCase() ==
+              MessageType.isNotification ||
           (currentMessage.messageChatType == ChatType.groupChat &&
               currentMessage.isThisAReplyMessage)) {
         return true;
@@ -44,7 +45,8 @@ class SenderHeader extends StatelessWidget {
     return previousMessage != null && checkIsNotNotification(previousMessage);
   }
 
-  ChatMessageModel? getPreviousMessage(List<ChatMessageModel> messageList, int position) {
+  ChatMessageModel? getPreviousMessage(
+      List<ChatMessageModel> messageList, int position) {
     return (position > 0) ? messageList[position + 1] : null;
   }
 
@@ -59,15 +61,16 @@ class SenderHeader extends StatelessWidget {
     return Visibility(
       visible: isGroupProfile ?? false
           ? (index == chatList.length - 1 ||
-          isSenderChanged(chatList, index)) &&
-          !chatList[index].isMessageSentByMe
+                  isSenderChanged(chatList, index)) &&
+              !chatList[index].isMessageSentByMe
           : false,
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
         child: Text(
           chatList[index].senderUserName.checkNull(),
-          style: textStyle?.copyWith(color: Color(MessageUtils.getColourCode(
-    chatList[index].senderUserName.checkNull()))),
+          style: textStyle?.copyWith(
+              color: Color(MessageUtils.getColourCode(
+                  chatList[index].senderUserName.checkNull()))),
           /*style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,

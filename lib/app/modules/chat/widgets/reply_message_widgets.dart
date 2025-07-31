@@ -54,11 +54,12 @@ class ReplyingMessageHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0, left: 15.0),
                       child: getReplyTitle(
-                          chatMessage.isMessageSentByMe,
-                          chatMessage.senderUserName.checkNull().isNotEmpty
-                              ? chatMessage.senderUserName
-                              : chatMessage.senderNickName,
-                          replyHeaderMessageViewStyle.titleTextStyle,),
+                        chatMessage.isMessageSentByMe,
+                        chatMessage.senderUserName.checkNull().isNotEmpty
+                            ? chatMessage.senderUserName
+                            : chatMessage.senderNickName,
+                        replyHeaderMessageViewStyle.titleTextStyle,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Padding(
@@ -71,17 +72,22 @@ class ReplyingMessageHeader extends StatelessWidget {
                           isReplying: true,
                           textStyle:
                               replyHeaderMessageViewStyle.contentTextStyle,
-                          contactName: chatMessage
-                              .contactChatMessage?.contactName,
-                          mediaFileName: chatMessage
-                              .mediaChatMessage?.mediaFileName,
+                          contactName:
+                              chatMessage.contactChatMessage?.contactName,
+                          mediaFileName:
+                              chatMessage.mediaChatMessage?.mediaFileName,
                           mediaChatMessage: chatMessage.mediaChatMessage,
                           mentionedUsers: chatMessage.mentionedUsersIds ?? [],
                           linkColor: replyHeaderMessageViewStyle.linkColor,
-                          mentionUserTextColor: replyHeaderMessageViewStyle.mentionUserColor,
-                          searchHighlightColor: replyHeaderMessageViewStyle.searchHighLightColor,
-                          mentionedMeBgColor: replyHeaderMessageViewStyle.mentionedMeBgColor,
-                          scheduledDateTime: chatMessage.meetChatMessage?.scheduledDateTime??0,
+                          mentionUserTextColor:
+                              replyHeaderMessageViewStyle.mentionUserColor,
+                          searchHighlightColor:
+                              replyHeaderMessageViewStyle.searchHighLightColor,
+                          mentionedMeBgColor:
+                              replyHeaderMessageViewStyle.mentionedMeBgColor,
+                          scheduledDateTime:
+                              chatMessage.meetChatMessage?.scheduledDateTime ??
+                                  0,
                         )
                         // getReplyMessage(
                         //     chatMessage.messageType.toUpperCase(),
@@ -107,7 +113,8 @@ class ReplyingMessageHeader extends StatelessWidget {
                       true,
                       chatMessage.locationChatMessage,
                       replyHeaderMessageViewStyle.mediaIconStyle,
-                      replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe),
+                      replyHeaderMessageViewStyle.borderRadius,
+                      chatMessage.isMessageSentByMe),
                   GestureDetector(
                     onTap: onCancel,
                     child: const Padding(
@@ -171,15 +178,14 @@ class ReplyMessage extends StatelessWidget {
             // Text(messageTextContent!),
             Expanded(
                 child: CustomTextView(
-              text: messageTextContent,
-              maxLines: 1,
-              defaultTextStyle: textStyle,
-              linkColor: linkColor,
-              mentionUserTextColor: mentionUserTextColor,
-              searchQueryTextColor: searchHighlightColor,
-              mentionUserIds: mentionedUsers,
-                    mentionedMeBgColor:mentionedMeBgColor
-            )),
+                    text: messageTextContent,
+                    maxLines: 1,
+                    defaultTextStyle: textStyle,
+                    linkColor: linkColor,
+                    mentionUserTextColor: mentionUserTextColor,
+                    searchQueryTextColor: searchHighlightColor,
+                    mentionUserIds: mentionedUsers,
+                    mentionedMeBgColor: mentionedMeBgColor)),
           ],
         );
       case Constants.mImage:
@@ -284,12 +290,19 @@ class ReplyMessage extends StatelessWidget {
                 AppUtils.svgIcon(
                     icon: videoCamera,
                     width: 15,
-                    colorFilter:const ColorFilter.mode(
+                    colorFilter: const ColorFilter.mode(
                         Color.fromRGBO(151, 165, 199, 1), BlendMode.srcIn)),
                 const SizedBox(
                   width: 10,
                 ),
-                Expanded(child: Text(MessageUtils.getMeetMessage(scheduledDateTime),style: textStyle,overflow: TextOverflow.ellipsis,softWrap: false, maxLines: 2,)),
+                Expanded(
+                    child: Text(
+                  MessageUtils.getMeetMessage(scheduledDateTime),
+                  style: textStyle,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  maxLines: 2,
+                )),
                 const SizedBox(
                   width: 5,
                 ),
@@ -326,7 +339,8 @@ getReplyImageHolder(
     bool isNotChatItem,
     LocationChatMessage? locationChatMessage,
     IconStyle iconStyle,
-    BorderRadius borderRadius,bool isSend) {
+    BorderRadius borderRadius,
+    bool isSend) {
   var isReply = false;
   if (mediaChatMessage != null || locationChatMessage != null) {
     isReply = true;
@@ -347,11 +361,15 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child: ImageCacheManager.getImage(isReply
+          child: ImageCacheManager.getImage(
+              isReply
                   ? mediaChatMessage!.mediaThumbImage
                   : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                  .checkNull(),
-              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
+                      .checkNull(),
+              isNotChatItem
+                  ? chatMessageModel.messageId.checkNull()
+                  : (chatMessageModel.replyParentChatMessage?.messageId)
+                      .checkNull(),
               size,
               size),
         ),
@@ -374,12 +392,15 @@ getReplyImageHolder(
         child: SizedBox(
           width: size,
           height: size,
-          child:  ImageCacheManager.getImage(
+          child: ImageCacheManager.getImage(
               isReply
                   ? mediaChatMessage!.mediaThumbImage
                   : chatMessageModel.mediaChatMessage!.mediaThumbImage
-                  .checkNull(),
-              isNotChatItem ? chatMessageModel.messageId.checkNull() : (chatMessageModel.replyParentChatMessage?.messageId).checkNull(),
+                      .checkNull(),
+              isNotChatItem
+                  ? chatMessageModel.messageId.checkNull()
+                  : (chatMessageModel.replyParentChatMessage?.messageId)
+                      .checkNull(),
               size,
               size),
         ),
@@ -427,15 +448,18 @@ getReplyImageHolder(
                 ),
               ),
             );
-    case  Constants.mMeet:
-      return isNotChatItem?const Offstage(): Container(
-        padding:const EdgeInsets.all(10),
-        decoration: BoxDecoration(color:isSend?const Color(0xffE3E7F0):Colors.white),
-        child: AppUtils.assetIcon(
-          assetName: mirrorflySmall,
-          width: 30,
-          ),
-      );
+    case Constants.mMeet:
+      return isNotChatItem
+          ? const Offstage()
+          : Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: isSend ? const Color(0xffE3E7F0) : Colors.white),
+              child: AppUtils.assetIcon(
+                assetName: mirrorflySmall,
+                width: 30,
+              ),
+            );
     default:
       debugPrint("reply header--> DEFAULT");
       return SizedBox(
@@ -453,16 +477,24 @@ class ReplyMessageHeader extends StatelessWidget {
   final ChatMessageModel chatMessage;
   final ReplyHeaderMessageViewStyle replyHeaderMessageViewStyle;
 
-  bool getReplyType(){
-    String replyType= chatMessage.replyParentChatMessage?.messageType ??"";
-    String type= chatMessage.messageType;
-    return !chatMessage.isMessageRecalled.value&&((type==Constants.mFile||type==Constants.mVideo||type==Constants.mDocument||type==Constants.mImage||type==Constants.mLocation||type==Constants.mContact)&&(replyType==Constants.mMeet));
+  bool getReplyType() {
+    String replyType = chatMessage.replyParentChatMessage?.messageType ?? "";
+    String type = chatMessage.messageType;
+    return !chatMessage.isMessageRecalled.value &&
+        ((type == Constants.mFile ||
+                type == Constants.mVideo ||
+                type == Constants.mDocument ||
+                type == Constants.mImage ||
+                type == Constants.mLocation ||
+                type == Constants.mContact) &&
+            (replyType == Constants.mMeet));
   }
+
   @override
   Widget build(BuildContext context) {
     LogMessage.d("ReplyMessageHeader", chatMessage.toJson());
     return Container(
-      width:(getReplyType()?NavUtils.width * 0.59:null),
+      width: (getReplyType() ? NavUtils.width * 0.59 : null),
       padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
       margin: const EdgeInsets.all(4),
       // width: NavUtils.width * 0.60,
@@ -482,9 +514,10 @@ class ReplyMessageHeader extends StatelessWidget {
               children: [
                 const SizedBox(height: 5),
                 getReplyTitle(
-                    chatMessage.replyParentChatMessage!.isMessageSentByMe,
-                    chatMessage.replyParentChatMessage!.senderUserName,
-                    replyHeaderMessageViewStyle.titleTextStyle,),
+                  chatMessage.replyParentChatMessage!.isMessageSentByMe,
+                  chatMessage.replyParentChatMessage!.senderUserName,
+                  replyHeaderMessageViewStyle.titleTextStyle,
+                ),
                 const SizedBox(height: 5),
                 ReplyMessage(
                   messageType: chatMessage.replyParentChatMessage!.messageType
@@ -504,10 +537,15 @@ class ReplyMessageHeader extends StatelessWidget {
                       chatMessage.replyParentChatMessage!.mentionedUsersIds ??
                           [],
                   linkColor: replyHeaderMessageViewStyle.linkColor,
-                  mentionUserTextColor: replyHeaderMessageViewStyle.mentionUserColor,
-                  searchHighlightColor: replyHeaderMessageViewStyle.searchHighLightColor,
-                  mentionedMeBgColor: replyHeaderMessageViewStyle.mentionedMeBgColor,
-                  scheduledDateTime: chatMessage.replyParentChatMessage?.meetChatMessage?.scheduledDateTime ??0,
+                  mentionUserTextColor:
+                      replyHeaderMessageViewStyle.mentionUserColor,
+                  searchHighlightColor:
+                      replyHeaderMessageViewStyle.searchHighLightColor,
+                  mentionedMeBgColor:
+                      replyHeaderMessageViewStyle.mentionedMeBgColor,
+                  scheduledDateTime: chatMessage.replyParentChatMessage
+                          ?.meetChatMessage?.scheduledDateTime ??
+                      0,
                 )
                 // getReplyMessage(
                 //     chatMessage.replyParentChatMessage!.messageType,
@@ -531,7 +569,8 @@ class ReplyMessageHeader extends StatelessWidget {
               false,
               chatMessage.replyParentChatMessage?.locationChatMessage,
               replyHeaderMessageViewStyle.mediaIconStyle,
-              replyHeaderMessageViewStyle.borderRadius,chatMessage.isMessageSentByMe),
+              replyHeaderMessageViewStyle.borderRadius,
+              chatMessage.isMessageSentByMe),
         ],
       ),
     );

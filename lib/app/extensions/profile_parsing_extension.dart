@@ -26,10 +26,15 @@ extension ProfileParsing on ProfileDetails {
   }
 
   bool isUnknownContact() {
-    return !isDeletedContact() && !isItSavedContact() && !isGroupProfile.checkNull();
+    return !isDeletedContact() &&
+        !isItSavedContact() &&
+        !isGroupProfile.checkNull();
   }
 
-  bool isEmailContact() => !isGroupProfile.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+  bool isEmailContact() =>
+      !isGroupProfile.checkNull() &&
+      isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 
   String getName() {
     if (!Constants.enableContactSync) {
@@ -40,7 +45,9 @@ extension ProfileParsing on ProfileDetails {
         ? item.nickName.toString()
         : item.name.toString();*/
       return name.checkNull().isEmpty
-          ? (nickName.checkNull().isEmpty ? getMobileNumberFromJid(jid.checkNull()) : nickName.checkNull())
+          ? (nickName.checkNull().isEmpty
+              ? getMobileNumberFromJid(jid.checkNull())
+              : nickName.checkNull())
           : name.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {
@@ -54,8 +61,10 @@ extension ProfileParsing on ProfileDetails {
       } else {
         LogMessage.d('nickName', nickName.toString());
         return nickName.checkNull().isEmpty
-            ? (name.checkNull().isEmpty ? getMobileNumberFromJid(jid.checkNull()) : name.checkNull())
-            : nickName.checkNull();//#FLUTTER-1300
+            ? (name.checkNull().isEmpty
+                ? getMobileNumberFromJid(jid.checkNull())
+                : name.checkNull())
+            : nickName.checkNull(); //#FLUTTER-1300
       }
     }
   }

@@ -1,7 +1,6 @@
 part of 'utils.dart';
 
-class MessageUtils{
-
+class MessageUtils {
   /// Constructs a URI for a static Google Maps image based on the provided latitude and longitude coordinates.
   /// The image will display a map centered at the specified coordinates with a red marker indicating the location.
   ///
@@ -11,7 +10,8 @@ class MessageUtils{
   static Uri getMapImageUri(double latitude, double longitude) {
     var googleMapKey = Get.find<MainController>()
         .googleMapKey; // Obtain Google Maps API key from the main controller
-    return Uri.parse("https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
+    return Uri.parse(
+        "https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=13&size=300x200&markers=color:red|$latitude,$longitude&key=$googleMapKey");
   }
 
   /// Generates a Google Maps launch URI based on the provided latitude and longitude coordinates.
@@ -19,10 +19,10 @@ class MessageUtils{
   /// @param latitude The latitude coordinate.
   /// @param longitude The longitude coordinate.
   /// @return A [Uri] representing the Google Maps URI for launching the map at the specified location.
-  static Uri getMapLaunchUri(double latitude, double longitude){
-    return Uri.parse('https://www.google.com/maps/search/?api=1&query=$latitude, $longitude');
+  static Uri getMapLaunchUri(double latitude, double longitude) {
+    return Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude, $longitude');
   }
-
 
   /// Returns the color code corresponding to the given name.
   /// If the name matches the translated version of "you",
@@ -38,7 +38,6 @@ class MessageUtils{
     return colorsArray[(rand).abs()];
   }
 
-
   /// Returns an appropriate icon widget based on the provided media type.
   ///
   /// [mediaType]: The type of media for which the icon is needed.
@@ -46,53 +45,54 @@ class MessageUtils{
   /// If `true` and [mediaType] is audio, it displays a different icon for recorded audio.
   ///
   /// Returns a widget displaying the appropriate icon for the given [mediaType].
-  static Widget getMediaTypeIcon(String mediaType, [bool isAudioRecorded = false]) {
+  static Widget getMediaTypeIcon(String mediaType,
+      [bool isAudioRecorded = false]) {
     // Logs the media type for debugging purposes.
     LogMessage.d("iconfor", mediaType.toString());
 
     // Determines the appropriate icon based on the media type.
     switch (mediaType.toUpperCase()) {
       case Constants.mImage:
-        return AppUtils.svgIcon(icon:
-          mImageIcon,
+        return AppUtils.svgIcon(
+          icon: mImageIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mAudio:
-      // Displays different icons based on whether the audio is recorded or not.
-        return AppUtils.svgIcon(icon:
-          isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
+        // Displays different icons based on whether the audio is recorded or not.
+        return AppUtils.svgIcon(
+          icon: isAudioRecorded ? mAudioRecordIcon : mAudioIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mVideo:
-        return AppUtils.svgIcon(icon:
-          mVideoIcon,
+        return AppUtils.svgIcon(
+          icon: mVideoIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mDocument:
       case Constants.mFile:
-      // Displays the same icon for both document and file types.
-        return AppUtils.svgIcon(icon:
-          mDocumentIcon,
+        // Displays the same icon for both document and file types.
+        return AppUtils.svgIcon(
+          icon: mDocumentIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mContact:
-        return AppUtils.svgIcon(icon:
-          mContactIcon,
+        return AppUtils.svgIcon(
+          icon: mContactIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       case Constants.mLocation:
-        return AppUtils.svgIcon(icon:
-          mLocationIcon,
+        return AppUtils.svgIcon(
+          icon: mLocationIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(playIconColor, BlendMode.srcIn),
         );
       default:
-      // Returns an empty Offstage if the media type is not recognized.
+        // Returns an empty Offstage if the media type is not recognized.
         return const Offstage();
     }
   }
@@ -112,19 +112,20 @@ class MessageUtils{
   /// the appropriate icon is returned based on the message status. If the message type is a notification, or if the sender
   /// is the current user or the message is recalled, an Offstage widget is returned to indicate no icon should be displayed.
 
-  static Widget getMessageIndicatorIcon(String messageStatus, bool isSender, String messageType, bool isRecalled) {
+  static Widget getMessageIndicatorIcon(String messageStatus, bool isSender,
+      String messageType, bool isRecalled) {
     // debugPrint("Message Status ==>");
     // debugPrint("Message Status ==> $messageStatus");
     if (messageType.toUpperCase() != MessageType.isNotification) {
       if (isSender && !isRecalled) {
         if (messageStatus == 'A') {
-          return AppUtils.svgIcon(icon:acknowledgedIcon);
+          return AppUtils.svgIcon(icon: acknowledgedIcon);
         } else if (messageStatus == 'D') {
-          return AppUtils.svgIcon(icon:deliveredIcon);
+          return AppUtils.svgIcon(icon: deliveredIcon);
         } else if (messageStatus == 'S') {
-          return AppUtils.svgIcon(icon:seenIcon);
+          return AppUtils.svgIcon(icon: seenIcon);
         } else if (messageStatus == 'N') {
-          return AppUtils.svgIcon(icon:unSendIcon);
+          return AppUtils.svgIcon(icon: unSendIcon);
         } else {
           return const Offstage();
         }
@@ -145,10 +146,9 @@ class MessageUtils{
   ///   A Widget displaying the icon for the specified document type.
   static Widget getDocumentTypeIcon(String mediaFileName, double size) {
     debugPrint("mediaFileName--> $mediaFileName");
-    return AppUtils.svgIcon(icon:getDocAsset(mediaFileName),
-        width: size, height: size);
+    return AppUtils.svgIcon(
+        icon: getDocAsset(mediaFileName), width: size, height: size);
   }
-
 
   /// Retrieves the corresponding image asset for a given document file type.
   ///
@@ -158,7 +158,8 @@ class MessageUtils{
     if (filename.isEmpty || !filename.contains(".")) {
       return "";
     }
-    debugPrint("helper document--> ${filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)}");
+    debugPrint(
+        "helper document--> ${filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)}");
     switch (filename.toLowerCase().substring(filename.lastIndexOf(".") + 1)) {
       case "csv":
         return csvImage;
@@ -189,13 +190,13 @@ class MessageUtils{
     }
   }
 
-
   /// split the call link from the message
   static String getCallLinkFromMessage(String message) {
     var link = "";
     var messageArray = message.split(" ");
     for (var i = 0; i < messageArray.length; i++) {
-      if (messageArray[i].isURL && messageArray[i].startsWith(Constants.webChatLogin)) {
+      if (messageArray[i].isURL &&
+          messageArray[i].startsWith(Constants.webChatLogin)) {
         link = messageArray[i];
         break;
       }
@@ -204,49 +205,54 @@ class MessageUtils{
     return link.trim();
   }
 
-  static Widget forMessageTypeIcon(String messageType,[MediaChatMessage? mediaChatMessage]) {
+  static Widget forMessageTypeIcon(String messageType,
+      [MediaChatMessage? mediaChatMessage]) {
     // debugPrint("messagetype $messageType");
     switch (messageType.toUpperCase()) {
       case Constants.mImage:
-        return AppUtils.svgIcon(icon:
-        mImageIcon,
+        return AppUtils.svgIcon(
+          icon: mImageIcon,
           fit: BoxFit.contain,
         );
       case Constants.mAudio:
-        return AppUtils.svgIcon(icon:
-        mediaChatMessage != null ? mediaChatMessage.isAudioRecorded ? mAudioRecordIcon : mAudioIcon : mAudioIcon,
+        return AppUtils.svgIcon(
+          icon: mediaChatMessage != null
+              ? mediaChatMessage.isAudioRecorded
+                  ? mAudioRecordIcon
+                  : mAudioIcon
+              : mAudioIcon,
           fit: BoxFit.contain,
           colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
         );
       case Constants.mVideo:
-        return AppUtils.svgIcon(icon:
-        mVideoIcon,
+        return AppUtils.svgIcon(
+          icon: mVideoIcon,
           fit: BoxFit.contain,
         );
       case Constants.mDocument:
-        return AppUtils.svgIcon(icon:
-        mDocumentIcon,
+        return AppUtils.svgIcon(
+          icon: mDocumentIcon,
           fit: BoxFit.contain,
         );
       case Constants.mFile:
-        return AppUtils.svgIcon(icon:
-        mDocumentIcon,
+        return AppUtils.svgIcon(
+          icon: mDocumentIcon,
           fit: BoxFit.contain,
         );
       case Constants.mContact:
-        return AppUtils.svgIcon(icon:
-        mContactIcon,
+        return AppUtils.svgIcon(
+          icon: mContactIcon,
           fit: BoxFit.contain,
         );
       case Constants.mLocation:
-        return AppUtils.svgIcon(icon:
-        mLocationIcon,
+        return AppUtils.svgIcon(
+          icon: mLocationIcon,
           fit: BoxFit.contain,
         );
       case Constants.mMeet:
-        return AppUtils.svgIcon(icon:
-        mMeetIcon,
-          colorFilter:const ColorFilter.mode(textColor, BlendMode.srcIn),
+        return AppUtils.svgIcon(
+          icon: mMeetIcon,
+          colorFilter: const ColorFilter.mode(textColor, BlendMode.srcIn),
           fit: BoxFit.contain,
         );
       default:
@@ -271,25 +277,25 @@ class MessageUtils{
         return "Contact";
       case Constants.mLocation:
         return "Location";
-        case Constants.mMeet:
-      return "Meet";
+      case Constants.mMeet:
+        return "Meet";
       default:
         return null;
     }
   }
 
-
-  static String getMeetMessage (int timestamp, {bool isScheduleOn = true}){
+  static String getMeetMessage(int timestamp, {bool isScheduleOn = true}) {
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     String formattedDate = DateFormat("MMM d, yyyy h:mm a").format(dateTime);
     formattedDate = formattedDate.replaceAll("AM", "am").replaceAll("PM", "pm");
-   String message = getTranslated("scheduleOn")+formattedDate;
-   if(isScheduleOn) {
+    String message = getTranslated("scheduleOn") + formattedDate;
+    if (isScheduleOn) {
       return message;
-    }else{
-     return formattedDate;
-   }
+    } else {
+      return formattedDate;
+    }
   }
+
   static Future<File> writeImageTemp(dynamic bytes, String imageName) async {
     final dir = await getTemporaryDirectory();
     await dir.create(recursive: true);

@@ -24,7 +24,6 @@ part 'profile_parsing_extension.dart';
 part 'recent_chat_extension.dart';
 part 'scroll_controller_extension.dart';
 
-
 extension FileFormatter on num {
   String readableFileSize({bool base1024 = true}) {
     final base = base1024 ? 1024 : 1000;
@@ -35,15 +34,17 @@ extension FileFormatter on num {
   }
 }
 
-
 extension GetHelper on GetxController {
   T get<T extends GetxController>({String? tag}) {
     if (GetInstance().isRegistered<T>(tag: tag)) {
       LogMessage.d("Creating Controller: ", "$T found, use a old instance.");
       return GetInstance().find<T>(tag: tag);
     } else {
-      LogMessage.d("Creating Controller: ", "$T not found, initializing a new instance.");
-      GetInstance().lazyPut<T>(()=>this as T,tag: tag); // Use the provided factory function to create a new instance
+      LogMessage.d("Creating Controller: ",
+          "$T not found, initializing a new instance.");
+      GetInstance().lazyPut<T>(() => this as T,
+          tag:
+              tag); // Use the provided factory function to create a new instance
       return GetInstance().find<T>(tag: tag);
     }
   }
@@ -62,18 +63,19 @@ abstract class NavView<T extends GetxController> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context);
-
 }
 
 // Abstract class for StatefulWidget
-abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
+abstract class NavViewStateful<T extends GetxController>
+    extends StatefulWidget {
   final String? tag;
   const NavViewStateful({Key? key, this.tag}) : super(key: key);
 
   T get controller => Get.find<T>(tag: tag);
-  T controllerWithTag(String tag){
-    return Get.find<T>(tag:tag);
+  T controllerWithTag(String tag) {
+    return Get.find<T>(tag: tag);
   }
+
   dynamic get arguments => NavUtils.arguments;
 
   T createController({String? tag});
@@ -152,87 +154,47 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
 }
 
-extension Regexparesing on RegExp {
-  Iterable<RegExpMatch> matcher(String text){
-    return allMatches(text);
-  }
-  List<RegExpMatch> findMatchedPosition(String text){
-    var list = <RegExpMatch>[];
-    allMatches(text).forEach((match) {
-      list.add(match);
-    });
-    return list;
-  }
-}
-extension RegexpMatcharesing on RegExpMatch {
-  String string(){
-    return "groupNames : $groupNames, pattern : $pattern, start : $start, end : $end, input : $input";
-  }
+/*
+abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
+  const NavViewStateful({Key? key}) : super(key: key);
+
+  final String? tag = null;
+
+  T get controller => createController({String? tag}).get();
+  dynamic get arguments => NavUtils.arguments;
+
+  T createController({String? tag});
+
+  @override
+  NavViewState<NavViewStateful<T>, T> createState();
 }
 
-extension MentionTagTextEditingControllerExtension on MentionTagTextEditingController{
-  String get formattedText {
-    const replaceString = "@[?]";
-    debugPrint(text);
+abstract class NavViewState<V extends NavViewStateful<T>, T extends GetxController> extends State<V> {
+  late T controller;
 
-    return text.replaceAll(Constants.mentionEscape, replaceString);
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.createController({String? tag});
+    // Initialize the controller
+    if (widget.tag == null) {
+      Get.put<T>(controller);
+    } else {
+      Get.put<T>(controller, tag: widget.tag);
+    }
   }
 
-  List<String> get getTags {
-    var tags = mentions;
-    // // Sort tags by startIndex to avoid overlapping replacements
-    // tags.sort((a, b) => a.startIndex.compareTo(b.startIndex));
-    return List<String>.from(tags.map((item)=>item));
+  @override
+  void dispose() {
+    // Dispose of the controller
+    if (widget.tag == null) {
+      Get.delete<T>();
+    } else {
+      Get.delete<T>(tag: widget.tag);
+    }
+    super.dispose();
   }
 
-  /*setCustomText(String content,List<ProfileDetails> profileDetails){
-    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
-    debugPrint("setText : $allMatches");
-    int index = 0;
-    int lastMatchEnd = 0;
-    text="";
-    setText = text;
-    for (var currentMatch in allMatches) {
-      text += content.substring(lastMatchEnd,currentMatch.start+1);
-      // _rebuild(text);
-      setText = text;
-      String id = profileDetails[index].jid.checkNull().split("@")[0];
-      String name = profileDetails[index].getName();
-      addMention(label: name,data: id,stylingWidget: Text('@${name}',style: const TextStyle(color: Colors.blueAccent),));
-      lastMatchEnd = currentMatch.end;
-      index++;
-    }
-    if (lastMatchEnd < content.length) {
-      text += content.substring(lastMatchEnd);
-      setText = text;
-      // _rebuild(text);
-    }
-    print("setText : $text $getText");
-
-  }*/
-
-  List<(String, Object?, Widget?)> getInitialMentions(String content,List<ProfileDetails> profileDetails){
-    List<(String, Object?, Widget?)> tuples = [];
-    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
-    int index = 0;
-    int lastMatchEnd = 0;
-    var text="";
-    for (var currentMatch in allMatches) {
-      text += content.substring(lastMatchEnd,currentMatch.start+1);
-      String id = profileDetails[index].jid.checkNull().split("@")[0];
-      String name = profileDetails[index].getName();
-      tuples.add((name,id,Text('@$name',style: const TextStyle(color: Colors.blueAccent),)));
-      lastMatchEnd = currentMatch.end;
-      index++;
-    }
-    if (lastMatchEnd < content.length) {
-      text += content.substring(lastMatchEnd);
-    }
-    debugPrint("getInitialMentions : $content , $text , $tuples");
-    initialMentions = tuples;
-    return tuples;
-  }
-
-
-
-}
+  @override
+  Widget build(BuildContext context);
+}*/

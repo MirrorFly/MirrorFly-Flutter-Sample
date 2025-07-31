@@ -140,6 +140,7 @@ class TextMessageView extends StatelessWidget {
 class CallLinkView extends StatelessWidget {
   const CallLinkView(
       {super.key, required this.message, required this.callLinkViewStyle});
+
   final String message;
   final CallLinkViewStyle callLinkViewStyle;
 
