@@ -1281,7 +1281,10 @@ class DashboardController extends FullLifeCycleController
 
       callLogScrollController.removeListener(_scrollListener);
 
-      fetchCallLogList();
+      if(!isLastPage.value&&!loading.value){
+        pageNumber = pageNumber + 1;
+        fetchCallLogList();
+      }
     }
   }
 
@@ -1900,7 +1903,6 @@ class DashboardController extends FullLifeCycleController
             if (list.data != null) {
               _callLogList.addAll(list.data!);
               isLastPage.value = list.data!.isEmpty;
-              pageNumber = pageNumber + 1;
             }
           }
         });
