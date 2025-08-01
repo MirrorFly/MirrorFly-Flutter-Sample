@@ -899,7 +899,7 @@ class ChatController extends FullLifeCycleController
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt'],
+      allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt', 'zip', 'rar', 'pptx'],
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
       if (MediaUtils.checkFileUploadSize(
