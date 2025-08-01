@@ -3,6 +3,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
+import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/dashboard/views/callhistory_view.dart';
 import '../../../modules/dashboard/views/recentchat_view.dart';
@@ -106,7 +107,8 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
                                                 Obx(() {
                                                   return tabItem(title: getTranslated("chats").toUpperCase(), count: controller.unreadCountString,tabItemStyle: AppStyleConfig.dashBoardPageStyle.tabItemStyle);
                                                 }),
-                                                tabItem(title: getTranslated("calls").toUpperCase(), count: controller.unreadCallCountString,tabItemStyle: AppStyleConfig.dashBoardPageStyle.tabItemStyle)
+                                                tabItem(title: getTranslated("calls").toUpperCase(), count: controller.unreadCallCount.value.toString(),tabItemStyle: AppStyleConfig.dashBoardPageStyle.tabItemStyle),
+
                                               ]),
                                     actions: [
                                       CustomActionBarIcons(
@@ -400,6 +402,7 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
   }
 
   Widget tabItem({required String title, required String count,required TabItemStyle tabItemStyle}) {
+    int parsedInt = int.parse(count);
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
@@ -409,14 +412,14 @@ DashboardController createController({String? tag}) => Get.put(DashboardControll
             title,
             style: tabItemStyle.textStyle,//const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
-          int.parse(count) > 0
+          parsedInt > 0
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
                     backgroundColor: tabItemStyle.countIndicatorStyle.bgColor,
                     radius: 9,
                     child: Text(
-                      count.toString(),
+                      returnFormattedCount(parsedInt),
                       style: tabItemStyle.countIndicatorStyle.textStyle,//const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
                     ),
                   ),
