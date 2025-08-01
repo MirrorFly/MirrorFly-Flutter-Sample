@@ -147,7 +147,7 @@ class MediaPreviewController extends FullLifeCycleController
           }*/
           debugPrint("sending image");
           await Get.find<ChatController>(tag: userJid)
-              .sendImageMessage(imageCache[i]?.path, captionMessage[i], "");
+              .sendImageMessage(mediaFileCache[i]?.path, captionMessage[i], "", captionMessageMentions[i]);
         } else if (data.type == 'video') {
           /*if (!availableFeatures.value.isVideoAttachmentAvailable.checkNull()) {
             featureNotAvailable = true;
@@ -155,7 +155,7 @@ class MediaPreviewController extends FullLifeCycleController
           }*/
           debugPrint("sending video");
           await Get.find<ChatController>(tag: userJid)
-              .sendVideoMessage(imageCache[i]!.path, captionMessage[i], "");
+              .sendVideoMessage(mediaFileCache[i]!.path, captionMessage[i], "",captionMessageMentions[i]);
         }
         i++;
       });

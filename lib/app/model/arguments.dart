@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart' show TextInputFormatter;
+import 'package:flutter/material.dart';
 
 import 'chat_message_model.dart';
 

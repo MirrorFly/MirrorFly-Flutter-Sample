@@ -154,6 +154,88 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
 }
 
+extension Regexparesing on RegExp {
+  Iterable<RegExpMatch> matcher(String text){
+    return allMatches(text);
+  }
+  List<RegExpMatch> findMatchedPosition(String text){
+    var list = <RegExpMatch>[];
+    allMatches(text).forEach((match) {
+      list.add(match);
+    });
+    return list;
+  }
+}
+extension RegexpMatcharesing on RegExpMatch {
+  String string(){
+    return "groupNames : $groupNames, pattern : $pattern, start : $start, end : $end, input : $input";
+  }
+}
+
+extension MentionTagTextEditingControllerExtension on MentionTagTextEditingController{
+  String get formattedText {
+    const replaceString = "@[?]";
+    debugPrint(text);
+
+    return text.replaceAll(Constants.mentionEscape, replaceString);
+  }
+
+  List<String> get getTags {
+    var tags = mentions;
+    // // Sort tags by startIndex to avoid overlapping replacements
+    // tags.sort((a, b) => a.startIndex.compareTo(b.startIndex));
+    return List<String>.from(tags.map((item)=>item));
+  }
+
+  /*setCustomText(String content,List<ProfileDetails> profileDetails){
+    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
+    debugPrint("setText : $allMatches");
+    int index = 0;
+    int lastMatchEnd = 0;
+    text="";
+    setText = text;
+    for (var currentMatch in allMatches) {
+      text += content.substring(lastMatchEnd,currentMatch.start+1);
+      // _rebuild(text);
+      setText = text;
+      String id = profileDetails[index].jid.checkNull().split("@")[0];
+      String name = profileDetails[index].getName();
+      addMention(label: name,data: id,stylingWidget: Text('@${name}',style: const TextStyle(color: Colors.blueAccent),));
+      lastMatchEnd = currentMatch.end;
+      index++;
+    }
+    if (lastMatchEnd < content.length) {
+      text += content.substring(lastMatchEnd);
+      setText = text;
+      // _rebuild(text);
+    }
+    print("setText : $text $getText");
+
+  }*/
+
+  List<(String, Object?, Widget?)> getInitialMentions(String content,List<ProfileDetails> profileDetails){
+    List<(String, Object?, Widget?)> tuples = [];
+    var allMatches = MentionUtils.mentionRegex.allMatches(content).toList();
+    int index = 0;
+    int lastMatchEnd = 0;
+    var text="";
+    for (var currentMatch in allMatches) {
+      text += content.substring(lastMatchEnd,currentMatch.start+1);
+      String id = profileDetails[index].jid.checkNull().split("@")[0];
+      String name = profileDetails[index].getName();
+      tuples.add((name,id,Text('@$name',style: const TextStyle(color: Colors.blueAccent),)));
+      lastMatchEnd = currentMatch.end;
+      index++;
+    }
+    if (lastMatchEnd < content.length) {
+      text += content.substring(lastMatchEnd);
+    }
+    debugPrint("getInitialMentions : $content , $text , $tuples");
+    initialMentions = tuples;
+    return tuples;
+  }
+}
+
 /*
 abstract class NavViewStateful<T extends GetxController> extends StatefulWidget {
   const NavViewStateful({Key? key}) : super(key: key);

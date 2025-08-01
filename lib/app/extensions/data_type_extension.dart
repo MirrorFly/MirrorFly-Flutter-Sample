@@ -41,7 +41,7 @@ extension StringParsing on String? {
 }
 
 extension BooleanParsing on bool? {
-  //check null
+  //cheeck null
   bool checkNull() {
     return this ?? false;
   }

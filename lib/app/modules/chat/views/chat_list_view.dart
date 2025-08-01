@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/chat/controllers/chat_controller.dart';

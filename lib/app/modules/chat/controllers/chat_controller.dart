@@ -111,16 +111,12 @@ class ChatController extends FullLifeCycleController
 
   final RxnBool _isMemberOfGroup = RxnBool(null);
 
-  bool? get isMemberOfGroup {
-    if (profile.isGroupProfile == true) {
-      if (!availableFeatures.value.isGroupChatAvailable.checkNull()) {
-        return false;
-      }
-      return _isMemberOfGroup.value; // could be true, false, or null
-    } else {
-      return true;
-    }
-  }
+  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
+
+  bool get isMemberOfGroup => profile.isGroupProfile ?? false
+      ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
+          _isMemberOfGroup.value.checkNull()
+      : true;
 
   bool get ableToCall => profile.isGroupProfile.checkNull()
       ? isMemberOfGroup.checkNull()
@@ -209,26 +205,8 @@ class ChatController extends FullLifeCycleController
     if (arguments?.messageId != null) {
       starredChatMessageId = arguments!.messageId;
     }
-
-    await getProfileDetails(nJid).then((value) {
-      LogMessage.d("chatController getProfileDetails", value.toJson());
-      profile_(value);
-      //make unreadMessageTypeMessageId
-      if (Platform.isAndroid) {
-        unreadMessageTypeMessageId = "M${value.jid}";
-      } else if (Platform.isIOS) {
-        unreadMessageTypeMessageId =
-            "M_${getMobileNumberFromJid(value.jid.checkNull())}";
-      }
-      checkAdminBlocked();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        newScrollController = ItemScrollController();
-        newItemPositionsListener = ItemPositionsListener.create();
-        searchScrollController = ItemScrollController();
-        ready();
-      });
-      // initListeners();
-    });
+    SessionManagement.setCurrentChatJID(nJid.checkNull());
+    await getChatProfile();
 
     setAudioPath();
 
@@ -238,6 +216,50 @@ class ChatController extends FullLifeCycleController
       //chatList.refresh();
     });
     super.onInit();
+  }
+
+  var chatProfileCalled = false;
+  Future<void> getChatProfile() async {
+    if (Mirrorfly.isValidGroupJid(nJid)) {
+      await Mirrorfly.getGroupProfile(
+          groupJid: nJid.checkNull(),
+          fetchFromServer: await AppUtils.isNetConnected(),
+          flyCallBack: (FlyResponse response) async {
+            if (response.isSuccess) {
+              debugPrint("getGroupProfileDetails--> $response");
+              var profile = ProfileDetails.fromJson(
+                  json.decode(response.data.toString()));
+              await initializeProfile(profile);
+            } else {
+              debugPrint("getGroupProfileDetails--> ${response.errorMessage}");
+            }
+          });
+    } else {
+      await getProfileDetails(nJid).then((value) async {
+        LogMessage.d("chatController getProfileDetails", value.toJson());
+        await initializeProfile(value);
+      });
+    }
+  }
+
+  Future<void> initializeProfile(ProfileDetails profile) async {
+    chatProfileCalled = true;
+    profile_(profile);
+
+    //make unreadMessageTypeMessageId
+    if (Platform.isAndroid) {
+      unreadMessageTypeMessageId = "M${profile.jid.checkNull()}";
+    } else if (Platform.isIOS) {
+      unreadMessageTypeMessageId =
+          "M_${getMobileNumberFromJid(profile.jid.checkNull())}";
+    }
+    checkAdminBlocked();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      newScrollController = ItemScrollController();
+      newItemPositionsListener = ItemPositionsListener.create();
+      searchScrollController = ItemScrollController();
+      ready();
+    });
   }
 
   void getAvailableFeatures() {
@@ -751,6 +773,12 @@ class ChatController extends FullLifeCycleController
             showStarredMessage();
             sendReadReceipt(removeUnreadFromList: false);
             loadPrevORNextMessagesLoad();
+            if (chatList.isNotEmpty &&
+                chatList[0].messageTextContent == Constants.chatClosed) {
+              isChatClosed(true);
+            } else {
+              isChatClosed(false);
+            }
           }
           chatLoading(false);
         });
@@ -763,11 +791,11 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> _loadPreviousMessages({bool showLoading = true}) async {
-    if (showLoading) {
-      showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
-    } else {
-      showLoadingPrevious(showLoading);
-    }
+    // if (showLoading) {
+    //   showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
+    // } else {
+    showLoadingPrevious(showLoading);
+    // }
     // showLoadingPrevious(await Mirrorfly.hasPreviousMessages());
     Mirrorfly.loadPreviousMessages(flyCallback: (FlyResponse response) {
       // LogMessage.d("loadPreviousMessages", response);
@@ -789,11 +817,11 @@ class ChatController extends FullLifeCycleController
 
   Future<void> _loadNextMessages(
       {bool showLoading = true, bool removeUnreadFromList = true}) async {
-    if (showLoading) {
-      showLoadingNext(await Mirrorfly.hasNextMessages());
-    } else {
-      showLoadingNext(showLoading);
-    }
+    // if (showLoading) {
+    //   showLoadingNext(await Mirrorfly.hasNextMessages());
+    // } else {
+    showLoadingNext(showLoading);
+    // }
     Mirrorfly.loadNextMessages(flyCallback: (FlyResponse response) {
       if (response.isSuccess && response.hasData) {
         List<ChatMessageModel> chatMessageModel =
@@ -801,6 +829,12 @@ class ChatController extends FullLifeCycleController
         if (chatMessageModel.isNotEmpty) {
           if (chatList.isNotEmpty) {
             chatList.insertAll(0, chatMessageModel.reversed.toList());
+            if (chatList.isNotEmpty &&
+                chatList[0].messageTextContent == Constants.chatClosed) {
+              isChatClosed(true);
+            } else {
+              isChatClosed(false);
+            }
           } else {
             chatList(chatMessageModel.reversed.toList());
           }
@@ -3246,6 +3280,9 @@ class ChatController extends FullLifeCycleController
     Future.delayed(const Duration(milliseconds: 2000), () {
       setChatStatus();
     });
+    if (!chatProfileCalled) {
+      getChatProfile();
+    }
   }
 
   void onDisconnected() {
@@ -3545,7 +3582,9 @@ class ChatController extends FullLifeCycleController
   }
 
   void cancelNotification() {
-    NotificationBuilder.cancelNotifications();
+    if (!Constants.isUIKIT) {
+      NotificationBuilder.cancelNotifications();
+    }
   }
 
   void setOnGoingUserGone() {
@@ -3611,6 +3650,8 @@ class ChatController extends FullLifeCycleController
 
   var topic = Topics().obs;
 
+  var isChatClosed = false.obs;
+
   void getTopicDetail() async {
     if (topicId.isNotEmpty) {
       await Mirrorfly.getTopics(
@@ -3635,15 +3676,15 @@ class ChatController extends FullLifeCycleController
   }
 
   void loadLastMessages(ChatMessageModel chatMessageModel) async {
-    if (await Mirrorfly.hasNextMessages()) {
-      _loadNextMessages(showLoading: false);
-    }
+
+    _loadNextMessages(showLoading: false);
+
   }
 
   Future<void> loadPrevORNextMessagesLoad({bool? isReplyMessage}) async {
-    if (await Mirrorfly.hasPreviousMessages()) {
+
       _loadPreviousMessages(showLoading: false);
-    }
+
   }
 
   void handleUnreadMessageSeparator(

@@ -229,7 +229,7 @@ class ContactListView extends NavViewStateful<ContactController> {
                                               controller
                                                   .onListItemPressed(item);
                                             },
-                                            onListItemPressed: () {
+                                            onListItemPressed: (_) {
                                               controller
                                                   .onListItemPressed(item);
                                             },

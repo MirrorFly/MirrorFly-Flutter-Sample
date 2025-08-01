@@ -532,4 +532,9 @@ class PipViewController extends FullLifeCycleController
   void userUpdatedHisProfile(String jid) {
     updateProfile(jid);
   }
+
+  @override
+  void onIncomingCallReceived(String callAction) {
+    // TODO: implement onIncomingCallReceived
+  }
 }
