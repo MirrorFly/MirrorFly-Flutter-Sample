@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart' show TextInputFormatter;
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import 'chat_message_model.dart';
 
@@ -11,7 +12,7 @@ class DashboardViewArguments {
 }
 
 class ChatViewArguments {
-  const ChatViewArguments({
+   ChatViewArguments({
     required this.chatJid,
     this.topicId = '',
     this.didNotificationLaunchApp = false,
@@ -23,7 +24,7 @@ class ChatViewArguments {
     this.disableAppBar = false,
     this.chatInfoPageRedirect = false,
     this.enableSwipeToReply = true,
-    this.menuActionsEnabled = false,
+    // this.menuActionsEnabled,
     this.isAppBarForwardEnabled = true,
     this.isMessageWidgetForwardEnabled = true,
     this.isAppBarReplyEnabled = true,
@@ -58,7 +59,7 @@ class ChatViewArguments {
   final bool didNotificationLaunchApp;
   final bool disableAppBar;
   final bool enableSwipeToReply;
-  final bool menuActionsEnabled;
+  bool menuActionsEnabled = !Constants.isUIKIT;
   final bool chatInfoPageRedirect;
   final bool isAppBarForwardEnabled;
   final bool isMessageWidgetForwardEnabled;
