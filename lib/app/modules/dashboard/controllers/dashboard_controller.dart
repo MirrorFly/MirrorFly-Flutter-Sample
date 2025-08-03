@@ -502,7 +502,6 @@ class DashboardController extends FullLifeCycleController
       }
     });
   }
-
 // Commented this bcz this is not used any where
   /*Future<ChatMessageModel?> getMessageOfId(String mid) async {
     var value = await Mirrorfly.getMessageOfId(messageId: mid);
@@ -2039,7 +2038,7 @@ class DashboardController extends FullLifeCycleController
 
         // _callLogList.addAll(list.data!);
         loading.value = true;
-        pageNumber = 1;
+        pageNumber =1;
 
         Mirrorfly.getCallLogsList(
             currentPage: pageNumber,
