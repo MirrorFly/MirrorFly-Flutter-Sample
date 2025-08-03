@@ -3,6 +3,7 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
+import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/dashboard/views/callhistory_view.dart';
 import '../../../modules/dashboard/views/recentchat_view.dart';
@@ -156,15 +157,8 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                                               .dashBoardPageStyle
                                                               .tabItemStyle);
                                                 }),
-                                                tabItem(
-                                                    title:
-                                                        getTranslated("calls")
-                                                            .toUpperCase(),
-                                                    count: controller
-                                                        .unreadCallCountString,
-                                                    tabItemStyle: AppStyleConfig
-                                                        .dashBoardPageStyle
-                                                        .tabItemStyle)
+                                                tabItem(title: getTranslated("calls").toUpperCase(), count: controller.unreadCallCount.value.toString(),tabItemStyle: AppStyleConfig.dashBoardPageStyle.tabItemStyle),
+
                                               ]),
                                     actions: [
                                       CustomActionBarIcons(
@@ -736,10 +730,8 @@ class DashboardView extends NavViewStateful<DashboardController> {
     return const Offstage();
   }
 
-  Widget tabItem(
-      {required String title,
-      required String count,
-      required TabItemStyle tabItemStyle}) {
+  Widget tabItem({required String title, required String count,required TabItemStyle tabItemStyle}) {
+    int parsedInt = int.parse(count);
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
@@ -747,19 +739,17 @@ class DashboardView extends NavViewStateful<DashboardController> {
         children: [
           Text(
             title,
-            style: tabItemStyle
-                .textStyle, //const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+            style: tabItemStyle.textStyle,//const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
-          int.parse(count) > 0
+          parsedInt > 0
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: CircleAvatar(
                     backgroundColor: tabItemStyle.countIndicatorStyle.bgColor,
                     radius: 9,
                     child: Text(
-                      count.toString(),
-                      style: tabItemStyle.countIndicatorStyle
-                          .textStyle, //const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
+                      returnFormattedCount(parsedInt),
+                      style: tabItemStyle.countIndicatorStyle.textStyle,//const TextStyle(fontSize: 12, color: Colors.white, fontFamily: 'sf_ui'),
                     ),
                   ),
                 )

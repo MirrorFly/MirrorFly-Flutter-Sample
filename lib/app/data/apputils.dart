@@ -27,7 +27,7 @@ class AppUtils {
         toToast(getTranslated("youMayNotProperApp"));
       }
     } else {
-      toToast(getTranslated("mediaDoesNotExist"));
+      toToast(getTranslated("downloadAndOpenTheFile"));
       debugPrint("media does not exist");
     }
   }

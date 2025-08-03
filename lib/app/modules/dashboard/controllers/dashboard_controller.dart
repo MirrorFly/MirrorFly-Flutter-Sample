@@ -1259,6 +1259,7 @@ class DashboardController extends FullLifeCycleController
   List<CallLogData> get callLogList => _callLogList;
 
   _callLogScrollListener() {
+
     // if (callLogScrollController.hasClients) {
     //   if (callLogScrollController.position.extentAfter <= 0 && isCallLogPageLoading.value == false) {
     //     if (scrollable.value) {
@@ -1281,7 +1282,13 @@ class DashboardController extends FullLifeCycleController
 
       callLogScrollController.removeListener(_scrollListener);
 
-      fetchCallLogList();
+
+      if(!isLastPage.value&&!loading.value){
+        pageNumber = pageNumber + 1;
+        fetchCallLogList();
+      }
+
+
     }
   }
 
@@ -1888,6 +1895,7 @@ class DashboardController extends FullLifeCycleController
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
+    loading.value = true;
     Mirrorfly.getCallLogsList(
         currentPage: pageNumber,
         flyCallBack: (FlyResponse response) {
@@ -1899,7 +1907,6 @@ class DashboardController extends FullLifeCycleController
             if (list.data != null) {
               _callLogList.addAll(list.data!);
               isLastPage.value = list.data!.isEmpty;
-              pageNumber = pageNumber + 1;
             }
           }
         });
