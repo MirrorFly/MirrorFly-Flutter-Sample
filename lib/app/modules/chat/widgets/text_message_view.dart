@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
+import 'package:mirrorfly_plugin/flychat.dart';
 
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -46,11 +47,16 @@ class TextMessageView extends StatelessWidget {
                           var link = MessageUtils.getCallLinkFromMessage(
                               chatMessage.messageTextContent.checkNull());
                           if (link.isNotEmpty) {
-                            NavUtils.toNamed(Routes.joinCallPreview,
-                                arguments: {
-                                  "callLinkId": link.replaceAll(
-                                      Constants.webChatLogin, "")
-                                });
+                            if (!(await Mirrorfly.isOnGoingCall())
+                                .checkNull()) {
+                              NavUtils.toNamed(Routes.joinCallPreview,
+                                  arguments: {
+                                    "callLinkId": link.replaceAll(
+                                        Constants.webChatLogin, "")
+                                  });
+                            } else {
+                              toToast('Can not join meet when in a call');
+                            }
                           }
                         } else {
                           toToast(getTranslated("noInternetConnection"));
@@ -151,9 +157,13 @@ class CallLinkView extends StatelessWidget {
         if (await AppUtils.isNetConnected()) {
           var link = MessageUtils.getCallLinkFromMessage(message);
           if (link.isNotEmpty) {
-            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-            });
+            if (!(await Mirrorfly.isOnGoingCall()).checkNull()) {
+              NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+              });
+            } else {
+              toToast('Can not join meet when in a call');
+            }
           }
         } else {
           toToast(getTranslated("noInternetConnection"));

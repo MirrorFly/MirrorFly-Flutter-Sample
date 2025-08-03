@@ -111,12 +111,16 @@ class ChatController extends FullLifeCycleController
 
   final RxnBool _isMemberOfGroup = RxnBool(null);
 
-  set isMemberOfGroup(value) => _isMemberOfGroup.value = value;
-
-  bool get isMemberOfGroup => profile.isGroupProfile ?? false
-      ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
-          _isMemberOfGroup.value.checkNull()
-      : true;
+  bool? get isMemberOfGroup {
+    if (profile.isGroupProfile == true) {
+      if (!availableFeatures.value.isGroupChatAvailable.checkNull()) {
+        return false;
+      }
+      return _isMemberOfGroup.value; // could be true, false, or null
+    } else {
+      return true;
+    }
+  }
 
   bool get ableToCall => profile.isGroupProfile.checkNull()
       ? isMemberOfGroup.checkNull()
@@ -126,7 +130,6 @@ class ChatController extends FullLifeCycleController
       ? availableFeatures.value.isGroupChatAvailable.checkNull() &&
           _isMemberOfGroup.value.checkNull()
       : true;
-
   // var profileDetail = Profile();
 
   String nJid = Constants.emptyString;
@@ -260,6 +263,15 @@ class ChatController extends FullLifeCycleController
       searchScrollController = ItemScrollController();
       ready();
     });
+
+    setAudioPath();
+
+    filteredPosition.bindStream(filteredPosition.stream);
+    ever(filteredPosition, (callback) {
+      lastPosition(callback.length);
+      //chatList.refresh();
+    });
+    super.onInit();
   }
 
   void getAvailableFeatures() {
@@ -3469,7 +3481,8 @@ class ChatController extends FullLifeCycleController
   void makeVoiceCall() async {
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    SessionManagement.setBool(Constants.layoutSwitch,true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
@@ -3515,7 +3528,8 @@ class ChatController extends FullLifeCycleController
 
   void makeVideoCall() async {
     closeKeyBoard();
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    SessionManagement.setBool(Constants.layoutSwitch, true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }

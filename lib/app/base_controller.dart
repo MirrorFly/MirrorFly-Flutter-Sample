@@ -10,10 +10,12 @@ import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.da
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
 import 'call_modules/outgoing_call/call_controller.dart';
+import 'call_modules/outgoing_call/call_swap_state.dart';
 import 'call_modules/outgoing_call/outgoing_call_controller.dart';
 import 'call_modules/participants/add_participants_controller.dart';
 import 'common/app_localizations.dart';
@@ -21,6 +23,7 @@ import 'common/constants.dart';
 import 'data/helper.dart';
 import 'data/session_management.dart';
 import 'extensions/extensions.dart';
+import 'model/call_user_list.dart';
 import 'modules/backup_restore/controllers/backup_controller.dart';
 import 'modules/backup_restore/controllers/restore_controller.dart';
 import 'modules/chat/controllers/chat_controller.dart';
@@ -335,14 +338,16 @@ class BaseController {
                 "#Mirrorfly call Outgoing call controller not registered for disconnect event");
           }
 
-          if (Get.isRegistered<PipViewController>(tag: "pipView")) {
-            Get.find<PipViewController>(tag: "pipView").callDisconnected();
-            stopTimer();
-          }
-          if (Get.isRegistered<PipViewController>()) {
-            Get.find<PipViewController>().callDisconnected();
-            stopTimer();
-          }
+            // Command the below line because we have handle the below functionality in the pip view controller
+
+            // if (Get.isRegistered<PipViewController>(tag: "pipView")) {
+            //   Get.find<PipViewController>(tag: "pipView").callDisconnected();
+            //   stopTimer();
+            // }
+            // if (Get.isRegistered<PipViewController>()) {
+            //   Get.find<PipViewController>().callDisconnected();
+            //   stopTimer();
+            // }
           break;
         case CallStatus.calling10s:
           break;
@@ -1161,13 +1166,34 @@ class BaseController {
     }
   }
 
-  static void userBlockedMe(String jid) {
+  static void userBlockedMe(String jid) async{
     LogMessage.d('userBlockedMe', jid.toString());
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>()
-          .updateRecentChat(jid: jid, changePosition: false);
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+          var callerList = await Mirrorfly.getCallUsersList();
+          final callUserList = callUserListFromJson(callerList);
+          if(callUserList.length <= 2){
+            final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+            if(blockedUser != null){
+                CallController().disconnectCall();
+            }
+          }
+
+      }
+      Get.find<DashboardController>().updateRecentChat(jid: jid, changePosition: false);
     }
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+        var callerList = await Mirrorfly.getCallUsersList();
+        final callUserList = callUserListFromJson(callerList);
+        if(callUserList.length <= 2){
+          final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+          if(blockedUser != null){
+            CallController().disconnectCall();
+          }
+        }
+        Get.find<CallController>().disconnectCall();
+      }
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
     if (Get.isRegistered<ChatInfoController>()) {
@@ -1182,6 +1208,33 @@ class BaseController {
     if (Get.isRegistered<AddParticipantsController>()) {
       Get.find<AddParticipantsController>().userBlockedMe(jid);
     }
+    if (Get.isRegistered<CallController>()) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+       var callerList = await Mirrorfly.getCallUsersList();
+       final callUserList = callUserListFromJson(callerList);
+      if(callUserList.length <= 2){
+        final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+        if(blockedUser != null){
+          Get.find<CallController>().disconnectCall();
+        }
+      }
+    }
+
+    }
+    if (Get.isRegistered<PipViewController>()) {
+      if((await Mirrorfly.isOnGoingCall()).checkNull()){
+        var callerList = await Mirrorfly.getCallUsersList();
+        final callUserList = callUserListFromJson(callerList);
+        if(callUserList.length <= 2){
+          final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+          if(blockedUser != null){
+            CallController().disconnectCall();
+          }
+        }
+
+      }
+    }
+
   }
 
   static void userCameOnline(String jid) {
@@ -1552,6 +1605,7 @@ class BaseController {
         var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
         // LogMessage.d("callTimer", time);
         if (Get.isRegistered<CallController>()) {
+          wakeLockEnable();
           Get.find<CallController>().callDuration(time);
         }
       },
@@ -1559,14 +1613,47 @@ class BaseController {
     // }
   }
 
+  static Future<void> wakeLockEnable() async {
+    try {
+      final isEnabled = await WakelockPlus.enabled;
+      if (!isEnabled) {
+        await WakelockPlus.enable();
+        debugPrint("Wakelock enabled.");
+      } else {
+        debugPrint("Wakelock already enabled.");
+      }
+    } catch (e) {
+      debugPrint("Failed to enable wakelock: $e");
+    }
+  }
+
   static void stopTimer() {
     debugPrint("baseController stopTimer");
+    CallViewState.isSwapped = false;
+    CallViewState.swappedUserJid = null;
+
     if (timer == null) {
       debugPrint("baseController Timer is null");
+      return;
     }
     timer?.cancel();
     timer = null;
+    wakeLockDisable();
   }
+
+  static Future<void> wakeLockDisable() async {
+    try {
+      final isEnabled = await WakelockPlus.enabled;
+      if (isEnabled) {
+        await WakelockPlus.disable();
+        debugPrint("baseController: Wakelock disabled.:");
+      } else {
+        debugPrint("baseController: Wakelock was already disabled.");
+      }
+    } catch (e) {
+      debugPrint("baseController: Failed to disable wakelock - $e");
+    }
+     }
 
   //#editMessage
   static void onMessageEdited(editedChatMessage) {

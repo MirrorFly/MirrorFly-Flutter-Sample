@@ -1,4 +1,6 @@
+
 import 'package:flutter/services.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -15,7 +17,6 @@ class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
   RxString version = "".obs;
   RxString releaseDate = "".obs;
-
   @override
   void onInit() {
     super.onInit();
@@ -48,10 +49,12 @@ class SettingsController extends GetxController {
   logoutFromSDK() async {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
-      Mirrorfly.logoutOfChatSDK(flyCallBack: (response) {
+      Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
+        PictureInPicture.stopPiP();
         clearAllPreferences();
-      }).catchError((ex) {
+      }).catchError((ex){
         LogMessage.d("logoutOfChatSDK", ex);
+        PictureInPicture.stopPiP();
         clearAllPreferences();
       });
     } else {
@@ -59,44 +62,38 @@ class SettingsController extends GetxController {
     }
   }
 
-  void clearAllPreferences() async {
+  void clearAllPreferences()async{
     var token = SessionManagement.getToken().checkNull();
-    var cameraPermissionAsked =
-        SessionManagement.getBool(Constants.cameraPermissionAsked);
-    var audioRecordPermissionAsked =
-        SessionManagement.getBool(Constants.audioRecordPermissionAsked);
-    var readPhoneStatePermissionAsked =
-        SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
-    var bluetoothPermissionAsked =
-        SessionManagement.getBool(Constants.bluetoothPermissionAsked);
-    if (BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
+    var cameraPermissionAsked = SessionManagement.getBool(Constants.cameraPermissionAsked);
+    var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
+    var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
+    var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+    var screenLayoutAsked = SessionManagement.getBool(Constants.layoutSwitch);
+   if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
       await BackupRestoreManager.instance.googleSignIn.signOut();
     }
     SessionManagement.clear().then((value) {
       SessionManagement.setToken(token);
-      SessionManagement.setBool(
-          Constants.cameraPermissionAsked, cameraPermissionAsked);
-      SessionManagement.setBool(
-          Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
-      SessionManagement.setBool(Constants.readPhoneStatePermissionAsked,
-          readPhoneStatePermissionAsked);
-      SessionManagement.setBool(
-          Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      SessionManagement.setBool(Constants.cameraPermissionAsked, cameraPermissionAsked);
+      SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
+      SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
+      SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      SessionManagement.setBool(Constants.layoutSwitch, screenLayoutAsked);
       DialogUtils.hideLoading();
       NavUtils.offAllNamed(Routes.login);
     });
   }
 
-// getReleaseDate() async {
-//   var releaseDate = "";
-//   String pathToYaml =
-//       join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
-//   File file = File(pathToYaml);
-//   file.readAsString().then((String content) {
-//     Map yaml = loadYaml(content);
-//     debugPrint(yaml['build_release_date']);
-//     releaseDate = yaml['build_release_date'];
-//   });
-//   return releaseDate;
-// }
+  // getReleaseDate() async {
+  //   var releaseDate = "";
+  //   String pathToYaml =
+  //       join(dirname(Platform.script.toFilePath()), '../pubspec.yaml');
+  //   File file = File(pathToYaml);
+  //   file.readAsString().then((String content) {
+  //     Map yaml = loadYaml(content);
+  //     debugPrint(yaml['build_release_date']);
+  //     releaseDate = yaml['build_release_date'];
+  //   });
+  //   return releaseDate;
+  // }
 }

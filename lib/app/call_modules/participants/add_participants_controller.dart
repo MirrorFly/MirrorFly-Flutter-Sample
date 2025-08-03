@@ -160,6 +160,7 @@ class AddParticipantsController extends GetxController
             (item) => item.getName().toLowerCase().contains(_searchText.trim()))
         .toList();
     usersList(filteredList);
+    isPageLoading(false);
   }
 
   clearSearch() {

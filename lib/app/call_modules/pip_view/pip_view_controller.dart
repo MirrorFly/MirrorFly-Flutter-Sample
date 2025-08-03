@@ -15,6 +15,8 @@ import 'package:mirror_fly_demo/app/routes/app_pages.dart';
 import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../base_controller.dart';
+
 class PipViewController extends FullLifeCycleController
     with FullLifeCycleMixin, CallEventListeners, ProfileEventListeners {
   final String tag = "PipViewController";
@@ -68,6 +70,18 @@ class PipViewController extends FullLifeCycleController
           remoteBusy(callMode, userJid, callType, callAction);
           break;
         }
+      case CallAction.remoteHangup:
+        {
+          BaseController.stopTimer();
+          callDisconnected();
+          break;
+        }
+      case CallAction.localHangup:
+        {
+          BaseController.stopTimer();
+          callDisconnected();
+          break;
+        }
       case CallAction.remoteOtherBusy:
         {
           remoteOtherBusy(callMode, userJid, callType, callAction);
@@ -107,6 +121,7 @@ class PipViewController extends FullLifeCycleController
     switch (callStatus) {
       case CallStatus.disconnected:
         {
+          BaseController.stopTimer();
           callDisconnected();
           break;
         }
