@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:mirror_fly_demo/app/data/mention_utils.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
+import '../../../data/session_management.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/gallery_picker/controllers/gallery_picker_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -51,7 +53,9 @@ class MediaPreviewController extends FullLifeCycleController
   @override
   void onInit() {
     super.onInit();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
+    SessionManagement.setCurrentChatJID(profile.jid.toString());
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) {
       pickerType(NavUtils.arguments['from']);
       debugPrint("pickerType $pickerType");
       // if(pickerType.value == Constants.gallery) {
