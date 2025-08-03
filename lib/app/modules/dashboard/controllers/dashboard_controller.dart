@@ -502,7 +502,6 @@ class DashboardController extends FullLifeCycleController
       }
     });
   }
-
 // Commented this bcz this is not used any where
   /*Future<ChatMessageModel?> getMessageOfId(String mid) async {
     var value = await Mirrorfly.getMessageOfId(messageId: mid);
@@ -1112,11 +1111,11 @@ class DashboardController extends FullLifeCycleController
     updateRecentChat(jid: chatMessageModel.chatUserJid, newInsertable: true);
   }
 
-  Future<void> onMessageDeleted({required String messageId}) async {
-    final int indexToBeReplaced =
-        recentChats.indexWhere((message) => message.lastMessageId == messageId);
-    debugPrint(
-        "#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+  Future<void> onMessageDeleted(
+      {required String messageId}) async {
+    final int indexToBeReplaced = 
+    recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
     if (!indexToBeReplaced.isNegative) {
       recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
       recentChats.refresh();
@@ -1282,7 +1281,7 @@ class DashboardController extends FullLifeCycleController
 
       callLogScrollController.removeListener(_scrollListener);
 
-      if (!isLastPage.value && !loading.value) {
+      if(!isLastPage.value&&!loading.value){
         pageNumber = pageNumber + 1;
         fetchCallLogList();
       }
@@ -1634,7 +1633,8 @@ class DashboardController extends FullLifeCycleController
       hasPaused = false;
       LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
       getRecentChatList();
-      fetchCallLogList();
+      // fetchCallLogList();
+      onCallLogUpdate(false);
     }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
@@ -2033,11 +2033,29 @@ class DashboardController extends FullLifeCycleController
       if (search.text.trim().isNotEmpty) {
         filteredCallLog(search.text.trim());
       } else {
-        var res = await Mirrorfly.getLocalCallLogs();
-        var list = callLogListFromJson(res);
-        _callLogList.clear();
-        callLogList.clear();
-        _callLogList.addAll(list.data!);
+        // var res = await Mirrorfly.getLocalCallLogs();
+        // var list = callLogListFromJson(res);
+
+        // _callLogList.addAll(list.data!);
+        loading.value = true;
+        pageNumber =1;
+
+        Mirrorfly.getCallLogsList(
+            currentPage: pageNumber,
+            flyCallBack: (FlyResponse response) {
+              loading.value = false;
+              if (response.isSuccess && response.hasData) {
+                var list = callLogListFromJson(response.data);
+                totalPages = list.totalPages!;
+                _callLogList.clear();
+                callLogList.clear();
+                // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+                if (list.data != null) {
+                  _callLogList.addAll(list.data!);
+                  isLastPage.value = list.data!.isEmpty;
+                }
+              }
+            });
       }
 
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
@@ -2358,6 +2376,7 @@ class DashboardController extends FullLifeCycleController
       LogMessage.d("Dashboard Controller deleteGroup",
           "Group is not found groupJid -> $groupJid , groupName-> $groupName");
     }
+
   }
 
   void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
