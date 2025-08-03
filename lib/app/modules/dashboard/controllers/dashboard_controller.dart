@@ -502,6 +502,7 @@ class DashboardController extends FullLifeCycleController
       }
     });
   }
+
 // Commented this bcz this is not used any where
   /*Future<ChatMessageModel?> getMessageOfId(String mid) async {
     var value = await Mirrorfly.getMessageOfId(messageId: mid);
@@ -1111,11 +1112,11 @@ class DashboardController extends FullLifeCycleController
     updateRecentChat(jid: chatMessageModel.chatUserJid, newInsertable: true);
   }
 
-  Future<void> onMessageDeleted(
-      {required String messageId}) async {
-    final int indexToBeReplaced = 
-    recentChats.indexWhere((message) => message.lastMessageId == messageId);
-    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+  Future<void> onMessageDeleted({required String messageId}) async {
+    final int indexToBeReplaced =
+        recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint(
+        "#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
     if (!indexToBeReplaced.isNegative) {
       recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
       recentChats.refresh();
@@ -1281,7 +1282,7 @@ class DashboardController extends FullLifeCycleController
 
       callLogScrollController.removeListener(_scrollListener);
 
-      if(!isLastPage.value&&!loading.value){
+      if (!isLastPage.value && !loading.value) {
         pageNumber = pageNumber + 1;
         fetchCallLogList();
       }
@@ -2038,7 +2039,7 @@ class DashboardController extends FullLifeCycleController
 
         // _callLogList.addAll(list.data!);
         loading.value = true;
-        pageNumber =1;
+        pageNumber = 1;
 
         Mirrorfly.getCallLogsList(
             currentPage: pageNumber,
@@ -2376,7 +2377,6 @@ class DashboardController extends FullLifeCycleController
       LogMessage.d("Dashboard Controller deleteGroup",
           "Group is not found groupJid -> $groupJid , groupName-> $groupName");
     }
-
   }
 
   void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
