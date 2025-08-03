@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
@@ -201,7 +203,15 @@ class MediaMessageOverlay extends StatelessWidget {
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    Mirrorfly.uploadMedia(messageId: messageId);
+    Map<String, dynamic> notificationPermission =
+    await AppPermission.checkAndRequestNotificationPermission();
+    if (notificationPermission['status'] || Platform.isIOS) {
+      debugPrint(
+          "notification permission ${notificationPermission['message']}");
+      Mirrorfly.uploadMedia(messageId: messageId);
+    } else {
+      toToast("${notificationPermission['message']}");
+    }
   } else {
     toToast(getTranslated("noInternetConnection"));
   }
@@ -214,9 +224,16 @@ void downloadMedia(String messageId) async {
     var permission = await AppPermission.getStoragePermission(
         permissionContent: getTranslated("writeStoragePermissionContent"),
         deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
+    Map<String, dynamic> notificationPermission =
+    await AppPermission.checkAndRequestNotificationPermission();
     if (permission) {
       debugPrint("media permission granted");
-      Mirrorfly.downloadMedia(messageId: messageId);
+      if (notificationPermission['status'] || Platform.isIOS) {
+        debugPrint("notification permission ${notificationPermission['message']}");
+        Mirrorfly.downloadMedia(messageId: messageId);
+      } else {
+        toToast("Notification permission ${notificationPermission['message']}");
+      }
     } else {
       debugPrint("storage permission not granted");
     }

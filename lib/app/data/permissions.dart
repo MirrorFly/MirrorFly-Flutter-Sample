@@ -295,6 +295,28 @@ class AppPermission {
     }
   }
 
+  static Future<Map<String, dynamic>>
+  checkAndRequestNotificationPermission() async {
+    final status = await Permission.notification.status;
+
+    if (status.isGranted) {
+      return {"status": true, "message": "Granted"};
+    }
+
+    final result = await Permission.notification.request();
+
+    if (result.isGranted) {
+      return {"status": true, "message": "Granted"};
+    } else if (result.isPermanentlyDenied) {
+      return {
+        "status": false,
+        "message": "Permanently denied, enable it via application settings"
+      };
+    } else {
+      return {"status": false, "message": "Denied"};
+    }
+  }
+
   static Future<bool> askAudioCallPermissions() async {
     final microphone = await Permission.microphone.status; //RECORD_AUDIO
     final phone = await Permission.phone.status; //READ_PHONE_STATE
@@ -433,6 +455,7 @@ class AppPermission {
       return true;
     }
   }
+
 
   static Future<bool> requestAudioCallPermissions(
       {required String content,

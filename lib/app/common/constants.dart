@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
-// Icon Package Name
-
-String? iconPackageName; //= 'mirrorfly_uikit_plugin/lib';
-
 //Colors
 const Color appBarColor = Color(0xffF2F2F2);
 const Color iconColor = Color(0xff181818);
@@ -534,3 +530,7 @@ class Constants {
   //Chat Open/Close Constant Messages
   static const String chatClosed = "#THIS_CHAT_IS_CLOSED";
 }
+
+// Icon Package Name
+String? iconPackageName = Constants.isUIKIT ? 'mirrorfly_uikit_plugin/lib' : null;
+
