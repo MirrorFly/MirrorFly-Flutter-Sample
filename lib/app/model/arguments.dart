@@ -24,7 +24,7 @@ class ChatViewArguments {
     this.disableAppBar = false,
     this.chatInfoPageRedirect = false,
     this.enableSwipeToReply = true,
-    // this.menuActionsEnabled,
+    this.menuActionsEnabled = true,
     this.isAppBarForwardEnabled = true,
     this.isMessageWidgetForwardEnabled = true,
     this.isAppBarReplyEnabled = true,
@@ -59,7 +59,7 @@ class ChatViewArguments {
   final bool didNotificationLaunchApp;
   final bool disableAppBar;
   final bool enableSwipeToReply;
-  bool menuActionsEnabled = !Constants.isUIKIT;
+  final bool menuActionsEnabled;
   final bool chatInfoPageRedirect;
   final bool isAppBarForwardEnabled;
   final bool isMessageWidgetForwardEnabled;

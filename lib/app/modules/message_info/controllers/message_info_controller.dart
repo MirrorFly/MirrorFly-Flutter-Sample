@@ -1,9 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../common/app_localizations.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -71,15 +73,12 @@ class MessageInfoController extends GetxController {
     var permission = await AppPermission.getStoragePermission(
         permissionContent: getTranslated("writeStoragePermissionContent"),
         deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
-    Map<String, dynamic> notificationPermission =
-    await AppPermission.checkAndRequestNotificationPermission();
     if (permission) {
       debugPrint("media permission granted");
-      if (notificationPermission['status'] || Platform.isIOS) {
-        debugPrint("notification permission ${notificationPermission['message']}");
+      if (Platform.isIOS || await AppPermission.checkPermission(Permission.notification)) {
         Mirrorfly.downloadMedia(messageId: messageId);
       } else {
-        toToast("Notification permission ${notificationPermission['message']}");
+        log("Notification permission is not granted !");
       }
     } else {
       debugPrint("media permission not granted");

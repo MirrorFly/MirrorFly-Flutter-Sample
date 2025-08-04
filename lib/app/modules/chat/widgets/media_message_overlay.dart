@@ -1,7 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' hide ChatMessageModel;
 
@@ -203,14 +205,11 @@ class MediaMessageOverlay extends StatelessWidget {
 
 void uploadMedia(String messageId) async {
   if (await AppUtils.isNetConnected()) {
-    Map<String, dynamic> notificationPermission =
-    await AppPermission.checkAndRequestNotificationPermission();
-    if (notificationPermission['status'] || Platform.isIOS) {
-      debugPrint(
-          "notification permission ${notificationPermission['message']}");
+    if (Platform.isIOS || await AppPermission.checkPermission(
+        Permission.notification)) {
       Mirrorfly.uploadMedia(messageId: messageId);
     } else {
-      toToast("${notificationPermission['message']}");
+      log("Notification permission is not granted !");
     }
   } else {
     toToast(getTranslated("noInternetConnection"));
@@ -224,15 +223,12 @@ void downloadMedia(String messageId) async {
     var permission = await AppPermission.getStoragePermission(
         permissionContent: getTranslated("writeStoragePermissionContent"),
         deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
-    Map<String, dynamic> notificationPermission =
-    await AppPermission.checkAndRequestNotificationPermission();
     if (permission) {
       debugPrint("media permission granted");
-      if (notificationPermission['status'] || Platform.isIOS) {
-        debugPrint("notification permission ${notificationPermission['message']}");
+      if (Platform.isIOS || await AppPermission.checkPermission(Permission.notification)) {
         Mirrorfly.downloadMedia(messageId: messageId);
       } else {
-        toToast("Notification permission ${notificationPermission['message']}");
+        log("Notification permission is not granted !");
       }
     } else {
       debugPrint("storage permission not granted");
