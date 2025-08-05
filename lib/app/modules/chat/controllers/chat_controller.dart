@@ -955,6 +955,15 @@ class ChatController extends FullLifeCycleController
     // var permission = await AppPermission.getStoragePermission();
     // if (permission) {
     setOnGoingUserGone();
+
+    /// While continuously sending documents, we are temporarily setting the current user’s chat JID in the session to an empty string.
+    /// As a result, when the onMediaStatusUpdated callback is triggered, the controller's tag (in the base controller) is also empty.
+    /// which causes the document status not to update.To address this, we are now resetting the current chat JID back into the session shortly after,
+    /// without interfering with the MirrorFly.setOnGoingChatUser() method.
+    if (SessionManagement.getCurrentChatJID() == Constants.emptyString) {
+      SessionManagement.setCurrentChatJID(profile_.value.jid.toString());
+    }
+
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
