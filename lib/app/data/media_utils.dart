@@ -76,12 +76,12 @@ class MediaUtils {
   /// Checks if the size of a file at the specified [path] is within the acceptable
   /// upload limits for the given [mediaType].
   /// Returns true if the file size is within the limits, otherwise false.
-  static bool checkFileUploadSize(String path, String mediaType) {
+  static Future<bool> checkFileUploadSize(String path, String mediaType) async {
     // Retrieve file information from the provided path
     var file = File(path);
 
     // Get the size of the file in bytes
-    int sizeInBytes = file.lengthSync();
+    int sizeInBytes = await file.length();
     debugPrint("file size --> $sizeInBytes");
 
     // Convert the file size from bytes to megabytes

@@ -410,7 +410,7 @@ class ProfileController extends GetxController {
         FilePickerResult? result = await FilePicker.platform
             .pickFiles(allowMultiple: false, type: FileType.image);
         if (result != null) {
-          if (MediaUtils.checkFileUploadSize(
+          if (await MediaUtils.checkFileUploadSize(
               result.files.single.path!, Constants.mImage)) {
             isImageSelected.value = true;
             NavUtils.to(CropImage(

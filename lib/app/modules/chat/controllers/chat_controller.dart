@@ -961,7 +961,7 @@ class ChatController extends FullLifeCycleController
       allowedExtensions: ['pdf', 'ppt', 'xls', 'doc', 'docx', 'xlsx', 'txt', 'zip', 'rar', 'pptx'],
     );
     if (result != null && File(result.files.single.path!).existsSync()) {
-      if (MediaUtils.checkFileUploadSize(
+      if (await MediaUtils.checkFileUploadSize(
           result.files.single.path!, Constants.mDocument)) {
         debugPrint("sendDoc ${result.files.first.extension}");
         Future.delayed(const Duration(seconds: 1), () {
@@ -1203,7 +1203,7 @@ class ChatController extends FullLifeCycleController
       );
       if (result != null && File(result.files.single.path!).existsSync()) {
         debugPrint(result.files.first.extension);
-        if (MediaUtils.checkFileUploadSize(
+        if (await MediaUtils.checkFileUploadSize(
             result.files.single.path!, Constants.mAudio)) {
           AudioPlayer player = AudioPlayer();
           // player.setUrl(result.files.single.path!);
@@ -1229,9 +1229,9 @@ class ChatController extends FullLifeCycleController
     } else {
       ///sometimes FilePicker's path not receiving with its file extension in Android
       ///so we are adding this below method internally
-      await Mirrorfly.openAudioFilePicker().then((value) {
+      await Mirrorfly.openAudioFilePicker().then((value) async {
         if (value != null) {
-          if (MediaUtils.checkFileUploadSize(value, Constants.mAudio)) {
+          if (await MediaUtils.checkFileUploadSize(value, Constants.mAudio)) {
             AudioPlayer player = AudioPlayer();
             // player.setUrl(value);
             player.setSourceDeviceFile(value);
