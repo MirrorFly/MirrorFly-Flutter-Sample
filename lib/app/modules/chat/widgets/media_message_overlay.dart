@@ -113,7 +113,7 @@ class MediaMessageOverlay extends StatelessWidget {
                 //status = MediaDownloadStatus.isMediaNotDownloaded;
               }
             } else {
-              status = MediaUploadStatus.isMediaUploaded;
+              status = MediaUploadStatus.isMediaNotUploaded;
 
               /// the below code is commented,
               /// As the file is sent by me
