@@ -81,6 +81,7 @@ class MediaUtils {
     var file = File(path);
 
     // Get the size of the file in bytes
+    /// Use async file.length() instead of lengthSync() to avoid blocking the UI thread, especially for large files
     int sizeInBytes = await file.length();
     debugPrint("file size --> $sizeInBytes");
 

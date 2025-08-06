@@ -229,11 +229,11 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                   },
                             onAssetItemClick: (asset, index) async {
                               final File? file = await asset.file;
+                              final String fileType = asset.typeInt == 1
+                                  ? Constants.mImage
+                                  : Constants.mVideo;
                               if (file != null) {
                                 try {
-                                  final String fileType = asset.typeInt == 1
-                                      ? Constants.mImage
-                                      : Constants.mVideo;
                                   final bool isValidSize = await MediaUtils
                                       .checkFileUploadSize(
                                       file.path,
@@ -269,15 +269,24 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                     widget.pathList!(
                                         widget.provider.pickedFile);
                                   } else {
-                                    debugPrint("#gallery media picker Error: failed to select the $fileType");
-                                    toToast(getTranslated("mediaMaxLimitRestriction")
-                                        .replaceAll("%d", "${fileType == Constants.mImage ? MediaUtils.maxImageFileSize : MediaUtils.maxVideoFileSize}"));
+                                    debugPrint(
+                                        "#gallery media picker Error: failed to select the $fileType");
+                                    toToast(getTranslated(
+                                            "mediaMaxLimitRestriction")
+                                        .replaceAll("%d",
+                                            "${fileType == Constants.mImage ? MediaUtils.maxImageFileSize : MediaUtils.maxVideoFileSize}"));
                                   }
                                 } catch (e) {
-                                  debugPrint("#gallery media picker: Error: Media picker ==> $e");
+                                  debugPrint(
+                                      "#gallery media picker: Error: Media picker ==> $e");
+                                  final String error =
+                                      "${getTranslated("anErrorOccurred")} ${getTranslated("mediaPickerError").replaceAll("%s", fileType.toLowerCase())}";
+                                  toToast(error);
                                 }
                               } else {
-                                debugPrint("#gallery media picker: Error: Media picker file should not be null");
+                                debugPrint(
+                                    "#gallery media picker: Error: Media picker file should not be null");
+                                toToast(getTranslated("anErrorOccurred"));
                               }
                             },
                           ),
