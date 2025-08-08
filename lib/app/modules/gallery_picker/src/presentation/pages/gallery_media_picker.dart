@@ -1,9 +1,13 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../common/app_localizations.dart';
+import '../../../../../common/constants.dart';
 import '../../../../../data/utils.dart';
 import '../../core/functions.dart';
 import '../../data/models/picked_asset_model.dart';
@@ -223,17 +227,29 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                   onAssetRemove: (asset, index) {
                                     widget.provider.removeEntity(asset);
                                   },
-                                  onAssetItemClick: (asset, index) async {
-                                    // File? file = await asset.file;
-                                    // if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
-                                    //   debugPrint("item processed1 ${DateTime.now()} ${file.lengthSync()}");
+                            onAssetItemClick: (asset, index) async {
+                              final File? file = await asset.file;
+                              final String fileType = asset.typeInt == 1
+                                  ? Constants.mImage
+                                  : Constants.mVideo;
+                              if (file != null) {
+                                try {
+                                  final bool isValidSize = await MediaUtils
+                                      .checkFileUploadSize(
+                                      file.path,
+                                      fileType);
+                                  debugPrint(
+                                      "#gallery media picker: isValidSize: $isValidSize");
+                                  if (isValidSize) {
+                                    debugPrint(
+                                        "#gallery media picker: item processed1 ${DateTime
+                                            .now()} ${file.lengthSync()}");
                                     widget.provider.pickEntity(asset);
                                     widget.provider.pickPath(PickedAssetModel(
                                       id: asset.id,
                                       // path: file.path,
-                                      type: asset.typeInt == 1
-                                          ? 'image'
-                                          : 'video',
+                                      type:
+                                      asset.typeInt == 1 ? 'image' : 'video',
                                       asset: asset,
                                       videoDuration: asset.videoDuration,
                                       createDateTime: asset.createDateTime,
@@ -250,14 +266,30 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                                       title: asset.title,
                                       size: asset.size,
                                     ));
-                                    widget
-                                        .pathList!(widget.provider.pickedFile);
+                                    widget.pathList!(
+                                        widget.provider.pickedFile);
+                                  } else {
+                                    debugPrint(
+                                        "#gallery media picker Error: failed to select the $fileType");
+                                    toToast(getTranslated(
+                                            "mediaMaxLimitRestriction")
+                                        .replaceAll("%d",
+                                            "${fileType == Constants.mImage ? MediaUtils.maxImageFileSize : MediaUtils.maxVideoFileSize}"));
                                   }
-                                  /*else{
-                                toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
+                                } catch (e) {
+                                  debugPrint(
+                                      "#gallery media picker: Error: Media picker ==> $e");
+                                  final String error =
+                                      "${getTranslated("anErrorOccurred")} ${getTranslated("mediaPickerError").replaceAll("%s", fileType.toLowerCase())}";
+                                  toToast(error);
+                                }
+                              } else {
+                                debugPrint(
+                                    "#gallery media picker: Error: Media picker file should not be null");
+                                toToast(getTranslated("anErrorOccurred"));
                               }
-                            },*/
-                                  ),
+                            },
+                          ),
                         )
                       : Container(),
                 ),

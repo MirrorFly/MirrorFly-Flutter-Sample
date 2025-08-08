@@ -589,5 +589,7 @@
     "qaWebLogoutFailure": "Failed to log out web sessions. Please try again",
     "backupCancel":"Backup Cancelled",
     "restoreCompleted": "Restored successfully",
-    "downloadAndOpenTheFile": "Download and open the file"
+    "downloadAndOpenTheFile": "Download and open the file",
+    "anErrorOccurred": "An error occurred",
+    "mediaPickerError": "while selecting the %s"
   }
