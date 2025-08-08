@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../../extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
@@ -11,8 +10,13 @@ import '../../../model/chat_message_model.dart';
 import 'custom_text_view.dart';
 
 class CaptionMessageView extends StatelessWidget {
-  const CaptionMessageView({super.key, required this.mediaMessage,
-  required this.chatMessage, required this.context, this.search = "", this.textMessageViewStyle = const TextMessageViewStyle()});
+  const CaptionMessageView(
+      {super.key,
+      required this.mediaMessage,
+      required this.chatMessage,
+      required this.context,
+      this.search = "",
+      this.textMessageViewStyle = const TextMessageViewStyle()});
 
   final MediaChatMessage mediaMessage;
   final ChatMessageModel chatMessage;
@@ -42,7 +46,8 @@ class CaptionMessageView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               chatMessage.isMessageStarred.value
-                  ? textMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
+                  ? textMessageViewStyle.iconFavourites ??
+                      AppUtils.svgIcon(icon: starSmallIcon)
                   : const Offstage(),
               const SizedBox(
                 width: 5,
@@ -55,11 +60,15 @@ class CaptionMessageView extends StatelessWidget {
               const SizedBox(
                 width: 5,
               ),
-
-              if (chatMessage.isMessageEdited.value) ... [
-                Text(getTranslated("edited"), //style: const TextStyle(fontSize: 11)
-                style: textMessageViewStyle.timeTextStyle,),
-                const SizedBox(width: 5,),
+              if (chatMessage.isMessageEdited.value) ...[
+                Text(
+                  getTranslated("edited"),
+                  //style: const TextStyle(fontSize: 11)
+                  style: textMessageViewStyle.timeTextStyle,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
               ],
               Text(
                 getChatTime(context, chatMessage.messageSentTime.toInt()),

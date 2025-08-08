@@ -52,14 +52,12 @@ class GalleryFunctions {
       completer,
       close,
     );
-
   }
 
-
-
   static onPickMax(GalleryMediaPickerController provider) {
-    provider.onPickMax
-        .addListener(() => showToast("Can't share more than ${provider.max} media items.", position: ToastPosition.bottom));
+    provider.onPickMax.addListener(() => showToast(
+        "Can't share more than ${provider.max} media items.",
+        position: ToastPosition.bottom));
   }
 
   static getPermission(setState, GalleryMediaPickerController provider) async {
@@ -68,16 +66,17 @@ class GalleryFunctions {
         requestOption: const PermissionRequestOption(
             iosAccessLevel: IosAccessLevel.readWrite));
     if (result.isAuth) {*/
-      /// load "recent" album
-      provider.setAssetCount();
-      PhotoManager.startChangeNotify();
-      PhotoManager.addChangeCallback((value) {
-        _refreshPathList(setState, provider);
-      });
 
-      if (provider.pathList.isEmpty) {
-        _refreshPathList(setState, provider);
-      }
+    /// load "recent" album
+    provider.setAssetCount();
+    PhotoManager.startChangeNotify();
+    PhotoManager.addChangeCallback((value) {
+      _refreshPathList(setState, provider);
+    });
+
+    if (provider.pathList.isEmpty) {
+      _refreshPathList(setState, provider);
+    }
     /*} else {
       /// if result is fail, you can call `PhotoManager.openSetting();`
       /// to open android/ios application's setting to get permission
@@ -85,16 +84,17 @@ class GalleryFunctions {
     }*/
   }
 
-  static var i =0 ;
+  static var i = 0;
+
   static _refreshPathList(setState, GalleryMediaPickerController provider) {
     PhotoManager.getAssetPathList(type: RequestType.common).then((pathList) {
       /// don't delete setState
-      if(pathList.isNotEmpty) {
+      if (pathList.isNotEmpty) {
         setState(() {
           provider.resetPathList(pathList);
         });
-      }else{
-        if(i<=1) {
+      } else {
+        if (i <= 1) {
           i++;
           _refreshPathList(setState, provider);
         }

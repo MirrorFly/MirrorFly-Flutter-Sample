@@ -1,46 +1,33 @@
-
-
-
 // import 'package:contacts_service/contacts_service.dart';
 
 import 'package:flutter_contacts/contact.dart';
 
-class LocalContact{
-
+class LocalContact {
   Contact contact;
   bool isSelected;
-  LocalContact({
-    required this.contact,
-    required this.isSelected
-  });
 
+  LocalContact({required this.contact, required this.isSelected});
 }
-class LocalContactPhone{
+
+class LocalContactPhone {
   List<ContactDetail> contactNo;
   String userName;
-  LocalContactPhone({
-    required this.contactNo,
-    required this.userName
-  });
+
+  LocalContactPhone({required this.contactNo, required this.userName});
 }
 
-class ContactDetail{
+class ContactDetail {
   String mobNo;
   String mobNoType;
   bool isSelected;
-  ContactDetail({
-    required this.mobNo,
-    required this.mobNoType,
-    required this.isSelected
-  });
+
+  ContactDetail(
+      {required this.mobNo, required this.mobNoType, required this.isSelected});
 }
 
-class ShareContactDetails{
+class ShareContactDetails {
   List<String> contactNo;
   String userName;
-  ShareContactDetails({
-    required this.contactNo,
-    required this.userName
-  });
-}
 
+  ShareContactDetails({required this.contactNo, required this.userName});
+}

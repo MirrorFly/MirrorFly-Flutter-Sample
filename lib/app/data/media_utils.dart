@@ -1,18 +1,18 @@
 part of 'utils.dart';
 
 class MediaUtils {
+  static const maxAudioFileSize = 2 * 1024; //30;
+  static const maxVideoFileSize = 2 * 1024; //30;
+  static const maxImageFileSize = 2 * 1024; //10;
+  static const maxDocFileSize = 2 * 1024; //20;
 
-  static const maxAudioFileSize = 2 * 1024;//30;
-  static const maxVideoFileSize = 2 * 1024;//30;
-  static const maxImageFileSize = 2 * 1024;//10;
-  static const maxDocFileSize = 2 * 1024;//20;
-
-  static bool isMediaFileNotAvailable(bool isMediaFileAvailable, ChatMessageModel message) {
+  static bool isMediaFileNotAvailable(
+      bool isMediaFileAvailable, ChatMessageModel message) {
     return !isMediaFileAvailable && message.isMediaMessage();
   }
 
   static bool isMediaExists(String? filePath) {
-    if(filePath == null || filePath.isEmpty) {
+    if (filePath == null || filePath.isEmpty) {
       return false;
     }
     File file = File(filePath);
@@ -39,7 +39,7 @@ class MediaUtils {
   }
 
   int parseFileSize(String? fileSize) {
-    if(fileSize==null){
+    if (fileSize == null) {
       return 0;
     }
     // Define unit suffixes and their corresponding multipliers in bytes
@@ -76,12 +76,13 @@ class MediaUtils {
   /// Checks if the size of a file at the specified [path] is within the acceptable
   /// upload limits for the given [mediaType].
   /// Returns true if the file size is within the limits, otherwise false.
-  static bool checkFileUploadSize(String path, String mediaType) {
+  static Future<bool> checkFileUploadSize(String path, String mediaType) async {
     // Retrieve file information from the provided path
     var file = File(path);
 
     // Get the size of the file in bytes
-    int sizeInBytes = file.lengthSync();
+    /// Use async file.length() instead of lengthSync() to avoid blocking the UI thread, especially for large files
+    int sizeInBytes = await file.length();
     debugPrint("file size --> $sizeInBytes");
 
     // Convert the file size from bytes to megabytes
@@ -104,16 +105,21 @@ class MediaUtils {
     }
   }
 
-  static bool isMediaFileAvailable(MessageType msgType, ChatMessageModel message) {
+  static bool isMediaFileAvailable(
+      MessageType msgType, ChatMessageModel message) {
     bool mediaExist = false;
     if (msgType == MessageType.audio ||
         msgType == MessageType.video ||
         msgType == MessageType.image ||
         msgType == MessageType.document) {
-      final downloadedMediaValue = message.mediaChatMessage?.mediaDownloadStatus.value ?? "";
-      final uploadedMediaValue = message.mediaChatMessage?.mediaUploadStatus.value ?? "";
-      if (MediaDownloadStatus.mediaDownloaded.value.toString() == downloadedMediaValue ||
-          MediaUploadStatus.mediaUploaded.value.toString() == uploadedMediaValue) {
+      final downloadedMediaValue =
+          message.mediaChatMessage?.mediaDownloadStatus.value ?? "";
+      final uploadedMediaValue =
+          message.mediaChatMessage?.mediaUploadStatus.value ?? "";
+      if (MediaDownloadStatus.mediaDownloaded.value.toString() ==
+              downloadedMediaValue ||
+          MediaUploadStatus.mediaUploaded.value.toString() ==
+              uploadedMediaValue) {
         mediaExist = true;
       }
     }
@@ -128,7 +134,8 @@ class MediaUtils {
       // Open the file
       File file = File(filePath);
       if (!file.existsSync()) {
-        return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+        return const Tuple2(
+            Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
       }
 
       // Read metadata
@@ -139,10 +146,11 @@ class MediaUtils {
       final int width = image.width;
       final int height = image.height;
       debugPrint('Image dimensions: $width x $height');
-      return Tuple2(width,height);
+      return Tuple2(width, height);
     } catch (e) {
       debugPrint('Error: $e');
-      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+      return const Tuple2(
+          Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
     }
   }
 
@@ -150,9 +158,11 @@ class MediaUtils {
   ///
   /// @param originalWidth original width of media
   /// @param originalHeight original height of media
-  static Tuple2<int, int> getMobileWidthAndHeight(int? originalWidth, int? originalHeight) {
+  static Tuple2<int, int> getMobileWidthAndHeight(
+      int? originalWidth, int? originalHeight) {
     if (originalWidth == null || originalHeight == null) {
-      return const Tuple2(Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
+      return const Tuple2(
+          Constants.mobileImageMaxWidth, Constants.mobileImageMaxHeight);
     }
 
     var newWidth = originalWidth;
@@ -175,9 +185,12 @@ class MediaUtils {
     }
 
     return Tuple2(
-      newWidth > Constants.mobileImageMinWidth ? newWidth : Constants.mobileImageMinWidth,
-      newHeight > Constants.mobileImageMinHeight ? newHeight : Constants.mobileImageMinHeight,
+      newWidth > Constants.mobileImageMinWidth
+          ? newWidth
+          : Constants.mobileImageMinWidth,
+      newHeight > Constants.mobileImageMinHeight
+          ? newHeight
+          : Constants.mobileImageMinHeight,
     );
   }
-
 }

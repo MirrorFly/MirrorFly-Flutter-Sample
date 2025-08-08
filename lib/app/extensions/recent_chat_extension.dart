@@ -1,4 +1,3 @@
-
 part of "extensions.dart";
 
 extension RecentChatParsing on RecentChatData {
@@ -6,8 +5,8 @@ extension RecentChatParsing on RecentChatData {
     return (isGroup.checkNull())
         ? ChatType.groupChat
         : (isBroadCast.checkNull())
-        ? ChatType.broadcastChat
-        : ChatType.singleChat;
+            ? ChatType.broadcastChat
+            : ChatType.singleChat;
   }
 
   bool isDeletedContact() {
@@ -22,7 +21,10 @@ extension RecentChatParsing on RecentChatData {
     return !isDeletedContact() && !isItSavedContact() && !isGroup.checkNull();
   }
 
-  bool isEmailContact() => !isGroup.checkNull() && isGroupInOfflineMode.checkNull(); // for email contact isGroupInOfflineMode will be true
+  bool isEmailContact() =>
+      !isGroup.checkNull() &&
+      isGroupInOfflineMode
+          .checkNull(); // for email contact isGroupInOfflineMode will be true
 
   String getName() {
     if (!Constants.enableContactSync) {
@@ -31,8 +33,8 @@ extension RecentChatParsing on RecentChatData {
         : item.name.toString();*/
       return profileName.checkNull().isEmpty
           ? nickName.checkNull().isNotEmpty
-          ? nickName.checkNull()
-          : getMobileNumberFromJid(jid.checkNull())
+              ? nickName.checkNull()
+              : getMobileNumberFromJid(jid.checkNull())
           : profileName.checkNull();
     } else {
       if (jid.checkNull() == SessionManagement.getUserJID()) {

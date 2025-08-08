@@ -11,7 +11,7 @@ import '../../../app_style_config.dart';
 import '../../../common/app_localizations.dart';
 import '../../../data/utils.dart';
 
-class CameraPickController extends GetxController with WidgetsBindingObserver  {
+class CameraPickController extends GetxController with WidgetsBindingObserver {
   RxDouble scale = 1.0.obs;
   CameraController? cameraController;
   var cameraInitialized = false.obs;
@@ -48,13 +48,14 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     debugPrint("cameraController disposed");
     super.dispose();
   }
+
   var min = 1.0;
   var max = 5.0;
-  var pointers =0;
+  var pointers = 0;
   Future<void> initCamera() async {
     cameras = await availableCameras();
     cameraController = CameraController(cameras[0], ResolutionPreset.high);
-    cameraController?.initialize().then((value)async {
+    cameraController?.initialize().then((value) async {
       cameraInitialized(true);
       min = (await cameraController?.getMinZoomLevel())!;
       var maxZoom = (await cameraController?.getMaxZoomLevel())!;
@@ -63,14 +64,14 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       debugPrint("zoom min : $min");
       debugPrint("zoom max : $max");
     });
-
   }
 
-   toggleFlash() {
-     flash.value = !flash.value;
-     flash.value ? cameraController?.setFlashMode(FlashMode.torch) : cameraController?.setFlashMode(FlashMode.off);
-
-   }
+  toggleFlash() {
+    flash.value = !flash.value;
+    flash.value
+        ? cameraController?.setFlashMode(FlashMode.torch)
+        : cameraController?.setFlashMode(FlashMode.off);
+  }
 
   double _currentScale = 1.0;
   double _baseScale = 1.0;
@@ -84,8 +85,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
       return;
     }
 
-    _currentScale = (_baseScale * details.scale)
-        .clamp(min, max);
+    _currentScale = (_baseScale * details.scale).clamp(min, max);
 
     await cameraController!.setZoomLevel(_currentScale);
   }
@@ -112,9 +112,10 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     countdownTimer =
         Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
+
   var minutesStr = '00'.obs;
   var secondsStr = '00'.obs;
-  var counter =0;
+  var counter = 0;
   var timeStr = "".obs;
   var progress = 0.obs;
   get timeString => timeStr("${minutesStr.value}:${secondsStr.value}");
@@ -124,7 +125,7 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     secondsStr((counter % 60).floor().toString().padLeft(2, '0'));
     progress(counter);
     debugPrint(counter.toString());
-    if(counter==maxVideoDuration){
+    if (counter == maxVideoDuration) {
       // stopVideoRecording();
       stopRecord();
     }
@@ -144,19 +145,24 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     }
 
     try {
-      await cameraController?.startVideoRecording();
-      startTimer();
-      isRecording(true);
+      await cameraController?.startVideoRecording().then((_) {
+        startTimer();
+        isRecording(true);
+      });
     } on CameraException catch (e) {
       LogMessage.d("startVideoRecording", "$e");
       _showCameraException(e);
       return;
+    } on Exception catch (e) {
+      LogMessage.d("startVideoRecording general Exception", "$e");
     }
   }
+
   void _showCameraException(CameraException e) {
     _logError(e.code, e.description);
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
+
   void _logError(String code, String? message) {
     // ignore: avoid_print
     print('Error: $code${message == null ? '' : '\nError Message: $message'}');
@@ -184,16 +190,17 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
   }
 
   Future<void> takePhoto(context) async {
-    if(cameraInitialized.value) {
+    if (cameraInitialized.value) {
       DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
         file = await cameraController?.takePicture();
-      }catch(e){
+      } catch (e) {
         LogMessage.d("takePhoto", "$e");
         DialogUtils.hideLoading();
-        toToast(getTranslated("insufficientMemoryError"));//CameraException(IOError, Failed saving image)
-      }finally{
+        toToast(getTranslated(
+            "insufficientMemoryError")); //CameraException(IOError, Failed saving image)
+      } finally {
         debugPrint("file : ${file?.path}");
         DialogUtils.hideLoading();
         NavUtils.back(result: file);
@@ -201,24 +208,23 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     }
   }
 
-  stopRecord()async{
-    if(cameraInitialized.value) {
+  stopRecord() async {
+    if (cameraInitialized.value) {
       //DialogUtils.showLoading();
       DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
       XFile? file;
       try {
-       file = await stopVideoRecording();
-      }catch(e){
+        file = await stopVideoRecording();
+      } catch (e) {
         LogMessage.d("stopRecord", "$e");
         DialogUtils.hideLoading();
         toToast(getTranslated("insufficientMemoryError"));
-      }finally{
+      } finally {
         // debugPrint("file : ${file?.path}, ${file?.length()},");
         DialogUtils.hideLoading();
         NavUtils.back(result: file);
         isRecording(false);
       }
-
     }
   }
 
@@ -228,13 +234,10 @@ class CameraPickController extends GetxController with WidgetsBindingObserver  {
     isFrontCamera.value = !isFrontCamera.value;
     transform = transform * pi;
     int cameraPos = isFrontCamera.value ? 0 : 1;
-    cameraController = CameraController(cameras[cameraPos], ResolutionPreset.high);
-    cameraController?.initialize().then((value){
+    cameraController =
+        CameraController(cameras[cameraPos], ResolutionPreset.high);
+    cameraController?.initialize().then((value) {
       cameraInitialized(true);
     });
-
   }
-
-
-
 }
