@@ -24,18 +24,19 @@ class ImagePreviewController extends GetxController {
     textMessage = NavUtils.arguments['caption'];
     // debugPrint("caption text received--> $textMessage");
     caption.text = textMessage;
-    SchedulerBinding.instance.addPostFrameCallback((_) => filePath(NavUtils.arguments['filePath']));
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => filePath(NavUtils.arguments['filePath']));
   }
 
   sendImageMessage() async {
     if (File(filePath.value).existsSync()) {
       // if(await AppUtils.isNetConnected()) {
-        var response = await Get.find<ChatController>().sendImageMessage(
-            filePath.value, caption.text, "",[]);
-        // debugPrint("Preview View ==> $response");
-        if (response != null) {
-          NavUtils.back();
-        }
+      var response = await Get.find<ChatController>()
+          .sendImageMessage(filePath.value, caption.text, "", []);
+      // debugPrint("Preview View ==> $response");
+      if (response != null) {
+        NavUtils.back();
+      }
       // }else{
       //   toToast(getTranslated("noInternetConnection"));
       // }
@@ -43,5 +44,4 @@ class ImagePreviewController extends GetxController {
       debugPrint("File Not Found For Image Upload");
     }
   }
-
 }

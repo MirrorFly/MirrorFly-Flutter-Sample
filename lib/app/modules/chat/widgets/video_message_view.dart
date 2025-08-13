@@ -12,11 +12,12 @@ import 'image_cache_manager.dart';
 import 'media_message_overlay.dart';
 
 class VideoMessageView extends StatelessWidget {
-  const VideoMessageView({Key? key,
-    required this.chatMessage,
-    this.search = "",
-    required this.isSelected,
-  this.videoMessageViewStyle = const VideoMessageViewStyle()})
+  const VideoMessageView(
+      {Key? key,
+      required this.chatMessage,
+      this.search = "",
+      required this.isSelected,
+      this.videoMessageViewStyle = const VideoMessageViewStyle()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
@@ -30,9 +31,10 @@ class VideoMessageView extends StatelessWidget {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
         if (chatMessage.messageType.toUpperCase() == 'VIDEO') {
-          if (MediaUtils.isMediaExists(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+          if (MediaUtils.isMediaExists(
+                  chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
               (chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                  MediaDownloadStatus.isMediaDownloaded ||
+                      MediaDownloadStatus.isMediaDownloaded ||
                   chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
                       MediaUploadStatus.isMediaUploaded ||
                   chatMessage.isMessageSentByMe)) {
@@ -40,7 +42,8 @@ class VideoMessageView extends StatelessWidget {
               "filePath": chatMessage.mediaChatMessage!.mediaLocalStoragePath.value,
             });*/
             // openVideoFile(videoPath: chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
-            AppUtils.openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
+            AppUtils.openDocument(
+                chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
           } else {
             debugPrint("file is video but condition failed");
           }
@@ -65,8 +68,8 @@ class VideoMessageView extends StatelessWidget {
                 onTap: isSelected
                     ? null
                     : () {
-                  onVideoClick();
-                },
+                        onVideoClick();
+                      },
                 child: SizedBox(
                   width: NavUtils.width * 0.6,
                   height: NavUtils.width * 0.8,
@@ -82,10 +85,11 @@ class VideoMessageView extends StatelessWidget {
                 left: 10,
                 child: Row(
                   children: [
-                    AppUtils.svgIcon(icon:
-                      mVideoIcon,
+                    AppUtils.svgIcon(
+                      icon: mVideoIcon,
                       fit: BoxFit.contain,
-                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                      colorFilter:
+                          const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                     const SizedBox(
                       width: 5,
@@ -99,52 +103,59 @@ class VideoMessageView extends StatelessWidget {
                   ],
                 ),
               ),
-              MediaMessageOverlay(chatMessage: chatMessage,
-                    onVideo: isSelected ? null : onVideoClick,downloadUploadViewStyle: videoMessageViewStyle.downloadUploadViewStyle,),
-              mediaMessage.mediaCaptionText
-                  .checkNull()
-                  .isEmpty
+              MediaMessageOverlay(
+                chatMessage: chatMessage,
+                onVideo: isSelected ? null : onVideoClick,
+                downloadUploadViewStyle:
+                    videoMessageViewStyle.downloadUploadViewStyle,
+              ),
+              mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
-                bottom: 8,
-                right: 10,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    chatMessage.isMessageStarred.value
-                        ? videoMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
-                        : const Offstage(),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    MessageUtils.getMessageIndicatorIcon(
-                        chatMessage.messageStatus.value,
-                        chatMessage.isMessageSentByMe,
-                        chatMessage.messageType,
-                        chatMessage.isMessageRecalled.value),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      getChatTime(
-                          context, chatMessage.messageSentTime.toInt()),
-                      style: videoMessageViewStyle.timeTextStyle,
-                      // style: TextStyle(
-                      //     fontSize: 11,
-                      //     color: chatMessage.isMessageSentByMe
-                      //         ? durationTextColor
-                      //         : textHintColor),
-                    ),
-                  ],
-                ),
-              )
+                      bottom: 8,
+                      right: 10,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          chatMessage.isMessageStarred.value
+                              ? videoMessageViewStyle.iconFavourites ??
+                                  AppUtils.svgIcon(icon: starSmallIcon)
+                              : const Offstage(),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          MessageUtils.getMessageIndicatorIcon(
+                              chatMessage.messageStatus.value,
+                              chatMessage.isMessageSentByMe,
+                              chatMessage.messageType,
+                              chatMessage.isMessageRecalled.value),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            getChatTime(
+                                context, chatMessage.messageSentTime.toInt()),
+                            style: videoMessageViewStyle.timeTextStyle,
+                            // style: TextStyle(
+                            //     fontSize: 11,
+                            //     color: chatMessage.isMessageSentByMe
+                            //         ? durationTextColor
+                            //         : textHintColor),
+                          ),
+                        ],
+                      ),
+                    )
                   : const SizedBox(),
             ],
           ),
-          mediaMessage.mediaCaptionText
-              .checkNull()
-              .isNotEmpty
-              ? CaptionMessageView(mediaMessage: mediaMessage, chatMessage: chatMessage, context: context,
-              search: search,textMessageViewStyle: videoMessageViewStyle.captionTextViewStyle,)
+          mediaMessage.mediaCaptionText.checkNull().isNotEmpty
+              ? CaptionMessageView(
+                  mediaMessage: mediaMessage,
+                  chatMessage: chatMessage,
+                  context: context,
+                  search: search,
+                  textMessageViewStyle:
+                      videoMessageViewStyle.captionTextViewStyle,
+                )
               : const SizedBox()
         ],
       ),

@@ -1,12 +1,13 @@
 // ignore_for_file: unnecessary_null_comparison
 
-
-
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import '../../../../../common/app_localizations.dart';
+import '../../../../../common/constants.dart';
 import '../../../../../data/utils.dart';
 import '../../core/functions.dart';
 import '../../data/models/picked_asset_model.dart';
@@ -118,7 +119,8 @@ class GalleryMediaPicker extends StatefulWidget {
       this.selectedCheckBackgroundColor = Colors.white,
       this.onlyImages = false,
       this.onlyVideos = false,
-      this.thumbnailQuality, required this.provider})
+      this.thumbnailQuality,
+      required this.provider})
       : super(key: key);
 
   @override
@@ -147,7 +149,9 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
       widget.provider.pickedFile.clear();
       widget.provider.picked.clear();
       widget.provider.pathList.clear();
-      widget.provider.onPickMax.removeListener(() { GalleryFunctions.onPickMax(widget.provider);});
+      widget.provider.onPickMax.removeListener(() {
+        GalleryFunctions.onPickMax(widget.provider);
+      });
       PhotoManager.stopChangeNotify();
       super.dispose();
     }
@@ -200,59 +204,91 @@ class _GalleryMediaPickerState extends State<GalleryMediaPicker> {
                           animation: widget.provider.currentAlbumNotifier,
                           builder: (BuildContext context, child) =>
                               GalleryGridView(
-                            path: widget.provider.currentAlbum,
-                            thumbnailQuality: widget.thumbnailQuality ?? 200,
-                            provider: widget.provider,
-                            padding: widget.gridPadding,
-                            childAspectRatio: widget.childAspectRatio ?? 0.5,
-                            crossAxisCount: widget.crossAxisCount ?? 3,
-                            gridViewBackgroundColor:
-                                widget.gridViewBackgroundColor,
-                            gridViewController: widget.gridViewController,
-                            gridViewPhysics: widget.gridViewPhysics,
-                            imageBackgroundColor: widget.imageBackgroundColor,
-                            selectedBackgroundColor:
-                                widget.selectedBackgroundColor,
-                            selectedCheckColor: widget.selectedCheckColor,
-                            thumbnailBoxFix: widget.thumbnailBoxFix,
-                            selectedCheckBackgroundColor:
-                                widget.selectedCheckBackgroundColor,
-                            onAssetRemove: (asset, index) {
-                              widget.provider.removeEntity(asset);
-                            },
+                                  path: widget.provider.currentAlbum,
+                                  thumbnailQuality:
+                                      widget.thumbnailQuality ?? 200,
+                                  provider: widget.provider,
+                                  padding: widget.gridPadding,
+                                  childAspectRatio:
+                                      widget.childAspectRatio ?? 0.5,
+                                  crossAxisCount: widget.crossAxisCount ?? 3,
+                                  gridViewBackgroundColor:
+                                      widget.gridViewBackgroundColor,
+                                  gridViewController: widget.gridViewController,
+                                  gridViewPhysics: widget.gridViewPhysics,
+                                  imageBackgroundColor:
+                                      widget.imageBackgroundColor,
+                                  selectedBackgroundColor:
+                                      widget.selectedBackgroundColor,
+                                  selectedCheckColor: widget.selectedCheckColor,
+                                  thumbnailBoxFix: widget.thumbnailBoxFix,
+                                  selectedCheckBackgroundColor:
+                                      widget.selectedCheckBackgroundColor,
+                                  onAssetRemove: (asset, index) {
+                                    widget.provider.removeEntity(asset);
+                                  },
                             onAssetItemClick: (asset, index) async {
-                              // File? file = await asset.file;
-                              // if(checkFileUploadSize(file!.path, asset.typeInt == 1 ? Constants.mImage : Constants.mVideo)) {
-                              //   debugPrint("item processed1 ${DateTime.now()} ${file.lengthSync()}");
-                                widget.provider.pickEntity(asset);
-                                widget.provider.pickPath(PickedAssetModel(
-                                  id: asset.id,
-                                  // path: file.path,
-                                  type: asset.typeInt == 1
-                                      ? 'image'
-                                      : 'video',
-                                  asset: asset,
-                                  videoDuration: asset.videoDuration,
-                                  createDateTime: asset.createDateTime,
-                                  latitude: asset.latitude,
-                                  longitude: asset.longitude,
-                                  thumbnail: await asset.thumbnailData,
-                                  height: asset.height,
-                                  width: asset.width,
-                                  orientationHeight: asset.orientatedHeight,
-                                  orientationWidth: asset.orientatedWidth,
-                                  orientationSize: asset.orientatedSize,
-                                  // file: await asset.file,
-                                  modifiedDateTime: asset.modifiedDateTime,
-                                  title: asset.title,
-                                  size: asset.size,
-                                ));
-                                  widget.pathList!(widget.provider.pickedFile);
+                              final File? file = await asset.file;
+                              final String fileType = asset.typeInt == 1
+                                  ? Constants.mImage
+                                  : Constants.mVideo;
+                              if (file != null) {
+                                try {
+                                  final bool isValidSize = await MediaUtils
+                                      .checkFileUploadSize(
+                                      file.path,
+                                      fileType);
+                                  debugPrint(
+                                      "#gallery media picker: isValidSize: $isValidSize");
+                                  if (isValidSize) {
+                                    debugPrint(
+                                        "#gallery media picker: item processed1 ${DateTime
+                                            .now()} ${file.lengthSync()}");
+                                    widget.provider.pickEntity(asset);
+                                    widget.provider.pickPath(PickedAssetModel(
+                                      id: asset.id,
+                                      // path: file.path,
+                                      type:
+                                      asset.typeInt == 1 ? 'image' : 'video',
+                                      asset: asset,
+                                      videoDuration: asset.videoDuration,
+                                      createDateTime: asset.createDateTime,
+                                      latitude: asset.latitude,
+                                      longitude: asset.longitude,
+                                      thumbnail: await asset.thumbnailData,
+                                      height: asset.height,
+                                      width: asset.width,
+                                      orientationHeight: asset.orientatedHeight,
+                                      orientationWidth: asset.orientatedWidth,
+                                      orientationSize: asset.orientatedSize,
+                                      // file: await asset.file,
+                                      modifiedDateTime: asset.modifiedDateTime,
+                                      title: asset.title,
+                                      size: asset.size,
+                                    ));
+                                    widget.pathList!(
+                                        widget.provider.pickedFile);
+                                  } else {
+                                    debugPrint(
+                                        "#gallery media picker Error: failed to select the $fileType");
+                                    toToast(getTranslated(
+                                            "mediaMaxLimitRestriction")
+                                        .replaceAll("%d",
+                                            "${fileType == Constants.mImage ? MediaUtils.maxImageFileSize : MediaUtils.maxVideoFileSize}"));
+                                  }
+                                } catch (e) {
+                                  debugPrint(
+                                      "#gallery media picker: Error: Media picker ==> $e");
+                                  final String error =
+                                      "${getTranslated("anErrorOccurred")} ${getTranslated("mediaPickerError").replaceAll("%s", fileType.toLowerCase())}";
+                                  toToast(error);
+                                }
+                              } else {
+                                debugPrint(
+                                    "#gallery media picker: Error: Media picker file should not be null");
+                                toToast(getTranslated("anErrorOccurred"));
                               }
-                              /*else{
-                                toToast(Constants.mediaMaxLimitRestriction.replaceAll("%d", "${asset.typeInt == 1 ? Constants.maxImageFileSize : Constants.maxVideoFileSize}"));
-                              }
-                            },*/
+                            },
                           ),
                         )
                       : Container(),

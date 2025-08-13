@@ -17,7 +17,6 @@ import '../model/chat_message_model.dart';
 import '../routes/route_settings.dart';
 import 'utils.dart';
 
-
 Future<ProfileDetails> getProfileDetails(String jid) async {
   var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
   // profileDataFromJson(value);
@@ -30,25 +29,30 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
 Future<ChatMessageModel> getMessageOfId(String mid) async {
   var value = await Mirrorfly.getMessageOfId(messageId: mid.checkNull());
   //LogMessage.d("getMessageOfId", "$value");
-  var chatMessage =
-      sendMessageModelFromJson(value.toString()); //await compute(sendMessageModelFromJson, value.toString());
+  var chatMessage = sendMessageModelFromJson(value
+      .toString()); //await compute(sendMessageModelFromJson, value.toString());
   return chatMessage;
 }
-
-
 
 String returnFormattedCount(int count) {
   return (count > 99) ? "99+" : count.toString();
 }
 
-InkWell listItem({Widget? leading, required Widget title, Widget? trailing, required Function() onTap}) {
+InkWell listItem(
+    {Widget? leading,
+    required Widget title,
+    Widget? trailing,
+    required Function() onTap}) {
   return InkWell(
     onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          leading != null ? Padding(padding: const EdgeInsets.only(right: 16.0), child: leading) : const SizedBox(),
+          leading != null
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 16.0), child: leading)
+              : const SizedBox(),
           Expanded(
             child: title,
           ),
@@ -81,8 +85,9 @@ String setDateHourFormat(int format, int hours) {
 bool equalsWithYesterday(DateTime srcDate, String day) {
   if (day == getTranslated("yesterday")) {
     var messageDate = DateFormat('yyyy/MM/dd').format(srcDate);
-    var yesterdayDate = DateFormat('yyyy/MM/dd')
-        .format(DateTime.now().subtract(const Duration(days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
+    var yesterdayDate = DateFormat('yyyy/MM/dd').format(DateTime.now().subtract(
+        const Duration(
+            days: 1, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)));
     return yesterdayDate == messageDate;
   } else {
     return equalsWithToday(srcDate, day);
@@ -103,18 +108,12 @@ String getChatTime(BuildContext context, int? epochTime) {
   var convertedTime = epochTime;
   // var convertedTime = Platform.isAndroid ? epochTime : epochTime * 1000; // / 1000;
   // debugPrint("epoch convertedTime---> $convertedTime");
-  var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+  var hourTime = manipulateMessageTime(
+      context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
   // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   //debugPrint('hourTime $hourTime');
   return hourTime;
 }
-
-
-
-
-
-
-
 
 class Triple {
   Triple(this.singleOrgroupJid, this.userId, this.typingStatus);
@@ -141,7 +140,9 @@ String getName(ProfileDetails item) {
         ? item.nickName.toString()
         : item.name.toString();*/
     return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.nickName.checkNull())
+        ? (item.nickName.checkNull().isEmpty
+            ? getMobileNumberFromJid(item.jid.checkNull())
+            : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -157,7 +158,9 @@ String getName(ProfileDetails item) {
     } else {
       LogMessage.d("getName", 'nickName ${item.nickName} name ${item.name}');
       return item.nickName.checkNull().isEmpty
-          ? (item.name.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.name.checkNull())
+          ? (item.name.checkNull().isEmpty
+              ? getMobileNumberFromJid(item.jid.checkNull())
+              : item.name.checkNull())
           : item.nickName.checkNull(); //#FLUTTER-1300
     }
   }
@@ -195,7 +198,9 @@ String getMemberName(ProfileDetails item) {
         ? item.nickName.toString()
         : item.name.toString();*/
     return item.name.checkNull().isEmpty
-        ? (item.nickName.checkNull().isEmpty ? getMobileNumberFromJid(item.jid.checkNull()) : item.nickName.checkNull())
+        ? (item.nickName.checkNull().isEmpty
+            ? getMobileNumberFromJid(item.jid.checkNull())
+            : item.nickName.checkNull())
         : item.name.checkNull();
   } else {
     if (item.jid.checkNull() == SessionManagement.getUserJID()) {
@@ -239,19 +244,23 @@ String convertSecondToLastSeen(String seconds) {
     if (seconds == "0") return getTranslated("online");
     LogMessage.d("getUserLastSeenTime", "seconds $seconds");
     // var userLastSeenDate = DateTime.now().subtract(Duration(milliseconds: double.parse(seconds).toInt()));
-    DateTime lastSeen = DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
+    DateTime lastSeen =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(seconds), isUtc: false);
     Duration diff = DateTime.now().difference(lastSeen);
 
     LogMessage.d("getUserLastSeenTime", "diff ${diff.inDays}");
     if (diff.inDays == 0) {
-      return getTranslated("lastSeenAt").replaceFirst("%d", DateFormat('hh:mm a').format(lastSeen));
+      return getTranslated("lastSeenAt")
+          .replaceFirst("%d", DateFormat('hh:mm a').format(lastSeen));
     } else if (diff.inDays == 1) {
       return getTranslated("lastSeenYesterday");
     } else if (diff.inDays > 1 && diff.inDays < 365) {
       var last = DateFormat('dd MMM').format(lastSeen);
       return getTranslated("lastSeenOn").replaceFirst("%d", last);
-    } else if (int.parse(DateFormat('yyyy').format(lastSeen)) < int.parse(DateFormat('yyyy').format(DateTime.now()))) {
-      return getTranslated("lastSeenOn").replaceFirst("%d",DateFormat('dd/MM/yyyy').format(lastSeen));
+    } else if (int.parse(DateFormat('yyyy').format(lastSeen)) <
+        int.parse(DateFormat('yyyy').format(DateTime.now()))) {
+      return getTranslated("lastSeenOn")
+          .replaceFirst("%d", DateFormat('dd/MM/yyyy').format(lastSeen));
     } else {
       return getTranslated("online");
     }
@@ -262,10 +271,12 @@ String convertSecondToLastSeen(String seconds) {
 
 String getDisplayImage(RecentChatData recentChat) {
   var imageUrl = recentChat.profileImage ?? Constants.emptyString;
-  if (recentChat.isBlockedMe.checkNull() || recentChat.isAdminBlocked.checkNull()) {
+  if (recentChat.isBlockedMe.checkNull() ||
+      recentChat.isAdminBlocked.checkNull()) {
     imageUrl = Constants.emptyString;
     //drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
-  } else if (!recentChat.isItSavedContact.checkNull() || recentChat.isDeletedContact()) {
+  } else if (!recentChat.isItSavedContact.checkNull() ||
+      recentChat.isDeletedContact()) {
     imageUrl = recentChat.profileImage ?? Constants.emptyString;
     // drawable = CustomDrawable(context).getDefaultDrawable(recentChat)
   }
@@ -273,22 +284,24 @@ String getDisplayImage(RecentChatData recentChat) {
 }
 
 void showQuickProfilePopup(
-    {
-    required Function() chatTap,
+    {required Function() chatTap,
     Function()? callTap,
     Function()? videoTap,
     required Function() infoTap,
     required Rx<ProfileDetails> profile,
     required Rx<AvailableFeatures> availableFeatures}) {
-  var isAudioCallAvailable =
-      profile.value.isGroupProfile.checkNull() ? false : availableFeatures.value.isOneToOneCallAvailable.checkNull();
-  var isVideoCallAvailable =
-      profile.value.isGroupProfile.checkNull() ? false : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+  var isAudioCallAvailable = profile.value.isGroupProfile.checkNull()
+      ? false
+      : availableFeatures.value.isOneToOneCallAvailable.checkNull();
+  var isVideoCallAvailable = profile.value.isGroupProfile.checkNull()
+      ? false
+      : availableFeatures.value.isOneToOneCallAvailable.checkNull();
 
   DialogUtils.createDialog(
     Obx(() {
       return Dialog(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
         child: SizedBox(
           width: NavUtils.width * 0.7,
           height: 300,
@@ -298,9 +311,11 @@ void showQuickProfilePopup(
                 child: InkWell(
                   onTap: () {
                     LogMessage.d('image click', 'true');
-                    debugPrint("quick profile click--> ${profile.toJson().toString()}");
+                    debugPrint(
+                        "quick profile click--> ${profile.toJson().toString()}");
                     if (profile.value.image!.isNotEmpty &&
-                        !(profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull()) &&
+                        !(profile.value.isBlockedMe.checkNull() ||
+                            profile.value.isAdminBlocked.checkNull()) &&
                         !( //!profile.value.isItSavedContact.checkNull() || //This is commented because Android side received as true and iOS side false
                             profile.value.isDeletedContact())) {
                       NavUtils.back();
@@ -314,16 +329,17 @@ void showQuickProfilePopup(
                     fit: StackFit.expand,
                     children: [
                       ClipRRect(
-                          borderRadius:
-                              const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
                           child: ImageNetwork(
                             url: profile.value.image.toString(),
                             width: NavUtils.width * 0.7,
                             height: 250,
                             clipOval: false,
                             errorWidget: profile.value.isGroupProfile!
-                                ? AppUtils.assetIcon(assetName:
-                                    groupImg,
+                                ? AppUtils.assetIcon(
+                                    assetName: groupImg,
                                     height: 250,
                                     width: NavUtils.width * 0.72,
                                     fit: BoxFit.cover,
@@ -334,11 +350,15 @@ void showQuickProfilePopup(
                                     radius: 0,
                                   ),
                             isGroup: profile.value.isGroupProfile.checkNull(),
-                            blocked: profile.value.isBlockedMe.checkNull() || profile.value.isAdminBlocked.checkNull(),
-                            unknown: (!profile.value.isItSavedContact.checkNull() || profile.value.isDeletedContact()),
+                            blocked: profile.value.isBlockedMe.checkNull() ||
+                                profile.value.isAdminBlocked.checkNull(),
+                            unknown:
+                                (!profile.value.isItSavedContact.checkNull() ||
+                                    profile.value.isDeletedContact()),
                           )),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 20),
                         child: Text(
                           profile.value.isGroupProfile!
                               ? profile.value.name.checkNull()
@@ -360,8 +380,8 @@ void showQuickProfilePopup(
                     Expanded(
                       child: InkWell(
                         onTap: chatTap,
-                        child: AppUtils.svgIcon(icon:
-                          quickMessage,
+                        child: AppUtils.svgIcon(
+                          icon: quickMessage,
                           fit: BoxFit.contain,
                           width: 30,
                           height: 30,
@@ -372,12 +392,11 @@ void showQuickProfilePopup(
                         ? Expanded(
                             child: InkWell(
                               onTap: () {
-                                  NavUtils.back();
-                                  makeVoiceCall(profile,
-                                      availableFeatures);
+                                NavUtils.back();
+                                makeVoiceCall(profile, availableFeatures);
                               },
-                              child: AppUtils.svgIcon(icon:
-                                quickCall,
+                              child: AppUtils.svgIcon(
+                                icon: quickCall,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -390,8 +409,8 @@ void showQuickProfilePopup(
                                 NavUtils.back();
                                 makeVideoCall(profile, availableFeatures);
                               },
-                              child: AppUtils.svgIcon(icon:
-                                quickVideo,
+                              child: AppUtils.svgIcon(
+                                icon: quickVideo,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -400,8 +419,8 @@ void showQuickProfilePopup(
                     Expanded(
                       child: InkWell(
                         onTap: infoTap,
-                        child: AppUtils.svgIcon(icon:
-                          quickInfo,
+                        child: AppUtils.svgIcon(
+                          icon: quickInfo,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -417,39 +436,50 @@ void showQuickProfilePopup(
   );
 }
 
-showBlockStatusAlert(Function? function,Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) {
-  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockToSendMsg"), actions: [
-    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-        onPressed: () {
-          NavUtils.back();
-        },
-        child: Text(getTranslated("cancel").toUpperCase(), )),
-    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-        onPressed: () async {
-          NavUtils.back();
-          Mirrorfly.unblockUser(
-              userJid: profile.value.jid.checkNull(),
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  debugPrint(response.toString());
-                  profile.value.isBlocked = false;
-                  if (function != null) {
-                    function.call(profile,availableFeatures);
-                  }
-                }
-              });
-        },
-        child: Text(getTranslated("unblock").toUpperCase(), )),
-  ]);
+showBlockStatusAlert(Function? function, Rx<ProfileDetails> profile,
+    Rx<AvailableFeatures> availableFeatures) {
+  DialogUtils.showAlert(
+      dialogStyle: AppStyleConfig.dialogStyle,
+      message: getTranslated("unBlockToSendMsg"),
+      actions: [
+        TextButton(
+            style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () {
+              NavUtils.back();
+            },
+            child: Text(
+              getTranslated("cancel").toUpperCase(),
+            )),
+        TextButton(
+            style: AppStyleConfig.dialogStyle.buttonStyle,
+            onPressed: () async {
+              NavUtils.back();
+              Mirrorfly.unblockUser(
+                  userJid: profile.value.jid.checkNull(),
+                  flyCallBack: (FlyResponse response) {
+                    if (response.isSuccess) {
+                      debugPrint(response.toString());
+                      profile.value.isBlocked = false;
+                      if (function != null) {
+                        function.call(profile, availableFeatures);
+                      }
+                    }
+                  });
+            },
+            child: Text(
+              getTranslated("unblock").toUpperCase(),
+            )),
+      ]);
 }
 
-makeVoiceCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
-  if(profile.value.isAdminBlocked.checkNull()){
+makeVoiceCall(
+    Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
+  if (profile.value.isAdminBlocked.checkNull()) {
     toToast(getTranslated("adminBlockedUser"));
     return;
   }
-  if(profile.value.isBlocked.checkNull()) {
-    showBlockStatusAlert(makeVoiceCall, profile,availableFeatures);
+  if (profile.value.isBlocked.checkNull()) {
+    showBlockStatusAlert(makeVoiceCall, profile, availableFeatures);
     return;
   }
   if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
@@ -466,25 +496,28 @@ makeVoiceCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeature
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
-    Mirrorfly.makeVoiceCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
-      if (response.isSuccess) {
-        NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-          "userJid": [profile.value.jid],
-          "callType": CallType.audio
+    Mirrorfly.makeVoiceCall(
+        toUserJid: profile.value.jid.checkNull(),
+        flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
+            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+              "userJid": [profile.value.jid],
+              "callType": CallType.audio
+            });
+          }
         });
-      }
-    });
   } else {
     debugPrint("permission not given");
   }
 }
 
-makeVideoCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
-  if(profile.value.isAdminBlocked.checkNull()){
+makeVideoCall(
+    Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeatures) async {
+  if (profile.value.isAdminBlocked.checkNull()) {
     toToast(getTranslated("adminBlockedUser"));
     return;
   }
-  if(profile.value.isBlocked.checkNull()) {
+  if (profile.value.isBlocked.checkNull()) {
     showBlockStatusAlert(makeVideoCall, profile, availableFeatures);
     return;
   }
@@ -502,14 +535,16 @@ makeVideoCall(Rx<ProfileDetails> profile, Rx<AvailableFeatures> availableFeature
     return;
   }
   if (await AppPermission.askVideoCallPermissions()) {
-      Mirrorfly.makeVideoCall(toUserJid: profile.value.jid.checkNull(), flyCallBack: (FlyResponse response) {
-        if (response.isSuccess) {
-          NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-            "userJid": [profile.value.jid],
-            "callType": CallType.video
-          });
-        }
-      });
+    Mirrorfly.makeVideoCall(
+        toUserJid: profile.value.jid.checkNull(),
+        flyCallBack: (FlyResponse response) {
+          if (response.isSuccess) {
+            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+              "userJid": [profile.value.jid],
+              "callType": CallType.video
+            });
+          }
+        });
   } else {
     LogMessage.d("askVideoCallPermissions", "false");
   }
@@ -522,16 +557,16 @@ String getCallLogDuration(int startTime, int endTime) {
   if (startTime == 0 || endTime == 0 || millis == 0) {
     return "";
   } else {
-    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
+    var seconds =
+        ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
     return '${(duration.inMinutes).toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
 }
 
 String getErrorDetails(FlyResponse response) {
-  if(Platform.isIOS){
+  if (Platform.isIOS) {
     return '${response.errorMessage}${response.errorDetails != null ? ", ${response.errorDetails}" : ""}';
-  }else{
+  } else {
     return response.errorMessage;
   }
 }
-

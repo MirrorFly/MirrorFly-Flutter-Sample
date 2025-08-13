@@ -299,8 +299,12 @@ class ChatInputField extends StatelessWidget {
             controller.availableFeatures.value.isAudioAttachmentAvailable
                 .checkNull())...[
           IconButton(
-            onPressed: () {
-              controller.startRecording();
+            onPressed: () async{
+              if (!(await Mirrorfly.isOnGoingCall()).checkNull()){
+                controller.startRecording();
+              }else{
+                toToast('Can not make a audio record when in a call');
+              }
             },
             icon: messageTypingAreaStyle.iconRecord ?? AppUtils.svgIcon(
               icon: audioMic,

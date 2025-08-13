@@ -1,5 +1,3 @@
-
-
 import '../model/chat_message_model.dart';
 
 abstract class GroupedMedia {
@@ -11,6 +9,7 @@ class MessageItem implements GroupedMedia {
   Map? linkMap = {};
   @override
   var id = -double.infinity + 0;
+
   MessageItem(this.chatMessage, [this.linkMap]);
 }
 
@@ -18,5 +17,6 @@ class Header implements GroupedMedia {
   final String titleName;
   @override
   var id = -double.infinity + 1;
+
   Header(this.titleName);
 }

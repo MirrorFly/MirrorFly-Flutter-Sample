@@ -13,7 +13,8 @@ class AudioLevelAnimation extends StatefulWidget {
     Key? key,
     required this.bgColor,
     this.radius = 14,
-    required this.audioLevel, this.dotsColor = Colors.white,
+    required this.audioLevel,
+    this.dotsColor = Colors.white,
   }) : super(key: key);
 
   @override
