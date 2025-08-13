@@ -1,7 +1,8 @@
 part of "extensions.dart";
 
 extension ScrollControllerExtension on ScrollController {
-  void scrollTo({required int index, required Duration duration, Curve? curve}) {
+  void scrollTo(
+      {required int index, required Duration duration, Curve? curve}) {
     var offset = getOffset(GlobalKey(debugLabel: "CHATITEM_$index"));
     LogMessage.d("ScrollTo", offset);
     animateTo(
@@ -11,11 +12,11 @@ extension ScrollControllerExtension on ScrollController {
     );
   }
 
-  void jumpsTo({required double index}){
+  void jumpsTo({required double index}) {
     jumpTo(index);
   }
 
-  double getOffset(GlobalKey key){
+  double getOffset(GlobalKey key) {
     final box = key.currentContext?.findRenderObject() as RenderBox;
     final boxHeight = box.size.height;
     Offset boxPosition = box.localToGlobal(Offset.zero);

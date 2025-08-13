@@ -297,11 +297,17 @@ class OutgoingCallController extends GetxController
     // startTimer();
     if (NavUtils.currentRoute != Routes.onGoingCallView &&
         NavUtils.currentRoute != Routes.participants) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        NavUtils.offNamed(Routes.onGoingCallView, arguments: {
-          "userJid": [userJid],
-          "cameraSwitch": cameraSwitch.value
-        });
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        bool? isAlreadyInCall = await Mirrorfly.isOnGoingCall();
+        if (isAlreadyInCall == true) {
+          print("#call is not disconnected already");
+          NavUtils.offNamed(Routes.onGoingCallView, arguments: {
+            "userJid": [userJid],
+            "cameraSwitch": cameraSwitch.value
+          });
+        } else {
+          print("#call is disconnected already");
+        }
       });
     }
   }

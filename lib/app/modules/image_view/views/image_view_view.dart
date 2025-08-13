@@ -14,7 +14,8 @@ class ImageViewView extends NavViewStateful<ImageViewController> {
   const ImageViewView({Key? key}) : super(key: key);
 
   @override
-ImageViewController createController({String? tag}) => Get.put(ImageViewController());
+  ImageViewController createController({String? tag}) =>
+      Get.put(ImageViewController());
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,9 @@ ImageViewController createController({String? tag}) => Get.put(ImageViewControll
                   ? PhotoView(
                       imageProvider: CachedNetworkImageProvider(
                           controller.imageUrl.value,
-                          headers: {"Authorization": main.currentAuthToken.value}),
+                          headers: {
+                            "Authorization": main.currentAuthToken.value
+                          }),
                       // Contained = the smallest possible size to fit one dimension of the screen
                       minScale: PhotoViewComputedScale.contained * 0.8,
                       // Covered = the smallest possible size to fit the whole screen

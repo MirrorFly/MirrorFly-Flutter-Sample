@@ -38,7 +38,7 @@ class ContactSyncController extends GetxController
   }
 
   @override
-  void onClose(){
+  void onClose() {
     super.onClose();
     animController.dispose();
   }
@@ -51,24 +51,32 @@ class ContactSyncController extends GetxController
 
   Rx<bool> syncing = false.obs;
   Rx<String> textContactSync = ''.obs;
+
   openContactPermission() async {
-    if(!await Mirrorfly.contactSyncStateValue()) {
-      var contactPermissionHandle = await AppPermission.checkAndRequestPermissions(permissions: [Permission.contacts],
-          permissionIcon: contactPermission,
-          permissionContent:getTranslated("contactPermissionContent"),permissionPermanentlyDeniedContent:getTranslated("contactPermissionDeniedContent") );
+    if (!await Mirrorfly.contactSyncStateValue()) {
+      var contactPermissionHandle =
+          await AppPermission.checkAndRequestPermissions(
+              permissions: [Permission.contacts],
+              permissionIcon: contactPermission,
+              permissionContent: getTranslated("contactPermissionContent"),
+              permissionPermanentlyDeniedContent:
+                  getTranslated("contactPermissionDeniedContent"));
       if (contactPermissionHandle) {
         syncing(true);
         textContactSync(getTranslated("contactSyncInProcess"));
-        Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {  });
+        Mirrorfly.syncContacts(
+            isFirstTime: !SessionManagement.isInitialContactSyncDone(),
+            flyCallBack: (_) {});
         checkContactSync();
       } else {
         NavUtils.offNamed(Routes.dashboard);
       }
-    }else{
+    } else {
       syncing(true);
       textContactSync(getTranslated("contactSyncInProcess"));
     }
   }
+
   checkContactSync() async {
     await Mirrorfly.contactSyncStateValue();
     /*if (contactSyncState == null || contactSyncState == Result.InProgress) {
@@ -81,11 +89,13 @@ class ContactSyncController extends GetxController
   }
 
   void onContactSyncComplete(bool result) {
-    if(NavUtils.currentRoute==Routes.contactSync) {
-      Mirrorfly.getRegisteredUsers(fetchFromServer: true,flyCallback: (FlyResponse response){
-        LogMessage.d("registeredUsers", response.isSuccess.toString());
-        navigateToDashboard();
-      });
+    if (NavUtils.currentRoute == Routes.contactSync) {
+      Mirrorfly.getRegisteredUsers(
+          fetchFromServer: true,
+          flyCallback: (FlyResponse response) {
+            LogMessage.d("registeredUsers", response.isSuccess.toString());
+            navigateToDashboard();
+          });
       /*then((value) {
         LogMessage.d("registeredUsers", value.toString());
         navigateToDashboard();
@@ -101,9 +111,9 @@ class ContactSyncController extends GetxController
   Future<void> onConnected() async {
     LogMessage.d('networkConnected', 'contactSync');
     textContactSync('');
-    if(!await Mirrorfly.contactSyncStateValue()){
+    if (!await Mirrorfly.contactSyncStateValue()) {
       openContactPermission();
-    }else{
+    } else {
       syncing(true);
       textContactSync(getTranslated("contactSyncInProcess"));
     }

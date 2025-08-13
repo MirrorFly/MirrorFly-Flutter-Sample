@@ -9,12 +9,16 @@ import '../../../model/chat_message_model.dart';
 import 'chat_widgets.dart';
 
 class LocationMessageView extends StatelessWidget {
-  const LocationMessageView({Key? key, required this.chatMessage, required this.isSelected,
-  this.locationMessageViewStyle = const LocationMessageViewStyle(),})
-      : super(key: key);
+  const LocationMessageView({
+    Key? key,
+    required this.chatMessage,
+    required this.isSelected,
+    this.locationMessageViewStyle = const LocationMessageViewStyle(),
+  }) : super(key: key);
   final ChatMessageModel chatMessage;
   final bool isSelected;
   final LocationMessageViewStyle locationMessageViewStyle;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,7 +37,8 @@ class LocationMessageView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 chatMessage.isMessageStarred.value
-                    ? locationMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
+                    ? locationMessageViewStyle.iconFavourites ??
+                        AppUtils.svgIcon(icon: starSmallIcon)
                     : const Offstage(),
                 const SizedBox(
                   width: 5,

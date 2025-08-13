@@ -12,10 +12,13 @@ import '../../../model/chat_message_model.dart';
 import 'media_message_overlay.dart';
 
 class AudioMessageView extends StatefulWidget {
-  const AudioMessageView({Key? key,
-    required this.chatMessage,
-    required this.onPlayAudio,
-    required this.onSeekbarChange,this.audioMessageViewStyle = const AudioMessageViewStyle(), this.decoration = const BoxDecoration()})
+  const AudioMessageView(
+      {Key? key,
+      required this.chatMessage,
+      required this.onPlayAudio,
+      required this.onSeekbarChange,
+      this.audioMessageViewStyle = const AudioMessageViewStyle(),
+      this.decoration = const BoxDecoration()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final Function() onPlayAudio;
@@ -35,11 +38,12 @@ class _AudioMessageViewState extends State<AudioMessageView>
         : widget.chatMessage.mediaChatMessage?.mediaDownloadStatus.value) {
       case MediaDownloadStatus.isMediaDownloaded:
       case MediaUploadStatus.isMediaUploaded:
-        if (MediaUtils.isMediaExists(
-            widget.chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
+        if (MediaUtils.isMediaExists(widget
+                .chatMessage.mediaChatMessage!.mediaLocalStoragePath.value) &&
             (widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
-                MediaDownloadStatus.isMediaDownloaded ||
-                widget.chatMessage.mediaChatMessage!.mediaDownloadStatus.value ==
+                    MediaDownloadStatus.isMediaDownloaded ||
+                widget.chatMessage.mediaChatMessage!.mediaDownloadStatus
+                        .value ==
                     MediaUploadStatus.isMediaUploaded ||
                 widget.chatMessage.isMessageSentByMe)) {
           //playAudio(chatList, chatList.mediaChatMessage!.mediaLocalStoragePath);
@@ -63,10 +67,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    currentPos = widget.chatMessage.mediaChatMessage!
-        .currentPos
-        .toDouble()
-        .obs;
+    currentPos = widget.chatMessage.mediaChatMessage!.currentPos.toDouble().obs;
     // player.onPlayerCompletion.listen((event) {
     //   isPlaying(false);
     //   currentPos(0);
@@ -81,7 +82,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
     //   currentPos.refresh();
     // });
     player.onPlayerStateChanged.listen(
-          (it) {
+      (it) {
         switch (it) {
           case PlayerState.playing:
             isPlaying(true);
@@ -105,7 +106,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
       widget.chatMessage.mediaChatMessage!.currentPos = 0;
       player.stop();
     });
-    player.onPositionChanged.listen((Duration  p) {
+    player.onPositionChanged.listen((Duration p) {
       LogMessage.d('p.inMilliseconds', p.inMilliseconds.toString());
       widget.chatMessage.mediaChatMessage!.currentPos = p.inMilliseconds;
       currentPos(p.inMilliseconds.toDouble());
@@ -147,7 +148,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
   @override
   Widget build(BuildContext context) {
     var screenWidth = NavUtils.width;
-    var currentPos = 0.0; /*double.parse(widget.chatMessage
+    var currentPos =
+        0.0; /*double.parse(widget.chatMessage
         .mediaChatMessage!.currentPos
         .toString());
     var maxPos = double.parse(widget.chatMessage
@@ -190,17 +192,37 @@ class _AudioMessageViewState extends State<AudioMessageView>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                 CircleAvatar(radius: (30/2),
-                  backgroundColor: widget.audioMessageViewStyle.iconStyle.bgColor,
-                  child: widget.chatMessage.mediaChatMessage!.isAudioRecorded
-                      ? AppUtils.svgIcon(icon:audioMic,
-                    colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),height: 13,)
-                    : AppUtils.svgIcon(icon:musicIcon,
-                  colorFilter: ColorFilter.mode(widget.audioMessageViewStyle.iconStyle.iconColor, BlendMode.srcIn),)),
-                MediaMessageOverlay(chatMessage: widget.chatMessage, onAudio: () {
+                CircleAvatar(
+                    radius: (30 / 2),
+                    backgroundColor:
+                        widget.audioMessageViewStyle.iconStyle.bgColor,
+                    child: widget.chatMessage.mediaChatMessage!.isAudioRecorded
+                        ? AppUtils.svgIcon(
+                            icon: audioMic,
+                            colorFilter: ColorFilter.mode(
+                                widget
+                                    .audioMessageViewStyle.iconStyle.iconColor,
+                                BlendMode.srcIn),
+                            height: 13,
+                          )
+                        : AppUtils.svgIcon(
+                            icon: musicIcon,
+                            colorFilter: ColorFilter.mode(
+                                widget
+                                    .audioMessageViewStyle.iconStyle.iconColor,
+                                BlendMode.srcIn),
+                          )),
+                MediaMessageOverlay(
+                  chatMessage: widget.chatMessage,
+                  onAudio: () {
                     widget.onPlayAudio();
-                    playAudio(widget.chatMessage,);
-                  },downloadUploadViewStyle:  widget.audioMessageViewStyle.downloadUploadViewStyle,), //widget.onPlayAudio),
+                    playAudio(
+                      widget.chatMessage,
+                    );
+                  },
+                  downloadUploadViewStyle:
+                      widget.audioMessageViewStyle.downloadUploadViewStyle,
+                ), //widget.onPlayAudio),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -209,7 +231,9 @@ class _AudioMessageViewState extends State<AudioMessageView>
                       Container(
                         padding: const EdgeInsets.only(top: 8),
                         child: SliderTheme(
-                          data: widget.audioMessageViewStyle.sliderThemeData.copyWith(overlayShape: SliderComponentShape.noThumb),
+                          data: widget.audioMessageViewStyle.sliderThemeData
+                              .copyWith(
+                                  overlayShape: SliderComponentShape.noThumb),
                           /*SliderThemeData(
                             thumbColor: audioColorDark,
                             trackHeight: 2,
@@ -243,13 +267,13 @@ class _AudioMessageViewState extends State<AudioMessageView>
                         child: Text(
                           DateTimeUtils.durationToString(Duration(
                               milliseconds: currentPos !=
-                                  0.0 // chatMessage.mediaChatMessage?.currentPos != 0
+                                      0.0 // chatMessage.mediaChatMessage?.currentPos != 0
                                   ? currentPos
-                                  .toInt() /*chatMessage
+                                      .toInt() /*chatMessage
                                               .mediaChatMessage?.currentPos ??
                                           0*/
                                   : widget.chatMessage.mediaChatMessage!
-                                  .mediaDuration)),
+                                      .mediaDuration)),
                           style: widget.audioMessageViewStyle.durationTextStyle,
                           // style: const TextStyle(
                           //     color: durationTextColor,
@@ -272,7 +296,8 @@ class _AudioMessageViewState extends State<AudioMessageView>
               mainAxisSize: MainAxisSize.min,
               children: [
                 widget.chatMessage.isMessageStarred.value
-                    ? widget.audioMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
+                    ? widget.audioMessageViewStyle.iconFavourites ??
+                        AppUtils.svgIcon(icon: starSmallIcon)
                     : const Offstage(),
                 const SizedBox(
                   width: 5,
@@ -311,7 +336,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
 
   playAudio(ChatMessageModel chatMessage) {
     var maxPos =
-    double.parse(chatMessage.mediaChatMessage!.mediaDuration.toString());
+        double.parse(chatMessage.mediaChatMessage!.mediaDuration.toString());
     /*if(!(currentPos >= 0.0 && currentPos <= maxPos)){
       currentPos(maxPos);
     }*/
@@ -341,24 +366,24 @@ class _AudioMessageViewState extends State<AudioMessageView>
                 ),
                 widget.chatMessage.mediaChatMessage!.isAudioRecorded
                     ? Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AppUtils.svgIcon(icon:
-                      audioMicBg,
-                      width: 28,
-                      height: 28,
-                      fit: BoxFit.contain,
-                    ),
-                    AppUtils.svgIcon(icon:
-                      audioMic1,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                )
-                    : AppUtils.svgIcon(icon:
-                  musicIcon,
-                  fit: BoxFit.contain,
-                ),
+                        alignment: Alignment.center,
+                        children: [
+                          AppUtils.svgIcon(
+                            icon: audioMicBg,
+                            width: 28,
+                            height: 28,
+                            fit: BoxFit.contain,
+                          ),
+                          AppUtils.svgIcon(
+                            icon: audioMic1,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      )
+                    : AppUtils.svgIcon(
+                        icon: musicIcon,
+                        fit: BoxFit.contain,
+                      ),
                 const SizedBox(
                   width: 4,
                 ),
@@ -377,9 +402,12 @@ class _AudioMessageViewState extends State<AudioMessageView>
                         // } else {
                         //   LogMessage.d("", "Error while playing audio.");
                         // }
-                        await player.play(DeviceFileSource(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value),position: Duration(
-                            milliseconds:
-                            chatMessage.mediaChatMessage!.currentPos));
+                        await player.play(
+                            DeviceFileSource(chatMessage
+                                .mediaChatMessage!.mediaLocalStoragePath.value),
+                            position: Duration(
+                                milliseconds:
+                                    chatMessage.mediaChatMessage!.currentPos));
                         isPlaying(true);
                       } else {
                         // int result = await player.pause();
@@ -395,14 +423,14 @@ class _AudioMessageViewState extends State<AudioMessageView>
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: isPlaying.value
-                          ? AppUtils.svgIcon(icon:
-                        pauseIcon,
-                        height: 17,
-                      ) //const Icon(Icons.pause)
-                          : AppUtils.svgIcon(icon:
-                        playIcon,
-                        height: 17,
-                      ),
+                          ? AppUtils.svgIcon(
+                              icon: pauseIcon,
+                              height: 17,
+                            ) //const Icon(Icons.pause)
+                          : AppUtils.svgIcon(
+                              icon: playIcon,
+                              height: 17,
+                            ),
                     ),
                   );
                 }),
@@ -425,7 +453,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                           child: Obx(() {
                             return Slider(
                               value: (!(currentPos.value >= 0.0 &&
-                                  currentPos.value <= maxPos))
+                                      currentPos.value <= maxPos))
                                   ? maxPos
                                   : currentPos.value,
                               /*double.parse(chatMessage
@@ -439,7 +467,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                                   .mediaChatMessage!.mediaDuration
                                   .toString()),
                               divisions:
-                              chatMessage.mediaChatMessage!.mediaDuration,
+                                  chatMessage.mediaChatMessage!.mediaDuration,
                               onChanged: (double value) {
                                 // debugPrint('onChanged $value');
                                 player.seek(
@@ -464,7 +492,7 @@ class _AudioMessageViewState extends State<AudioMessageView>
                                 DateTimeUtils.durationToString(Duration(
                                     milliseconds: currentPos.value == 0.0
                                         ? widget.chatMessage.mediaChatMessage!
-                                        .mediaDuration
+                                            .mediaDuration
                                         : currentPos.value.toInt())),
                                 style: const TextStyle(
                                     color: durationTextColor,

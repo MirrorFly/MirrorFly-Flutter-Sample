@@ -11,7 +11,8 @@ class VideoPlayerWidget extends StatefulWidget {
   final String videoPath;
   final String videoTitle;
 
-  const VideoPlayerWidget({super.key, required this.videoPath, required this.videoTitle});
+  const VideoPlayerWidget(
+      {super.key, required this.videoPath, required this.videoTitle});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -20,8 +21,10 @@ class VideoPlayerWidget extends StatefulWidget {
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
+
   // bool _isPlaying = false;
   bool isStopped = false;
+
   // double _sliderValue = 0.0;
 
   @override
@@ -41,9 +44,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _controller.setLooping(false);
         _controller.setVolume(1.0);
         _controller.setPlaybackSpeed(1.0);
-
       });
-    }).catchError((e){
+    }).catchError((e) {
       LogMessage.d("initialize", "$e");
       //PlatformException(VideoError, Video player had error com.google.android.exoplayer2.ExoPlaybackException: Source error, null, null)
       toToast(getTranslated("errorVideoInitialize"));
@@ -121,24 +123,20 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   Widget _playIcon(String videoPath) {
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Spacer(),
-        FloatingActionButton(
-          onPressed: ()=> AppUtils.openDocument(videoPath),
-          backgroundColor: buttonBgColor,
-          child: const Icon(
-            Icons.play_arrow,
-            color: Colors.white,
-          ),
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Spacer(),
+      FloatingActionButton(
+        onPressed: () => AppUtils.openDocument(videoPath),
+        backgroundColor: buttonBgColor,
+        child: const Icon(
+          Icons.play_arrow,
+          color: Colors.white,
         ),
-        const Spacer(),
-      ]
-    );
+      ),
+      const Spacer(),
+    ]);
   }
-  /*Widget _buildControls() {
+/*Widget _buildControls() {
     final position = _controller.value.position;
     final duration = _controller.value.duration;
 
@@ -203,4 +201,3 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }*/
 }
-

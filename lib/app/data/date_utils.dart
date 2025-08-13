@@ -1,21 +1,20 @@
 part of 'utils.dart';
 
 class DateTimeUtils {
-
   /// Converts a Duration object to a formatted string representation of time.
   ///
   /// @param duration The Duration object to be converted.
   /// @return A string representing the duration in the format "HH:MM:SS".
   static String durationToString(Duration duration) {
     debugPrint("duration conversion $duration");
-    String hours = (duration.inHours == 00) ? "" : "${duration.inHours
-        .toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
+    String hours = (duration.inHours == 00)
+        ? ""
+        : "${duration.inHours.toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours
     int minutes = duration.inMinutes % 60; // Get minutes
-    var seconds = ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(
-        2, '0');
+    var seconds =
+        ((duration.inSeconds % 60)).toStringAsFixed(0).padLeft(2, '0');
     return '$hours${minutes.toStringAsFixed(0).padLeft(2, '0')}:$seconds';
   }
-
 
   /// Converts a timestamp represented as microseconds since epoch to a formatted date string.
   /// @param microseconds The timestamp to convert, represented in microseconds since epoch.
@@ -48,7 +47,8 @@ class DateTimeUtils {
   ///               Defaults to "MMMM dd, yyyy".
   /// @return A string representing the date of the message formatted according to the given
   ///         format or the default format if no format is specified.
-  static String getDateHeaderMessage({required int messageSentTime, String format = "MMMM dd, yyyy"}) {
+  static String getDateHeaderMessage(
+      {required int messageSentTime, String format = "MMMM dd, yyyy"}) {
     // Convert message sending time to date string
     return getDateString(messageSentTime, format);
   }
@@ -58,7 +58,8 @@ class DateTimeUtils {
   /// @param microSeconds The timestamp of the call log time.
   /// @return A string representing the date of the call, or a translated string indicating
   ///         'Today', 'Yesterday', or an DateString(dd-MMM) string if the call log date is not relevant.
-  static String getCallLogDate({required int microSeconds, String format = "dd-MMM"}) {
+  static String getCallLogDate(
+      {required int microSeconds, String format = "dd-MMM"}) {
     return getDateString(microSeconds, format);
   }
 
@@ -87,7 +88,6 @@ class DateTimeUtils {
     return "";
   }
 
-
   /// Checks if the given [microseconds] value corresponds to the current date.
   ///
   /// Returns true if the date extracted from the [microseconds] value matches
@@ -101,7 +101,9 @@ class DateTimeUtils {
   static bool isToday(int microseconds) {
     var calendar = DateTime.fromMicrosecondsSinceEpoch(microseconds);
     final now = DateTime.now();
-    return now.day == calendar.day && now.month == calendar.month && now.year == calendar.year;
+    return now.day == calendar.day &&
+        now.month == calendar.month &&
+        now.year == calendar.year;
   }
 
   /// Checks if the provided microseconds represent a date that occurred yesterday
@@ -120,8 +122,6 @@ class DateTimeUtils {
         yesterday.year == calendar.year;
   }
 
-
-
   /// Checks if the given integer represents a two-digit date, and returns it in a standardized format.
   /// If the integer is not two digits long, it prefixes a '0' to the date.
   ///
@@ -135,13 +135,13 @@ class DateTimeUtils {
     }
   }
 
-
   static String getRecentChatTime(BuildContext context, int? epochTime) {
     if (epochTime == null) return "";
     if (epochTime == 0) return "";
     var convertedTime = epochTime; // / 1000;
     //messageDate.time = convertedTime
-    var hourTime = manipulateMessageTime(context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+    var hourTime = manipulateMessageTime(
+        context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
     var currentYear = DateTime.now().year;
     var calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
     var time = (currentYear == calendar.year)
@@ -150,8 +150,8 @@ class DateTimeUtils {
     return (equalsWithYesterday(calendar, getTranslated("today")))
         ? hourTime
         : (equalsWithYesterday(calendar, getTranslated("yesterday")))
-        ? getTranslated("yesterday").toUpperCase()
-        : time;
+            ? getTranslated("yesterday").toUpperCase()
+            : time;
   }
 
   static String getFormattedCallDurationTime(int timeInMilliseconds) {
@@ -181,6 +181,4 @@ class DateTimeUtils {
       return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
     }
   }
-
-
 }

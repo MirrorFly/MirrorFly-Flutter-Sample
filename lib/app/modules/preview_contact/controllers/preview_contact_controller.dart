@@ -1,4 +1,3 @@
-// import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/contact.dart';
 import 'package:get/get.dart';
@@ -23,6 +22,7 @@ class PreviewContactController extends GetxController {
     super.onInit();
     from = NavUtils.arguments['from'];
   }
+
   @override
   void onReady() {
     super.onReady();
@@ -45,7 +45,9 @@ class PreviewContactController extends GetxController {
         var newContactList = <ContactDetail>[];
         for (var phone in contact.contact.phones) {
           ContactDetail contactDetail = ContactDetail(
-              mobNo: phone.number, isSelected: true, mobNoType: phone.label.name);
+              mobNo: phone.number,
+              isSelected: true,
+              mobNoType: phone.label.name);
           newContactList.add(contactDetail);
         }
         LocalContactPhone localContactPhone = LocalContactPhone(
@@ -80,39 +82,39 @@ class PreviewContactController extends GetxController {
 
     var contactServerSharing = <ShareContactDetails>[];
     // if (await AppUtils.isNetConnected()) {
-      for (var item in contactList) {
-        var contactSharing = <String>[];
-        for (var contactItem in item.contactNo) {
-          if (contactItem.isSelected) {
-            debugPrint("adding--> ${contactItem.mobNo}");
-            contactSharing.add(contactItem.mobNo);
-          } else {
-            debugPrint("skipping--> ${contactItem.mobNo}");
-          }
+    for (var item in contactList) {
+      var contactSharing = <String>[];
+      for (var contactItem in item.contactNo) {
+        if (contactItem.isSelected) {
+          debugPrint("adding--> ${contactItem.mobNo}");
+          contactSharing.add(contactItem.mobNo);
+        } else {
+          debugPrint("skipping--> ${contactItem.mobNo}");
         }
-        if (contactSharing.isEmpty) {
-          toToast(getTranslated("selectLeastOne"));
-          return;
-        }
-        debugPrint("adding contact list--> ${contactSharing.toString()}");
-        contactServerSharing.add(ShareContactDetails(
-            contactNo: contactSharing, userName: item.userName));
-        // contactSharing.clear();
       }
-
-      debugPrint("sharing contact length--> ${contactServerSharing.length}");
-
-      for (var contactItem in contactServerSharing) {
-        debugPrint("sending contact--> ${contactItem.userName}");
-        debugPrint("sending contact--> ${contactItem.contactNo}");
-
-        var response = await Get.find<ChatController>(tag: userJid)
-            .sendContactMessage(contactItem.contactNo, contactItem.userName);
-        debugPrint("ContactResponse ==> $response");
+      if (contactSharing.isEmpty) {
+        toToast(getTranslated("selectLeastOne"));
+        return;
       }
+      debugPrint("adding contact list--> ${contactSharing.toString()}");
+      contactServerSharing.add(ShareContactDetails(
+          contactNo: contactSharing, userName: item.userName));
+      // contactSharing.clear();
+    }
 
-      NavUtils.back();
-      NavUtils.back();
+    debugPrint("sharing contact length--> ${contactServerSharing.length}");
+
+    for (var contactItem in contactServerSharing) {
+      debugPrint("sending contact--> ${contactItem.userName}");
+      debugPrint("sending contact--> ${contactItem.contactNo}");
+
+      var response = await Get.find<ChatController>(tag: userJid)
+          .sendContactMessage(contactItem.contactNo, contactItem.userName);
+      debugPrint("ContactResponse ==> $response");
+    }
+
+    NavUtils.back();
+    NavUtils.back();
     // } else {
     //   toToast(getTranslated("noInternetConnection"));
     // }

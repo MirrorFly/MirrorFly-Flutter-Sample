@@ -1,14 +1,15 @@
-
 part of 'utils.dart';
 
-class AppUtils{
+class AppUtils {
   AppUtils._();
+
   static Future<bool> isNetConnected() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     return isConnected;
   }
 
-  static String getMapImageUrl(double latitude, double longitude,String googleMapKey) {
+  static String getMapImageUrl(
+      double latitude, double longitude, String googleMapKey) {
     // var googleMapKey = Get
     //     .find<MainController>()
     //     .googleMapKey; //Env.googleMapKey;//Constants.googleMapKey;
@@ -26,7 +27,7 @@ class AppUtils{
         toToast(getTranslated("youMayNotProperApp"));
       }
     } else {
-      toToast(getTranslated("mediaDoesNotExist"));
+      toToast(getTranslated("downloadAndOpenTheFile"));
       debugPrint("media does not exist");
     }
   }
@@ -34,7 +35,8 @@ class AppUtils{
   static Future<void> launchWeb(Uri uri) async {
     if (await AppUtils.isNetConnected()) {
       if (await canLaunchUrl(uri)) {
-        await launchUrl(uri,
+        await launchUrl(
+          uri,
           mode: LaunchMode.externalApplication,
         );
       } else {
@@ -63,44 +65,44 @@ class AppUtils{
   /// * Build initials with given name.
   /// * @parameter Name instance of Profile name
   /// * return initials of the name.
-  static String getInitials(String name){
-      String string = "";
-      // debugPrint("str.characters.length ${str}");
-      if (name.characters.length >= 2) {
-        if (name.trim().contains(" ")) {
-          var st = name.trim().split(" ");
-          string = st[0].characters.take(1).toUpperCase().toString() +
-              st[1].characters.take(1).toUpperCase().toString();
-        } else {
-          string = name.characters.take(2).toUpperCase().toString();
-        }
+  static String getInitials(String name) {
+    String string = "";
+    // debugPrint("str.characters.length ${str}");
+    if (name.characters.length >= 2) {
+      if (name.trim().contains(" ")) {
+        var st = name.trim().split(" ");
+        string = st[0].characters.take(1).toUpperCase().toString() +
+            st[1].characters.take(1).toUpperCase().toString();
       } else {
-        string = name;
+        string = name.characters.take(2).toUpperCase().toString();
       }
-      return string;
+    } else {
+      string = name;
+    }
+    return string;
   }
 
-  static Tuple2<StringBuffer,bool> getActualMemberName(StringBuffer string){
+  static Tuple2<StringBuffer, bool> getActualMemberName(StringBuffer string) {
     // LogMessage.d("getActualMemberName","${string} string length ${string.length} characters ${string.toString().characters.length}");
-    return (string.toString().characters.length > Constants.maxNameLength) ?
-    Tuple2(
-      StringBuffer("${string.toString().characters.take(Constants.maxNameLength)}..."),
-      false
-    )
-    :
-    Tuple2(string, true);
+    return (string.toString().characters.length > Constants.maxNameLength)
+        ? Tuple2(
+            StringBuffer(
+                "${string.toString().characters.take(Constants.maxNameLength)}..."),
+            false)
+        : Tuple2(string, true);
   }
 
-  static Future<Tuple2<String, ProfileDetails>> getNameAndProfileDetails(String jid) async {
+  static Future<Tuple2<String, ProfileDetails>> getNameAndProfileDetails(
+      String jid) async {
     var profileDetails = await getProfileDetails(jid);
     var name = profileDetails.getName();
     return Tuple2(name, profileDetails);
   }
 
-  static Map getExceptionMap(String code,String message){
+  static Map getExceptionMap(String code, String message) {
     var map = {};
-    map["code"]=code;
-    map["message"]=message;
+    map["code"] = code;
+    map["message"] = message;
     return map;
   }
 
@@ -127,35 +129,52 @@ class AppUtils{
     return false;
   }
 
-  static String? groupedDateMessage(int index, List<ChatMessageModel> chatList) {
-    if(index.isNegative){
+  static String? groupedDateMessage(
+      int index, List<ChatMessageModel> chatList) {
+    if (index.isNegative) {
       return null;
     }
     if (index == chatList.length - 1) {
-      return DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList.last.messageSentTime);
+      return DateTimeUtils.getDateHeaderMessage(
+          messageSentTime: chatList.last.messageSentTime);
     } else {
       return (isDateChanged(index, chatList) &&
-          (DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index + 1].messageSentTime) !=
-              DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)))
-          ? DateTimeUtils.getDateHeaderMessage(messageSentTime: chatList[index].messageSentTime)
+              (DateTimeUtils.getDateHeaderMessage(
+                      messageSentTime: chatList[index + 1].messageSentTime) !=
+                  DateTimeUtils.getDateHeaderMessage(
+                      messageSentTime: chatList[index].messageSentTime)))
+          ? DateTimeUtils.getDateHeaderMessage(
+              messageSentTime: chatList[index].messageSentTime)
           : null;
     }
   }
 
-  static SvgPicture svgIcon({required String icon, BoxFit fit = BoxFit.contain, ColorFilter? colorFilter, double? width, double? height}) {
-    return SvgPicture.asset(icon, fit: fit, colorFilter: colorFilter, width: width, height: height, package: iconPackageName,);
-  }
-
-  static Image assetIcon({required String assetName, double? height, double? width, BoxFit fit = BoxFit.cover}) {
-    return Image.asset(
-      assetName,
-      height: height,
+  static SvgPicture svgIcon(
+      {required String icon,
+      BoxFit fit = BoxFit.contain,
+      ColorFilter? colorFilter,
+      double? width,
+      double? height}) {
+    return SvgPicture.asset(
+      icon,
+      fit: fit,
+      colorFilter: colorFilter,
       width: width,
-      fit: fit, package: iconPackageName
+      height: height,
+      package: iconPackageName,
     );
   }
 
-  static Size getSizeFromAspectRatio(double width,double height){
+  static Image assetIcon(
+      {required String assetName,
+      double? height,
+      double? width,
+      BoxFit fit = BoxFit.cover}) {
+    return Image.asset(assetName,
+        height: height, width: width, fit: fit, package: iconPackageName);
+  }
+
+  static Size getSizeFromAspectRatio(double width, double height) {
     var rational = Rational(width.toInt(), height.toInt());
     LogMessage.d("findPIPSize", "${rational.aspectRatio}");
     var calWidth = width * rational.aspectRatio;

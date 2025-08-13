@@ -88,6 +88,7 @@ class GroupChatInfoPageStyle {
             fontSize: 14),
         dividerColor: Color(0xffFAFAFA)),
   });
+
   final AppBarTheme appBarTheme;
   final TextStyle silverAppbarTitleStyle;
   final TextStyle silverAppBarSubTitleStyle;

@@ -1,4 +1,3 @@
-
 // import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -10,10 +9,8 @@ import '../../../data/utils.dart';
 import '../../../model/local_contact_model.dart';
 import '../../../routes/route_settings.dart';
 
-
 class LocalContactController extends GetxController {
-
-  var search=false.obs;
+  var search = false.obs;
 
   var contactList = List<LocalContact>.empty(growable: true).obs;
   var searchList = List<LocalContact>.empty(growable: true).obs;
@@ -28,21 +25,22 @@ class LocalContactController extends GetxController {
     getContacts();
   }
 
-  getContacts() async{
+  getContacts() async {
     FlutterContacts.getContacts(withProperties: true).then((localContactList) {
       for (var userDetail in localContactList) {
         if (userDetail.phones.isNotEmpty) {
-          LocalContact localContact = LocalContact(contact: userDetail, isSelected: false);
+          LocalContact localContact =
+              LocalContact(contact: userDetail, isSelected: false);
           contactList.add(localContact);
           searchList.add(localContact);
-        }else{
+        } else {
           debugPrint("No phone number found for contact--> $userDetail");
         }
       }
     });
   }
 
-  onSearchCancelled(){
+  onSearchCancelled() {
     searchList.clear();
     searchList.addAll(contactList);
   }
@@ -54,7 +52,10 @@ class LocalContactController extends GetxController {
       return;
     }
     for (var userDetail in contactList) {
-      if (name(userDetail.contact).toString().toLowerCase().contains(searchTextController.text.trim().toLowerCase())) {
+      if (name(userDetail.contact)
+          .toString()
+          .toLowerCase()
+          .contains(searchTextController.text.trim().toLowerCase())) {
         searchList.add(userDetail);
       }
     }
@@ -67,8 +68,12 @@ class LocalContactController extends GetxController {
     //   contactList.add(number!.replaceAll(RegExp('[+() -]'), ''));
     // }
 
-    NavUtils.toNamed(Routes.previewContact, arguments: {"contactList" : contactsSelected,"shareContactList" : contactsSelected, "from": "contact_pick", "userJid" : userJid});
-
+    NavUtils.toNamed(Routes.previewContact, arguments: {
+      "contactList": contactsSelected,
+      "shareContactList": contactsSelected,
+      "from": "contact_pick",
+      "userJid": userJid
+    });
   }
 
   name(Contact item) {
@@ -80,12 +85,11 @@ class LocalContactController extends GetxController {
   // }
 
   void contactSelected(LocalContact localContact) {
-
-    if(contactsSelected.contains(localContact)){
+    if (contactsSelected.contains(localContact)) {
       localContact.isSelected = false;
       contactsSelected.remove(localContact);
-    }else {
-      if(contactsSelected.length == 5){
+    } else {
+      if (contactsSelected.length == 5) {
         toToast(getTranslated("cantShare5More"));
         return;
       }
@@ -93,5 +97,4 @@ class LocalContactController extends GetxController {
       contactsSelected.add(localContact);
     }
   }
-
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import '../../../stylesheet/stylesheet.dart';
 
 import '../../../common/constants.dart';
@@ -15,14 +16,17 @@ import 'text_message_view.dart';
 import 'video_message_view.dart';
 
 class MessageContent extends StatelessWidget {
-  const MessageContent({Key? key,
-    required this.chatList,
-    required this.index,
-    this.search = "",
-    this.isSelected = false,
-    required this.onPlayAudio,
-    required this.onSeekbarChange, this.senderChatBubbleStyle = const SenderChatBubbleStyle(), this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle(),
-  this.notificationMessageViewStyle = const NotificationMessageViewStyle()})
+  const MessageContent(
+      {Key? key,
+      required this.chatList,
+      required this.index,
+      this.search = "",
+      this.isSelected = false,
+      required this.onPlayAudio,
+      required this.onSeekbarChange,
+      this.senderChatBubbleStyle = const SenderChatBubbleStyle(),
+      this.receiverChatBubbleStyle = const ReceiverChatBubbleStyle(),
+      this.notificationMessageViewStyle = const NotificationMessageViewStyle()})
       : super(key: key);
   final List<ChatMessageModel> chatList;
   final int index;
@@ -43,20 +47,28 @@ class MessageContent extends StatelessWidget {
     if (chatList[index].isMessageRecalled.value) {
       return RecalledMessageView(
         chatMessage: chatMessage,
-        textMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.textMessageViewStyle : receiverChatBubbleStyle.textMessageViewStyle,
+        textMessageViewStyle: chatList[index].isMessageSentByMe
+            ? senderChatBubbleStyle.textMessageViewStyle
+            : receiverChatBubbleStyle.textMessageViewStyle,
       );
     } else {
-      if (chatList[index].messageType.toUpperCase() == Constants.mText ||
-          chatList[index].messageType.toUpperCase() == Constants.mAutoText) {
+      if ((chatList[index].messageType.toUpperCase() == Constants.mText ||
+              chatList[index].messageType.toUpperCase() ==
+                  Constants.mAutoText) &&
+          chatMessage.messageTextContent.checkNull() != Constants.chatClosed) {
         return TextMessageView(
           chatMessage: chatMessage,
           search: search,
-          textMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.textMessageViewStyle : receiverChatBubbleStyle.textMessageViewStyle,
+          textMessageViewStyle: chatList[index].isMessageSentByMe
+              ? senderChatBubbleStyle.textMessageViewStyle
+              : receiverChatBubbleStyle.textMessageViewStyle,
         );
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mNotification) {
         return NotificationMessageView(
-            chatMessage: chatMessage.messageTextContent,notificationMessageViewStyle: notificationMessageViewStyle,);
+          chatMessage: chatMessage.messageTextContent,
+          notificationMessageViewStyle: notificationMessageViewStyle,
+        );
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mLocation) {
         if (chatList[index].locationChatMessage == null) {
@@ -65,7 +77,9 @@ class MessageContent extends StatelessWidget {
         return LocationMessageView(
           chatMessage: chatMessage,
           isSelected: isSelected,
-          locationMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.locationMessageViewStyle : receiverChatBubbleStyle.locationMessageViewStyle,
+          locationMessageViewStyle: chatList[index].isMessageSentByMe
+              ? senderChatBubbleStyle.locationMessageViewStyle
+              : receiverChatBubbleStyle.locationMessageViewStyle,
         );
       } else if (chatList[index].messageType.toUpperCase() ==
           Constants.mContact) {
@@ -76,14 +90,20 @@ class MessageContent extends StatelessWidget {
           chatMessage: chatMessage,
           search: search,
           isSelected: isSelected,
-          contactMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.contactMessageViewStyle : receiverChatBubbleStyle.contactMessageViewStyle,
-          decoration: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.decoration : receiverChatBubbleStyle.decoration,
+          contactMessageViewStyle: chatList[index].isMessageSentByMe
+              ? senderChatBubbleStyle.contactMessageViewStyle
+              : receiverChatBubbleStyle.contactMessageViewStyle,
+          decoration: chatList[index].isMessageSentByMe
+              ? senderChatBubbleStyle.decoration
+              : receiverChatBubbleStyle.decoration,
         );
-      }else if (chatList[index].messageType.toUpperCase() == Constants.mMeet ) {
+      } else if (chatList[index].messageType.toUpperCase() == Constants.mMeet) {
         return MeetMessageView(
           chatMessage: chatMessage,
           search: search,
-          textMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.textMessageViewStyle : receiverChatBubbleStyle.textMessageViewStyle,
+          textMessageViewStyle: chatList[index].isMessageSentByMe
+              ? senderChatBubbleStyle.textMessageViewStyle
+              : receiverChatBubbleStyle.textMessageViewStyle,
         );
       } else {
         if (chatList[index].mediaChatMessage == null) {
@@ -91,25 +111,35 @@ class MessageContent extends StatelessWidget {
         } else {
           if (chatList[index].messageType.toUpperCase() == Constants.mImage) {
             return ImageMessageView(
-                chatMessage: chatMessage,
-                search: search,
-                isSelected: isSelected,
-            imageMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.imageMessageViewStyle : receiverChatBubbleStyle.imageMessageViewStyle,);
+              chatMessage: chatMessage,
+              search: search,
+              isSelected: isSelected,
+              imageMessageViewStyle: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.imageMessageViewStyle
+                  : receiverChatBubbleStyle.imageMessageViewStyle,
+            );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mVideo) {
             return VideoMessageView(
-                chatMessage: chatMessage,
-                search: search,
-                isSelected: isSelected,
-            videoMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.videoMessageViewStyle : receiverChatBubbleStyle.videoMessageViewStyle,);
+              chatMessage: chatMessage,
+              search: search,
+              isSelected: isSelected,
+              videoMessageViewStyle: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.videoMessageViewStyle
+                  : receiverChatBubbleStyle.videoMessageViewStyle,
+            );
           } else if (chatList[index].messageType.toUpperCase() ==
-              Constants.mDocument ||
+                  Constants.mDocument ||
               chatList[index].messageType.toUpperCase() == Constants.mFile) {
             return DocumentMessageView(
               chatMessage: chatMessage,
               search: search,
-              docMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.docMessageViewStyle : receiverChatBubbleStyle.docMessageViewStyle,
-              decoration: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.decoration : receiverChatBubbleStyle.decoration,
+              docMessageViewStyle: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.docMessageViewStyle
+                  : receiverChatBubbleStyle.docMessageViewStyle,
+              decoration: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.decoration
+                  : receiverChatBubbleStyle.decoration,
             );
           } else if (chatList[index].messageType.toUpperCase() ==
               Constants.mAudio) {
@@ -117,8 +147,12 @@ class MessageContent extends StatelessWidget {
               chatMessage: chatMessage,
               onPlayAudio: onPlayAudio,
               onSeekbarChange: onSeekbarChange,
-              audioMessageViewStyle: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.audioMessageViewStyle : receiverChatBubbleStyle.audioMessageViewStyle,
-              decoration: chatList[index].isMessageSentByMe ? senderChatBubbleStyle.decoration : receiverChatBubbleStyle.decoration,
+              audioMessageViewStyle: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.audioMessageViewStyle
+                  : receiverChatBubbleStyle.audioMessageViewStyle,
+              decoration: chatList[index].isMessageSentByMe
+                  ? senderChatBubbleStyle.decoration
+                  : receiverChatBubbleStyle.decoration,
             );
           } else {
             return const Offstage();
