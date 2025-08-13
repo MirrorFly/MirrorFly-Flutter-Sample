@@ -16,8 +16,10 @@ import '../controllers/profile_controller.dart';
 
 class ProfileView extends NavViewStateful<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
+
   @override
-ProfileController createController({String? tag}) => Get.put(ProfileController());
+  ProfileController createController({String? tag}) =>
+      Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,8 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                   // style: const TextStyle(color: appbarTextColor),
                 ),
                 // centerTitle: true,
-                automaticallyImplyLeading: NavUtils.previousRoute != Routes.login //controller.from.value == Routes.login
+                automaticallyImplyLeading: NavUtils.previousRoute !=
+                    Routes.login //controller.from.value == Routes.login
                 // ? false
                 // : true,
                 ),
@@ -67,41 +70,81 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                         child: Stack(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(18.0, 0, 18.0, 0),
+                              padding:
+                                  const EdgeInsets.fromLTRB(18.0, 0, 18.0, 0),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Obx(() {
-                                  debugPrint("controller.userImgUrl.value ${controller.userImgUrl.value}");
-                                  debugPrint("controller.imagePath.value ${controller.imagePath.value}");
-                                  debugPrint("controller.profile name ${controller.profileName.text}");
+                                  debugPrint(
+                                      "controller.userImgUrl.value ${controller.userImgUrl.value}");
+                                  debugPrint(
+                                      "controller.imagePath.value ${controller.imagePath.value}");
+                                  debugPrint(
+                                      "controller.profile name ${controller.profileName.text}");
 
                                   return InkWell(
-                                    child: controller.imagePath.value.isNotEmpty || controller.imagePathNew.value.isNotEmpty
+                                    child: controller
+                                                .imagePath.value.isNotEmpty ||
+                                            controller
+                                                .imagePathNew.value.isNotEmpty
                                         ? SizedBox(
-                                            width: AppStyleConfig.profileViewStyle.profileImageSize.width,
-                                            height: AppStyleConfig.profileViewStyle.profileImageSize.height,
+                                            width: AppStyleConfig
+                                                .profileViewStyle
+                                                .profileImageSize
+                                                .width,
+                                            height: AppStyleConfig
+                                                .profileViewStyle
+                                                .profileImageSize
+                                                .height,
                                             child: ClipOval(
                                               child: Image.file(
-                                                File(controller.imagePath.value.isEmpty ? controller.imagePathNew.value : controller.imagePath.value),
+                                                File(controller
+                                                        .imagePath.value.isEmpty
+                                                    ? controller
+                                                        .imagePathNew.value
+                                                    : controller
+                                                        .imagePath.value),
                                                 fit: BoxFit.fill,
                                               ),
                                             ))
-                                        : controller.userImgUrl.value.isEmpty && controller.name.value.isNotEmpty
+                                        : controller.userImgUrl.value.isEmpty &&
+                                                controller.name.value.isNotEmpty
                                             ? ProfileTextImage(
                                                 bgColor: buttonBgColor,
-                                                text: controller.name.value.checkNull(),
-                                                radius: AppStyleConfig.profileViewStyle.profileImageSize.width/2,
+                                                text: controller.name.value
+                                                    .checkNull(),
+                                                radius: AppStyleConfig
+                                                        .profileViewStyle
+                                                        .profileImageSize
+                                                        .width /
+                                                    2,
                                               )
                                             : ImageNetwork(
-                                                url: controller.userImgUrl.value.checkNull(),
-                                                width: AppStyleConfig.profileViewStyle.profileImageSize.width,
-                                                height: AppStyleConfig.profileViewStyle.profileImageSize.height,
+                                                url: controller.userImgUrl.value
+                                                    .checkNull(),
+                                                width: AppStyleConfig
+                                                    .profileViewStyle
+                                                    .profileImageSize
+                                                    .width,
+                                                height: AppStyleConfig
+                                                    .profileViewStyle
+                                                    .profileImageSize
+                                                    .height,
                                                 clipOval: true,
-                                                errorWidget: controller.profileName.text.checkNull().isNotEmpty
+                                                errorWidget: controller
+                                                        .profileName.text
+                                                        .checkNull()
+                                                        .isNotEmpty
                                                     ? ProfileTextImage(
                                                         bgColor: buttonBgColor,
-                                                        text: controller.profileName.text.checkNull(),
-                                                        radius: AppStyleConfig.profileViewStyle.profileImageSize.width/2,
+                                                        text: controller
+                                                            .profileName.text
+                                                            .checkNull(),
+                                                        radius: AppStyleConfig
+                                                                .profileViewStyle
+                                                                .profileImageSize
+                                                                .width /
+                                                            2,
                                                       )
                                                     : null,
                                                 isGroup: false,
@@ -122,10 +165,16 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                 child: Container(
                                   width: 40,
                                   decoration: BoxDecoration(
-                                    color: AppStyleConfig.profileViewStyle.cameraIconStyle.bgColor,
-                                    border: Border.all(color: AppStyleConfig.profileViewStyle.cameraIconStyle.borderColor ?? Colors.white,width: 1),
-                                    shape: BoxShape.circle
-                                  ),
+                                      color: AppStyleConfig.profileViewStyle
+                                          .cameraIconStyle.bgColor,
+                                      border: Border.all(
+                                          color: AppStyleConfig
+                                                  .profileViewStyle
+                                                  .cameraIconStyle
+                                                  .borderColor ??
+                                              Colors.white,
+                                          width: 1),
+                                      shape: BoxShape.circle),
                                   child: InkWell(
                                     onTap: controller.loading.value
                                         ? null
@@ -133,9 +182,13 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                             controller.unFocusAll();
                                             bottomSheetView(context);
                                           },
-                                    child: AppUtils.svgIcon(icon:
-                                      'assets/logos/camera_profile_change.svg',
-                                      colorFilter: ColorFilter.mode(AppStyleConfig.profileViewStyle.cameraIconStyle.iconColor, BlendMode.srcIn),
+                                    child: AppUtils.svgIcon(
+                                      icon:
+                                          'assets/logos/camera_profile_change.svg',
+                                      colorFilter: ColorFilter.mode(
+                                          AppStyleConfig.profileViewStyle
+                                              .cameraIconStyle.iconColor,
+                                          BlendMode.srcIn),
                                     ),
                                   ),
                                 ),
@@ -155,17 +208,22 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                               cursorColor: buttonBgColor,
                               focusNode: controller.userNameFocus,
                               autofocus: false,
-                              onChanged: (value) => controller.nameChanges(value),
-                              textAlign: controller.profileName.text.isNotEmpty ? TextAlign.center : TextAlign.start,
+                              onChanged: (value) =>
+                                  controller.nameChanges(value),
+                              textAlign: controller.profileName.text.isNotEmpty
+                                  ? TextAlign.center
+                                  : TextAlign.start,
                               maxLength: 30,
                               controller: controller.profileName,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: getTranslated("userName"),
-                                hintStyle: AppStyleConfig.profileViewStyle.nameTextFieldStyle.editTextHintStyle,
+                                hintStyle: AppStyleConfig.profileViewStyle
+                                    .nameTextFieldStyle.editTextHintStyle,
                                 counterText: '',
                               ),
-                              style: AppStyleConfig.profileViewStyle.nameTextFieldStyle.editTextStyle,
+                              style: AppStyleConfig.profileViewStyle
+                                  .nameTextFieldStyle.editTextStyle,
                               // style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           );
@@ -174,8 +232,10 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                       const SizedBox(
                         height: 20,
                       ),
-                      Text(getTranslated("email"),
-                        style: AppStyleConfig.profileViewStyle.emailTextFieldStyle.titleStyle,
+                      Text(
+                        getTranslated("email"),
+                        style: AppStyleConfig
+                            .profileViewStyle.emailTextFieldStyle.titleStyle,
                         // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                       TextField(
@@ -186,53 +246,68 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                         controller: controller.profileEmail,
                         enabled: controller.emailEditAccess,
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: getTranslated("enterEmailID"),
-                          icon: AppUtils.svgIcon(icon:'assets/logos/email.svg'),
-                          hintStyle: AppStyleConfig.profileViewStyle.emailTextFieldStyle.editTextHintStyle
-                        ),
-                        style: AppStyleConfig.profileViewStyle.emailTextFieldStyle.editTextStyle,
+                            border: InputBorder.none,
+                            hintText: getTranslated("enterEmailID"),
+                            icon: AppUtils.svgIcon(
+                                icon: 'assets/logos/email.svg'),
+                            hintStyle: AppStyleConfig.profileViewStyle
+                                .emailTextFieldStyle.editTextHintStyle),
+                        style: AppStyleConfig
+                            .profileViewStyle.emailTextFieldStyle.editTextStyle,
                         // style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
                       ),
                       const AppDivider(),
                       const SizedBox(
                         height: 20,
                       ),
-                  Text(getTranslated("mobileNumber"),
-                        style: AppStyleConfig.profileViewStyle.mobileTextFieldStyle.titleStyle,
+                      Text(
+                        getTranslated("mobileNumber"),
+                        style: AppStyleConfig
+                            .profileViewStyle.mobileTextFieldStyle.titleStyle,
                         // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                      ),TextField(
-                          cursorColor: buttonBgColor,
-                          controller: controller.profileMobile,
-                          onChanged: (value) => controller.onMobileChange(value),
-                          enabled: false,
-                          decoration: InputDecoration(
+                      ),
+                      TextField(
+                        cursorColor: buttonBgColor,
+                        controller: controller.profileMobile,
+                        onChanged: (value) => controller.onMobileChange(value),
+                        enabled: false,
+                        decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: getTranslated("enterMobileNumber"),
-                            icon: AppUtils.svgIcon(icon:'assets/logos/phone.svg'),
-                            hintStyle: AppStyleConfig.profileViewStyle.mobileTextFieldStyle.editTextHintStyle
-                          ),
-                          style: AppStyleConfig.profileViewStyle.mobileTextFieldStyle.editTextStyle,
-                          // style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
-                        ),
+                            icon: AppUtils.svgIcon(
+                                icon: 'assets/logos/phone.svg'),
+                            hintStyle: AppStyleConfig.profileViewStyle
+                                .mobileTextFieldStyle.editTextHintStyle),
+                        style: AppStyleConfig.profileViewStyle
+                            .mobileTextFieldStyle.editTextStyle,
+                        // style: const TextStyle(fontWeight: FontWeight.normal, color: textColor),
+                      ),
                       const AppDivider(),
                       const SizedBox(
                         height: 20,
                       ),
                       Text(
                         getTranslated("status"),
-                        style: AppStyleConfig.profileViewStyle.statusTextFieldStyle.titleStyle,
+                        style: AppStyleConfig
+                            .profileViewStyle.statusTextFieldStyle.titleStyle,
                         // style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                       Obx(() => ListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              controller.profileStatus.value.isNotEmpty ? controller.profileStatus.value : getTranslated("defaultStatus"),
-                              style: controller.profileStatus.value.isNotEmpty ? AppStyleConfig.profileViewStyle.statusTextFieldStyle.editTextStyle : AppStyleConfig.profileViewStyle.statusTextFieldStyle.editTextHintStyle,
+                              controller.profileStatus.value.isNotEmpty
+                                  ? controller.profileStatus.value
+                                  : getTranslated("defaultStatus"),
+                              style: controller.profileStatus.value.isNotEmpty
+                                  ? AppStyleConfig.profileViewStyle
+                                      .statusTextFieldStyle.editTextStyle
+                                  : AppStyleConfig.profileViewStyle
+                                      .statusTextFieldStyle.editTextHintStyle,
                               // style: TextStyle(color: controller.profileStatus.value.isNotEmpty ? textColor : Colors.black38, fontWeight: FontWeight.normal),
                             ),
                             minLeadingWidth: 10,
-                            leading: AppUtils.svgIcon(icon:'assets/logos/status.svg'),
+                            leading: AppUtils.svgIcon(
+                                icon: 'assets/logos/status.svg'),
                             onTap: () {
                               controller.goToStatus();
                             },
@@ -255,7 +330,8 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                                       }
                                     : null,
                             child: Text(
-                              controller.from == Routes.login || controller.from.isEmpty
+                              controller.from == Routes.login ||
+                                      controller.from.isEmpty
                                   ? getTranslated("save")
                                   : controller.changed.value
                                       ? getTranslated("updateAndContinue")
@@ -284,10 +360,13 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
             child: SizedBox(
               width: NavUtils.size.width,
               child: Theme(
-                data: Theme.of(context).copyWith(cardTheme: AppStyleConfig.profileViewStyle.bottomSheetCardTheme),
+                data: Theme.of(context).copyWith(
+                    cardTheme:
+                        AppStyleConfig.profileViewStyle.bottomSheetCardTheme),
                 child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -295,7 +374,10 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(getTranslated("options"),style: AppStyleConfig.profileViewStyle.optionStyle,),
+                        Text(
+                          getTranslated("options"),
+                          style: AppStyleConfig.profileViewStyle.optionStyle,
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -308,7 +390,8 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                           },
                           title: Text(
                             getTranslated("takePhoto"),
-                            style: AppStyleConfig.profileViewStyle.optionsTextStyle,
+                            style: AppStyleConfig
+                                .profileViewStyle.optionsTextStyle,
                             // style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                         ),
@@ -321,33 +404,50 @@ ProfileController createController({String? tag}) => Get.put(ProfileController()
                           },
                           title: Text(
                             getTranslated("chooseFromGallery"),
-                            style: AppStyleConfig.profileViewStyle.optionsTextStyle,
+                            style: AppStyleConfig
+                                .profileViewStyle.optionsTextStyle,
                             // style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                         ),
-                        controller.userImgUrl.value.isNotEmpty || controller.imagePath.value.isNotEmpty
+                        controller.userImgUrl.value.isNotEmpty ||
+                                controller.imagePath.value.isNotEmpty
                             ? ListTile(
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
                                 onTap: () {
                                   NavUtils.back();
-                                  DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("areYouSureToRemovePhoto"), actions: [
-                                    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-                                        onPressed: () {
-                                          NavUtils.back();
-                                        },
-                                        child: Text(getTranslated("cancel").toUpperCase(), )),
-                                    TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-                                        onPressed: () {
-                                          NavUtils.back();
-                                          controller.removeProfileImage();
-                                        },
-                                        child: Text(getTranslated("remove").toUpperCase(), ))
-                                  ]);
+                                  DialogUtils.showAlert(
+                                      dialogStyle: AppStyleConfig.dialogStyle,
+                                      message: getTranslated(
+                                          "areYouSureToRemovePhoto"),
+                                      actions: [
+                                        TextButton(
+                                            style: AppStyleConfig
+                                                .dialogStyle.buttonStyle,
+                                            onPressed: () {
+                                              NavUtils.back();
+                                            },
+                                            child: Text(
+                                              getTranslated("cancel")
+                                                  .toUpperCase(),
+                                            )),
+                                        TextButton(
+                                            style: AppStyleConfig
+                                                .dialogStyle.buttonStyle,
+                                            onPressed: () {
+                                              NavUtils.back();
+                                              controller.removeProfileImage();
+                                            },
+                                            child: Text(
+                                              getTranslated("remove")
+                                                  .toUpperCase(),
+                                            ))
+                                      ]);
                                 },
                                 title: Text(
                                   getTranslated("removePhoto"),
-                                  style: AppStyleConfig.profileViewStyle.optionsTextStyle,
+                                  style: AppStyleConfig
+                                      .profileViewStyle.optionsTextStyle,
                                   // style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
                                 ),
                               )

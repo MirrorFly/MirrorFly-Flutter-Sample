@@ -22,8 +22,10 @@ class GroupCreationController extends GetxController {
   var name = "".obs;
   var loading = false.obs;
 
-  final _count= 25.obs;
+  final _count = 25.obs;
+
   set count(value) => _count.value = value;
+
   get count => _count.value.toString();
 
   // group name
@@ -32,7 +34,7 @@ class GroupCreationController extends GetxController {
   var showEmoji = false.obs;
 
   @override
-  void onInit(){
+  void onInit() {
     super.onInit();
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -41,13 +43,13 @@ class GroupCreationController extends GetxController {
     });
   }
 
-  onGroupNameChanged(){
+  onGroupNameChanged() {
     debugPrint("text changing");
     debugPrint("length--> ${groupName.text.characters.length}");
     _count((25 - groupName.text.characters.length));
   }
 
-  onEmojiBackPressed(){
+  onEmojiBackPressed() {
     var text = groupName.text;
     var cursorPosition = groupName.selection.base.offset;
 
@@ -63,7 +65,7 @@ class GroupCreationController extends GetxController {
     if (cursorPosition >= 0) {
       final selection = groupName.value.selection;
       final newTextBeforeCursor =
-      selection.textBefore(text).characters.skipLast(1).toString();
+          selection.textBefore(text).characters.skipLast(1).toString();
       LogMessage.d("newTextBeforeCursor", newTextBeforeCursor);
       groupName
         ..text = newTextBeforeCursor + selection.textAfter(text)
@@ -73,8 +75,8 @@ class GroupCreationController extends GetxController {
     _count((25 - groupName.text.characters.length));
   }
 
-  onEmojiSelected(Emoji emoji){
-    if(groupName.text.characters.length < 25){
+  onEmojiSelected(Emoji emoji) {
+    if (groupName.text.characters.length < 25) {
       final controller = groupName;
       final text = controller.text;
       final selection = controller.selection;
@@ -87,7 +89,7 @@ class GroupCreationController extends GetxController {
       }
 
       final newText =
-      text.replaceRange(selection.start, selection.end, emoji.emoji);
+          text.replaceRange(selection.start, selection.end, emoji.emoji);
       final emojiLength = emoji.emoji.length;
       controller
         ..text = newText
@@ -99,24 +101,27 @@ class GroupCreationController extends GetxController {
     _count((25 - groupName.text.characters.length));
   }
 
-  goToAddParticipantsPage(){
-    if(groupName.text.trim().isNotEmpty) {
+  goToAddParticipantsPage() {
+    if (groupName.text.trim().isNotEmpty) {
       //NavUtils.toNamed(Routes.ADD_PARTICIPANTS);
-      NavUtils.toNamed(Routes.contacts, arguments: const ContactListArguments(forGroup:true)
-          /*{"forward" : false,"group":true,"groupJid":"" }*/)?.then((value){
-        if(value!=null){
+      NavUtils.toNamed(Routes.contacts,
+              arguments: const ContactListArguments(
+                  forGroup:
+                      true) /*{"forward" : false,"group":true,"groupJid":"" }*/)
+          ?.then((value) {
+        if (value != null) {
           createGroup(value as List<String>);
         }
       });
-    }else{
+    } else {
       toToast(getTranslated("pleaseProvideGroupName"));
     }
   }
 
-  showHideEmoji(){
+  showHideEmoji() {
     if (!showEmoji.value) {
       focusNode.unfocus();
-    }else{
+    } else {
       focusNode.requestFocus();
       return;
     }
@@ -125,9 +130,8 @@ class GroupCreationController extends GetxController {
     });
   }
 
-
   Future imagePick() async {
-    if(await AppPermission.getStoragePermission()) {
+    if (await AppPermission.getStoragePermission()) {
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowMultiple: false, type: FileType.image);
       if (result != null) {
@@ -138,9 +142,7 @@ class GroupCreationController extends GetxController {
           if (value != null) {
             value as MemoryImage;
             // imageBytes = value.bytes;
-            var name = "${DateTime
-                .now()
-                .millisecondsSinceEpoch}.jpg";
+            var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
             MessageUtils.writeImageTemp(value.bytes, name).then((value) {
               imagePath(value.path);
             });
@@ -154,9 +156,9 @@ class GroupCreationController extends GetxController {
   }
 
   final ImagePicker _picker = ImagePicker();
+
   camera() async {
-    final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera);
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       // isImageSelected.value = true;
       NavUtils.to(CropImage(
@@ -165,9 +167,7 @@ class GroupCreationController extends GetxController {
         if (value != null) {
           value as MemoryImage;
           // imageBytes = value.bytes;
-          var name = "${DateTime
-              .now()
-              .millisecondsSinceEpoch}.jpg";
+          var name = "${DateTime.now().millisecondsSinceEpoch}.jpg";
           MessageUtils.writeImageTemp(value.bytes, name).then((value) {
             imagePath(value.path);
           });
@@ -179,22 +179,28 @@ class GroupCreationController extends GetxController {
     }
   }
 
-  createGroup(List<String> users,){
+  createGroup(
+    List<String> users,
+  ) {
     LogMessage.d("group name", groupName.text);
     LogMessage.d("users", users.toString());
     LogMessage.d("group image", imagePath.value);
     DialogUtils.showLoading(dialogStyle: AppStyleConfig.dialogStyle);
-    Mirrorfly.createGroup(groupName: groupName.text.toString(),userList: users,image: imagePath.value, flyCallBack: (FlyResponse response) {
-      DialogUtils.hideLoading();
-      if(response.isSuccess) {
-        NavUtils.back();
-        toToast(getTranslated("groupCreatedSuccessfully"));
-      }
-    });
+    Mirrorfly.createGroup(
+        groupName: groupName.text.toString(),
+        userList: users,
+        image: imagePath.value,
+        flyCallBack: (FlyResponse response) {
+          DialogUtils.hideLoading();
+          if (response.isSuccess) {
+            NavUtils.back();
+            toToast(getTranslated("groupCreatedSuccessfully"));
+          }
+        });
   }
 
   void choosePhoto() {
-    DialogUtils.showVerticalButtonAlert(actions:[
+    DialogUtils.showVerticalButtonAlert(actions: [
       ListTile(
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),

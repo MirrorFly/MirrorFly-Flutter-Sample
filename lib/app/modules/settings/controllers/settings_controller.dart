@@ -1,5 +1,6 @@
 
 import 'package:flutter/services.dart';
+import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -11,7 +12,6 @@ import '../../../data/session_management.dart';
 import '../../../data/utils.dart';
 import '../../../routes/route_settings.dart';
 import '../../backup_restore/backup_utils/backup_restore_manager.dart';
-
 
 class SettingsController extends GetxController {
   // PackageInfo? packageInfo;
@@ -36,8 +36,8 @@ class SettingsController extends GetxController {
 
   logout() {
     if (SessionManagement.getEnablePin()) {
-      NavUtils.toNamed(Routes.pin)?.then((value){
-        if(value!=null && value){
+      NavUtils.toNamed(Routes.pin)?.then((value) {
+        if (value != null && value) {
           logoutFromSDK();
         }
       });
@@ -50,9 +50,11 @@ class SettingsController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
+        PictureInPicture.stopPiP();
         clearAllPreferences();
       }).catchError((ex){
         LogMessage.d("logoutOfChatSDK", ex);
+        PictureInPicture.stopPiP();
         clearAllPreferences();
       });
     } else {
@@ -66,6 +68,7 @@ class SettingsController extends GetxController {
     var audioRecordPermissionAsked = SessionManagement.getBool(Constants.audioRecordPermissionAsked);
     var readPhoneStatePermissionAsked = SessionManagement.getBool(Constants.readPhoneStatePermissionAsked);
     var bluetoothPermissionAsked = SessionManagement.getBool(Constants.bluetoothPermissionAsked);
+    var screenLayoutAsked = SessionManagement.getBool(Constants.layoutSwitch);
    if(BackupRestoreManager.instance.getGoogleAccountSignedIn != null) {
       await BackupRestoreManager.instance.googleSignIn.signOut();
     }
@@ -75,6 +78,7 @@ class SettingsController extends GetxController {
       SessionManagement.setBool(Constants.audioRecordPermissionAsked, audioRecordPermissionAsked);
       SessionManagement.setBool(Constants.readPhoneStatePermissionAsked, readPhoneStatePermissionAsked);
       SessionManagement.setBool(Constants.bluetoothPermissionAsked, bluetoothPermissionAsked);
+      SessionManagement.setBool(Constants.layoutSwitch, screenLayoutAsked);
       DialogUtils.hideLoading();
       NavUtils.offAllNamed(Routes.login);
     });

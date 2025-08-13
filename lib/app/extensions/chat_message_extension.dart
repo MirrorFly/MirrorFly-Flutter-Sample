@@ -2,25 +2,39 @@ part of "extensions.dart";
 
 extension ChatmessageParsing on ChatMessageModel {
   bool isMediaDownloaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloaded.value);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaDownloadStatus.value ==
+            MediaDownloadStatus.mediaDownloaded.value);
   }
 
   bool isMediaUploaded() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploaded.value);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaUploadStatus.value ==
+            MediaUploadStatus.mediaUploaded.value);
   }
 
   bool isMediaDownloading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaDownloadStatus.value == MediaDownloadStatus.mediaDownloading.value);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaDownloadStatus.value ==
+            MediaDownloadStatus.mediaDownloading.value);
   }
 
   bool isMediaUploading() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaUploading.value);
-  }
-  bool isUploadFailed() {
-    return isMediaMessage() && (mediaChatMessage?.mediaUploadStatus.value == MediaUploadStatus.mediaNotUploaded.value);
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaUploadStatus.value ==
+            MediaUploadStatus.mediaUploading.value);
   }
 
-  bool isMediaMessage() => (isAudioMessage() || isVideoMessage() || isImageMessage() || isFileMessage());
+  bool isUploadFailed() {
+    return isMediaMessage() &&
+        (mediaChatMessage?.mediaUploadStatus.value ==
+            MediaUploadStatus.mediaNotUploaded.value);
+  }
+
+  bool isMediaMessage() => (isAudioMessage() ||
+      isVideoMessage() ||
+      isImageMessage() ||
+      isFileMessage());
 
   bool isTextMessage() => messageType == Constants.mText;
 
@@ -34,5 +48,6 @@ extension ChatmessageParsing on ChatMessageModel {
 
   bool isMeetMessage() => messageType == Constants.mMeet;
 
-  bool isNotificationMessage() => messageType.toUpperCase() == Constants.mNotification;
+  bool isNotificationMessage() =>
+      messageType.toUpperCase() == Constants.mNotification;
 }

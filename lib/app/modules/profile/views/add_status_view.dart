@@ -12,7 +12,8 @@ class AddStatusView extends NavView<StatusListController> {
   const AddStatusView({Key? key}) : super(key: key);
 
   @override
-StatusListController createController({String? tag}) => StatusListController();
+  StatusListController createController({String? tag}) =>
+      StatusListController();
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +70,11 @@ StatusListController createController({String? tag}) => StatusListController();
                         padding: const EdgeInsets.all(4.0),
                         child: Center(
                           child: Obx(
-                                () =>
-                                Text(
-                                  controller.count.toString(),
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal),
-                                ),
+                            () => Text(
+                              controller.count.toString(),
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.normal),
+                            ),
                           ),
                         )),
                     Obx(() {
@@ -89,12 +88,17 @@ StatusListController createController({String? tag}) => StatusListController();
                             if (!controller.showEmoji.value) {
                               controller.focusNode.unfocus();
                             }
-                            Future.delayed(
-                                const Duration(milliseconds: 500), () {
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () {
                               controller.showEmoji(!controller.showEmoji.value);
                             });
                           },
-                          icon: controller.showEmoji.value ? const Icon(Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
+                          icon: controller.showEmoji.value
+                              ? const Icon(
+                                  Icons.keyboard,
+                                  color: iconColor,
+                                )
+                              : AppUtils.svgIcon(icon: smileIcon));
                     })
                   ],
                 ),
@@ -106,7 +110,7 @@ StatusListController createController({String? tag}) => StatusListController();
                   onPressed: () => controller.onBackPressed(),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: WidgetStateColor.resolveWith(
-                              (states) => Colors.white),
+                          (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
                   child: Text(
@@ -126,7 +130,7 @@ StatusListController createController({String? tag}) => StatusListController();
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: WidgetStateColor.resolveWith(
-                              (states) => Colors.white),
+                          (states) => Colors.white),
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero)),
                   child: Text(
@@ -147,7 +151,8 @@ StatusListController createController({String? tag}) => StatusListController();
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-            textController: TextEditingController(),//controller.addStatusController,
+            textController:
+                TextEditingController(), //controller.addStatusController,
             onBackspacePressed: () => controller.onEmojiBackPressed(),
             onEmojiSelected: (cat, emoji) => controller.onEmojiSelected(emoji));
       } else {

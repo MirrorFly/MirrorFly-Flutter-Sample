@@ -13,7 +13,11 @@ class CallHighlightedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final matches = searchString.isEmpty ? <RegExpMatch>[] : RegExp(searchString, caseSensitive: false).allMatches(content).toList();
+    final matches = searchString.isEmpty
+        ? <RegExpMatch>[]
+        : RegExp(searchString, caseSensitive: false)
+            .allMatches(content)
+            .toList();
     final parts = <InlineSpan>[];
     if (matches.isEmpty) {
       parts.add(TextSpan(text: content));

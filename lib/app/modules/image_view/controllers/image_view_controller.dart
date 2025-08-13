@@ -8,18 +8,17 @@ class ImageViewController extends GetxController {
   var imageName = ''.obs;
   var imagePath = ''.obs;
   var imageUrl = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
     imageName(NavUtils.arguments['imageName']);
     imagePath(NavUtils.arguments['imagePath']);
-    if(NavUtils.arguments['imageUrl'].toString().startsWith("http")) {
+    if (NavUtils.arguments['imageUrl'].toString().startsWith("http")) {
       imageUrl(NavUtils.arguments['imageUrl']);
-    }else {
+    } else {
       imageUrl(SessionManagement.getMediaEndPoint().checkNull() +
           NavUtils.arguments['imageUrl'].toString());
     }
   }
-
-
 }

@@ -1,13 +1,18 @@
+import 'package:flutter/services.dart' show TextInputFormatter;
+import 'package:flutter/material.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 
 import 'chat_message_model.dart';
 
-class DashboardViewArguments{
+class DashboardViewArguments {
   final bool didMissedCallNotificationLaunchApp;
 
-  const DashboardViewArguments({this.didMissedCallNotificationLaunchApp = false});
+  const DashboardViewArguments(
+      {this.didMissedCallNotificationLaunchApp = false});
 }
-class ChatViewArguments{
-  const ChatViewArguments({
+
+class ChatViewArguments {
+   ChatViewArguments({
     required this.chatJid,
     this.topicId = '',
     this.didNotificationLaunchApp = false,
@@ -17,7 +22,32 @@ class ChatViewArguments{
     this.enableCalls = true,
     this.showChatDeliveryIndicator = true,
     this.disableAppBar = false,
-    this.enableSwipeToReply = true});
+    this.chatInfoPageRedirect = false,
+    this.enableSwipeToReply = true,
+    this.menuActionsEnabled = true,
+    this.isAppBarForwardEnabled = true,
+    this.isMessageWidgetForwardEnabled = true,
+    this.isAppBarReplyEnabled = true,
+    this.isAppBarStarEnabled = true,
+    this.isAppBarDeleteMessageEnabled = true,
+    this.isAppBarCopyMessageEnabled = true,
+    this.isAppBarMessageInfoEnabled = true,
+    this.isAppBarReportEnabled = true,
+    this.isAppBarClearChatEnabled = true,
+    this.isAppBarBlockEnabled = true,
+    this.isAppBarSearchEnabled = true,
+    this.isAppBarEmailEnabled = true,
+    this.isAppBarEditMessageEnabled = true,
+    this.isAppBarShareEnabled = true,
+    this.isVoiceCallEnabled = true,
+    this.isVideoCallEnabled = true,
+    this.swipeSensitivity = 5,
+    this.showTopicName = true,
+    this.topicTitleColor,
+    this.topicTitleBgColor,
+    this.messageTextFieldInputFormatters,
+  }) : assert(swipeSensitivity >= 5 && swipeSensitivity <= 20,
+            'swipeSensitivity must be between 5 and 20');
 
   final String chatJid;
   final String topicId;
@@ -29,13 +59,39 @@ class ChatViewArguments{
   final bool didNotificationLaunchApp;
   final bool disableAppBar;
   final bool enableSwipeToReply;
+  final bool menuActionsEnabled;
+  final bool chatInfoPageRedirect;
+  final bool isAppBarForwardEnabled;
+  final bool isMessageWidgetForwardEnabled;
+  final bool isAppBarReplyEnabled;
+  final bool isAppBarStarEnabled;
+  final bool isAppBarDeleteMessageEnabled;
+  final bool isAppBarCopyMessageEnabled;
+  final bool isAppBarMessageInfoEnabled;
+  final bool isAppBarReportEnabled;
+  final bool isAppBarClearChatEnabled;
+  final bool isAppBarBlockEnabled;
+  final bool isAppBarSearchEnabled;
+  final bool isAppBarEmailEnabled;
+  final bool isAppBarEditMessageEnabled;
+  final bool isAppBarShareEnabled;
+  final bool isVoiceCallEnabled;
+  final bool isVideoCallEnabled;
+
+  final int swipeSensitivity;
+  final bool showTopicName;
+  final Color? topicTitleColor;
+  final Color? topicTitleBgColor;
+
+  final List<TextInputFormatter>? messageTextFieldInputFormatters;
 }
 
-class ChatSearchViewArguments{
-  const ChatSearchViewArguments({
-    required this.chatJid,
-    required this.chatList,
-    this.showChatDeliveryIndicator = true,this.disableAppBar = false});
+class ChatSearchViewArguments {
+  const ChatSearchViewArguments(
+      {required this.chatJid,
+      required this.chatList,
+      this.showChatDeliveryIndicator = true,
+      this.disableAppBar = false});
 
   final String chatJid;
   final List<ChatMessageModel> chatList;
@@ -43,9 +99,14 @@ class ChatSearchViewArguments{
   final bool disableAppBar;
 }
 
-class ContactListArguments{
+class ContactListArguments {
   const ContactListArguments(
-      {this.messageIds = const [], this.topicId = "", this.callType = "", this.forMakeCall = false,this.groupJid = "",this.forGroup = false});
+      {this.messageIds = const [],
+      this.topicId = "",
+      this.callType = "",
+      this.forMakeCall = false,
+      this.groupJid = "",
+      this.forGroup = false});
   final List<String> messageIds;
   final String groupJid;
   final String topicId;
@@ -54,13 +115,14 @@ class ContactListArguments{
   final bool forGroup;
 }
 
-class ChatInfoArguments{
+class ChatInfoArguments {
   final String chatJid;
   final bool disableAppbar;
-  const ChatInfoArguments({required this.chatJid,this.disableAppbar = false});
+
+  const ChatInfoArguments({required this.chatJid, this.disableAppbar = false});
 }
 
-class ViewAllMediaArguments{
+class ViewAllMediaArguments {
   final String chatJid;
   const ViewAllMediaArguments({required this.chatJid});
 }

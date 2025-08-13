@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/app_localizations.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/chat/controllers/chat_controller.dart';
@@ -23,7 +24,14 @@ class ChatListView extends StatefulWidget {
   final NotificationMessageViewStyle notificationMessageViewStyle;
   final Color chatSelectedColor;
 
-  const ChatListView({super.key, required this.chatController, required this.chatList,required this.senderChatStyle,required this.receiverChatStyle, required this.chatSelectedColor, required this.notificationMessageViewStyle});
+  const ChatListView(
+      {super.key,
+      required this.chatController,
+      required this.chatList,
+      required this.senderChatStyle,
+      required this.receiverChatStyle,
+      required this.chatSelectedColor,
+      required this.notificationMessageViewStyle});
 
   @override
   State<ChatListView> createState() => _ChatListViewState();
@@ -46,11 +54,31 @@ class _ChatListViewState extends State<ChatListView> {
         child: Obx(() {
           return ScrollablePositionedList.separated(
             separatorBuilder: (context, index) {
-              var string = AppUtils.groupedDateMessage(index, widget.chatList); //Date Labels
-              return string != null ? NotificationMessageView(chatMessage: string) : const Offstage();
+              if (widget.chatList[index].messageType.toUpperCase() ==
+                      Constants.mText &&
+                  widget.chatList[index].messageTextContent.checkNull() ==
+                      Constants.chatClosed) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(getTranslated("chatClosed")),
+                    ),
+                    const Expanded(child: Divider())
+                  ],
+                );
+              }
+              var string = AppUtils.groupedDateMessage(
+                  index, widget.chatList); //Date Labels
+              return string != null
+                  ? NotificationMessageView(chatMessage: string)
+                  : const Offstage();
             },
             itemScrollController: widget.chatController.newScrollController,
-            itemPositionsListener: widget.chatController.newItemPositionsListener,
+            itemPositionsListener:
+                widget.chatController.newItemPositionsListener,
             itemCount: widget.chatList.length,
             shrinkWrap: true,
             reverse: true,
@@ -62,47 +90,81 @@ class _ChatListViewState extends State<ChatListView> {
                 children: [
                   Obx(() {
                     // LogMessage.d("ScrollablePositionedList inside AutomaticKeepAlive", "build $index");
-                    return widget.chatController.showLoadingPrevious.value && index == widget.chatList.length - 1
+                    return widget.chatController.showLoadingPrevious.value &&
+                            index == widget.chatList.length - 1
                         ? const Center(child: CircularProgressIndicator())
                         : const Offstage();
                   }),
-                  (widget.chatList[index].messageType.toUpperCase() != Constants.mNotification)
+                  (widget.chatList[index].messageType.toUpperCase() !=
+                          Constants.mNotification)
                       ? SwipeTo(
-                          onRightSwipe: (widget.chatController.arguments?.enableSwipeToReply).checkNull() ? (DragUpdateDetails dragUpdateDetails) {
-                            if (!widget.chatList[index].isMessageRecalled.value &&
-                                !widget.chatList[index].isMessageDeleted &&
-                                widget.chatList[index].messageStatus.value.checkNull().toString() != "N") {
-                              widget.chatController.handleReplyChatMessage(widget.chatList[index]);
-                            }
-                          } : null,
+                          swipeSensitivity: widget
+                                  .chatController.arguments?.swipeSensitivity ??
+                              5,
+                          onRightSwipe: (widget.chatController.arguments
+                                      ?.enableSwipeToReply)
+                                  .checkNull()
+                              ? (DragUpdateDetails dragUpdateDetails) {
+                                  if (!widget.chatList[index].isMessageRecalled
+                                          .value &&
+                                      !widget
+                                          .chatList[index].isMessageDeleted &&
+                                      widget.chatList[index].messageStatus.value
+                                              .checkNull()
+                                              .toString() !=
+                                          "N") {
+                                    widget.chatController
+                                        .handleReplyChatMessage(
+                                            widget.chatList[index]);
+                                  }
+                                }
+                              : null,
                           animationDuration: const Duration(milliseconds: 300),
                           offsetDx: 0.2,
                           child: GestureDetector(
-                            onLongPress: (widget.chatController.arguments?.disableAppBar).checkNull() ? null : () {
-                              debugPrint("LongPressed");
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              if (!widget.chatController.isSelected.value) {
-                                widget.chatController.isSelected(true);
-                                widget.chatController.addChatSelection(widget.chatList[index]);
-                              }
-                            },
+                            onLongPress: (widget.chatController.arguments
+                                        ?.disableAppBar)
+                                    .checkNull()
+                                ? null
+                                : () {
+                                    debugPrint("LongPressed");
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    if (!widget
+                                        .chatController.isSelected.value) {
+                                      widget.chatController.isSelected(true);
+                                      widget.chatController.addChatSelection(
+                                          widget.chatList[index]);
+                                    }
+                                  },
                             onTap: () {
                               debugPrint("On Tap");
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (widget.chatController.isSelected.value) {
                                 widget.chatController.isSelected.value
-                                    ? widget.chatController.selectedChatList.contains(widget.chatList[index])
-                                        ? widget.chatController.clearChatSelection(widget.chatList[index])
-                                        : widget.chatController.addChatSelection(widget.chatList[index])
+                                    ? widget.chatController.selectedChatList
+                                            .contains(widget.chatList[index])
+                                        ? widget.chatController
+                                            .clearChatSelection(
+                                                widget.chatList[index])
+                                        : widget.chatController
+                                            .addChatSelection(
+                                                widget.chatList[index])
                                     : null;
                                 widget.chatController.getMessageActions();
                               } else {
-                                var replyChat = widget.chatList[index].replyParentChatMessage;
+                                var replyChat = widget
+                                    .chatList[index].replyParentChatMessage;
                                 if (replyChat != null) {
                                   debugPrint("reply tap ");
-                                  var chat = widget.chatList.indexWhere((element) => element.messageId == replyChat.messageId);
+                                  var chat = widget.chatList.indexWhere(
+                                      (element) =>
+                                          element.messageId ==
+                                          replyChat.messageId);
                                   if (!chat.isNegative) {
-                                    widget.chatController.navigateToMessage(widget.chatList[chat], index: chat);
+                                    widget.chatController.navigateToMessage(
+                                        widget.chatList[chat],
+                                        index: chat);
                                   }
                                 }
                               }
@@ -114,25 +176,48 @@ class _ChatListViewState extends State<ChatListView> {
                               // LogMessage.d("Container", "build ${widget.chatList[index].messageId}");
                               return Container(
                                 key: ValueKey(widget.chatList[index].messageId),
-                                color: widget.chatList[index].isSelected.value ? widget.chatSelectedColor : Colors.transparent,
-                                margin: const EdgeInsets.only(left: 10, right: 14, top: 5, bottom: 10),
+                                color: widget.chatList[index].isSelected.value
+                                    ? widget.chatSelectedColor
+                                    : Colors.transparent,
+                                margin: const EdgeInsets.only(
+                                    left: 10, right: 14, top: 5, bottom: 10),
                                 child: Align(
-                                  alignment: (widget.chatList[index].isMessageSentByMe ? Alignment.bottomRight : Alignment.bottomLeft),
+                                  alignment:
+                                      (widget.chatList[index].isMessageSentByMe
+                                          ? Alignment.bottomRight
+                                          : Alignment.bottomLeft),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Visibility(
-                                        visible: widget.chatList[index].isMessageSentByMe && widget.chatController.forwardMessageVisibility(widget.chatList[index]),
+                                        visible: widget.chatList[index]
+                                                .isMessageSentByMe &&
+                                            widget.chatController
+                                                .forwardMessageVisibility(
+                                                    widget.chatList[index]) &&
+                                            (widget.chatController.arguments
+                                                    ?.isMessageWidgetForwardEnabled)
+                                                .checkNull(),
                                         child: IconButton(
                                             onPressed: () {
-                                              widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
+                                              widget.chatController
+                                                  .forwardSingleMessage(widget
+                                                      .chatList[index]
+                                                      .messageId);
                                             },
-                                            icon: widget.senderChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia)),
+                                            icon: AppUtils.svgIcon(
+                                                icon: forwardMedia)),
                                       ),
                                       Container(
-                                        constraints: BoxConstraints(maxWidth: NavUtils.width * 0.8),
-                                        decoration: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.decoration : widget.receiverChatStyle.decoration,
+                                        constraints: BoxConstraints(
+                                            maxWidth: NavUtils.width * 0.75),
+                                        decoration: widget.chatList[index]
+                                                .isMessageSentByMe
+                                            ? widget.senderChatStyle.decoration
+                                            : widget
+                                                .receiverChatStyle.decoration,
                                         /*decoration: BoxDecoration(
                                             borderRadius: const BorderRadius.only(
                                                 topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10)),
@@ -141,45 +226,91 @@ class _ChatListViewState extends State<ChatListView> {
                                                 ? Border.all(color: chatSentBgColor)
                                                 : Border.all(color: chatBorderColor)),*/
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            if (widget.chatController.profile.isGroupProfile.checkNull()) ...[
+                                            if (widget.chatController.profile
+                                                .isGroupProfile
+                                                .checkNull()) ...[
                                               SenderHeader(
-                                                  isGroupProfile: widget.chatController.profile.isGroupProfile,
-                                                  chatList: widget.chatList,
-                                                  index: index,textStyle: widget.receiverChatStyle.participantNameTextStyle,),
-                                            ],
-                                            widget.chatList[index].isThisAReplyMessage
-                                                ?( widget.chatList[index].replyParentChatMessage == null || widget.chatList[index].replyParentChatMessage!.isMessageRecalled ||widget.chatList[index].replyParentChatMessage!.isMessageDeleted)
-                                                ? messageNotAvailableWidget(widget.chatList[index])
-                                                    : ReplyMessageHeader(chatMessage: widget.chatList[index],replyHeaderMessageViewStyle: widget.chatList[index].isMessageSentByMe ? widget.senderChatStyle.replyHeaderMessageViewStyle : widget.receiverChatStyle.replyHeaderMessageViewStyle,)
-                                                : const Offstage(),
-                                            MessageContent(
+                                                isGroupProfile: widget
+                                                    .chatController
+                                                    .profile
+                                                    .isGroupProfile,
                                                 chatList: widget.chatList,
                                                 index: index,
-                                                onPlayAudio: () {
-                                                  if (widget.chatController.isAudioRecording.value == Constants.audioRecording) {
-                                                    widget.chatController.stopRecording();
-                                                  }
-                                                  // widget.chatController.playAudio(widget.chatList[index]);
-                                                },
-                                                onSeekbarChange: (double value) {
-                                                  // widget.chatController.onSeekbarChange(value, widget.chatList[index]);
-                                                },
-                                                isSelected: widget.chatController.isSelected.value,
-                                            senderChatBubbleStyle: widget.senderChatStyle,
-                                                receiverChatBubbleStyle: widget.receiverChatStyle,
-                                            notificationMessageViewStyle: widget.notificationMessageViewStyle,)
+                                                textStyle: widget
+                                                    .receiverChatStyle
+                                                    .participantNameTextStyle,
+                                              ),
+                                            ],
+                                            widget.chatList[index]
+                                                    .isThisAReplyMessage
+                                                ? widget.chatList[index]
+                                                            .replyParentChatMessage ==
+                                                        null
+                                                    ? messageNotAvailableWidget(
+                                                        widget.chatList[index])
+                                                    : ReplyMessageHeader(
+                                                        chatMessage: widget
+                                                            .chatList[index],
+                                                        replyHeaderMessageViewStyle: widget
+                                                                .chatList[index]
+                                                                .isMessageSentByMe
+                                                            ? widget
+                                                                .senderChatStyle
+                                                                .replyHeaderMessageViewStyle
+                                                            : widget
+                                                                .receiverChatStyle
+                                                                .replyHeaderMessageViewStyle,
+                                                      )
+                                                : const Offstage(),
+                                            MessageContent(
+                                              chatList: widget.chatList,
+                                              index: index,
+                                              onPlayAudio: () {
+                                                if (widget
+                                                        .chatController
+                                                        .isAudioRecording
+                                                        .value ==
+                                                    Constants.audioRecording) {
+                                                  widget.chatController
+                                                      .stopRecording();
+                                                }
+                                                // widget.chatController.playAudio(widget.chatList[index]);
+                                              },
+                                              onSeekbarChange: (double value) {
+                                                // widget.chatController.onSeekbarChange(value, widget.chatList[index]);
+                                              },
+                                              isSelected: widget.chatController
+                                                  .isSelected.value,
+                                              senderChatBubbleStyle:
+                                                  widget.senderChatStyle,
+                                              receiverChatBubbleStyle:
+                                                  widget.receiverChatStyle,
+                                              notificationMessageViewStyle: widget
+                                                  .notificationMessageViewStyle,
+                                            )
                                           ],
                                         ),
                                       ),
-                                      if (!widget.chatList[index].isMessageSentByMe &&
-                                          widget.chatController.forwardMessageVisibility(widget.chatList[index])) ...[
+                                      if (!widget.chatList[index]
+                                              .isMessageSentByMe &&
+                                          widget.chatController
+                                              .forwardMessageVisibility(
+                                                  widget.chatList[index]) &&
+                                          (widget.chatController.arguments
+                                                  ?.isMessageWidgetForwardEnabled)
+                                              .checkNull()) ...[
                                         IconButton(
                                             onPressed: () {
-                                              widget.chatController.forwardSingleMessage(widget.chatList[index].messageId);
+                                              widget.chatController
+                                                  .forwardSingleMessage(widget
+                                                      .chatList[index]
+                                                      .messageId);
                                             },
-                                            icon: widget.receiverChatStyle.iconForward ?? AppUtils.svgIcon(icon:forwardMedia))
+                                            icon: AppUtils.svgIcon(
+                                                icon: forwardMedia))
                                       ],
                                     ],
                                   ),
@@ -188,9 +319,12 @@ class _ChatListViewState extends State<ChatListView> {
                             }),
                           ),
                         )
-                      : NotificationMessageView(chatMessage: widget.chatList[index].messageTextContent),
+                      : NotificationMessageView(
+                          chatMessage:
+                              widget.chatList[index].messageTextContent),
                   Obx(() {
-                    return widget.chatController.showLoadingNext.value && index == 0
+                    return widget.chatController.showLoadingNext.value &&
+                            index == 0
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
@@ -208,5 +342,3 @@ class _ChatListViewState extends State<ChatListView> {
   // @override
   // bool get wantKeepAlive => true;
 }
-
-

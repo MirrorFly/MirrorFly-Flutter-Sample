@@ -1111,11 +1111,11 @@ class DashboardController extends FullLifeCycleController
     updateRecentChat(jid: chatMessageModel.chatUserJid, newInsertable: true);
   }
 
-  Future<void> onMessageDeleted(
-      {required String messageId}) async {
-    final int indexToBeReplaced = 
-    recentChats.indexWhere((message) => message.lastMessageId == messageId);
-    debugPrint("#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
+  Future<void> onMessageDeleted({required String messageId}) async {
+    final int indexToBeReplaced =
+        recentChats.indexWhere((message) => message.lastMessageId == messageId);
+    debugPrint(
+        "#Dashboard onMessageDeleted index to replace $indexToBeReplaced");
     if (!indexToBeReplaced.isNegative) {
       recentChats[indexToBeReplaced].isLastMessageRecalledByUser = true;
       recentChats.refresh();
@@ -1123,15 +1123,15 @@ class DashboardController extends FullLifeCycleController
   }
 
   Future<void> onMessageStatusUpdated(ChatMessageModel chatMessageModel) async {
-    final index = recentChats.indexWhere(
-        (message) => message.lastMessageId == chatMessageModel.messageId);
-    debugPrint("Message Status Update index of search $index");
-    if (!index.isNegative) {
-      // updateRecentChat(chatMessageModel.chatUserJid);
-      recentChats[index].lastMessageStatus =
-          chatMessageModel.messageStatus.value;
-      recentChats.refresh();
-    }
+    // final index = recentChats.indexWhere(
+    //     (message) => message.lastMessageId == chatMessageModel.messageId);
+    // debugPrint("Message Status Update index of search $index");
+    // if (!index.isNegative) {
+      updateRecentChat(jid: chatMessageModel.chatUserJid,changePosition: false);
+    //   recentChats[index].lastMessageStatus =
+    //       chatMessageModel.messageStatus.value;
+    //   recentChats.refresh();
+    // }
   }
 
   void markConversationReadNotifyUI(String jid) {
@@ -1281,7 +1281,10 @@ class DashboardController extends FullLifeCycleController
 
       callLogScrollController.removeListener(_scrollListener);
 
-      fetchCallLogList();
+      if (!isLastPage.value && !loading.value) {
+        pageNumber = pageNumber + 1;
+        fetchCallLogList();
+      }
     }
   }
 
@@ -1618,6 +1621,7 @@ class DashboardController extends FullLifeCycleController
   void onInactive() {}
 
   var hasPaused = false;
+
   @override
   void onPaused() {
     hasPaused = true;
@@ -1629,7 +1633,8 @@ class DashboardController extends FullLifeCycleController
       hasPaused = false;
       LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
       getRecentChatList();
-      fetchCallLogList();
+      // fetchCallLogList();
+      onCallLogUpdate(false);
     }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {
@@ -1888,6 +1893,7 @@ class DashboardController extends FullLifeCycleController
   void onHidden() {}
 
   Future<void> fetchCallLogList() async {
+    loading.value = true;
     Mirrorfly.getCallLogsList(
         currentPage: pageNumber,
         flyCallBack: (FlyResponse response) {
@@ -1899,7 +1905,6 @@ class DashboardController extends FullLifeCycleController
             if (list.data != null) {
               _callLogList.addAll(list.data!);
               isLastPage.value = list.data!.isEmpty;
-              pageNumber = pageNumber + 1;
             }
           }
         });
@@ -1917,15 +1922,17 @@ class DashboardController extends FullLifeCycleController
     }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeVideoCall(toUserJid: fromUser.checkNull(), flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  //setOnGoingUserGone();
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": [fromUser],
-                    "callType": CallType.video
-                  })?.then((value) => setOnGoingUserAvail());
-                }
-              });
+        Mirrorfly.makeVideoCall(
+            toUserJid: fromUser.checkNull(),
+            flyCallBack: (FlyResponse response) {
+              if (response.isSuccess) {
+                //setOnGoingUserGone();
+                NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+                  "userJid": [fromUser],
+                  "callType": CallType.video
+                })?.then((value) => setOnGoingUserAvail());
+              }
+            });
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
@@ -2026,11 +2033,29 @@ class DashboardController extends FullLifeCycleController
       if (search.text.trim().isNotEmpty) {
         filteredCallLog(search.text.trim());
       } else {
-        var res = await Mirrorfly.getLocalCallLogs();
-        var list = callLogListFromJson(res);
-        _callLogList.clear();
-        callLogList.clear();
-        _callLogList.addAll(list.data!);
+        // var res = await Mirrorfly.getLocalCallLogs();
+        // var list = callLogListFromJson(res);
+
+        // _callLogList.addAll(list.data!);
+        loading.value = true;
+        pageNumber =1;
+
+        Mirrorfly.getCallLogsList(
+            currentPage: pageNumber,
+            flyCallBack: (FlyResponse response) {
+              loading.value = false;
+              if (response.isSuccess && response.hasData) {
+                var list = callLogListFromJson(response.data);
+                totalPages = list.totalPages!;
+                _callLogList.clear();
+                callLogList.clear();
+                // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+                if (list.data != null) {
+                  _callLogList.addAll(list.data!);
+                  isLastPage.value = list.data!.isEmpty;
+                }
+              }
+            });
       }
 
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
@@ -2336,24 +2361,26 @@ class DashboardController extends FullLifeCycleController
     getArchivedChatsList();
   }
 
-  Future<void> deleteGroup({required String groupJid, required String groupName}) async {
+  Future<void> deleteGroup(
+      {required String groupJid, required String groupName}) async {
+    LogMessage.d("Dashboard Controller deleteGroup",
+        "groupJid -> $groupJid , groupName-> $groupName");
 
-    LogMessage.d("Dashboard Controller deleteGroup", "groupJid -> $groupJid , groupName-> $groupName");
-
-    var chatIndex = recentChats.indexWhere((element) =>
-    groupJid == element.jid);
+    var chatIndex =
+        recentChats.indexWhere((element) => groupJid == element.jid);
 
     if (!chatIndex.isNegative) {
       LogMessage.d("Dashboard Controller", "chat found chatIndex-> $chatIndex");
       recentChats.removeAt(chatIndex);
-    }else{
-      LogMessage.d("Dashboard Controller deleteGroup", "Group is not found groupJid -> $groupJid , groupName-> $groupName");
+    } else {
+      LogMessage.d("Dashboard Controller deleteGroup",
+          "Group is not found groupJid -> $groupJid , groupName-> $groupName");
     }
-
   }
 
   void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
-    LogMessage.d("DashboardController onChatMuteStatusUpdated", "muteStatus : $muteStatus, jidList: $jidList");
+    LogMessage.d("DashboardController onChatMuteStatusUpdated",
+        "muteStatus : $muteStatus, jidList: $jidList");
     if (muteStatus == null || jidList == null) return;
     recentChats.where((chat) => jidList.contains(chat.jid)).forEach((chat) {
       chat.isMuted = muteStatus;

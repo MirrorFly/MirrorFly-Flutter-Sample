@@ -21,7 +21,13 @@ class ImageMessageView extends StatefulWidget {
   final ImageMessageViewStyle imageMessageViewStyle;
   final Decoration decoration;
 
-  const ImageMessageView({super.key, required this.chatMessage, this.search = "", required this.isSelected,this.imageMessageViewStyle = const ImageMessageViewStyle(), this.decoration = const BoxDecoration()});
+  const ImageMessageView(
+      {super.key,
+      required this.chatMessage,
+      this.search = "",
+      required this.isSelected,
+      this.imageMessageViewStyle = const ImageMessageViewStyle(),
+      this.decoration = const BoxDecoration()});
 
   @override
   State<ImageMessageView> createState() => _ImageMessageViewState();
@@ -41,17 +47,27 @@ class _ImageMessageViewState extends State<ImageMessageView> {
             alignment: Alignment.center,
             children: [
               SizedBox(
-                width:NavUtils.width * 0.60,
-                height: NavUtils.height *0.4,
+                width: NavUtils.width * 0.60,
+                height: NavUtils.height * 0.4,
                 child: ClipRRect(
                   borderRadius: widget.imageMessageViewStyle.imageBorderRadius,
                   child: Obx(() {
                     return getImage(
-                        mediaMessage.mediaLocalStoragePath, mediaMessage.mediaThumbImage, context, mediaMessage.mediaFileName, widget.isSelected, widget.chatMessage.messageId, widget.chatMessage);
+                        mediaMessage.mediaLocalStoragePath,
+                        mediaMessage.mediaThumbImage,
+                        context,
+                        mediaMessage.mediaFileName,
+                        widget.isSelected,
+                        widget.chatMessage.messageId,
+                        widget.chatMessage);
                   }),
                 ),
               ),
-              MediaMessageOverlay(chatMessage: widget.chatMessage,downloadUploadViewStyle: widget.imageMessageViewStyle.downloadUploadViewStyle,),
+              MediaMessageOverlay(
+                chatMessage: widget.chatMessage,
+                downloadUploadViewStyle:
+                    widget.imageMessageViewStyle.downloadUploadViewStyle,
+              ),
               mediaMessage.mediaCaptionText.checkNull().isEmpty
                   ? Positioned(
                       bottom: 8,
@@ -67,12 +83,18 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            widget.chatMessage.isMessageStarred.value ? widget.imageMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon) : const SizedBox.shrink(),
+                            widget.chatMessage.isMessageStarred.value
+                                ? widget.imageMessageViewStyle.iconFavourites ??
+                                    AppUtils.svgIcon(icon: starSmallIcon)
+                                : const SizedBox.shrink(),
                             const SizedBox(
                               width: 5,
                             ),
-                            MessageUtils.getMessageIndicatorIcon(widget.chatMessage.messageStatus.value, widget.chatMessage.isMessageSentByMe,
-                                widget.chatMessage.messageType, widget.chatMessage.isMessageRecalled.value),
+                            MessageUtils.getMessageIndicatorIcon(
+                                widget.chatMessage.messageStatus.value,
+                                widget.chatMessage.isMessageSentByMe,
+                                widget.chatMessage.messageType,
+                                widget.chatMessage.isMessageRecalled.value),
                             const SizedBox(
                               width: 4,
                             ),
@@ -80,8 +102,12 @@ class _ImageMessageViewState extends State<ImageMessageView> {
                               children: [
                                 // AppUtils.assetIcon(assetName:cornerShadow,width: 40,height: 20,fit: BoxFit.fitHeight,),
                                 Text(
-                                  getChatTime(context, widget.chatMessage.messageSentTime.toInt()),
-                                  style: widget.imageMessageViewStyle.timeTextStyle,
+                                  getChatTime(
+                                      context,
+                                      widget.chatMessage.messageSentTime
+                                          .toInt()),
+                                  style: widget
+                                      .imageMessageViewStyle.timeTextStyle,
                                   // style: TextStyle(fontSize: 11, color: widget.chatMessage.isMessageSentByMe ? durationTextColor : textButtonColor),
                                 ),
                               ],
@@ -94,7 +120,14 @@ class _ImageMessageViewState extends State<ImageMessageView> {
             ],
           ),
           mediaMessage.mediaCaptionText.checkNull().isNotEmpty
-              ? CaptionMessageView(mediaMessage: mediaMessage, chatMessage: widget.chatMessage, context: context, search: widget.search,textMessageViewStyle: widget.imageMessageViewStyle.captionTextViewStyle,)
+              ? CaptionMessageView(
+                  mediaMessage: mediaMessage,
+                  chatMessage: widget.chatMessage,
+                  context: context,
+                  search: widget.search,
+                  textMessageViewStyle:
+                      widget.imageMessageViewStyle.captionTextViewStyle,
+                )
               : const Offstage(),
         ],
       ),
@@ -113,16 +146,21 @@ getImage(
     bool isSelected,
     String messageId,
     ChatMessageModel chatMessage) {
-  debugPrint("getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
+  debugPrint(
+      "getImage mediaLocalStoragePath : $mediaLocalStoragePath -- $mediaFileName");
   // chatMessage.isMediaDownloading() conditional check is for the media download or uploaded in android once
   // after deleting it from local, the isMediaExists returns true but the file is empty,
   // error Image error builder, so we added.
-  if (MediaUtils.isMediaExists(mediaLocalStoragePath.value) && !chatMessage.isMediaDownloading()) {
+  if (MediaUtils.isMediaExists(mediaLocalStoragePath.value) &&
+      !chatMessage.isMediaDownloading()) {
     return InkWell(
         onTap: isSelected
             ? null
             : () {
-                NavUtils.toNamed(Routes.imageView, arguments: {'imageName': mediaFileName, 'imagePath': mediaLocalStoragePath.value});
+                NavUtils.toNamed(Routes.imageView, arguments: {
+                  'imageName': mediaFileName,
+                  'imagePath': mediaLocalStoragePath.value
+                });
               },
         child: Obx(() {
           return Image(
@@ -138,7 +176,8 @@ getImage(
               return const Center(child: CircularProgressIndicator());
             },
             frameBuilder: (cxt, child, frame, wasSynchronouslyLoaded) {
-              debugPrint("getImage frameBuilder : frame : $frame ,wasSynchronouslyLoaded :$wasSynchronouslyLoaded");
+              debugPrint(
+                  "getImage frameBuilder : frame : $frame ,wasSynchronouslyLoaded :$wasSynchronouslyLoaded");
               return child;
             },
             errorBuilder: (cxt, obj, strace) {
@@ -157,4 +196,3 @@ getImage(
     return ImageCacheManager.getImage(mediaThumbImage, messageId);
   }
 }
-
