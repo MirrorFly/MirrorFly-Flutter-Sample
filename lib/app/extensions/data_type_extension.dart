@@ -16,7 +16,10 @@ extension StringParsing on String? {
       while (this!.contains(searchedKey, i + 1)) {
         i = this!.indexOf(searchedKey, i + 1);
 
-        if (i == 0 || (i > 0 && (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i]) || this!.split("")[i] == " "))) {
+        if (i == 0 ||
+            (i > 0 &&
+                (RegExp("[^A-Za-z0-9 ]").hasMatch(this!.split("")[i]) ||
+                    this!.split("")[i] == " "))) {
           return i;
         }
         i++;
@@ -26,7 +29,9 @@ extension StringParsing on String? {
   }
 
   bool startsWithTextInWords(String text) {
-    return !this!.toLowerCase().contains(text.toLowerCase()) ? false : true/*this!.toLowerCase().startsWith(text.toLowerCase())*/;
+    return !this!.toLowerCase().contains(text.toLowerCase())
+        ? false
+        : true /*this!.toLowerCase().startsWith(text.toLowerCase())*/;
     //checkIndexes(text)>-1;
     /*return when {
       this.indexOf(text, ignoreCase = true) <= -1 -> false
@@ -36,8 +41,12 @@ extension StringParsing on String? {
 }
 
 extension BooleanParsing on bool? {
-  //check null
+  //cheeck null
   bool checkNull() {
     return this ?? false;
+  }
+
+  bool isNull() {
+    return this == null ? true : false;
   }
 }

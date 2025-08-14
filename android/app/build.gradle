@@ -37,8 +37,8 @@ apply plugin: 'com.google.gms.google-services'*/
 
 android {
     namespace = "com.contusdemo.mirror_fly_demo"
-    compileSdk = 34
-    ndkVersion = "25.1.8937393"
+    compileSdk = 35
+    ndkVersion = " 26.1.10909125"
 
     signingConfigs {
         config {

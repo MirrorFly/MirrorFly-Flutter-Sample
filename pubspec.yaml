@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 4.0.0+14
+version: 4.1.0+20
 build_release_date: Apr 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -34,7 +34,7 @@ dependencies:
   geolocator: ^13.0.1
   geocoding: ^3.0.0
   focus_detector: ^2.0.1
-  record: ^5.1.2
+  record: ^6.0.0
   swipe_to: ^1.0.6
   flutter_keyboard_visibility: ^6.0.0
   keyboard_dismisser: ^3.0.0
@@ -46,12 +46,12 @@ dependencies:
   video_player: ^2.9.1
   internet_connection_checker: ^1.0.0+1
   provider: ^6.1.2
-  photo_manager: ^3.2.3
+  photo_manager: 3.2.3
   oktoast: ^3.4.0
   share_plus: ^10.1.3
   flutter_inappwebview: ^6.0.0
   tuple: ^2.0.2
-  open_file_plus: ^3.4.1+1
+#  open_file_plus: ^3.4.1+1
   device_info_plus: ^10.1.2
   http: ^1.2.2
   flutter_libphonenumber: ^2.3.3
@@ -59,6 +59,9 @@ dependencies:
   device_calendar: ^4.3.3
   fl_pip: ^3.2.1
   flutter_in_app_pip: ^1.7.4
+  open_file_plus:
+    git:
+      url: https://github.com/postflow/open_file_plus.git
 #  mirrorfly_plugin: ^1.0.4
 
   #BackUp and Restore
@@ -66,17 +69,18 @@ dependencies:
   google_sign_in: ^6.2.2
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0
+  wakelock_plus: ^1.3.2
 
   qr_code_scanner_plus: ^2.0.10+1
 
 
   mirrorfly_plugin:
-    path: ../p078-mirrorfly-flutter-plugin
+    path: p078-mirrorfly-flutter-plugin
 
   #Packages Not Needed for UIKIT
   otp_text_field: ^1.1.3
-  firebase_core: ^3.3.0
-  firebase_auth: ^5.1.4
+  firebase_auth: 5.5.1
+  firebase_core: 3.12.1
   firebase_app_installations: ^0.3.0+4v
   firebase_messaging: ^15.0.4
   flutter_local_notifications: ^17.2.4
@@ -106,6 +110,7 @@ flutter:
     - assets/calls/
     - assets/animation/
     - assets/locales/
+    - assets/i18n/
     - assets/backup_restore/
     - pubspec.yaml
 

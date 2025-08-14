@@ -21,16 +21,20 @@ import 'chat_list_view.dart';
 
 class ChatView extends NavViewStateful<ChatController> {
   ChatView({Key? key, this.chatViewArguments})
-      : super(key: key, tag: chatViewArguments?.chatJid);
+      : super(key: key, tag: (chatViewArguments ?? NavUtils.arguments).chatJid);
   final ChatViewArguments? chatViewArguments;
   final chatStyle = AppStyleConfig.chatPageStyle;
 
   @override
   ChatController createController({String? tag}) {
-    debugPrint("ChatView createController");
-    final arguments = chatViewArguments ??
-        NavUtils.arguments as ChatViewArguments;
-    return Get.put(ChatController(arguments), tag: tag);
+    if (!Get.isRegistered<ChatController>(tag: tag)) {
+      final arguments = chatViewArguments ?? NavUtils.arguments as ChatViewArguments;
+      LogMessage.d("ChatView: ", "createController with tag: $tag}" );
+      return Get.put(ChatController(arguments), tag: tag);
+    } else {
+      LogMessage.d("ChatView: ", "existing controller with tag: $tag}" );
+      return Get.find<ChatController>(tag: tag);
+    }
   }
 
   /*@override
@@ -42,105 +46,102 @@ class ChatView extends NavViewStateful<ChatController> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-          appBarTheme: chatStyle.appBarTheme
-      ),
+      data: Theme.of(context).copyWith(appBarTheme: chatStyle.appBarTheme),
       child: Scaffold(
-          appBar: !((controller.arguments?.disableAppBar).checkNull())
-              ? getAppBar(context)
-              : null,
-          body: SafeArea(
-            child: Container(
-              width: NavUtils.width,
-              height: NavUtils.height,
-              decoration: AppStyleConfig
-                  .chatPageStyle.chatPageBackgroundDecoration ?? BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(chatBgIcon, package: iconPackageName),
-                  fit: BoxFit.cover,
+        appBar: !((controller.arguments?.disableAppBar).checkNull())
+            ? getAppBar(context)
+            : null,
+        body: SafeArea(
+          child: Container(
+            width: NavUtils.width,
+            height: NavUtils.height,
+            decoration: chatStyle.chatPageBackgroundDecoration ??
+                BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(chatBgIcon, package: iconPackageName),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: PopScope(
-                canPop: false,
-                onPopInvokedWithResult: (didPop, result) {
-                  if (didPop) {
-                    return;
-                  }
-                  LogMessage.d(
-                      "viewInsets", "${NavUtils.defaultRouteName} : ${MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom}, NavUtils.canPop : ${NavUtils.canPop}, selected : ${controller.isSelected.value},  emoji : ${controller.showEmoji.value}");
-                  if (controller.showEmoji.value) {
-                    controller.showEmoji(false);
-                  } else if (MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom > 0.0) {
-                    //FocusManager.instance.primaryFocus?.unfocus();
-                    controller.focusNode.unfocus();
-                  } else if (!NavUtils.canPop) {
-                    // controller.saveUnsentMessage();
-                    NavUtils.offAllNamed(NavUtils.defaultRouteName);
-                    // Navigator.pop(context);
-                    // NavUtils.back();
-                  } else if (controller.isSelected.value) {
-                    controller.clearAllChatSelection();
-                  } else {
-                    NavUtils.back();
-                  }
-                },
-                child: Column(
-                  children: [
-                    Obx(() {
-                      return Visibility(
-                          visible: controller.topic.value.topicName != null,
-                          child: Container(
-                              width: NavUtils.width,
-                              decoration: BoxDecoration(
-                                color: Theme
-                                    .of(context)
-                                    .primaryColor,
-                                borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(8),
-                                    bottomRight: Radius.circular(8)),
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                controller.topic.value.topicName.checkNull(),
-                                textAlign: TextAlign.center,
-                              )));
-                    }),
-                    Expanded(child: Stack(
+            child: PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, result) {
+                if (didPop) return;
+
+                if (controller.showEmoji.value) {
+                  controller.showEmoji(false);
+                } else if (MediaQuery.of(context).viewInsets.bottom > 0.0) {
+                  controller.focusNode.unfocus();
+                } else if (!NavUtils.canPop) {
+                  NavUtils.offAllNamed(NavUtils.defaultRouteName);
+                } else if (controller.isSelected.value) {
+                  controller.clearAllChatSelection();
+                } else {
+                  NavUtils.back();
+                }
+              },
+              child: Column(
+                children: [
+                  Obx(() {
+                    return Visibility(
+                      visible: controller.topic.value.topicName != null&&
+                          (controller.arguments?.showTopicName).checkNull(),
+                      child: Container(
+                        width: NavUtils.width,
+                        decoration: BoxDecoration(
+                          color: controller.arguments?.topicTitleBgColor ?? Theme.of(context).primaryColor,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: Text(
+                          controller.topic.value.topicName.checkNull(),
+                          textAlign: TextAlign.center,
+                    style: controller.arguments?.topicTitleColor !=
+                    null
+                    ? TextStyle(
+                    color: controller
+                        .arguments?.topicTitleColor)
+                        : const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    );
+                  }),
+                  Expanded(
+                    child: Stack(
                       children: [
                         Obx(() {
                           return controller.chatLoading.value
-                              ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
+                              ? const Center(child: CircularProgressIndicator())
                               : LayoutBuilder(
-                              builder: (context, constraints) {
-                                debugPrint(
-                                    "list view constraints $constraints");
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  controller.screenWidth(constraints.maxWidth);
-                                  controller.screenHeight(constraints.maxHeight);
-                                });
-                                return ChatListView(
-                                  chatController: controller,
-                                  chatList: controller.chatList,
-                                  senderChatStyle: chatStyle
-                                      .senderChatBubbleStyle,
-                                  receiverChatStyle: AppStyleConfig
-                                      .chatPageStyle.receiverChatBubbleStyle,
-                                  chatSelectedColor: AppStyleConfig
-                                      .chatPageStyle.chatSelectionBgColor,
-                                  notificationMessageViewStyle: AppStyleConfig
-                                      .chatPageStyle
-                                      .notificationMessageViewStyle,);
-                              }
+                            builder: (context, constraints) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                controller.screenWidth(constraints.maxWidth);
+                                controller.screenHeight(constraints.maxHeight);
+
+                                if (controller.fabPosition.value == Offset.zero) {
+                                  final safeBottom = constraints.maxHeight - controller.fabHeight.value - controller.margin.value;
+                                  final defaultY = safeBottom;
+                                  final defaultX = constraints.maxWidth - controller.fabHeight.value - controller.margin.value;
+
+                                  controller.fabPosition(Offset(defaultX, defaultY));
+                                }
+
+                              });
+
+                              return ChatListView(
+                                chatController: controller,
+                                chatList: controller.chatList,
+                                senderChatStyle: chatStyle.senderChatBubbleStyle,
+                                receiverChatStyle: chatStyle.receiverChatBubbleStyle,
+                                chatSelectedColor: chatStyle.chatSelectionBgColor,
+                                notificationMessageViewStyle: chatStyle.notificationMessageViewStyle,
+                              );
+                            },
                           );
                         }),
+
                         Obx(() {
                           return Visibility(
                             visible: controller.showHideRedirectToLatest.value,
@@ -154,21 +155,18 @@ class ChatView extends NavViewStateful<ChatController> {
                                       ? CircleAvatar(
                                     radius: 8,
                                     child: Text(
-                                      returnFormattedCount(
-                                          controller.unreadCount.value),
-                                      style: const TextStyle(
-                                          fontSize: 9, color: Colors.white),
+                                      returnFormattedCount(controller.unreadCount.value),
+                                      style: const TextStyle(fontSize: 9, color: Colors.white),
                                     ),
                                   )
                                       : const SizedBox.shrink(),
                                   IconButton(
-                                    icon: AppUtils.assetIcon(assetName:
-                                      redirectLastMessage,
+                                    icon: AppUtils.assetIcon(
+                                      assetName: redirectLastMessage,
                                       width: 32,
                                       height: 32,
                                     ),
-                                    onPressed: () {
-                                      //scroll to end
+                                    onPressed:() {
                                       controller.scrollToEnd();
                                     },
                                   ),
@@ -181,72 +179,67 @@ class ChatView extends NavViewStateful<ChatController> {
                           return controller.ableToScheduleMeet && !(controller.profile.isAdminBlocked.checkNull() || controller.profile.isBlocked.checkNull()||controller.isBlocked.value) && !controller.profile.isDeletedContact() ? FloatingFab(
                             fabTheme: chatStyle
                                 .instantScheduleMeetStyle,
-                            parentWidgetWidth: controller.screenWidth,
-                            parentWidgetHeight: controller.screenHeight,
                             onFabTap: ()async{
                               await controller.setMeetBottomSheet();
                             },
+                            controller: controller,
                           ) : const Offstage();
                         }),
+
                         if (Constants.enableContactSync) ...[
                           Obx(() {
-                            return !controller.profile.isItSavedContact
-                                .checkNull()
+                            return !controller.profile.isItSavedContact.checkNull()
                                 ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const SizedBox(
-                                  width: 8,
-                                ),
+                                const SizedBox(width: 8),
                                 buttonNotSavedContact(
-                                    text: getTranslated("add"),
-                                    onClick: () {
-                                      controller.saveContact();
-                                    }),
-                                const SizedBox(
-                                  width: 8,
+                                  text: getTranslated("add"),
+                                  onClick: controller.saveContact,
                                 ),
+                                const SizedBox(width: 8),
                                 buttonNotSavedContact(
-                                    text: controller.profile.isBlocked
-                                        .checkNull()
-                                        ? getTranslated("unblock")
-                                        : getTranslated("block"),
-                                    onClick: () {
-                                      if (controller.profile.isBlocked
-                                          .checkNull()) {
-                                        controller.unBlockUser();
-                                      } else {
-                                        controller.blockUser();
-                                      }
-                                    }),
-                                const SizedBox(
-                                  width: 8,
+                                  text: controller.profile.isBlocked.checkNull()
+                                      ? getTranslated("unblock")
+                                      : getTranslated("block"),
+                                  onClick: () {
+                                    if (controller.profile.isBlocked.checkNull()) {
+                                      controller.unBlockUser();
+                                    } else {
+                                      controller.blockUser();
+                                    }
+                                  },
                                 ),
+                                const SizedBox(width: 8),
                               ],
                             )
                                 : const SizedBox.shrink();
-                          })
+                          }),
                         ],
-
                       ],
-                    )),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      // child: Obx(() {
-                        child: ChatInputField(
-                          jid: controller.arguments!.chatJid.checkNull(),
-                          messageTypingAreaStyle: chatStyle
-                            .messageTypingAreaStyle,controller: controller,chatTaggerController: controller.messageController,
-                        onChanged: (text) => controller.isTyping(text),focusNode: controller.focusNode,)
-                      // }),
                     ),
-                  ],
-                ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ChatInputField(
+                      jid: controller.arguments!.chatJid.checkNull(),
+                      messageTypingAreaStyle: chatStyle.messageTypingAreaStyle,
+                      controller: controller,
+                      chatTaggerController: controller.messageController,
+                      onChanged: (text) => controller.isTyping(text),
+                      focusNode: controller.focusNode,
+                    ),
+                  ),
+                ],
               ),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
+
+
 
   Widget buttonNotSavedContact(
       {required String text, required Function()? onClick}) =>
@@ -277,11 +270,13 @@ class ChatView extends NavViewStateful<ChatController> {
       title: Text(controller.selectedChatList.length.toString(),
         style: chatStyle.chatUserAppBarStyle.titleTextStyle,),
       actions: [
-        CustomActionBarIcons(
+        (controller.arguments?.menuActionsEnabled).checkNull()
+            ? CustomActionBarIcons(
             popupMenuThemeData: chatStyle.popupMenuThemeData,
             availableWidth: NavUtils.width / 2, // half the screen width
             actionWidth: 48, // default for IconButtons
-            actions: actionBarItems(context, isSelected: true)),
+            actions: actionBarItems(context, isSelected: true))
+            : const SizedBox(),
       ],
     );
   }
@@ -353,6 +348,13 @@ class ChatView extends NavViewStateful<ChatController> {
           width: (NavUtils.width) / 1.9,
           child: InkWell(
             highlightColor: Colors.transparent,
+            onTap: (controller.arguments?.chatInfoPageRedirect).checkNull()
+                ? () {
+                    LogMessage.d("title clicked",
+                        controller.profile.isGroupProfile.toString());
+                    controller.infoPage();
+                  }
+                : null,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
@@ -388,14 +390,11 @@ class ChatView extends NavViewStateful<ChatController> {
                 })
               ],
             ),
-            onTap: () {
-              LogMessage.d("title clicked",
-                  controller.profile.isGroupProfile.toString());
-              controller.infoPage();
-            },
           ),
         ),
-        actions: actionBarItems(context, isSelected: false),
+        actions: (controller.arguments?.menuActionsEnabled).checkNull()
+            ? actionBarItems(context, isSelected: false)
+            : const [],
       );
     });
   }
@@ -403,13 +402,18 @@ class ChatView extends NavViewStateful<ChatController> {
   actionBarItems(BuildContext context, {bool isSelected = false}) {
     if (isSelected) {
       return [
-        CustomAction(
+      if ((controller.arguments?.isAppBarReplyEnabled).checkNull()) ...[
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.handleReplyChatMessage(controller.selectedChatList[0]);
               controller.clearChatSelection(controller.selectedChatList[0]);
             },
-            icon: chatStyle.chatUserAppBarStyle.iconReply ?? AppUtils.svgIcon(icon:replyIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn),),
+            icon: chatStyle.chatUserAppBarStyle.iconReply ??
+                AppUtils.svgIcon(icon:replyIcon,
+                  colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn),),
             tooltip: 'Reply',
           ),
           overflowWidget: Text(getTranslated("reply"),
@@ -426,14 +430,22 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.clearChatSelection(controller.selectedChatList[0]);
           },
         ),
-        CustomAction(
+    ],
+    if ((controller.arguments?.isAppBarForwardEnabled).checkNull()) ...[
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.checkBusyStatusForForward();
             },
-            icon: chatStyle.chatUserAppBarStyle.iconForward ?? AppUtils.svgIcon(icon:forwardIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconForward ??
+    AppUtils.svgIcon(
+    icon:forwardIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn)),
             tooltip: 'Forward',
           ),
+
           overflowWidget: Text(getTranslated("forward"),
               style: chatStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canBeForwarded.value
@@ -445,14 +457,21 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.checkBusyStatusForForward();
           },
         ),
-        CustomAction(
+
+    ],
+
+    if ((controller.arguments?.isAppBarStarEnabled).checkNull()) ...[
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.favouriteMessage();
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: chatStyle.chatUserAppBarStyle.iconFavourites ?? AppUtils.svgIcon(icon:favouriteIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconFavourites ??
+    AppUtils.svgIcon(icon:favouriteIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black,
+    BlendMode.srcIn)),
             tooltip: 'Favourite',
           ),
           overflowWidget: Text(getTranslated("favourite"),
@@ -466,14 +485,19 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.favouriteMessage();
           },
         ),
-        CustomAction(
+    ],
+    if ((controller.arguments?.isAppBarStarEnabled).checkNull()) ...[
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.favouriteMessage();
             },
             // icon: controller.getOptionStatus('Favourite') ? const Icon(Icons.star_border_outlined)
             // icon: controller.selectedChatList[0].isMessageStarred
-            icon: chatStyle.chatUserAppBarStyle.iconUnFavourite ?? AppUtils.svgIcon(icon:unFavouriteIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconUnFavourite ??
+    AppUtils.svgIcon(icon:unFavouriteIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black, BlendMode.srcIn)),
             tooltip: 'unFavourite',
           ),
           overflowWidget: Text(getTranslated("unFavourite"),
@@ -487,12 +511,21 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.favouriteMessage();
           },
         ),
-        CustomAction(
+    ],
+
+    if ((controller.arguments?.isAppBarDeleteMessageEnabled)
+        .checkNull()) ...[
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.deleteMessages();
             },
-            icon: chatStyle.chatUserAppBarStyle.iconDelete ?? AppUtils.svgIcon(icon:deleteIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconDelete ??
+    AppUtils.svgIcon(
+    icon:deleteIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn)),
             tooltip: 'Delete',
           ),
           overflowWidget: Text(getTranslated("delete"),
@@ -507,12 +540,17 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.deleteMessages();
           },
         ),
-        CustomAction(
+
+    ],
+    if ((controller.arguments?.isAppBarReportEnabled).checkNull()) ...[
+
+    CustomAction(
           visibleWidget: IconButton(
               onPressed: () {
                 controller.reportChatOrMessage();
               },
-              icon: chatStyle.chatUserAppBarStyle.iconReport ?? const Icon(Icons.report_problem_rounded)),
+              icon: chatStyle.chatUserAppBarStyle.iconReport ??
+    const Icon(Icons.report_problem_rounded)),
           overflowWidget: Text(getTranslated("report"),
               style: chatStyle.popupMenuThemeData.textStyle),
           showAsAction: controller.canShowReport.value
@@ -524,13 +562,18 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.reportChatOrMessage();
           },
         ),
-        CustomAction(
+
+    ],
+    if ((controller.arguments?.isAppBarCopyMessageEnabled).checkNull()) ...[
+
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.closeKeyBoard();
               controller.copyTextMessages();
             },
-            icon: chatStyle.chatUserAppBarStyle.iconCopy ?? AppUtils.svgIcon(icon:
+            icon: chatStyle.chatUserAppBarStyle.iconCopy ??
+    AppUtils.svgIcon(icon:
                 copyIcon,
                 fit: BoxFit.contain,
                 colorFilter: ColorFilter.mode(
@@ -550,17 +593,24 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.copyTextMessages();
           },
         ),
-        CustomAction(
+
+    ],
+    if ((controller.arguments?.isAppBarMessageInfoEnabled).checkNull()) ...[
+
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {
               controller.messageInfo();
             },
-            icon: chatStyle.chatUserAppBarStyle.iconInfo ?? AppUtils.svgIcon(icon:
+            icon: chatStyle.chatUserAppBarStyle.iconInfo ??
+    AppUtils.svgIcon(icon:
                 infoIcon,
                 fit: BoxFit.contain,
                 colorFilter: ColorFilter.mode(
                     chatStyle.appBarTheme.actionsIconTheme
-                        ?.color ?? Colors.black, BlendMode.srcIn)
+                        ?.color ??
+    Colors.black,
+    BlendMode.srcIn)
             ),
             tooltip: 'Message Info',
           ),
@@ -575,10 +625,18 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.messageInfo();
           },
         ),
-        CustomAction(
+
+    ],
+    if ((controller.arguments?.isAppBarShareEnabled).checkNull()) ...[
+
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: chatStyle.chatUserAppBarStyle.iconShare ?? AppUtils.svgIcon(icon:shareIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconShare ??
+    AppUtils.svgIcon(icon:shareIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn)),
             tooltip: 'Share',
           ),
           overflowWidget: Text(getTranslated("share"),
@@ -592,10 +650,19 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.share();
           },
         ),
-        CustomAction(
+
+
+    ],
+    if ((controller.arguments?.isAppBarEditMessageEnabled).checkNull()) ...[
+
+    CustomAction(
           visibleWidget: IconButton(
             onPressed: () {},
-            icon: chatStyle.chatUserAppBarStyle.iconEdit ?? AppUtils.svgIcon(icon:shareIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+            icon: chatStyle.chatUserAppBarStyle.iconEdit ??
+    AppUtils.svgIcon(icon:shareIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn)),
             tooltip: 'Edit Message',
           ),
           overflowWidget: Text(getTranslated("editMessage"),
@@ -609,6 +676,7 @@ class ChatView extends NavViewStateful<ChatController> {
             controller.editMessage();
           },
         ),
+    ],
       ];
     } else {
       return [
@@ -617,6 +685,8 @@ class ChatView extends NavViewStateful<ChatController> {
           availableWidth: NavUtils.width / 2, // half the screen width
           actionWidth: 48, // default for IconButtons
           actions: [
+            if ((controller.arguments?.isAppBarClearChatEnabled)
+            .checkNull()) ...[
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {
@@ -638,7 +708,9 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.clearUserChatHistory();
               },
             ),
-            CustomAction(
+    ],
+    if ((controller.arguments?.isAppBarReportEnabled).checkNull()) ...[
+    CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {
                   controller.reportChatOrMessage();
@@ -655,7 +727,9 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.reportChatOrMessage();
               },
             ),
-            controller.isBlocked.value
+    ],
+    if ((controller.arguments?.isAppBarBlockEnabled).checkNull()) ...[
+    controller.isBlocked.value
                 ? CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {
@@ -692,7 +766,9 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.blockUser();
               },
             ),
-            CustomAction(
+    ],
+    if ((controller.arguments?.isAppBarSearchEnabled).checkNull()) ...[
+    CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
                 icon: chatStyle.chatUserAppBarStyle.iconSearch ?? const Icon(Icons.search),
@@ -707,7 +783,9 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.gotoSearch();
               },
             ),
-            CustomAction(
+    ],
+    if ((controller.arguments?.isAppBarEmailEnabled).checkNull()) ...[
+    CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
                 icon: chatStyle.chatUserAppBarStyle.iconEmail ?? const Icon(Icons.email_outlined),
@@ -728,6 +806,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.exportChat();
               },
             ),
+            ],
             CustomAction(
               visibleWidget: IconButton(
                 onPressed: () {},
@@ -742,21 +821,29 @@ class ChatView extends NavViewStateful<ChatController> {
                 controller.closeKeyBoard();
               },
             ),
-            CustomAction(
+    if ((controller.arguments?.isVideoCallEnabled).checkNull()) ...[
+    CustomAction(
               visibleWidget: IconButton(
                 onPressed: controller.ableToCall ? () {
                   controller.makeVideoCall();
                 } : null,
-                  icon: chatStyle.chatUserAppBarStyle.iconVideoCall ?? AppUtils.svgIcon(icon:videoCallIcon,colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ?? Colors.black, BlendMode.srcIn)),
+                  icon: chatStyle.chatUserAppBarStyle.iconVideoCall ??
+    AppUtils.svgIcon(icon:videoCallIcon,
+    colorFilter: ColorFilter.mode(chatStyle.appBarTheme.actionsIconTheme?.color ??
+    Colors.black,
+    BlendMode.srcIn)),
               ),
-                overflowWidget: Text(getTranslated("videoCall"),style:chatStyle.popupMenuThemeData.textStyle),
+                overflowWidget: Text(getTranslated("videoCall"),
+    style:chatStyle.popupMenuThemeData.textStyle),
                 showAsAction: controller.isVideoCallAvailable  && (controller.arguments?.enableCalls).checkNull() ? ShowAsAction.always : ShowAsAction.gone,
               keyValue: 'Video Call',
               onItemClick: controller.ableToCall ? () {
                 controller.makeVideoCall();
               } : null,
             ),
-            CustomAction(
+            ],
+    if ((controller.arguments?.isVoiceCallEnabled).checkNull()) ...[
+    CustomAction(
               visibleWidget: IconButton(
                 onPressed: controller.ableToCall ? () {
                   controller.makeVoiceCall();
@@ -771,6 +858,7 @@ class ChatView extends NavViewStateful<ChatController> {
               } : null,
             ),
           ],
+    ],
         ),
       ];
     }

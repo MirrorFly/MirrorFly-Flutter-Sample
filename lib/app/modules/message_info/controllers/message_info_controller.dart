@@ -1,8 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../common/app_localizations.dart';
 import '../../../extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
@@ -12,14 +15,12 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class MessageInfoController extends GetxController {
-
   var messageID = NavUtils.arguments["messageID"];
   var jid = NavUtils.arguments["jid"];
   var isGroupProfile = NavUtils.arguments["isGroupProfile"];
   var chatMessage = [NavUtils.arguments["chatMessage"] as ChatMessageModel].obs;
   var readTime = ''.obs;
   var deliveredTime = ''.obs;
-
 
   var calendar = DateTime.now();
 
@@ -55,11 +56,11 @@ class MessageInfoController extends GetxController {
   String setDateHourFormat(int format, int hours) {
     var dateHourFormat = (format == 12)
         ? (hours < 10)
-        ? "hh:mm aa"
-        : "h:mm aa"
+            ? "hh:mm aa"
+            : "h:mm aa"
         : (hours < 10)
-        ? "HH:mm"
-        : "H:mm";
+            ? "HH:mm"
+            : "H:mm";
     return dateHourFormat;
   }
 
@@ -68,13 +69,22 @@ class MessageInfoController extends GetxController {
         File(mediaLocalStoragePath).existsSync();
   }
 
-
   downloadMedia(String messageId) async {
-    var permission = await AppPermission.getStoragePermission(permissionContent: getTranslated("writeStoragePermissionContent"),deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
+    var permission = await AppPermission.getStoragePermission(
+        permissionContent: getTranslated("writeStoragePermissionContent"),
+        deniedContent: getTranslated("writeStoragePermissionDeniedContent"));
     if (permission) {
-      Mirrorfly.downloadMedia(messageId: messageId);
+      debugPrint("media permission granted");
+      if (Platform.isIOS || await AppPermission.checkPermission(Permission.notification)) {
+        Mirrorfly.downloadMedia(messageId: messageId);
+      } else {
+        log("Notification permission is not granted !");
+      }
+    } else {
+      debugPrint("media permission not granted");
     }
   }
+
   /*@override
   void onClose(){
     super.onClose();
@@ -87,8 +97,10 @@ class MessageInfoController extends GetxController {
   var currentPos = 0.obs;
   var isPlaying = false.obs;
   var audioPlayed = false.obs;
+
   // AudioPlayer player = AudioPlayer();
   ChatMessageModel? playingChat;
+
   playAudio(ChatMessageModel chatMessage) async {
     /*setPlayingChat(chatMessage);
     if (!playingChat!.mediaChatMessage!.isPlaying) {
@@ -130,7 +142,7 @@ class MessageInfoController extends GetxController {
     }*/
   }
 
-  void onSeekbarChange(double value,ChatMessageModel chatMessage) {
+  void onSeekbarChange(double value, ChatMessageModel chatMessage) {
     /*debugPrint('onSeekbarChange $value');
     if (playingChat != null) {
       player.seek(Duration(milliseconds: value.toInt()));
@@ -143,70 +155,85 @@ class MessageInfoController extends GetxController {
   var messageDeliveredList = <ParticipantList>[].obs;
   var messageReadList = <ParticipantList>[].obs;
   var statusCount = 0.obs;
-  String chatDate(BuildContext cxt,ParticipantList item) => getChatTime(cxt, int.parse(item.time.checkNull()));
+
+  String chatDate(BuildContext cxt, ParticipantList item) =>
+      getChatTime(cxt, int.parse(item.time.checkNull()));
+
   getMessageStatus(String messageId) async {
-    Mirrorfly.getGroupMessageDeliveredRecipients(messageId: messageId, groupJid: jid, flyCallBack: (FlyResponse response) {
-      LogMessage.d("deliveredResp", response.data);
-      if(response.hasData) {
-        var item = messageStatusDetailFromJson(response.data);
-        statusCount(item.totalParticipantCount!);
-        messageDeliveredList(item.participantList);
-      }
-    });
+    Mirrorfly.getGroupMessageDeliveredRecipients(
+        messageId: messageId,
+        groupJid: jid,
+        flyCallBack: (FlyResponse response) {
+          LogMessage.d("deliveredResp", response.data);
+          if (response.hasData) {
+            var item = messageStatusDetailFromJson(response.data);
+            statusCount(item.totalParticipantCount!);
+            messageDeliveredList(item.participantList);
+          }
+        });
 
-
-
-    Mirrorfly.getGroupMessageSeenRecipients(messageId: messageId, groupJid: jid, flyCallBack: (FlyResponse response) {
-      LogMessage.d("readResp", response.data);
-      if(response.hasData) {
-        var readItem = messageStatusDetailFromJson(response.data);
-        messageReadList(readItem.participantList);
-      }
-    });
+    Mirrorfly.getGroupMessageSeenRecipients(
+        messageId: messageId,
+        groupJid: jid,
+        flyCallBack: (FlyResponse response) {
+          LogMessage.d("readResp", response.data);
+          if (response.hasData) {
+            var readItem = messageStatusDetailFromJson(response.data);
+            messageReadList(readItem.participantList);
+          }
+        });
   }
 
   var visibleDeliveredList = false.obs;
-  onDeliveredClick(){
-    if(visibleDeliveredList.value){
+
+  onDeliveredClick() {
+    if (visibleDeliveredList.value) {
       visibleDeliveredList(false);
-    }else{
+    } else {
       visibleDeliveredList(true);
     }
   }
 
   var visibleReadList = false.obs;
-  onReadClick(){
-    if(visibleReadList.value){
+
+  onReadClick() {
+    if (visibleReadList.value) {
       visibleReadList(false);
-    }else{
+    } else {
       visibleReadList(true);
     }
   }
 
-  void onMessageStatusUpdated(ChatMessageModel chatMessageModel){
+  void onMessageStatusUpdated(ChatMessageModel chatMessageModel) {
     // LogMessage.d("MESSAGE STATUS UPDATED on Info", chatMessageModel.messageId);
-    if(chatMessageModel.messageId == chatMessage[0].messageId){
-      chatMessage[0]=chatMessageModel;
+    if (chatMessageModel.messageId == chatMessage[0].messageId) {
+      chatMessage[0] = chatMessageModel;
       chatMessage.refresh();
       getStatusOfMessage(chatMessageModel.messageId);
     }
   }
 
-  void onMessageEdited(ChatMessageModel editedChatMessage) {
-    if(editedChatMessage.messageId == chatMessage[0].messageId){
-      chatMessage[0]=editedChatMessage;
+  Future<void> onMessageDeleted({required String messageId}) async {
+    if (chatMessage[0].messageId == messageId) {
+      chatMessage[0].isMessageRecalled.value = true;
     }
   }
-  
-  getStatusOfMessage(String messageId){
-    if(!isGroupProfile) {
+
+  void onMessageEdited(ChatMessageModel editedChatMessage) {
+    if (editedChatMessage.messageId == chatMessage[0].messageId) {
+      chatMessage[0] = editedChatMessage;
+    }
+  }
+
+  getStatusOfMessage(String messageId) {
+    if (!isGroupProfile) {
       Mirrorfly.getMessageStatusOf(messageId: messageId).then((value) {
         LogMessage.d("getMessageStatusOf", value);
         var chatMessageStatusDetail = chatMessageStatusDetailFromJson(value);
         readTime(chatMessageStatusDetail.seenTime);
         deliveredTime(chatMessageStatusDetail.deliveredTime);
       });
-    }else{
+    } else {
       getMessageStatus(messageId);
     }
   }

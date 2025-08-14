@@ -14,6 +14,7 @@ import '../../../routes/route_settings.dart';
 
 class ChatInfoController extends GetxController {
   var profile_ = ProfileDetails().obs;
+
   ProfileDetails get profile => profile_.value;
   var mute = false.obs;
   var nameController = TextEditingController();
@@ -22,15 +23,18 @@ class ChatInfoController extends GetxController {
 
   var silverBarHeight = 20.0;
   final _isSliverAppBarExpanded = true.obs;
+
   set isSliverAppBarExpanded(value) => _isSliverAppBarExpanded.value = value;
+
   bool get isSliverAppBarExpanded => _isSliverAppBarExpanded.value;
 
   final muteable = false.obs;
   var userPresenceStatus = ''.obs;
+
   ChatInfoArguments get argument => NavUtils.arguments as ChatInfoArguments;
 
   @override
-  void onInit(){
+  void onInit() {
     super.onInit();
     getProfileDetails(argument.chatJid).then((value) {
       profile_(value);
@@ -61,39 +65,45 @@ class ChatInfoController extends GetxController {
         nameController.text = profile.nickName.checkNull();
       });
     }
-
   }
 
   onToggleChange(bool value) async {
-    if(muteable.value) {
+    if (muteable.value) {
       LogMessage.d("change", value.toString());
       mute(value);
       // Mirrorfly.updateChatMuteStatus(jid: profile.jid.checkNull(), muteStatus: value);
-      Mirrorfly.updateChatMuteStatusList(jidList: [profile.jid.checkNull()], muteStatus: value);
-      notifyDashboardUI();
+      Mirrorfly.updateChatMuteStatusList(
+          jidList: [profile.jid.checkNull()], muteStatus: value);
+      // notifyDashboardUI();
     }
   }
 
-  getUserLastSeen(){
-    if(!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull()) {
-      Mirrorfly.getUserLastSeenTime(jid: profile.jid.toString(), flyCallBack: (FlyResponse response) {
-        if(response.isSuccess && response.hasData) {
-          LogMessage.d("getUserLastSeenTime", response);
-          var lastSeen = convertSecondToLastSeen(response.data);
-          userPresenceStatus(lastSeen.toString());
-        }else{
-          userPresenceStatus("");
-        }
-      });
-    }else{
+  getUserLastSeen() {
+    if (!profile.isBlockedMe.checkNull() ||
+        !profile.isAdminBlocked.checkNull()) {
+      Mirrorfly.getUserLastSeenTime(
+          jid: profile.jid.toString(),
+          flyCallBack: (FlyResponse response) {
+            if (response.isSuccess && response.hasData) {
+              LogMessage.d("getUserLastSeenTime", response);
+              var lastSeen = convertSecondToLastSeen(response.data);
+              userPresenceStatus(lastSeen.toString());
+            } else {
+              userPresenceStatus("");
+            }
+          });
+    } else {
       userPresenceStatus("");
     }
   }
 
-
   void userCameOnline(jid) {
     debugPrint("userCameOnline : $jid");
-    if (jid.isNotEmpty && profile.jid == jid && !profile.isGroupProfile.checkNull() && (!profile.isBlockedMe.checkNull() || !profile.isAdminBlocked.checkNull())) {
+    if (jid.isNotEmpty &&
+        profile.jid == jid &&
+        !profile.isGroupProfile.checkNull() &&
+        (!profile.isBlockedMe.checkNull() ||
+            !profile.isAdminBlocked.checkNull())) {
       debugPrint("userCameOnline : $jid");
       /*Future.delayed(const Duration(milliseconds: 3000), () {
         setChatStatus();
@@ -103,9 +113,11 @@ class ChatInfoController extends GetxController {
   }
 
   void userWentOffline(jid) {
-    if(jid.isNotEmpty && profile.jid==jid && !profile.isGroupProfile.checkNull()) {
+    if (jid.isNotEmpty &&
+        profile.jid == jid &&
+        !profile.isGroupProfile.checkNull()) {
       debugPrint("userWentOffline : $jid");
-      Future.delayed(const Duration(milliseconds: 3000),(){
+      Future.delayed(const Duration(milliseconds: 3000), () {
         getUserLastSeen();
       });
     }
@@ -125,36 +137,50 @@ class ChatInfoController extends GetxController {
 
   reportChatOrUser() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
-          title: getTranslated("reportUser").replaceFirst("%d", profile.getName()),
-          message:getTranslated("last5Message"),
+      DialogUtils.showAlert(
+          dialogStyle: AppStyleConfig.dialogStyle,
+          title:
+              getTranslated("reportUser").replaceFirst("%d", profile.getName()),
+          message: getTranslated("last5Message"),
           actions: [
-            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+            TextButton(
+                style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                   // DialogUtils.showLoading(message: "Reporting User");
-                  Mirrorfly
-                      .reportUserOrMessages(jid: profile.jid!, type: "chat", flyCallBack: (FlyResponse response) {
-                    if(response.isSuccess){
-                      toToast(getTranslated("reportSent"));
-                    }else{
-                      toToast(getTranslated("thereNoMessagesAvailable"));
-                    }
-                  });
+                  Mirrorfly.reportUserOrMessages(
+                      jid: profile.jid!,
+                      type: "chat",
+                      flyCallBack: (FlyResponse response) {
+                        if (response.isSuccess) {
+                          toToast(getTranslated("reportSent"));
+                        } else {
+                          toToast(getTranslated("thereNoMessagesAvailable"));
+                        }
+                      });
                 },
-                child: Text(getTranslated("report").toUpperCase(), )),
-            TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+                child: Text(
+                  getTranslated("report").toUpperCase(),
+                )),
+            TextButton(
+                style: AppStyleConfig.dialogStyle.buttonStyle,
                 onPressed: () {
                   NavUtils.back();
                 },
-                child: Text(getTranslated("cancel").toUpperCase(), )),
+                child: Text(
+                  getTranslated("cancel").toUpperCase(),
+                )),
           ]);
     });
   }
 
-  gotoViewAllMedia(){
-    debugPrint("to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
-    NavUtils.toNamed(Routes.viewMedia,arguments: ViewAllMediaArguments(chatJid: profile.jid.checkNull())/*{"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false}*/);
+  gotoViewAllMedia() {
+    debugPrint(
+        "to Media Page==>${profile.name} jid==>${profile.jid} isgroup==>${profile.isGroupProfile ?? false}");
+    NavUtils.toNamed(Routes.viewMedia,
+        arguments: ViewAllMediaArguments(
+            chatJid: profile.jid
+                .checkNull()) /*{"name":profile.name,"jid":profile.jid,"isgroup":profile.isGroupProfile ?? false}*/);
   }
 
   void onContactSyncComplete(bool result) {
@@ -173,9 +199,20 @@ class ChatInfoController extends GetxController {
     userUpdatedHisProfile(jid);
   }
 
-  void notifyDashboardUI(){
-    if(Get.isRegistered<DashboardController>()){
-      Get.find<DashboardController>().chatMuteChangesNotifyUI(profile.jid.checkNull());
+  void notifyDashboardUI() {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>()
+          .chatMuteChangesNotifyUI(profile.jid.checkNull());
+    }
+  }
+
+  void onChatMuteStatusUpdated({bool? muteStatus, List<String>? jidList}) {
+    LogMessage.d("ChatInfo onChatMuteStatusUpdated",
+        "muteStatus : $muteStatus, jidList: $jidList");
+    if (muteStatus == null || jidList == null) return;
+    if (jidList.contains(profile.jid)) {
+      profile.isMuted = muteStatus;
+      mute(muteStatus);
     }
   }
 }

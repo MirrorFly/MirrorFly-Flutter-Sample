@@ -19,18 +19,24 @@ import '../../../model/group_media_model.dart';
 import '../../../routes/route_settings.dart';
 import '../../chat/controllers/chat_controller.dart';
 
-
 class ViewAllMediaController extends GetxController {
   final _medialist = <String, List<MessageItem>>{}.obs;
-  set medialist(Map<String,List<MessageItem>> value) => _medialist.value = value;
-  Map<String,List<MessageItem>> get medialistdata => _medialist;
+
+  set medialist(Map<String, List<MessageItem>> value) =>
+      _medialist.value = value;
+
+  Map<String, List<MessageItem>> get medialistdata => _medialist;
 
   final _docslist = <String, List<MessageItem>>{}.obs;
+
   set docslist(Map<String, List<MessageItem>> value) => _docslist.value = value;
+
   Map<String, List<MessageItem>> get docslistdata => _docslist;
 
   final _linklist = <String, List<MessageItem>>{}.obs;
+
   set linklist(Map<String, List<MessageItem>> value) => _linklist.value = value;
+
   Map<String, List<MessageItem>> get linklistdata => _linklist;
 
   var name = ''.obs;
@@ -43,7 +49,8 @@ class ViewAllMediaController extends GetxController {
   var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
   var newLinkMessages = List<ChatMessageModel>.empty(growable: true).obs;
 
-  ViewAllMediaArguments get arguments => NavUtils.arguments as ViewAllMediaArguments;
+  ViewAllMediaArguments get arguments =>
+      NavUtils.arguments as ViewAllMediaArguments;
 
   @override
   void onInit() {
@@ -72,9 +79,9 @@ class ViewAllMediaController extends GetxController {
   }
 
   void onMediaStatusUpdated(ChatMessageModel chatMessageModel) {
-    if(chatMessageModel.isFileMessage()){
+    if (chatMessageModel.isFileMessage()) {
       getDocsMessages();
-    }else{
+    } else {
       getMediaMessages();
     }
   }
@@ -91,13 +98,25 @@ class ViewAllMediaController extends GetxController {
           imageCount(0);
           videoCount(0);
           audioCount(0);
-          medialistdata.forEach((key,List<MessageItem> value){
-            var imgCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isImageMessage()).toList().length;
-            imageCount(imageCount.value+imgCount);
-            var vidCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isVideoMessage()).toList().length;
-            videoCount(videoCount.value+vidCount);
-            var adiCount = value.where((MessageItem chatItem) => chatItem.chatMessage.isAudioMessage()).toList().length;
-            audioCount(audioCount.value+adiCount);
+          medialistdata.forEach((key, List<MessageItem> value) {
+            var imgCount = value
+                .where((MessageItem chatItem) =>
+                    chatItem.chatMessage.isImageMessage())
+                .toList()
+                .length;
+            imageCount(imageCount.value + imgCount);
+            var vidCount = value
+                .where((MessageItem chatItem) =>
+                    chatItem.chatMessage.isVideoMessage())
+                .toList()
+                .length;
+            videoCount(videoCount.value + vidCount);
+            var adiCount = value
+                .where((MessageItem chatItem) =>
+                    chatItem.chatMessage.isAudioMessage())
+                .toList()
+                .length;
+            audioCount(audioCount.value + adiCount);
           });
           // debugPrint("_media list length--> ${_medialist.length}");
         }
@@ -109,7 +128,7 @@ class ViewAllMediaController extends GetxController {
   getDocsMessages() {
     Mirrorfly.getDocsMessages(jid: arguments.chatJid).then((value) async {
       if (value != null) {
-        LogMessage.d("getDocsMessages",value);
+        LogMessage.d("getDocsMessages", value);
         var data = chatMessageModelFromJson(value);
         documentCount(data.length);
         // LogMessage.d("getDocsMessagess",json.encode(data));
@@ -135,18 +154,18 @@ class ViewAllMediaController extends GetxController {
   }
 
   void navigateLink(String url) async {
-    if(MessageUtils.getCallLinkFromMessage(url).isNotEmpty) {
-      if(await AppUtils.isNetConnected()) {
+    if (MessageUtils.getCallLinkFromMessage(url).isNotEmpty) {
+      if (await AppUtils.isNetConnected()) {
         var link = MessageUtils.getCallLinkFromMessage(url);
         if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
           NavUtils.toNamed(Routes.joinCallPreview, arguments: {
             "callLinkId": link.replaceAll(Constants.webChatLogin, "")
           });
         }
-      }else{
+      } else {
         toToast(getTranslated("noInternetConnection"));
       }
-    }else{
+    } else {
       AppUtils.launchWeb(Uri.parse(url));
     }
   }
@@ -156,11 +175,12 @@ class ViewAllMediaController extends GetxController {
     NavUtils.back();
     NavUtils.back();
     if (Get.isRegistered<ChatController>(tag: linkChatItem.chatUserJid)) {
-      Get.find<ChatController>(tag: linkChatItem.chatUserJid).navigateToMessage(linkChatItem);
+      Get.find<ChatController>(tag: linkChatItem.chatUserJid)
+          .navigateToMessage(linkChatItem);
     }
   }
 
-  Future<Map<String,List<MessageItem>>> getMapGroupedMediaList(
+  Future<Map<String, List<MessageItem>>> getMapGroupedMediaList(
       List<ChatMessageModel> mediaMessages, bool isMedia,
       [bool isLinkMedia = false]) async {
     // debugPrint("media message length--> ${mediaMessages.length}");
@@ -173,7 +193,7 @@ class ViewAllMediaController extends GetxController {
     int month;
     int day;
     //var viewAllMediaList = <GroupedMedia>[];
-    Map<String,List<MessageItem>> mapMediaList = {};
+    Map<String, List<MessageItem>> mapMediaList = {};
     var previousCategoryType = 10;
     var messages = <MessageItem>[];
     for (var chatMessage in mediaMessages) {
@@ -194,10 +214,11 @@ class ViewAllMediaController extends GetxController {
       // debugPrint("getMapGroupedMediaList category--> $category");
       if (isLinkMedia) {
         if (previousCategoryType != category.key) {
-          messages=[];
+          messages = [];
         }
         previousCategoryType = category.key;
-        mapMediaList[category.value]=getMapMessageWithURLList(messages,chatMessage);
+        mapMediaList[category.value] =
+            getMapMessageWithURLList(messages, chatMessage);
       } else {
         // debugPrint("getMapGroupedMediaList isMessage Recalled--> ${chatMessage.isMessageRecalled}");
         // debugPrint("getMapGroupedMediaList isMediaDownloaded--> ${chatMessage.isMediaDownloaded()}");
@@ -209,23 +230,24 @@ class ViewAllMediaController extends GetxController {
           // debugPrint("getMapGroupedMediaList isMediaAvailable --> true");
           if (previousCategoryType != category.key) {
             // debugPrint("getMapGroupedMediaList previousCategoryType check --->${previousCategoryType != category.key}");
-            messages=[];
+            messages = [];
           }
           // debugPrint("getMapGroupedMediaList messages add--> ${chatMessage.toJson()}");
           messages.add(MessageItem(chatMessage));
           // debugPrint("getMapGroupedMediaList category value--> ${category.value}");
-          mapMediaList[category.value]=messages;
+          mapMediaList[category.value] = messages;
           previousCategoryType = category.key;
-        }else{
+        } else {
           debugPrint("getMapGroupedMediaList isMediaAvailable --> false");
         }
       }
     }
     // debugPrint("getMapGroupedMediaList Return map list--> ${mapMediaList.length.toString()}");
-    return mapMediaList;//viewAllMediaList;
+    return mapMediaList; //viewAllMediaList;
   }
 
-  List<MessageItem> getMapMessageWithURLList(List<MessageItem> messageList,ChatMessageModel message) {
+  List<MessageItem> getMapMessageWithURLList(
+      List<MessageItem> messageList, ChatMessageModel message) {
     var textContent = "";
     if (message.isTextMessage()) {
       textContent = message.messageTextContent!;
@@ -253,14 +275,14 @@ class ViewAllMediaController extends GetxController {
     var urls = <MapEntry<String, String>>[];
     var splitString = text.split(exp);
     for (var string in splitString) {
-        try {
-          var item = Uri.parse(string);
-          if(item.host.isNotEmpty) {
-            urls.add(MapEntry(item.host, item.toString()));
-          }
-        } catch (ignored) {
-          LogMessage.d('$string url exception', ignored.toString());
+      try {
+        var item = Uri.parse(string);
+        if (item.host.isNotEmpty) {
+          urls.add(MapEntry(item.host, item.toString()));
         }
+      } catch (ignored) {
+        LogMessage.d('$string url exception', ignored.toString());
+      }
     }
     LogMessage.d("urls", urls.toString());
     return urls;
@@ -280,10 +302,9 @@ class ViewAllMediaController extends GetxController {
     var fileExists = file.absolute.existsSync();
     // debugPrint("file path---> $filePath");
     debugPrint("file exists---> ${fileExists.toString()}");
-    var fileExists1 =
-        File(filePath).existsSync() ||
-            Directory(filePath).existsSync() ||
-            Link(filePath).existsSync();
+    var fileExists1 = File(filePath).existsSync() ||
+        Directory(filePath).existsSync() ||
+        Link(filePath).existsSync();
     debugPrint("file exists1---> ${fileExists1.toString()}");
     return await io.File(filePath).absolute.exists();
   }
@@ -318,8 +339,8 @@ class ViewAllMediaController extends GetxController {
     return MapEntry(0, getTranslated("recent"));
   }
 
-  Image imageFromBase64String(String base64String,
-      double? width, double? height) {
+  Image imageFromBase64String(
+      String base64String, double? width, double? height) {
     var decodedBase64 = base64String.replaceAll("\n", "");
     Uint8List image = const Base64Decoder().convert(decodedBase64);
     return Image.memory(
@@ -338,8 +359,8 @@ class ViewAllMediaController extends GetxController {
     AppUtils.openDocument(path);
   }
 
-  openImage(int gridIndex){
-    NavUtils.toNamed(Routes.viewAllMediaPreview, arguments: {"images" : previewMediaList, "index": gridIndex});
+  openImage(int gridIndex) {
+    NavUtils.toNamed(Routes.viewAllMediaPreview,
+        arguments: {"images": previewMediaList, "index": gridIndex});
   }
-
 }

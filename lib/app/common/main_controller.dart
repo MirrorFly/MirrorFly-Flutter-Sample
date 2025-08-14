@@ -29,7 +29,8 @@ import '../modules/notification/notification_builder.dart';
 import '../routes/route_settings.dart';
 import 'notification_service.dart';
 
-class MainController extends FullLifeCycleController with FullLifeCycleMixin /*with FullLifeCycleMixin */ {
+class MainController extends FullLifeCycleController
+    with FullLifeCycleMixin /*with FullLifeCycleMixin */ {
   var currentAuthToken = "".obs;
   var googleMapKey = "";
   Rx<String> mediaEndpoint = "".obs;
@@ -49,7 +50,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   final unreadCallCount = 0.obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
 
     //presentPinPage();
@@ -58,7 +59,6 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     BaseController.initListeners();
 
     startNetworkListen();
-
   }
 
   @override
@@ -66,9 +66,14 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     super.onReady();
 
     debugPrint("#Mirrorfly Notification -> Main Controller push onResume");
-    Mirrorfly.getValueFromManifestOrInfoPlist(androidManifestKey: "com.google.android.geo.API_THUMP_KEY", iOSPlistKey: "API_THUMP_KEY").then((value) {
+    Mirrorfly.getValueFromManifestOrInfoPlist(
+            androidManifestKey: "com.google.android.geo.API_THUMP_KEY",
+            iOSPlistKey: "API_THUMP_KEY")
+        .then((value) {
       googleMapKey = value;
       LogMessage.d("com.google.android.geo.API_THUMP_KEY", googleMapKey);
+    }).catchError((e) {
+      LogMessage.d("API_THUMP_KEY not found", e);
     });
     mediaEndpoint(SessionManagement.getMediaEndPoint().checkNull());
     getMediaEndpoint();
@@ -85,13 +90,13 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     _configureSelectNotificationSubject();
     unreadMissedCallCount();
     _removeBadge();
-
   }
 
   Future<void> _isAndroidPermissionGranted() async {
     if (Platform.isAndroid) {
       final bool granted = await flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
               ?.areNotificationsEnabled() ??
           false;
 
@@ -102,21 +107,30 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
 
   Future<void> _requestPermissions() async {
     if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           );
-      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           );
-    } else if (Platform.isAndroid && !(await Permission.notification.status.isGranted)) {
+    } else if (Platform.isAndroid &&
+        !(await Permission.notification.status.isGranted)) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? granted = await androidImplementation?.requestNotificationsPermission();
+      final bool? granted =
+          await androidImplementation?.requestNotificationsPermission();
       // setState(() {
       _notificationsEnabled = granted ?? false;
       // });
@@ -128,16 +142,19 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       // await Navigator.of(context).push(MaterialPageRoute<void>(
       //   builder: (BuildContext context) => SecondPage(payload),
       // ));
-      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ","$payload ${NavUtils.currentRoute}");
-      if (payload != null && payload.isNotEmpty && payload.toString() != Constants.callNotificationId.toString()) {
+      LogMessage.d("#Mirrorfly Notification -> opening chat page--> ",
+          "$payload ${NavUtils.currentRoute}");
+      if (payload != null &&
+          payload.isNotEmpty &&
+          payload.toString() != Constants.callNotificationId.toString()) {
         var chatJid = payload.checkNull().split(",")[0];
         var topicId = payload.checkNull().split(",")[1];
-        if(SessionManagement.getCurrentChatJID().checkNull() == chatJid){
+        if (SessionManagement.getCurrentChatJID().checkNull() == chatJid) {
           NotificationBuilder.cancelNotifications();
-         return;
+          return;
         }
         if (NavUtils.isOverlayOpen || NavUtils.currentRoute == Routes.chat) {
-          LogMessage.d("#Mirrorfly Notification ->","already chat page");
+          LogMessage.d("#Mirrorfly Notification ->", "already chat page");
           if (NavUtils.currentRoute == Routes.forwardChat ||
               NavUtils.currentRoute == Routes.chatInfo ||
               NavUtils.currentRoute == Routes.groupInfo ||
@@ -145,23 +162,32 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
             NavUtils.back();
           }
           if (NavUtils.currentRoute.contains("from_notification=true")) {
-            LogMessage.d("#Mirrorfly Notification -> previously app opened from notification", "so we have to maintain that");
-            NavUtils.offAllNamed(Routes.chat,arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId,didNotificationLaunchApp: true));
+            LogMessage.d(
+                "#Mirrorfly Notification -> previously app opened from notification",
+                "so we have to maintain that");
+            NavUtils.offAllNamed(Routes.chat,
+                arguments: ChatViewArguments(
+                    chatJid: chatJid,
+                    topicId: topicId,
+                    didNotificationLaunchApp: true));
             // NavUtils.offAllNamed("${Routes.chat}?jid=$chatJid&from_notification=true&topicId=$topicId");
           } else {
-            if(NavUtils.isOverlayOpen){
-              LogMessage.d("#Mirrorfly Notification ->" , "isOverlayOpen dismissing");
+            if (NavUtils.isOverlayOpen) {
+              LogMessage.d(
+                  "#Mirrorfly Notification ->", "isOverlayOpen dismissing");
 
               NavUtils.back();
             }
-            LogMessage.d("#Mirrorfly Notification ->" , "Calling off named");
+            LogMessage.d("#Mirrorfly Notification ->", "Calling off named");
 
-
-            NavUtils.offNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId), preventDuplicates: false);
+            NavUtils.offNamed(Routes.chat,
+                arguments:
+                    ChatViewArguments(chatJid: chatJid, topicId: topicId),
+                preventDuplicates: false);
             // NavUtils.back();
             /*Below 400 milliseconds the controller is not deleted and creating the issue in the Scrolled Positioned list issue,
              so we are waiting for 500 considering Android Platform*/
-           /* Future.delayed(const Duration(milliseconds: 500),(){
+            /* Future.delayed(const Duration(milliseconds: 500),(){
               NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
             });*/
           }
@@ -170,14 +196,18 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
           if (NavUtils.currentRoute == Routes.forwardChat ||
               NavUtils.currentRoute == Routes.chatInfo ||
               NavUtils.currentRoute == Routes.groupInfo ||
-              NavUtils.currentRoute == Routes.messageInfo){
+              NavUtils.currentRoute == Routes.messageInfo) {
             debugPrint("chat info page");
-            NavUtils.popUntil((route)=>!(route.navigator?.canPop() ?? false));
+            NavUtils.popUntil((route) => !(route.navigator?.canPop() ?? false));
             Future.delayed(const Duration(milliseconds: 500), () {
-              NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+              NavUtils.toNamed(Routes.chat,
+                  arguments:
+                      ChatViewArguments(chatJid: chatJid, topicId: topicId));
             });
-          }else{
-            NavUtils.toNamed(Routes.chat, arguments: ChatViewArguments(chatJid: chatJid,topicId: topicId));
+          } else {
+            NavUtils.toNamed(Routes.chat,
+                arguments:
+                    ChatViewArguments(chatJid: chatJid, topicId: topicId));
           }
         }
       } else {
@@ -264,6 +294,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   final deBouncer = DeBouncer(milliseconds: 600);
+
   @override
   void onInactive() {
     LogMessage.d('LifeCycle', 'onInactive');
@@ -275,32 +306,34 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     // enterOrExitPIPMode();
   }
 
-  void enterOrExitPIPMode() async{
-
-    LogMessage.d("PIPView", "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
-    if(Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
+  void enterOrExitPIPMode() async {
+    LogMessage.d("PIPView",
+        "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
+    if (Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
       LogMessage.d("PIPView", PictureInPicture.isActive);
-      if ((await Mirrorfly.isOnGoingCall()).checkNull() && PictureInPicture.isActive) {
-        LogMessage.d("PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
-        FlPiP().enable(
-            ios: const FlPiPiOSConfig(),
-            android: FlPiPAndroidConfig(
-                aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
-                      if(onValue) {
-                        PictureInPicture.stopPiP();
-                        NavUtils.toNamed(Routes.pipView);
-                      }
+      if ((await Mirrorfly.isOnGoingCall()).checkNull() &&
+          PictureInPicture.isActive) {
+        LogMessage.d(
+            "PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+        FlPiP()
+            .enable(
+                ios: const FlPiPiOSConfig(),
+                android: const FlPiPAndroidConfig())
+            .then((onValue) {
+          if (onValue) {
+            PictureInPicture.stopPiP();
+            NavUtils.toNamed(Routes.pipView);
+          }
         });
-      }else if(NavUtils.currentRoute == Routes.onGoingCallView){
+      } else if (NavUtils.currentRoute == Routes.onGoingCallView) {
         LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
-        FlPiP().enable(
-            ios: const FlPiPiOSConfig(),
-            android: FlPiPAndroidConfig(
-                aspectRatio: Rational(
-                    NavUtils.width.toInt(), NavUtils.height.toInt()))).then((onValue){
+        FlPiP()
+            .enable(
+                ios: const FlPiPiOSConfig(),
+                android: const FlPiPAndroidConfig())
+            .then((onValue) {
           LogMessage.d("PIPView", " FlPiP enable $onValue");
-          if(onValue){
+          if (onValue) {
             NavUtils.offNamed(Routes.pipView);
           }
         });
@@ -309,7 +342,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   Future<void> updatePIPView() async {
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       LogMessage.d("PIPView", NavUtils.currentRoute);
       if (NavUtils.currentRoute == Routes.pipView) {
         if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
@@ -328,18 +361,22 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   bool fromLockScreen = false;
 
   var hasPaused = false;
+
   @override
   void onPaused() async {
     hasPaused = true;
     LogMessage.d('LifeCycle', 'onPaused');
     fromLockScreen = await Mirrorfly.isLockScreen();
-    var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
-    debugPrint('mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
+    var unReadMessageCount =
+        await Mirrorfly.getUnreadMessageCountExceptMutedChat();
+    debugPrint(
+        'mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
     fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
+
   // While going Background
   // onInactive
   // onHidden
@@ -372,12 +409,13 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
 
   @override
   void onResumed() {
-    hasHidden=false;
+    hasHidden = false;
     _leaveHintTimer?.cancel();
     isUserLeavingApp = false;
     LogMessage.d('LifeCycle', 'onResumed');
+    SessionManagement.setBool(Constants.layoutSwitch, true);
     NotificationBuilder.cancelNotifications();
-    if(hasPaused) {
+    if (hasPaused) {
       hasPaused = false;
       checkShouldShowPin();
       if (Constants.enableContactSync) {
@@ -390,21 +428,24 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   void syncContacts() async {
-    if(await Permission.contacts.isGranted) {
+    if (await Permission.contacts.isGranted) {
       if (await AppUtils.isNetConnected() &&
           !await Mirrorfly.contactSyncStateValue()) {
         final permission = await Permission.contacts.status;
         if (permission == PermissionStatus.granted) {
-          if(SessionManagement.getLogin()) {
-            Mirrorfly.syncContacts(isFirstTime: !SessionManagement.isInitialContactSyncDone(), flyCallBack: (_) {});
+          if (SessionManagement.getLogin()) {
+            Mirrorfly.syncContacts(
+                isFirstTime: !SessionManagement.isInitialContactSyncDone(),
+                flyCallBack: (_) {});
           }
         }
       }
-    }else{
-      if(SessionManagement.isInitialContactSyncDone()) {
+    } else {
+      if (SessionManagement.isInitialContactSyncDone()) {
         Mirrorfly.revokeContactSync(flyCallBack: (FlyResponse response) {
           BaseController.onContactSyncComplete(true);
-          LogMessage.d("checkContactPermission isSuccess", response.isSuccess.toString());
+          LogMessage.d("checkContactPermission isSuccess",
+              response.isSuccess.toString());
         });
       }
     }
@@ -424,11 +465,14 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   void checkShouldShowPin() {
     var lastSession = SessionManagement.appLastSession();
     var lastPinChangedAt = SessionManagement.lastPinChangedAt();
-    var sessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastSession,isUtc: true));
-    var lockSessionDifference = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt,isUtc: true));
+    var sessionDifference = DateTime.now().difference(
+        DateTime.fromMillisecondsSinceEpoch(lastSession, isUtc: true));
+    var lockSessionDifference = DateTime.now().difference(
+        DateTime.fromMillisecondsSinceEpoch(lastPinChangedAt, isUtc: true));
     debugPrint('sessionDifference seconds ${sessionDifference.inSeconds}');
     debugPrint('lockSessionDifference days ${lockSessionDifference.inDays}');
-    if (Constants.pinAlert <= lockSessionDifference.inDays && Constants.pinExpiry >= lockSessionDifference.inDays) {
+    if (Constants.pinAlert <= lockSessionDifference.inDays &&
+        Constants.pinExpiry >= lockSessionDifference.inDays) {
       //Alert Day
       debugPrint('Alert Day');
     } else if (Constants.pinExpiry < lockSessionDifference.inDays) {
@@ -438,7 +482,8 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     } else {
       //if 30 days not completed
       debugPrint('Not Expired');
-      if (Constants.sessionLockTime <= sessionDifference.inSeconds || fromLockScreen) {
+      if (Constants.sessionLockTime <= sessionDifference.inSeconds ||
+          fromLockScreen) {
         //Show Pin if App Lock Enabled
         debugPrint('Show Pin');
         presentPinPage();
@@ -448,10 +493,10 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   void presentPinPage() {
-    if ((SessionManagement.getEnablePin() || SessionManagement.getEnableBio()) && NavUtils.currentRoute != Routes.pin) {
-      NavUtils.toNamed(
-          Routes.pin, arguments: {"showBack": "false"}
-      );
+    if ((SessionManagement.getEnablePin() ||
+            SessionManagement.getEnableBio()) &&
+        NavUtils.currentRoute != Routes.pin) {
+      NavUtils.toNamed(Routes.pin, arguments: {"showBack": "false"});
     }
   }
 
@@ -468,10 +513,11 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   }
 
   var hasHidden = false;
+
   @override
   void onHidden() {
     LogMessage.d('LifeCycle', 'onHidden');
-    hasHidden=true;
+    hasHidden = true;
   }
 
   unreadMissedCallCount() async {
@@ -479,7 +525,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
       var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
       unreadCallCount.value = unreadMissedCallCount ?? 0;
       debugPrint("unreadMissedCallCount $unreadMissedCallCount");
-    }catch(e){
+    } catch (e) {
       debugPrint("unreadMissedCallCount $e");
     }
   }
@@ -492,22 +538,25 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     FlutterAppBadge.count(0);
   }
 
-  void onMessageDeleteNotifyUI({required String chatJid, bool changePosition = true}) {
+  void onMessageDeleteNotifyUI(
+      {required String chatJid, bool changePosition = true}) {
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: chatJid, changePosition: changePosition);
+      Get.find<DashboardController>()
+          .updateRecentChat(jid: chatJid, changePosition: changePosition);
     }
   }
 
-  void onUpdateLastMessageUI(String chatJid){
+  void onUpdateLastMessageUI(String chatJid) {
     if (Get.isRegistered<ArchivedChatListController>()) {
       Get.find<ArchivedChatListController>().updateArchiveRecentChat(chatJid);
     }
     if (Get.isRegistered<DashboardController>()) {
-      Get.find<DashboardController>().updateRecentChat(jid: chatJid, newInsertable: true);
+      Get.find<DashboardController>()
+          .updateRecentChat(jid: chatJid, newInsertable: true);
     }
   }
 
-  void updateRecentChatListHistory(){
+  void updateRecentChatListHistory() {
     if (Get.isRegistered<DashboardController>()) {
       Get.find<DashboardController>().getRecentChatList();
     }
@@ -528,7 +577,7 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
   Timer? _leaveHintTimer;
   bool isUserLeavingApp = false;
 
-  void goingInActive(){
+  void goingInActive() {
     _leaveHintTimer = Timer(const Duration(milliseconds: 300), () {
       if (!isUserLeavingApp) return;
       onUserLeaveHint();
@@ -536,13 +585,13 @@ class MainController extends FullLifeCycleController with FullLifeCycleMixin /*w
     isUserLeavingApp = true;
   }
 
-  void onUserLeaveHint(){
+  void onUserLeaveHint() {
     LogMessage.d('LifeCycle', 'onUserLeaveHint');
     debugPrint("User is leaving the app (onUserLeaveHint equivalent)");
-    if(Get.isRegistered<PipViewController>(tag: "pipView")){
+    if (Get.isRegistered<PipViewController>(tag: "pipView")) {
       Get.find<PipViewController>(tag: "pipView").hideOptions();
     }
-    if(Get.isRegistered<PipViewController>()){
+    if (Get.isRegistered<PipViewController>()) {
       Get.find<PipViewController>().hideOptions();
     }
     enterOrExitPIPMode();

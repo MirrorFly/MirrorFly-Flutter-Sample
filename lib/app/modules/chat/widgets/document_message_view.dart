@@ -10,7 +10,12 @@ import '../../../model/chat_message_model.dart';
 import 'media_message_overlay.dart';
 
 class DocumentMessageView extends StatelessWidget {
-  const DocumentMessageView({Key? key, required this.chatMessage, this.search = "",this.docMessageViewStyle = const DocMessageViewStyle(), this.decoration = const BoxDecoration()})
+  const DocumentMessageView(
+      {Key? key,
+      required this.chatMessage,
+      this.search = "",
+      this.docMessageViewStyle = const DocMessageViewStyle(),
+      this.decoration = const BoxDecoration()})
       : super(key: key);
   final ChatMessageModel chatMessage;
   final String search;
@@ -18,7 +23,8 @@ class DocumentMessageView extends StatelessWidget {
   final Decoration decoration;
 
   onDocumentClick() {
-    AppUtils.openDocument(chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
+    AppUtils.openDocument(
+        chatMessage.mediaChatMessage!.mediaLocalStoragePath.value);
   }
 
   @override
@@ -66,20 +72,29 @@ class DocumentMessageView extends StatelessWidget {
                     width: 12,
                   ),
                   Expanded(
-                    child: CustomTextView(
-                      key: Key("message_view+${chatMessage.messageId}"),
-                      text: chatMessage.mediaChatMessage!.mediaFileName.checkNull(),
-                      defaultTextStyle: docMessageViewStyle.fileTextStyle.textStyle,
-                      linkColor: docMessageViewStyle.fileTextStyle.urlMessageColor,
-                      mentionUserTextColor: docMessageViewStyle.fileTextStyle.mentionUserColor,
-                      searchQueryTextColor: docMessageViewStyle.fileTextStyle.highlightColor,
-                      searchQueryString: search,
-                      mentionUserIds: chatMessage.mentionedUsersIds ?? [],
-                      maxLines: 2,
-                      mentionedMeBgColor: docMessageViewStyle.fileTextStyle.mentionedMeBgColor,
-                    )
+                      child: CustomTextView(
+                    key: Key("message_view+${chatMessage.messageId}"),
+                    text:
+                        chatMessage.mediaChatMessage!.mediaFileName.checkNull(),
+                    defaultTextStyle:
+                        docMessageViewStyle.fileTextStyle.textStyle,
+                    linkColor:
+                        docMessageViewStyle.fileTextStyle.urlMessageColor,
+                    mentionUserTextColor:
+                        docMessageViewStyle.fileTextStyle.mentionUserColor,
+                    searchQueryTextColor:
+                        docMessageViewStyle.fileTextStyle.highlightColor,
+                    searchQueryString: search,
+                    mentionUserIds: chatMessage.mentionedUsersIds ?? [],
+                    maxLines: 2,
+                    mentionedMeBgColor:
+                        docMessageViewStyle.fileTextStyle.mentionedMeBgColor,
+                  )),
+                  MediaMessageOverlay(
+                    chatMessage: chatMessage,
+                    downloadUploadViewStyle:
+                        docMessageViewStyle.downloadUploadViewStyle,
                   ),
-                  MediaMessageOverlay(chatMessage: chatMessage,downloadUploadViewStyle:  docMessageViewStyle.downloadUploadViewStyle,),
                 ],
               ),
             ),
@@ -105,7 +120,8 @@ class DocumentMessageView extends StatelessWidget {
                   ),
                   const Spacer(),
                   chatMessage.isMessageStarred.value
-                      ? docMessageViewStyle.iconFavourites ?? AppUtils.svgIcon(icon:starSmallIcon)
+                      ? docMessageViewStyle.iconFavourites ??
+                          AppUtils.svgIcon(icon: starSmallIcon)
                       : const Offstage(),
                   const SizedBox(
                     width: 5,

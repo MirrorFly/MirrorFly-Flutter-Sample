@@ -122,30 +122,30 @@ class Marquee extends StatefulWidget {
         assert(velocity != 0.0, "The velocity cannot be zero."),
         assert(velocity.isFinite),
         assert(
-        pauseAfterRound >= Duration.zero,
-        "The pauseAfterRound cannot be negative as time travel isn't "
-            "invented yet.",
+          pauseAfterRound >= Duration.zero,
+          "The pauseAfterRound cannot be negative as time travel isn't "
+          "invented yet.",
         ),
         assert(
-        fadingEdgeStartFraction >= 0 && fadingEdgeStartFraction <= 1,
-        "The fadingEdgeGradientFractionOnStart value should be between 0 and "
-            "1, inclusive",
+          fadingEdgeStartFraction >= 0 && fadingEdgeStartFraction <= 1,
+          "The fadingEdgeGradientFractionOnStart value should be between 0 and "
+          "1, inclusive",
         ),
         assert(
-        fadingEdgeEndFraction >= 0 && fadingEdgeEndFraction <= 1,
-        "The fadingEdgeGradientFractionOnEnd value should be between 0 and "
-            "1, inclusive",
+          fadingEdgeEndFraction >= 0 && fadingEdgeEndFraction <= 1,
+          "The fadingEdgeGradientFractionOnEnd value should be between 0 and "
+          "1, inclusive",
         ),
         assert(numberOfRounds == null || numberOfRounds > 0),
         assert(
-        accelerationDuration >= Duration.zero,
-        "The accelerationDuration cannot be negative as time travel isn't "
-            "invented yet.",
+          accelerationDuration >= Duration.zero,
+          "The accelerationDuration cannot be negative as time travel isn't "
+          "invented yet.",
         ),
         assert(
-        decelerationDuration >= Duration.zero,
-        "The decelerationDuration must be positive or zero as time travel "
-            "isn't invented yet.",
+          decelerationDuration >= Duration.zero,
+          "The decelerationDuration must be positive or zero as time travel "
+          "isn't invented yet.",
         ),
         accelerationCurve = IntegralCurve(accelerationCurve),
         decelerationCurve = IntegralCurve(decelerationCurve);
@@ -520,7 +520,7 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   // The scroll positions at various scrolling phases.
   late double _startPosition; // At the start, before accelerating.
   late double
-  _accelerationTarget; // After accelerating, before moving linearly.
+      _accelerationTarget; // After accelerating, before moving linearly.
   late double _linearTarget; // After moving linearly, before decelerating.
   late double _decelerationTarget; // After decelerating.
 
@@ -535,9 +535,11 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   bool _running = false;
   bool _isOnPause = false;
   int _roundCounter = 0;
+
   bool get isDone => widget.numberOfRounds == null
       ? false
       : widget.numberOfRounds == _roundCounter;
+
   bool get showFading =>
       !widget.showFadingOnlyWhenScrolling ? true : !_isOnPause;
 
@@ -605,17 +607,17 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
         _totalDuration - _accelerationDuration - _decelerationDuration;
 
     assert(
-    _totalDuration > Duration.zero,
-    "With the given values, the total duration for one round would be "
-        "negative. As time travel isn't invented yet, this shouldn't happen.",
+      _totalDuration > Duration.zero,
+      "With the given values, the total duration for one round would be "
+      "negative. As time travel isn't invented yet, this shouldn't happen.",
     );
     assert(
-    _linearDuration! >= Duration.zero,
-    "Acceleration and deceleration phase overlap. To fix this, try a "
-        "combination of these approaches:\n"
-        "* Make the text longer, so there's more room to animate within.\n"
-        "* Shorten the accelerationDuration or decelerationDuration.\n"
-        "* Decrease the velocity, so the duration to animate within is longer.\n",
+      _linearDuration! >= Duration.zero,
+      "Acceleration and deceleration phase overlap. To fix this, try a "
+      "combination of these approaches:\n"
+      "* Make the text longer, so there's more room to animate within.\n"
+      "* Shorten the accelerationDuration or decelerationDuration.\n"
+      "* Decrease the velocity, so the duration to animate within is longer.\n",
     );
   }
 
@@ -672,10 +674,10 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   /// Helping method that either animates to the given target position or jumps
   /// right to it if the duration is Duration.zero.
   Future<void> _animateTo(
-      double? target,
-      Duration? duration,
-      Curve curve,
-      ) async {
+    double? target,
+    Duration? duration,
+    Curve curve,
+  ) async {
     if (!_controller.hasClients) return;
     if (duration! > Duration.zero) {
       await _controller.animateTo(target!, duration: duration, curve: curve);
@@ -715,7 +717,7 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
         break;
       case CrossAxisAlignment.end:
         alignment =
-        isHorizontal ? Alignment.bottomCenter : Alignment.centerRight;
+            isHorizontal ? Alignment.bottomCenter : Alignment.centerRight;
         break;
       case CrossAxisAlignment.center:
         alignment = Alignment.center;
@@ -734,7 +736,7 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
       itemBuilder: (_, i) {
         final text = i.isEven
             ? Text(widget.text,
-            style: widget.style, textScaler: TextScaler.noScaling)
+                style: widget.style, textScaler: TextScaler.noScaling)
             : _buildBlankSpace();
         return alignment == null
             ? text
@@ -756,7 +758,7 @@ class _MarqueeState extends State<Marquee> with SingleTickerProviderStateMixin {
   Widget _wrapWithFadingEdgeScrollView(Widget child) {
     return FadingEdgeScrollView.fromScrollView(
       gradientFractionOnStart:
-      !showFading ? 0.0 : widget.fadingEdgeStartFraction,
+          !showFading ? 0.0 : widget.fadingEdgeStartFraction,
       gradientFractionOnEnd: !showFading ? 0.0 : widget.fadingEdgeEndFraction,
       child: child as ScrollView,
     );

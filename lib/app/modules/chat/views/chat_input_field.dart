@@ -32,9 +32,9 @@ class ChatInputField extends StatelessWidget {
     return Obx(() {
       return Container(
         color: messageTypingAreaStyle.bgColor, //Colors.white,
-        child: controller.isBlocked.value
+        child: controller.isMemberOfGroup.isNull() ? const Offstage() : controller.isBlocked.value
             ? userBlocked(context)
-            : controller.isMemberOfGroup
+            : controller.isMemberOfGroup.checkNull()
             ? Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -299,8 +299,12 @@ class ChatInputField extends StatelessWidget {
             controller.availableFeatures.value.isAudioAttachmentAvailable
                 .checkNull())...[
           IconButton(
-            onPressed: () {
-              controller.startRecording();
+            onPressed: () async{
+              if (!(await Mirrorfly.isOnGoingCall()).checkNull()){
+                controller.startRecording();
+              }else{
+                toToast('Can not make a audio record when in a call');
+              }
             },
             icon: messageTypingAreaStyle.iconRecord ?? AppUtils.svgIcon(
               icon: audioMic,

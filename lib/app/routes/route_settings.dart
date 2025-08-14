@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
@@ -60,137 +59,207 @@ import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart
 
 part 'app_routes.dart';
 
-
 Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
-      return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-     case Routes.login:
-      return MaterialPageRoute(builder: (_) => const LoginView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const DashboardView(), settings: settings);
+    case Routes.login:
+      return MaterialPageRoute(
+          builder: (_) => const LoginView(), settings: settings);
     // case Routes.otp:
     //   return MaterialPageRoute(builder: (_) => const OtpView(),settings: settings);
     case Routes.dashboard:
-      return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const DashboardView(), settings: settings);
     case Routes.scanner:
-      return MaterialPageRoute(builder: (_) => const ScannerView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ScannerView(), settings: settings);
     case Routes.webLoginResult:
-      return MaterialPageRoute(builder: (_) => const WebLoginResultView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const WebLoginResultView(), settings: settings);
     case Routes.createGroup:
-      return MaterialPageRoute(builder: (_) => const GroupCreationView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const GroupCreationView(), settings: settings);
     case Routes.groupInfo:
-      return MaterialPageRoute(builder: (_) => const GroupInfoView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const GroupInfoView(), settings: settings);
     case Routes.viewMedia:
-      return MaterialPageRoute(builder: (_) => const ViewAllMediaView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ViewAllMediaView(), settings: settings);
 
     case Routes.countries:
-      return MaterialPageRoute(builder: (_) => const CountryListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const CountryListView(), settings: settings);
     case Routes.profile:
-      return MaterialPageRoute(builder: (_) => const ProfileView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ProfileView(), settings: settings);
     case Routes.statusList:
-      return MaterialPageRoute(builder: (_) => const StatusListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const StatusListView(), settings: settings);
     case Routes.chat:
       final arguments = settings.arguments as ChatViewArguments;
-      return MaterialPageRoute(builder: (_) => ChatView(chatViewArguments: arguments),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => ChatView(chatViewArguments: arguments),
+          settings: settings);
     case Routes.forwardChat:
       final arguments = settings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(builder: (_) => ForwardChatView(forwardMessageIds: arguments['messageIds']),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) =>
+              ForwardChatView(forwardMessageIds: arguments['messageIds']),
+          settings: settings);
     case Routes.chatSearch:
-      return MaterialPageRoute(builder: (_) => ChatSearchView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => ChatSearchView(), settings: settings);
     case Routes.locationSent:
-      return MaterialPageRoute(builder: (_) => const LocationSentView(),settings: settings);
+      // MaterialPageRoute changed to PageRouteBuilder due to animation issue on the locationSent and chat page return
+      return PageRouteBuilder(
+        settings: settings,
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            LocationSentView(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: Duration.zero, // disables animation on pop
+      );
     case Routes.contacts:
-      return MaterialPageRoute(builder: (_) => const ContactListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ContactListView(), settings: settings);
     case Routes.settings:
-      return MaterialPageRoute(builder: (_) => const SettingsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const SettingsView(), settings: settings);
     case Routes.blockedList:
-      return MaterialPageRoute(builder: (_) => const BlockedListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const BlockedListView(), settings: settings);
     case Routes.notification:
-      return MaterialPageRoute(builder: (_) => const NotificationSettingsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const NotificationSettingsView(), settings: settings);
     case Routes.appLock:
-      return MaterialPageRoute(builder: (_) => const AppLockSettingsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const AppLockSettingsView(), settings: settings);
     case Routes.pin:
-      return MaterialPageRoute(builder: (_) => const PinView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const PinView(), settings: settings);
     case Routes.setPin:
-      return MaterialPageRoute(builder: (_) => const SetPinView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const SetPinView(), settings: settings);
     case Routes.videoPreview:
-      return MaterialPageRoute(builder: (_) => const VideoPreviewView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const VideoPreviewView(), settings: settings);
     case Routes.videoPlay:
-      return MaterialPageRoute(builder: (_) => const VideoPlayerView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const VideoPlayerView(), settings: settings);
     case Routes.imageView:
-      return MaterialPageRoute(builder: (_) => const ImageViewView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ImageViewView(), settings: settings);
     case Routes.localContact:
-      return MaterialPageRoute(builder: (_) => const LocalContactView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const LocalContactView(), settings: settings);
     case Routes.previewContact:
-      return MaterialPageRoute(builder: (_) => const PreviewContactView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const PreviewContactView(), settings: settings);
     case Routes.messageInfo:
-      return MaterialPageRoute(builder: (_) => const MessageInfoView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const MessageInfoView(), settings: settings);
     case Routes.chatInfo:
-      return MaterialPageRoute(builder: (_) => const ChatInfoView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ChatInfoView(), settings: settings);
     case Routes.deleteAccount:
-      return MaterialPageRoute(builder: (_) => const DeleteAccountView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const DeleteAccountView(), settings: settings);
     case Routes.deleteAccountReason:
-      return MaterialPageRoute(builder: (_) => const DeleteAccountReasonView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const DeleteAccountReasonView(), settings: settings);
     case Routes.starredMessages:
-      return MaterialPageRoute(builder: (_) => const StarredMessagesView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const StarredMessagesView(), settings: settings);
     case Routes.cameraPick:
-      return MaterialPageRoute(builder: (_) => const CameraPickView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const CameraPickView(), settings: settings);
     case Routes.adminBlocked:
-      return MaterialPageRoute(builder: (_) => const AdminBlockedView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const AdminBlockedView(), settings: settings);
     case Routes.archivedChats:
-      return MaterialPageRoute(builder: (_) => const ArchivedChatListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ArchivedChatListView(), settings: settings);
     case Routes.chatSettings:
-      return MaterialPageRoute(builder: (_) => const ChatSettingsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ChatSettingsView(), settings: settings);
     case Routes.galleryPicker:
-      return MaterialPageRoute(builder: (_) => const GalleryPickerView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const GalleryPickerView(), settings: settings);
     case Routes.mediaPreview:
-      return MaterialPageRoute(builder: (_) => const MediaPreviewView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const MediaPreviewView(), settings: settings);
     case Routes.languages:
-      return MaterialPageRoute(builder: (_) => const LanguageListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const LanguageListView(), settings: settings);
     case Routes.busyStatus:
-      return MaterialPageRoute(builder: (_) => const BusyStatusView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const BusyStatusView(), settings: settings);
     case Routes.dataUsageSetting:
-      return MaterialPageRoute(builder: (_) => const DataUsageListView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const DataUsageListView(), settings: settings);
     case Routes.contactSync:
-      return MaterialPageRoute(builder: (_) => const ContactSyncPage(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ContactSyncPage(), settings: settings);
     case Routes.viewAllMediaPreview:
-      return MaterialPageRoute(builder: (_) => const ViewAllMediaPreviewView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ViewAllMediaPreviewView(), settings: settings);
     case Routes.addBusyStatus:
       final arguments = settings.arguments as Map<String, dynamic>;
-      return MaterialPageRoute(builder: (_) => AddBusyStatusView(status: arguments['status']),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => AddBusyStatusView(status: arguments['status']),
+          settings: settings);
     case Routes.addProfileStatus:
-      return MaterialPageRoute(builder: (_) => const AddStatusView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const AddStatusView(), settings: settings);
     case Routes.restoreBackup:
-      return MaterialPageRoute(builder: (_) => const RestoreView(),settings: settings);
-     case Routes.backUpView:
-      return MaterialPageRoute(builder: (_) => const BackupView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const RestoreView(), settings: settings);
+    case Routes.backUpView:
+      return MaterialPageRoute(
+          builder: (_) => const BackupView(), settings: settings);
 
     //calls
     case Routes.joinCallPreview:
-      return MaterialPageRoute(builder: (_) => const JoinCallPreviewView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const JoinCallPreviewView(), settings: settings);
     case Routes.outGoingCallView:
-      return MaterialPageRoute(builder: (_) => const OutGoingCallView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const OutGoingCallView(), settings: settings);
     case Routes.onGoingCallView:
-      return MaterialPageRoute(builder: (_) => const OnGoingCallView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const OnGoingCallView(), settings: settings);
     case Routes.callTimeOutView:
-      return MaterialPageRoute(builder: (_) => const CallTimeoutView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const CallTimeoutView(), settings: settings);
     case Routes.participants:
-      return MaterialPageRoute(builder: (_) => const ParticipantsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const ParticipantsView(), settings: settings);
     case Routes.groupParticipants:
-      return MaterialPageRoute(builder: (_) => const GroupParticipantsView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const GroupParticipantsView(), settings: settings);
     case Routes.callInfo:
-      return MaterialPageRoute(builder: (_) => const CallInfoView(),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) => const CallInfoView(), settings: settings);
     case Routes.pipView:
-      return MaterialPageRoute(builder: (_) => PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),settings: settings);
+      return MaterialPageRoute(
+          builder: (_) =>
+              PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),
+          settings: settings);
     default:
       if (settings.name!.startsWith(Routes.dashboard)) {
-        return MaterialPageRoute(builder: (_) => const DashboardView(),settings: settings);
-      }/*else if (settings.name!.startsWith(Routes.chat)) {
+        return MaterialPageRoute(
+            builder: (_) => const DashboardView(), settings: settings);
+      }
+      /*else if (settings.name!.startsWith(Routes.chat)) {
         final parameters = jsonDecode(jsonEncode(Uri.parse(settings.name!).queryParameters));
         LogMessage.d("parameters", parameters);
         LogMessage.d("parameters chatJid", parameters['chatJid']);
         return MaterialPageRoute(builder: (_) => ChatView(),settings: settings);
-      }*/else if (settings.name!.startsWith(Routes.contacts)) {
-        return MaterialPageRoute(builder: (_) => const ContactListView(),settings: settings);
+      }*/
+      else if (settings.name!.startsWith(Routes.contacts)) {
+        return MaterialPageRoute(
+            builder: (_) => const ContactListView(), settings: settings);
       }
       return null;
   }
