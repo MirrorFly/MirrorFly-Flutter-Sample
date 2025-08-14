@@ -591,5 +591,6 @@
     "restoreCompleted": "Restored successfully",
     "downloadAndOpenTheFile": "Download and open the file",
     "anErrorOccurred": "An error occurred",
-    "mediaPickerError": "while selecting the %s"
-  }
+    "mediaPickerError": "while selecting the %s",
+    "notificationPermissionNotGranted": "Notification permission is not granted"
+}
