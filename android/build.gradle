@@ -18,12 +18,8 @@ allprojects {
         mavenCentral()
         jcenter()
         maven {
-            url "https://repo.mirrorfly.com/internal"
+            url "https://repo.mirrorfly.com/release"
         }
-        maven {
-            url "https://repo.mirrorfly.com/snapshot"
-        }
-        //mavenLocal()
     }
 }
 
