@@ -359,16 +359,15 @@ class Constants {
   // Dummy OTP View
   static const bool isOTPViewEnabled = false;
   static ChatBuilder chatBuilder = ChatBuilder(
-      domainBaseUrl: "https://your_domain_base_url/api/v1/",
-      licenseKey: 'xxxx',
-      iOSContainerID: 'YOUR_APPGROUP_ID',
+      domainBaseUrl: "",
+      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
+      iOSContainerID: 'group.com.mirrorfly.flutter',
       chatHistoryEnable: true,
       enableDebugLog: true,
       storageFolderName: "Mirrorfly Flutter",
-      isTrialLicenceKey: false
-  );
+      isTrialLicenceKey: false);
   static bool enablePrivateStorage = false;
-  static const String webChatLogin = 'https://YOUR_WEB_APP_URL';
+  static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static MetaDataUserList?
       metaDataUserList; // = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
