@@ -1,0 +1,16 @@
+{
+  "FLY_INFO_MSG_DOWNLOADING_FILE": "கோப்பைப் பதிவிறக்கம் {%s} செய்கிறது...",
+  "FLY_INFO_MSG_DOWNLOADING_FILES": "கோப்புகளை பதிவிறக்கம் {%s} செய்கிறது...",
+  "FLY_MESSAGE_UPLOADING_FILE": "கோப்பை {%s} பதிவேற்றுகிறது...",
+  "FLY_MESSAGE_UPLOADING_FILES": "கோப்புகளை {%s} பதிவேற்றுகிறது...",
+  "FLY_INFO_MSG_DOWNLOADING": "பதிவிறக்கம் செய்கிறது...",
+  "FLY_INFO_INCOMING": "உள்வரும் அழைப்பு",
+  "FLY_INFO_OUTGOING": "வெளியேறும் அழைப்பு",
+  "FLY_INFO_ONGOING": "நடந்து கொண்டிருக்கும் அழைப்பு",
+  "FLY_INFO_CALL": "அழைப்பு",
+  "FLY_INFO_CALL_NOTIFICATION_HANGUP": "அழைப்பை முடிக்கவும்",
+  "FLY_INFO_CALL_NOTIFICATION_DECLINE": "நிராகரிக்கவும்",
+  "FLY_INFO_CALL_NOTIFICATION_ACCEPT": "ஏற்கவும்",
+  "CALL_DURATION": "அழைப்பு கால அளவு",
+  "FLY_DOWNLOAD_FAILED": "பதிவிறக்கம் தோல்வியடைந்தது"
+}

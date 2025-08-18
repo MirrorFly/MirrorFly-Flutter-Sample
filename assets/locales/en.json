@@ -588,5 +588,9 @@
     "qaWebLogoutSuccess": "All web sessions have been logged out successfully",
     "qaWebLogoutFailure": "Failed to log out web sessions. Please try again",
     "backupCancel":"Backup Cancelled",
-    "restoreCompleted": "Restored successfully"
-  }
+    "restoreCompleted": "Restored successfully",
+    "downloadAndOpenTheFile": "Download and open the file",
+    "anErrorOccurred": "An error occurred",
+    "mediaPickerError": "while selecting the %s",
+    "notificationPermissionNotGranted": "Notification permission is not granted"
+}

@@ -11,14 +11,16 @@ class PreviewContactView extends NavViewStateful<PreviewContactController> {
   const PreviewContactView({Key? key}) : super(key: key);
 
   @override
-PreviewContactController createController({String? tag}) => Get.put(PreviewContactController());
+  PreviewContactController createController({String? tag}) =>
+      Get.put(PreviewContactController());
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
           appBarTheme: AppStyleConfig.localContactPreviewPageStyle.appBarTheme,
-          floatingActionButtonTheme: AppStyleConfig.localContactPreviewPageStyle.floatingActionButtonThemeData),
+          floatingActionButtonTheme: AppStyleConfig
+              .localContactPreviewPageStyle.floatingActionButtonThemeData),
       child: Scaffold(
           appBar: AppBar(
             title: controller.from == "contact_pick"
@@ -41,12 +43,18 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                           return Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 5),
                                 child: Row(
                                   children: [
                                     ProfileTextImage(
                                       text: contactItem.userName,
-                                      radius: AppStyleConfig.localContactPreviewPageStyle.contactItemStyle.profileImageSize.width / 2,
+                                      radius: AppStyleConfig
+                                              .localContactPreviewPageStyle
+                                              .contactItemStyle
+                                              .profileImageSize
+                                              .width /
+                                          2,
                                     ),
                                     const SizedBox(
                                       width: 10,
@@ -54,7 +62,10 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                                     Flexible(
                                       child: Text(
                                         contactItem.userName,
-                                       style: AppStyleConfig.localContactPreviewPageStyle.contactItemStyle.titleStyle,
+                                        style: AppStyleConfig
+                                            .localContactPreviewPageStyle
+                                            .contactItemStyle
+                                            .titleStyle,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
@@ -62,7 +73,10 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                                 ),
                               ),
                               Divider(
-                                color: AppStyleConfig.localContactPreviewPageStyle.contactItemStyle.dividerColor,
+                                color: AppStyleConfig
+                                    .localContactPreviewPageStyle
+                                    .contactItemStyle
+                                    .dividerColor,
                                 thickness: 0.1,
                               ),
                               ListView.builder(
@@ -73,7 +87,9 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                                       (BuildContext context, int childIndex) {
                                     var phoneItem =
                                         contactItem.contactNo[childIndex];
-                                    var style = AppStyleConfig.localContactPreviewPageStyle.listItemStyle;
+                                    var style = AppStyleConfig
+                                        .localContactPreviewPageStyle
+                                        .listItemStyle;
                                     return ListTile(
                                       onTap: contactItem.contactNo.length > 1 &&
                                               controller.from != "chat"
@@ -116,7 +132,10 @@ PreviewContactController createController({String? tag}) => Get.put(PreviewConta
                                     );
                                   }),
                               Divider(
-                                color: AppStyleConfig.localContactPreviewPageStyle.contactItemStyle.dividerColor,
+                                color: AppStyleConfig
+                                    .localContactPreviewPageStyle
+                                    .contactItemStyle
+                                    .dividerColor,
                                 thickness: 0.8,
                               ),
                             ],

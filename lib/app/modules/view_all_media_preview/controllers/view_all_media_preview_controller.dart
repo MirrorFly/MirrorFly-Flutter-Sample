@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../common/app_localizations.dart';
@@ -8,8 +7,6 @@ import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 
 class ViewAllMediaPreviewController extends GetxController {
-
-
   var previewMediaList = List<ChatMessageModel>.empty(growable: true).obs;
   var index = 0.obs;
   late PageController pageViewController;
@@ -20,11 +17,16 @@ class ViewAllMediaPreviewController extends GetxController {
     super.onInit();
     previewMediaList.addAll(NavUtils.arguments['images']);
     index(NavUtils.arguments['index']);
-    pageViewController = PageController(initialPage: index.value, keepPage: false);
+    pageViewController =
+        PageController(initialPage: index.value, keepPage: false);
   }
 
   shareMedia() {
-    var mediaItem = previewMediaList.elementAt(index.value).mediaChatMessage!.mediaLocalStoragePath.value;
+    var mediaItem = previewMediaList
+        .elementAt(index.value)
+        .mediaChatMessage!
+        .mediaLocalStoragePath
+        .value;
     Share.shareXFiles([XFile(mediaItem)]);
   }
 
@@ -34,9 +36,9 @@ class ViewAllMediaPreviewController extends GetxController {
   }
 
   void setTitle(int index) {
-    if(previewMediaList.elementAt(index).isMessageSentByMe){
+    if (previewMediaList.elementAt(index).isMessageSentByMe) {
       title(getTranslated("sentMedia"));
-    }else{
+    } else {
       title(getTranslated("receivedMedia"));
     }
   }

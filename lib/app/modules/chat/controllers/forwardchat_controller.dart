@@ -107,7 +107,7 @@ class ForwardChatController extends GetxController {
 
   void getRecentChatList() {
     Mirrorfly.getRecentChatList(flyCallBack: (FlyResponse response) {
-      if(response.isSuccess && response.hasData) {
+      if (response.isSuccess && response.hasData) {
         var data = recentChatFromJson(response.data);
         if (data.data != null) {
           if (_mainrecentChats.isEmpty) {
@@ -128,7 +128,9 @@ class ForwardChatController extends GetxController {
         LogMessage.d("getAllGroups", response);
         var list = profileFromJson(response.data);
         for (var group in list) {
-          if(recentChats.indexWhere((element) => element.jid == group.jid).isNegative){
+          if (recentChats
+              .indexWhere((element) => element.jid == group.jid)
+              .isNegative) {
             _maingroupList.add(group);
             _groupList.add(group);
           }
@@ -151,15 +153,17 @@ class ForwardChatController extends GetxController {
 
   Future<void> getUsers({bool bottom = false}) async {
     if (await AppUtils.isNetConnected()) {
-      if(!bottom)contactLoading(true);
+      if (!bottom) contactLoading(true);
       searching = true;
-      callback (FlyResponse response){
-        if(response.isSuccess){
+      callback(FlyResponse response) {
+        if (response.isSuccess) {
           if (response.hasData) {
             var list = userListFromJson(response.data);
             if (list.data != null) {
               for (var user in list.data!) {
-                if(recentChats.indexWhere((element) => element.jid == user.jid).isNegative){
+                if (recentChats
+                    .indexWhere((element) => element.jid == user.jid)
+                    .isNegative) {
                   _mainuserList.add(user);
                   _userList.add(user);
                 }
@@ -173,16 +177,20 @@ class ForwardChatController extends GetxController {
           }
           searching = false;
           contactLoading(false);
-        }else{
+        } else {
           searching = false;
           contactLoading(false);
         }
       }
+
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
-          metaDataUserList: Constants.metaDataUserList, //#metaData
-          flyCallback: callback)
-          : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
+          ? Mirrorfly.getUserList(
+              page: pageNum,
+              search: searchQuery.text.trim().toString(),
+              metaDataUserList: Constants.metaDataUserList, //#metaData
+              flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(
+              fetchFromServer: false, flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
@@ -221,11 +229,12 @@ class ForwardChatController extends GetxController {
                   .toLowerCase()
                   .contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
-        if(y<3) {// only add 3 items in recent chat list
+        if (y < 3) {
+          // only add 3 items in recent chat list
           _recentChats.add(recentChat);
           _recentChats.refresh();
           y++;
-        }else{
+        } else {
           break;
         }
       }
@@ -243,7 +252,9 @@ class ForwardChatController extends GetxController {
                   .contains(searchQuery.text.trim().toString().toLowerCase()) ==
               true) {
         // add only when group not available in recent chat list
-        if(_recentChats.indexWhere((element) => element.jid == group.jid).isNegative) {
+        if (_recentChats
+            .indexWhere((element) => element.jid == group.jid)
+            .isNegative) {
           _groupList.add(group);
           _groupList.refresh();
         }
@@ -256,41 +267,52 @@ class ForwardChatController extends GetxController {
       _userList.clear();
       searching = true;
       searchLoading(true);
-      callback(FlyResponse response){
-        if(response.isSuccess){
+      callback(FlyResponse response) {
+        if (response.isSuccess) {
           if (response.hasData) {
             var list = userListFromJson(response.data);
             if (list.data != null) {
               list.data?.forEach((user) {
                 // add only when user not available in recent chat list
-                if(_recentChats.indexWhere((element) => element.jid == user.jid).isNegative) {
+                if (_recentChats
+                    .indexWhere((element) => element.jid == user.jid)
+                    .isNegative) {
                   if (!Constants.enableContactSync) {
                     _userList.add(user);
                   } else {
-                    var filter = user.nickName.checkNull().toLowerCase().contains(searchQuery.text.trim().toString().toLowerCase());
-                    if(filter) {
+                    var filter = user.nickName
+                        .checkNull()
+                        .toLowerCase()
+                        .contains(
+                            searchQuery.text.trim().toString().toLowerCase());
+                    if (filter) {
                       _userList.add(user);
                     }
                   }
                 }
               });
-              scrollable((_userList.length == 20 && !Constants.enableContactSync));
+              scrollable(
+                  (_userList.length == 20 && !Constants.enableContactSync));
             } else {
               scrollable(false);
             }
           }
           searching = false;
           searchLoading(false);
-        }else{
+        } else {
           searching = false;
           searchLoading(false);
         }
       }
+
       (!Constants.enableContactSync)
-          ? Mirrorfly.getUserList(page: pageNum, search: searchQuery.text.trim().toString(),
-          metaDataUserList: Constants.metaDataUserList, //#metaData
-          flyCallback: callback)
-          : Mirrorfly.getRegisteredUsers(fetchFromServer: false,flyCallback: callback);
+          ? Mirrorfly.getUserList(
+              page: pageNum,
+              search: searchQuery.text.trim().toString(),
+              metaDataUserList: Constants.metaDataUserList, //#metaData
+              flyCallback: callback)
+          : Mirrorfly.getRegisteredUsers(
+              fetchFromServer: false, flyCallback: callback);
       /*future
       // Mirrorfly.getUserList(pageNum, searchQuery.text.trim().toString())
           .then((value) {
@@ -321,47 +343,68 @@ class ForwardChatController extends GetxController {
 
   bool isChecked(String jid) => selectedJids.contains(jid);
 
-  Future<void> onItemSelect(String jid, String name,bool isBlocked,bool isGroup) async {
-    if(isGroup.checkNull() && !availableFeatures.value.isGroupChatAvailable.checkNull()){
+  Future<void> onItemSelect(
+      String jid, String name, bool isBlocked, bool isGroup) async {
+    if (isGroup.checkNull() &&
+        !availableFeatures.value.isGroupChatAvailable.checkNull()) {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    if(isGroup.checkNull() && !(await Mirrorfly.isMemberOfGroup(groupJid: jid, userJid: SessionManagement.getUserJID().checkNull())).checkNull()){
+    if (isGroup.checkNull() &&
+        !(await Mirrorfly.isMemberOfGroup(
+                groupJid: jid,
+                userJid: SessionManagement.getUserJID().checkNull()))
+            .checkNull()) {
       toToast(getTranslated("youAreNoLonger"));
       return;
     }
-    if(isBlocked.checkNull()){
-      unBlock(jid,name);
-    }else{
-      onItemClicked(jid,name);
+    if (isBlocked.checkNull()) {
+      unBlock(jid, name);
+    } else {
+      onItemClicked(jid, name);
     }
   }
 
-  unBlock(String jid, String name,){
-    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,message: getTranslated("unBlockUser").replaceFirst("%d", name), actions: [
-      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-          onPressed: () {
-            NavUtils.back();
-          },
-          child: Text(getTranslated("no").toUpperCase(), )),
-      TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-          onPressed: () async {
-            AppUtils.isNetConnected().then((isConnected) {
-              if (isConnected) {
+  unBlock(
+    String jid,
+    String name,
+  ) {
+    DialogUtils.showAlert(
+        dialogStyle: AppStyleConfig.dialogStyle,
+        message: getTranslated("unBlockUser").replaceFirst("%d", name),
+        actions: [
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: () {
                 NavUtils.back();
-                Mirrorfly.unblockUser(userJid: jid.checkNull(), flyCallBack: (FlyResponse response) {
-                  if (response.isSuccess && response.hasData) {
-                  toToast(getTranslated("hasUnBlocked").replaceFirst("%d", name));
-                    userUpdatedHisProfile(jid);
+              },
+              child: Text(
+                getTranslated("no").toUpperCase(),
+              )),
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: () async {
+                AppUtils.isNetConnected().then((isConnected) {
+                  if (isConnected) {
+                    NavUtils.back();
+                    Mirrorfly.unblockUser(
+                        userJid: jid.checkNull(),
+                        flyCallBack: (FlyResponse response) {
+                          if (response.isSuccess && response.hasData) {
+                            toToast(getTranslated("hasUnBlocked")
+                                .replaceFirst("%d", name));
+                            userUpdatedHisProfile(jid);
+                          }
+                        });
+                  } else {
+                    toToast(getTranslated("noInternetConnection"));
                   }
                 });
-              } else {
-              toToast(getTranslated("noInternetConnection"));
-              }
-            });
-          },
-          child: Text(getTranslated("yes").toUpperCase(), )),
-    ]);
+              },
+              child: Text(
+                getTranslated("yes").toUpperCase(),
+              )),
+        ]);
   }
 
   void onItemClicked(String jid, String name) {
@@ -418,32 +461,36 @@ class ForwardChatController extends GetxController {
     AppUtils.isNetConnected().then((isConnected) {
       if (isConnected) {
         Mirrorfly.isBusyStatusEnabled().then((isSuccess) async {
-          if (!isSuccess){
+          if (!isSuccess) {
             if (forwardMessageIds.isNotEmpty && selectedJids.isNotEmpty) {
-          DialogUtils.showLoading(message: getTranslated("forwardMessage"),dialogStyle: AppStyleConfig.dialogStyle);
+              DialogUtils.showLoading(
+                  message: getTranslated("forwardMessage"),
+                  dialogStyle: AppStyleConfig.dialogStyle);
               // Future.delayed(const Duration(milliseconds: 1000), () async {
-                await Mirrorfly.forwardMessagesToMultipleUsers(
-                    messageIds: forwardMessageIds, userList: selectedJids, flyCallBack: (FlyResponse response) {
-                  // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
-                  updateLastMessage(selectedJids);
-                  DialogUtils.hideLoading();
-                  NavUtils.back();
-                });
+              await Mirrorfly.forwardMessagesToMultipleUsers(
+                  messageIds: forwardMessageIds,
+                  userList: selectedJids,
+                  flyCallBack: (FlyResponse response) {
+                    // debugPrint("to chat profile ==> ${selectedUsersList[0].toJson().toString()}");
+                    updateLastMessage(selectedJids);
+                    DialogUtils.hideLoading();
+                    NavUtils.back();
+                  });
               // });
             }
-          }else{
+          } else {
             //show busy status popup
             // var messageObject = MessageObject(toJid: profile.jid.toString(),replyMessageId: (isReplying.value) ? replyChatMessage.messageId : "", messageType: Constants.mText,textMessage: messageController.text);
             // showBusyStatusAlert(disableBusyChatAndSend());
           }
         });
       } else {
-      toToast(getTranslated("noInternetConnection"));
+        toToast(getTranslated("noInternetConnection"));
       }
     });
   }
 
-  void updateLastMessage(List<String> chatJid){
+  void updateLastMessage(List<String> chatJid) {
     //below method is used when message is not sent and onMessageStatusUpdate listener will not trigger till the message status was updated so notify the ui in dashboard
     for (var element in chatJid) {
       Get.find<MainController>().onUpdateLastMessageUI(element);
@@ -452,18 +499,21 @@ class ForwardChatController extends GetxController {
 
   Future<String> getParticipantsNameAsCsv(String jid) async {
     var groupParticipantsName = "";
-    await Mirrorfly.getGroupMembersList(jid: jid, fetchFromServer: false, flyCallBack: (FlyResponse response) {
-      if (response.isSuccess && response.hasData) {
-        var str = <String>[];
-        var groupsMembersProfileList = memberFromJson(response.data);
-        for (var it in groupsMembersProfileList) {
-          //if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
-          str.add(it.name.checkNull());
-          //}
-        }
-        return groupParticipantsName = (str.join(","));
-      }
-    });
+    await Mirrorfly.getGroupMembersList(
+        jid: jid,
+        fetchFromServer: false,
+        flyCallBack: (FlyResponse response) {
+          if (response.isSuccess && response.hasData) {
+            var str = <String>[];
+            var groupsMembersProfileList = memberFromJson(response.data);
+            for (var it in groupsMembersProfileList) {
+              //if (it.jid.checkNull() != SessionManagement.getUserJID().checkNull()) {
+              str.add(it.name.checkNull());
+              //}
+            }
+            return groupParticipantsName = (str.join(","));
+          }
+        });
     return groupParticipantsName;
   }
 
@@ -497,8 +547,7 @@ class ForwardChatController extends GetxController {
         _maingroupList.indexWhere((element) => element.jid == jid);
     var mainuserListIndex =
         _mainuserList.indexWhere((element) => element.jid == jid);
-    var groupListIndex =
-        _groupList.indexWhere((element) => element.jid == jid);
+    var groupListIndex = _groupList.indexWhere((element) => element.jid == jid);
     var userListIndex = _userList.indexWhere((element) => element.jid == jid);
     getProfileDetails(jid).then((value) {
       if (!maingroupListIndex.isNegative) {
@@ -519,14 +568,14 @@ class ForwardChatController extends GetxController {
   void onContactSyncComplete(bool result) {
     getRecentChatList();
     if (searchQuery.text.toString().trim().isNotEmpty) {
-      lastInputValue='';
+      lastInputValue = '';
       onSearch(searchQuery.text.toString());
     }
   }
 
   void checkContactSyncPermission() {
     Permission.contacts.isGranted.then((value) {
-      if(!value){
+      if (!value) {
         _mainuserList.clear();
         _userList.clear();
         _userList.refresh();

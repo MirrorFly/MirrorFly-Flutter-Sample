@@ -1,17 +1,19 @@
-
 import 'package:flutter/material.dart';
 import 'package:mirrorfly_plugin/logmessage.dart';
 
 class MirrorFlyNavigationObserver extends NavigatorObserver {
   static List<Route<dynamic>> routeStack = [];
 
-  static Route<dynamic>? get current => routeStack.isNotEmpty ? routeStack.last : null;
-  static Route<dynamic>? get previous => routeStack.length > 1 ? routeStack[routeStack.length - 2] : null;
+  static Route<dynamic>? get current =>
+      routeStack.isNotEmpty ? routeStack.last : null;
+
+  static Route<dynamic>? get previous =>
+      routeStack.length > 1 ? routeStack[routeStack.length - 2] : null;
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
-    if(route.settings.name==null) {
+    if (route.settings.name == null) {
       debugPrint("Warning: Route pushed without Name");
     }
     routeStack.add(route);
@@ -45,6 +47,7 @@ class MirrorFlyNavigationObserver extends NavigatorObserver {
   }
 
   void logCurrentStack(String action) {
-    LogMessage.d("MirrorFly Navigator Observer: ","After $action: Current Stack: ${routeStack.map((r) => r.settings.name).toList()}");
+    LogMessage.d("MirrorFly Navigator Observer: ",
+        "After $action: Current Stack: ${routeStack.map((r) => r.settings.name).toList()}");
   }
 }

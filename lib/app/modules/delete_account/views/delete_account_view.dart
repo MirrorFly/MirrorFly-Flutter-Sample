@@ -14,7 +14,8 @@ class DeleteAccountView extends NavViewStateful<DeleteAccountController> {
   const DeleteAccountView({Key? key}) : super(key: key);
 
   @override
-DeleteAccountController createController({String? tag}) => Get.put(DeleteAccountController());
+  DeleteAccountController createController({String? tag}) =>
+      Get.put(DeleteAccountController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +32,10 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
               children: [
                 Row(
                   children: [
-                  AppUtils.svgIcon(icon:
-                    warningIcon,
-                  fit: BoxFit.contain,
-                ),
+                    AppUtils.svgIcon(
+                      icon: warningIcon,
+                      fit: BoxFit.contain,
+                    ),
                     const SizedBox(width: 15),
                     Text(
                       getTranslated("deletingYourAccount"),
@@ -42,63 +43,117 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
                     ),
                   ],
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: [
-                    const SizedBox(width: 30,),
-                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription1"),style: const TextStyle(color: textColor),),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    const Text(
+                      Constants.bulletPoint,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      getTranslated("deletingYourAccountDescription1"),
+                      style: const TextStyle(color: textColor),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: [
-                    const SizedBox(width: 30,),
-                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription2"),style: const TextStyle(color: textColor),),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    const Text(
+                      Constants.bulletPoint,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      getTranslated("deletingYourAccountDescription2"),
+                      style: const TextStyle(color: textColor),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: [
-                    const SizedBox(width: 30,),
-                    const Text(Constants.bulletPoint, style: TextStyle(fontSize: 12),),
-                    Text(getTranslated("deletingYourAccountDescription3"),style: const TextStyle(color: textColor),),
+                    const SizedBox(
+                      width: 30,
+                    ),
+                    const Text(
+                      Constants.bulletPoint,
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      getTranslated("deletingYourAccountDescription3"),
+                      style: const TextStyle(color: textColor),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 15,),
-          Text(getTranslated("deleteConfirmation"),
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  getTranslated("deleteConfirmation"),
                   style: const TextStyle(color: textHintColor, fontSize: 15),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Text(
                   getTranslated("country"),
-                  style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      color: textHintColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
                 Obx(() => countryItem(
-                  // contentPadding: EdgeInsets.zero,
-                  title: Text(controller.selectedCountry.value.name ?? "",
-                      style: const TextStyle(color: textHintColor,fontSize: 16,fontWeight: FontWeight.normal)),
-                  trailing: const Icon(Icons.keyboard_arrow_down_outlined),
-                  onTap: (){
-                    NavUtils.toNamed(Routes.countries)?.then((value) => value!=null ? controller.selectedCountry.value = value : controller.india);
-                  },
-                )),
-                const SizedBox(height: 10,),
+                      // contentPadding: EdgeInsets.zero,
+                      title: Text(controller.selectedCountry.value.name ?? "",
+                          style: const TextStyle(
+                              color: textHintColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal)),
+                      trailing: const Icon(Icons.keyboard_arrow_down_outlined),
+                      onTap: () {
+                        NavUtils.toNamed(Routes.countries)?.then((value) =>
+                            value != null
+                                ? controller.selectedCountry.value = value
+                                : controller.india);
+                      },
+                    )),
+                const SizedBox(
+                  height: 10,
+                ),
                 Text(
                   getTranslated("mobileNumber"),
-                  style: const TextStyle(color: textHintColor, fontSize: 14, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      color: textHintColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                   child: IntrinsicHeight(
                     child: Row(
                       children: [
                         Obx(
-                              ()=> Text(
+                          () => Text(
                             controller.selectedCountry.value.dialCode ?? "",
-                            style: const TextStyle(fontSize: 15,color: textHintColor,fontWeight: FontWeight.normal),
+                            style: const TextStyle(
+                                fontSize: 15,
+                                color: textHintColor,
+                                fontWeight: FontWeight.normal),
                           ),
                         ),
                         const Padding(
@@ -116,25 +171,27 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly
                             ],
-                            style: const TextStyle(color: textHintColor,fontWeight: FontWeight.normal),
+                            style: const TextStyle(
+                                color: textHintColor,
+                                fontWeight: FontWeight.normal),
                             decoration: InputDecoration(
-                              counterText: '',
-                              enabledBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: buttonBgColor),
-                              ),
-                              hintText: getTranslated("mobileNumber")
-                            ),
+                                counterText: '',
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: buttonBgColor),
+                                ),
+                                hintText: getTranslated("mobileNumber")),
                           ),
                         ),
-
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 30,),
+                const SizedBox(
+                  height: 30,
+                ),
                 Center(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -142,15 +199,15 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 10),
                         textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
+                            fontSize: 14, fontWeight: FontWeight.w500),
                         shape: const StadiumBorder()),
                     onPressed: () {
                       controller.deleteAccount();
                     },
                     child: Text(
                       getTranslated("continue"),
-                      style: const TextStyle(fontWeight: FontWeight.w600,color: Colors.white),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, color: Colors.white),
                     ),
                   ),
                 ),
@@ -162,13 +219,18 @@ DeleteAccountController createController({String? tag}) => Get.put(DeleteAccount
     );
   }
 
-  Widget countryItem({Function()? onTap, required Widget title, Widget? trailing,EdgeInsetsGeometry? dividerPadding }){
+  Widget countryItem(
+      {Function()? onTap,
+      required Widget title,
+      Widget? trailing,
+      EdgeInsetsGeometry? dividerPadding}) {
     return InkWell(
       onTap: onTap,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(right: 10.0,top: 10.0,bottom: 10.0),
+            padding:
+                const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 10.0),
             child: Row(
               children: [
                 Expanded(

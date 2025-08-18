@@ -13,7 +13,8 @@ class StatusListView extends NavViewStateful<StatusListController> {
   const StatusListView({Key? key}) : super(key: key);
 
   @override
-StatusListController createController({String? tag}) => Get.put(StatusListController());
+  StatusListController createController({String? tag}) =>
+      Get.put(StatusListController());
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,8 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
             children: [
               Text(
                 getTranslated("yourCurrentStatus"),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(
                 () => ListTile(
@@ -50,8 +52,8 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                           color: textColor,
                           fontSize: 14,
                           fontWeight: FontWeight.normal)),
-                  trailing: AppUtils.svgIcon(icon:
-                    pencilEditIcon,
+                  trailing: AppUtils.svgIcon(
+                    icon: pencilEditIcon,
                     fit: BoxFit.contain,
                   ),
                   onTap: () {
@@ -72,7 +74,8 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
               ),
               Text(
                 getTranslated("selectNewStatus"),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               Obx(() => controller.statusList.isNotEmpty
                   ? Expanded(
@@ -96,8 +99,8 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                                       fontWeight: FontWeight.w500)),
                               trailing:
                                   item.status == controller.selectedStatus.value
-                                      ? AppUtils.svgIcon(icon:
-                                          tickIcon,
+                                      ? AppUtils.svgIcon(
+                                          icon: tickIcon,
                                           fit: BoxFit.contain,
                                         )
                                       : const SizedBox(),
@@ -105,7 +108,7 @@ StatusListController createController({String? tag}) => Get.put(StatusListContro
                                 controller.updateStatus(item.status.checkNull(),
                                     item.id.checkNull());
                               },
-                              onLongPress: (){
+                              onLongPress: () {
                                 debugPrint("Status list long press");
                                 controller.deleteStatus(item);
                               },

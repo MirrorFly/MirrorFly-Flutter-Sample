@@ -14,7 +14,8 @@ class ChatSettingsView extends NavViewStateful<ChatSettingsController> {
   const ChatSettingsView({Key? key}) : super(key: key);
 
   @override
-ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsController());
+  ChatSettingsController createController({String? tag}) =>
+      Get.put(ChatSettingsController());
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,8 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                lockItem(title: getTranslated("archiveSetting"),
+                lockItem(
+                    title: getTranslated("archiveSetting"),
                     subtitle: getTranslated("archiveSettingDec"),
                     on: controller.archiveEnabled,
                     onToggle: (value) => controller.enableArchive()),
@@ -44,55 +46,62 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                     on: controller.busyStatusPreference.value,
                     onTap: () => controller.busyStatusEnable()),
                 Visibility(
-                  visible: controller.busyStatusPreference.value,
+                    visible: controller.busyStatusPreference.value,
                     child: chatListItem(
-                     Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(getTranslated("editBusyStatus"),
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400)),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text(controller.busyStatus.value,
-                              maxLines: null,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(getTranslated("editBusyStatus"),
                               style: const TextStyle(
-                                  color: buttonBgColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400)),
-                        ),
-                      ],
-                    ),
-                    rightArrowIcon, () => {NavUtils.toNamed(Routes.busyStatus)},
-                    )),
-                notificationItem(title: getTranslated("autoDownload"), subtitle: getTranslated("autoDownloadLabel"),on: controller.autoDownloadEnabled, onTap: controller.enableDisableAutoDownload),
-                Visibility(
-                  visible: controller.autoDownloadEnabled,
-                    child: chatListItem(Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(getTranslated("dataUsageSettings"),
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Text(getTranslated("dataUsageSettingsLabel"),
-                            style: const TextStyle(
-                                color: textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400)),
+                                  fontSize: 14, fontWeight: FontWeight.w400)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Text(controller.busyStatus.value,
+                                maxLines: null,
+                                style: const TextStyle(
+                                    color: buttonBgColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  rightArrowIcon, () => {NavUtils.toNamed(Routes.dataUsageSetting)},
-                )),
+                      rightArrowIcon,
+                      () => {NavUtils.toNamed(Routes.busyStatus)},
+                    )),
+                notificationItem(
+                    title: getTranslated("autoDownload"),
+                    subtitle: getTranslated("autoDownloadLabel"),
+                    on: controller.autoDownloadEnabled,
+                    onTap: controller.enableDisableAutoDownload),
+                Visibility(
+                    visible: controller.autoDownloadEnabled,
+                    child: chatListItem(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(getTranslated("dataUsageSettings"),
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w400)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Text(getTranslated("dataUsageSettingsLabel"),
+                                style: const TextStyle(
+                                    color: textColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400)),
+                          ),
+                        ],
+                      ),
+                      rightArrowIcon,
+                      () => {NavUtils.toNamed(Routes.dataUsageSetting)},
+                    )),
                 if (Constants.isBackupFeatureEnabled) ...[
-                  chatListItem(Text(getTranslated("chatBackup"),
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400)), rightArrowIcon, () => {NavUtils.toNamed(Routes.backUpView)})
+                  chatListItem(
+                      Text(getTranslated("chatBackup"),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w400)),
+                      rightArrowIcon,
+                      () => {NavUtils.toNamed(Routes.backUpView)})
                 ],
                 // notificationItem(title: getTranslated("chatBackup"), subtitle: "", onTap: onTap)
                 /*Commented out, because this feature is NI*/
@@ -130,7 +139,7 @@ ChatSettingsController createController({String? tag}) => Get.put(ChatSettingsCo
                             fontSize: 14,
                             fontWeight: FontWeight.w400)),
                     dividerPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    onTap: (){
+                    onTap: () {
                       controller.clearAllConversation();
                     })
               ],

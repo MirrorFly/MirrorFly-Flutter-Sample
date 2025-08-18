@@ -1,14 +1,15 @@
-
 part of 'route_settings.dart';
 
 abstract class Routes {
   Routes._();
+
   static const dashboard = _Paths.dashboard;
   static const scanner = _Paths.scanner;
   static const webLoginResult = _Paths.webLoginResult;
   static const createGroup = _Paths.createGroup;
   static const groupInfo = _Paths.groupInfo;
   static const viewMedia = _Paths.viewMedia;
+
   // static const recentSearch = _Paths.recentSearch;
   static const login = _Paths.login;
   static const otp = _Paths.otp;
@@ -62,17 +63,18 @@ abstract class Routes {
   static const groupParticipants = _Paths.groupParticipants;
   static const callInfo = _Paths.callInfo;
   static const pipView = _Paths.pipView;
-
 }
 
 abstract class _Paths {
   _Paths._();
+
   static const dashboard = '/dashboard';
   static const scanner = '/scanner';
   static const webLoginResult = '/web_logins';
   static const createGroup = '/create_group';
   static const groupInfo = '/group_info';
   static const viewMedia = '/view_all_media';
+
   // static const recentSearch = '/recent_search';
   static const login = '/login';
   static const otp = '/otp';
@@ -126,5 +128,4 @@ abstract class _Paths {
   static const groupParticipants = '/groupParticipants';
   static const callInfo = '/call-info';
   static const pipView = '/pipView';
-
 }

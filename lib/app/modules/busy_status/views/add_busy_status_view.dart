@@ -15,14 +15,17 @@ class AddBusyStatusView extends NavViewStateful<BusyStatusController> {
   final String? status;
 
   @override
-BusyStatusController createController({String? tag}) => Get.put(BusyStatusController());
+  BusyStatusController createController({String? tag}) =>
+      Get.put(BusyStatusController());
 
   @override
   void onInit() {
     controller.addStatusController.text = status ?? "";
-    controller.count(139 - controller.addStatusController.text.characters.length);
+    controller
+        .count(139 - controller.addStatusController.text.characters.length);
     super.onInit();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,13 +90,12 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                           padding: const EdgeInsets.all(4.0),
                           child: Center(
                             child: Obx(
-                                  () =>
-                                  Text(
-                                    controller.count.toString(),
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal),
-                                  ),
+                              () => Text(
+                                controller.count.toString(),
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
                             ),
                           )),
                       Obx(() {
@@ -101,8 +103,12 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                             onPressed: () {
                               controller.showHideEmoji(context);
                             },
-                            icon: controller.showEmoji.value ? const Icon(
-                              Icons.keyboard, color: iconColor,) : AppUtils.svgIcon(icon:smileIcon));
+                            icon: controller.showEmoji.value
+                                ? const Icon(
+                                    Icons.keyboard,
+                                    color: iconColor,
+                                  )
+                                : AppUtils.svgIcon(icon: smileIcon));
                       })
                     ],
                   ),
@@ -119,12 +125,13 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: WidgetStateColor.resolveWith(
-                                (states) => Colors.white),
+                            (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: Text(
                       getTranslated("cancel").toUpperCase(),
-                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                      style:
+                          const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),
@@ -142,12 +149,13 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: WidgetStateColor.resolveWith(
-                                (states) => Colors.white),
+                            (states) => Colors.white),
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero)),
                     child: Text(
                       getTranslated("ok").toUpperCase(),
-                      style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                      style:
+                          const TextStyle(color: Colors.black, fontSize: 16.0),
                     ),
                   ),
                 ),
@@ -164,7 +172,8 @@ BusyStatusController createController({String? tag}) => Get.put(BusyStatusContro
     return Obx(() {
       if (controller.showEmoji.value) {
         return EmojiLayout(
-            textController: TextEditingController(),//controller.addStatusController,
+            textController:
+            TextEditingController(), //controller.addStatusController,
             onBackspacePressed: () {
               controller.onEmojiBackPressed();
             },

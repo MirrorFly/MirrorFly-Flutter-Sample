@@ -1,39 +1,63 @@
-
 part of 'utils.dart';
 
 class DialogUtils {
   DialogUtils._();
+
   // DialogUtils(this.buildContext);
 
   static const RouteSettings routeSettings = RouteSettings(name: '/dialog');
+
   // final BuildContext buildContext;
   static BuildContext get buildContext => NavUtils.currentContext;
 
-  static createDialog(Widget builder){
-    return showDialog(context: buildContext, builder: (_){
-      return builder;
-    },routeSettings: routeSettings);
+  static createDialog(Widget builder) {
+    return showDialog(
+        context: buildContext,
+        builder: (_) {
+          return builder;
+        },
+        routeSettings: routeSettings);
   }
 
-  static bottomSheet(Widget builder,{bool ignoreSafeArea = false, bool isScrollControlled = false,
-    bool enableDrag = true,bool isDismissible = true, Color backgroundColor = Colors.transparent, Color barrierColor = Colors.transparent, bool needKeyboardPadding = false}){
-    return showModalBottomSheet(context: buildContext,
+  static bottomSheet(Widget builder,
+      {bool ignoreSafeArea = false,
+      bool isScrollControlled = false,
+      bool enableDrag = true,
+      bool isDismissible = true,
+      Color backgroundColor = Colors.transparent,
+      Color barrierColor = Colors.transparent,
+      bool needKeyboardPadding = false}) {
+    return showModalBottomSheet(
+        context: buildContext,
         routeSettings: routeSettings,
-        builder: (_){
-      return needKeyboardPadding ? Padding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(NavUtils.currentContext).viewInsets.bottom),
-        child: builder,
-      ) : builder ;
-    },isDismissible: isDismissible,useSafeArea: ignoreSafeArea,backgroundColor: backgroundColor, isScrollControlled: isScrollControlled,enableDrag: enableDrag, barrierColor: barrierColor);
+        builder: (_) {
+          return needKeyboardPadding
+              ? Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(NavUtils.currentContext)
+                          .viewInsets
+                          .bottom),
+                  child: builder,
+                )
+              : builder;
+        },
+        isDismissible: isDismissible,
+        useSafeArea: ignoreSafeArea,
+        backgroundColor: backgroundColor,
+        isScrollControlled: isScrollControlled,
+        enableDrag: enableDrag,
+        barrierColor: barrierColor);
   }
 
   // Method to show a loading dialog
   static void showLoading(
-      {String? title, String? message,
-      bool dismiss = false,required DialogStyle dialogStyle}) {
+      {String? title,
+      String? message,
+      bool dismiss = false,
+      required DialogStyle dialogStyle}) {
     showDialog(
-      context: buildContext,routeSettings: routeSettings,
+      context: buildContext,
+      routeSettings: routeSettings,
       builder: (_) {
         return Dialog(
           backgroundColor: dialogStyle.backgroundColor,
@@ -51,7 +75,10 @@ class DialogUtils {
                 if (title != null) ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-                    child: Text(title,style: dialogStyle.titleTextStyle,),
+                    child: Text(
+                      title,
+                      style: dialogStyle.titleTextStyle,
+                    ),
                   )
                 ],
                 Padding(
@@ -61,7 +88,11 @@ class DialogUtils {
                     children: [
                       const CircularProgressIndicator(),
                       const SizedBox(width: 16),
-                      Flexible(child: Text(message ?? getTranslated("loading"),style: dialogStyle.titleTextStyle,)),
+                      Flexible(
+                          child: Text(
+                        message ?? getTranslated("loading"),
+                        style: dialogStyle.titleTextStyle,
+                      )),
                     ],
                   ),
                 ),
@@ -75,10 +106,10 @@ class DialogUtils {
   }
 
   // Method to show a simple progress loading dialog
-  static void progressLoading(
-      {bool dismiss = false}) {
+  static void progressLoading({bool dismiss = false}) {
     showDialog(
-        context: buildContext,routeSettings: routeSettings,
+        context: buildContext,
+        routeSettings: routeSettings,
         builder: (_) {
           return AlertDialog(
             elevation: 0,
@@ -110,12 +141,15 @@ class DialogUtils {
       required String message,
       List<Widget>? actions,
       Widget? content,
-      bool? barrierDismissible,required DialogStyle dialogStyle}) {
+      bool? barrierDismissible,
+      required DialogStyle dialogStyle}) {
     showDialog(
-        context: buildContext,routeSettings: routeSettings,
+        context: buildContext,
+        routeSettings: routeSettings,
         builder: (_) {
           return AlertDialog(
-            backgroundColor: dialogStyle.backgroundColor,//Colors.white,
+            backgroundColor: dialogStyle.backgroundColor,
+            //Colors.white,
             title: title != null
                 ? Text(
                     title,
@@ -152,10 +186,10 @@ class DialogUtils {
   }
 
   // Method to show a dialog with vertical buttons
-  static void showVerticalButtonAlert(
-      {required List<Widget> actions}) {
+  static void showVerticalButtonAlert({required List<Widget> actions}) {
     showDialog(
-        context: buildContext,routeSettings: routeSettings,
+        context: buildContext,
+        routeSettings: routeSettings,
         builder: (_) {
           return Dialog(
             child: Column(
@@ -168,10 +202,10 @@ class DialogUtils {
   }
 
   // Method to show a dialog with horizontal buttons
-  static void showButtonAlert(
-      {required List<Widget> actions}) {
+  static void showButtonAlert({required List<Widget> actions}) {
     showDialog(
-        context: buildContext,routeSettings: routeSettings,
+        context: buildContext,
+        routeSettings: routeSettings,
         builder: (_) {
           return Dialog(
             child: Padding(
@@ -194,16 +228,18 @@ class DialogUtils {
 
   // Method to check if any dialog is open
   static bool isDialogOpen() {
-    return NavUtils.currentRoute == '/dialog' || NavUtils.currentRoute == '/PopupMenu';
+    return NavUtils.currentRoute == '/dialog' ||
+        NavUtils.currentRoute == '/PopupMenu';
   }
 
   // Method to show a feature unavailable alert
   static void showFeatureUnavailable() {
-    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+    DialogUtils.showAlert(
+        dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("featureNotAvailableForYourPlan"),
         actions: [
           TextButton(
-        style: AppStyleConfig.dialogStyle.buttonStyle,
+              style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 Navigator.of(buildContext).pop();
               },

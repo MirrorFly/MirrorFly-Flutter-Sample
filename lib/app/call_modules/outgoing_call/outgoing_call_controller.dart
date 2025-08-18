@@ -244,7 +244,9 @@ class OutgoingCallController extends GetxController
     if (/*NavUtils.currentRoute == Routes.outGoingCallView &&*/
         callList.length < 2) {
       debugPrint("Pop back at userDisconnection is called");
-      NavUtils.back();
+      if (NavUtils.canPop) {
+        NavUtils.back();
+      }
     } else if (isUserJidExistsInCallList){
       debugPrint("User JID $userJid exists at call list, so removing the user");
       removeUser(callMode, userJid, callType);
@@ -295,11 +297,17 @@ class OutgoingCallController extends GetxController
     // startTimer();
     if (NavUtils.currentRoute != Routes.onGoingCallView &&
         NavUtils.currentRoute != Routes.participants) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        NavUtils.offNamed(Routes.onGoingCallView, arguments: {
-          "userJid": [userJid],
-          "cameraSwitch": cameraSwitch.value
-        });
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        bool? isAlreadyInCall = await Mirrorfly.isOnGoingCall();
+        if (isAlreadyInCall == true) {
+          print("#call is not disconnected already");
+          NavUtils.offNamed(Routes.onGoingCallView, arguments: {
+            "userJid": [userJid],
+            "cameraSwitch": cameraSwitch.value
+          });
+        } else {
+          print("#call is disconnected already");
+        }
       });
     }
   }
@@ -326,7 +334,7 @@ class OutgoingCallController extends GetxController
     Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
       if (response.isSuccess) {
         callList.clear();
-        NavUtils.back();
+        // NavUtils.back();
       }
     });
   }
