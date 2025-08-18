@@ -368,7 +368,6 @@ class Constants {
       isTrialLicenceKey: false);
   static bool enablePrivateStorage = false;
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
-
   static MetaDataUserList?
       metaDataUserList; // = MetaDataUserList(key: "platform", value: ["flutter"]);
   static const bool enableContactSync = false;
