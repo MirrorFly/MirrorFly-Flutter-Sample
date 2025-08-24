@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -60,6 +61,23 @@ class DashboardView extends NavViewStateful<DashboardController> {
                   length: 2,
                   child: Builder(builder: (ctx) {
                     return Scaffold(
+                        appBar: AppBar(
+                            actions: [
+                              IconButton(
+                                  onPressed: () {
+                                  Mirrorfly.disconnectLiveKitCall(flyCallback: (_) => ());
+                                  }, icon: const Icon(Icons.call_end))
+                            ],
+                            leading: IconButton(
+                                onPressed: () {
+                                  Mirrorfly.makeLiveKitAudioCall(
+                                      flyCallback: (_) {},
+                                      callersId: ["919000000007"],
+                                      //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
+                                      chatId: '',
+                                      callType: FlyCallType.audio,
+                                      callMode: FlyCallMode.oneToOne);
+                                }, icon: Icon(Icons.call))),
                         floatingActionButton: controller.isSearching.value
                             ? null
                             : Obx(() {
