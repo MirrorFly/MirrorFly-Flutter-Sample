@@ -4048,12 +4048,34 @@ class ChatController extends FullLifeCycleController
               flyCallback: (_) {},
               callersId: [profile.jid!,],
               //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-              chatId: '',
-              callType: FlyCallType.audio,
-              callMode: FlyCallMode.oneToOne);
+              chatId: '');
         }
       } else {
         debugPrint("permission not given");
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  void makeLKVideoCall() async {
+    closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch, true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askVideoCallPermissions()) {
+        if (profile.isGroupProfile.checkNull()) {
+          NavUtils.toNamed(Routes.groupParticipants,
+              arguments: {"groupId": profile.jid, "callType": CallType.video});
+        } else {
+          Mirrorfly.makeLiveKitVideoCall(
+              callersId: [profile.jid ?? ""], chatId: '', flyCallback: (FlyResponse response) {  });
+        }
+      } else {
+        LogMessage.d("askVideoCallPermissions", "false");
       }
     } else {
       toToast(getTranslated("noInternetConnection"));

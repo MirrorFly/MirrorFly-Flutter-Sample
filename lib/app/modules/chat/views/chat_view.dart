@@ -825,7 +825,7 @@ class ChatView extends NavViewStateful<ChatController> {
     CustomAction(
               visibleWidget: IconButton(
                 onPressed: controller.ableToCall ? () {
-                  controller.makeVideoCall();
+                  controller.makeLKVideoCall();
                 } : null,
                   icon: chatStyle.chatUserAppBarStyle.iconVideoCall ??
     AppUtils.svgIcon(icon:videoCallIcon,
@@ -838,7 +838,7 @@ class ChatView extends NavViewStateful<ChatController> {
                 showAsAction: controller.isVideoCallAvailable  && (controller.arguments?.enableCalls).checkNull() ? ShowAsAction.always : ShowAsAction.gone,
               keyValue: 'Video Call',
               onItemClick: controller.ableToCall ? () {
-                controller.makeVideoCall();
+                controller.makeLKVideoCall();
               } : null,
             ),
             ],
