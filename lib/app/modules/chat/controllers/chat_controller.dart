@@ -15,10 +15,12 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallMode, FlyCallType;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -44,7 +46,6 @@ import '../../../common/app_localizations.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
-import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/route_settings.dart';
 import '../../../stylesheet/stylesheet.dart';
@@ -4022,4 +4023,41 @@ class ChatController extends FullLifeCycleController
       toToast(getTranslated("noInternetConnection"));
     }
   }
+
+  ///  Callkit function to make audio call
+
+  void makeAudioCall() async {
+    debugPrint("#FLY CALL VOICE CALL CALLING");
+    closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch,true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askAudioCallPermissions()) {
+        if (profile.isGroupProfile.checkNull()) {
+          if (isMemberOfGroup.checkNull()) {
+            NavUtils.toNamed(Routes.groupParticipants, arguments: {
+              "groupId": profile.jid,
+              "callType": CallType.audio
+            });
+          }
+        } else {
+          Mirrorfly.makeLiveKitAudioCall(
+              flyCallback: (_) {},
+              callersId: [profile.jid!,],
+              //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
+              chatId: '',
+              callType: FlyCallType.audio,
+              callMode: FlyCallMode.oneToOne);
+        }
+      } else {
+        debugPrint("permission not given");
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
 }
