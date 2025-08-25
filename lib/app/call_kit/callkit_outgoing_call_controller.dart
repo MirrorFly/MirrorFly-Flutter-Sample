@@ -48,14 +48,19 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   ///
-  void updateCallAction({required FlyCallStatus status}) {
+  void updateCallAction({required FlyCallStatus status}) async{
     if (status == FlyCallStatus.callTimeout) {
       toToast("Call Timeout");
+      await handleTimeOutDisconnect();
       NavUtils.back();
     } else if (status == FlyCallStatus.disconnected) {
       toToast("Call Disconnected");
       NavUtils.back();
     }
+  }
+
+  Future<void> handleTimeOutDisconnect() async{
+    await MirrorflyCallKit.liveKitCore.ops.disconnectCall();
   }
 
   void muteAudio() async {

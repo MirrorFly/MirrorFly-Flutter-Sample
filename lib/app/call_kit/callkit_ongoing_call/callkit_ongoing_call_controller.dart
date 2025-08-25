@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/routes/route_settings.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../data/utils.dart';
@@ -37,8 +38,7 @@ class CallKitOnGoingCallController extends GetxController with GetTickerProvider
   }
 
   void disconnectCall() {
-    NavUtils.back();
-    NavUtils.back();
+    NavUtils.offNamed(Routes.chat);
     // TODO: end call
   }
 
