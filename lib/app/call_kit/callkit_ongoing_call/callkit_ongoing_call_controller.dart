@@ -38,7 +38,8 @@ class CallKitOnGoingCallController extends GetxController with GetTickerProvider
   }
 
   void disconnectCall() {
-    NavUtils.offNamed(Routes.chat);
+    NavUtils.back();
+    NavUtils.back();
     // TODO: end call
   }
 
