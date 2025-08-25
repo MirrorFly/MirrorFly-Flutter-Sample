@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../data/utils.dart';
@@ -23,24 +24,41 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       users.value = NavUtils.arguments?["userJid"] as List<String?>;
       cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
     }
-    // FlyCallUpdates.instance.statusStream.listen((event) {
-    //   callStatus.value = event.callStatus.name; // update observable
-    //   print("📞 CallStatus: ${event.callStatus}, reason: ${event.reason}");
-    // });
     super.onInit();
   }
 
-  void handleStatusStream(CallStatusEvent event) {
-    callStatus.value = event.callStatus.name; // update observable
-    print("📞 CallStatus: ${event.callStatus}, reason: ${event.reason}");
-
-    if (event.callStatus.name.toLowerCase() == "connecting") {
-      NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {
-      });
+  ///
+  void updateCallStatus({required FlyCallStatus status}) {
+    switch (status) {
+      case FlyCallStatus.ringing:
+       callStatus("Ringing");
+      case FlyCallStatus.connecting:
+        callStatus("Trying to connect");
+      case FlyCallStatus.reconnecting:
+        callStatus("Trying to reconnecting");
+      case FlyCallStatus.connected:
+      callStatus("Trying to connect");
+      case FlyCallStatus.disconnected:
+        callStatus("Disconnected");
+      case FlyCallStatus.callTimeout:
+        callStatus("Trying to timeout");
+      default:
+        print("[MirrorFly] Unknown Call Status: $status");
     }
   }
 
-    void muteAudio() async {
+  ///
+  void updateCallAction({required FlyCallStatus status}) {
+    if (status == FlyCallStatus.callTimeout) {
+      toToast("Call Timeout");
+      NavUtils.back();
+    } else if (status == FlyCallStatus.disconnected) {
+      toToast("Call Disconnected");
+      NavUtils.back();
+    }
+  }
+
+  void muteAudio() async {
     // muted.value = !muted.value;
     print("[MirrorFly] muteAudio start");
     final bool isMuted = await MirrorflyCallKit.getIsMicrophoneEnabled();

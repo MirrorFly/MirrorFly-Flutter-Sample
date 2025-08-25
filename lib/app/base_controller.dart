@@ -12,6 +12,7 @@ import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_r
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'call_kit/callkit_outgoing_call_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
@@ -61,25 +62,72 @@ class BaseController {
 
     ///
     MirrorflyCallKit.callStatusStream.listen((callStatus) {
+      if (Get.isRegistered<CallKitOutgoingCallController>()) {
+        ///
+        final CallKitOutgoingCallController callKitOutgoingCallController =
+            Get.find<CallKitOutgoingCallController>();
+        final CallStatusEvent callStatusEvent = callStatus;
+        final FlyCallStatus flyCallStatus = callStatusEvent.callStatus;
 
-      print("[MirrorFly] MirrorflyCallKit.callStatusStream - CallStatusEvent: ${callStatus.toJson()}");
-      final CallStatusEvent callStatusEvent = callStatus;
-      final FlyCallStatus flyCallStatus = callStatusEvent.callStatus;
+        ///
+        print(
+            "[MirrorFly] [BaseController] MirrorflyCallKit.callStatusStream - CallStatusEvent: ${callStatus.toJson()}");
 
-      if (flyCallStatus == FlyCallStatus.connecting) {
-        NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {
-        });
+        ///
+        if (flyCallStatus == FlyCallStatus.connecting) {
+          // After attended
+          print(
+              "[MirrorFly] [BaseController] MirrorflyCallKit.connecting - CallStatusEvent: ${callStatus.toJson()}");
+          NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {});
+        }
+
+        ///
+        if (flyCallStatus == FlyCallStatus.connected) {
+          // Trying to connect
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.ringing) {
+          // Ringing
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.callTimeout) {
+          // Time out (show toast & PopBack)
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.disconnected) {
+          // Disconnected (show toast & PopBack)
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.reconnecting) {
+          // Disconnected (show toast & PopBack)
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.declined) {
+          // Declined (show toast & PopBack)
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+        }
+      } else {
+        print(
+            "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
       }
     });
 
     ///
     MirrorflyCallKit.callActionStream.listen((callAction) {
-      print("[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
+      print(
+          "[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
     });
 
     ///
     MirrorflyCallKit.participantStream.listen((participantStream) {
-      print("[MirrorFly] MirrorflyCallKit.participantStream - participantStream: ${participantStream.toJson()}");
+      print(
+          "[MirrorFly] MirrorflyCallKit.participantStream - participantStream: ${participantStream.toJson()}");
     });
   }
 
