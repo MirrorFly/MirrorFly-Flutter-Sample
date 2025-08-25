@@ -4077,6 +4077,10 @@ class ChatController extends FullLifeCycleController
         } else {
           Mirrorfly.makeLiveKitVideoCall(
               callersId: [profile.jid ?? ""], chatId: '', flyCallback: (FlyResponse response) {  });
+          NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+            "userJid": [profile.jid],
+            "callType": CallType.video
+          });
         }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");

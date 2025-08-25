@@ -37,6 +37,8 @@ class CallKitOnGoingCallController extends GetxController with GetTickerProvider
   }
 
   void disconnectCall() {
+    NavUtils.back();
+    NavUtils.back();
     // TODO: end call
   }
 
