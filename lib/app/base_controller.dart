@@ -10,6 +10,7 @@ import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.da
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
@@ -51,9 +52,32 @@ import 'modules/notification/notification_builder.dart';
 import 'modules/profile/controllers/profile_controller.dart';
 import 'modules/starred_messages/controllers/starred_messages_controller.dart';
 import 'modules/view_all_media/controllers/view_all_media_controller.dart';
+import 'model/chat_message_model.dart' as model;
 
 class BaseController {
+
+  ///
+  static void initializeCallKitListeners() {
+
+    ///
+    MirrorflyCallKit.callStatusStream.listen((callStatus) {
+      print("[MirrorFly] MirrorflyCallKit.callStatusStream - CallStatusEvent: ${callStatus.toJson()}");
+    });
+
+    ///
+    MirrorflyCallKit.callActionStream.listen((callAction) {
+      print("[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
+    });
+
+    ///
+    MirrorflyCallKit.participantStream.listen((participantStream) {
+      print("[MirrorFly] MirrorflyCallKit.participantStream - participantStream: ${participantStream.toJson()}");
+    });
+  }
+
+  ///
   static void initListeners() {
+    initializeCallKitListeners();
     Mirrorfly.getCurrentCallDuration().then((value) {
       var startTime = value ?? 0;
       if (startTime > 0) {
@@ -135,7 +159,7 @@ class BaseController {
       LogMessage.d("showOrUpdateOrCancelNotification", event);
       var data = json.decode(event.toString());
       var jid = data["jid"];
-      var chatMessage = sendMessageModelFromJson(data["chatMessage"]);
+      var chatMessage = model.sendMessageModelFromJson(data["chatMessage"]);
       showOrUpdateOrCancelNotification(jid, chatMessage);
     });
     Mirrorfly.onGroupDeletedLocally.listen(onGroupDeletedLocally);
@@ -794,7 +818,7 @@ class BaseController {
 
   static void onMessageReceived(chatMessage) {
     LogMessage.d("flutter onMessageReceived", chatMessage.toString());
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(chatMessage);
+    model.ChatMessageModel chatMessageModel = model.sendMessageModelFromJson(chatMessage);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       // debugPrint("basecontroller ChatController registered");
       Get.find<ChatController>(tag: controllerTag)
@@ -820,7 +844,7 @@ class BaseController {
   }
 
   static void onMessageStatusUpdated(event) {
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    model.ChatMessageModel chatMessageModel = model.sendMessageModelFromJson(event);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag)
           .onMessageStatusUpdated(chatMessageModel);
@@ -849,7 +873,7 @@ class BaseController {
   }
 
   static void onMediaStatusUpdated(event) {
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    model.ChatMessageModel chatMessageModel = model.sendMessageModelFromJson(event);
     LogMessage.d("Media Status Updated", chatMessageModel.toJson());
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag)
@@ -1022,7 +1046,7 @@ class BaseController {
 
   static void onGroupNotificationMessage(event) {
     debugPrint('onGroupNotificationMessage $event');
-    ChatMessageModel chatMessageModel = sendMessageModelFromJson(event);
+    model.ChatMessageModel chatMessageModel = model.sendMessageModelFromJson(event);
     if (SessionManagement.getCurrentChatJID() ==
         chatMessageModel.chatUserJid.checkNull()) {
       debugPrint("Message Received group chat screen is in online");
@@ -1049,7 +1073,7 @@ class BaseController {
   }
 
   static Future<void> showOrUpdateOrCancelNotification(
-      String jid, ChatMessageModel chatMessage) async {
+      String jid, model.ChatMessageModel chatMessage) async {
     if (SessionManagement.getCurrentChatJID() ==
             chatMessage.chatUserJid.checkNull() ||
         chatMessage.isMessageEdited.value.checkNull()) {
@@ -1432,7 +1456,7 @@ class BaseController {
 
   void onSuccess(result) {}
 
-  Future<void> showLocalNotification(ChatMessageModel chatMessageModel) async {
+  Future<void> showLocalNotification(model.ChatMessageModel chatMessageModel) async {
     debugPrint("showing local notification");
     var isUserMuted =
         await Mirrorfly.isChatMuted(jid: chatMessageModel.chatUserJid);
@@ -1657,8 +1681,8 @@ class BaseController {
 
   //#editMessage
   static void onMessageEdited(editedChatMessage) {
-    ChatMessageModel chatMessageModel =
-        sendMessageModelFromJson(editedChatMessage);
+    model.ChatMessageModel chatMessageModel =
+    model.sendMessageModelFromJson(editedChatMessage);
     if (Get.isRegistered<ChatController>(tag: controllerTag)) {
       Get.find<ChatController>(tag: controllerTag)
           .onMessageEdited(chatMessageModel);

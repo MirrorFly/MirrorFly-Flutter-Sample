@@ -30,17 +30,34 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     super.onInit();
   }
 
-  void muteAudio() {
-    muted.value = !muted.value;
+  void muteAudio() async {
+    // muted.value = !muted.value;
+    print("[MirrorFly] muteAudio start");
+    final bool isMuted = await MirrorflyCallKit.getIsMicrophoneEnabled();
+    print("[MirrorFly] existing mute status : $isMuted");
+    MirrorflyCallKit.toggleMicrophone(result: (result) {
+      print("[MirrorFly] toggleMicrophone result : $result");
+    });
   }
 
-  void videoMute() {
-    videoMuted.value = !videoMuted.value;
+  void videoMute() async {
+    // videoMuted.value = !videoMuted.value;
+    print("[MirrorFly] videoMute start");
+    final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
+    print("[MirrorFly] existing isVideoMute status : $isVideoMute");
+    MirrorflyCallKit.toggleMicrophone(result: (result) {
+      print("[MirrorFly] toggleMicrophone result : $result");
+    });
   }
 
-  void switchCamera() {
-    NavUtils.toNamed(Routes.callKitOnGoingCallView, );
-
+  void switchCamera() async {
+    // NavUtils.toNamed(Routes.callKitOnGoingCallView);
+    print("[MirrorFly] switchCamera start");
+    var pos = await MirrorflyCallKit.getCurrentCameraPosition();
+    print("[MirrorFly] existing pos : $pos");
+    MirrorflyCallKit.switchCameraPosition(result: (result) {
+      print("[MirrorFly] switchCameraPosition result : $result");
+    });
   }
 
   void changeSpeaker() {
