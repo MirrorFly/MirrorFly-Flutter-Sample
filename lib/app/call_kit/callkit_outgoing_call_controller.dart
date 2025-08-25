@@ -7,7 +7,7 @@ import '../routes/route_settings.dart';
 
 class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
   /// Observables
-  var callStatus = "Calling...".obs;
+  var callStatus = "Trying to connect...".obs;
   var callType = "audio".obs; // "audio" or "video"
   var muted = false.obs;
   var videoMuted = false.obs;
@@ -31,17 +31,19 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void updateCallStatus({required FlyCallStatus status}) {
     switch (status) {
       case FlyCallStatus.ringing:
-       callStatus("Ringing");
+       callStatus("Ringing...");
       case FlyCallStatus.connecting:
-        callStatus("Trying to connect");
+        callStatus("Calling...");
       case FlyCallStatus.reconnecting:
-        callStatus("Trying to reconnecting");
+        callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
-      callStatus("Trying to connect");
+      callStatus("Trying to connect...");
       case FlyCallStatus.disconnected:
         callStatus("Disconnected");
       case FlyCallStatus.callTimeout:
         callStatus("Trying to timeout");
+      case FlyCallStatus.rejected:
+        callStatus("Call Declined");
       default:
         print("[MirrorFly] Unknown Call Status: $status");
     }
@@ -55,6 +57,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       NavUtils.back();
     } else if (status == FlyCallStatus.disconnected) {
       toToast("Call Disconnected");
+      NavUtils.back();
+    } else if (status == FlyCallStatus.rejected) {
+      toToast("Call Declined");
       NavUtils.back();
     }
   }

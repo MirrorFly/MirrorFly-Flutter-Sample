@@ -37,10 +37,24 @@ class CallKitOnGoingCallController extends GetxController with GetTickerProvider
     speakerOn.value = !speakerOn.value;
   }
 
-  void disconnectCall() {
-    NavUtils.back();
-    NavUtils.back();
-    // TODO: end call
+  void disconnectCall() async {
+    print("[MirrorFly]  disconnectCall invoked...");
+    try {
+      var result = await MirrorflyCallKit.localHangup();
+      print("[MirrorFly] localHangup() result: $result");
+
+      if (result == true) {
+        print("[MirrorFly]  Call disconnected successfully. Navigating back...");
+        NavUtils.back();
+        NavUtils.back();
+      } else {
+        print("[MirrorFly]  Call disconnect failed. Retrying or handling failure...");
+        // you can show a snackbar or retry logic here
+      }
+    } catch (e, stack) {
+      print("[MirrorFly]  Exception in disconnectCall: $e");
+      print(stack);
+    }
   }
 
   void goToPIP() {
