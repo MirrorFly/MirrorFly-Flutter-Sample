@@ -102,6 +102,13 @@ class BaseController {
         if (flyCallStatus == FlyCallStatus.disconnected) {
           // Disconnected (show toast & PopBack)
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
+        }
+
+        if (flyCallStatus == FlyCallStatus.rejected) {
+          // Rejected by remote user (show toast & PopBack)
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.reconnecting) {
