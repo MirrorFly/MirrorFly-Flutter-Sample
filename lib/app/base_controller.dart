@@ -61,7 +61,15 @@ class BaseController {
 
     ///
     MirrorflyCallKit.callStatusStream.listen((callStatus) {
+
       print("[MirrorFly] MirrorflyCallKit.callStatusStream - CallStatusEvent: ${callStatus.toJson()}");
+      final CallStatusEvent callStatusEvent = callStatus;
+      final FlyCallStatus flyCallStatus = callStatusEvent.callStatus;
+
+      if (flyCallStatus == FlyCallStatus.connecting) {
+        NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {
+        });
+      }
     });
 
     ///
