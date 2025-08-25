@@ -19,10 +19,14 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   @override
   Future<void> onInit() async{
     // TODO: implement onInit
-    if (NavUtils.arguments != null) {
-      users.value = NavUtils.arguments?["userJid"] as List<String?>;
-      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
-    }
+    // if (NavUtils.arguments != null) {
+    //   users.value = NavUtils.arguments?["userJid"] as List<String?>;
+    //   cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
+    // }
+    // FlyCallUpdates.instance.statusStream.listen((event) {
+    //   callStatus.value = event.callStatus.name; // update observable
+    //   print("📞 CallStatus: ${event.callStatus}, reason: ${event.reason}");
+    // });
     super.onInit();
   }
 
@@ -36,17 +40,34 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       });
     }
 
+    void muteAudio() async {
+    // muted.value = !muted.value;
+    print("[MirrorFly] muteAudio start");
+    final bool isMuted = await MirrorflyCallKit.getIsMicrophoneEnabled();
+    print("[MirrorFly] existing mute status : $isMuted");
+    MirrorflyCallKit.toggleMicrophone(result: (result) {
+      print("[MirrorFly] toggleMicrophone result : $result");
+    });
   }
 
-  void muteAudio() {
-    muted.value = !muted.value;
+  void videoMute() async {
+    // videoMuted.value = !videoMuted.value;
+    print("[MirrorFly] videoMute start");
+    final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
+    print("[MirrorFly] existing isVideoMute status : $isVideoMute");
+    MirrorflyCallKit.toggleMicrophone(result: (result) {
+      print("[MirrorFly] toggleMicrophone result : $result");
+    });
   }
 
-  void videoMute() {
-    videoMuted.value = !videoMuted.value;
-  }
-
-  void switchCamera() {
+  void switchCamera() async {
+    // NavUtils.toNamed(Routes.callKitOnGoingCallView);
+    print("[MirrorFly] switchCamera start");
+    var pos = await MirrorflyCallKit.getCurrentCameraPosition();
+    print("[MirrorFly] existing pos : $pos");
+    MirrorflyCallKit.switchCameraPosition(result: (result) {
+      print("[MirrorFly] switchCameraPosition result : $result");
+    });
   }
 
   void changeSpeaker() {

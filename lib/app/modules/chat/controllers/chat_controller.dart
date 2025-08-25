@@ -4044,15 +4044,21 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
-          Mirrorfly.makeLiveKitAudioCall(
+          final bool result = await Mirrorfly.makeLiveKitAudioCall(
               flyCallback: (_) {},
-              callersId: [profile.jid!,],
+              callersId: [
+                profile.jid!,
+              ],
               //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
               chatId: '');
-          NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-            "userJid": [profile.jid],
-            "callType": CallType.audio
-          });
+          if (result) {
+            NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+              "userJid": [profile.jid],
+              "callType": CallType.audio
+            });
+          } else {
+            debugPrint("[MirrorFly] CF not connected");
+          }
         }
       } else {
         debugPrint("permission not given");
