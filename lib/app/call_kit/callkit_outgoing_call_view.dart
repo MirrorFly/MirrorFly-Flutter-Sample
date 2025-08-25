@@ -6,6 +6,7 @@ import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
 import '../call_modules/ripple_animation_view.dart';
 import '../data/helper.dart';
+import '../data/session_management.dart';
 import '../extensions/extensions.dart';
 import 'callkit_outgoing_call_controller.dart';
 
@@ -82,30 +83,39 @@ class CallKitOutgoingCallView
 
                 const Spacer(),
 
-                /// Mini Self Preview (like WhatsApp)
-                // Align(
-                //   alignment: Alignment.centerRight,
-                //   child: Container(
-                //     margin: const EdgeInsets.all(16.0),
-                //     height: 120,
-                //     width: 96,
-                //     decoration: const BoxDecoration(
-                //       borderRadius: BorderRadius.all(Radius.circular(16.0)),
-                //       boxShadow: [
-                //         BoxShadow(
-                //           offset: Offset(0, 8),
-                //           blurRadius: 20,
-                //           color: Colors.black38,
-                //         ),
-                //       ],
-                //       image: DecorationImage(
-                //         fit: BoxFit.cover,
-                //         image: NetworkImage(
-                //             "https://i.postimg.cc/0Q0n66Ff/call-bg.png"),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                Obx(() {
+                  if (!controller.isOnGoingCallViewEnable.value) {
+                    return const SizedBox.shrink(); // don't show anything
+                  }
+
+                  // Show MirrorFlyCallView for local preview
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: const EdgeInsets.all(16.0),
+                      height: 120,
+                      width: 96,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0, 8),
+                            blurRadius: 20,
+                            color: Colors.black38,
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: MirrorFlyCallView(
+                          key: UniqueKey(),
+                          participantIdentity: SessionManagement.getUserJID().checkNull(),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+
 
                 /// Control Buttons
                 Padding(
@@ -154,7 +164,7 @@ class CallKitOutgoingCallView
                 Padding(
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: InkWell(
-                    onTap: controller.disconnectCall,
+                    onTap: controller.localHangup,
                     child: Container(
                       height: 72,
                       width: 72,
@@ -183,17 +193,20 @@ class CallKitOutgoingCallView
   }
 
   Widget _buildCallOption({required Widget icon, required VoidCallback onTap}) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 56,
-        width: 56,
-        decoration: const BoxDecoration(
-          color: Colors.white10,
-          shape: BoxShape.circle,
+    return Obx(() => Visibility(
+      visible: controller.isIconEnable.value,
+      child: InkWell(
+        onTap: controller.isIconEnable.value ?  onTap : null,
+        child: Container(
+          height: 56,
+          width: 56,
+          decoration: const BoxDecoration(
+            color: Colors.white10,
+            shape: BoxShape.circle,
+          ),
+          child: Center(child: icon),
         ),
-        child: Center(child: icon),
       ),
-    );
+    ));
   }
 }

@@ -78,7 +78,7 @@ class BaseController {
           // After attended
           print(
               "[MirrorFly] [BaseController] MirrorflyCallKit.connecting - CallStatusEvent: ${callStatus.toJson()}");
-          NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {});
+          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         ///
@@ -90,6 +90,7 @@ class BaseController {
         if (flyCallStatus == FlyCallStatus.ringing) {
           // Ringing
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.callTimeout) {

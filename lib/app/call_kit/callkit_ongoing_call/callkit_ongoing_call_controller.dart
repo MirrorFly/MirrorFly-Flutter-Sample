@@ -21,8 +21,25 @@ class CallKitOnGoingCallController extends GetxController with GetTickerProvider
 
 
   /// 🔹 Placeholder methods
-  void muteAudio() {
-    muted.value = !muted.value;
+  void muteAudio() async {
+    print("[MirrorFly] muteAudio start");
+    // 1. Get current mic status
+    // final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
+    // print("[MirrorFly] muteAudio existing mic enabled : $isMicEnabled");
+
+    // 2. Toggle microphone
+    MirrorflyCallKit.toggleMicrophone(result: (result) async {
+      print("[MirrorFly] muteAudio toggleMicrophone result : $result");
+
+      // 3. Update observable based on what mic will become
+      if (result) {
+        final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
+        print("[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
+        muted.value = !isMicEnabled; // if mic is enabled -> muted = false, if disabled -> muted = true
+      } else {
+        print("[MirrorFly] muteAudio failure toggleMicrophone result : $result");
+      }
+    });
   }
 
   void videoMute() {

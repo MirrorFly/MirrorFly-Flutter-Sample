@@ -40,7 +40,7 @@ class CallKitOngoingCallView
                                           ),
                       )
                       : const Center(
-                    child: Icon(Icons.call,
+                    child: Icon(Icons.abc,
                         size: 80, color: Colors.white),
                   );
                 }),

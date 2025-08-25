@@ -12,6 +12,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var muted = false.obs;
   var videoMuted = false.obs;
   var speakerOn = false.obs;
+  var isIconEnable = false.obs;
+  var isOnGoingCallViewEnable = false.obs;
   var users = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
 
@@ -47,6 +49,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     }
   }
 
+
+
   ///
   void updateCallAction({required FlyCallStatus status}) async{
     if (status == FlyCallStatus.callTimeout) {
@@ -56,7 +60,22 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     } else if (status == FlyCallStatus.disconnected) {
       toToast("Call Disconnected");
       NavUtils.back();
+    }else if(status == FlyCallStatus.ringing){
+      print("[MirrorFly] isRinging");
+      isReadyIconEnable();
+    }else if(status == FlyCallStatus.connecting){
+      print("[MirrorFly] isConnecting");
+      isOnGoingCallView();
     }
+  }
+
+  void isOnGoingCallView() async{
+    isOnGoingCallViewEnable.value = true;
+  }
+
+  void isReadyIconEnable() async{
+    print("[MirrorFly] isReadyIconEnable");
+    isIconEnable.value = true;
   }
 
   Future<void> handleTimeOutDisconnect() async{
@@ -67,19 +86,20 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     print("[MirrorFly] muteAudio start");
 
     // 1. Get current mic status
-    final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
-    print("[MirrorFly] existing mic enabled : $isMicEnabled");
+    // final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
+    // print("[MirrorFly] muteAudio existing mic enabled : $isMicEnabled");
 
     // 2. Toggle microphone
-    MirrorflyCallKit.toggleMicrophone(result: (result) {
-      print("[MirrorFly] toggleMicrophone result : $result");
+    MirrorflyCallKit.toggleMicrophone(result: (result) async {
+      print("[MirrorFly] muteAudio toggleMicrophone result : $result");
 
       // 3. Update observable based on what mic will become
       if (result) {
-        muted.value = !result; // if mic is enabled -> muted = false, if disabled -> muted = true
+        final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
+        print("[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
+        muted.value = !isMicEnabled; // if mic is enabled -> muted = false, if disabled -> muted = true
       } else {
-        // fallback in case result isn't bool
-        muted.value = !isMicEnabled;
+        print("[MirrorFly] muteAudio failure toggleMicrophone result : $result");
       }
     });
   }
@@ -109,7 +129,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     speakerOn.value = !speakerOn.value;
   }
 
-  void disconnectCall() async {
+  void localHangup() async {
     print("[MirrorFly]  disconnectCall invoked...");
 
     try {
