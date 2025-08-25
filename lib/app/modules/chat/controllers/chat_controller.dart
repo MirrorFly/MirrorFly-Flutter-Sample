@@ -4049,6 +4049,10 @@ class ChatController extends FullLifeCycleController
               callersId: [profile.jid!,],
               //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
               chatId: '');
+          NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+            "userJid": [profile.jid],
+            "callType": CallType.audio
+          });
         }
       } else {
         debugPrint("permission not given");
