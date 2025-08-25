@@ -19,10 +19,10 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   @override
   Future<void> onInit() async{
     // TODO: implement onInit
-    // if (NavUtils.arguments != null) {
-    //   users.value = NavUtils.arguments?["userJid"] as List<String?>;
-    //   cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
-    // }
+    if (NavUtils.arguments != null) {
+      users.value = NavUtils.arguments?["userJid"] as List<String?>;
+      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
+    }
     // FlyCallUpdates.instance.statusStream.listen((event) {
     //   callStatus.value = event.callStatus.name; // update observable
     //   print("📞 CallStatus: ${event.callStatus}, reason: ${event.reason}");
@@ -36,9 +36,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
     if (event.callStatus.name.toLowerCase() == "connecting") {
       NavUtils.toNamed(Routes.callKitOnGoingCallView, arguments: {
-
       });
     }
+  }
 
     void muteAudio() async {
     // muted.value = !muted.value;

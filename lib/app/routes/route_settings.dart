@@ -256,7 +256,7 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.callKitOnGoingCallView:
       return MaterialPageRoute(
           builder: (_) =>
-              CallKitOnGoingCallView(),
+              CallKitOngoingCallView(),
           settings: settings);
 
     default:
