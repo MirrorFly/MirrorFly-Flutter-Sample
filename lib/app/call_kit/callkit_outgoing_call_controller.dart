@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../routes/route_settings.dart';
 
@@ -24,6 +25,10 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var localParticipantId = "".obs;
   var remoteParticipantId = "".obs; // Temp for now as we do only 1-1 calls
 
+  ///
+  var mainCallViewUserId = "".obs;
+  var secondaryCallViewUserId = "".obs;
+
   @override
   Future<void> onInit() async {
     // TODO: implement onInit
@@ -37,6 +42,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         isOnGoingCallView();
         isReadyIconEnable();
       }
+
+      updateUserId();
     }
     print("[MirrorFly] callview");
     super.onInit();
@@ -44,6 +51,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   ///
   void updateCallStatus({required FlyCallStatus status}) {
+    print("[MirrorFly] [Call Outgoing call controller] Call Status Updated: $status");
     switch (status) {
       case FlyCallStatus.ringing:
         callStatus("Ringing...");
@@ -82,6 +90,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void connecting() {
     callStatus("Connected");
     isOnGoingCallView();
+    updateUserId();
   }
 
   void disconnect() {
@@ -196,5 +205,22 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
       }
     }
+  }
+
+  void updateUserId() {
+    print("[MirrorFly] [MirrorFlyCall] updateUserId called with isIncoming: $isIncoming, callerUsersId: $callerUsersId");
+    if (isIncoming.value) {
+      mainCallViewUserId(callerUsersId.first);
+      if (callerUsersId.length > 1) {
+        secondaryCallViewUserId(callerUsersId.last);
+      }
+    } else {
+      mainCallViewUserId(SessionManagement.getUserJID());
+      if (callerUsersId.isNotEmpty) {
+        mainCallViewUserId(callerUsersId.first);
+        secondaryCallViewUserId(SessionManagement.getUserJID());
+      }
+    }
+    print("[MirrorFly] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
   }
 }

@@ -26,7 +26,7 @@ class CallKitOutgoingCallView
         fit: StackFit.expand,
         children: [
           /// 🔹 Background: video or placeholder
-          Obx(() => _buildCallBackground()),
+          Obx(() => _buildCallMainView()),
 
           /// 🔹 Gradient overlay
           _buildGradientOverlay(),
@@ -67,29 +67,33 @@ class CallKitOutgoingCallView
   }
 
   /// ============================================================
-  /// 🔹 Call Background (Video or Loading)
-  Widget _buildCallBackground() {
+  /// 🔹 Call Main View (Video or Audio)
+  ///
+  Widget _buildCallMainView() {
     final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
 
     if (!isVideoCall) {
       return _getAudioCallView();
     }
 
-      return _getVideoCallView("919000000008@xmpp-uikit-qa.contus.us", "Large");
-    // }
-
-    // Waiting for tracks
-    return _loadingVideoContainer();
+    print("[MirrorFly] [MirrorFlyCall] isVideoCall: $isVideoCall "
+        "controller call Type: ${controller.callType.value.toUpperCase()} "
+        "controller.mainCallViewUserId.value ${controller.mainCallViewUserId.value}");
+    return _getVideoCallView(controller.mainCallViewUserId.value, "Large");
   }
 
   /// 🔹 Local Preview (Video / Profile Pic for audio)
   Widget _buildLocalPreviewOrProfile() {
     final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
 
+    print("[MirrorFly] [MirrorFlyCall] isVideoCall: $isVideoCall controller call Type: ${controller.callType.value.toUpperCase()}");
+
     if (isVideoCall) {
+      print("[MirrorFly] [MirrorFlyCall] controller.isLocalTracksPublished.value ${controller.isLocalTracksPublished.value}");
+      print("[MirrorFly] [MirrorFlyCall] controller.isRemoteTracksPublished.value ${controller.isRemoteTracksPublished.value}");
       if (controller.isLocalTracksPublished.value &&
           controller.isRemoteTracksPublished.value) {
-        return _buildVideoPreview(controller.localParticipantId.value);
+        return _buildVideoPreview(controller.secondaryCallViewUserId.value);
       }
       return const Offstage();
     }
@@ -119,7 +123,7 @@ class CallKitOutgoingCallView
     // if (participantId == controller.localParticipantId.value) {
     //   // Local participant
     //   print("[MirrorFly] [MirrorFlyCall] Returning LOCAL video view for $participantId");
-      return MirrorFlyCallView(key: UniqueKey(),participantIdentity: participantId);
+      return MirrorFlyCallView(key: UniqueKey(),userJID: participantId);
     // } else {
     //   // Remote participant
     //   print("[MirrorFly] [MirrorFlyCall] Returning REMOTE video view for $participantId");
@@ -148,7 +152,7 @@ class CallKitOutgoingCallView
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16.0),
-          child: _getVideoCallView("919000000009@xmpp-uikit-qa.contus.us", "Small"),
+          child: _getVideoCallView(participantId, "Small"),
         ),
       ),
     );
