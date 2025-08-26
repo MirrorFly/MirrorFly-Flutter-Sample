@@ -29,12 +29,10 @@ class CallKitOutgoingCallView
           /// 🔹 Background (network image or MirrorFly video view)
           Obx(() {
             if (controller.callType.value.toUpperCase() != "AUDIO") {
-              print("unhandlecallAudiocall");
               return  MirrorFlyCallView(
                 participantIdentity: controller.isOnGoingCallViewEnable.value ? controller.callerUsersId[0]! : SessionManagement.getUserJID().checkNull(),
               );
             } else {
-              print("unhandlecallAudiocall1 ${controller.isOnGoingCallViewEnable.value} ${controller.callerUsersId[0]!} ${SessionManagement.getUserJID()}");
               return RipplesAnimation(onPressed: () {  }, child: FutureBuilder(
                   future: getProfileDetails(
                       controller.isOnGoingCallViewEnable.value ? controller.callerUsersId[0]! : SessionManagement.getUserJID().checkNull()),
@@ -73,7 +71,6 @@ class CallKitOutgoingCallView
             child: Column(
               children: [
                 const SizedBox(height: 40),
-
                 /// Call Status
                 Obx(() => Text(
                   controller.callStatus.value,
@@ -143,53 +140,46 @@ class CallKitOutgoingCallView
 
                 /// Control Buttons
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 32.0, vertical: 16.0),
-                  child: Row(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                  child: Obx(() => Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildCallOption(
-                        icon: Obx(() => Icon(
-                          controller.speakerOn.value
-                              ? Icons.volume_up
-                              : Icons.hearing,
+                        icon: Icon(
+                          controller.speakerOn.value ? Icons.volume_up : Icons.hearing,
                           color: Colors.white,
-                        )),
+                        ),
                         onTap: controller.changeSpeaker,
                       ),
                       _buildCallOption(
-                        icon: Obx(() => Icon(
-                          controller.muted.value
-                              ? Icons.mic_off
-                              : Icons.mic,
+                        icon: Icon(
+                          controller.muted.value ? Icons.mic_off : Icons.mic,
                           color: Colors.white,
-                        )),
+                        ),
                         onTap: controller.muteAudio,
                       ),
-                      Obx(() {
-                        if (controller.callType.value == CallType.video) {
-                          return _buildCallOption(
-                            icon: Icon(
-                              controller.videoMuted.value
-                                  ? Icons.videocam_off
-                                  : Icons.videocam,
-                              color: Colors.white,
-                            ),
-                            onTap: controller.videoMute,
-                          );
-                        } else {
-                          return const SizedBox.shrink(); // hide for audio calls
-                        }
-                      }),
 
-                      _buildCallOption(
-                        icon: const Icon(Icons.switch_camera,
-                            color: Colors.white),
-                        onTap: controller.switchCamera,
-                      ),
+                      // Add these only if video call
+                      if (controller.callType.value == CallType.video)
+                        _buildCallOption(
+                          icon: Icon(
+                            controller.videoMuted.value
+                                ? Icons.videocam_off
+                                : Icons.videocam,
+                            color: Colors.white,
+                          ),
+                          onTap: controller.videoMute,
+                        ),
+
+                      if (controller.callType.value == CallType.video)
+                        _buildCallOption(
+                          icon: const Icon(Icons.switch_camera, color: Colors.white),
+                          onTap: controller.switchCamera,
+                        ),
                     ],
-                  ),
+                  )),
                 ),
+
 
                 /// End Call Button
                 Padding(
@@ -224,20 +214,17 @@ class CallKitOutgoingCallView
   }
 
   Widget _buildCallOption({required Widget icon, required VoidCallback onTap}) {
-    return Obx(() => Visibility(
-      visible: controller.isIconEnable.value,
-      child: InkWell(
-        onTap: controller.isIconEnable.value ?  onTap : null,
-        child: Container(
-          height: 56,
-          width: 56,
-          decoration: const BoxDecoration(
-            color: Colors.white10,
-            shape: BoxShape.circle,
-          ),
-          child: Center(child: icon),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 56,
+        width: 56,
+        decoration: const BoxDecoration(
+          color: Colors.white10,
+          shape: BoxShape.circle,
         ),
+        child: Center(child: icon),
       ),
-    ));
+    );
   }
 }

@@ -62,19 +62,24 @@ class BaseController {
     String? callType;
     String? callerId;
 
-    MirrorflyCallKit.incomingAcceptStream.listen((callStatus) {
-      final IncomingCallAcceptStatusEvent incomingCallStatusEvent = callStatus;
-      final FlyCallAction flyCallStatus = incomingCallStatusEvent.callStatus;
 
-      // If incoming call, store callerId & callType
-      if (flyCallStatus == FlyCallAction.incomingCall) {
-        callerId = incomingCallStatusEvent.callerId;
-        callType = incomingCallStatusEvent.callType;
+    MirrorflyCallKit.callActionStream.listen((callAction) {
+      final CallActionEvent callActionActionEvent = callAction;
+      final FlyCallAction flyCallAction = callActionActionEvent.callAction;
+      if (flyCallAction == FlyCallAction.incomingCall) {
+        callerId = callActionActionEvent.participantId;
+        callType = callActionActionEvent.callType;
         print("[MirrorFly] Cached callerId=$callerId callType=$callType");
       }
+      if (Get.isRegistered<CallKitOutgoingCallController>()) {
+        final CallKitOutgoingCallController callKitOutgoingCallController =
+        Get.find<CallKitOutgoingCallController>();
+        if(flyCallAction == FlyCallAction.denyCall){
 
-      // If answered, navigate with the cached values
-      if (flyCallStatus == FlyCallAction.answerCall) {
+        }
+
+      }
+      if (flyCallAction == FlyCallAction.answerCall) {
         print("incoming call action recieve");
         if (callerId != null && callType != null) {
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
@@ -91,8 +96,8 @@ class BaseController {
         }
       }
 
-
-      print("[MirrorFly] [BaseController] callStatusStream -> ${callStatus.toJson()}");
+      print(
+          "[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
     });
 
     ///
@@ -113,7 +118,7 @@ class BaseController {
           // After attended
           print(
               "[MirrorFly] [BaseController] MirrorflyCallKit.connecting - CallStatusEvent: ${callStatus.toJson()}");
-          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
         }
 
         ///
@@ -125,25 +130,21 @@ class BaseController {
         if (flyCallStatus == FlyCallStatus.ringing) {
           // Ringing
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.callTimeout) {
           // Time out (show toast & PopBack)
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.disconnected) {
           // Disconnected (show toast & PopBack)
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.rejected) {
           // Rejected by remote user (show toast & PopBack)
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-          callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
         }
 
         if (flyCallStatus == FlyCallStatus.reconnecting) {
@@ -161,11 +162,8 @@ class BaseController {
       }
     });
 
-    ///
-    MirrorflyCallKit.callActionStream.listen((callAction) {
-      print(
-          "[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
-    });
+
+
 
     ///
     MirrorflyCallKit.participantStream.listen((participantStream) {

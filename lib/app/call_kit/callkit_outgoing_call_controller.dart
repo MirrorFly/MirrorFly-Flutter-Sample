@@ -5,7 +5,8 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../data/utils.dart';
 import '../routes/route_settings.dart';
 
-class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
+class CallKitOutgoingCallController extends GetxController
+    with GetTickerProviderStateMixin {
   /// Observables
   var callStatus = "Trying to connect...".obs;
   var callType = "".obs; // "audio" or "video"
@@ -18,9 +19,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
 
-
   @override
-  Future<void> onInit() async{
+  Future<void> onInit() async {
     // TODO: implement onInit
     print("[MirrorFly] callviewinit");
     if (NavUtils.arguments != null) {
@@ -43,15 +43,15 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.ringing:
         callStatus("Ringing...");
       case FlyCallStatus.connecting:
-        callStatus("Connected");
+        connecting();
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
         callStatus("Connected");
       case FlyCallStatus.disconnected:
-        callStatus("Disconnected");
+        disconnect();
       case FlyCallStatus.callTimeout:
-        callStatus("Trying to timeout");
+        callTimeOut();
       case FlyCallStatus.rejected:
         callStatus("Call Declined");
       default:
@@ -60,36 +60,43 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   ///
-  void updateCallAction({required FlyCallStatus status}) async{
-    if (status == FlyCallStatus.callTimeout) {
-      toToast("Call Timeout");
-      await handleTimeOutDisconnect();
-      NavUtils.back();
-    } else if (status == FlyCallStatus.disconnected) {
+
+  void callTimeOut() async {
+    callStatus("Trying to timeout");
+    toToast("Call Timeout");
+    await handleTimeOutDisconnect();
+    NavUtils.back();
+  }
+
+  void rejected() {
+    toToast("Call Declined");
+    NavUtils.back();
+  }
+
+  void ringing() {}
+  void connecting() {
+    callStatus("Connected");
+    isOnGoingCallView();
+  }
+
+  void disconnect() {
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      callStatus("Disconnected");
       toToast("Call Disconnected");
       NavUtils.back();
-    } else if (status == FlyCallStatus.rejected) {
-      toToast("Call Declined");
-      NavUtils.back();
-    }else if(status == FlyCallStatus.ringing){
-      print("[MirrorFly] isRinging");
-      isReadyIconEnable();
-    }else if(status == FlyCallStatus.connecting){
-      print("[MirrorFly] isConnecting");
-      isOnGoingCallView();
     }
   }
 
-  void isOnGoingCallView() async{
+  void isOnGoingCallView() async {
     isOnGoingCallViewEnable.value = true;
   }
 
-  void isReadyIconEnable() async{
+  void isReadyIconEnable() async {
     print("[MirrorFly] isReadyIconEnable");
     isIconEnable.value = true;
   }
 
-  Future<void> handleTimeOutDisconnect() async{
+  Future<void> handleTimeOutDisconnect() async {
     await MirrorflyCallKit.liveKitCore.ops.disconnectCall();
   }
 
@@ -106,15 +113,18 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
       // 3. Update observable based on what mic will become
       if (result) {
-        final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
-        print("[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
-        muted.value = !isMicEnabled; // if mic is enabled -> muted = false, if disabled -> muted = true
+        final bool isMicEnabled =
+            await MirrorflyCallKit.getIsMicrophoneEnabled();
+        print(
+            "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
+        muted.value =
+            !isMicEnabled; // if mic is enabled -> muted = false, if disabled -> muted = true
       } else {
-        print("[MirrorFly] muteAudio failure toggleMicrophone result : $result");
+        print(
+            "[MirrorFly] muteAudio failure toggleMicrophone result : $result");
       }
     });
   }
-
 
   void videoMute() async {
     // videoMuted.value = !videoMuted.value;
@@ -147,10 +157,13 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       print("[MirrorFly] localHangup() result: $result");
 
       if (result == true) {
-        print("[MirrorFly]  Call disconnected successfully. Navigating back...");
+        print(
+            "[MirrorFly]  Call disconnected successfully. Navigating back...");
         NavUtils.back();
       } else {
-        print("[MirrorFly]  Call disconnect failed. Retrying or handling failure...");
+        NavUtils.back();
+        print(
+            "[MirrorFly]  Call disconnect failed. Retrying or handling failure...");
         // you can show a snackbar or retry logic here
       }
     } catch (e, stack) {
@@ -158,5 +171,4 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       print(stack);
     }
   }
-
 }
