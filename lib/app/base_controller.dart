@@ -114,6 +114,7 @@ class BaseController {
           print(
               "[MirrorFly] [BaseController] MirrorflyCallKit.connecting - CallStatusEvent: ${callStatus.toJson()}");
           callKitOutgoingCallController.updateCallAction(status: flyCallStatus);
+          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
         }
 
         ///
@@ -163,15 +164,46 @@ class BaseController {
 
     ///
     MirrorflyCallKit.callActionStream.listen((callAction) {
+      ///
       print(
-          "[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
+          "[MirrorFly] [BaseController] MirrorflyCallKit.callActionStream - CallStatusEvent: ${callAction.toJson()}");
+
     });
 
     ///
-    MirrorflyCallKit.participantStream.listen((participantStream) {
+    MirrorflyCallKit.participantStream.listen((flyCallParticipantEvent) {
       print(
-          "[MirrorFly] MirrorflyCallKit.participantStream - participantStream: ${participantStream.toJson()}");
+          "[MirrorFly] [BaseController] MirrorflyCallKit.participantStream - participantStream: ${flyCallParticipantEvent.toJson()}");
+
+      final CallParticipantEvent callParticipantEvent = flyCallParticipantEvent;
+      final String participantId = callParticipantEvent.participantId;
+
+      /// Check for track published event
+      if (callParticipantEvent.participantEvent == FlyParticipantEvent.trackPublished) {
+        final bool isSelf = isSelfId(id: participantId);
+
+       if (Get.isRegistered<CallKitOutgoingCallController>()) {
+          final CallKitOutgoingCallController controller = Get.find<CallKitOutgoingCallController>();
+          final String id = "$participantId@xmpp-uikit-qa.contus.us";
+          controller.onTracksPublished(isSelf: isSelf, participantId: id);
+        } else {
+          print("[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
+        }
+      }
     });
+  }
+
+  static bool isSelfId({required String id}) {
+    final String? currentUserId = SessionManagement.getUserJID();
+    if (currentUserId == null) {
+      print("[MirrorFly] isSelfId: is null id=$id");
+      return true;
+    } else {
+      //
+      final String participantId = "$id@xmpp-uikit-qa.contus.us";
+      print("[MirrorFly] isSelfId: ${currentUserId == participantId}");
+      return currentUserId == participantId;
+    }
   }
 
   ///
