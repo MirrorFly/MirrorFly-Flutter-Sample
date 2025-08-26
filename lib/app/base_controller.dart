@@ -59,6 +59,41 @@ class BaseController {
 
   ///
   static void initializeCallKitListeners() {
+    String? callType;
+    String? callerId;
+
+    MirrorflyCallKit.incomingAcceptStream.listen((callStatus) {
+      final IncomingCallAcceptStatusEvent incomingCallStatusEvent = callStatus;
+      final FlyCallAction flyCallStatus = incomingCallStatusEvent.callStatus;
+
+      // If incoming call, store callerId & callType
+      if (flyCallStatus == FlyCallAction.incomingCall) {
+        callerId = incomingCallStatusEvent.callerId;
+        callType = incomingCallStatusEvent.callType;
+        print("[MirrorFly] Cached callerId=$callerId callType=$callType");
+      }
+
+      // If answered, navigate with the cached values
+      if (flyCallStatus == FlyCallAction.answerCall) {
+        print("incoming call action recieve");
+        if (callerId != null && callType != null) {
+          final jid = "$callerId@xmpp-uikit-qa.contus.us";
+          NavUtils.toNamed(
+            Routes.callKitOutGoingCallView,
+            arguments: {
+              "userJid": [jid],   // pass modified JID
+              "callType": callType,
+              "isIncoming": true,
+            },
+          );
+        } else {
+          print("[MirrorFly] ERROR: answerCall received but callerId/callType not set");
+        }
+      }
+
+
+      print("[MirrorFly] [BaseController] callStatusStream -> ${callStatus.toJson()}");
+    });
 
     ///
     MirrorflyCallKit.callStatusStream.listen((callStatus) {

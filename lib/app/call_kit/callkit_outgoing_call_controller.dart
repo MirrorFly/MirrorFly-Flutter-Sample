@@ -8,24 +8,32 @@ import '../routes/route_settings.dart';
 class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
   /// Observables
   var callStatus = "Trying to connect...".obs;
-  var callType = "audio".obs; // "audio" or "video"
+  var callType = "".obs; // "audio" or "video"
   var muted = false.obs;
   var videoMuted = false.obs;
   var speakerOn = false.obs;
   var isIconEnable = false.obs;
   var isOnGoingCallViewEnable = false.obs;
-  var users = <String?>[].obs;
+  var callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
-
+  final RxBool isIncoming = false.obs;
 
 
   @override
   Future<void> onInit() async{
     // TODO: implement onInit
+    print("[MirrorFly] callviewinit");
     if (NavUtils.arguments != null) {
-      users.value = NavUtils.arguments?["userJid"] as List<String?>;
-      cameraSwitch(NavUtils.arguments?["cameraSwitch"]);
+      callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
+      callType(NavUtils.arguments?["callType"]);
+      isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
+      print("[MirrorFly] isIncoming: $isIncoming $callType $callerUsersId");
+      if (isIncoming.value) {
+        isOnGoingCallView();
+        isReadyIconEnable();
+      }
     }
+    print("[MirrorFly] callview");
     super.onInit();
   }
 
@@ -33,13 +41,13 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void updateCallStatus({required FlyCallStatus status}) {
     switch (status) {
       case FlyCallStatus.ringing:
-       callStatus("Ringing...");
+        callStatus("Ringing...");
       case FlyCallStatus.connecting:
-        callStatus("Calling...");
+        callStatus("Connected");
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
-      callStatus("Trying to connect...");
+        callStatus("Connected");
       case FlyCallStatus.disconnected:
         callStatus("Disconnected");
       case FlyCallStatus.callTimeout:
@@ -134,7 +142,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void localHangup() async {
     print("[MirrorFly]  disconnectCall invoked...");
-
     try {
       var result = await MirrorflyCallKit.localHangup();
       print("[MirrorFly] localHangup() result: $result");

@@ -28,14 +28,16 @@ class CallKitOutgoingCallView
         children: [
           /// 🔹 Background (network image or MirrorFly video view)
           Obx(() {
-            if (controller.callType.value == "video") {
-              return const MirrorFlyCallView(
-                participantIdentity: "917530066369",
+            if (controller.callType.value.toUpperCase() != "AUDIO") {
+              print("unhandlecallAudiocall");
+              return  MirrorFlyCallView(
+                participantIdentity: controller.isOnGoingCallViewEnable.value ? controller.callerUsersId[0]! : SessionManagement.getUserJID().checkNull(),
               );
             } else {
+              print("unhandlecallAudiocall1 ${controller.isOnGoingCallViewEnable.value} ${controller.callerUsersId[0]!} ${SessionManagement.getUserJID()}");
               return RipplesAnimation(onPressed: () {  }, child: FutureBuilder(
                   future: getProfileDetails(
-                      controller.users[0]!),
+                      controller.isOnGoingCallViewEnable.value ? controller.callerUsersId[0]! : SessionManagement.getUserJID().checkNull()),
                   builder: (ctx, snap) {
                     return snap.hasData &&
                         snap.data != null
@@ -89,31 +91,53 @@ class CallKitOutgoingCallView
                   }
 
                   // Show MirrorFlyCallView for local preview
-                  return Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      margin: const EdgeInsets.all(16.0),
-                      height: 120,
-                      width: 96,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(0, 8),
-                            blurRadius: 20,
-                            color: Colors.black38,
+                  if (controller.callType.value.toUpperCase() != "AUDIO") {
+                    print("unhandlecallAudiocall2 ${SessionManagement.getUserJID()}");
+                    return Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: const EdgeInsets.all(16.0),
+                        height: 120,
+                        width: 96,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              offset: Offset(0, 8),
+                              blurRadius: 20,
+                              color: Colors.black38,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.0),
+                          child: MirrorFlyCallView(
+                            key: UniqueKey(),
+                            participantIdentity: SessionManagement.getUserJID().checkNull(),
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16.0),
-                        child: MirrorFlyCallView(
-                          key: UniqueKey(),
-                          participantIdentity: SessionManagement.getUserJID().checkNull(),
                         ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    print("unhandlecallAudiocall3 ${SessionManagement.getUserJID()}");
+                    // Audio call: show profile image
+                    return Align(
+                      alignment: Alignment.bottomRight,
+                      child: FutureBuilder(
+                        future: getProfileDetails(SessionManagement.getUserJID().checkNull()),
+                        builder: (ctx, snap) {
+                          if (snap.hasData && snap.data != null) {
+                            return buildProfileImage(
+                              snap.data!,
+                              size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width,
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    );
+                  }
                 }),
 
 
@@ -142,15 +166,22 @@ class CallKitOutgoingCallView
                         )),
                         onTap: controller.muteAudio,
                       ),
-                      _buildCallOption(
-                        icon: Obx(() => Icon(
-                          controller.videoMuted.value
-                              ? Icons.videocam_off
-                              : Icons.videocam,
-                          color: Colors.white,
-                        )),
-                        onTap: controller.videoMute,
-                      ),
+                      Obx(() {
+                        if (controller.callType.value == CallType.video) {
+                          return _buildCallOption(
+                            icon: Icon(
+                              controller.videoMuted.value
+                                  ? Icons.videocam_off
+                                  : Icons.videocam,
+                              color: Colors.white,
+                            ),
+                            onTap: controller.videoMute,
+                          );
+                        } else {
+                          return const SizedBox.shrink(); // hide for audio calls
+                        }
+                      }),
+
                       _buildCallOption(
                         icon: const Icon(Icons.switch_camera,
                             color: Colors.white),
