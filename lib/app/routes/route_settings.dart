@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
-import 'package:mirror_fly_demo/app/call_kit/callkit_ongoing_call/callkit_onging_call_view.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_outgoing_call_view.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
@@ -252,11 +251,6 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (_) =>
               CallKitOutgoingCallView(),
-          settings: settings);
-    case Routes.callKitOnGoingCallView:
-      return MaterialPageRoute(
-          builder: (_) =>
-              CallKitOngoingCallView(),
           settings: settings);
 
     default:
