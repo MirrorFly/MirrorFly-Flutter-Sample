@@ -20,7 +20,6 @@ import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_cont
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallMode, FlyCallType;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -4068,7 +4067,7 @@ class ChatController extends FullLifeCycleController
     }
   }
 
-  void makeLKVideoCall() async {
+  Future<void> makeLKVideoCall() async {
     closeKeyBoard();
     SessionManagement.setBool(Constants.layoutSwitch, true);
     if((await Mirrorfly.isOnGoingCall()).checkNull()){
@@ -4081,12 +4080,18 @@ class ChatController extends FullLifeCycleController
           NavUtils.toNamed(Routes.groupParticipants,
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
-          Mirrorfly.makeLiveKitVideoCall(
-              callersId: [profile.jid ?? ""], chatId: '', flyCallback: (FlyResponse response) {  });
-          NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-            "userJid": [profile.jid],
-            "callType": CallType.video
-          });
+          final bool result = await Mirrorfly.makeLiveKitVideoCall(
+              callersId: [profile.jid ?? ""],
+              chatId: '',
+              flyCallback: (FlyResponse response) {});
+          if (result) {
+            NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+              "userJid": [profile.jid],
+              "callType": CallType.video
+            });
+        } else {
+            toToast("CF Not connected");
+          }
         }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
