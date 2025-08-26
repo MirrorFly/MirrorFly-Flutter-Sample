@@ -5,8 +5,7 @@ import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../data/utils.dart';
 import '../routes/route_settings.dart';
 
-class CallKitOutgoingCallController extends GetxController
-    with GetTickerProviderStateMixin {
+class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
   /// Observables
   var callStatus = "Trying to connect...".obs;
   var callType = "".obs; // "audio" or "video"
@@ -18,6 +17,12 @@ class CallKitOutgoingCallController extends GetxController
   var callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
+
+  ///
+  final RxBool isLocalTracksPublished = false.obs;
+  final RxBool isRemoteTracksPublished = false.obs;
+  var localParticipantId = "".obs;
+  var remoteParticipantId = "".obs; // Temp for now as we do only 1-1 calls
 
   @override
   Future<void> onInit() async {
@@ -169,6 +174,27 @@ class CallKitOutgoingCallController extends GetxController
     } catch (e, stack) {
       print("[MirrorFly]  Exception in disconnectCall: $e");
       print(stack);
+    }
+  }
+
+  ///
+  void onTracksPublished({required bool isSelf, required String participantId}) {
+    if (isSelf) {
+      if (!isLocalTracksPublished.value) {
+        print("[MirrorFly] [MirrorFlyCall] Local tracks published for $participantId");
+        isLocalTracksPublished(true);
+        localParticipantId(participantId);
+      } else {
+        print("[MirrorFly] [MirrorFlyCall] Ignoring duplicate local publish for $participantId");
+      }
+    } else {
+      if (!isRemoteTracksPublished.value) {
+        print("[MirrorFly] [MirrorFlyCall] Remote tracks published for $participantId");
+        isRemoteTracksPublished(true);
+        remoteParticipantId(participantId);
+      } else {
+        print("[MirrorFly] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
+      }
     }
   }
 }
