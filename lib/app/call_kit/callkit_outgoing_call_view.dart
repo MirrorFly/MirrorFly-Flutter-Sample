@@ -29,10 +29,12 @@ class CallKitOutgoingCallView
           /// 🔹 Background (network image or MirrorFly video view)
           Obx(() {
             if (controller.callType.value == "video") {
-              return const MirrorFlyCallView(
-                participantIdentity: "917530066369",
+              print("[MirrorFly] CallKitOutgoingCallView - video view");
+              return MirrorFlyCallView(
+                participantIdentity: SessionManagement.getUserJID().checkNull(),
               );
             } else {
+              print("[MirrorFly] CallKitOutgoingCallView - Audio view");
               return RipplesAnimation(onPressed: () {  }, child: FutureBuilder(
                   future: getProfileDetails(
                       controller.users[0]!),
