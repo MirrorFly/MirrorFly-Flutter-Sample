@@ -129,6 +129,8 @@ class BaseController {
 
         ///
         if (flyCallStatus == FlyCallStatus.connected) {
+          print(
+              "[MirrorFly] [BaseController] MirrorflyCallKit.connected - CallStatusEvent: ${callStatus.toJson()}");
           // Trying to connect
           callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
         }
