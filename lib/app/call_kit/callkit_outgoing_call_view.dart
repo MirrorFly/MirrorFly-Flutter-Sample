@@ -243,7 +243,7 @@ class CallKitOutgoingCallView
           ),
 
           // Add these only if video call
-          if (controller.callType.value == CallType.video)
+          if (controller.callType.value.toLowerCase() == CallType.video)
             _buildCallOption(
               icon: Icon(
                 controller.videoMuted.value
@@ -254,7 +254,7 @@ class CallKitOutgoingCallView
               onTap: controller.videoMute,
             ),
 
-          if (controller.callType.value == CallType.video)
+          if (controller.callType.value.toLowerCase() == CallType.video)
             _buildCallOption(
               icon: const Icon(Icons.switch_camera, color: Colors.white),
               onTap: controller.switchCamera,
