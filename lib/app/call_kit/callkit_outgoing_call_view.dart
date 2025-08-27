@@ -292,20 +292,17 @@ class CallKitOutgoingCallView
 
   /// 🔹 Call Option Button
   Widget _buildCallOption({required Widget icon, required VoidCallback onTap}) {
-    return Obx(() => Visibility(
-      visible: controller.isIconEnable.value,
-      child: InkWell(
-        onTap: controller.isIconEnable.value ? onTap : null,
-        child: Container(
-          height: 56,
-          width: 56,
-          decoration: const BoxDecoration(
-            color: Colors.white10,
-            shape: BoxShape.circle,
-          ),
-          child: Center(child: icon),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 56,
+        width: 56,
+        decoration: const BoxDecoration(
+          color: Colors.white10,
+          shape: BoxShape.circle,
         ),
+        child: Center(child: icon),
       ),
-    ));
+    );
   }
 }

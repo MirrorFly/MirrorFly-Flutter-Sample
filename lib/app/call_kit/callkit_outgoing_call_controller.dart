@@ -13,7 +13,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var muted = false.obs;
   var videoMuted = false.obs;
   var speakerOn = false.obs;
-  var isIconEnable = false.obs;
   var isOnGoingCallViewEnable = false.obs;
   var callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
@@ -40,7 +39,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       print("[MirrorFly] isIncoming: $isIncoming $callType $callerUsersId");
       if (isIncoming.value) {
         isOnGoingCallView();
-        isReadyIconEnable();
       }
 
       updateUserId();
@@ -105,10 +103,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     isOnGoingCallViewEnable.value = true;
   }
 
-  void isReadyIconEnable() async {
-    print("[MirrorFly] isReadyIconEnable");
-    isIconEnable.value = true;
-  }
 
   Future<void> handleTimeOutDisconnect() async {
     await MirrorflyCallKit.liveKitCore.ops.disconnectCall();
