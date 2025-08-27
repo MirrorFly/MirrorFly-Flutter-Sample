@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:livekit_client/src/hardware/hardware.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -43,6 +44,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       if (isIncoming.value) {
         isOnGoingCallView();
       }
+      await setInitialAudioOutput();
 
       updateUserId();
     }
@@ -215,8 +217,69 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     });
   }
 
-  void changeSpeaker() {
-    speakerOn.value = !speakerOn.value;
+
+  Future<void> setInitialAudioOutput() async {
+    final isVideo = callType.value.toLowerCase() == "video";
+    final targetId = isVideo ? "speaker" : "earpiece";
+
+    final device = await _getAudioDevice(targetId);
+
+    if (device != null) {
+      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+        device: device,
+        toSpeaker: isVideo,
+        toEarPiece: !isVideo,
+      );
+      if(result){
+        speakerOn.value = isVideo;
+        print("[Mirrorfly] Initial audio output set to ${device.label}");
+      }else{
+        print("[Mirrorfly] Initial audio output  Error");
+      }
+
+      // update observable only after success
+
+    }
+  }
+
+  Future<FlyMediaDevice?> _getAudioDevice(String deviceId) async {
+    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
+    try {
+      final d = devices.firstWhere(
+            (d) => d.deviceId == deviceId && d.kind == "audiooutput",
+      );
+
+      // convert MediaDevice → FlyMediaDevice
+      return FlyMediaDevice(d.deviceId, d.label, d.kind, d.groupId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+
+
+
+  void changeSpeaker() async{
+    final isCurrentlySpeaker = speakerOn.value;
+    final targetId = isCurrentlySpeaker ? "earpiece" : "speaker";
+
+    final device = await _getAudioDevice(targetId);
+
+    if (device != null) {
+      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+        device: device,
+        toSpeaker: targetId == "speaker",
+        toEarPiece: targetId == "earpiece",
+      );
+      if(result){
+        speakerOn.value = (targetId == "speaker");
+        print("[Mirrorfly] Change audio output set to ${device.label}");
+      }else{
+        print("[Mirrorfly] change  audio output  Error");
+      }
+      // update only after success
+      print("[Mirrorfly] Switched to ${device.label}");
+    }
   }
 
   void localHangup() async {
