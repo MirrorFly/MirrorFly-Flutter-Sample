@@ -64,21 +64,29 @@ class BaseController {
 
 
     MirrorflyCallKit.callActionStream.listen((callAction) {
+
+      //
+      print(
+          "[MirrorFly] [BaseController] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
+
+      //
       final CallActionEvent callActionActionEvent = callAction;
       final FlyCallAction flyCallAction = callActionActionEvent.callAction;
+
       if (flyCallAction == FlyCallAction.incomingCall) {
         callerId = callActionActionEvent.participantId;
         callType = callActionActionEvent.callType;
-        print("[MirrorFly] Cached callerId=$callerId callType=$callType");
+        print("[MirrorFly] [BaseController] Cached callerId=$callerId callType=$callType");
       }
+
       if (Get.isRegistered<CallKitOutgoingCallController>()) {
         final CallKitOutgoingCallController callKitOutgoingCallController =
         Get.find<CallKitOutgoingCallController>();
-        if(flyCallAction == FlyCallAction.denyCall){
+        if(flyCallAction == FlyCallAction.denyCall) {
 
         }
-
       }
+
       if (flyCallAction == FlyCallAction.answerCall) {
         print("incoming call action recieve");
         if (callerId != null && callType != null) {
@@ -86,18 +94,16 @@ class BaseController {
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
             arguments: {
-              "userJid": [jid],   // pass modified JID
+              "userJid": [jid], // pass modified JID
               "callType": callType,
               "isIncoming": true,
             },
           );
         } else {
-          print("[MirrorFly] ERROR: answerCall received but callerId/callType not set");
+          print(
+              "[MirrorFly] [BaseController] ERROR: answerCall received but callerId/callType not set");
         }
       }
-
-      print(
-          "[MirrorFly] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
     });
 
     ///
