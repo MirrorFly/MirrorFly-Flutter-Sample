@@ -192,12 +192,15 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   void videoMute() async {
-    // videoMuted.value = !videoMuted.value;
     print("[MirrorFly] videoMute start");
-    final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
-    print("[MirrorFly] existing isVideoMute status : $isVideoMute");
-    MirrorflyCallKit.toggleMicrophone(result: (result) {
-      print("[MirrorFly] toggleMicrophone result : $result");
+    MirrorflyCallKit.toggleCamera(result: (result) async{
+      if(result){
+        final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
+        print("[MirrorFly] existing isVideoMute status : $isVideoMute");
+        videoMuted.value = !isVideoMute;
+      }else{
+        print("[MirrorFly]  Error isVideoMute status  result : $result");
+      }
     });
   }
 
