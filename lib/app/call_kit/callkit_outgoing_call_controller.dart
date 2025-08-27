@@ -117,7 +117,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.callTimeout:
         callTimeOut();
       case FlyCallStatus.rejected:
-        callStatus("Call Declined");
+        rejected();
       default:
         print("[MirrorFly] Unknown Call Status: $status");
     }
