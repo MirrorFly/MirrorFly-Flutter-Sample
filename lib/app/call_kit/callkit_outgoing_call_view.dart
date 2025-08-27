@@ -25,6 +25,33 @@ class CallKitOutgoingCallView
       body: Stack(
         fit: StackFit.expand,
         children: [
+          ///  Remote mute status indicator
+          Obx(() {
+            if (controller.isOnGoingCallViewEnable.value) {
+              return Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 70, right: 30),
+                  height: 32,
+                  width: 32,
+                  decoration: BoxDecoration(
+                    color: controller.isRemoteAudioMuted.value
+                        ? Colors.white : Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    controller.isRemoteAudioMuted.value
+                        ? Icons.mic_off
+                        : Icons.mic,
+                    color: controller.isRemoteAudioMuted.value
+                        ?Colors.red:Colors.white,
+                    size: 18,
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
           /// 🔹 Background: video or placeholder
           Obx(() => _buildCallMainView()),
 

@@ -21,6 +21,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
   RxString cameraPosition = CameraType.front.obs;
+  var isRemoteAudioMuted = false.obs;
+  var isRemoteVideoMuted = false.obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -122,6 +124,28 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] Unknown Call Status: $status");
     }
   }
+
+  void onRemoteMuteStatusChanged({
+    required FlyCallMuteType muteType,
+    required FlyCallMuteStatus muteStatus,
+    String? participantId,
+  }) {
+    switch (muteType) {
+      case FlyCallMuteType.audio:
+        isRemoteAudioMuted.value = muteStatus == FlyCallMuteStatus.muted;
+        break;
+
+      case FlyCallMuteType.video:
+        isRemoteVideoMuted.value = muteStatus == FlyCallMuteStatus.muted;
+        break;
+    }
+
+    print(
+        "[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}, videoMuted=${isRemoteVideoMuted.value}");
+  }
+
+
+
 
   ///
    void _updateCallDuration({required String duration}) {
