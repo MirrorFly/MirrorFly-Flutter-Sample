@@ -194,6 +194,32 @@ class BaseController {
         }
       }
     });
+
+    ///
+    MirrorflyCallKit.muteOperationsStream.listen((muteStatus) {
+      final MuteStatusEvent muteStatusEvent = muteStatus;
+
+      final String participantId = muteStatusEvent.userId;
+      print(
+          "[MirrorFly] muteOperationsStream => user: $participantId | self:  | type: ${muteStatusEvent.muteType} | status: ${muteStatusEvent.muteStatus}");
+      final bool isSelf = isSelfId(id: participantId);
+
+      if (isSelf) {
+        return;
+      }
+      if (Get.isRegistered<CallKitOutgoingCallController>()) {
+        final CallKitOutgoingCallController controller =
+        Get.find<CallKitOutgoingCallController>();
+
+        controller.onRemoteMuteStatusChanged(
+          participantId: participantId,
+          muteType: muteStatusEvent.muteType,
+          muteStatus: muteStatusEvent.muteStatus,
+        );
+      }
+    });
+
+
   }
 
   static bool isSelfId({required String id}) {
@@ -204,6 +230,7 @@ class BaseController {
     } else {
       //
       final String participantId = "$id@xmpp-uikit-qa.contus.us";
+      print("[Mirrorfly] isSelfId $currentUserId $participantId");
       print("[MirrorFly] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;
     }
