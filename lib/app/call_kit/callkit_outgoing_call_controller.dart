@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
@@ -27,6 +29,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   ///
   var mainCallViewUserId = "".obs;
   var secondaryCallViewUserId = "".obs;
+  Timer? timer;
 
   @override
   Future<void> onInit() async {
@@ -47,6 +50,40 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     super.onInit();
   }
 
+  void _startTimer({int? time}) {
+    if (timer != null) {
+      timer?.cancel();
+    }
+    timer = null;
+    const oneSec = Duration(seconds: 1);
+    var startTime = time != null
+        ? DateTime.fromMillisecondsSinceEpoch(time)
+        : DateTime.now();
+    timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        final hrDur = DateTime.now().difference(startTime).inHours;
+        final minDur = DateTime.now().difference(startTime).inMinutes;
+        final secDur = DateTime.now().difference(startTime).inSeconds % 60;
+        final hours = hrDur.remainder(24).toStringAsFixed(0).padLeft(2, '0');
+        final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+        final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+        var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
+        print("[MirrorFly] Timer: $time");
+        _updateCallDuration(duration: time);
+      },
+    );
+  }
+
+  void _stopTimer() {
+    if (timer == null) {
+      print("[MirrorFly] Timer is null");
+      return;
+    }
+    timer?.cancel();
+    timer = null;
+  }
+
   ///
   void updateCallStatus({required FlyCallStatus status}) {
     print("[MirrorFly] [Call Outgoing call controller] Call Status Updated: $status");
@@ -58,7 +95,19 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
-        callStatus("Connected");
+
+        /// For incoming call after the call gets connected the FlyCallStatus is connected
+        if (isIncoming.value) {
+          callStatus("Connected");
+          _startTimer();
+          print("[MirrorFly] [Call Outgoing call controller] incoming call connected status updated");
+          return;
+        } else {
+          print("[MirrorFly] [Call Outgoing call controller] not a incoming call");
+        }
+
+        /// For outgoing call after the self caller gets connected to the room the FlyCallStatus is connected
+        callStatus("Calling...");
       case FlyCallStatus.disconnected:
         disconnect();
       case FlyCallStatus.callTimeout:
@@ -71,11 +120,17 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   ///
+   void _updateCallDuration({required String duration}) {
+    callStatus(duration);
+  }
+
+  ///
 
   void callTimeOut() async {
     callStatus("Trying to timeout");
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
+    _stopTimer();
     NavUtils.back();
   }
 
@@ -89,9 +144,11 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     callStatus("Connected");
     isOnGoingCallView();
     updateUserId();
+    _startTimer();
   }
 
   void disconnect() {
+    _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
       toToast("Call Disconnected");
