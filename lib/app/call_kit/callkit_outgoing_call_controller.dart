@@ -91,6 +91,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.ringing:
         callStatus("Ringing...");
       case FlyCallStatus.connecting:
+        /// Received only for outgoing call.
         connecting();
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
