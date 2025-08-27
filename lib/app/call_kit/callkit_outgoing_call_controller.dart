@@ -20,6 +20,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
+  RxString cameraPosition = "camera_front".obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -171,22 +172,16 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void muteAudio() async {
     print("[MirrorFly] muteAudio start");
 
-    // 1. Get current mic status
-    // final bool isMicEnabled = await MirrorflyCallKit.getIsMicrophoneEnabled();
-    // print("[MirrorFly] muteAudio existing mic enabled : $isMicEnabled");
-
-    // 2. Toggle microphone
     MirrorflyCallKit.toggleMicrophone(result: (result) async {
       print("[MirrorFly] muteAudio toggleMicrophone result : $result");
 
-      // 3. Update observable based on what mic will become
       if (result) {
         final bool isMicEnabled =
             await MirrorflyCallKit.getIsMicrophoneEnabled();
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
         muted.value =
-            !isMicEnabled; // if mic is enabled -> muted = false, if disabled -> muted = true
+            !isMicEnabled;
       } else {
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone result : $result");
@@ -208,14 +203,24 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   void switchCamera() async {
-    // NavUtils.toNamed(Routes.callKitOnGoingCallView);
     print("[MirrorFly] switchCamera start");
-    var pos = await MirrorflyCallKit.getCurrentCameraPosition();
-    print("[MirrorFly] existing pos : $pos");
-    MirrorflyCallKit.switchCameraPosition(result: (result) {
+
+    MirrorflyCallKit.switchCameraPosition(result: (result) async {
       print("[MirrorFly] switchCameraPosition result : $result");
+
+      // After switching, get the updated position
+      var pos = await MirrorflyCallKit.getCurrentCameraPosition();
+      if (pos == "camera_front") {
+        cameraPosition.value = pos;
+      } else if (pos == "camera_back") {
+        cameraPosition.value = pos;
+      }
+      print("[MirrorFly] updated pos : $pos");
+
+      // Update state
     });
   }
+
 
 
   Future<void> setInitialAudioOutput() async {
@@ -237,8 +242,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[Mirrorfly] Initial audio output  Error");
       }
 
-      // update observable only after success
-
     }
   }
 
@@ -249,7 +252,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
             (d) => d.deviceId == deviceId && d.kind == "audiooutput",
       );
 
-      // convert MediaDevice → FlyMediaDevice
       return FlyMediaDevice(d.deviceId, d.label, d.kind, d.groupId);
     } catch (_) {
       return null;
@@ -277,7 +279,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       }else{
         print("[Mirrorfly] change  audio output  Error");
       }
-      // update only after success
       print("[Mirrorfly] Switched to ${device.label}");
     }
   }
@@ -297,7 +298,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         NavUtils.back();
         print(
             "[MirrorFly]  Call disconnect failed. Retrying or handling failure...");
-        // you can show a snackbar or retry logic here
       }
     } catch (e, stack) {
       print("[MirrorFly]  Exception in disconnectCall: $e");

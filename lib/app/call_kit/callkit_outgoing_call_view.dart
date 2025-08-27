@@ -222,41 +222,42 @@ class CallKitOutgoingCallView
 
   /// 🔹 Call Control Buttons
   Widget _buildCallControls() {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       child: Obx(() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildCallOption(
-            icon: Icon(
-              controller.speakerOn.value ? Icons.volume_up : Icons.hearing,
-              color: Colors.white,
-            ),
+            isActive: controller.speakerOn.value,
+            icon: controller.speakerOn.value
+                ? Icons.volume_up
+                : Icons.hearing,
             onTap: controller.changeSpeaker,
           ),
+
           _buildCallOption(
-            icon: Icon(
-              controller.muted.value ? Icons.mic_off : Icons.mic,
-              color: Colors.white,
-            ),
+            isActive: controller.muted.value,
+            icon: controller.muted.value
+                ? Icons.mic_off
+                : Icons.mic,
             onTap: controller.muteAudio,
           ),
 
-          // Add these only if video call
           if (controller.callType.value.toLowerCase() == CallType.video)
             _buildCallOption(
-              icon: Icon(
-                controller.videoMuted.value
-                    ? Icons.videocam_off
-                    : Icons.videocam,
-                color: Colors.white,
-              ),
+              isActive: controller.videoMuted.value,
+              icon: controller.videoMuted.value
+                  ? Icons.videocam_off
+                  : Icons.videocam,
               onTap: controller.videoMute,
             ),
 
           if (controller.callType.value.toLowerCase() == CallType.video)
             _buildCallOption(
-              icon: const Icon(Icons.switch_camera, color: Colors.white),
+              isActive: false,
+              icon: controller.cameraPosition.value == "camera_front"
+                  ? Icons.cameraswitch
+                  : Icons.flip_camera_android,
               onTap: controller.switchCamera,
             ),
         ],
@@ -291,18 +292,28 @@ class CallKitOutgoingCallView
   }
 
   /// 🔹 Call Option Button
-  Widget _buildCallOption({required Widget icon, required VoidCallback onTap}) {
+  Widget _buildCallOption({
+    required IconData icon,
+    required VoidCallback onTap,
+    bool isActive = false,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Container(
         height: 56,
         width: 56,
-        decoration: const BoxDecoration(
-          color: Colors.white10,
+        decoration: BoxDecoration(
+          color: isActive ? Colors.white : Colors.white10,
           shape: BoxShape.circle,
         ),
-        child: Center(child: icon),
+        child: Center(
+          child: Icon(
+            icon,
+            color: isActive ? Colors.red : Colors.white,
+          ),
+        ),
       ),
     );
   }
+
 }
