@@ -112,7 +112,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         /// For outgoing call after the self caller gets connected to the room the FlyCallStatus is connected
         callStatus("Calling...");
       case FlyCallStatus.disconnected:
-        disconnect();
+        disconnectCall();
       case FlyCallStatus.callTimeout:
         callTimeOut();
       case FlyCallStatus.rejected:
@@ -150,7 +150,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     _startTimer();
   }
 
-  void disconnect() {
+  void disconnectCall() {
     _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
@@ -284,6 +284,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void localHangup() async {
     print("[MirrorFly]  disconnectCall invoked...");
+    _stopTimer();
     try {
       var result = await MirrorflyCallKit.localHangup();
       print("[MirrorFly] localHangup() result: $result");
