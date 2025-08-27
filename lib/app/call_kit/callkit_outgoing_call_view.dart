@@ -255,7 +255,7 @@ class CallKitOutgoingCallView
           if (controller.callType.value.toLowerCase() == CallType.video)
             _buildCallOption(
               isActive: false,
-              icon: controller.cameraPosition.value == "camera_front"
+              icon: controller.cameraPosition.value == CameraType.front
                   ? Icons.cameraswitch
                   : Icons.flip_camera_android,
               onTap: controller.switchCamera,

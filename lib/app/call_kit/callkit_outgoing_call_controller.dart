@@ -20,7 +20,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
-  RxString cameraPosition = "camera_front".obs;
+  RxString cameraPosition = CameraType.front.obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -210,9 +210,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
       // After switching, get the updated position
       var pos = await MirrorflyCallKit.getCurrentCameraPosition();
-      if (pos == "camera_front") {
+      if (pos == CameraType.front) {
         cameraPosition.value = pos;
-      } else if (pos == "camera_back") {
+      } else if (pos == CameraType.back) {
         cameraPosition.value = pos;
       }
       print("[MirrorFly] updated pos : $pos");
