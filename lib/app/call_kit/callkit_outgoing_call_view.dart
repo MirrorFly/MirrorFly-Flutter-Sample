@@ -145,18 +145,88 @@ class CallKitOutgoingCallView
 
   /// 🔹 Video Call View
   Widget _getVideoCallView(String participantId, String from) {
-    print("[MirrorFly] [MirrorFlyCall] Getting video view from: $from ,for participant: $participantId");
+    print(
+      "[MirrorFly][MirrorFlyCall] Getting video view from: $from , for participant: $participantId",
+    );
 
-    // if (participantId == controller.localParticipantId.value) {
-    //   // Local participant
-    //   print("[MirrorFly] [MirrorFlyCall] Returning LOCAL video view for $participantId");
-      return MirrorFlyCallView(key: UniqueKey(),userJID: participantId);
-    // } else {
-    //   // Remote participant
-    //   print("[MirrorFly] [MirrorFlyCall] Returning REMOTE video view for $participantId");
-    //   return MirrorFlyCallView(participantIdentity: participantId);
-    // }
+    return FutureBuilder<String>(
+      future: _getParticipantImageUrl(participantId: participantId, from: from),
+      builder: (context, snapshot) {
+        final profileUrl = snapshot.data ?? '';
+
+        print(
+          "[MirrorFly][MirrorFlyCall] profileUrl from getVideoCallView → $profileUrl",
+        );
+
+        return MirrorFlyCallView(
+          key: UniqueKey(),
+          userJID: participantId,
+          profileImage: getUserProfileImage(),
+        );
+      },
+    );
   }
+
+
+  /// 🔹 Fetches the profile image URL for a participant
+  Future<String> _getParticipantImageUrl({
+    required String participantId,
+    required String from,
+  }) async {
+    print(
+      "[MirrorFly][MirrorFlyCall] Fetching profile image from: $from , participant: $participantId",
+    );
+
+    try {
+      final profileDetails = await getProfileDetails(participantId);
+      final String profileUrl = getUserProfileImageUrl(item: profileDetails);
+
+      print(
+        "[MirrorFly][MirrorFlyCall] Raw profileUrl: $profileUrl",
+      );
+
+      final resolvedUrl = getImageUrl(profileUrl);
+
+      print(
+        "[MirrorFly][MirrorFlyCall] Resolved imageUrl: $resolvedUrl",
+      );
+
+      return resolvedUrl;
+    } catch (e) {
+      print(
+        "[MirrorFly][MirrorFlyCall] Error fetching profile details for participant: $participantId → $e");
+      return '';
+    }
+  }
+
+
+  String getImageUrl(String url) {
+    if (url.isEmpty) {
+      print("[MirrorFly][ImageUrl] URL is empty → returning empty string");
+      return "";
+    }
+
+    if (url.startsWith("http")) {
+      print("[MirrorFly][ImageUrl] URL is already absolute → $url");
+      return url;
+    } else {
+      if (url.contains("/")) {
+        print("[MirrorFly][ImageUrl] URL contains '/' but is not absolute → returning empty string");
+        return "";
+      }
+
+      final String mediaEndpoint =
+      SessionManagement.getMediaEndPoint().checkNull();
+      final String finalUrl = "$mediaEndpoint$url";
+
+      print(
+        "[MirrorFly][ImageUrl] Relative URL detected → base: $mediaEndpoint , final: $finalUrl",
+      );
+
+      return finalUrl;
+    }
+  }
+
 
   /// 🔹 Local Video Preview
   Widget _buildVideoPreview(String participantId) {
@@ -205,6 +275,31 @@ class CallKitOutgoingCallView
           return const Offstage();
         },
       ),
+    );
+  }
+
+  Widget getUserProfileImage() {
+   return FutureBuilder(
+      future: getProfileDetails(
+        controller.isOnGoingCallViewEnable.value
+            ? controller.callerUsersId[0]!
+            : SessionManagement.getUserJID().checkNull(),
+      ),
+      builder: (ctx, snap) {
+        if (snap.hasData && snap.data != null) {
+          return Column(
+            children: [
+
+              SizedBox(height: 8),
+              buildProfileImage(
+                snap.data!,
+                size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width,
+              ),
+            ]
+          );
+        }
+        return const Offstage();
+      },
     );
   }
 
@@ -325,6 +420,8 @@ class CallKitOutgoingCallView
     bool isActive = false,
   }) {
     return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: onTap,
       child: Container(
         height: 56,
