@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../data/session_management.dart';
@@ -47,11 +48,21 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       print("[MirrorFly] isIncoming: $isIncoming $callType $callerUsersId");
       if (isIncoming.value) {
         isOnGoingCallView();
+        secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+        mainCallViewUserId.value = callerUsersId[0] ?? "";
+      } else if (!isIncoming.value && callType.value == "audio") {
+        mainCallViewUserId.value = callerUsersId[0] ?? "";
+      } else if (!isIncoming.value && callType.value == "video") {
+        mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+        secondaryCallViewUserId.value = callerUsersId[0] ?? "";
+      }else{
+        print("[MirrorFly] Invalid call parameters");
       }
       getRemoteUserName();
       await setInitialAudioOutput();
 
-      updateUserId();
+      // updateUserId();
+
     }
     print("[MirrorFly] callview");
     super.onInit();
@@ -123,6 +134,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.connected:
         connected();
 
+        secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+        mainCallViewUserId.value = callerUsersId[0] ?? "";
+
         /// *** Need to check *** ///
         /// Need to get the current routed Audio Device and set the Audio Route value accordingly
         setInitialAudioOutput();
@@ -189,10 +203,10 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void ringing() {}
   void connecting() {
-    callStatus("Connected");
+    // callStatus("Connected");
     isOnGoingCallView();
-    updateUserId();
-    _startTimer();
+    // updateUserId();
+    // _startTimer();
   }
   void connected(){
     callStatus("Connected");
@@ -381,7 +395,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         secondaryCallViewUserId(callerUsersId.last);
       }
     } else {
-      mainCallViewUserId(SessionManagement.getUserJID());
+      mainCallViewUserId(callerUsersId.first);
       if (callerUsersId.isNotEmpty) {
         mainCallViewUserId(callerUsersId.first);
         secondaryCallViewUserId(SessionManagement.getUserJID());
