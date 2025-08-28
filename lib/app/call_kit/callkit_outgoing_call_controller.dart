@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
-import 'package:livekit_client/src/hardware/hardware.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -37,7 +36,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   @override
   Future<void> onInit() async {
-    // TODO: implement onInit
     print("[MirrorFly] callviewinit");
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
@@ -250,13 +248,13 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final isVideo = callType.value.toLowerCase() == "video";
     final targetId = isVideo ? "speaker" : "earpiece";
 
+    print("[Mirrorfly] Get Audio Device at Initial Audio output: $targetId");
+
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
       var result = await MirrorflyCallKit.changeAudioOutputDevice(
-        device: device,
-        toSpeaker: isVideo,
-        toEarPiece: !isVideo,
+        device: device
       );
       if(result){
         speakerOn.value = isVideo;
@@ -288,13 +286,12 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final isCurrentlySpeaker = speakerOn.value;
     final targetId = isCurrentlySpeaker ? "earpiece" : "speaker";
 
+    print("Get Audio Device at Change Speaker: $targetId");
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
       var result = await MirrorflyCallKit.changeAudioOutputDevice(
-        device: device,
-        toSpeaker: targetId == "speaker",
-        toEarPiece: targetId == "earpiece",
+        device: device
       );
       if(result){
         speakerOn.value = (targetId == "speaker");
