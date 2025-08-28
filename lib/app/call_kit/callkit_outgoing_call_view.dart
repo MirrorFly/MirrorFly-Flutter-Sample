@@ -196,7 +196,10 @@ class CallKitOutgoingCallView
     // if (participantId == controller.localParticipantId.value) {
     //   // Local participant
     //   print("[MirrorFly] [MirrorFlyCall] Returning LOCAL video view for $participantId");
-      return MirrorFlyCallView(key: UniqueKey(),userJID: participantId);
+    return MirrorFlyCallView(
+        key: UniqueKey(),
+        userJID: participantId,
+        profileImage: getUserProfileImageWithName(participantId: participantId));
     // } else {
     //   // Remote participant
     //   print("[MirrorFly] [MirrorFlyCall] Returning REMOTE video view for $participantId");
@@ -210,10 +213,9 @@ class CallKitOutgoingCallView
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        color: Colors.white,
         margin: const EdgeInsets.all(12.0),
-        height: 70,
-        width: 60,
+        height: 160,
+        width: 100,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
@@ -257,8 +259,8 @@ class CallKitOutgoingCallView
     );
   }
 
-  Widget getUserProfileImage() {
-   return FutureBuilder(
+  Widget getUserProfileImageWithName({required String participantId}) {
+    return FutureBuilder<ProfileDetails>(
       future: getProfileDetails(
         controller.isOnGoingCallViewEnable.value
             ? controller.callerUsersId[0]!
@@ -266,15 +268,26 @@ class CallKitOutgoingCallView
       ),
       builder: (ctx, snap) {
         if (snap.hasData && snap.data != null) {
+          final bool isLocalView = controller.remoteParticipantId.value != participantId;
           return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-
-              SizedBox(height: 8),
+              // 🔹 Name first
+              Text(
+                isLocalView ? "You" : controller.remoteUserName.value,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: isLocalView ? 12 : 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
-                size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width,
+                size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width/2,
               ),
-            ]
+            ],
           );
         }
         return const Offstage();
