@@ -32,11 +32,11 @@ class CallKitOutgoingCallView
                 alignment: Alignment.topRight,
                 child: Container(
                   margin: const EdgeInsets.only(top: 70, right: 30),
-                  height: 32,
-                  width: 32,
+                  height: 42,
+                  width: 42,
                   decoration: BoxDecoration(
                     color: controller.isRemoteAudioMuted.value
-                        ? Colors.white : Colors.black54,
+                        ? Colors.white : Colors.black12,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -45,7 +45,7 @@ class CallKitOutgoingCallView
                         : Icons.mic,
                     color: controller.isRemoteAudioMuted.value
                         ?Colors.red:Colors.white,
-                    size: 18,
+                    size: 20,
                   ),
                 ),
               );
@@ -63,6 +63,14 @@ class CallKitOutgoingCallView
             child: Column(
               children: [
                 const SizedBox(height: 40),
+                Obx(() => controller.isOnGoingCallViewEnable.value ? Text(
+                  controller.remoteUserName.value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ): const Offstage()),
                 /// Call Status
                 Obx(() => Text(
                   controller.callStatus.value,
@@ -77,7 +85,7 @@ class CallKitOutgoingCallView
 
                 /// Local Preview / Profile Image
                 Obx(() => controller.isOnGoingCallViewEnable.value
-                    ? _buildLocalPreviewOrProfile()
+                    ? _buildLocalPreviewOrProfile(context)
                     : const SizedBox.shrink()),
 
                 /// Call Control Buttons
@@ -110,7 +118,7 @@ class CallKitOutgoingCallView
   }
 
   ///  Local Preview (Video / Profile Pic for audio)
-  Widget _buildLocalPreviewOrProfile() {
+  Widget _buildLocalPreviewOrProfile(BuildContext context) {
     final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
 
     print("[MirrorFly] [MirrorFlyCall] isVideoCall: $isVideoCall controller call Type: ${controller.callType.value.toUpperCase()}");
@@ -128,19 +136,57 @@ class CallKitOutgoingCallView
     // Audio call -> show profile image
     return Align(
       alignment: Alignment.bottomRight,
-      child: FutureBuilder(
-        future: getProfileDetails(SessionManagement.getUserJID().checkNull()),
-        builder: (ctx, snap) {
-          if (snap.hasData && snap.data != null) {
-            return buildProfileImage(
-              snap.data!,
-              size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width,
-            );
-          }
-          return const SizedBox.shrink();
-        },
+      child: Container(
+        margin: const EdgeInsets.all(16.0),
+        width: MediaQuery.of(context).size.width * 0.25,
+        height: MediaQuery.of(context).size.height * 0.15,
+        decoration: BoxDecoration(
+          color: Colors.grey[800],
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: const [
+            BoxShadow(
+              offset: Offset(0, 4),
+              blurRadius: 8,
+              color: Colors.black26,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FutureBuilder(
+              future: getProfileDetails(SessionManagement.getUserJID().checkNull()),
+              builder: (ctx, snap) {
+                if (snap.hasData && snap.data != null) {
+                  return buildProfileImage(
+                    snap.data!,
+                    size: 40, //  profile image fixed size
+                  );
+                }
+                return const Icon(
+                  Icons.person,
+                  size: 40,
+                  color: Colors.white,
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "You", //  your label text
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+
+
+
+
   }
 
   ///  Video Call View
@@ -158,32 +204,35 @@ class CallKitOutgoingCallView
     // }
   }
 
-  ///  Local Video Preview
+  /// Local Video Preview
   Widget _buildVideoPreview(String participantId) {
     print("[MirrorFly] [MirrorFlyCall] Building local video preview for participant: $participantId");
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-        margin: const EdgeInsets.all(16.0),
-        height: 90,
-        width: 80,
+        color: Colors.white,
+        margin: const EdgeInsets.all(12.0),
+        height: 70,
+        width: 60,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
           boxShadow: const [
             BoxShadow(
-              offset: Offset(0, 8),
-              blurRadius: 20,
-              color: Colors.white,
+              offset: Offset(0, 4),
+              blurRadius: 8,
+              color: Colors.black26,
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(12.0),
           child: _getVideoCallView(participantId, "Small"),
         ),
       ),
     );
   }
+
 
   ///  Audio Call View
   Widget _getAudioCallView() {
