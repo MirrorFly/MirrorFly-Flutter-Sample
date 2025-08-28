@@ -13,29 +13,29 @@ import '../routes/route_settings.dart';
 class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
   /// Observables
   var callStatus = "Trying to connect...".obs;
-  var callType = "".obs; // "audio" or "video"
-  var muted = false.obs;
-  var videoMuted = false.obs;
-  var speakerOn = false.obs;
-  var isOnGoingCallViewEnable = false.obs;
-  var callerUsersId = <String?>[].obs;
+  RxString callType = "".obs; // "audio" or "video"
+  RxBool muted = false.obs;
+  RxBool videoMuted = false.obs;
+  RxBool speakerOn = false.obs;
+  RxBool isOnGoingCallViewEnable = false.obs;
+  RxList<String?> callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
   RxString cameraPosition = CameraType.front.obs;
-  var isRemoteAudioMuted = false.obs;
-  var isRemoteVideoMuted = false.obs;
-  var remoteUserName = "".obs;
-  var localUserName = "".obs;
+  RxBool isRemoteAudioMuted = false.obs;
+  RxBool isRemoteVideoMuted = false.obs;
+  RxString remoteUserName = "".obs;
+  RxString localUserName = "".obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
   final RxBool isRemoteTracksPublished = false.obs;
-  var localParticipantId = "".obs;
-  var remoteParticipantId = "".obs; // Temp for now as we do only 1-1 calls
+  RxString localParticipantId = "".obs;
+  RxString remoteParticipantId = "".obs; // Temp for now as we do only 1-1 calls
 
   ///
-  var mainCallViewUserId = "".obs;
-  var secondaryCallViewUserId = "".obs;
+  RxString mainCallViewUserId = "".obs;
+  RxString secondaryCallViewUserId = "".obs;
   Timer? timer;
 
   @override
@@ -193,6 +193,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
     _stopTimer();
+    _resetValues();
     NavUtils.back();
   }
 
@@ -216,6 +217,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   void disconnectCall() {
+    _resetValues();
     _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
@@ -230,7 +232,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
 
   Future<void> handleTimeOutDisconnect() async {
-    await MirrorflyCallKit.liveKitCore.ops.disconnectCall();
+    await MirrorflyCallKit.disconnectCall();
   }
 
   void muteAudio() async {
@@ -402,5 +404,27 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       }
     }
     print("[MirrorFly] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+  }
+
+  void _resetValues() {
+    callType("");
+    muted(false);
+    videoMuted(false);
+    speakerOn(false);
+    isOnGoingCallViewEnable(false);
+    callerUsersId(<String?>[]);
+    cameraSwitch(false);
+    isIncoming(false);
+    cameraPosition(CameraType.front);
+    isRemoteAudioMuted(false);
+    isRemoteVideoMuted(false);
+    remoteUserName("");
+    localUserName("");
+    isLocalTracksPublished(false);
+    isRemoteTracksPublished(false);
+    localParticipantId("");
+    remoteParticipantId("");
+    mainCallViewUserId("");
+    secondaryCallViewUserId("");
   }
 }
