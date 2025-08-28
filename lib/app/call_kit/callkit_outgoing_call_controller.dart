@@ -123,6 +123,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.connected:
         connected();
 
+        /// *** Need to check *** ///
+        /// Need to get the current routed Audio Device and set the Audio Route value accordingly
+        setInitialAudioOutput();
         /// For incoming call after the call gets connected the FlyCallStatus is connected
         // if (isIncoming.value)
           print("[MirrorFly] [Call Outgoing call controller] incoming call connected status updated");
@@ -267,8 +270,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       // Update state
     });
   }
-
-
 
   Future<void> setInitialAudioOutput() async {
     final isVideo = callType.value.toLowerCase() == "video";
