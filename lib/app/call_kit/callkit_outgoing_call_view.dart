@@ -109,7 +109,7 @@ class CallKitOutgoingCallView
     return _getVideoCallView(controller.mainCallViewUserId.value, "Large");
   }
 
-  /// 🔹 Local Preview (Video / Profile Pic for audio)
+  ///  Local Preview (Video / Profile Pic for audio)
   Widget _buildLocalPreviewOrProfile() {
     final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
 
@@ -143,7 +143,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Video Call View
+  ///  Video Call View
   Widget _getVideoCallView(String participantId, String from) {
     print("[MirrorFly] [MirrorFlyCall] Getting video view from: $from ,for participant: $participantId");
 
@@ -158,22 +158,22 @@ class CallKitOutgoingCallView
     // }
   }
 
-  /// 🔹 Local Video Preview
+  ///  Local Video Preview
   Widget _buildVideoPreview(String participantId) {
     print("[MirrorFly] [MirrorFlyCall] Building local video preview for participant: $participantId");
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
         margin: const EdgeInsets.all(16.0),
-        height: 120,
-        width: 96,
+        height: 90,
+        width: 80,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: const [
             BoxShadow(
               offset: Offset(0, 8),
               blurRadius: 20,
-              color: Colors.black38,
+              color: Colors.white,
             ),
           ],
         ),
@@ -185,7 +185,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Audio Call View
+  ///  Audio Call View
   Widget _getAudioCallView() {
     return RipplesAnimation(
       onPressed: () {},
@@ -208,7 +208,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Gradient Overlay
+  ///  Gradient Overlay
   Widget _buildGradientOverlay() {
     return Container(
       decoration: const BoxDecoration(
@@ -227,7 +227,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Loading Container (Video Connecting)
+  ///  Loading Container (Video Connecting)
   Widget _loadingVideoContainer() {
     return Container(
       color: Colors.black,
@@ -247,7 +247,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Call Control Buttons
+  ///  Call Control Buttons
   Widget _buildCallControls() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
@@ -292,7 +292,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 End Call Button
+  ///  End Call Button
   Widget _buildEndCallButton() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -318,7 +318,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// 🔹 Call Option Button
+  ///  Call Option Button
   Widget _buildCallOption({
     required IconData icon,
     required VoidCallback onTap,

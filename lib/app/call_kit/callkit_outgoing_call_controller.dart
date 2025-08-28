@@ -98,15 +98,14 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.connecting:
         /// Received only for outgoing call.
       /// For incoming call after the call gets connected the FlyCallStatus is connected
-        // connecting();
+        connecting();
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
+        connected();
 
         /// For incoming call after the call gets connected the FlyCallStatus is connected
-        // if (isIncoming.value) {
-          callStatus("Connected");
-          _startTimer();
+        // if (isIncoming.value)
           print("[MirrorFly] [Call Outgoing call controller] incoming call connected status updated");
           return;
         // } else {
@@ -168,6 +167,12 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void ringing() {}
   void connecting() {
+    callStatus("Connected");
+    isOnGoingCallView();
+    updateUserId();
+    _startTimer();
+  }
+  void connected(){
     callStatus("Connected");
     isOnGoingCallView();
     updateUserId();
