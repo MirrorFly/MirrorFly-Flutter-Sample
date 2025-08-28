@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:livekit_client/src/hardware/hardware.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
+import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../data/session_management.dart';
@@ -23,6 +24,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   RxString cameraPosition = CameraType.front.obs;
   var isRemoteAudioMuted = false.obs;
   var isRemoteVideoMuted = false.obs;
+  var remoteUserName = "".obs;
+  var localUserName = "".obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -47,6 +50,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       if (isIncoming.value) {
         isOnGoingCallView();
       }
+      getRemoteUserName();
       await setInitialAudioOutput();
 
       updateUserId();
@@ -54,6 +58,23 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     print("[MirrorFly] callview");
     super.onInit();
   }
+
+  void getRemoteUserName() async {
+    ProfileDetails profile = await getProfileDetails(callerUsersId[0]!);
+    String username = profile.name ?? profile.nickName ?? "Unknown";
+    remoteUserName.value = username;
+    print("User Name: $username");
+
+  }
+
+  void getUserName()async{
+    ProfileDetails profile = await getProfileDetails(SessionManagement.getUserJID()!);
+    String username = profile.name ?? profile.nickName ?? "Unknown";
+    localUserName.value = username;
+    print("User Name: $username");
+
+  }
+
 
   void _startTimer({int? time}) {
     if (timer != null) {
@@ -102,11 +123,10 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
       case FlyCallStatus.connected:
+        connected();
 
         /// For incoming call after the call gets connected the FlyCallStatus is connected
-        // if (isIncoming.value) {
-          callStatus("Connected");
-          _startTimer();
+        // if (isIncoming.value)
           print("[MirrorFly] [Call Outgoing call controller] incoming call connected status updated");
           return;
         // } else {
@@ -168,6 +188,12 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void ringing() {}
   void connecting() {
+    callStatus("Connected");
+    isOnGoingCallView();
+    updateUserId();
+    _startTimer();
+  }
+  void connected(){
     callStatus("Connected");
     isOnGoingCallView();
     updateUserId();
