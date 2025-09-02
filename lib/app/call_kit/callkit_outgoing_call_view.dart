@@ -98,7 +98,7 @@ class CallKitOutgoingCallView
                     : const SizedBox.shrink()),
 
                 /// Call Control Buttons
-                Center(child: _buildCallControls()),
+                Center(child: _buildCallControls(context)),
 
                 /// End Call
                 Center(child: _buildEndCallButton()),
@@ -382,7 +382,7 @@ class CallKitOutgoingCallView
   }
 
   ///  Call Control Buttons
-  Widget _buildCallControls() {
+  Widget _buildCallControls(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       child: Obx(() =>
@@ -390,12 +390,14 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: controller.speakerOn.value,
-                icon: controller.speakerOn.value
-                    ? Icons.volume_up
-                    : Icons.hearing,
-                onTap: controller.changeSpeaker,
+                isActive: true,
+                icon: _getCurrentAudioIcon(controller.selectedDevice.value),
+                onTap: () async {
+                  _showAudioDeviceSelector(context, controller);
+                },
               ),
+
+
               _buildCallOption(
                 isActive: controller.muted.value,
                 icon: controller.muted.value ? Icons.mic_off : Icons.mic,
@@ -482,3 +484,64 @@ class CallKitOutgoingCallView
     );
   }
 }
+void _showAudioDeviceSelector(BuildContext context, CallKitOutgoingCallController controller) async {
+  final availableTypes = await controller.getAvailableTypes();
+
+  await showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (_) => Center(
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          width: 250,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: availableTypes.map((type) {
+              return ListTile(
+                leading: Icon(
+                  type == FlyCallAudioDeviceType.speaker
+                      ? Icons.speaker_phone
+                      : type == FlyCallAudioDeviceType.earpiece
+                      ? Icons.phone_android
+                      : type == FlyCallAudioDeviceType.bluetooth
+                      ? Icons.bluetooth_audio
+                      : Icons.headset,
+                ),
+                title: Text(type.name.capitalize!),
+                trailing: controller.selectedDevice.value == type
+                    ? const Icon(Icons.check, color: Colors.green)
+                    : null,
+                onTap: () {
+                  controller.changeAudioDevice(type);
+                  Navigator.of(context).pop(); // close dialog
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+IconData _getCurrentAudioIcon(FlyCallAudioDeviceType? type) {
+  switch (type) {
+    case FlyCallAudioDeviceType.speaker:
+      return Icons.volume_up;
+    case FlyCallAudioDeviceType.earpiece:
+      return Icons.hearing;
+    case FlyCallAudioDeviceType.bluetooth:
+      return Icons.bluetooth_audio;
+    case FlyCallAudioDeviceType.wired:
+      return Icons.headset;
+    default:
+      return Icons.volume_up;
+  }
+}
+
+
