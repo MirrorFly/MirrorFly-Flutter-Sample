@@ -23,6 +23,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   final RxBool cameraSwitch = false.obs;
   var selectedDevice = FlyCallAudioDeviceType.earpiece.obs;
   final RxBool isIncoming = false.obs;
+  final RxBool isManualDeviceSelected = false.obs;
   RxString cameraPosition = CameraType.front.obs;
   RxBool isRemoteAudioMuted = false.obs;
   RxBool isRemoteVideoMuted = false.obs;
@@ -61,7 +62,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] Invalid call parameters");
       }
       getRemoteUserName();
-      await initAudioRouting();
+      // await initAudioRouting();
       // updateUserId();
 
     }
@@ -159,6 +160,18 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] Unknown Call Status: $status");
     }
   }
+  void updateCallAction({required FlyCallAction action,FlyMediaDevice? initialDevice}) {
+    switch (action) {
+      case FlyCallAction.initAudioOutput:
+          initAudioRouting(initialDevice);
+        break;
+
+      default:
+        print("[MirrorFly] Unknown Call Action: $action");
+        break;
+    }
+  }
+
 
   void onRemoteMuteStatusChanged({
     required FlyCallMuteType muteType,
@@ -288,49 +301,38 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     });
   }
 
-  Future<void> initAudioRouting() async {
+  Future<void> initAudioRouting(FlyMediaDevice? initialDevice) async {
     print("[MirrorFly] Initializing audio routing...");
 
-    final isVideo = callType.value.toLowerCase() == "video";
-    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
-    final audioOutputs = devices.where((d) => d.kind == OutputAudioDeviceKind.audioOutput.value).toList();
-
-    FlyMediaDevice? targetDevice;
-
-    // Priority order
-    final bluetooth = audioOutputs.firstWhereOrNull(
-          (d) => d.groupId?.toLowerCase().contains(FlyCallAudioDeviceType.bluetooth.value) ?? false,
-    );
-    final wired = audioOutputs.firstWhereOrNull(
-          (d) => d.deviceId.toLowerCase().contains(FlyCallAudioDeviceType.wired.value),
-    );
-
-    if (bluetooth != null) {
-      targetDevice = bluetooth;
-      selectedDevice.value = FlyCallAudioDeviceType.bluetooth;
-    } else if (wired != null) {
-      targetDevice = wired;
-      selectedDevice.value = FlyCallAudioDeviceType.wired;
-    } else if (isVideo) {
-      targetDevice = audioOutputs.firstWhereOrNull(
-            (d) => d.deviceId.toLowerCase().contains(FlyCallAudioDeviceType.speaker.value),
-      );
-      selectedDevice.value = FlyCallAudioDeviceType.speaker;
-    } else {
-      targetDevice = audioOutputs.firstWhereOrNull(
-            (d) => d.deviceId.toLowerCase().contains(FlyCallAudioDeviceType.earpiece.value) ||
-            d.deviceId.toLowerCase().contains("receiver"),
-      );
-      selectedDevice.value = FlyCallAudioDeviceType.earpiece;
+    if (initialDevice == null) {
+      print("[MirrorFly] No initial device passed!");
+      return;
     }
 
-    if (targetDevice != null) {
-      await _switchTo(targetDevice);
-    } else {
-      print("[MirrorFly] No audio output device found!");
+    // Set the selectedDevice.value based on the passed FlyMediaDevice
+    switch (initialDevice.deviceId.toLowerCase()) {
+      case 'bluetooth':
+        selectedDevice.value = FlyCallAudioDeviceType.bluetooth;
+        break;
+      case 'wired':
+        selectedDevice.value = FlyCallAudioDeviceType.wired;
+        break;
+      case 'speaker':
+        selectedDevice.value = FlyCallAudioDeviceType.speaker;
+        break;
+      case 'earpiece':
+      case 'receiver':
+        selectedDevice.value = FlyCallAudioDeviceType.earpiece;
+        break;
+      default:
+        selectedDevice.value = FlyCallAudioDeviceType.earpiece;
+        break;
     }
+
+    print("[MirrorFly] Routing to device: ${initialDevice.label}, enum: ${selectedDevice.value}");
+
   }
-  Future<void> changeAudioDevice(FlyCallAudioDeviceType type) async {
+  Future<void> changeAudioDevice(FlyCallAudioDeviceType type,) async {
     print("[MirrorFly] changeAudioDevice -> ${type.value}");
     final device = await _getAudioDevice(type.value);
     if (device != null) {
@@ -342,6 +344,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   Future<void> _switchTo(FlyMediaDevice device) async {
+
     final result = await MirrorflyCallKit.changeAudioOutputDevice(
       flyMediaDevice: device,
       device: device.deviceId,
@@ -380,10 +383,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     }
     return types;
   }
-
-
-
-
 
 
 
@@ -467,5 +466,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     remoteParticipantId("");
     mainCallViewUserId("");
     secondaryCallViewUserId("");
+    isManualDeviceSelected(false);
   }
 }

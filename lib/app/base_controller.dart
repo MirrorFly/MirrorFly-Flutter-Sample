@@ -78,11 +78,18 @@ class BaseController {
         callType = callActionActionEvent.callType;
         print("[MirrorFly] [BaseController] Cached callerId=$callerId callType=$callType");
       }
+      print(
+          "[MirrorFly] [BaseController] event start audio device changes");
 
       if (Get.isRegistered<CallKitOutgoingCallController>()) {
         final CallKitOutgoingCallController callKitOutgoingCallController =
         Get.find<CallKitOutgoingCallController>();
-        if(flyCallAction == FlyCallAction.denyCall) {
+        print("[Mirrorfly] flymediadevice1${callActionActionEvent.flyMediaDevice}");
+        if(flyCallAction == FlyCallAction.initAudioOutput) {
+          print(
+              "[MirrorFly] audioevent audio device changes");
+          callKitOutgoingCallController.updateCallAction(action: flyCallAction,initialDevice: callActionActionEvent.flyMediaDevice);
+
 
         }
       }
