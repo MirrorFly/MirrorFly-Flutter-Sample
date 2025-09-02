@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,12 +34,10 @@ import 'modules/group/controllers/group_info_controller.dart';
 import 'modules/media_preview/controllers/media_preview_controller.dart';
 import 'modules/settings/views/blocked/blocked_list_controller.dart';
 import 'routes/route_settings.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import 'common/main_controller.dart';
 import 'common/notification_service.dart';
 import 'data/utils.dart';
-import 'model/chat_message_model.dart';
 import 'model/notification_message_model.dart';
 import 'modules/archived_chats/archived_chat_list_controller.dart';
 import 'modules/chat/controllers/forwardchat_controller.dart';
@@ -63,7 +60,7 @@ class BaseController {
     String? callerId;
 
 
-    MirrorflyCallKit.callActionStream.listen((callAction) {
+    MirrorFlyCallKit.callActionStream.listen((callAction) {
 
       //
       print(
@@ -72,6 +69,21 @@ class BaseController {
       //
       final CallActionEvent callActionActionEvent = callAction;
       final FlyCallAction flyCallAction = callActionActionEvent.callAction;
+
+      if (callAction.callAction == FlyCallAction.actionCallSwitch &&
+          callAction.switchAction != null) {
+        print("[MirrorFly] [BaseController] Call Switch Action Received: ${callAction.switchAction}");
+        // Call switch action
+        if (Get.isRegistered<CallKitOutgoingCallController>()) {
+          final CallKitOutgoingCallController callKitOutgoingCallController =
+              Get.find<CallKitOutgoingCallController>();
+          callKitOutgoingCallController.callSwitchAction(
+              switchAction: callAction.switchAction);
+        } else {
+          print(
+              "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
+        }
+      }
 
       if (flyCallAction == FlyCallAction.incomingCall) {
         callerId = callActionActionEvent.participantId;
@@ -114,7 +126,7 @@ class BaseController {
     });
 
     ///
-    MirrorflyCallKit.callStatusStream.listen((callStatus) {
+    MirrorFlyCallKit.callStatusStream.listen((callStatus) {
       if (Get.isRegistered<CallKitOutgoingCallController>()) {
         ///
         final CallKitOutgoingCallController callKitOutgoingCallController =
@@ -181,7 +193,7 @@ class BaseController {
 
 
     ///
-    MirrorflyCallKit.participantStream.listen((flyCallParticipantEvent) {
+    MirrorFlyCallKit.participantStream.listen((flyCallParticipantEvent) {
       print(
           "[MirrorFly] [BaseController] MirrorflyCallKit.participantStream - participantStream: ${flyCallParticipantEvent.toJson()}");
 
@@ -203,7 +215,7 @@ class BaseController {
     });
 
     ///
-    MirrorflyCallKit.muteOperationsStream.listen((muteStatus) {
+    MirrorFlyCallKit.muteOperationsStream.listen((muteStatus) {
       final MuteStatusEvent muteStatusEvent = muteStatus;
 
       final String participantId = muteStatusEvent.userId;
