@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
@@ -354,14 +353,14 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     }
   }
   Future<FlyMediaDevice?> _getAudioDevice(String type) async {
-    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
+    final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
     return devices.firstWhereOrNull(
           (d) => d.deviceId.toLowerCase().contains(type.toLowerCase()) &&
           d.kind == OutputAudioDeviceKind.audioOutput.value,
     );
   }
   Future<List<FlyCallAudioDeviceType>> getAvailableTypes() async {
-    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
+    final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
     final audioOutputs = devices.where((d) => d.kind == OutputAudioDeviceKind.audioOutput.value).toList();
 
     final types = <FlyCallAudioDeviceType>[];
