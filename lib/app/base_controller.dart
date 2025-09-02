@@ -63,7 +63,7 @@ class BaseController {
     String? callerId;
 
 
-    MirrorflyCallKit.callActionStream.listen((callAction) {
+    MirrorFlyCallKit.callActionStream.listen((callAction) {
 
       //
       print(
@@ -72,6 +72,21 @@ class BaseController {
       //
       final CallActionEvent callActionActionEvent = callAction;
       final FlyCallAction flyCallAction = callActionActionEvent.callAction;
+
+      if (callAction.callAction == FlyCallAction.actionCallSwitch &&
+          callAction.switchAction != null) {
+        print("[MirrorFly] [BaseController] Call Switch Action Received: ${callAction.switchAction}");
+        // Call switch action
+        if (Get.isRegistered<CallKitOutgoingCallController>()) {
+          final CallKitOutgoingCallController callKitOutgoingCallController =
+              Get.find<CallKitOutgoingCallController>();
+          callKitOutgoingCallController.callSwitchAction(
+              switchAction: callAction.switchAction);
+        } else {
+          print(
+              "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
+        }
+      }
 
       if (flyCallAction == FlyCallAction.incomingCall) {
         callerId = callActionActionEvent.participantId;
@@ -107,7 +122,7 @@ class BaseController {
     });
 
     ///
-    MirrorflyCallKit.callStatusStream.listen((callStatus) {
+    MirrorFlyCallKit.callStatusStream.listen((callStatus) {
       if (Get.isRegistered<CallKitOutgoingCallController>()) {
         ///
         final CallKitOutgoingCallController callKitOutgoingCallController =
@@ -174,7 +189,7 @@ class BaseController {
 
 
     ///
-    MirrorflyCallKit.participantStream.listen((flyCallParticipantEvent) {
+    MirrorFlyCallKit.participantStream.listen((flyCallParticipantEvent) {
       print(
           "[MirrorFly] [BaseController] MirrorflyCallKit.participantStream - participantStream: ${flyCallParticipantEvent.toJson()}");
 
@@ -196,7 +211,7 @@ class BaseController {
     });
 
     ///
-    MirrorflyCallKit.muteOperationsStream.listen((muteStatus) {
+    MirrorFlyCallKit.muteOperationsStream.listen((muteStatus) {
       final MuteStatusEvent muteStatusEvent = muteStatus;
 
       final String participantId = muteStatusEvent.userId;

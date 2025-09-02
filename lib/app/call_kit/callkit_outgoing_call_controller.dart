@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../app_style_config.dart';
+import '../common/app_localizations.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../routes/route_settings.dart';
@@ -217,6 +220,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void disconnectCall() {
     _stopTimer();
+    closeDialog();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
       toToast("Call Disconnected");
@@ -230,18 +234,18 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
 
   Future<void> handleTimeOutDisconnect() async {
-    await MirrorflyCallKit.liveKitCore.ops.disconnectCall();
+    await MirrorFlyCallKit.disconnectCall();
   }
 
   void muteAudio() async {
     print("[MirrorFly] muteAudio start");
 
-    MirrorflyCallKit.toggleMicrophone(result: (result) async {
+    MirrorFlyCallKit.toggleMicrophone(result: (result) async {
       print("[MirrorFly] muteAudio toggleMicrophone result : $result");
 
       if (result) {
         final bool isMicEnabled =
-            await MirrorflyCallKit.getIsMicrophoneEnabled();
+            await MirrorFlyCallKit.getIsMicrophoneEnabled();
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
         muted.value =
@@ -255,9 +259,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void videoMute() async {
     print("[MirrorFly] videoMute start");
-    MirrorflyCallKit.toggleCamera(result: (result) async{
+    MirrorFlyCallKit.toggleCamera(result: (result) async{
       if(result){
-        final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
+        final bool isVideoMute = await MirrorFlyCallKit.getIsCameraEnabled();
         print("[MirrorFly] existing isVideoMute status : $isVideoMute");
         videoMuted.value = !isVideoMute;
       }else{
@@ -269,11 +273,11 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void switchCamera() async {
     print("[MirrorFly] switchCamera start");
 
-    MirrorflyCallKit.switchCameraPosition(result: (result) async {
+    MirrorFlyCallKit.switchCameraPosition(result: (result) async {
       print("[MirrorFly] switchCameraPosition result : $result");
 
       // After switching, get the updated position
-      var pos = await MirrorflyCallKit.getCurrentCameraPosition();
+      var pos = await MirrorFlyCallKit.getCurrentCameraPosition();
       if (pos == CameraType.front) {
         cameraPosition.value = pos;
       } else if (pos == CameraType.back) {
@@ -294,7 +298,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
-      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+      var result = await MirrorFlyCallKit.changeAudioOutputDevice(
         device: device
       );
       if(result){
@@ -308,7 +312,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   Future<FlyMediaDevice?> _getAudioDevice(String deviceId) async {
-    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
+    final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
     try {
       final d = devices.firstWhere(
             (d) => d.deviceId == deviceId && d.kind == "audiooutput",
@@ -331,7 +335,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
-      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+      var result = await MirrorFlyCallKit.changeAudioOutputDevice(
         device: device
       );
       if(result){
@@ -348,7 +352,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     print("[MirrorFly]  disconnectCall invoked...");
     _stopTimer();
     try {
-      var result = await MirrorflyCallKit.localHangup();
+      var result = await MirrorFlyCallKit.localHangup();
       print("[MirrorFly] localHangup() result: $result");
 
       if (result == true) {
@@ -402,5 +406,64 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       }
     }
     print("[MirrorFly] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+  }
+
+  void requestVideoCallSwitch() async {
+    print("[MirrorFly]  makeCallSwitch invoked...");
+    await MirrorFlyCallKit.requestVideoCallSwitch();
+  }
+
+  void acceptIncomingCallSwitchRequest() async {
+    print("[MirrorFly]  acceptIncomingCallSwitchRequest invoked...");
+    await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
+  }
+
+  void declineIncomingCallSwitchRequest() async {
+    print("[MirrorFly]  declineIncomingCallSwitchRequest invoked...");
+    await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
+  }
+
+  void callSwitchAction({required CallSwitchAction? switchAction}) {
+    print("[MirrorFly] callSwitchAction: $switchAction");
+    switch (switchAction) {
+      case CallSwitchAction.incomingRequest:
+        print("[MirrorFly] CallSwitchAction.incomingRequest");
+        showIncomingCallSwitchRequestDialog();
+      case CallSwitchAction.decline:
+        print("[MirrorFly] CallSwitchAction.decline");
+        closeDialog();
+        toToast("Video call switch declined");
+      default:
+        break;
+    }
+  }
+
+  ///
+  void showIncomingCallSwitchRequestDialog() {
+    DialogUtils.showAlert(
+        dialogStyle: AppStyleConfig.dialogStyle,
+        message: getTranslated("videoSwitchRequestedMessage")
+            .replaceFirst("%d", "Test"),
+        actions: [
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: declineIncomingCallSwitchRequest,
+              child: Text(
+                getTranslated("declineRequest").toUpperCase(),
+              )),
+          TextButton(
+              style: AppStyleConfig.dialogStyle.buttonStyle,
+              onPressed: acceptIncomingCallSwitchRequest,
+              child: Text(
+                getTranslated("acceptRequest"),
+              ))
+        ],
+        barrierDismissible: false);
+  }
+
+  void closeDialog() {
+    if (DialogUtils.isDialogOpen()) {
+      NavUtils.back();
+    }
   }
 }

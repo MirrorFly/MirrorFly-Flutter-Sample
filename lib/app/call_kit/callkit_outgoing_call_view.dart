@@ -417,6 +417,13 @@ class CallKitOutgoingCallView
                       : Icons.flip_camera_android,
                   onTap: controller.switchCamera,
                 ),
+              if (controller.callType.value.toLowerCase() == CallType.audio ||
+                  controller.callType.value.toLowerCase() == CallType.video)
+                _buildCallOption(
+                isActive: false,
+                icon: Icons.switch_access_shortcut_add_rounded,
+                onTap: controller.requestVideoCallSwitch,
+              ),
             ],
           )),
     );
