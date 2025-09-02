@@ -70,6 +70,21 @@ class BaseController {
       final CallActionEvent callActionActionEvent = callAction;
       final FlyCallAction flyCallAction = callActionActionEvent.callAction;
 
+      if (callAction.callAction == FlyCallAction.actionCallSwitch &&
+          callAction.switchAction != null) {
+        print("[MirrorFly] [BaseController] Call Switch Action Received: ${callAction.switchAction}");
+        // Call switch action
+        if (Get.isRegistered<CallKitOutgoingCallController>()) {
+          final CallKitOutgoingCallController callKitOutgoingCallController =
+              Get.find<CallKitOutgoingCallController>();
+          callKitOutgoingCallController.callSwitchAction(
+              switchAction: callAction.switchAction);
+        } else {
+          print(
+              "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
+        }
+      }
+
       if (flyCallAction == FlyCallAction.incomingCall) {
         callerId = callActionActionEvent.participantId;
         callType = callActionActionEvent.callType;
