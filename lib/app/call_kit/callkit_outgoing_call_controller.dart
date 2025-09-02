@@ -232,18 +232,18 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
 
   Future<void> handleTimeOutDisconnect() async {
-    await MirrorflyCallKit.disconnectCall();
+    await MirrorFlyCallKit.disconnectCall();
   }
 
   void muteAudio() async {
     print("[MirrorFly] muteAudio start");
 
-    MirrorflyCallKit.toggleMicrophone(result: (result) async {
+    MirrorFlyCallKit.toggleMicrophone(result: (result) async {
       print("[MirrorFly] muteAudio toggleMicrophone result : $result");
 
       if (result) {
         final bool isMicEnabled =
-            await MirrorflyCallKit.getIsMicrophoneEnabled();
+            await MirrorFlyCallKit.getIsMicrophoneEnabled();
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
         muted.value =
@@ -257,9 +257,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   void videoMute() async {
     print("[MirrorFly] videoMute start");
-    MirrorflyCallKit.toggleCamera(result: (result) async{
+    MirrorFlyCallKit.toggleCamera(result: (result) async{
       if(result){
-        final bool isVideoMute = await MirrorflyCallKit.getIsCameraEnabled();
+        final bool isVideoMute = await MirrorFlyCallKit.getIsCameraEnabled();
         print("[MirrorFly] existing isVideoMute status : $isVideoMute");
         videoMuted.value = !isVideoMute;
       }else{
@@ -271,11 +271,11 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void switchCamera() async {
     print("[MirrorFly] switchCamera start");
 
-    MirrorflyCallKit.switchCameraPosition(result: (result) async {
+    MirrorFlyCallKit.switchCameraPosition(result: (result) async {
       print("[MirrorFly] switchCameraPosition result : $result");
 
       // After switching, get the updated position
-      var pos = await MirrorflyCallKit.getCurrentCameraPosition();
+      var pos = await MirrorFlyCallKit.getCurrentCameraPosition();
       if (pos == CameraType.front) {
         cameraPosition.value = pos;
       } else if (pos == CameraType.back) {
@@ -296,7 +296,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
-      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+      var result = await MirrorFlyCallKit.changeAudioOutputDevice(
         device: device
       );
       if(result){
@@ -310,7 +310,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   }
 
   Future<FlyMediaDevice?> _getAudioDevice(String deviceId) async {
-    final devices = await MirrorflyCallKit.getAvailableMediaDevices();
+    final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
     try {
       final d = devices.firstWhere(
             (d) => d.deviceId == deviceId && d.kind == "audiooutput",
@@ -333,7 +333,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     final device = await _getAudioDevice(targetId);
 
     if (device != null) {
-      var result = await MirrorflyCallKit.changeAudioOutputDevice(
+      var result = await MirrorFlyCallKit.changeAudioOutputDevice(
         device: device
       );
       if(result){
@@ -350,7 +350,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     print("[MirrorFly]  disconnectCall invoked...");
     _stopTimer();
     try {
-      var result = await MirrorflyCallKit.localHangup();
+      var result = await MirrorFlyCallKit.localHangup();
       print("[MirrorFly] localHangup() result: $result");
 
       if (result == true) {
