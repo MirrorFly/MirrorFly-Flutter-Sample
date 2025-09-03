@@ -459,27 +459,35 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     print("[MirrorFly] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
   }
 
+  ///
   void requestVideoCallSwitch() async {
     print("[MirrorFly]  makeCallSwitch invoked...");
     _videoCallSwitchRequestConfirmationPopup();
   }
 
+  ///
   void cancelVideoCallSwitchRequest() async {
     print("[MirrorFly]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
+    toToast("Video call switch canceled");
     _closeDialog();
+    _cancelCallSwitchReqWaiting();
   }
 
+  ///
   void acceptIncomingCallSwitchRequest() async {
     print("[MirrorFly]  acceptIncomingCallSwitchRequest invoked...");
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
   }
 
+  ///
   void declineIncomingCallSwitchRequest() async {
     print("[MirrorFly]  declineIncomingCallSwitchRequest invoked...");
     await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
+    _closeDialog();
   }
 
+  ///
   void callSwitchAction({required CallSwitchAction? switchAction}) {
     print("[MirrorFly] callSwitchAction: $switchAction");
     switch (switchAction) {
@@ -499,6 +507,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
       case CallSwitchAction.cancel:
         print("[MirrorFly] CallSwitchAction.cancel");
+        _closeDialog();
+        toToast("Video call switch canceled");
 
       case CallSwitchAction.accept:
         print("[MirrorFly] CallSwitchAction.accept");
@@ -597,7 +607,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     _cancelCallSwitchReqWaiting();
 
     print("[MirrorFly] cancelVideoCallSwitchRequestOnTimerEnd invoked...");
-    await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
+    await MirrorFlyCallKit.cancelVideoCallSwitchRequest(onTimeOut: true);
     _closeDialog();
   }
 
