@@ -477,6 +477,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   ///
   void acceptIncomingCallSwitchRequest() async {
     print("[MirrorFly]  acceptIncomingCallSwitchRequest invoked...");
+    _closeDialog();
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
   }
 
@@ -514,10 +515,29 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] CallSwitchAction.accept");
         _closeDialog();
         _cancelCallSwitchReqWaiting();
+        _onVideoCallSwitchRequestAccepted();
+        _processCallSwitchUI();
 
       default:
         break;
     }
+  }
+
+  ///
+  void _processCallSwitchUI() async {
+    print("[MirrorFly] Processing call switch UI changes...");
+    final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+    if (flyCallType == null && flyCallType == FlyCallType.none) {
+      print("[MirrorFly] Unable to get current call type after switch.");
+      return;
+    }
+    flyCallType == FlyCallType.audio ? callType("audio") : callType("video");
+  }
+
+  ///
+  void _onVideoCallSwitchRequestAccepted() {
+    print("[MirrorFly] Video call switch request accepted.");
+    _closeDialog();
   }
 
   ///
@@ -620,7 +640,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   ///
   void _closeDialog() {
     print("[MirrorFly] _closeDialog called");
-    if (DialogUtils.isDialogOpen()) {
+    if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
       NavUtils.back();
     }
   }

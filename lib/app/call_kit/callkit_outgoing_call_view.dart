@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
-import '../call_modules/ripple_animation_view.dart';
 import '../data/helper.dart';
 import '../data/session_management.dart';
 import '../extensions/extensions.dart';
@@ -138,175 +137,6 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// ============================================================
-  /// 🔹 Call Main View (Video or Audio)
-  ///
-  Widget _buildCallMainView() {
-    final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
-
-    if (!isVideoCall) {
-      return _getAudioCallView();
-    }
-
-    print(
-        "[MirrorFly] [MirrorFlyCall] _buildCallMainView isVideoCall: $isVideoCall "
-            "controller call Type: ${controller.callType.value.toUpperCase()} "
-            "controller.mainCallViewUserId.value ${controller.mainCallViewUserId
-            .value}");
-    return _getVideoCallView(controller.mainCallViewUserId.value, "Large");
-  }
-
-  ///  Local Preview (Video / Profile Pic for audio)
-  Widget _buildLocalPreviewOrProfile(BuildContext context) {
-    final isVideoCall = controller.callType.value.toUpperCase() != "AUDIO";
-
-    print(
-        "[MirrorFly] [MirrorFlyCall] isVideoCall: $isVideoCall controller call Type: ${controller
-            .callType.value.toUpperCase()}");
-
-    if (isVideoCall) {
-      print(
-          "[MirrorFly] [MirrorFlyCall] controller.isLocalTracksPublished.value ${controller
-              .isLocalTracksPublished.value}");
-      print(
-          "[MirrorFly] [MirrorFlyCall] controller.isRemoteTracksPublished.value ${controller
-              .isRemoteTracksPublished.value}");
-      if (controller.isLocalTracksPublished.value &&
-          controller.isRemoteTracksPublished.value) {
-        return _buildVideoPreview(controller.secondaryCallViewUserId.value);
-      }
-      return const Offstage();
-    }
-
-    // Audio call -> show profile image
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: Container(
-        margin: const EdgeInsets.all(16.0),
-        width: MediaQuery
-            .of(context)
-            .size
-            .width * 0.25,
-        height: MediaQuery
-            .of(context)
-            .size
-            .height * 0.15,
-        decoration: BoxDecoration(
-          color: Colors.grey[800],
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 4),
-              blurRadius: 8,
-              color: Colors.black26,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FutureBuilder(
-              future:
-              getProfileDetails(SessionManagement.getUserJID().checkNull()),
-              builder: (ctx, snap) {
-                if (snap.hasData && snap.data != null) {
-                  return buildProfileImage(
-                    snap.data!,
-                    size: 40, //  profile image fixed size
-                  );
-                }
-                return const Icon(
-                  Icons.person,
-                  size: 40,
-                  color: Colors.white,
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "You", //  your label text
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  ///  Video Call View
-  Widget _getVideoCallView(String participantId, String from) {
-    print(
-        "[MirrorFly] [MirrorFlyCall] Getting video view from: $from ,for participant: $participantId");
-
-    // if (participantId == controller.localParticipantId.value) {
-    //   // Local participant
-    //   print("[MirrorFly] [MirrorFlyCall] Returning LOCAL video view for $participantId");
-    return MirrorFlyCallView(
-        key: UniqueKey(),
-        userJID: participantId,
-        profileImage:
-        getUserProfileImageWithName(participantId: participantId));
-    // } else {
-    //   // Remote participant
-    //   print("[MirrorFly] [MirrorFlyCall] Returning REMOTE video view for $participantId");
-    //   return MirrorFlyCallView(participantIdentity: participantId);
-    // }
-  }
-
-  /// Local Video Preview
-  Widget _buildVideoPreview(String participantId) {
-    print(
-        "[MirrorFly] [MirrorFlyCall] Building local video preview for participant: $participantId");
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        margin: const EdgeInsets.all(12.0),
-        height: 160,
-        width: 100,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 4),
-              blurRadius: 8,
-              color: Colors.black26,
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12.0),
-          child: _getVideoCallView(participantId, "Small"),
-        ),
-      ),
-    );
-  }
-
-  ///  Audio Call View
-  Widget _getAudioCallView() {
-    return RipplesAnimation(
-      onPressed: () {},
-      child: FutureBuilder(
-        future: getProfileDetails(
-           controller.callerUsersId[0]!,
-        ),
-        builder: (ctx, snap) {
-          if (snap.hasData && snap.data != null) {
-            return buildProfileImage(
-              snap.data!,
-              size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width,
-            );
-          }
-          return const Offstage();
-        },
-      ),
-    );
-  }
-
   Widget getUserProfileImageWithName({required String participantId}) {
     return FutureBuilder<ProfileDetails>(
       future: getProfileDetails(participantId),
@@ -361,26 +191,6 @@ class CallKitOutgoingCallView
     );
   }
 
-  ///  Loading Container (Video Connecting)
-  Widget _loadingVideoContainer() {
-    return Container(
-      color: Colors.black,
-      child: const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(color: Colors.white),
-            SizedBox(height: 12),
-            Text(
-              "Connecting...",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   ///  Call Control Buttons
   Widget _buildCallControls(BuildContext context) {
     return Padding(
@@ -419,11 +229,10 @@ class CallKitOutgoingCallView
                       : Icons.flip_camera_android,
                   onTap: controller.switchCamera,
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.audio ||
-                  controller.callType.value.toLowerCase() == CallType.video)
+              if (controller.callType.value.toLowerCase() == CallType.audio)
                 _buildCallOption(
                 isActive: false,
-                icon: Icons.switch_access_shortcut_add_rounded,
+                icon: Icons.switch_video,
                 onTap: controller.requestVideoCallSwitch,
               ),
             ],
@@ -484,6 +293,7 @@ class CallKitOutgoingCallView
     );
   }
 }
+
 void _showAudioDeviceSelector(BuildContext context, CallKitOutgoingCallController controller) async {
   final availableTypes = await controller.getAvailableTypes();
 
@@ -529,6 +339,7 @@ void _showAudioDeviceSelector(BuildContext context, CallKitOutgoingCallControlle
     ),
   );
 }
+
 IconData _getCurrentAudioIcon(FlyCallAudioDeviceType? type) {
   switch (type) {
     case FlyCallAudioDeviceType.speaker:
