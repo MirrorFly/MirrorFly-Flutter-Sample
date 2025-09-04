@@ -44,8 +44,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   Timer? timer;
 
   ///
-  Timer? _outgoingSwitchTimer;
-  bool _isWaitingCanceled = false;
+  // Timer? _outgoingSwitchTimer;
+  // bool _isWaitingCanceled = false;
 
   @override
   Future<void> onInit() async {
@@ -112,7 +112,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
         final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
         var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
-        print("[MirrorFly] Timer: $time");
+        // print("[MirrorFly] Timer: $time");
         _updateCallDuration(duration: time);
       },
     );
@@ -471,7 +471,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
     toToast("Video call switch canceled");
     _closeDialog();
-    _cancelCallSwitchReqWaiting();
+    // _cancelCallSwitchReqWaiting();
   }
 
   ///
@@ -500,7 +500,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         print("[MirrorFly] CallSwitchAction.decline");
         toToast("Video call switch declined");
         _closeDialog();
-        _cancelCallSwitchReqWaiting();
+        // _cancelCallSwitchReqWaiting();
 
       case CallSwitchAction.outgoingRequest:
         print("[MirrorFly] CallSwitchAction.outgoingRequest");
@@ -514,9 +514,16 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       case CallSwitchAction.accept:
         print("[MirrorFly] CallSwitchAction.accept");
         _closeDialog();
-        _cancelCallSwitchReqWaiting();
+        // _cancelCallSwitchReqWaiting();
         _onVideoCallSwitchRequestAccepted();
         _processCallSwitchUI();
+
+      case CallSwitchAction.timeout:
+        print("[MirrorFly] CallSwitchAction.timeout");
+        _closeDialog();
+        toToast(getTranslated("noResponseFrom")
+            .replaceFirst("%d", remoteUserName.value));
+        break;
 
       default:
         break;
@@ -570,7 +577,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     DialogUtils.showAlert(
         dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("videoSwitchRequestedMessage")
-            .replaceFirst("%d", "Test"),
+            .replaceFirst("%d", remoteUserName.value),
         actions: [
           TextButton(
               style: AppStyleConfig.dialogStyle.buttonStyle,
@@ -591,8 +598,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   ///
   void _showOutGoingCallSwitchRequestDialog() {
     //
-    _isWaitingCanceled = false;
-    _outgoingSwitchTimer?.cancel();
+    // _isWaitingCanceled = false;
+    // _outgoingSwitchTimer?.cancel();
 
     //
     DialogUtils.showAlert(
@@ -608,34 +615,34 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
       barrierDismissible: false,
     );
 
-    _outgoingSwitchTimer = Timer(const Duration(seconds: 20), () async {
-      print("[MirrorFly][BaseController] 20s wait ended");
-      if (!_isWaitingCanceled) {
-        _cancelVideoCallSwitchRequestOnTimerEnd();
-        toToast(getTranslated("noResponseFrom").replaceFirst("%d", "Test"));
-        _closeDialog();
-      } else {
-        print("[MirrorFly][BaseController] _isWaitingCanceled is true");
-      }
-    });
+    // _outgoingSwitchTimer = Timer(const Duration(seconds: 20), () async {
+    //   print("[MirrorFly][BaseController] 20s wait ended");
+    //   if (!_isWaitingCanceled) {
+    //     _cancelVideoCallSwitchRequestOnTimerEnd();
+    //     toToast(getTranslated("noResponseFrom").replaceFirst("%d", "Test"));
+    //     _closeDialog();
+    //   } else {
+    //     print("[MirrorFly][BaseController] _isWaitingCanceled is true");
+    //   }
+    // });
   }
 
   ///
-  void _cancelVideoCallSwitchRequestOnTimerEnd() async {
-    print("[MirrorFly][BaseController] Canceling video call switch request due to timeout");
+  // void _cancelVideoCallSwitchRequestOnTimerEnd() async {
+  //   print("[MirrorFly][BaseController] Canceling video call switch request due to timeout");
+  //
+  //   _cancelCallSwitchReqWaiting();
+  //
+  //   print("[MirrorFly] cancelVideoCallSwitchRequestOnTimerEnd invoked...");
+  //   await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
+  //   _closeDialog();
+  // }
 
-    _cancelCallSwitchReqWaiting();
-
-    print("[MirrorFly] cancelVideoCallSwitchRequestOnTimerEnd invoked...");
-    await MirrorFlyCallKit.cancelVideoCallSwitchRequest(onTimeOut: true);
-    _closeDialog();
-  }
-
-  ///
-  void _cancelCallSwitchReqWaiting() {
-    _isWaitingCanceled = true;
-    _outgoingSwitchTimer?.cancel();
-  }
+  // ///
+  // void _cancelCallSwitchReqWaiting() {
+  //   _isWaitingCanceled = true;
+  //   _outgoingSwitchTimer?.cancel();
+  // }
 
   ///
   void _closeDialog() {
