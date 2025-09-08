@@ -19,7 +19,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   var callDuration = "".obs;
   RxString callType = "".obs; // "audio" or "video"
   RxBool muted = false.obs;
-  RxBool videoMuted = false.obs;
+  RxBool isVideoEnabled = true.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
   RxList<String?> callerUsersId = <String?>[].obs;
@@ -283,15 +283,29 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     });
   }
 
-  void videoMute() async {
-    print("[MirrorFly] videoMute start");
-    MirrorFlyCallKit.toggleCamera(result: (result) async{
+  void setCameraEnable({required bool enable}) async {
+    print("[MirrorFly] setCameraEnable start");
+    final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+
+    if (flyCallType == null) {
+      print("[MirrorFly] setCameraEnable: Unable to get current call type.");
+      return;
+    }
+
+    if (flyCallType == FlyCallType.audio) {
+      print("[MirrorFly] setCameraEnable: Current call is not a video call, so requesting to switch video call");
+      requestVideoCallSwitch();
+      return;
+    }
+
+    print("[MirrorFly] setCameraEnable: value : $enable");
+
+    isVideoEnabled.value = enable;
+    MirrorFlyCallKit.setCameraEnable(enable: enable, result: (result) async {
       if(result){
-        final bool isVideoMute = await MirrorFlyCallKit.getIsCameraEnabled();
-        print("[MirrorFly] existing isVideoMute status : $isVideoMute");
-        videoMuted.value = !isVideoMute;
+        print("[MirrorFly] setCameraEnable : $result");
       }else{
-        print("[MirrorFly]  Error isVideoMute status  result : $result");
+        print("[MirrorFly]  Error setCameraEnable status  result : $result");
       }
     });
   }
@@ -657,7 +671,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   void _resetValues() {
     callType("");
     muted(false);
-    videoMuted(false);
+    isVideoEnabled(false);
     speakerOn(false);
     isOnGoingCallViewEnable(false);
     callerUsersId(<String?>[]);

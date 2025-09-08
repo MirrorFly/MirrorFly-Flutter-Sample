@@ -209,11 +209,13 @@ class CallKitOutgoingCallView
               ),
               if (controller.callType.value.toLowerCase() == CallType.video)
                 _buildCallOption(
-                  isActive: controller.videoMuted.value,
-                  icon: controller.videoMuted.value
+                  isActive: true,
+                  icon: !controller.isVideoEnabled.value
                       ? Icons.videocam_off
                       : Icons.videocam,
-                  onTap: controller.videoMute,
+                  onTap: () {
+                    controller.setCameraEnable(enable: !(controller.isVideoEnabled.value));
+                  },
                 ),
               if (controller.callType.value.toLowerCase() == CallType.video)
                 _buildCallOption(
