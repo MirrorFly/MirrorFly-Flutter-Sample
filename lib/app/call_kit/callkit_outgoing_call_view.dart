@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:googleapis/drive/v3.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
+import '../common/constants.dart';
 import '../data/helper.dart';
 import '../data/session_management.dart';
 import '../extensions/extensions.dart';
@@ -20,7 +22,7 @@ class CallKitOutgoingCallView
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.audioCallerBackground,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -30,7 +32,7 @@ class CallKitOutgoingCallView
           Obx(() {
             return controller.mainCallViewUserId.value.isNotEmpty ? MirrorFlyCallView(
                 key: UniqueKey(),
-                userJID: controller.mainCallViewUserId.value,
+                userJID: controller.mainCallViewUserId.value,viewBgColor: AppColors.audioCallerBackground,
                 profileImage: getUserProfileImageWithName(
                     participantId: controller.mainCallViewUserId.value)) : const Offstage();
           }),
@@ -44,17 +46,6 @@ class CallKitOutgoingCallView
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const SizedBox(height: 40),
-                Obx(() => Center(
-                  child: Text(
-                    controller.remoteUserName.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )),
-                /// Call Status
                 Obx(() =>
                     Center(
                       child: Text(
@@ -66,6 +57,19 @@ class CallKitOutgoingCallView
                         ),
                       ),
                     )),
+                const SizedBox(height: 10,),
+                Obx(() => Center(
+                  child: Text(
+                    controller.remoteUserName.value,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )),
+                /// Call Status
+
 
                 const Spacer(),
 
@@ -90,6 +94,7 @@ class CallKitOutgoingCallView
                   child: MirrorFlyCallView(
                       key: UniqueKey(),
                       userJID: controller.secondaryCallViewUserId.value,
+                      viewBgColor: AppColors.callerBackground,
                       profileImage: getUserProfileImageWithName(
                           participantId:
                           controller.secondaryCallViewUserId.value)),
@@ -147,17 +152,6 @@ class CallKitOutgoingCallView
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔹 Name first
-              Text(
-                isLocalView ? "You" : controller.remoteUserName.value,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: isLocalView ? 12 : 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig

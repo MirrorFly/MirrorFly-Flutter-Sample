@@ -16,6 +16,7 @@ import '../routes/route_settings.dart';
 class CallKitOutgoingCallController extends GetxController with GetTickerProviderStateMixin {
   /// Observables
   var callStatus = "Trying to connect...".obs;
+  var callDuration = "".obs;
   RxString callType = "".obs; // "audio" or "video"
   RxBool muted = false.obs;
   RxBool videoMuted = false.obs;
@@ -203,7 +204,7 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
 
   ///
    void _updateCallDuration({required String duration}) {
-    callStatus(duration);
+    callDuration(duration);
   }
 
   ///
