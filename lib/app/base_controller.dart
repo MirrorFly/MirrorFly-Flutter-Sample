@@ -54,6 +54,11 @@ import 'model/chat_message_model.dart' as model;
 
 class BaseController {
   static void initializeCallKitListeners() {
+
+    //
+    String? callerId;
+    String? callType;
+
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) {
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
@@ -129,22 +134,22 @@ class BaseController {
 
     ///
     MirrorFlyCallKit.flyCallAction.listen((event) {
-      String? callerId;
-      String? callType;
+
+      print("[MirrorFly] [BaseController] flyCallAction event ${event.toString()}");
 
       //
       final FlyCallAction flyCallAction = event;
       final FlyCallActionEvent flyCallActionEvent = flyCallAction.flyCallEvent;
 
       //
-      if(flyCallActionEvent == FlyCallActionEvent.incomingCall){
+      if(flyCallActionEvent == FlyCallActionEvent.incomingCall) {
         callerId = flyCallAction.participantId;
         callType = flyCallAction.callType;
-        print("[MirrorFly] [BaseController] Cached callerId=$callerId callType=$callType");
+        print("[MirrorFly] [BaseController] callerId=$callerId callType=$callType");
       }
 
       //
-      if ( flyCallActionEvent == FlyCallActionEvent.answerCall) {
+      if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
         print("incoming call action recieve");
         if (callerId != null && callType != null) {
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
@@ -355,192 +360,6 @@ class BaseController {
       }
     });
   }
-
-  /*static void initializeCallKitListeners() {
-    String? callType;
-    String? callerId;
-
-
-    MirrorFlyCallKit.callActionStream.listen((callAction) {
-
-      //
-      print(
-          "[MirrorFly] [BaseController] MirrorflyCallKit.callActionStream - callAction: ${callAction.toJson()}");
-
-      //
-      final CallActionEvent callActionActionEvent = callAction;
-      final FlyCallAction flyCallAction = callActionActionEvent.callAction;
-
-      if (callAction.callAction == FlyCallAction.actionCallSwitch &&
-          callAction.switchAction != null) {
-        print("[MirrorFly] [BaseController] Call Switch Action Received: ${callAction.switchAction}");
-        // Call switch action
-        if (Get.isRegistered<CallKitOutgoingCallController>()) {
-          final CallKitOutgoingCallController callKitOutgoingCallController =
-              Get.find<CallKitOutgoingCallController>();
-          callKitOutgoingCallController.callSwitchAction(
-              switchAction: callAction.switchAction);
-        } else {
-          print(
-              "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
-        }
-      }
-
-      if (flyCallAction == FlyCallAction.incomingCall) {
-        callerId = callActionActionEvent.participantId;
-        callType = callActionActionEvent.callType;
-        print("[MirrorFly] [BaseController] Cached callerId=$callerId callType=$callType");
-      }
-      print(
-          "[MirrorFly] [BaseController] event start audio device changes");
-
-      if (Get.isRegistered<CallKitOutgoingCallController>()) {
-        final CallKitOutgoingCallController callKitOutgoingCallController =
-        Get.find<CallKitOutgoingCallController>();
-        print("[Mirrorfly] flymediadevice1${callActionActionEvent.flyMediaDevice}");
-        if(flyCallAction == FlyCallAction.initAudioOutput) {
-          print(
-              "[MirrorFly] audioevent audio device changes");
-          callKitOutgoingCallController.updateCallAction(action: flyCallAction,initialDevice: callActionActionEvent.flyMediaDevice);
-
-
-        }
-      }
-
-      if (flyCallAction == FlyCallAction.answerCall) {
-        print("incoming call action recieve");
-        if (callerId != null && callType != null) {
-          final jid = "$callerId@xmpp-uikit-qa.contus.us";
-          NavUtils.toNamed(
-            Routes.callKitOutGoingCallView,
-            arguments: {
-              "userJid": [jid], // pass modified JID
-              "callType": callType,
-              "isIncoming": true,
-            },
-          );
-        } else {
-          print(
-              "[MirrorFly] [BaseController] ERROR: answerCall received but callerId/callType not set");
-        }
-      }
-    });
-
-    ///
-    MirrorFlyCallKit.callStatusStream.listen((callStatus) {
-      if (Get.isRegistered<CallKitOutgoingCallController>()) {
-        ///
-        final CallKitOutgoingCallController callKitOutgoingCallController =
-            Get.find<CallKitOutgoingCallController>();
-        final CallStatusEvent callStatusEvent = callStatus;
-        final FlyCallStatus flyCallStatus = callStatusEvent.callStatus;
-
-        ///
-        print(
-            "[MirrorFly] [BaseController] MirrorflyCallKit.callStatusStream - CallStatusEvent: ${callStatus.toJson()}");
-
-        ///
-        if (flyCallStatus == FlyCallStatus.connecting) {
-          // After attended
-          print(
-              "[MirrorFly] [BaseController] MirrorflyCallKit.connecting - CallStatusEvent: ${callStatus.toJson()}");
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        ///
-        if (flyCallStatus == FlyCallStatus.connected) {
-          print(
-              "[MirrorFly] [BaseController] MirrorflyCallKit.connected - CallStatusEvent: ${callStatus.toJson()}");
-          // Trying to connect
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.ringing) {
-          // Ringing
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.callTimeout) {
-          // Time out (show toast & PopBack)
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.disconnected) {
-          // Disconnected (show toast & PopBack)
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.rejected) {
-          // Rejected by remote user (show toast & PopBack)
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.reconnecting) {
-          // Disconnected (show toast & PopBack)
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-
-        if (flyCallStatus == FlyCallStatus.declined) {
-          // Declined (show toast & PopBack)
-          callKitOutgoingCallController.updateCallStatus(status: flyCallStatus);
-        }
-      } else {
-        print(
-            "[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
-      }
-    });
-
-
-
-
-    ///
-    MirrorFlyCallKit.participantStream.listen((flyCallParticipantEvent) {
-      print(
-          "[MirrorFly] [BaseController] MirrorflyCallKit.participantStream - participantStream: ${flyCallParticipantEvent.toJson()}");
-
-      final CallParticipantEvent callParticipantEvent = flyCallParticipantEvent;
-      final String participantId = callParticipantEvent.participantId;
-
-      /// Check for track published event
-      if (callParticipantEvent.participantEvent == FlyParticipantEvent.trackPublished) {
-        final bool isSelf = isSelfId(id: participantId);
-
-       if (Get.isRegistered<CallKitOutgoingCallController>()) {
-          final CallKitOutgoingCallController controller = Get.find<CallKitOutgoingCallController>();
-          final String id = "$participantId@xmpp-uikit-qa.contus.us";
-          controller.onTracksPublished(isSelf: isSelf, participantId: id);
-        } else {
-          print("[MirrorFly] [BaseController] CallKitOutgoingCallController Not Registered");
-        }
-      }
-    });
-
-    ///
-    MirrorFlyCallKit.muteOperationsStream.listen((muteStatus) {
-      final MuteStatusEvent muteStatusEvent = muteStatus;
-
-      final String participantId = muteStatusEvent.userId;
-      print(
-          "[MirrorFly] muteOperationsStream => user: $participantId | self:  | type: ${muteStatusEvent.muteType} | status: ${muteStatusEvent.muteStatus}");
-      final bool isSelf = isSelfId(id: participantId);
-
-      if (isSelf) {
-        return;
-      }
-      if (Get.isRegistered<CallKitOutgoingCallController>()) {
-        final CallKitOutgoingCallController controller =
-        Get.find<CallKitOutgoingCallController>();
-
-        controller.onRemoteMuteStatusChanged(
-          participantId: participantId,
-          muteType: muteStatusEvent.muteType,
-          muteStatus: muteStatusEvent.muteStatus,
-        );
-      }
-    });
-
-
-  }*/
 
   static bool isSelfId({required String id}) {
     final String? currentUserId = SessionManagement.getUserJID();

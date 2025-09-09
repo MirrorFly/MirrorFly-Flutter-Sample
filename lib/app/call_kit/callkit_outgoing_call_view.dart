@@ -46,16 +46,18 @@ class CallKitOutgoingCallView
                           ),
                         ),
                         if (controller.isRemoteAudioMuted.value)
-                          Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black54,
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: const Icon(
-                              Icons.mic_off_outlined,
-                              color: Colors.white,
-                              size: 20,
+                          Center(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black54,
+                              ),
+                              padding: const EdgeInsets.all(12),
+                              child: const Icon(
+                                Icons.mic_off_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
                       ],
