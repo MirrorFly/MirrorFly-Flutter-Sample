@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:googleapis/drive/v3.dart';
+import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
 import '../common/constants.dart';
 import '../data/helper.dart';
 import '../data/session_management.dart';
+import '../data/utils.dart';
 import '../extensions/extensions.dart';
 import 'callkit_outgoing_call_controller.dart';
 
@@ -22,127 +23,180 @@ class CallKitOutgoingCallView
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: AppColors.audioCallerBackground,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          /// 🔹 Background: video or placeholder
-          // Obx(() => _buildCallMainView()),
-
-          Obx(() {
-            return controller.mainCallViewUserId.value.isNotEmpty ? MirrorFlyCallView(
-                key: UniqueKey(),
-                userJID: controller.mainCallViewUserId.value,viewBgColor: AppColors.audioCallerBackground,
-                profileImage: getUserProfileImageWithName(
-                    participantId: controller.mainCallViewUserId.value)) : const Offstage();
-          }),
-
-          /// 🔹 Gradient overlay
-          _buildGradientOverlay(),
-
-          /// 🔹 Foreground content
-          SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const SizedBox(height: 40),
-                Obx(() =>
-                    Center(
-                      child: Text(
-                        controller.callStatus.value,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+      backgroundColor: Colors.transparent,
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: controller.toggleControls,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            /// Main view
+            Obx(() {
+              return controller.mainCallViewUserId.value.isNotEmpty
+                  ? Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        MirrorFlyCallView(
+                          key: ValueKey(controller.mainCallViewUserId.value),
+                          userJID: controller.mainCallViewUserId.value,
+                          viewBgColor: AppColors.audioCallerBackground,
+                          profileImage: getUserProfileImageWithName(
+                            participantId: controller.mainCallViewUserId.value,
+                            scale: 1,
+                          ),
                         ),
-                      ),
-                    )),
-                const SizedBox(height: 10,),
-                Obx(() => Center(
-                  child: Text(
-                    controller.remoteUserName.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )),
-                /// Call Status
+                        if (controller.isRemoteAudioMuted.value)
+                          Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black54,
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: const Icon(
+                              Icons.mic_off_outlined,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                      ],
+                    )
+                  : const Offstage();
+            }),
 
+            /// 🔹 Gradient overlay
+            _buildGradientOverlay(),
 
-                const Spacer(),
+            /// 🔹 Foreground content
+            SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const SizedBox(height: 40),
 
-                /// Local Preview / Profile Image
-                Obx(() =>
-                controller.isOnGoingCallViewEnable.value
-                    ? Container(
-                  margin: const EdgeInsets.all(12.0),
-                  height: 160,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: const [
-                      BoxShadow(
-                        offset: Offset(0, 4),
-                        blurRadius: 8,
-                        color: Colors.black26,
-                      ),
-                    ],
-                  ),
-                  child: MirrorFlyCallView(
-                      key: UniqueKey(),
-                      userJID: controller.secondaryCallViewUserId.value,
-                      viewBgColor: AppColors.callerBackground,
-                      profileImage: getUserProfileImageWithName(
-                          participantId:
-                          controller.secondaryCallViewUserId.value)),
-                )
-                    : const SizedBox.shrink()),
+                  /// Call Status
+                  Obx(() {
+                    final isOngoing = controller.isOnGoingCallViewEnable.value;
 
-                /// Call Control Buttons
-                Center(child: _buildCallControls(context)),
+                    return Column(
+                      children: [
+                        if (!isOngoing) ...[
+                          Center(
+                            child: Text(
+                              controller.callStatus.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              controller.remoteUserName.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (isOngoing) ...[
+                          Center(
+                            child: Text(
+                              controller.remoteUserName.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              controller.callDuration.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  }),
 
-                /// End Call
-                Center(child: _buildEndCallButton()),
-              ],
+                  const Spacer(),
+
+                  /// Local Preview / Profile Image
+                  Obx(() => controller.isOnGoingCallViewEnable.value
+                      ? Container(
+                          margin: const EdgeInsets.all(12.0),
+                          height: 130,
+                          width: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 4),
+                                blurRadius: 8,
+                                color: Colors.black26,
+                              ),
+                            ],
+                          ),
+                          child: MirrorFlyCallView(
+                              viewBgColor: AppColors.callerBackground,
+                              key: UniqueKey(),
+                              userJID: controller.secondaryCallViewUserId.value,
+                              profileImage: getUserProfileImageWithName(
+                                  participantId:
+                                      controller.secondaryCallViewUserId.value,
+                                  scale: 2)),
+                        )
+                      : const SizedBox.shrink()),
+                  _buildControls(context),
+
+                  // /// Call Control Buttons
+                  // Center(child: _buildCallControls(context)),
+                  //
+                  // /// End Call
+                  // Center(child: _buildEndCallButton()),
+                ],
+              ),
             ),
-          ),
-          ///  Remote mute status indicator
-          Obx(() {
-            if (controller.isOnGoingCallViewEnable.value) {
-              return Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 70, right: 30),
-                  height: 42,
-                  width: 42,
-                  decoration: BoxDecoration(
-                    color: controller.isRemoteAudioMuted.value
-                        ? Colors.white : Colors.black12,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    controller.isRemoteAudioMuted.value
-                        ? Icons.mic_off
-                        : Icons.mic,
-                    color: controller.isRemoteAudioMuted.value
-                        ?Colors.red:Colors.white,
-                    size: 20,
-                  ),
-                ),
-              );
-            }
-
-            return const SizedBox.shrink();
-          }),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget getUserProfileImageWithName({required String participantId}) {
+  /// 🔹 Controls wrapper
+  Widget _buildControls(BuildContext context) {
+    return Obx(() {
+      return AnimatedSlide(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        offset:
+            controller.showControls.value ? Offset.zero : const Offset(0, 2),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: controller.showControls.value ? 1 : 0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildCallControls(context), // mute / video / switch
+              _buildEndCallButton(), // red disconnect
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget getUserProfileImageWithName(
+      {required String participantId, double scale = 1.0}) {
     return FutureBuilder<ProfileDetails>(
       future: getProfileDetails(participantId),
       builder: (ctx, snap) {
@@ -152,12 +206,34 @@ class CallKitOutgoingCallView
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // 🔹 Name first
+              const SizedBox(height: 8),
+              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig
-                    .outgoingCallPageStyle.profileImageSize.width /
-                    2,
+                        .outgoingCallPageStyle.profileImageSize.width /
+                    scale,
               ),
+              Obx(() {
+                return controller.isOnGoingCallViewEnable.value &&
+                        controller.localParticipantId.value == participantId
+                    ? const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "You",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              }),
             ],
           );
         }
@@ -189,8 +265,7 @@ class CallKitOutgoingCallView
   Widget _buildCallControls(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-      child: Obx(() =>
-          Row(
+      child: Obx(() => Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
@@ -200,8 +275,6 @@ class CallKitOutgoingCallView
                   _showAudioDeviceSelector(context, controller);
                 },
               ),
-
-
               _buildCallOption(
                 isActive: controller.muted.value,
                 icon: controller.muted.value ? Icons.mic_off : Icons.mic,
@@ -214,7 +287,8 @@ class CallKitOutgoingCallView
                       ? Icons.videocam_off
                       : Icons.videocam,
                   onTap: () {
-                    controller.setCameraEnable(enable: !(controller.isVideoEnabled.value));
+                    controller.setCameraEnable(
+                        enable: !(controller.isVideoEnabled.value));
                   },
                 ),
               if (controller.callType.value.toLowerCase() == CallType.video)
@@ -227,10 +301,10 @@ class CallKitOutgoingCallView
                 ),
               if (controller.callType.value.toLowerCase() == CallType.audio)
                 _buildCallOption(
-                isActive: false,
-                icon: Icons.switch_video,
-                onTap: controller.requestVideoCallSwitch,
-              ),
+                  isActive: false,
+                  icon: Icons.videocam_off,
+                  onTap: controller.requestVideoCallSwitch,
+                ),
             ],
           )),
     );
@@ -239,26 +313,15 @@ class CallKitOutgoingCallView
   ///  End Call Button
   Widget _buildEndCallButton() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
-      child: InkWell(
-        onTap: controller.localHangup,
-        child: Container(
-          height: 72,
-          width: 72,
-          decoration: const BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 8),
-                blurRadius: 20,
-                color: Colors.black45,
-              )
-            ],
-          ),
-          child: const Icon(Icons.call_end, color: Colors.white, size: 32),
-        ),
-      ),
+      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+      child: ElevatedButton(
+          style: AppStyleConfig.ongoingCallPageStyle.disconnectButtonStyle,
+          onPressed: () {
+            controller.localHangup();
+          },
+          child: AppUtils.svgIcon(
+            icon: callEndButton,
+          )),
     );
   }
 
@@ -282,7 +345,7 @@ class CallKitOutgoingCallView
         child: Center(
           child: Icon(
             icon,
-            color: isActive ? Colors.red : Colors.white,
+            color: isActive ? Colors.black : Colors.white,
           ),
         ),
       ),
@@ -290,7 +353,8 @@ class CallKitOutgoingCallView
   }
 }
 
-void _showAudioDeviceSelector(BuildContext context, CallKitOutgoingCallController controller) async {
+void _showAudioDeviceSelector(
+    BuildContext context, CallKitOutgoingCallController controller) async {
   final availableTypes = await controller.getAvailableTypes();
 
   await showDialog(
@@ -314,10 +378,10 @@ void _showAudioDeviceSelector(BuildContext context, CallKitOutgoingCallControlle
                   type == FlyCallAudioDeviceType.speaker
                       ? Icons.speaker_phone
                       : type == FlyCallAudioDeviceType.earpiece
-                      ? Icons.phone_android
-                      : type == FlyCallAudioDeviceType.bluetooth
-                      ? Icons.bluetooth_audio
-                      : Icons.headset,
+                          ? Icons.phone_android
+                          : type == FlyCallAudioDeviceType.bluetooth
+                              ? Icons.bluetooth_audio
+                              : Icons.headset,
                 ),
                 title: Text(type.name.capitalize!),
                 trailing: controller.selectedDevice.value == type
@@ -350,5 +414,3 @@ IconData _getCurrentAudioIcon(FlyCallAudioDeviceType? type) {
       return Icons.volume_up;
   }
 }
-
-

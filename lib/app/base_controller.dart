@@ -54,7 +54,6 @@ import 'model/chat_message_model.dart' as model;
 
 class BaseController {
 
-  ///
   static void initializeCallKitListeners() {
     String? callType;
     String? callerId;

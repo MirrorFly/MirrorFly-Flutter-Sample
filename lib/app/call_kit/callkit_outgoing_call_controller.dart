@@ -17,6 +17,8 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
   /// Observables
   var callStatus = "Trying to connect...".obs;
   var callDuration = "".obs;
+  var callTryStatus = "".obs;
+  RxBool showControls = true.obs;
   RxString callType = "".obs; // "audio" or "video"
   RxBool muted = false.obs;
   RxBool isVideoEnabled = true.obs;
@@ -75,6 +77,9 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     }
     print("[MirrorFly] callview");
     super.onInit();
+  }
+  void toggleControls() {
+    showControls.value = !showControls.value;
   }
 
   void getRemoteUserName() async {
@@ -138,8 +143,13 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
         /// Received only for outgoing call.
       /// For incoming call after the call gets connected the FlyCallStatus is connected
       //   connecting();
+      case FlyCallStatus.tryingToConnect:
+        callStatus("Trying to connect...");
       case FlyCallStatus.reconnecting:
         callStatus("Trying to reconnecting...");
+        callTryStatus("Trying to reconnecting...");
+      case FlyCallStatus.reconnected:
+        callTryStatus("");
       case FlyCallStatus.connected:
         connected();
 
@@ -689,5 +699,6 @@ class CallKitOutgoingCallController extends GetxController with GetTickerProvide
     mainCallViewUserId("");
     secondaryCallViewUserId("");
     isManualDeviceSelected(false);
+    callTryStatus("");
   }
 }
