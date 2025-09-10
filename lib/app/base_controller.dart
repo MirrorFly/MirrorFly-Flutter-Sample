@@ -308,12 +308,20 @@ class BaseController {
 
         case FlyCallActionEvent.audioMuted:
           print("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
-          controller.isAudioMute(isMuted: true);
+          if (!isSelfId(id: flyCallAction.participantId)) {
+            controller.isAudioMute(isMuted: true);
+          } else {
+            print("[MirrorFly][BaseController] Skipped self audioMuted event");
+          }
           break;
 
         case FlyCallActionEvent.audioUnMuted:
-          print("[MirrorFly][BaseController] flyCallActionEvent audioUnMuted");
-          controller.isAudioMute(isMuted: false);
+          print("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
+          if (!isSelfId(id: flyCallAction.participantId)) {
+            controller.isAudioMute(isMuted: false);
+          } else {
+            print("[MirrorFly][BaseController] Skipped self audioMuted event");
+          }
           break;
 
         case FlyCallActionEvent.videoMuted:
@@ -361,7 +369,7 @@ class BaseController {
     });
   }
 
-  static bool isSelfId({required String id}) {
+  static bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
     if (currentUserId == null) {
       print("[MirrorFly] isSelfId: is null id=$id");

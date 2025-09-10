@@ -134,30 +134,52 @@ class CallKitOutgoingCallView
                   /// Local Preview / Profile Image
                   Obx(() => controller.isOnGoingCallViewEnable.value
                       ? Container(
-                          margin: const EdgeInsets.all(12.0),
-                          height: 130,
-                          width: 100,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 8,
-                                color: Colors.black26,
-                              ),
-                            ],
+                    margin: const EdgeInsets.all(12.0),
+                    height: 130,
+                    width: 100,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, 4),
+                          blurRadius: 8,
+                          color: Colors.black26,
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        MirrorFlyCallView(
+                          viewBgColor: AppColors.callerBackground,
+                          key: UniqueKey(),
+                          userJID: controller.secondaryCallViewUserId.value,
+                          profileImage: getUserProfileImageWithName(
+                            participantId: controller.secondaryCallViewUserId.value,
+                            scale: 2,
                           ),
-                          child: MirrorFlyCallView(
-                              viewBgColor: AppColors.callerBackground,
-                              key: UniqueKey(),
-                              userJID: controller.secondaryCallViewUserId.value,
-                              profileImage: getUserProfileImageWithName(
-                                  participantId:
-                                      controller.secondaryCallViewUserId.value,
-                                  scale: 2)),
-                        )
-                      : const SizedBox.shrink()),
+                        ),
+
+                        if (controller.muted.value)
+                          Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black54,
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: const Icon(
+                              Icons.mic_off_outlined,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                      ],
+                    ),
+                  )
+                      : const SizedBox.shrink(),
+                  ),
+
                   _buildControls(context),
 
                   // /// Call Control Buttons
