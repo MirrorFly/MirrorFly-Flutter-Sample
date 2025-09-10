@@ -131,72 +131,89 @@ class CallKitOutgoingCallView
 
                   const Spacer(),
 
-                  /// Local Preview / Profile Image
-                  Obx(() => controller.isOnGoingCallViewEnable.value
-                      ? Container(
-                    margin: const EdgeInsets.all(12.0),
-                    height: 130,
-                    width: 100,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, 4),
-                          blurRadius: 8,
-                          color: Colors.black26,
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        MirrorFlyCallView(
-                          viewBgColor: AppColors.callerBackground,
-                          key: UniqueKey(),
-                          userJID: controller.secondaryCallViewUserId.value,
-                          profileImage: getUserProfileImageWithName(
-                            participantId: controller.secondaryCallViewUserId.value,
-                            scale: 2,
-                          ),
-                        ),
-
-                        if (controller.muted.value)
-                          Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black54,
-                            ),
-                            padding: const EdgeInsets.all(12),
-                            child: const Icon(
-                              Icons.mic_off_outlined,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ),
-                      ],
-                    ),
-                  )
-                      : const SizedBox.shrink(),
-                  ),
-
                   _buildControls(context),
 
-                  // /// Call Control Buttons
-                  // Center(child: _buildCallControls(context)),
-                  //
-                  // /// End Call
-                  // Center(child: _buildEndCallButton()),
                 ],
               ),
             ),
+
+            /// Local Preview / Profile Image
+            Obx(() {
+              if (!controller.isOnGoingCallViewEnable.value) {
+                return const SizedBox.shrink();
+              }
+              final screenSize = MediaQuery.of(context).size;
+              final previewWidth = (screenSize.width * 0.25).clamp(80.0, 140.0);
+              final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
+              final bottomOffset = controller.showControls.value
+                  ? screenSize.height * 0.28
+                  : screenSize.height * 0.14;
+
+              return AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                bottom: bottomOffset,
+                right: screenSize.width * 0.05,
+                child: _buildLocalPreview(
+                  width: previewWidth,
+                  height: previewHeight,
+                ),
+              );
+            })
+
           ],
         ),
       ),
     );
   }
 
-  /// 🔹 Controls wrapper
+  Widget _buildLocalPreview({required double width, required double height}) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16), // better than circle for video
+        boxShadow: const [
+          BoxShadow(
+            offset: Offset(0, 4),
+            blurRadius: 8,
+            color: Colors.black26,
+          ),
+        ],
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          MirrorFlyCallView(
+            viewBgColor: AppColors.callerBackground,
+            key: UniqueKey(),
+            userJID: controller.secondaryCallViewUserId.value,
+            profileImage: getUserProfileImageWithName(
+              participantId: controller.secondaryCallViewUserId.value,
+              scale: 2,
+            ),
+          ),
+          if (controller.muted.value)
+            Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black54,
+              ),
+              padding: const EdgeInsets.all(12),
+              child: const Icon(
+                Icons.mic_off_outlined,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+
+  ///  Controls wrapper
   Widget _buildControls(BuildContext context) {
     return Obx(() {
       return AnimatedSlide(
