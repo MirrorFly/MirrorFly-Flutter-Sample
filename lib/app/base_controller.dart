@@ -308,20 +308,12 @@ class BaseController {
 
         case FlyCallActionEvent.audioMuted:
           print("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
-          if (!isSelfId(id: flyCallAction.participantId)) {
-            controller.isAudioMute(isMuted: true);
-          } else {
-            print("[MirrorFly][BaseController] Skipped self audioMuted event");
-          }
+            controller.isAudioMute(isAudioMuted: true,participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.audioUnMuted:
           print("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
-          if (!isSelfId(id: flyCallAction.participantId)) {
-            controller.isAudioMute(isMuted: false);
-          } else {
-            print("[MirrorFly][BaseController] Skipped self audioMuted event");
-          }
+            controller.isAudioMute(isAudioMuted: false,participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoMuted:

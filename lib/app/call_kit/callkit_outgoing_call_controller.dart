@@ -150,14 +150,33 @@ class CallKitOutgoingCallController extends GetxController
     callTryStatus("");
   }
 
-  void isAudioMute({required bool isMuted}) {
-    isRemoteAudioMuted.value = isMuted;
+  void isAudioMute({required bool isAudioMuted,required String? participantId}) {
+    if(isSelfId(id: participantId)){
+      muted.value = isAudioMuted;
+    }else{
+      isRemoteAudioMuted.value = isAudioMuted;
+    }
     print("[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}");
   }
 
   void isVideoMute({required bool isMuted}) {
     isRemoteVideoMuted.value = isMuted;
     print("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
+  }
+
+
+  static bool isSelfId({required String? id}) {
+    final String? currentUserId = SessionManagement.getUserJID();
+    if (currentUserId == null) {
+      print("[MirrorFly] isSelfId: is null id=$id");
+      return true;
+    } else {
+      //
+      final String participantId = "$id@xmpp-uikit-qa.contus.us";
+      print("[Mirrorfly] isSelfId $currentUserId $participantId");
+      print("[MirrorFly] isSelfId: ${currentUserId == participantId}");
+      return currentUserId == participantId;
+    }
   }
 
   ///
@@ -232,7 +251,6 @@ class CallKitOutgoingCallController extends GetxController
             await MirrorFlyCallKit.getIsMicrophoneEnabled();
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
-        muted.value = !isMicEnabled;
       } else {
         print(
             "[MirrorFly] muteAudio failure toggleMicrophone result : $result");
