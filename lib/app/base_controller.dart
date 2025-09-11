@@ -258,12 +258,12 @@ class BaseController {
 
         case FlyCallActionEvent.cancel:
           print("[MirrorFly][BaseController] flyCallActionEvent cancel");
-          controller.closeDialog();
+          controller.onRemoteUserCancelledTheSwitchRequest();
           break;
 
         case FlyCallActionEvent.decline:
           print("[MirrorFly][BaseController] flyCallActionEvent decline");
-          controller.closeDialog();
+          controller.onCallSwitchRemoteUserDeclined();
           break;
 
         case FlyCallActionEvent.timeout:

@@ -165,7 +165,6 @@ class CallKitOutgoingCallController extends GetxController
       isVideoEnabled.value = isVideoMuted;
     }else{
       isRemoteVideoMuted.value = isVideoMuted;
-
     }
     print("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
   }
@@ -299,6 +298,21 @@ class CallKitOutgoingCallController extends GetxController
                 "[MirrorFly]  Error setCameraEnable status  result : $result");
           }
         });
+  }
+
+
+
+  void onCallSwitchRemoteUserDeclined() {
+    print("[MirrorFly] onCallSwitchRemoteUserDeclined");
+    toToast("Video call switch declined");
+    closeDialog();
+  }
+
+  ///
+  void onRemoteUserCancelledTheSwitchRequest() {
+    print("[MirrorFly] onRemoteUserCancelledTheSwitchRequest");
+    toToast("Video call switch canceled");
+    closeDialog();
   }
 
   void switchCamera() async {
