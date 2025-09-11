@@ -142,8 +142,8 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void reconnecting() {
-    callStatus("Trying to reconnecting...");
-    callTryStatus("Trying to reconnecting...");
+    // callStatus("Trying to reconnecting...");
+    callTryStatus("Reconnecting...");
   }
 
   void reconnected() {
@@ -313,6 +313,15 @@ class CallKitOutgoingCallController extends GetxController
     print("[MirrorFly] onRemoteUserCancelledTheSwitchRequest");
     toToast("Video call switch canceled");
     closeDialog();
+  }
+
+  void remoteUserIsEngaged() async {
+    print("[MirrorFly] remoteUserIsEngaged");
+    toToast("${remoteUserName.value} in another call");
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (NavUtils.canPop) {
+      NavUtils.back();
+    }
   }
 
   void switchCamera() async {
