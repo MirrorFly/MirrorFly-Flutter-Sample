@@ -60,7 +60,18 @@ class BaseController {
     String? callType;
 
     ///
-    MirrorFlyCallKit.flyCallStatus.listen((event) {
+    MirrorFlyCallKit.flyCallStatus.listen((event) async {
+      final flyCallStatus = event;
+      final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
+
+      if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
+        /// --- Need to check ----
+        /// Need to refactor the above code & handle this logic at FlyCallAction - answerCall
+        callerId = flyCallStatus.participantsIds.first;
+        callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
+        print("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType");
+      }
+
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
         print(
             "[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered");
@@ -69,8 +80,6 @@ class BaseController {
 
       final callKitOutgoingCallController =
       Get.find<CallKitOutgoingCallController>();
-      final flyCallStatus = event;
-      final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
 
       print(
           "[MirrorFly][BaseController] callStatusStream - Event: ${event.toJson()}");
@@ -92,6 +101,7 @@ class BaseController {
           callKitOutgoingCallController.tryingToConnect();
           break;
         case FlyCallStatusEvent.calling:
+          /// Need to pass this condition to UI, to update the call status from "Trying to connect" to "Calling"
           print("[MirrorFly][BaseController]flyCallStatusEvent connected");
           break;
         case FlyCallStatusEvent.reconnecting:
@@ -130,24 +140,29 @@ class BaseController {
         case FlyCallStatusEvent.none:
           print("[MirrorFly][BaseController]flyCallStatusEvent none");
           break;
+        case FlyCallStatusEvent.incomingCall:
+          /// This will be triggered when we receive the incoming call in call status stream.
+        /// This condition is already handled above to set the callerId and callType
+          break;
       }
     });
 
     ///
     MirrorFlyCallKit.flyCallAction.listen((event) {
 
-      print("[MirrorFly] [BaseController] flyCallAction event ${event.toString()}");
+      print("[MirrorFly] [BaseController] flyCallAction event ${event.toJson()}");
 
       //
       final FlyCallAction flyCallAction = event;
       final FlyCallActionEvent flyCallActionEvent = flyCallAction.flyCallEvent;
 
       //
-      if(flyCallActionEvent == FlyCallActionEvent.incomingCall) {
-        callerId = flyCallAction.participantId;
-        callType = flyCallAction.callType;
-        print("[MirrorFly] [BaseController] callerId=$callerId callType=$callType");
-      }
+      /// Commented the below code, because we are already setting the callerId and callType in the call status stream when we receive the incoming call
+      // if(flyCallActionEvent == FlyCallActionEvent.incomingCall) {
+      //   callerId = flyCallAction.participantId;
+      //   callType = flyCallAction.callType;
+      //   print("[MirrorFly] [BaseController] callerId=$callerId callType=$callType");
+      // }
 
       //
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
@@ -183,9 +198,9 @@ class BaseController {
           print("[MirrorFly][BaseController] flyCallActionEvent outgoingCall");
           break;
 
-        case FlyCallActionEvent.incomingCall:
-          print("[MirrorFly][BaseController] flyCallActionEvent incomingCall");
-          break;
+        // case FlyCallActionEvent.incomingCall:
+        //   print("[MirrorFly][BaseController] flyCallActionEvent incomingCall");
+        //   break;
 
         case FlyCallActionEvent.answerCall:
           print("[MirrorFly][BaseController] flyCallActionEvent answerCall");
