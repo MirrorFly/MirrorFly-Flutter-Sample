@@ -125,6 +125,7 @@ class BaseController {
           break;
         case FlyCallStatusEvent.engaged:
           print("[MirrorFly][BaseController]flyCallStatusEvent engaged");
+          callKitOutgoingCallController.remoteUserIsEngaged();
           break;
         case FlyCallStatusEvent.none:
           print("[MirrorFly][BaseController]flyCallStatusEvent none");
