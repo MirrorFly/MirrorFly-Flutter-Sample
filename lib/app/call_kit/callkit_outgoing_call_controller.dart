@@ -212,7 +212,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void connecting() {
     // callStatus("Connected");
-    isOnGoingCallView();
+    // isOnGoingCallView();
     // updateUserId();
     // _startTimer();
   }
