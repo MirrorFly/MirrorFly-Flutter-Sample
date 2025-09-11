@@ -32,7 +32,7 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isManualDeviceSelected = false.obs;
   RxString cameraPosition = CameraType.front.obs;
   RxBool isRemoteAudioMuted = false.obs;
-  RxBool isRemoteVideoMuted = false.obs;
+  RxBool isRemoteVideoMuted = true.obs;
   RxString remoteUserName = "".obs;
   RxString localUserName = "".obs;
 
@@ -156,12 +156,23 @@ class CallKitOutgoingCallController extends GetxController
     }else{
       isRemoteAudioMuted.value = isAudioMuted;
     }
+
     print("[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}");
   }
 
-  void isVideoMute({required bool isMuted}) {
-    isRemoteVideoMuted.value = isMuted;
+  void isVideoMute({required bool isVideoMuted,required String? participantId}) {
+    if(isSelfId(id: participantId)){
+      isVideoEnabled.value = isVideoMuted;
+    }else{
+      isRemoteVideoMuted.value = isVideoMuted;
+
+    }
     print("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
+  }
+
+  void audioCallAfterCallSwitch(){
+    print("audioCallAfterCallSwitch change the call type into audio call");
+    callType.value = "audio";
   }
 
 

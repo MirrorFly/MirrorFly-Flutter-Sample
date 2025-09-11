@@ -233,6 +233,7 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+          controller.audioCallAfterCallSwitch();
           print("[MirrorFly][BaseController] flyCallActionEvent toAudioCallAfterCallSwitch");
           break;
 
@@ -318,12 +319,12 @@ class BaseController {
 
         case FlyCallActionEvent.videoMuted:
           print("[MirrorFly][BaseController] flyCallActionEvent videoMuted");
-          controller.isVideoMute(isMuted: false);
+          controller.isVideoMute(isVideoMuted: false,participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoUnMuted:
           print("[MirrorFly][BaseController] flyCallActionEvent videoUnMuted");
-          controller.isVideoMute(isMuted: true);
+          controller.isVideoMute(isVideoMuted: true,participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.speakingChanged:
