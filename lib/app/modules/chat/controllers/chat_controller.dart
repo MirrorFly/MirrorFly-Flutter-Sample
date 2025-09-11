@@ -4049,7 +4049,7 @@ class ChatController extends FullLifeCycleController
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "userJid": [profile.jid],
-                    "callType": CallType.video
+                    "callType": CallType.audio
                   });
                 } else {
                   toToast("CF Not connected");
