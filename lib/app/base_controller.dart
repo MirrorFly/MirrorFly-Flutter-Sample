@@ -227,8 +227,8 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.initAudioOutput:
-          final flyMediaDevice = flyCallAction.flyMediaDevice;
-          controller.initAudioRouting(flyMediaDevice);
+          // final flyMediaDevice = flyCallAction.flyMediaDevice;
+          controller.initAudioRouting();
           print("[MirrorFly][BaseController] flyCallActionEvent initAudioOutput");
           break;
 

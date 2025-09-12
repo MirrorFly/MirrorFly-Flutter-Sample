@@ -418,18 +418,14 @@ void _showAudioDeviceSelector(
                 leading: Icon(
                   type == FlyCallAudioDeviceType.speaker
                       ? Icons.speaker_phone
-                      : type == FlyCallAudioDeviceType.earpiece
-                          ? Icons.phone_android
-                          : type == FlyCallAudioDeviceType.bluetooth
-                              ? Icons.bluetooth_audio
-                              : Icons.headset,
+                      :  Icons.phone_android
                 ),
                 title: Text(type.name.capitalize!),
-                trailing: controller.selectedDevice.value == type
+                trailing: controller.selectedDevice.value == type.value
                     ? const Icon(Icons.check, color: Colors.green)
                     : null,
                 onTap: () {
-                  controller.changeAudioDevice(type);
+                  controller.changeAudioDevice(type.value);
                   Navigator.of(context).pop(); // close dialog
                 },
               );
@@ -441,17 +437,23 @@ void _showAudioDeviceSelector(
   );
 }
 
-IconData _getCurrentAudioIcon(FlyCallAudioDeviceType? type) {
-  switch (type) {
-    case FlyCallAudioDeviceType.speaker:
-      return Icons.volume_up;
-    case FlyCallAudioDeviceType.earpiece:
-      return Icons.hearing;
-    case FlyCallAudioDeviceType.bluetooth:
-      return Icons.bluetooth_audio;
-    case FlyCallAudioDeviceType.wired:
-      return Icons.headset;
-    default:
-      return Icons.volume_up;
+IconData _getCurrentAudioIcon(String? type) {
+  if (type == FlyCallAudioDeviceType.speaker.value) {
+    return Icons.volume_up;
+  } else if (type == FlyCallAudioDeviceType.earpiece.value) {
+    return Icons.hearing;
+  } else {
+    return Icons.hearing;
   }
+  // switch (type) {
+  //   case FlyCallAudioDeviceType.speaker:
+  //     return Icons.volume_up;
+  //   case FlyCallAudioDeviceType.earpiece:
+  //     return Icons.hearing;
+  //   case FlyCallAudioDeviceType.bluetooth:
+  //     return Icons.bluetooth_audio;
+  //   case FlyCallAudioDeviceType.wired:
+  //     return Icons.headset;
+  //   default:
+  //     return Icons.volume_up;
 }
