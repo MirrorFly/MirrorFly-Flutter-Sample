@@ -203,6 +203,11 @@ class CallKitOutgoingCallController extends GetxController
     await handleTimeOutDisconnect();
     _stopTimer();
     _resetValues();
+    NavUtils.offNamed(Routes.callTimeOutView, arguments: {
+      "callType": callType,
+      "userJid": callerUsersId,
+      "calleeName": remoteUserName.value
+    });
     NavUtils.back();
   }
 

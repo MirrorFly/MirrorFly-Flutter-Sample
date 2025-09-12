@@ -67,6 +67,8 @@ abstract class Routes {
   //callkit
   static const callKitOutGoingCallView = _Paths.callKitOutGoingCallView;
   static const callKitOnGoingCallView = _Paths.callKitOnGoingCallView;
+  static const callKitTimeOutView = _Paths.callKitTimeOutView;
+
 
 
 
@@ -139,6 +141,8 @@ abstract class _Paths {
   //callkit
   static const callKitOutGoingCallView = '/callKitOutGoingCallView';
   static const callKitOnGoingCallView = '/callKitOnGoingCallView';
+  static const callKitTimeOutView = '/callKitTimeOutView';
+
 
 
 }
