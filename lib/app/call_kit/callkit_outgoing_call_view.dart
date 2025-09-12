@@ -311,9 +311,9 @@ class CallKitOutgoingCallView
             children: [
               _buildCallOption(
                 isActive: true,
-                icon: _getCurrentAudioIcon(controller.selectedDevice.value),
+                icon: controller.selectedDevice.value ? Icons.volume_up: Icons.hearing,
                 onTap: () async {
-                  _showAudioDeviceSelector(context, controller);
+                  controller.changeAudioDevice();
                 },
               ),
               _buildCallOption(
@@ -394,66 +394,66 @@ class CallKitOutgoingCallView
   }
 }
 
-void _showAudioDeviceSelector(
-    BuildContext context, CallKitOutgoingCallController controller) async {
-  final availableTypes = await controller.getAvailableTypes();
-
-  await showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (_) => Center(
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          width: 250,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: availableTypes.map((type) {
-              return ListTile(
-                leading: Icon(
-                  type == FlyCallAudioDeviceType.speaker
-                      ? Icons.speaker_phone
-                      :  Icons.phone_android
-                ),
-                title: Text(type.name.capitalize!),
-                trailing: controller.selectedDevice.value == type.value
-                    ? const Icon(Icons.check, color: Colors.green)
-                    : null,
-                onTap: () {
-                  controller.changeAudioDevice(type.value);
-                  Navigator.of(context).pop(); // close dialog
-                },
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-IconData _getCurrentAudioIcon(String? type) {
-  if (type == FlyCallAudioDeviceType.speaker.value) {
-    return Icons.volume_up;
-  } else if (type == FlyCallAudioDeviceType.earpiece.value) {
-    return Icons.hearing;
-  } else {
-    return Icons.hearing;
-  }
-  // switch (type) {
-  //   case FlyCallAudioDeviceType.speaker:
-  //     return Icons.volume_up;
-  //   case FlyCallAudioDeviceType.earpiece:
-  //     return Icons.hearing;
-  //   case FlyCallAudioDeviceType.bluetooth:
-  //     return Icons.bluetooth_audio;
-  //   case FlyCallAudioDeviceType.wired:
-  //     return Icons.headset;
-  //   default:
-  //     return Icons.volume_up;
-}
+// void _showAudioDeviceSelector(
+//     BuildContext context, CallKitOutgoingCallController controller) async {
+//   final availableTypes = await controller.getAvailableTypes();
+//
+//   await showDialog(
+//     context: context,
+//     barrierDismissible: true,
+//     builder: (_) => Center(
+//       child: Material(
+//         color: Colors.transparent,
+//         child: Container(
+//           width: 250,
+//           padding: const EdgeInsets.all(16),
+//           decoration: BoxDecoration(
+//             color: Colors.white,
+//             borderRadius: BorderRadius.circular(12),
+//           ),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: availableTypes.map((type) {
+//               return ListTile(
+//                 leading: Icon(
+//                   type == FlyCallAudioDeviceType.speaker
+//                       ? Icons.speaker_phone
+//                       :  Icons.phone_android
+//                 ),
+//                 title: Text(type.name.capitalize!),
+//                 trailing: controller.selectedDevice.value == type.value
+//                     ? const Icon(Icons.check, color: Colors.green)
+//                     : null,
+//                 onTap: () {
+//                   controller.changeAudioDevice(type.value);
+//                   Navigator.of(context).pop(); // close dialog
+//                 },
+//               );
+//             }).toList(),
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
+//
+// IconData _getCurrentAudioIcon(String? type) {
+//   if (type == FlyCallAudioDeviceType.speaker.value) {
+//     return Icons.volume_up;
+//   } else if (type == FlyCallAudioDeviceType.earpiece.value) {
+//     return Icons.hearing;
+//   } else {
+//     return Icons.hearing;
+//   }
+//   // switch (type) {
+//   //   case FlyCallAudioDeviceType.speaker:
+//   //     return Icons.volume_up;
+//   //   case FlyCallAudioDeviceType.earpiece:
+//   //     return Icons.hearing;
+//   //   case FlyCallAudioDeviceType.bluetooth:
+//   //     return Icons.bluetooth_audio;
+//   //   case FlyCallAudioDeviceType.wired:
+//   //     return Icons.headset;
+//   //   default:
+//   //     return Icons.volume_up;
+// }

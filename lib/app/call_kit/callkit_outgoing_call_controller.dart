@@ -27,7 +27,7 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isOnGoingCallViewEnable = false.obs;
   RxList<String?> callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
-  var selectedDevice = "".obs;
+  RxBool selectedDevice = false.obs;
   final RxBool isIncoming = false.obs;
   final RxBool isManualDeviceSelected = false.obs;
   RxString cameraPosition = CameraType.front.obs;
@@ -349,13 +349,13 @@ class CallKitOutgoingCallController extends GetxController
 
     if (callType.value == "audio") {
       print("[MirrorFly] Call type is audio, setting to earpiece.");
-      selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
+      selectedDevice.value = false;
     } else if (callType.value == "video") {
       print("[MirrorFly] Call type is video, setting to speaker.");
-      selectedDevice.value = FlyCallAudioDeviceType.speaker.value;
+      selectedDevice.value = true;
     } else {
       print("[MirrorFly] Unknown call type, defaulting to earpiece.");
-      selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
+      selectedDevice.value = false;
     }
 
     // // Set the selectedDevice.value based on the passed FlyMediaDevice
@@ -379,32 +379,33 @@ class CallKitOutgoingCallController extends GetxController
     // }
     }
 
-  Future<void> changeAudioDevice(
-      String type,
-  ) async {
-    print("[MirrorFly] changeAudioDevice -> ${type}");
-  //  final device = await _getAudioDevice(type.value);
-  //   if (type.value != null) {
-      await _switchTo(type);
-      selectedDevice.value = type;
-    // } else {
-    //   print("[MirrorFly] No matching device for ${type.value}");
-    // }
-  }
+  Future<void> _switchTo() async {
+    // determine target device based on current state
+    final targetDevice = selectedDevice.value
+        ? FlyCallAudioDeviceType.earpiece.value  // if speaker active → switch to earpiece
+        : FlyCallAudioDeviceType.speaker.value; // if earpiece active → switch to speaker
 
-  Future<void> _switchTo(String device) async {
+    print("[MirrorFly] Attempting switch to: $targetDevice");
+
     final result = await MirrorFlyCallKit.changeAudioOutputDevice(
       flyMediaDevice: const FlyMediaDevice("", "", "", ""),
-      device: device,
+      device: targetDevice,
     );
 
     if (result) {
-      selectedDevice.value = device;
-      print("[MirrorFly] Audio switched to: ${device}");
+      // update state only after success
+      selectedDevice.value = !selectedDevice.value;
+      print("[MirrorFly] ✅ Switched to: $targetDevice");
     } else {
-      print("[MirrorFly] Failed to switch audio: ${device}");
+      print("[MirrorFly] ❌ Failed to switch to: $targetDevice");
     }
   }
+
+  Future<void> changeAudioDevice() async {
+    print("[MirrorFly] changeAudioDevice -> ");
+    await _switchTo();
+  }
+
 
   // Future<FlyMediaDevice?> _getAudioDevice(String type) async {
   //   final devices = await MirrorFlyCallKit.getAvailableMediaDevices();

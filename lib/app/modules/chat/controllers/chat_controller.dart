@@ -4082,19 +4082,26 @@ class ChatController extends FullLifeCycleController
           NavUtils.toNamed(Routes.groupParticipants,
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
-           await Mirrorfly.makeLiveKitVideoCall(
-              callersId: [profile.jid ?? ""],
-              chatId: '',
-              flyCallback: (FlyCallCfResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                    "userJid": [profile.jid],
-                    "callType": CallType.video
-                  });
-                } else {
-                  toToast("CF Not connected");
-                }
-              });
+          try{
+            await Mirrorfly.makeLiveKitVideoCall(
+                callersId: [profile.jid ?? ""],
+                chatId: '',
+                flyCallback: (FlyCallCfResponse response) {
+                  print("1111111111111111111");
+                  if (response.isSuccess) {
+                    NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                      "userJid": [profile.jid],
+                      "callType": CallType.video
+                    });
+                  } else {
+                    toToast("CF Not connected");
+                  }
+                });
+          }catch(e){
+            print("make video call Error$e");
+
+          }
+
         }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
