@@ -82,7 +82,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   SessionManagement.onInit();
-  debugPrint("#Mirrorfly Notification -> Handling a background message: ${message.messageId}");
+  debugPrint(
+      "#Mirrorfly Notification -> Handling a background message: ${message.toMap().toString()}, messageId: ${message.messageId}");
   if (Platform.isAndroid) {
     PushNotifications.onMessage(message);
   }

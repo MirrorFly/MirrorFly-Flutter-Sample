@@ -354,6 +354,7 @@ toToast(String text) {
 class Constants {
   static bool isUIKIT = false;
   static bool useDeprecatedInit = false;
+  static bool useMirrorFlyCallKit = true;
   static const bool isBackupFeatureEnabled = true;
 
   // Dummy OTP View
