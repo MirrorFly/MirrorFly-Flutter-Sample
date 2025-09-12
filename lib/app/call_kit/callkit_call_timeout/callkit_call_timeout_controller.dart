@@ -49,7 +49,7 @@ class CallKitCallTimeoutController extends GetxController {
         if (await AppPermission.askAudioCallPermissions()) {
           if (users.length == 1) {
             await Mirrorfly.makeLiveKitAudioCall(
-                flyCallback: (FlyCallCfResponse response) {
+                flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": [users],
