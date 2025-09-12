@@ -218,6 +218,11 @@ class CallKitOutgoingCallController extends GetxController
     // _startTimer();
   }
 
+  void outGoingCallCalling() {
+    debugPrint("[MirrorFly] outgoing calling");
+    callStatus("Calling...");
+  }
+
   void connected() {
     callStatus("Connected");
     isOnGoingCallView();

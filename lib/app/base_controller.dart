@@ -103,6 +103,7 @@ class BaseController {
         case FlyCallStatusEvent.calling:
           /// Need to pass this condition to UI, to update the call status from "Trying to connect" to "Calling"
           print("[MirrorFly][BaseController]flyCallStatusEvent connected");
+          callKitOutgoingCallController.outGoingCallCalling();
           break;
         case FlyCallStatusEvent.reconnecting:
           print("[MirrorFly][BaseController]flyCallStatusEvent reconnecting");
@@ -1890,6 +1891,15 @@ class BaseController {
   }
 
   static void onLogout(isLogout) {
+
+    /// Dispose callkit if isOnGoingCall is true while logout
+    if (MirrorFlyCallKit.isOngoingCall()) {
+      debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
+      MirrorFlyCallKit.dispose();
+    } else {
+      debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
+    }
+
     LogMessage.d('NavUtils.currentRoute', NavUtils.currentRoute);
     DialogUtils.hideLoading();
     if (isLogout &&
@@ -2094,3 +2104,4 @@ class BaseController {
     }
   }
 }
+
