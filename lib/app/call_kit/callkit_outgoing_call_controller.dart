@@ -16,7 +16,7 @@ import '../routes/route_settings.dart';
 class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
   /// Observables
-  var callStatus = "Trying to connect...".obs;
+  var callStatus = "Trying to connect".obs;
   var callDuration = "".obs;
   var callTryStatus = "".obs;
   RxBool showControls = true.obs;
@@ -198,7 +198,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
 
   void callTimeOut() async {
-    callStatus("Trying to timeout");
+    callStatus("Call Timeout");
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
     _stopTimer();

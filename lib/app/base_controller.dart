@@ -74,7 +74,7 @@ class BaseController {
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
         print(
-            "[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered");
+            "[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered for event $flyCallStatusEvent");
         return;
       }
 
@@ -186,7 +186,7 @@ class BaseController {
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
         print(
-            "[MirrorFly][BaseController] flyCallAction CallKitOutgoingCallController not registered");
+            "[MirrorFly][BaseController] flyCallAction CallKitOutgoingCallController not registered for event $flyCallActionEvent");
         return;
       }
       final controller = Get.find<CallKitOutgoingCallController>();
