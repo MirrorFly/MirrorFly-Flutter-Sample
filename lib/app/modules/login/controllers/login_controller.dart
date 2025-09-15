@@ -382,6 +382,7 @@ class LoginController extends GetxController {
           storageFolderName: builder.storageFolderName,
           enablePrivateStorage: Constants.enablePrivateStorage,
           enableMobileNumberLogin: builder.enableMobileNumberLogin,
+          enableVoipActivity: builder.enableVoipActivity,
           flyCallback: (response) async {
             if (response.isSuccess) {
               login();

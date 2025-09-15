@@ -366,7 +366,9 @@ class Constants {
       chatHistoryEnable: true,
       enableDebugLog: true,
       storageFolderName: "Mirrorfly Flutter",
-      isTrialLicenceKey: false);
+      isTrialLicenceKey: false,
+      enableVoipActivity: false
+  );
   static bool enablePrivateStorage = false;
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
 
