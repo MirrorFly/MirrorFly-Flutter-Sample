@@ -251,7 +251,7 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
     case Routes.callKitOutGoingCallView:
       return MaterialPageRoute(
           builder: (_) =>
-              CallKitOutgoingCallView(),
+              const CallKitOutgoingCallView(),
           settings: settings);
     case Routes.callKitTimeOutView:
       return MaterialPageRoute(

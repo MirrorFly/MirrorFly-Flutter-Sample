@@ -29,10 +29,14 @@ class CallKitCallTimeoutController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    if (NavUtils.arguments != null) {
+      callType.value = (NavUtils.arguments["callType"]);
+      users.value = (NavUtils.arguments["userJid"] as List<String?>);
+      calleeName.value = (NavUtils.arguments["calleeName"]);
+      print("$callType${users.value}$calleeName");
+    }
     super.onInit();
-    callType(NavUtils.arguments["callType"]);
-    users.value = (NavUtils.arguments["userJid"] as List<String?>);
-    calleeName(NavUtils.arguments["calleeName"]);
+
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
   }
@@ -52,8 +56,8 @@ class CallKitCallTimeoutController extends GetxController {
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": [users],
-                      "callType": CallType.audio
+                      "userJid": users.toList(),
+                      "callType": callType
                     });
                   } else {
                     toToast("CF Not connected");
@@ -90,7 +94,7 @@ class CallKitCallTimeoutController extends GetxController {
                 flyCallBack: (FlyResponse response) {
                   if (response.isSuccess) {
                     NavUtils.offNamed(Routes.outGoingCallView,
-                        arguments: {"userJid": users});
+                        arguments: {"userJid": users.toList(),"callType": CallType.video});
                   }
                 });
           } else {
@@ -105,7 +109,7 @@ class CallKitCallTimeoutController extends GetxController {
                 toUserJidList: usersList,
                 flyCallBack: (FlyResponse response) {
                   NavUtils.offNamed(Routes.outGoingCallView,
-                      arguments: {"userJid": users});
+                      arguments: {"userJid": users,"callType": CallType.video});
                 });
           }
         } else {

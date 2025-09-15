@@ -202,13 +202,13 @@ class CallKitOutgoingCallController extends GetxController
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
     _stopTimer();
-    _resetValues();
-    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
-      "callType": callType,
-      "userJid": callerUsersId,
+    NavUtils.toNamed(Routes.callKitTimeOutView, arguments: {
+      "callType": callType.value,
+      "userJid": callerUsersId.toList(),
       "calleeName": remoteUserName.value
     });
-    NavUtils.back();
+    _resetValues();
+
   }
 
   void rejected() {
@@ -715,6 +715,7 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId("");
     isManualDeviceSelected(false);
     callTryStatus("");
+    print("[MirrorFly] _resetValues");
   }
 }
 // void updateCallStatus({required FlyCallStatus status}) {
