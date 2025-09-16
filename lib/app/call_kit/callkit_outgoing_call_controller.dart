@@ -81,6 +81,12 @@ class CallKitOutgoingCallController extends GetxController
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    debugPrint("[MirrorFly] CallKitOutgoingCallController onClose called");
+    super.onClose();
+  }
+
   void toggleControls() {
     showControls.value = !showControls.value;
   }
@@ -202,12 +208,15 @@ class CallKitOutgoingCallController extends GetxController
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
     _stopTimer();
-    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
-      "callType": callType.value,
-      "userJid": callerUsersId.toList(),
-      "calleeName": remoteUserName.value
-    });
+    final String type = callType.value;
+    final String calleeName = remoteUserName.value;
+    final List<String?> callUserList = callerUsersId.toList();
     _resetValues();
+    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
+      "callType": type,
+      "userJid": callUserList,
+      "calleeName": calleeName
+    });
 
   }
 

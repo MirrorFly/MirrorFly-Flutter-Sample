@@ -30,7 +30,7 @@ class CallKitCallTimeoutController extends GetxController {
       callType.value = (NavUtils.arguments["callType"]);
       users.value = (NavUtils.arguments["userJid"] as List<String?>);
       calleeName.value = (NavUtils.arguments["calleeName"]);
-      log("$callType $users $calleeName");
+      debugPrint("Call Timeout OnInit arguments => $callType $users $calleeName");
     }
     super.onInit();
 
@@ -43,6 +43,7 @@ class CallKitCallTimeoutController extends GetxController {
   void cancelCallTimeout() {
     NavUtils.back();
   }
+
   callAgain() async {
     // NavUtils.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
     if (await AppUtils.isNetConnected()) {
@@ -52,9 +53,9 @@ class CallKitCallTimeoutController extends GetxController {
             await Mirrorfly.makeLiveKitAudioCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
-                    NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                    NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": users.toList(),
-                      "callType": callType
+                      "callType": callType.value
                     });
                   } else {
                     toToast("CF Not connected");
