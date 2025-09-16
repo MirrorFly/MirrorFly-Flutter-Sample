@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_cont
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallCfResponse, FlyResult;
+import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyResult;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';

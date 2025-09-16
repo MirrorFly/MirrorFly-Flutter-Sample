@@ -1,11 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:mirrorfly_plugin/flychat.dart';
-import 'package:mirrorfly_plugin/logmessage.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:mirrorfly_plugin/model/call_constants.dart';
-import 'package:mirrorfly_plugin/model/callback.dart';
 
 import '../../common/app_localizations.dart';
 import '../../common/constants.dart';
@@ -33,7 +30,7 @@ class CallKitCallTimeoutController extends GetxController {
       callType.value = (NavUtils.arguments["callType"]);
       users.value = (NavUtils.arguments["userJid"] as List<String?>);
       calleeName.value = (NavUtils.arguments["calleeName"]);
-      print("$callType${users.value}$calleeName");
+      log("$callType $users $calleeName");
     }
     super.onInit();
 
@@ -64,7 +61,7 @@ class CallKitCallTimeoutController extends GetxController {
                   }
                 },
                 callersId: [
-                  users.value.first ?? "",
+                  users.first ?? "",
                 ],
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
                 chatId: '');
