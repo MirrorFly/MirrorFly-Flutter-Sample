@@ -194,17 +194,20 @@ class CallKitOutgoingCallView
               scale: 2,
             ),
           ),
-          if (controller.muted.value)
-            Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black54,
-              ),
-              padding: const EdgeInsets.all(12),
-              child: const Icon(
-                Icons.mic_off_outlined,
-                color: Colors.white,
-                size: 18,
+         // if (controller.muted.value)
+            Visibility(
+              visible: controller.muted.value,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black54,
+                ),
+                padding: const EdgeInsets.all(12),
+                child: const Icon(
+                  Icons.mic_off_outlined,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
             ),
         ],
@@ -310,8 +313,8 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: true,
-                icon: controller.selectedDevice.value ? Icons.volume_up: Icons.hearing,
+                isActive: controller.selectedDevice.value,
+                icon: Icons.volume_up,
                 onTap: () async {
                   controller.changeAudioDevice();
                 },
