@@ -146,10 +146,10 @@ class BaseController {
           /// This will be triggered when we receive the incoming call in call status stream.
         /// This condition is already handled above to set the callerId and callType
           break;
-
-          case FlyCallStatusEvent.callFailed:
+        case FlyCallStatusEvent.callFailed:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed();
+          break;
       }
     });
 
