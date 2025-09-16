@@ -226,7 +226,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void connecting() {
-    // callStatus("Connected");
+    callStatus("Connecting...");
     // isOnGoingCallView();
     // updateUserId();
     // _startTimer();
@@ -702,6 +702,18 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
+  void onCallFailed() {
+    print("[MirrorFly] onCallFailed called");
+    _resetValues();
+    _stopTimer();
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      callStatus("Call Failed");
+      toToast("Call Failed");
+      NavUtils.back();
+    }
+  }
+
+  ///
   void _resetValues() {
     callType("");
     muted(false);
@@ -726,6 +738,7 @@ class CallKitOutgoingCallController extends GetxController
     callTryStatus("");
     print("[MirrorFly] _resetValues");
   }
+
 }
 // void updateCallStatus({required FlyCallStatus status}) {
 //   print("[MirrorFly] [Call Outgoing call controller] Call Status Updated: $status");
