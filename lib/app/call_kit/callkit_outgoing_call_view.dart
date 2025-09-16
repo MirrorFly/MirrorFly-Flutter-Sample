@@ -30,38 +30,39 @@ class CallKitOutgoingCallView
         child: Stack(
           fit: StackFit.expand,
           children: [
+
             /// Main view
             Obx(() {
               return controller.mainCallViewUserId.value.isNotEmpty
                   ? Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        MirrorFlyCallView(
-                          key: ValueKey(controller.mainCallViewUserId.value),
-                          userJID: controller.mainCallViewUserId.value,
-                          viewBgColor: AppColors.audioCallerBackground,
-                          profileImage: getUserProfileImageWithName(
-                            participantId: controller.mainCallViewUserId.value,
-                            scale: 1,
-                          ),
+                alignment: Alignment.topCenter,
+                children: [
+                  MirrorFlyCallView(
+                    key: ValueKey(controller.mainCallViewUserId.value),
+                    userJID: controller.mainCallViewUserId.value,
+                    viewBgColor: AppColors.audioCallerBackground,
+                    profileImage: getUserProfileImageWithName(
+                      participantId: controller.mainCallViewUserId.value,
+                      scale: 1,
+                    ),
+                  ),
+                  if (controller.isRemoteAudioMuted.value)
+                    Center(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black54,
                         ),
-                        if (controller.isRemoteAudioMuted.value)
-                          Center(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black54,
-                              ),
-                              padding: const EdgeInsets.all(12),
-                              child: const Icon(
-                                Icons.mic_off_outlined,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                      ],
-                    )
+                        padding: const EdgeInsets.all(12),
+                        child: const Icon(
+                          Icons.mic_off_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                ],
+              )
                   : const Offstage();
             }),
 
@@ -142,9 +143,12 @@ class CallKitOutgoingCallView
               if (!controller.isOnGoingCallViewEnable.value) {
                 return const SizedBox.shrink();
               }
-              final screenSize = MediaQuery.of(context).size;
+              final screenSize = MediaQuery
+                  .of(context)
+                  .size;
               final previewWidth = (screenSize.width * 0.25).clamp(80.0, 140.0);
-              final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
+              final previewHeight = previewWidth *
+                  1.3; // maintain 4:3-ish aspect ratio
               final bottomOffset = controller.showControls.value
                   ? screenSize.height * 0.28
                   : screenSize.height * 0.14;
@@ -194,10 +198,9 @@ class CallKitOutgoingCallView
               scale: 2,
             ),
           ),
-         // if (controller.muted.value)
-            Visibility(
-              visible: controller.muted.value,
-              child: Container(
+
+          Obx(() {
+            return controller.muted.value ? Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.black54,
@@ -208,8 +211,8 @@ class CallKitOutgoingCallView
                   color: Colors.white,
                   size: 18,
                 ),
-              ),
-            ),
+              ) : const Offstage();
+          }),
         ],
       ),
     );
@@ -223,7 +226,7 @@ class CallKitOutgoingCallView
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         offset:
-            controller.showControls.value ? Offset.zero : const Offset(0, 2),
+        controller.showControls.value ? Offset.zero : const Offset(0, 2),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: controller.showControls.value ? 1 : 0,
@@ -256,26 +259,26 @@ class CallKitOutgoingCallView
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig
-                        .outgoingCallPageStyle.profileImageSize.width /
+                    .outgoingCallPageStyle.profileImageSize.width /
                     scale,
               ),
               Obx(() {
                 return controller.isOnGoingCallViewEnable.value &&
-                        controller.localParticipantId.value == participantId
+                    controller.localParticipantId.value == participantId
                     ? const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "You",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      )
+                  padding: EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "You",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                )
                     : const SizedBox.shrink();
               }),
             ],
@@ -309,7 +312,8 @@ class CallKitOutgoingCallView
   Widget _buildCallControls(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-      child: Obx(() => Row(
+      child: Obx(() =>
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
