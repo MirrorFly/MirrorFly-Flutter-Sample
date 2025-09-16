@@ -329,12 +329,12 @@ class CallKitOutgoingCallController extends GetxController
 
     print("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
 
-    isVideoEnabled.value = enable;
     MirrorFlyCallKit.setCameraEnable(
         enable: enable,
         result: (result) async {
           if (result) {
             print("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
+            isVideoEnabled.value = enable;
           } else {
             print(
                 "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
