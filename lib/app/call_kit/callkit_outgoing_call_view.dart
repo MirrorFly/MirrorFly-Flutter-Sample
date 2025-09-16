@@ -349,7 +349,7 @@ class CallKitOutgoingCallView
                 ),
               if (controller.callType.value.toLowerCase() == CallType.audio)
                 _buildCallOption(
-                  isActive: false,
+                  isActive: true,
                   icon: Icons.videocam_off,
                   onTap: controller.requestVideoCallSwitch,
                 ),

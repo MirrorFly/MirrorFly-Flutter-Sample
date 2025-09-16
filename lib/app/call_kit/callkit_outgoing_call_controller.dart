@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -320,10 +321,20 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    if (flyCallType == FlyCallType.audio) {
-      print(
-          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call");
+    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+
+    if (flyCallType == FlyCallType.audio && callStatus) {
+      log(
+          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
       requestVideoCallSwitch();
+      return;
+    }else {
+      log("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
+    }
+
+    if (flyCallType == FlyCallType.video && !callStatus) {
+      log(
+          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not connected, cannot change camera state. callStatus- $callStatus");
       return;
     }
 
@@ -559,8 +570,17 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void requestVideoCallSwitch() async {
-    print("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
-    _videoCallSwitchRequestConfirmationPopup();
+
+    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+    final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+
+    if (flyCallType == FlyCallType.audio && callStatus) {
+      log("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
+      _videoCallSwitchRequestConfirmationPopup();
+    }else{
+      log("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
+    }
+
   }
 
   ///
