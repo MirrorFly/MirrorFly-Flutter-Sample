@@ -64,9 +64,8 @@ class BaseController {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
 
+      // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
-        /// --- Need to check ----
-        /// Need to refactor the above code & handle this logic at FlyCallAction - answerCall
         callerId = flyCallStatus.participantsIds.first;
         callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
         print("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType");
@@ -162,15 +161,7 @@ class BaseController {
       final FlyCallAction flyCallAction = event;
       final FlyCallActionEvent flyCallActionEvent = flyCallAction.flyCallEvent;
 
-      //
-      /// Commented the below code, because we are already setting the callerId and callType in the call status stream when we receive the incoming call
-      // if(flyCallActionEvent == FlyCallActionEvent.incomingCall) {
-      //   callerId = flyCallAction.participantId;
-      //   callType = flyCallAction.callType;
-      //   print("[MirrorFly] [BaseController] callerId=$callerId callType=$callType");
-      // }
-
-      //
+      // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
         print("incoming call action recieve");
         if (callerId != null && callType != null) {
@@ -187,6 +178,7 @@ class BaseController {
           print(
               "[MirrorFly] [BaseController] ERROR: answerCall received but callerId/callType not set");
         }
+        return;
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {

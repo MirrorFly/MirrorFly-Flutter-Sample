@@ -53,6 +53,7 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
+    await _handleInitialCallStatus();
     print("[MirrorFly] callviewinit");
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
@@ -79,6 +80,24 @@ class CallKitOutgoingCallController extends GetxController
     }
     print("[MirrorFly] callview");
     super.onInit();
+  }
+
+  Future<void> _handleInitialCallStatus() async {
+    debugPrint("[MirrorFly] _handleInitialCallStatus called");
+    final FlyCallStatusEvent? currentStatusEvent =
+        MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
+    debugPrint("[MirrorFly] currentStatusEvent: $currentStatusEvent");
+    if (currentStatusEvent == FlyCallStatusEvent.connected) {
+      connected();
+    } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
+      connecting();
+    } else if (currentStatusEvent == FlyCallStatusEvent.ringing) {
+      ringing();
+    } else if (currentStatusEvent == FlyCallStatusEvent.tryingToConnect) {
+      tryingToConnect();
+    } else {
+      // Let the listener status will trigger from base controller
+    }
   }
 
   @override
@@ -227,9 +246,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void connecting() {
     callStatus("Connecting...");
-    // isOnGoingCallView();
-    // updateUserId();
-    // _startTimer();
+    debugPrint("[MirrorFly] connecting.. called");
   }
 
   void outGoingCallCalling() {
