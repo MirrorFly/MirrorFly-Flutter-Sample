@@ -87,6 +87,7 @@ class BaseController {
       switch (flyCallStatusEvent) {
         case FlyCallStatusEvent.connecting:
           print("[MirrorFly][BaseController]flyCallStatusEvent connecting");
+          callKitOutgoingCallController.connecting();
           break;
         case FlyCallStatusEvent.connected:
           print("[MirrorFly][BaseController]flyCallStatusEvent connected");
@@ -102,7 +103,7 @@ class BaseController {
           break;
         case FlyCallStatusEvent.calling:
           /// Need to pass this condition to UI, to update the call status from "Trying to connect" to "Calling"
-          print("[MirrorFly][BaseController]flyCallStatusEvent connected");
+          print("[MirrorFly][BaseController]flyCallStatusEvent FlyCallStatusEvent.calling");
           callKitOutgoingCallController.outGoingCallCalling();
           break;
         case FlyCallStatusEvent.reconnecting:
@@ -145,6 +146,10 @@ class BaseController {
           /// This will be triggered when we receive the incoming call in call status stream.
         /// This condition is already handled above to set the callerId and callType
           break;
+
+          case FlyCallStatusEvent.callFailed:
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
+          callKitOutgoingCallController.onCallFailed();
       }
     });
 
