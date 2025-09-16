@@ -51,21 +51,21 @@ class CallKitCallTimeoutController extends GetxController {
         if (await AppPermission.askAudioCallPermissions()) {
           if (users.length == 1) {
             await Mirrorfly.makeLiveKitAudioCall(
-                flyResult: (FlyResult response) {
-                  if (response.isSuccess) {
-                    NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": users.toList(),
-                      "callType": callType.value
-                    });
-                  } else {
-                    toToast("CF Not connected");
-                  }
-                },
                 callersId: [
                   users.first ?? "",
                 ],
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-                chatId: '');
+                chatId: '',
+              flyResult: (FlyResult response) {
+                if (response.isSuccess) {
+                  NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                    "userJid": users.toList(),
+                    "callType": callType.value
+                  });
+                } else {
+                  toToast("CF Not connected");
+                }
+              },);
           } else {
             var usersList = <String>[];
             for (var element in users) {
@@ -73,13 +73,13 @@ class CallKitCallTimeoutController extends GetxController {
                 usersList.add(element);
               }
             }
-            Mirrorfly.makeGroupVoiceCall(
-                groupJid: groupId.value,
-                toUserJidList: usersList,
-                flyCallBack: (FlyResponse response) {
-                  NavUtils.offNamed(Routes.outGoingCallView,
-                      arguments: {"userJid": users});
-                });
+            // Mirrorfly.makeGroupVoiceCall(
+            //     groupJid: groupId.value,
+            //     toUserJidList: usersList,
+            //     flyCallBack: (FlyResponse response) {
+            //       NavUtils.offNamed(Routes.outGoingCallView,
+            //           arguments: {"userJid": users});
+            //     });
           }
         } else {
           debugPrint("permission not given");
@@ -87,12 +87,17 @@ class CallKitCallTimeoutController extends GetxController {
       } else {
         if (await AppPermission.askVideoCallPermissions()) {
           if (users.length == 1) {
-            Mirrorfly.makeVideoCall(
-                toUserJid: users.first!,
-                flyCallBack: (FlyResponse response) {
+            await Mirrorfly.makeLiveKitVideoCall(
+                callersId: [users.first ?? "",],
+                chatId: '',
+                flyResult: (FlyResult response) {
                   if (response.isSuccess) {
-                    NavUtils.offNamed(Routes.outGoingCallView,
-                        arguments: {"userJid": users.toList(),"callType": CallType.video});
+                    NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                      "userJid": users.toList(),
+                      "callType": CallType.video
+                    });
+                  } else {
+                    toToast("CF Not connected");
                   }
                 });
           } else {
@@ -102,13 +107,13 @@ class CallKitCallTimeoutController extends GetxController {
                 usersList.add(element);
               }
             }
-            Mirrorfly.makeGroupVideoCall(
-                groupJid: groupId.value,
-                toUserJidList: usersList,
-                flyCallBack: (FlyResponse response) {
-                  NavUtils.offNamed(Routes.outGoingCallView,
-                      arguments: {"userJid": users,"callType": CallType.video});
-                });
+            // Mirrorfly.makeGroupVideoCall(
+            //     groupJid: groupId.value,
+            //     toUserJidList: usersList,
+            //     flyCallBack: (FlyResponse response) {
+            //       NavUtils.offNamed(Routes.outGoingCallView,
+            //           arguments: {"userJid": users,"callType": CallType.video});
+            //     });
           }
         } else {
           LogMessage.d("askVideoCallPermissions", "false");
