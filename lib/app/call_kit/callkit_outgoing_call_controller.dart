@@ -202,7 +202,7 @@ class CallKitOutgoingCallController extends GetxController
     toToast("Call Timeout");
     await handleTimeOutDisconnect();
     _stopTimer();
-    NavUtils.toNamed(Routes.callKitTimeOutView, arguments: {
+    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
       "callType": callType.value,
       "userJid": callerUsersId.toList(),
       "calleeName": remoteUserName.value
@@ -405,9 +405,9 @@ class CallKitOutgoingCallController extends GetxController
     if (result) {
       // update state only after success
       selectedDevice.value = !selectedDevice.value;
-      print("[MirrorFly] ✅ Switched to: $targetDevice");
+      print("[MirrorFly] Switched to: $targetDevice");
     } else {
-      print("[MirrorFly] ❌ Failed to switch to: $targetDevice");
+      print("[MirrorFly] Failed to switch to: $targetDevice");
     }
   }
 
