@@ -196,13 +196,12 @@ class PushNotifications {
   }
 
   static void showNotification(RemoteMessage remoteMessage) async {
-
-    // Need to check
-    //  "pushFrom": "MirrorFly",
-    //  "serverType": "mf-callkit",
-
     var notificationData = remoteMessage.data;
-    if (Constants.useMirrorFlyCallKit && notificationData.containsKey("call_type")) {
+
+    final bool isFromMirrorFly = notificationData.containsKey("pushFrom") && notificationData["pushFrom"] == "MirrorFly";
+    final bool isCallKitPush = notificationData.containsKey("serverType") && notificationData["serverType"] == "mf-callkit";
+
+    if (Constants.useMirrorFlyCallKit && (isFromMirrorFly && isCallKitPush)) {
       debugPrint("#Mirrorfly #CallKit Notification -> Using MirrorFly Call Kit");
       debugPrint("#Mirrorfly -> #CallKit -> #Notification -> #notificationData: $notificationData");
       MirrorFlyCallKit.processIncomingCallPayload(payload: notificationData);
