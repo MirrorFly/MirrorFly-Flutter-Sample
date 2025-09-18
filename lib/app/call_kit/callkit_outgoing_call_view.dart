@@ -39,7 +39,7 @@ class CallKitOutgoingCallView
                 children: [
                   MirrorFlyCallView(
                     key: ValueKey(controller.mainCallViewUserId.value),
-                    userJID: controller.mainCallViewUserId.value,
+                    userJID: controller.mainCallViewUserId.value,fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
                       participantId: controller.mainCallViewUserId.value,
@@ -191,8 +191,9 @@ class CallKitOutgoingCallView
         children: [
           MirrorFlyCallView(
             viewBgColor: AppColors.callerBackground,
-            key: UniqueKey(),
+            key: ValueKey(controller.secondaryCallViewUserId.value),
             userJID: controller.secondaryCallViewUserId.value,
+            fit: BoxFit.cover,
             profileImage: getUserProfileImageWithName(
               participantId: controller.secondaryCallViewUserId.value,
               scale: 2,
