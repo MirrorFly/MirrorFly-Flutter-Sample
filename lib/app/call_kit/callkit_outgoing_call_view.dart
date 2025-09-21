@@ -39,7 +39,8 @@ class CallKitOutgoingCallView
                 children: [
                   MirrorFlyCallView(
                     key: ValueKey(controller.mainCallViewUserId.value),
-                    userJID: controller.mainCallViewUserId.value,fit: BoxFit.cover,
+                    userJID: controller.mainCallViewUserId.value,
+                    fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
                       participantId: controller.mainCallViewUserId.value,
@@ -67,8 +68,7 @@ class CallKitOutgoingCallView
             }),
 
             /// 🔹 Gradient overlay
-            _buildGradientOverlay(),
-
+            Obx(() => _buildGradientOverlay(controller.callType.value)),
             /// 🔹 Foreground content
             SafeArea(
               child: Column(
@@ -291,17 +291,24 @@ class CallKitOutgoingCallView
   }
 
   ///  Gradient Overlay
-  Widget _buildGradientOverlay() {
+  Widget _buildGradientOverlay(String callType) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1D1D35),
+          colors: callType == "video"
+              ? [
             Colors.transparent,
             Colors.transparent,
-            Color(0xFF1D1D35),
+          ]
+              : [
+            const Color(0xFF1D1D35),
+            Colors.transparent,
+            Colors.transparent,
+            const Color(0xFF1D1D35),
           ],
-          stops: [0, 0.2, 0.6, 1],
+          stops: callType == "video"
+              ? [0, 1] // fully transparent
+              : [0, 0.2, 0.6, 1],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
