@@ -112,6 +112,14 @@ class CallKitOutgoingCallController extends GetxController
     super.onClose();
   }
 
+
+  @override
+  void dispose(){
+    debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
+    super.dispose();
+
+  }
+
   void toggleControls() {
     showControls.value = !showControls.value;
   }

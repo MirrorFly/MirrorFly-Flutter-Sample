@@ -1895,7 +1895,7 @@ class BaseController {
     /// Dispose callkit if isOnGoingCall is true while logout
     if (MirrorFlyCallKit.isOngoingCall()) {
       debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
-      MirrorFlyCallKit.dispose();
+      MirrorFlyCallKit.logOut();
     } else {
       debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
     }
