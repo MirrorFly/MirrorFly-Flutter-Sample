@@ -2305,21 +2305,24 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> stopRecording() async {
-    isAudioRecording(Constants.audioRecordDone);
-    isUserTyping(messageController.text.trim().isNotEmpty);
-    _audioTimer?.cancel();
-    _audioTimer = null;
-    debugPrint("Audio Recording Stopped");
-    await record.stop().then((filePath) async {
-      debugPrint("Audio saved path---> $filePath");
-      if (MediaUtils.isMediaExists(filePath)) {
-        recordedAudioPath = filePath.checkNull();
-        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
-      } else {
-        debugPrint("File Not Found For Audio");
-      }
-      debugPrint(filePath);
-    });
+    if(isAudioRecording.value == Constants.audioRecording){
+      isAudioRecording(Constants.audioRecordDone);
+      isUserTyping(messageController.text.trim().isNotEmpty);
+      _audioTimer?.cancel();
+      _audioTimer = null;
+      debugPrint("Audio Recording Stopped");
+      await record.stop().then((filePath) async {
+        debugPrint("Audio saved path---> $filePath");
+        if (MediaUtils.isMediaExists(filePath)) {
+          recordedAudioPath = filePath.checkNull();
+          debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
+        } else {
+          debugPrint("File Not Found For Audio");
+        }
+        debugPrint(filePath);
+      });
+    }
+
   }
 
   Future<void> deleteRecording() async {
@@ -4044,6 +4047,9 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
+          if(isAudioRecording.value == Constants.audioRecording){
+            stopRecording();
+          }
            await Mirrorfly.makeLiveKitAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
@@ -4083,6 +4089,9 @@ class ChatController extends FullLifeCycleController
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
           try{
+            if(isAudioRecording.value == Constants.audioRecording){
+              stopRecording();
+            }
             await Mirrorfly.makeLiveKitVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
