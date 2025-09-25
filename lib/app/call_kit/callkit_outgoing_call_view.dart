@@ -35,7 +35,7 @@ class CallKitOutgoingCallView
             Obx(() {
               return controller.mainCallViewUserId.value.isNotEmpty
                   ? Stack(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.center,
                 children: [
                   MirrorFlyCallView(
                     key: ValueKey(controller.mainCallViewUserId.value),
@@ -254,9 +254,6 @@ class CallKitOutgoingCallView
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔹 Name first
-              const SizedBox(height: 8),
-              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig
