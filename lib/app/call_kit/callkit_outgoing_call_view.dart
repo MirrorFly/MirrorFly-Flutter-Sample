@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
@@ -35,7 +34,7 @@ class CallKitOutgoingCallView
             Obx(() {
               return controller.mainCallViewUserId.value.isNotEmpty
                   ? Stack(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.center,
                 children: [
                   MirrorFlyCallView(
                     key: ValueKey(controller.mainCallViewUserId.value),
@@ -254,9 +253,6 @@ class CallKitOutgoingCallView
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔹 Name first
-              const SizedBox(height: 8),
-              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig
