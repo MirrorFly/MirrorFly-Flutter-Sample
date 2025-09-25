@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -60,6 +61,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
                   length: 2,
                   child: Builder(builder: (ctx) {
                     return Scaffold(
+
                         floatingActionButton: controller.isSearching.value
                             ? null
                             : Obx(() {

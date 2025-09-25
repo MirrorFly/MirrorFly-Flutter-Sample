@@ -15,10 +15,12 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyResult;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -44,7 +46,6 @@ import '../../../common/app_localizations.dart';
 import '../../../common/widgets.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
-import '../../../model/chat_message_model.dart';
 import '../../../model/reply_hash_map.dart';
 import '../../../routes/route_settings.dart';
 import '../../../stylesheet/stylesheet.dart';
@@ -2321,21 +2322,26 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> stopRecording() async {
-    isAudioRecording(Constants.audioRecordDone);
-    isUserTyping(messageController.text.trim().isNotEmpty);
-    _audioTimer?.cancel();
-    _audioTimer = null;
-    debugPrint("Audio Recording Stopped");
-    await record.stop().then((filePath) async {
-      debugPrint("Audio saved path---> $filePath");
-      if (MediaUtils.isMediaExists(filePath)) {
-        recordedAudioPath = filePath.checkNull();
-        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
-      } else {
-        debugPrint("File Not Found For Audio");
-      }
-      debugPrint(filePath);
-    });
+    if(isAudioRecording.value == Constants.audioRecording){
+      isAudioRecording(Constants.audioRecordDone);
+      isUserTyping(messageController.text.trim().isNotEmpty);
+      _audioTimer?.cancel();
+      _audioTimer = null;
+      debugPrint("Audio Recording Stopped");
+      await record.stop().then((filePath) async {
+        debugPrint("Audio saved path---> $filePath");
+        if (MediaUtils.isMediaExists(filePath)) {
+          recordedAudioPath = filePath.checkNull();
+          debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
+        } else {
+          debugPrint("File Not Found For Audio");
+        }
+        debugPrint(filePath);
+      });
+    }else{
+      debugPrint("Audio Recording Not Stopped");
+    }
+
   }
 
   Future<void> deleteRecording() async {
@@ -4039,6 +4045,99 @@ class ChatController extends FullLifeCycleController
       toToast(getTranslated("noInternetConnection"));
     }
   }
+
+  ///  Callkit function to make audio call
+
+  void makeAudioCall() async {
+    debugPrint("#FLY CALL VOICE CALL CALLING");
+    closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch,true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askAudioCallPermissions()) {
+        if (profile.isGroupProfile.checkNull()) {
+          if (isMemberOfGroup.checkNull()) {
+            NavUtils.toNamed(Routes.groupParticipants, arguments: {
+              "groupId": profile.jid,
+              "callType": CallType.audio
+            });
+          }
+        } else {
+          if(isAudioRecording.value == Constants.audioRecording){
+            stopRecording();
+          }
+           await Mirrorfly.makeLiveKitAudioCall(
+              flyResult: (FlyResult response) {
+                if (response.isSuccess) {
+                  NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                    "userJid": [profile.jid],
+                    "callType": CallType.audio
+                  });
+                } else {
+                  toToast("CF Not connected");
+                }
+              },
+              callersId: [
+                profile.jid!,
+              ],
+              //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
+              chatId: '');
+        }
+      } else {
+        debugPrint("permission not given");
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  Future<void> makeLKVideoCall() async {
+    closeKeyBoard();
+    SessionManagement.setBool(Constants.layoutSwitch, true);
+    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askVideoCallPermissions()) {
+        if (profile.isGroupProfile.checkNull()) {
+          NavUtils.toNamed(Routes.groupParticipants,
+              arguments: {"groupId": profile.jid, "callType": CallType.video});
+        } else {
+          try{
+            if(isAudioRecording.value == Constants.audioRecording){
+              stopRecording();
+            }
+            await Mirrorfly.makeLiveKitVideoCall(
+                callersId: [profile.jid ?? ""],
+                chatId: '',
+                flyResult: (FlyResult response) {
+                  if (response.isSuccess) {
+                    NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                      "userJid": [profile.jid],
+                      "callType": CallType.video
+                    });
+                  } else {
+                    toToast("CF Not connected");
+                  }
+                });
+          }catch(e){
+            print("make video call Error$e");
+
+          }
+
+        }
+      } else {
+        LogMessage.d("askVideoCallPermissions", "false");
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
 }
 
 enum AttachmentType {

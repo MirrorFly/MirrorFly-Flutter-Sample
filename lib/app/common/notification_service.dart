@@ -4,11 +4,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'package:mirror_fly_demo/app/call_modules/outgoing_call/call_controller.dart';
-import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/data/utils.dart';
-import 'package:mirror_fly_demo/main.dart';
 import '../common/received_notification.dart';
 
 

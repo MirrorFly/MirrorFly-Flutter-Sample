@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:get/get.dart';
@@ -49,6 +50,13 @@ class SettingsController extends GetxController {
   logoutFromSDK() async {
     if (await AppUtils.isNetConnected()) {
       DialogUtils.progressLoading();
+      /// Dispose callkit if isOnGoingCall is true while logout
+      if (MirrorFlyCallKit.isOngoingCall()) {
+        debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
+        MirrorFlyCallKit.logOut();
+      } else {
+        debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
+      }
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){
         PictureInPicture.stopPiP();
         clearAllPreferences();

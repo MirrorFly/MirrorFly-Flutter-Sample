@@ -39,6 +39,10 @@ Widget buildProfileImage(ProfileDetails item, {double size = 105}) {
   );
 }
 
+String getUserProfileImageUrl({required ProfileDetails item}) {
+  return item.image.toString();
+}
+
 class SpeakingDots extends StatefulWidget {
   const SpeakingDots(
       {Key? key,

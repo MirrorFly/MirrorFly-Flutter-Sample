@@ -99,6 +99,17 @@ class DashboardController extends FullLifeCycleController
 
   @override
   void onInit() {
+
+    Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
+      if(response.isSuccess) {
+        print("centrifuge CallKit initialized successfully");
+        LogMessage.d("CallKit", "CallKit initialized successfully");
+      } else {
+        print("centrifuge CallKit initialization failed: ${response.exception}");
+        LogMessage.d("CallKit", "CallKit initialization failed: ${response.exception}");
+      }
+    });
+
     arguments = NavUtils.arguments as DashboardViewArguments?;
     tabController = TabController(length: 2, vsync: this);
     if ((arguments?.didMissedCallNotificationLaunchApp).checkNull()) {
