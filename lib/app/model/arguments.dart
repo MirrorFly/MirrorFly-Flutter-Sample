@@ -22,7 +22,7 @@ class ChatViewArguments {
     this.enableCalls = true,
     this.showChatDeliveryIndicator = true,
     this.disableAppBar = false,
-    this.chatInfoPageRedirect = false,
+    this.chatInfoPageRedirect = true,
     this.enableSwipeToReply = true,
     this.menuActionsEnabled = true,
     this.isAppBarForwardEnabled = true,
