@@ -60,6 +60,21 @@ class BaseController {
     String? callType;
 
     ///
+    MirrorFlyCallKit.onPermissionDeniedWhileIncomingCall.listen((data) {
+      final Map<String, dynamic>? errorJson =
+          jsonDecode(data) as Map<String, dynamic>?;
+      final String? permissionType = errorJson?['type'];
+      final String? permissionAction = errorJson?['action'];
+      final String? message = errorJson?['message'];
+      debugPrint(
+          "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+
+      if (message != null) {
+        toToast(message);
+      }
+    });
+
+    ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
@@ -145,6 +160,7 @@ class BaseController {
           /// This will be triggered when we receive the incoming call in call status stream.
         /// This condition is already handled above to set the callerId and callType
           break;
+        case FlyCallStatusEvent.callFailed:
       }
     });
 
