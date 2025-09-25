@@ -60,21 +60,6 @@ class BaseController {
     String? callType;
 
     ///
-    MirrorFlyCallKit.onPermissionDeniedWhileIncomingCall.listen((data) {
-      final Map<String, dynamic>? errorJson =
-          jsonDecode(data) as Map<String, dynamic>?;
-      final String? permissionType = errorJson?['type'];
-      final String? permissionAction = errorJson?['action'];
-      final String? message = errorJson?['message'];
-      debugPrint(
-          "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-      if (message != null) {
-        toToast(message);
-      }
-    });
-
-    ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
@@ -161,6 +146,21 @@ class BaseController {
         /// This condition is already handled above to set the callerId and callType
           break;
         case FlyCallStatusEvent.callFailed:
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
+          break;
+        case FlyCallStatusEvent.permissionDenied:
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent permissionDenied");
+          final Map<String, dynamic>? errorJson =
+              jsonDecode(flyCallStatus.reason ?? '') as Map<String, dynamic>?;
+          final String? permissionType = errorJson?['type'];
+          final String? permissionAction = errorJson?['action'];
+          final String? message = errorJson?['message'];
+          debugPrint(
+              "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+
+          if (message != null) {
+            toToast(message);
+          }
       }
     });
 
@@ -1911,7 +1911,9 @@ class BaseController {
     /// Dispose callkit if isOnGoingCall is true while logout
     if (MirrorFlyCallKit.isOngoingCall()) {
       debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
-      MirrorFlyCallKit.dispose();
+      MirrorFlyCallKit.logOut(flyResult: (_) {
+
+      });
     } else {
       debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
     }
