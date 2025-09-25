@@ -53,7 +53,13 @@ class SettingsController extends GetxController {
       /// Dispose callkit if isOnGoingCall is true while logout
       if (MirrorFlyCallKit.isOngoingCall()) {
         debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
-        MirrorFlyCallKit.logOut();
+        MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
+          if(response.isSuccess){
+            debugPrint("[MirrorFlyCallKit] onLogout - success");
+          }else{
+            debugPrint("[MirrorFlyCallKit] onLogout - failed");
+          }
+        });
       } else {
         debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
       }
