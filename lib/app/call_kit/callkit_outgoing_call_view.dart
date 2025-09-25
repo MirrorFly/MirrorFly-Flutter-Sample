@@ -67,9 +67,9 @@ class CallKitOutgoingCallView
                   : const Offstage();
             }),
 
-            /// 🔹 Gradient overlay
+            /// Gradient overlay
             Obx(() => _buildGradientOverlay(controller.callType.value)),
-            /// 🔹 Foreground content
+            /// Foreground content
             SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,

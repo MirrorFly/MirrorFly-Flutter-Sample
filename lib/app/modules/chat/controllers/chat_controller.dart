@@ -2321,6 +2321,8 @@ class ChatController extends FullLifeCycleController
         }
         debugPrint(filePath);
       });
+    }else{
+      debugPrint("Audio Recording Not Stopped");
     }
 
   }
