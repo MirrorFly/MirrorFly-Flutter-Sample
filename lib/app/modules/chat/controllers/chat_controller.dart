@@ -4066,7 +4066,7 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
-          if(isAudioRecording.value == Constants.audioRecording){
+                 if(isAudioRecording.value == Constants.audioRecording){
             stopRecording();
           }
             await MirrorFlyCallKit.makeAudioCall(
