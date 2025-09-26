@@ -209,6 +209,10 @@ class PushNotifications {
       if (!remoteMessage.data.containsKey("message_id")) {
         notificationData["message_id"] = remoteMessage.messageId;
       }
+
+      /// For Android, background call and message payloads are received from Firebase.
+      /// For iOS, they are handled inside the Notification Service Extension
+      /// and in `didReceiveIncomingPush` for VoIP.
       if (notificationData.isNotEmpty && Platform.isAndroid) {
         WidgetsFlutterBinding.ensureInitialized();
         Mirrorfly.handleReceivedMessage(notificationData: notificationData,

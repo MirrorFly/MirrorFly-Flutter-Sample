@@ -148,9 +148,6 @@ class BaseController {
           /// This will be triggered when we receive the incoming call in call status stream.
         /// This condition is already handled above to set the callerId and callType
           break;
-        case FlyCallStatusEvent.callFailed:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
-          break;
         case FlyCallStatusEvent.permissionDenied:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent permissionDenied");
           final Map<String, dynamic>? errorJson =
