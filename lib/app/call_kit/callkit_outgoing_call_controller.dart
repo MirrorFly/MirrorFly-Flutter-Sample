@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,12 +54,13 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
-    print("[MirrorFly] callviewinit");
+    await _handleInitialCallStatus();
+    debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
-      print("[MirrorFly] isIncoming: $isIncoming $callType $callerUsersId");
+      debugPrint("[MirrorFly][OutgoingCallController] isIncoming: $isIncoming $callType $callerUsersId");
       if (isIncoming.value) {
         isOnGoingCallView();
         secondaryCallViewUserId.value =
@@ -70,15 +72,52 @@ class CallKitOutgoingCallController extends GetxController
         mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
         secondaryCallViewUserId.value = callerUsersId[0] ?? "";
       } else {
-        print("[MirrorFly] Invalid call parameters");
+        debugPrint("[MirrorFly][OutgoingCallController] Invalid call parameters");
       }
-      initAudioRouting();
-      getRemoteUserName();
       // await initAudioRouting();
       // updateUserId();
     }
-    print("[MirrorFly] callview");
+    debugPrint("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    initAudioRouting();
+    getRemoteUserName();
+    super.onReady();
+  }
+
+  Future<void> _handleInitialCallStatus() async {
+    debugPrint("[MirrorFly] _handleInitialCallStatus called");
+    final FlyCallStatusEvent? currentStatusEvent =
+        MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
+    debugPrint("[MirrorFly] currentStatusEvent: $currentStatusEvent");
+    if (currentStatusEvent == FlyCallStatusEvent.connected) {
+      connected();
+    } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
+      connecting();
+    } else if (currentStatusEvent == FlyCallStatusEvent.ringing) {
+      ringing();
+    } else if (currentStatusEvent == FlyCallStatusEvent.tryingToConnect) {
+      tryingToConnect();
+    } else {
+      // Let the listener status will trigger from base controller
+    }
+  }
+
+  @override
+  void onClose() {
+    debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController onClose called");
+    super.onClose();
+  }
+
+
+  @override
+  void dispose(){
+    debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
+    super.dispose();
+
   }
 
   void toggleControls() {
@@ -89,7 +128,7 @@ class CallKitOutgoingCallController extends GetxController
     ProfileDetails profile = await getProfileDetails(callerUsersId[0]!);
     String username = profile.name ?? profile.nickName ?? "Unknown";
     remoteUserName.value = username;
-    print("User Name: $username");
+    debugPrint("User Name: $username");
   }
 
   void getUserName() async {
@@ -97,7 +136,7 @@ class CallKitOutgoingCallController extends GetxController
         await getProfileDetails(SessionManagement.getUserJID()!);
     String username = profile.name ?? profile.nickName ?? "Unknown";
     localUserName.value = username;
-    print("User Name: $username");
+    debugPrint("User Name: $username");
   }
 
   void _startTimer({int? time}) {
@@ -119,7 +158,7 @@ class CallKitOutgoingCallController extends GetxController
         final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
         final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
         var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
-        // print("[MirrorFly] Timer: $time");
+        // print("[MirrorFly][OutgoingCallController] Timer: $time");
         _updateCallDuration(duration: time);
       },
     );
@@ -127,7 +166,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void _stopTimer() {
     if (timer == null) {
-      print("[MirrorFly] Timer is null");
+      debugPrint("[MirrorFly][OutgoingCallController] Timer is null");
       return;
     }
     timer?.cancel();
@@ -158,7 +197,7 @@ class CallKitOutgoingCallController extends GetxController
       isRemoteAudioMuted.value = isAudioMuted;
     }
 
-    print("[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}");
+    debugPrint("[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}");
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {
@@ -167,11 +206,11 @@ class CallKitOutgoingCallController extends GetxController
     }else{
       isRemoteVideoMuted.value = isVideoMuted;
     }
-    print("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
+    debugPrint("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
   }
 
   void audioCallAfterCallSwitch(){
-    print("audioCallAfterCallSwitch change the call type into audio call");
+    debugPrint("audioCallAfterCallSwitch change the call type into audio call");
     callType.value = "audio";
   }
 
@@ -179,13 +218,13 @@ class CallKitOutgoingCallController extends GetxController
   static bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
     if (currentUserId == null) {
-      print("[MirrorFly] isSelfId: is null id=$id");
+      debugPrint("[MirrorFly][OutgoingCallController] isSelfId: is null id=$id");
       return true;
     } else {
       //
       final String participantId = "$id@xmpp-uikit-qa.contus.us";
-      print("[Mirrorfly] isSelfId $currentUserId $participantId");
-      print("[MirrorFly] isSelfId: ${currentUserId == participantId}");
+      debugPrint("[MirrorFly][OutgoingCallController] isSelfId $currentUserId $participantId");
+      debugPrint("[MirrorFly][OutgoingCallController] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;
     }
   }
@@ -200,26 +239,32 @@ class CallKitOutgoingCallController extends GetxController
   void callTimeOut() async {
     callStatus("Call Timeout");
     toToast("Call Timeout");
-    await handleTimeOutDisconnect();
+    // await handleTimeOutDisconnect();
     _stopTimer();
+    final String type = callType.value;
+    final String calleeName = remoteUserName.value;
+    final List<String?> callUserList = callerUsersId.toList();
     _resetValues();
-    NavUtils.back();
+    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
+      "callType": type,
+      "userJid": callUserList,
+      "calleeName": calleeName
+    });
+
   }
 
   void rejected() {
-    toToast("Call Declined");
+    toToast("User Busy");
     NavUtils.back();
   }
 
   void connecting() {
-    // callStatus("Connected");
-    // isOnGoingCallView();
-    // updateUserId();
-    // _startTimer();
+    callStatus("Connecting...");
+    debugPrint("[MirrorFly] connecting.. called");
   }
 
   void outGoingCallCalling() {
-    debugPrint("[MirrorFly] outgoing calling");
+    debugPrint("[MirrorFly][OutgoingCallController] outgoing calling");
     callStatus("Calling...");
   }
 
@@ -231,7 +276,7 @@ class CallKitOutgoingCallController extends GetxController
     if (timer == null || !(timer?.isActive ?? false)) {
       _startTimer();
     } else {
-      print("[MirrorFly] Timer is already running");
+      debugPrint("[MirrorFly][OutgoingCallController] Timer is already running");
     }
     secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
     mainCallViewUserId.value = callerUsersId[0] ?? "";
@@ -257,51 +302,61 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void muteAudio() async {
-    print("[MirrorFly] muteAudio start");
+    debugPrint("[MirrorFly][OutgoingCallController] muteAudio start");
 
     MirrorFlyCallKit.toggleMicrophone(result: (result) async {
-      print("[MirrorFly] muteAudio toggleMicrophone result : $result");
+      debugPrint("[MirrorFly][OutgoingCallController] muteAudio toggleMicrophone result : $result");
 
       if (result) {
         final bool isMicEnabled =
             await MirrorFlyCallKit.getIsMicrophoneEnabled();
-        print(
-            "[MirrorFly] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
       } else {
-        print(
-            "[MirrorFly] muteAudio failure toggleMicrophone result : $result");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone result : $result");
       }
     });
   }
 
   void setCameraEnable({required bool enable}) async {
-    print("[MirrorFly] setCameraEnable start");
+    debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable start");
     final FlyCallType? flyCallType =
         await MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == null) {
-      print("[MirrorFly] setCameraEnable: Unable to get current call type.");
+      debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable: Unable to get current call type.");
       return;
     }
 
-    if (flyCallType == FlyCallType.audio) {
-      print(
-          "[MirrorFly] setCameraEnable: Current call is not a video call, so requesting to switch video call");
+    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+
+    if (flyCallType == FlyCallType.audio && callStatus) {
+      log(
+          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
       requestVideoCallSwitch();
       return;
+    }else {
+      log("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
     }
 
-    print("[MirrorFly] setCameraEnable: value : $enable");
+    if (flyCallType == FlyCallType.video && !callStatus) {
+      log(
+          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not connected, cannot change camera state. callStatus- $callStatus");
+      return;
+    }
 
-    isVideoEnabled.value = enable;
+    debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
+
     MirrorFlyCallKit.setCameraEnable(
         enable: enable,
         result: (result) async {
           if (result) {
-            print("[MirrorFly] setCameraEnable : $result");
+            debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
+            isVideoEnabled.value = enable;
           } else {
-            print(
-                "[MirrorFly]  Error setCameraEnable status  result : $result");
+            debugPrint(
+                "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
           }
         });
   }
@@ -309,21 +364,21 @@ class CallKitOutgoingCallController extends GetxController
 
 
   void onCallSwitchRemoteUserDeclined() {
-    print("[MirrorFly] onCallSwitchRemoteUserDeclined");
+    debugPrint("[MirrorFly][OutgoingCallController] onCallSwitchRemoteUserDeclined");
     toToast("Video call switch declined");
     closeDialog();
   }
 
   ///
   void onRemoteUserCancelledTheSwitchRequest() {
-    print("[MirrorFly] onRemoteUserCancelledTheSwitchRequest");
+    debugPrint("[MirrorFly][OutgoingCallController] onRemoteUserCancelledTheSwitchRequest");
     toToast("Video call switch canceled");
     closeDialog();
   }
 
   void remoteUserIsEngaged() async {
-    print("[MirrorFly] remoteUserIsEngaged");
-    toToast("${remoteUserName.value} in another call");
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged");
+    toToast("${remoteUserName.value} is engaged");
     await Future.delayed(const Duration(milliseconds: 500));
     if (NavUtils.canPop) {
       NavUtils.back();
@@ -331,10 +386,10 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void switchCamera() async {
-    print("[MirrorFly] switchCamera start");
+    debugPrint("[MirrorFly][OutgoingCallController] switchCamera start");
 
     MirrorFlyCallKit.switchCameraPosition(result: (result) async {
-      print("[MirrorFly] switchCameraPosition result : $result");
+      debugPrint("[MirrorFly][OutgoingCallController] switchCameraPosition result : $result");
 
       // After switching, get the updated position
       var pos = await MirrorFlyCallKit.getCurrentCameraPosition();
@@ -343,23 +398,23 @@ class CallKitOutgoingCallController extends GetxController
       } else if (pos == CameraType.back) {
         cameraPosition.value = pos;
       }
-      print("[MirrorFly] updated pos : $pos");
+      debugPrint("[MirrorFly][OutgoingCallController] updated pos : $pos");
 
       // Update state
     });
   }
 
   Future<void> initAudioRouting() async {
-    print("[MirrorFly] Initializing audio routing...");
+    debugPrint("[MirrorFly][OutgoingCallController] Initializing audio routing...");
 
     if (callType.value == "audio") {
-      print("[MirrorFly] Call type is audio, setting to earpiece.");
+      debugPrint("[MirrorFly][OutgoingCallController] Call type is audio, setting to earpiece.");
       selectedDevice.value = false;
     } else if (callType.value == "video") {
-      print("[MirrorFly] Call type is video, setting to speaker.");
+      debugPrint("[MirrorFly][OutgoingCallController] Call type is video, setting to speaker.");
       selectedDevice.value = true;
     } else {
-      print("[MirrorFly] Unknown call type, defaulting to earpiece.");
+      debugPrint("[MirrorFly][OutgoingCallController] Unknown call type, defaulting to earpiece.");
       selectedDevice.value = false;
     }
 
@@ -390,7 +445,7 @@ class CallKitOutgoingCallController extends GetxController
         ? FlyCallAudioDeviceType.earpiece.value  // if speaker active → switch to earpiece
         : FlyCallAudioDeviceType.speaker.value; // if earpiece active → switch to speaker
 
-    print("[MirrorFly] Attempting switch to: $targetDevice");
+    debugPrint("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
 
     final result = await MirrorFlyCallKit.changeAudioOutputDevice(
       flyMediaDevice: const FlyMediaDevice("", "", "", ""),
@@ -400,14 +455,14 @@ class CallKitOutgoingCallController extends GetxController
     if (result) {
       // update state only after success
       selectedDevice.value = !selectedDevice.value;
-      print("[MirrorFly] ✅ Switched to: $targetDevice");
+      debugPrint("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
     } else {
-      print("[MirrorFly] ❌ Failed to switch to: $targetDevice");
+      debugPrint("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
     }
   }
 
   Future<void> changeAudioDevice() async {
-    print("[MirrorFly] changeAudioDevice -> ");
+    debugPrint("[MirrorFly][OutgoingCallController] changeAudioDevice -> ");
     await _switchTo();
   }
 
@@ -455,23 +510,23 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void localHangup() async {
-    print("[MirrorFly]  disconnectCall invoked...");
+    debugPrint("[MirrorFly][OutgoingCallController]  disconnectCall invoked...");
     _stopTimer();
     try {
       var result = await MirrorFlyCallKit.localHangup();
-      print("[MirrorFly] localHangup() result: $result");
+      debugPrint("[MirrorFly][OutgoingCallController] localHangup() result: $result");
 
       if (result == true) {
-        print(
-            "[MirrorFly]  Call disconnected successfully. Navigating back...");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
         NavUtils.back();
       } else {
         NavUtils.back();
-        print(
-            "[MirrorFly]  Call disconnect failed. Retrying or handling failure...");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
       }
     } catch (e, stack) {
-      print("[MirrorFly]  Exception in disconnectCall: $e");
+      debugPrint("[MirrorFly][OutgoingCallController]  Exception in disconnectCall: $e");
       print(stack);
     }
   }
@@ -481,30 +536,30 @@ class CallKitOutgoingCallController extends GetxController
       {required bool isSelf, required String participantId}) {
     if (isSelf) {
       if (!isLocalTracksPublished.value) {
-        print(
-            "[MirrorFly] [MirrorFlyCall] Local tracks published for $participantId");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Local tracks published for $participantId");
         isLocalTracksPublished(true);
         localParticipantId(participantId);
       } else {
-        print(
-            "[MirrorFly] [MirrorFlyCall] Ignoring duplicate local publish for $participantId");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate local publish for $participantId");
       }
     } else {
       if (!isRemoteTracksPublished.value) {
-        print(
-            "[MirrorFly] [MirrorFlyCall] Remote tracks published for $participantId");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Remote tracks published for $participantId");
         isRemoteTracksPublished(true);
         remoteParticipantId(participantId);
       } else {
-        print(
-            "[MirrorFly] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
       }
     }
   }
 
   void updateUserId() {
-    print(
-        "[MirrorFly] [MirrorFlyCall] updateUserId called with isIncoming: $isIncoming, callerUsersId: $callerUsersId");
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] [MirrorFlyCall] updateUserId called with isIncoming: $isIncoming, callerUsersId: $callerUsersId");
     if (isIncoming.value) {
       mainCallViewUserId(callerUsersId.first);
       if (callerUsersId.length > 1) {
@@ -517,19 +572,28 @@ class CallKitOutgoingCallController extends GetxController
         secondaryCallViewUserId(SessionManagement.getUserJID());
       }
     }
-    print(
-        "[MirrorFly] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
   }
 
   ///
   void requestVideoCallSwitch() async {
-    print("[MirrorFly]  makeCallSwitch invoked...");
-    _videoCallSwitchRequestConfirmationPopup();
+
+    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+    final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+
+    if (flyCallType == FlyCallType.audio && callStatus) {
+      log("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
+      _videoCallSwitchRequestConfirmationPopup();
+    }else{
+      log("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
+    }
+
   }
 
   ///
   void cancelVideoCallSwitchRequest() async {
-    print("[MirrorFly]  cancelVideoCallSwitch invoked...");
+    debugPrint("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
     toToast("Video call switch canceled");
     closeDialog();
@@ -538,14 +602,14 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void acceptIncomingCallSwitchRequest() async {
-    print("[MirrorFly]  acceptIncomingCallSwitchRequest invoked...");
+    debugPrint("[MirrorFly][OutgoingCallController]  acceptIncomingCallSwitchRequest invoked...");
     closeDialog();
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
   }
 
   ///
   void declineIncomingCallSwitchRequest() async {
-    print("[MirrorFly]  declineIncomingCallSwitchRequest invoked...");
+    debugPrint("[MirrorFly][OutgoingCallController]  declineIncomingCallSwitchRequest invoked...");
     await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
     closeDialog();
   }
@@ -566,11 +630,11 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void processCallSwitchUI() async {
-    print("[MirrorFly] Processing call switch UI changes...");
+    debugPrint("[MirrorFly][OutgoingCallController] Processing call switch UI changes...");
     final FlyCallType? flyCallType =
         await MirrorFlyCallKit.getCurrentCallType();
     if (flyCallType == null && flyCallType == FlyCallType.none) {
-      print("[MirrorFly] Unable to get current call type after switch.");
+      debugPrint("[MirrorFly][OutgoingCallController] Unable to get current call type after switch.");
       return;
     }
     flyCallType == FlyCallType.audio ? callType("audio") : callType("video");
@@ -578,7 +642,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void onVideoCallSwitchRequestAccepted() {
-    print("[MirrorFly] Video call switch request accepted.");
+    debugPrint("[MirrorFly][OutgoingCallController] Video call switch request accepted.");
     closeDialog();
   }
 
@@ -651,24 +715,24 @@ class CallKitOutgoingCallController extends GetxController
     );
 
     // _outgoingSwitchTimer = Timer(const Duration(seconds: 20), () async {
-    //   print("[MirrorFly][BaseController] 20s wait ended");
+    //   print("[MirrorFly][OutgoingCallController][BaseController] 20s wait ended");
     //   if (!_isWaitingCanceled) {
     //     _cancelVideoCallSwitchRequestOnTimerEnd();
     //     toToast(getTranslated("noResponseFrom").replaceFirst("%d", "Test"));
     //     _closeDialog();
     //   } else {
-    //     print("[MirrorFly][BaseController] _isWaitingCanceled is true");
+    //     print("[MirrorFly][OutgoingCallController][BaseController] _isWaitingCanceled is true");
     //   }
     // });
   }
 
   ///
   // void _cancelVideoCallSwitchRequestOnTimerEnd() async {
-  //   print("[MirrorFly][BaseController] Canceling video call switch request due to timeout");
+  //   print("[MirrorFly][OutgoingCallController][BaseController] Canceling video call switch request due to timeout");
   //
   //   _cancelCallSwitchReqWaiting();
   //
-  //   print("[MirrorFly] cancelVideoCallSwitchRequestOnTimerEnd invoked...");
+  //   print("[MirrorFly][OutgoingCallController] cancelVideoCallSwitchRequestOnTimerEnd invoked...");
   //   await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
   //   _closeDialog();
   // }
@@ -681,8 +745,20 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void closeDialog() {
-    print("[MirrorFly] _closeDialog called");
+    debugPrint("[MirrorFly][OutgoingCallController] _closeDialog called");
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
+      NavUtils.back();
+    }
+  }
+
+  ///
+  void onCallFailed() {
+    debugPrint("[MirrorFly][OutgoingCallController] onCallFailed called");
+    _resetValues();
+    _stopTimer();
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      callStatus("Call Failed");
+      toToast("Call Failed");
       NavUtils.back();
     }
   }
@@ -710,107 +786,7 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId("");
     isManualDeviceSelected(false);
     callTryStatus("");
+    debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
   }
-}
-// void updateCallStatus({required FlyCallStatus status}) {
-//   print("[MirrorFly] [Call Outgoing call controller] Call Status Updated: $status");
-//   switch (status) {
-//     case FlyCallStatus.ringing:
-//       callStatus("Ringing...");
-//     case FlyCallStatus.connecting:
-//     /// Received only for outgoing call.
-//     /// For incoming call after the call gets connected the FlyCallStatus is connected
-//     //   connecting();
-//     case FlyCallStatus.tryingToConnect:
-//       callStatus("Trying to connect...");
-//     case FlyCallStatus.reconnecting:
-//       callStatus("Trying to reconnecting...");
-//       callTryStatus("Trying to reconnecting...");
-//     case FlyCallStatus.reconnected:
-//       callTryStatus("");
-//     case FlyCallStatus.connected:
-//       connected();
-//
-//       secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-//       mainCallViewUserId.value = callerUsersId[0] ?? "";
-//
-//       /// *** Need to check *** ///
-//       /// Need to get the current routed Audio Device and set the Audio Route value accordingly
-//       // setInitialAudioOutput();
-//       /// For incoming call after the call gets connected the FlyCallStatus is connected
-//       // if (isIncoming.value)
-//       print("[MirrorFly] [Call Outgoing call controller] incoming call connected status updated");
-//       return;
-//   // } else {
-//   //   print("[MirrorFly] [Call Outgoing call controller] not a incoming call");
-//   // }
-//
-//     case FlyCallStatus.disconnected:
-//       disconnectCall();
-//     case FlyCallStatus.callTimeout:
-//       callTimeOut();
-//     case FlyCallStatus.rejected:
-//       rejected();
-//     default:
-//       print("[MirrorFly] Unknown Call Status: $status");
-//   }
-// }
-// void callSwitchAction({required CallSwitchAction? switchAction}) {
-//   print("[MirrorFly] callSwitchAction: $switchAction");
-//   switch (switchAction) {
-//     case CallSwitchAction.incomingRequest:
-//       print("[MirrorFly] CallSwitchAction.incomingRequest");
-//       _showIncomingCallSwitchRequestDialog();
-//
-//     case CallSwitchAction.decline:
-//       print("[MirrorFly] CallSwitchAction.decline");
-//       toToast("Video call switch declined");
-//       closeDialog();
-//   // _cancelCallSwitchReqWaiting();
-//
-//     case CallSwitchAction.outgoingRequest:
-//       print("[MirrorFly] CallSwitchAction.outgoingRequest");
-//       showOutGoingCallSwitchRequestDialog();
-//
-//     case CallSwitchAction.cancel:
-//       print("[MirrorFly] CallSwitchAction.cancel");
-//       _closeDialog();
-//       toToast("Video call switch canceled");
-//
-//     case CallSwitchAction.accept:
-//       print("[MirrorFly] CallSwitchAction.accept");
-//       _closeDialog();
-//       // _cancelCallSwitchReqWaiting();
-//       _onVideoCallSwitchRequestAccepted();
-//       _processCallSwitchUI();
-//
-//     case CallSwitchAction.timeout:
-//       print("[MirrorFly] CallSwitchAction.timeout");
-//       _closeDialog();
-//       toToast(getTranslated("noResponseFrom")
-//           .replaceFirst("%d", remoteUserName.value));
-//       break;
-//
-//     default:
-//       break;
-//   }
-// }
 
-// void onRemoteMuteStatusChanged({
-//   required FlyCallMuteType muteType,
-//   required FlyCallMuteStatus muteStatus,
-//   String? participantId,
-// }) {
-//   switch (muteType) {
-//     case FlyCallMuteType.audio:
-//       isRemoteAudioMuted.value = muteStatus == FlyCallMuteStatus.muted;
-//       break;
-//
-//     case FlyCallMuteType.video:
-//       isRemoteVideoMuted.value = muteStatus == FlyCallMuteStatus.muted;
-//       break;
-//   }
-//
-//   print(
-//       "[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}, videoMuted=${isRemoteVideoMuted.value}");
-// }
+}

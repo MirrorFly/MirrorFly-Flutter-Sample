@@ -455,6 +455,27 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  void checkForAndroidNotificationProgressPermission(AttachmentType type) async {
+    if (Platform.isIOS || await AppPermission.checkPermission(Permission.notification)) {
+      switch (type) {
+        case AttachmentType.camera:
+          NavUtils.back();
+          onCameraClick();
+        case AttachmentType.gallery:
+          NavUtils.back();
+          onGalleryClick();
+        case AttachmentType.audio:
+          NavUtils.back();
+          onAudioClick();
+        case AttachmentType.document:
+          NavUtils.back();
+          documentPickUpload();
+      }
+    } else {
+      toToast(getTranslated("notificationPermissionNotGranted"));
+    }
+  }
+
   showBottomSheetAttachment() {
     DialogUtils.bottomSheet(
       Container(
@@ -468,20 +489,16 @@ class ChatController extends FullLifeCycleController
                   attachments: availableAttachments,
                   availableFeatures: availableFeatures,
                   onDocument: () {
-                    NavUtils.back();
-                    documentPickUpload();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.document);
                   },
                   onCamera: () {
-                    NavUtils.back();
-                    onCameraClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.camera);
                   },
                   onGallery: () {
-                    NavUtils.back();
-                    onGalleryClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.gallery);
                   },
                   onAudio: () {
-                    NavUtils.back();
-                    onAudioClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.audio);
                   },
                   onContact: () {
                     NavUtils.back();
@@ -2305,21 +2322,26 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> stopRecording() async {
-    isAudioRecording(Constants.audioRecordDone);
-    isUserTyping(messageController.text.trim().isNotEmpty);
-    _audioTimer?.cancel();
-    _audioTimer = null;
-    debugPrint("Audio Recording Stopped");
-    await record.stop().then((filePath) async {
-      debugPrint("Audio saved path---> $filePath");
-      if (MediaUtils.isMediaExists(filePath)) {
-        recordedAudioPath = filePath.checkNull();
-        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
-      } else {
-        debugPrint("File Not Found For Audio");
-      }
-      debugPrint(filePath);
-    });
+    if(isAudioRecording.value == Constants.audioRecording){
+      isAudioRecording(Constants.audioRecordDone);
+      isUserTyping(messageController.text.trim().isNotEmpty);
+      _audioTimer?.cancel();
+      _audioTimer = null;
+      debugPrint("Audio Recording Stopped");
+      await record.stop().then((filePath) async {
+        debugPrint("Audio saved path---> $filePath");
+        if (MediaUtils.isMediaExists(filePath)) {
+          recordedAudioPath = filePath.checkNull();
+          debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
+        } else {
+          debugPrint("File Not Found For Audio");
+        }
+        debugPrint(filePath);
+      });
+    }else{
+      debugPrint("Audio Recording Not Stopped");
+    }
+
   }
 
   Future<void> deleteRecording() async {
@@ -4044,6 +4066,9 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
+          if(isAudioRecording.value == Constants.audioRecording){
+            stopRecording();
+          }
             await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
@@ -4052,7 +4077,22 @@ class ChatController extends FullLifeCycleController
                     "callType": CallType.audio
                   });
                 } else {
-                  toToast("CF Not connected");
+                  final String errorData = response.data;
+                  if (errorData == "Centrifuge not connected") {
+                    toToast("CF Not connected");
+                  }
+
+                  // Assuming it is permission denied error
+                  final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
+                  final String? permissionType = errorJson?['type'];
+                  final String? permissionAction = errorJson?['action'];
+                  final String? message = errorJson?['message'];
+                  debugPrint(
+                      "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+
+                  if (message != null) {
+                    toToast(message);
+                  }
                 }
               },
               callersId: [
@@ -4062,6 +4102,7 @@ class ChatController extends FullLifeCycleController
               chatId: '');
         }
       } else {
+        toToast("Permission is not granted");
         debugPrint("permission not given");
       }
     } else {
@@ -4083,6 +4124,9 @@ class ChatController extends FullLifeCycleController
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
           try{
+            if(isAudioRecording.value == Constants.audioRecording){
+              stopRecording();
+            }
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
@@ -4095,14 +4139,13 @@ class ChatController extends FullLifeCycleController
                   } else {
                     toToast("CF Not connected");
                   }
-                });
-          }catch(e){
-            print("make video call Error$e");
-
+              });
+        }catch(e){
+            debugPrint("make video call Error$e");
           }
-
         }
       } else {
+        toToast("Permission is not granted");
         LogMessage.d("askVideoCallPermissions", "false");
       }
     } else {
@@ -4110,4 +4153,11 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+}
+
+enum AttachmentType {
+  camera,
+  gallery,
+  audio,
+  document,
 }
