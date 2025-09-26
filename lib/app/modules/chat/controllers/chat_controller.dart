@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_cont
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallCfResponse, FlyResult;
+import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyResult;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -455,6 +455,27 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+  void checkForAndroidNotificationProgressPermission(AttachmentType type) async {
+    if (Platform.isIOS || await AppPermission.checkPermission(Permission.notification)) {
+      switch (type) {
+        case AttachmentType.camera:
+          NavUtils.back();
+          onCameraClick();
+        case AttachmentType.gallery:
+          NavUtils.back();
+          onGalleryClick();
+        case AttachmentType.audio:
+          NavUtils.back();
+          onAudioClick();
+        case AttachmentType.document:
+          NavUtils.back();
+          documentPickUpload();
+      }
+    } else {
+      toToast(getTranslated("notificationPermissionNotGranted"));
+    }
+  }
+
   showBottomSheetAttachment() {
     DialogUtils.bottomSheet(
       Container(
@@ -468,20 +489,16 @@ class ChatController extends FullLifeCycleController
                   attachments: availableAttachments,
                   availableFeatures: availableFeatures,
                   onDocument: () {
-                    NavUtils.back();
-                    documentPickUpload();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.document);
                   },
                   onCamera: () {
-                    NavUtils.back();
-                    onCameraClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.camera);
                   },
                   onGallery: () {
-                    NavUtils.back();
-                    onGalleryClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.gallery);
                   },
                   onAudio: () {
-                    NavUtils.back();
-                    onAudioClick();
+                    checkForAndroidNotificationProgressPermission(AttachmentType.audio);
                   },
                   onContact: () {
                     NavUtils.back();
@@ -2305,21 +2322,26 @@ class ChatController extends FullLifeCycleController
   }
 
   Future<void> stopRecording() async {
-    isAudioRecording(Constants.audioRecordDone);
-    isUserTyping(messageController.text.trim().isNotEmpty);
-    _audioTimer?.cancel();
-    _audioTimer = null;
-    debugPrint("Audio Recording Stopped");
-    await record.stop().then((filePath) async {
-      debugPrint("Audio saved path---> $filePath");
-      if (MediaUtils.isMediaExists(filePath)) {
-        recordedAudioPath = filePath.checkNull();
-        debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
-      } else {
-        debugPrint("File Not Found For Audio");
-      }
-      debugPrint(filePath);
-    });
+    if(isAudioRecording.value == Constants.audioRecording){
+      isAudioRecording(Constants.audioRecordDone);
+      isUserTyping(messageController.text.trim().isNotEmpty);
+      _audioTimer?.cancel();
+      _audioTimer = null;
+      debugPrint("Audio Recording Stopped");
+      await record.stop().then((filePath) async {
+        debugPrint("Audio saved path---> $filePath");
+        if (MediaUtils.isMediaExists(filePath)) {
+          recordedAudioPath = filePath.checkNull();
+          debugPrint("Audio recordedAudioPath path---> $recordedAudioPath");
+        } else {
+          debugPrint("File Not Found For Audio");
+        }
+        debugPrint(filePath);
+      });
+    }else{
+      debugPrint("Audio Recording Not Stopped");
+    }
+
   }
 
   Future<void> deleteRecording() async {
@@ -4044,6 +4066,9 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
+          if(isAudioRecording.value == Constants.audioRecording){
+            stopRecording();
+          }
            await Mirrorfly.makeLiveKitAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
@@ -4099,6 +4124,9 @@ class ChatController extends FullLifeCycleController
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
           try{
+            if(isAudioRecording.value == Constants.audioRecording){
+              stopRecording();
+            }
             await Mirrorfly.makeLiveKitVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
@@ -4125,4 +4153,11 @@ class ChatController extends FullLifeCycleController
     }
   }
 
+}
+
+enum AttachmentType {
+  camera,
+  gallery,
+  audio,
+  document,
 }

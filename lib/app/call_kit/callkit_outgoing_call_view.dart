@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
@@ -30,45 +29,46 @@ class CallKitOutgoingCallView
         child: Stack(
           fit: StackFit.expand,
           children: [
+
             /// Main view
             Obx(() {
               return controller.mainCallViewUserId.value.isNotEmpty
                   ? Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        MirrorFlyCallView(
-                          key: ValueKey(controller.mainCallViewUserId.value),
-                          userJID: controller.mainCallViewUserId.value,
-                          viewBgColor: AppColors.audioCallerBackground,
-                          profileImage: getUserProfileImageWithName(
-                            participantId: controller.mainCallViewUserId.value,
-                            scale: 1,
-                          ),
+                alignment: Alignment.center,
+                children: [
+                  MirrorFlyCallView(
+                    key: ValueKey(controller.mainCallViewUserId.value),
+                    userJID: controller.mainCallViewUserId.value,
+                    fit: BoxFit.cover,
+                    viewBgColor: AppColors.audioCallerBackground,
+                    profileImage: getUserProfileImageWithName(
+                      participantId: controller.mainCallViewUserId.value,
+                      scale: 1,
+                    ),
+                  ),
+                  if (controller.isRemoteAudioMuted.value)
+                    Center(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black54,
                         ),
-                        if (controller.isRemoteAudioMuted.value)
-                          Center(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black54,
-                              ),
-                              padding: const EdgeInsets.all(12),
-                              child: const Icon(
-                                Icons.mic_off_outlined,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                      ],
-                    )
+                        padding: const EdgeInsets.all(12),
+                        child: const Icon(
+                          Icons.mic_off_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                ],
+              )
                   : const Offstage();
             }),
 
-            /// 🔹 Gradient overlay
-            _buildGradientOverlay(),
-
-            /// 🔹 Foreground content
+            /// Gradient overlay
+            Obx(() => _buildGradientOverlay(controller.callType.value)),
+            /// Foreground content
             SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -142,9 +142,12 @@ class CallKitOutgoingCallView
               if (!controller.isOnGoingCallViewEnable.value) {
                 return const SizedBox.shrink();
               }
-              final screenSize = MediaQuery.of(context).size;
+              final screenSize = MediaQuery
+                  .of(context)
+                  .size;
               final previewWidth = (screenSize.width * 0.25).clamp(80.0, 140.0);
-              final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
+              final previewHeight = previewWidth *
+                  1.3; // maintain 4:3-ish aspect ratio
               final bottomOffset = controller.showControls.value
                   ? screenSize.height * 0.28
                   : screenSize.height * 0.14;
@@ -187,26 +190,29 @@ class CallKitOutgoingCallView
         children: [
           MirrorFlyCallView(
             viewBgColor: AppColors.callerBackground,
-            key: UniqueKey(),
+            key: ValueKey(controller.secondaryCallViewUserId.value),
             userJID: controller.secondaryCallViewUserId.value,
+            fit: BoxFit.cover,
             profileImage: getUserProfileImageWithName(
               participantId: controller.secondaryCallViewUserId.value,
               scale: 2,
             ),
           ),
-          if (controller.muted.value)
-            Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black54,
-              ),
-              padding: const EdgeInsets.all(12),
-              child: const Icon(
-                Icons.mic_off_outlined,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
+
+          Obx(() {
+            return controller.muted.value ? Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.black54,
+                ),
+                padding: const EdgeInsets.all(12),
+                child: const Icon(
+                  Icons.mic_off_outlined,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ) : const Offstage();
+          }),
         ],
       ),
     );
@@ -220,7 +226,7 @@ class CallKitOutgoingCallView
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         offset:
-            controller.showControls.value ? Offset.zero : const Offset(0, 2),
+        controller.showControls.value ? Offset.zero : const Offset(0, 2),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 300),
           opacity: controller.showControls.value ? 1 : 0,
@@ -247,32 +253,29 @@ class CallKitOutgoingCallView
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔹 Name first
-              const SizedBox(height: 8),
-              // 🔹 Profile image below
               buildProfileImage(
                 snap.data!,
                 size: AppStyleConfig
-                        .outgoingCallPageStyle.profileImageSize.width /
+                    .outgoingCallPageStyle.profileImageSize.width /
                     scale,
               ),
               Obx(() {
                 return controller.isOnGoingCallViewEnable.value &&
-                        controller.localParticipantId.value == participantId
+                    controller.localParticipantId.value == participantId
                     ? const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "You",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      )
+                  padding: EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "You",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                )
                     : const SizedBox.shrink();
               }),
             ],
@@ -284,17 +287,24 @@ class CallKitOutgoingCallView
   }
 
   ///  Gradient Overlay
-  Widget _buildGradientOverlay() {
+  Widget _buildGradientOverlay(String callType) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1D1D35),
+          colors: callType == "video"
+              ? [
             Colors.transparent,
             Colors.transparent,
-            Color(0xFF1D1D35),
+          ]
+              : [
+            const Color(0xFF1D1D35),
+            Colors.transparent,
+            Colors.transparent,
+            const Color(0xFF1D1D35),
           ],
-          stops: [0, 0.2, 0.6, 1],
+          stops: callType == "video"
+              ? [0, 1] // fully transparent
+              : [0, 0.2, 0.6, 1],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -306,12 +316,13 @@ class CallKitOutgoingCallView
   Widget _buildCallControls(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-      child: Obx(() => Row(
+      child: Obx(() =>
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: true,
-                icon: controller.selectedDevice.value ? Icons.volume_up: Icons.hearing,
+                isActive: controller.selectedDevice.value,
+                icon: Icons.volume_up,
                 onTap: () async {
                   controller.changeAudioDevice();
                 },
@@ -342,7 +353,7 @@ class CallKitOutgoingCallView
                 ),
               if (controller.callType.value.toLowerCase() == CallType.audio)
                 _buildCallOption(
-                  isActive: false,
+                  isActive: true,
                   icon: Icons.videocam_off,
                   onTap: controller.requestVideoCallSwitch,
                 ),

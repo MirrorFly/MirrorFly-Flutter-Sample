@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 4.1.0+20
+version: 4.1.1+21
 build_release_date: Apr 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -75,7 +75,7 @@ dependencies:
 
 
   mirrorfly_plugin:
-    path: ../p078-mirrorfly-flutter-plugin
+    path: p078-mirrorfly-flutter-plugin
 
   #Packages Not Needed for UIKIT
   otp_text_field: ^1.1.3
