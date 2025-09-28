@@ -673,6 +673,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void showIncomingCallSwitchRequestDialog() {
+    closeDialog();
     DialogUtils.showAlert(
         dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("videoSwitchRequestedMessage")
@@ -701,6 +702,7 @@ class CallKitOutgoingCallController extends GetxController
     // _outgoingSwitchTimer?.cancel();
 
     //
+    closeDialog();
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestMessage"),
