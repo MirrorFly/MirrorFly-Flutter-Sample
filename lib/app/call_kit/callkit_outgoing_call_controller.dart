@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -36,6 +37,8 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isRemoteVideoMuted = true.obs;
   RxString remoteUserName = "".obs;
   RxString localUserName = "".obs;
+  late AudioPlayer _player;
+
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -77,6 +80,7 @@ class CallKitOutgoingCallController extends GetxController
       // await initAudioRouting();
       // updateUserId();
     }
+    initPlayer();
     debugPrint("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
   }
@@ -116,8 +120,13 @@ class CallKitOutgoingCallController extends GetxController
   @override
   void dispose(){
     debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
+    _player.dispose();
     super.dispose();
 
+  }
+
+  void initPlayer() {
+    _player = AudioPlayer();
   }
 
   void toggleControls() {
@@ -672,27 +681,42 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void showIncomingCallSwitchRequestDialog() {
+  void showIncomingCallSwitchRequestDialog() async {
+    debugPrint("[DEBUG] showIncomingCallSwitchRequestDialog called");
+
     closeDialog();
+
+    try {
+      await _player.setVolume(1.0);
+      await _player.setReleaseMode(ReleaseMode.loop);
+      await _player.play(AssetSource('sounds/reconnecting_ringtone.mp3'));
+      debugPrint("[DEBUG] AudioPlayer started playing");
+    } catch (e) {
+      debugPrint("[ERROR] Failed to play ringtone: $e");
+    }
+
     DialogUtils.showAlert(
-        dialogStyle: AppStyleConfig.dialogStyle,
-        message: getTranslated("videoSwitchRequestedMessage")
-            .replaceFirst("%d", remoteUserName.value),
-        actions: [
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: declineIncomingCallSwitchRequest,
-              child: Text(
-                getTranslated("declineRequest").toUpperCase(),
-              )),
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: acceptIncomingCallSwitchRequest,
-              child: Text(
-                getTranslated("acceptRequest"),
-              ))
-        ],
-        barrierDismissible: false);
+      dialogStyle: AppStyleConfig.dialogStyle,
+      message: getTranslated("videoSwitchRequestedMessage")
+          .replaceFirst("%d", remoteUserName.value),
+      actions: [
+        TextButton(
+            onPressed: () {
+              debugPrint("[DEBUG] Decline pressed");
+              _player.stop();
+              declineIncomingCallSwitchRequest();
+            },
+            child: Text(getTranslated("declineRequest").toUpperCase())),
+        TextButton(
+            onPressed: () {
+              debugPrint("[DEBUG] Accept pressed");
+              _player.stop();
+              acceptIncomingCallSwitchRequest();
+            },
+            child: Text(getTranslated("acceptRequest"))),
+      ],
+      barrierDismissible: false,
+    );
   }
 
   ///
@@ -748,10 +772,23 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void closeDialog() {
     debugPrint("[MirrorFly][OutgoingCallController] _closeDialog called");
+
+    // Stop the ringtone only if it is currently playing
+    if (_player.state == PlayerState.playing) {
+      _player.stop();
+      debugPrint("[MirrorFly][OutgoingCallController] AudioPlayer stopped");
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController] AudioPlayer not playing, no stop needed");
+    }
+
+    // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
       NavUtils.back();
+      debugPrint("[MirrorFly][OutgoingCallController] Dialog closed");
     }
   }
+
+
 
   ///
   void onCallFailed() {
@@ -772,7 +809,7 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
       final String temp = mainCallViewUserId.value;
       mainCallViewUserId.value = secondaryCallViewUserId.value;
-      secondaryCallViewUserId.value = temp ?? "";
+      secondaryCallViewUserId.value = temp;
       debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
     }
 
