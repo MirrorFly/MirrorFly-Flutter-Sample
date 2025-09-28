@@ -764,6 +764,19 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
+  void videoSwap(){
+    debugPrint("[MirrorFly][OutgoingCallController] videoSwap called");
+    if(callType.value == "video"){
+      debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+      final String temp = mainCallViewUserId.value;
+      mainCallViewUserId.value = secondaryCallViewUserId.value;
+      secondaryCallViewUserId.value = temp ?? "";
+      debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    }
+
+  }
+
+  ///
   void _resetValues() {
     callType("");
     muted(false);

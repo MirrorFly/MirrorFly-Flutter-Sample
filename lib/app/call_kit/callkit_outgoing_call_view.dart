@@ -197,6 +197,10 @@ class CallKitOutgoingCallView
               participantId: controller.secondaryCallViewUserId.value,
               scale: 2,
             ),
+            onTap: (){
+              debugPrint("Local preview tapped, swapping views");
+              controller.videoSwap();
+            },
           ),
 
           Obx(() {
