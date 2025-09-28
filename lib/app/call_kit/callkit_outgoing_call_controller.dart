@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../app_style_config.dart';
 import '../common/app_localizations.dart';
@@ -59,6 +60,13 @@ class CallKitOutgoingCallController extends GetxController
   Future<void> onInit() async {
     await _handleInitialCallStatus();
     debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
+    if (callType.value.isNotEmpty) {
+      _handleWakelock(callType.value);
+    }
+
+    ever(callType, (String type) {
+      _handleWakelock(type);
+    });
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
@@ -121,13 +129,24 @@ class CallKitOutgoingCallController extends GetxController
   void dispose(){
     debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
     _player.dispose();
+    WakelockPlus.disable();
     super.dispose();
-
   }
 
   void initPlayer() {
     _player = AudioPlayer();
   }
+
+  void _handleWakelock(String type) async {
+    if (type == "video") {
+      await WakelockPlus.enable();
+      debugPrint("[MirrorFly][OutgoingCallController] Wakelock ENABLED (video call)");
+    } else {
+      await WakelockPlus.disable();
+      debugPrint("[MirrorFly][OutgoingCallController] Wakelock DISABLED (not video)");
+    }
+  }
+
 
   void toggleControls() {
     showControls.value = !showControls.value;
@@ -812,7 +831,6 @@ class CallKitOutgoingCallController extends GetxController
       secondaryCallViewUserId.value = temp;
       debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
     }
-
   }
 
   ///
