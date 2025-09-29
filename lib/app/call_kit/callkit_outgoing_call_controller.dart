@@ -58,7 +58,6 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
-    await _handleInitialCallStatus();
     debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
     if (callType.value.isNotEmpty) {
       _handleWakelock(callType.value);
@@ -72,7 +71,9 @@ class CallKitOutgoingCallController extends GetxController
       callType(NavUtils.arguments?["callType"]);
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       debugPrint("[MirrorFly][OutgoingCallController] isIncoming: $isIncoming $callType $callerUsersId");
+      await _handleInitialCallStatus();
       if (isIncoming.value) {
+        callDuration("Connecting...");
         isOnGoingCallView();
         secondaryCallViewUserId.value =
             SessionManagement.getUserJID().checkNull();
@@ -266,7 +267,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void callTimeOut() async {
     callStatus("Call Timeout");
-    toToast("Call Timeout");
+    toToast("Unavailable try again later");
     // await handleTimeOutDisconnect();
     _stopTimer();
     final String type = callType.value;
