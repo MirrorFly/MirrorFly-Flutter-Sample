@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show MirrorFlyCallKit;
+// import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
@@ -193,22 +195,39 @@ class PushNotifications {
 
   }
 
-  static void showNotification(RemoteMessage remoteMessage) {
+  static void showNotification(RemoteMessage remoteMessage) async {
     var notificationData = remoteMessage.data;
-    if(!remoteMessage.data.containsKey("message_id")){
-      notificationData["message_id"]=remoteMessage.messageId;
-    }
-    if(notificationData.isNotEmpty && Platform.isAndroid) {
-      WidgetsFlutterBinding.ensureInitialized();
-      Mirrorfly.handleReceivedMessage(notificationData: notificationData, flyCallBack: (FlyResponse response) {
-          LogMessage.d("#Mirrorfly Notification -> notification message", response.toString());
-        if(response.isSuccess && response.hasData){
-          var data = sendMessageModelFromJson(response.data);
-          if(data.messageId.isNotEmpty) {
-            NotificationBuilder.createNotification(data,autoCancel: false);
-          }
-        }
-      });
+
+    final bool isFromMirrorFly = notificationData.containsKey("pushFrom") && notificationData["pushFrom"] == "MirrorFly";
+    final bool isCallKitPush = notificationData.containsKey("serverType") && notificationData["serverType"] == "mf-callkit";
+
+    if (Constants.useMirrorFlyCallKit && (isFromMirrorFly && isCallKitPush)) {
+      debugPrint("#Mirrorfly #CallKit Notification -> Using MirrorFly Call Kit");
+      debugPrint("#Mirrorfly -> #CallKit -> #Notification -> #notificationData: $notificationData");
+      MirrorFlyCallKit.processIncomingCallPayload(payload: notificationData);
+    } else {
+      if (!remoteMessage.data.containsKey("message_id")) {
+        notificationData["message_id"] = remoteMessage.messageId;
+      }
+
+      /// For Android, background call and message payloads are received from Firebase.
+      /// For iOS, they are handled inside the Notification Service Extension
+      /// and in `didReceiveIncomingPush` for VoIP.
+      if (notificationData.isNotEmpty && Platform.isAndroid) {
+        WidgetsFlutterBinding.ensureInitialized();
+        Mirrorfly.handleReceivedMessage(notificationData: notificationData,
+            flyCallBack: (FlyResponse response) {
+              LogMessage.d("#Mirrorfly Notification -> notification message",
+                  response.toString());
+              if (response.isSuccess && response.hasData) {
+                var data = sendMessageModelFromJson(response.data);
+                if (data.messageId.isNotEmpty) {
+                  NotificationBuilder.createNotification(
+                      data, autoCancel: false);
+                }
+              }
+            });
+      }
     }
   }
 }
