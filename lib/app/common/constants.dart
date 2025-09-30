@@ -354,6 +354,7 @@ toToast(String text) {
 class Constants {
   static bool isUIKIT = false;
   static bool useDeprecatedInit = false;
+  static bool useMirrorFlyCallKit = true;
   static const bool isBackupFeatureEnabled = true;
 
   // Dummy OTP View
@@ -365,7 +366,9 @@ class Constants {
       chatHistoryEnable: true,
       enableDebugLog: true,
       storageFolderName: "Mirrorfly Flutter",
-      isTrialLicenceKey: false);
+      isTrialLicenceKey: false,
+      enableVoipActivity: false
+  );
   static bool enablePrivateStorage = false;
   static const String webChatLogin = 'https://webchat-uikit-qa.contus.us/';
   static MetaDataUserList?
