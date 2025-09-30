@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -50,7 +49,7 @@ class CallKitCallTimeoutController extends GetxController {
       if (callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
           if (users.length == 1) {
-            await Mirrorfly.makeLiveKitAudioCall(
+            await MirrorFlyCallKit.makeAudioCall(
                 callersId: [
                   users.first ?? "",
                 ],
@@ -87,7 +86,7 @@ class CallKitCallTimeoutController extends GetxController {
       } else {
         if (await AppPermission.askVideoCallPermissions()) {
           if (users.length == 1) {
-            await Mirrorfly.makeLiveKitVideoCall(
+            await MirrorFlyCallKit.makeVideoCall(
                 callersId: [users.first ?? "",],
                 chatId: '',
                 flyResult: (FlyResult response) {
