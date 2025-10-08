@@ -347,7 +347,7 @@ class CallKitOutgoingCallView
                         enable: !(controller.isVideoEnabled.value));
                   },
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.video)
+              if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value)
                 _buildCallOption(
                   isActive: false,
                   icon: controller.cameraPosition.value == CameraType.front
