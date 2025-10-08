@@ -39,6 +39,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString remoteUserName = "".obs;
   RxString localUserName = "".obs;
   late AudioPlayer _player;
+  bool _isPlaying = false;
 
 
   ///
@@ -73,6 +74,7 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] isIncoming: $isIncoming $callType $callerUsersId");
       await _handleInitialCallStatus();
       if (isIncoming.value) {
+        debugPrint("[MirrorFly][kingsly][OutgoingCallController] Incoming call setup");
         callDuration("Connecting...");
         isOnGoingCallView();
         secondaryCallViewUserId.value =
@@ -703,7 +705,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void showIncomingCallSwitchRequestDialog() async {
-    debugPrint("[DEBUG] showIncomingCallSwitchRequestDialog called");
+    debugPrint("[MirrorFly][OutgoingCallController][DEBUG] showIncomingCallSwitchRequestDialog called");
 
     closeDialog();
 
@@ -711,9 +713,10 @@ class CallKitOutgoingCallController extends GetxController
       await _player.setVolume(1.0);
       await _player.setReleaseMode(ReleaseMode.loop);
       await _player.play(AssetSource('sounds/reconnecting_ringtone.mp3'));
-      debugPrint("[DEBUG] AudioPlayer started playing");
+      _isPlaying = true;
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
     } catch (e) {
-      debugPrint("[ERROR] Failed to play ringtone: $e");
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
     }
 
     DialogUtils.showAlert(
@@ -722,16 +725,14 @@ class CallKitOutgoingCallController extends GetxController
           .replaceFirst("%d", remoteUserName.value),
       actions: [
         TextButton(
-            onPressed: () {
-              debugPrint("[DEBUG] Decline pressed");
-              _player.stop();
+            onPressed: () async {
+              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Decline pressed");
               declineIncomingCallSwitchRequest();
             },
             child: Text(getTranslated("declineRequest").toUpperCase())),
         TextButton(
-            onPressed: () {
-              debugPrint("[DEBUG] Accept pressed");
-              _player.stop();
+            onPressed: () async {
+              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Accept pressed");
               acceptIncomingCallSwitchRequest();
             },
             child: Text(getTranslated("acceptRequest"))),
@@ -791,16 +792,18 @@ class CallKitOutgoingCallController extends GetxController
   // }
 
   ///
-  void closeDialog() {
+  void closeDialog() async{
     debugPrint("[MirrorFly][OutgoingCallController] _closeDialog called");
 
     // Stop the ringtone only if it is currently playing
-    if (_player.state == PlayerState.playing) {
-      _player.stop();
-      debugPrint("[MirrorFly][OutgoingCallController] AudioPlayer stopped");
+    if (_isPlaying) {
+      await _player.stop();
+      _isPlaying = false;
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer stopped (manual tracking)");
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] AudioPlayer not playing, no stop needed");
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer not playing (manual tracking)");
     }
+
 
     // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
