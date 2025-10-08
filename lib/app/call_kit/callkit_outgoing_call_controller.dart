@@ -240,6 +240,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void audioCallAfterCallSwitch(){
     debugPrint("audioCallAfterCallSwitch change the call type into audio call");
+    switchCamera();
     callType.value = "audio";
   }
 
