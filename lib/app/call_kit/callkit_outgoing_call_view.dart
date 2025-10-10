@@ -36,15 +36,40 @@ class CallKitOutgoingCallView
                   ? Stack(
                 alignment: Alignment.center,
                 children: [
-                  MirrorFlyCallView(
-                    key: ValueKey(controller.mainCallViewUserId.value),
-                    userJID: controller.mainCallViewUserId.value,
-                    fit: BoxFit.cover,
-                    viewBgColor: AppColors.audioCallerBackground,
-                    profileImage: getUserProfileImageWithName(
-                      participantId: controller.mainCallViewUserId.value,
-                      scale: 1,
-                    ),
+                  Stack(
+                    children: [
+                      MirrorFlyCallView(
+                        key: ValueKey(controller.mainCallViewUserId.value),
+                        userJID: controller.mainCallViewUserId.value,
+                        fit: BoxFit.cover,
+                        viewBgColor: AppColors.audioCallerBackground,
+                        profileImage: getUserProfileImageWithName(
+                          participantId: controller.mainCallViewUserId.value,
+                          scale: 1,
+                        ),
+                      ),
+
+                      // Reconnecting overlay widget
+                      Visibility(
+                        visible: controller.isRemoteUserReconnecting.value,
+                        child: Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
+                            child: const Center(
+                              child: Text(
+                                'Reconnecting...',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   if (controller.isRemoteAudioMuted.value)
                     Center(
@@ -188,15 +213,40 @@ class CallKitOutgoingCallView
       child: Stack(
         alignment: Alignment.center,
         children: [
-          MirrorFlyCallView(
-            viewBgColor: AppColors.callerBackground,
-            key: ValueKey(controller.secondaryCallViewUserId.value),
-            userJID: controller.secondaryCallViewUserId.value,
-            fit: BoxFit.cover,
-            profileImage: getUserProfileImageWithName(
-              participantId: controller.secondaryCallViewUserId.value,
-              scale: 2,
-            ),
+          Stack(
+            children: [
+              MirrorFlyCallView(
+                viewBgColor: AppColors.callerBackground,
+                key: ValueKey(controller.secondaryCallViewUserId.value),
+                userJID: controller.secondaryCallViewUserId.value,
+                fit: BoxFit.cover,
+                profileImage: getUserProfileImageWithName(
+                  participantId: controller.secondaryCallViewUserId.value,
+                  scale: 2,
+                ),
+              ),
+
+              // Reconnecting overlay widget
+              Visibility(
+               visible: controller.isLocalUserReconnecting.value,
+                child: Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
+                    child: const Center(
+                      child: Text(
+                        'Reconnecting...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
 
           Obx(() {

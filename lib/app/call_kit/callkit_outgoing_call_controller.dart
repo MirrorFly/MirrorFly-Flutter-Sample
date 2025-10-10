@@ -52,6 +52,9 @@ class CallKitOutgoingCallController extends GetxController
   // Timer? _outgoingSwitchTimer;
   // bool _isWaitingCanceled = false;
 
+  RxBool isLocalUserReconnecting = false.obs;
+  RxBool isRemoteUserReconnecting = false.obs;
+
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
@@ -181,13 +184,61 @@ class CallKitOutgoingCallController extends GetxController
     callStatus("Trying to connect...");
   }
 
-  void reconnecting() {
-    // callStatus("Trying to reconnecting...");
-    callTryStatus("Reconnecting...");
+  /// Handle reconnecting state for local and remote user
+  void reconnecting({required List<String> participantId}) {
+    for (final id in participantId) {
+      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnecting event for id: $id");
+      final isLocal = isSelfId(id: id);
+
+      if (isLocal && isLocalUserReconnecting.value) {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Local user already reconnecting of id: $id");
+        return;
+      }
+
+      if (!isLocal && isRemoteUserReconnecting.value) {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user already reconnecting of id: $id");
+        return;
+      }
+
+      if (isLocal) {
+        isLocalUserReconnecting.value = true;
+        callStatus("Reconnecting...");
+      } else {
+        isRemoteUserReconnecting.value = true;
+      }
+
+      callTryStatus("Reconnecting...");
+      break;
+    }
   }
 
-  void reconnected() {
-    callTryStatus("");
+  void reconnected({required List<String> participantIds}) {
+    debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event for participantId: $participantIds");
+
+    if (participantIds.isEmpty) {
+      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event with empty participantId");
+      return;
+    }
+
+    for (final id in participantIds) {
+      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event for id: $id");
+      final isLocal = isSelfId(id: id);
+
+      if (isLocal && isLocalUserReconnecting.value) {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Local user reconnected of id: $id");
+        isLocalUserReconnecting.value = false;
+        callStatus("Connected");
+      } else {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Local user is not in reconnecting state");
+      }
+
+      if (!isLocal && isRemoteUserReconnecting.value) {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user reconnected of id: $id");
+        isRemoteUserReconnecting.value = false;
+      }else {
+        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user is not in reconnecting state");
+      }
+    }
   }
 
   void isAudioMute({required bool isAudioMuted,required String? participantId}) {
@@ -282,13 +333,16 @@ class CallKitOutgoingCallController extends GetxController
     mainCallViewUserId.value = callerUsersId[0] ?? "";
   }
 
-  void disconnectCall() {
+  void disconnectCall({required String reason}) {
+    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall invoked with reason: $reason");
     _resetValues();
     _stopTimer();
     closeDialog();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
-      toToast("Call Disconnected");
+      reason == "reconnectAttemptsExceeded"
+          ? toToast("Reconnection attempt exceeded")
+          : toToast("Call Disconnected");
       NavUtils.back();
     }
   }
