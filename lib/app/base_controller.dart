@@ -58,6 +58,8 @@ class BaseController {
     //
     String? callerId;
     String? callType;
+    String? callMode;
+    String? groupId;
 
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
@@ -71,7 +73,10 @@ class BaseController {
         }
         callerId = flyCallStatus.participantsIds.first;
         callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
-        debugPrint("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType");
+        callMode =  MirrorFlyCallKit.getCurrentCallMode();
+        groupId =  MirrorFlyCallKit.getCurrentCallGroupId();
+
+        debugPrint("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType callMode=$callMode groupId=$groupId");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
@@ -189,6 +194,8 @@ class BaseController {
               "userJid": [jid], // pass modified JID
               "callType": callType,
               "isIncoming": true,
+              "callMode": callMode,
+              "chatId": groupId,
             },
           );
         } else {
