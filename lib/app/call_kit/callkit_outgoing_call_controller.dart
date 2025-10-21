@@ -37,6 +37,7 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isRemoteVideoMuted = true.obs;
   RxString remoteUserName = "".obs;
   RxString localUserName = "".obs;
+  var callerList = <FlyCallParticipant>[].obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -59,42 +60,135 @@ class CallKitOutgoingCallController extends GetxController
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
+    await getCurrentCallParticipants();
+
     debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
+
     if (NavUtils.arguments != null) {
-      callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
-      callType(NavUtils.arguments?["callType"]);
-      groupId(NavUtils.arguments?["chatId"] as String? ?? "");
-      isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
-      debugPrint("[MirrorFly][OutgoingCallController] isIncoming: groupId $groupId $isIncoming $callType $callerUsersId");
-      if (isIncoming.value) {
-        isOnGoingCallView();
-        secondaryCallViewUserId.value =
-            SessionManagement.getUserJID().checkNull();
-        mainCallViewUserId.value = callerUsersId[0] ?? "";
-      } else if (!isIncoming.value && callType.value == "audio") {
-        if(groupId.value.isNotEmpty){
-          mainCallViewUserId.value = groupId.value;
-        }else{
-          mainCallViewUserId.value = callerUsersId[0] ?? "";
-        }
-      } else if (!isIncoming.value && callType.value == "video") {
-        mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-        secondaryCallViewUserId.value = callerUsersId[0] ?? "";
-      } else {
-        debugPrint("[MirrorFly][OutgoingCallController] Invalid call parameters");
-      }
-      // await initAudioRouting();
-      // updateUserId();
+      _initCallArguments();
+      _handleCallTypeLogic();
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController] No call arguments found");
     }
+
     debugPrint("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
   }
+  void _initCallArguments() {
+    callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
+    callType(NavUtils.arguments?["callType"]);
+    groupId(NavUtils.arguments?["chatId"] as String? ?? "");
+    isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
+
+    debugPrint(
+      "[MirrorFly][OutgoingCallController] "
+          "isIncoming: groupId $groupId $isIncoming $callType $callerUsersId",
+    );
+  }
+
+  void _handleCallTypeLogic() {
+    if (isIncoming.value) {
+      _handleIncomingCall();
+    } else if (!isIncoming.value && callType.value == "audio") {
+      _handleOutgoingAudioCall();
+    } else if (!isIncoming.value && callType.value == "video") {
+      _handleOutgoingVideoCall();
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController] Invalid call parameters");
+    }
+  }
+
+  void _handleIncomingCall() {
+    isOnGoingCallView();
+
+    final localParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
+    final remoteParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
+
+    if (localParticipant != null) {
+      secondaryCallViewUserId.value = localParticipant.identity;
+    } else {
+      secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+    }
+
+    if (remoteParticipant != null) {
+      mainCallViewUserId.value = remoteParticipant.identity;
+    } else {
+      mainCallViewUserId.value = callerUsersId[0] ?? "";
+    }
+
+    debugPrint("[MirrorFly][IncomingCall] main:${mainCallViewUserId.value} "
+        "secondary:${secondaryCallViewUserId.value}");
+  }
+
+  void _handleOutgoingAudioCall() {
+    if (groupId.value.isNotEmpty) {
+      mainCallViewUserId.value = groupId.value;
+      return;
+    }
+
+    if (callerList.isEmpty) {
+      debugPrint("[MirrorFly][AudioCall] Caller list empty");
+      mainCallViewUserId.value = callerUsersId[0] ?? "";
+      return;
+    }
+
+    final remoteParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
+
+    if (remoteParticipant != null) {
+      mainCallViewUserId.value = remoteParticipant.identity;
+    } else {
+      mainCallViewUserId.value = callerUsersId[0] ?? "";
+    }
+
+    debugPrint("[MirrorFly][AudioCall] main:${mainCallViewUserId.value}");
+  }
+
+  void _handleOutgoingVideoCall() {
+    if (groupId.value.isNotEmpty) {
+      mainCallViewUserId.value = groupId.value;
+      return;
+    }
+
+    if (callerList.isEmpty) {
+      debugPrint("[MirrorFly][VideoCall] Caller list empty");
+      return;
+    }
+
+    final localParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
+    final remoteParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
+
+    if (localParticipant != null && remoteParticipant != null) {
+      mainCallViewUserId.value = localParticipant.identity;
+      secondaryCallViewUserId.value = remoteParticipant.identity;
+    } else {
+      mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+      secondaryCallViewUserId.value = callerUsersId[0] ?? "";
+    }
+
+    debugPrint("[MirrorFly][VideoCall] main:${mainCallViewUserId.value} "
+        "secondary:${secondaryCallViewUserId.value}");
+  }
+
+
+
+
 
   @override
   void onReady() {
     initAudioRouting();
     getRemoteUserName();
     super.onReady();
+  }
+
+  Future<void> getCurrentCallParticipants() async {
+    final participants = await MirrorFlyCallKit.currentCallParticipants;
+    callerList.value = participants ?? []; // Handle null safely
+    debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${callerList.length}");
   }
 
   Future<void> _handleInitialCallStatus() async {
@@ -846,6 +940,8 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId("");
     isManualDeviceSelected(false);
     callTryStatus("");
+    groupId("");
+    callerList.clear();
     debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
   }
 
