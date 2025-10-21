@@ -186,7 +186,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> getCurrentCallParticipants() async {
-    final participants = await MirrorFlyCallKit.currentCallParticipants;
+    final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
     callerList.value = participants ?? []; // Handle null safely
     debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${callerList.length}");
   }
@@ -720,8 +720,15 @@ class CallKitOutgoingCallController extends GetxController
         secondaryCallViewUserId(callerUsersId.last);
       }
     } else {
-      mainCallViewUserId(callerUsersId.first);
-      if (callerUsersId.isNotEmpty) {
+      final localParticipant =
+      callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
+      final remoteParticipant =
+      callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
+      if(localParticipant != null && remoteParticipant != null){
+        mainCallViewUserId.value = remoteParticipant.identity;
+        secondaryCallViewUserId.value = localParticipant.identity;
+        debugPrint("[MirrorFly][OutgoingCallController] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+      }else{
         mainCallViewUserId(callerUsersId.first);
         secondaryCallViewUserId(SessionManagement.getUserJID());
       }
