@@ -22,6 +22,7 @@ class CallKitOutgoingCallController extends GetxController
   var callTryStatus = "".obs;
   RxBool showControls = true.obs;
   RxString callType = "".obs; // "audio" or "video"
+  RxString groupId = "".obs;
   RxBool muted = false.obs;
   RxBool isVideoEnabled = true.obs;
   RxBool speakerOn = false.obs;
@@ -62,15 +63,20 @@ class CallKitOutgoingCallController extends GetxController
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
+      groupId(NavUtils.arguments?["chatId"] as String? ?? "");
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
-      debugPrint("[MirrorFly][OutgoingCallController] isIncoming: $isIncoming $callType $callerUsersId");
+      debugPrint("[MirrorFly][OutgoingCallController] isIncoming: groupId $groupId $isIncoming $callType $callerUsersId");
       if (isIncoming.value) {
         isOnGoingCallView();
         secondaryCallViewUserId.value =
             SessionManagement.getUserJID().checkNull();
         mainCallViewUserId.value = callerUsersId[0] ?? "";
       } else if (!isIncoming.value && callType.value == "audio") {
-        mainCallViewUserId.value = callerUsersId[0] ?? "";
+        if(groupId.value.isNotEmpty){
+          mainCallViewUserId.value = groupId.value;
+        }else{
+          mainCallViewUserId.value = callerUsersId[0] ?? "";
+        }
       } else if (!isIncoming.value && callType.value == "video") {
         mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
         secondaryCallViewUserId.value = callerUsersId[0] ?? "";
