@@ -18,12 +18,19 @@ import '../routes/route_settings.dart';
 import 'utils.dart';
 
 Future<ProfileDetails> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
+
+  try {
+    var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
+    var profile = ProfileDetails.fromJson(json.decode(value.toString()));
+    return profile;
+  } catch(e) {
+    debugPrint("getProfileDetails Exception--> $e");
+    return ProfileDetails();
+  }
   // profileDataFromJson(value);
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
-  var profile = ProfileDetails.fromJson(json.decode(value.toString()));
-  return profile;
+
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {

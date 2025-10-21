@@ -4074,7 +4074,9 @@ class ChatController extends FullLifeCycleController
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "userJid": [profile.jid],
-                    "callType": CallType.audio
+                    "callType": CallType.audio,
+                    "callMode": "ONE_TO_ONE",
+                    "chatId": ""
                   });
                 } else {
                   final String errorData = response.data;
@@ -4134,7 +4136,9 @@ class ChatController extends FullLifeCycleController
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": [profile.jid],
-                      "callType": CallType.video
+                      "callType": CallType.video,
+                      "callMode": "ONE_TO_ONE",
+                      "chatId": ""
                     });
                   } else {
                     toToast("CF Not connected");
