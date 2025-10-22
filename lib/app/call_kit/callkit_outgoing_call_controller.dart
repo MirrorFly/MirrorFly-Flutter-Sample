@@ -395,10 +395,11 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] onGroupCallConnected called with joinSyncStatus: ${joinSyncStatus.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
 
     // Refresh the participants list
-    await getCurrentCallParticipants();
+    // await getCurrentCallParticipants();
 
-    if (callerList
-        .any((e) => e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
+    debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected checking connected participants");
+
+    if (callerList.any((e) => e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
       isGroupOnGoingCallEnabled.value = true;
       callStatus("Connected");
       if (timer == null || !(timer?.isActive ?? false)) {
@@ -411,6 +412,27 @@ class CallKitOutgoingCallController extends GetxController
       }
     }
   }
+
+  ///
+  /// Get participant connection state
+  ///
+  String getParticipantConnectionState(FlyCallStatusEvent status) {
+    switch (status) {
+      case FlyCallStatusEvent.connected:
+        return "";
+      case FlyCallStatusEvent.connecting:
+        return "Connecting";
+      case FlyCallStatusEvent.reconnecting:
+        return "Reconnecting";
+      case FlyCallStatusEvent.disconnected:
+        return "Disconnected";
+      case FlyCallStatusEvent.calling:
+        return "Calling";
+      default:
+        return "Unknown";
+    }
+  }
+
 
   ///
   /// Get logs for values
@@ -614,19 +636,19 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void callTimeOut() async {
-    callStatus("Call Timeout");
-    toToast("Call Timeout");
-    // await handleTimeOutDisconnect();
-    _stopTimer();
-    final String type = callType.value;
-    final String calleeName = isGroupCall.value ? chatNameForGroupCall.value :  remoteUserName.value;
-    final List<String?> callUserList = callerUsersId.toList();
-    _resetValues();
-    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
-      "callType": type,
-      "userJid": callUserList,
-      "calleeName": calleeName
-    });
+    // callStatus("Call Timeout");
+    // toToast("Call Timeout");
+    // // await handleTimeOutDisconnect();
+    // _stopTimer();
+    // final String type = callType.value;
+    // final String calleeName = isGroupCall.value ? chatNameForGroupCall.value :  remoteUserName.value;
+    // final List<String?> callUserList = callerUsersId.toList();
+    // _resetValues();
+    // NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
+    //   "callType": type,
+    //   "userJid": callUserList,
+    //   "calleeName": calleeName
+    // });
 
   }
 

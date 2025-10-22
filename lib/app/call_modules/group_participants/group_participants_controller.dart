@@ -272,22 +272,22 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                final String errorData = response.data;
-                if (errorData == "Centrifuge not connected") {
-                  toToast("CF Not connected");
-                }
+                // final String errorData = response.data;
+                // if (errorData == "Centrifuge not connected") {
+                //   toToast("CF Not connected");
+                // }
+                //
+                // // Assuming it is permission denied error
+                // final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
+                // final String? permissionType = errorJson?['type'];
+                // final String? permissionAction = errorJson?['action'];
+                // final String? message = errorJson?['message'];
+                // debugPrint(
+                //     "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
 
-                // Assuming it is permission denied error
-                final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                final String? permissionType = errorJson?['type'];
-                final String? permissionAction = errorJson?['action'];
-                final String? message = errorJson?['message'];
-                debugPrint(
-                    "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-                if (message != null) {
-                  toToast(message);
-                }
+                // if (message != null) {
+                //   toToast(message);
+                // }
               }
             },
             callersId: selectedUsersJIDList,
