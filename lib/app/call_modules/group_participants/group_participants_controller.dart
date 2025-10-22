@@ -306,17 +306,47 @@ class GroupParticipantsController extends GetxController {
       }
     } else if (callType.value == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeGroupVideoCall(
-            groupJid: groupId.value,
-            toUserJidList: selectedUsersJIDList,
-            flyCallBack: (FlyResponse response) {
+        await MirrorFlyCallKit.makeVideoCall(
+            flyResult: (FlyResult response) {
               if (response.isSuccess) {
-                NavUtils.offNamed(Routes.outGoingCallView, arguments: {
+                NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                   "userJid": selectedUsersJIDList,
-                  "callType": CallType.video
+                  "callType": CallType.video,
+                  "callMode": "ONE-TO-MANY",
+                  "chatId": groupId.value,
                 });
+              } else {
+                final String errorData = response.data;
+                if (errorData == "Centrifuge not connected") {
+                  toToast("CF Not connected");
+                }
+
+                // Assuming it is permission denied error
+                final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
+                final String? permissionType = errorJson?['type'];
+                final String? permissionAction = errorJson?['action'];
+                final String? message = errorJson?['message'];
+                debugPrint(
+                    "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+
+                if (message != null) {
+                  toToast(message);
+                }
               }
-            });
+            },
+            callersId: selectedUsersJIDList,
+            chatId: groupId.value);
+        // Mirrorfly.makeGroupVideoCall(
+        //     groupJid: groupId.value,
+        //     toUserJidList: selectedUsersJIDList,
+        //     flyCallBack: (FlyResponse response) {
+        //       if (response.isSuccess) {
+        //         NavUtils.offNamed(Routes.outGoingCallView, arguments: {
+        //           "userJid": selectedUsersJIDList,
+        //           "callType": CallType.video
+        //         });
+        //       }
+        //     });
       }
     }
   }
