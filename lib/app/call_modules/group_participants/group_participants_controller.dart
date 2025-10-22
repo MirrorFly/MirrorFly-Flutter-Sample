@@ -291,6 +291,7 @@ class GroupParticipantsController extends GetxController {
               }
             },
             callersId: selectedUsersJIDList,
+            callMode: "ONE-TO-MANY",
             chatId: groupId.value);
         // Mirrorfly.makeGroupVoiceCall(
         //     groupJid: groupId.value,
@@ -335,6 +336,7 @@ class GroupParticipantsController extends GetxController {
               }
             },
             callersId: selectedUsersJIDList,
+            callMode: "ONE-TO-MANY",
             chatId: groupId.value);
         // Mirrorfly.makeGroupVideoCall(
         //     groupJid: groupId.value,
