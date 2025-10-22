@@ -360,7 +360,7 @@ class CallKitOutgoingCallController extends GetxController
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
     debugPrint("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
-      onOneToOneCallConnected();
+      // onConnected();
     } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
       connecting();
     } else if (currentStatusEvent == FlyCallStatusEvent.ringing) {
@@ -386,23 +386,24 @@ class CallKitOutgoingCallController extends GetxController
     debugPrint(
         "[MirrorFly][OutgoingCallController] onGroupCallConnected called with joinSyncStatus: ${joinSyncStatus.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
 
-    // Refresh the participants list
-    // await getCurrentCallParticipants();
-
-    debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected checking connected participants");
-
-    if (callerList.any((e) => !e.isLocalParticipant && e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
-      isGroupOnGoingCallEnabled.value = true;
-      callStatus("Connected");
-      if (timer == null || !(timer?.isActive ?? false)) {
-        debugPrint(
-            "[MirrorFly][OutgoingCallController] onGroupCallConnected starting timer");
-        _startTimer();
-      } else {
-        debugPrint(
-            "[MirrorFly][OutgoingCallController] onGroupCallConnected Timer is already running");
-      }
-    }
+    // // Refresh the participants list
+    // // await getCurrentCallParticipants();
+    //
+    // debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected checking connected participants");
+    //
+    // final List<FlyCallParticipant> onlyRemote =
+    // callerList.where((e) => !e.isLocalParticipant).toList();
+    //
+    // if (onlyRemote.any((p) => p.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
+    //   isGroupOnGoingCallEnabled.value = true;
+    //   callStatus("Connected");
+    //   if (timer == null || !(timer?.isActive ?? false)) {
+    //     debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected starting timer");
+    //     _startTimer();
+    //   } else {
+    //     debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected Timer is already running");
+    //   }
+    // }
   }
 
   ///
@@ -659,18 +660,47 @@ class CallKitOutgoingCallController extends GetxController
     callStatus("Calling...");
   }
 
-  void onOneToOneCallConnected() {
-    callStatus("Connected");
-    isOnGoingCallView();
-    updateUserId();
+  void onConnected(List<String> participantIds) {
+    if (!isGroupCall.value) {
+      debugPrint("[MirrorFly][OutgoingCallController] onConnected for one to one call");
+      callStatus("Connected");
 
-    if (timer == null || !(timer?.isActive ?? false)) {
-      _startTimer();
+      for (var p in participantIds) {
+        if (!isSelfId(id: p)) {
+          if (!isGroupOnGoingCallEnabled.value) {
+            isGroupOnGoingCallEnabled.value = true;
+          }
+          callerList
+              .firstWhereOrNull((e) => e.identity == p)
+              ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
+          callerList.refresh();
+          if (timer == null || !(timer?.isActive ?? false)) {
+            _startTimer();
+          } else {
+            debugPrint(
+                "[MirrorFly][OutgoingCallController] Timer is already running");
+          }
+        } else {
+          debugPrint(
+              "[MirrorFly][OutgoingCallController] onConnected: Skipping self id: $p");
+        }
+      }
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] Timer is already running");
+      debugPrint("[MirrorFly][OutgoingCallController] onConnected for group call");
+      callStatus("Connected");
+      isOnGoingCallView();
+      updateUserId();
+
+      if (timer == null || !(timer?.isActive ?? false)) {
+        _startTimer();
+      } else {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] Timer is already running");
+      }
+      secondaryCallViewUserId.value =
+          SessionManagement.getUserJID().checkNull();
+      mainCallViewUserId.value = callerUsersId[0] ?? "";
     }
-    secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-    mainCallViewUserId.value = callerUsersId[0] ?? "";
   }
 
   void disconnectCall({required String reason}) {

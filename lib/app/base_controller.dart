@@ -63,9 +63,9 @@ class BaseController {
 
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
-      final flyCallStatus = event;
+      final FlyCallStatus flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
-      final Map<String, FlyCallStatusEvent>? joinSyncStatus = flyCallStatus.joinSyncStatus;
+      // final Map<String, FlyCallStatusEvent>? joinSyncStatus = flyCallStatus.joinSyncStatus;
 
       // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
@@ -99,7 +99,7 @@ class BaseController {
           break;
         case FlyCallStatusEvent.connected:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent connected");
-          callKitOutgoingCallController.onOneToOneCallConnected();
+          callKitOutgoingCallController.onConnected(flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.ringing:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent ringing");
@@ -169,10 +169,10 @@ class BaseController {
           callKitOutgoingCallController.onCallFailed();
           break;
         case FlyCallStatusEvent.joinSync:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent joinSync, joinSyncStatus: $joinSyncStatus");
-          if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
-            callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
-          }
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent joinSync");
+          // if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
+          //   callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
+          // }
       }
     });
 
