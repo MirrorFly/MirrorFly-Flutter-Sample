@@ -65,9 +65,10 @@ class BaseController {
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
+      final Map<String, FlyCallStatusEvent>? joinSyncStatus = flyCallStatus.joinSyncStatus;
 
       // Incoming call - set the callerId and callType to be used when answering the call
-      if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
+      if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
         }
@@ -98,7 +99,7 @@ class BaseController {
           break;
         case FlyCallStatusEvent.connected:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent connected");
-          callKitOutgoingCallController.connected();
+          callKitOutgoingCallController.onOneToOneCallConnected();
           break;
         case FlyCallStatusEvent.ringing:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent ringing");
@@ -150,10 +151,6 @@ class BaseController {
         case FlyCallStatusEvent.none:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent none");
           break;
-        case FlyCallStatusEvent.incomingCall:
-          /// This will be triggered when we receive the incoming call in call status stream.
-        /// This condition is already handled above to set the callerId and callType
-          break;
         case FlyCallStatusEvent.permissionDenied:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent permissionDenied");
           final Map<String, dynamic>? errorJson =
@@ -171,6 +168,11 @@ class BaseController {
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed();
           break;
+        case FlyCallStatusEvent.joinSync:
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent joinSync, joinSyncStatus: $joinSyncStatus");
+          if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
+            callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
+          }
       }
     });
 

@@ -221,7 +221,7 @@ class CallKitOutgoingCallView
             ? Stack(
                 alignment: Alignment.center,
                 children: [
-                  controller.isGroupOnGoingCallEnabled.value
+                  !controller.isGroupOnGoingCallEnabled.value
                       ? MirrorFlyCallView(
                           key: ValueKey(controller.groupId.value),
                           userJID: controller.groupId.value,

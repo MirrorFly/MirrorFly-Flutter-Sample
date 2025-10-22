@@ -224,10 +224,11 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get current participants in the call
   ///
-  Future<void> getCurrentCallParticipants() async {
+  Future<List<FlyCallParticipant>> getCurrentCallParticipants() async {
     final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
-    callerList.value = participants ?? []; // Handle null safely
     debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${callerList.length}, participants: ${callerList.map((p) => p.identity).toList()}");
+    callerList.value = participants ?? [];
+    return participants ?? []; // Handle null safely
   }
 
   ///
@@ -367,7 +368,7 @@ class CallKitOutgoingCallController extends GetxController
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
     debugPrint("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
-      connected();
+      onOneToOneCallConnected();
     } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
       connecting();
     } else if (currentStatusEvent == FlyCallStatusEvent.ringing) {
@@ -376,6 +377,38 @@ class CallKitOutgoingCallController extends GetxController
       tryingToConnect();
     } else {
       // Let the listener status will trigger from base controller
+    }
+  }
+
+  ///
+  /// Handle group call connected state
+  ///
+  void onGroupCallJoinSync(
+      {required Map<String, FlyCallStatusEvent> joinSyncStatus}) async {
+    if (!isGroupCall.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onGroupCallConnected called for non-group call");
+      return;
+    }
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onGroupCallConnected called with joinSyncStatus: ${joinSyncStatus.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
+
+    // Refresh the participants list
+    await getCurrentCallParticipants();
+
+    if (callerList
+        .any((e) => e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
+      isGroupOnGoingCallEnabled.value = true;
+      callStatus("Connected");
+      if (timer == null || !(timer?.isActive ?? false)) {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] onGroupCallConnected starting timer");
+        _startTimer();
+      } else {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] onGroupCallConnected Timer is already running");
+      }
     }
   }
 
@@ -612,7 +645,7 @@ class CallKitOutgoingCallController extends GetxController
     callStatus("Calling...");
   }
 
-  void connected() {
+  void onOneToOneCallConnected() {
     callStatus("Connected");
     isOnGoingCallView();
     updateUserId();
