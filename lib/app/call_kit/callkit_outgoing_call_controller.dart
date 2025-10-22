@@ -52,7 +52,9 @@ class CallKitOutgoingCallController extends GetxController
 
   /// For group call handling
   RxBool isGroupCall = false.obs;
+  RxBool isGroupOnGoingCallEnabled = false.obs;
   RxString chatNameForGroupCall = "".obs;
+  RxString groupCallTitle = "".obs;
   RxMap<String, String> remoteUserNameMap = <String, String>{}.obs;
 
   /// Over all call participant list
@@ -210,10 +212,12 @@ class CallKitOutgoingCallController extends GetxController
 
     await getChatNameForGroupCall(chatId: groupId.value);
 
+    await getGroupCallTitle();
+
     getUserNameForOneToOneCall(
         remoteUserId: remoteParticipantId.value, localUserId: localParticipantId.value);
 
-    _getLogsOfLocalValues();
+    getLogsOfLocalValues();
     super.onReady();
   }
 
@@ -246,8 +250,14 @@ class CallKitOutgoingCallController extends GetxController
     final bool yes = callMode == "ONE-TO-MANY" && chatId != "";
     isGroupCall.value = yes;
 
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall.value}");
+
     // For both
     localParticipantId.value = SessionManagement.getUserJID() ?? '';
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] #configureCallMode localParticipantId: ${localParticipantId.value}, remoteParticipantId: ${remoteParticipantId.value}");
   }
 
   ///
@@ -330,6 +340,25 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
+  /// Get group call title
+  ///
+  Future<void> getGroupCallTitle() async {
+    if (!isGroupCall.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] #getGroupCallTitle Not a group call");
+      return;
+    } else {
+      final String firstMemberName = remoteUserNameMap.values.first;
+      final String remainingMembersCount = (remoteUserNameMap.length - 1).toString();
+      final String suffix = remainingMembersCount == "1" ? "other" : "others";
+      groupCallTitle.value = "$firstMemberName and $remainingMembersCount $suffix";
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] #getGroupCallTitle groupCallTitle: ${groupCallTitle.value}");
+      return;
+    }
+  }
+
+  ///
   /// Handle the UI based on the current call status
   ///
   Future<void> _handleInitialCallStatus() async {
@@ -353,7 +382,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get logs for values
   ///
-  void _getLogsOfLocalValues() {
+  void getLogsOfLocalValues() {
     debugPrint('''
        [Call Logs]
        callStatus: ${callStatus.value}
