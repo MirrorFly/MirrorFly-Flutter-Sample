@@ -272,19 +272,11 @@ class CallKitOutgoingCallController extends GetxController
     }
     for (var user in callerList) {
       debugPrint("[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
-      if (user.isLocalParticipant) {
-        debugPrint(
-            "[MirrorFly][OutgoingCallController] Skipping local participant: ${user.identity}");
         ProfileDetails profile = await getProfileDetails(validId(userId: user.identity,isGroup: false));
         String username = profile.name ?? profile.nickName ?? "Unknown";
-        localUserName.value = username;
-      } else {
-        ProfileDetails profile = await getProfileDetails(validId(userId: user.identity,isGroup: false));
-        String username = profile.name ?? profile.nickName ?? "Unknown";
-        remoteUserNameMap[user.identity] = username;
+        remoteUserNameMap[user.identity] = user.isLocalParticipant ? "You" : username;
         debugPrint(
             "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
-      }
     }
     debugPrint("[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
@@ -399,7 +391,7 @@ class CallKitOutgoingCallController extends GetxController
 
     debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected checking connected participants");
 
-    if (callerList.any((e) => e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
+    if (callerList.any((e) => !e.isLocalParticipant && e.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
       isGroupOnGoingCallEnabled.value = true;
       callStatus("Connected");
       if (timer == null || !(timer?.isActive ?? false)) {
@@ -417,6 +409,7 @@ class CallKitOutgoingCallController extends GetxController
   /// Get participant connection state
   ///
   String getParticipantConnectionState(FlyCallStatusEvent status) {
+    debugPrint("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
       case FlyCallStatusEvent.connected:
         return "";
@@ -432,7 +425,6 @@ class CallKitOutgoingCallController extends GetxController
         return "Unknown";
     }
   }
-
 
   ///
   /// Get logs for values
@@ -1202,6 +1194,8 @@ class CallKitOutgoingCallController extends GetxController
     localUserName("");
     isGroupCall(false);
     chatNameForGroupCall("");
+    isGroupOnGoingCallEnabled(false);
+    groupCallTitle("");
 
     debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
   }

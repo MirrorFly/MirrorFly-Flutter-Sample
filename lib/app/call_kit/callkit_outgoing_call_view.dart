@@ -216,109 +216,110 @@ class CallKitOutgoingCallView
         fit: StackFit.expand, children: [
       /// Main view
       Obx(() {
+        final participants = controller.callerList;
         return controller.chatNameForGroupCall.value.isNotEmpty
-            ? Obx(() {
-                final participants = controller.callerList;
-                return Stack(
+            ? Stack(
                   alignment: Alignment.center,
-                  children: [
-                    !controller.isGroupOnGoingCallEnabled.value
-                        ? MirrorFlyCallView(
-                            key: ValueKey(controller.groupId.value),
-                            userJID: controller.groupId.value,
-                            fit: BoxFit.cover,
-                            viewBgColor: AppColors.audioCallerBackground,
-                            profileImage: getUserProfileImageWithName(
-                              participantId: controller.groupId.value,
-                              scale: 1,
-                            ),
-                          )
-                        : GridView.builder(
-                            padding: const EdgeInsets.only(top: 150, left: 16, right: 16, bottom: 80),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: participants.length <= 2
-                                  ? 1
-                                  : participants.length <= 4
-                                      ? 2
-                                      : 3,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 1.0,
-                            ),
-                            itemCount: participants.length,
-                            itemBuilder: (context, index) {
-                              final participant = participants[index];
-                              return Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Stack(
-                                    children: [
-                                      MirrorFlyCallView(
-                                        key: ValueKey(participant.identity),
-                                        userJID: participant.identity,
-                                        fit: BoxFit.cover,
-                                        viewBgColor:
-                                            AppColors.audioCallerBackground,
-                                        profileImage: getUserProfileImageWithName(
-                                          participantId: participant.identity,
-                                          scale: 1.2,
-                                        ),
-                                      ),
-                                        Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Text(
-                                            controller
-                                                .getParticipantConnectionState(
-                                                    participants[index]
-                                                        .flyCallStatusEvent!),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              shadows: [
-                                                Shadow(
-                                                  blurRadius: 4,
-                                                  color: Colors.black87,
-                                                  offset: Offset(0, 1),
-                                                ),
-                                              ],
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  Positioned(
-                                    bottom: 8,
-                                    left: 8,
-                                    right: 8,
-                                    child: Text(
-                                      controller.remoteUserNameMap[
-                                              participant.identity] ??
-                                          participant.identity ??
-                                          '',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        shadows: [
-                                          Shadow(
-                                            blurRadius: 4,
-                                            color: Colors.black87,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ],
+                children: [
+                  controller.isGroupOnGoingCallEnabled.value
+                      /// Group call is ongoing with participants joined
+                      ? GridView.builder(
+                          padding: const EdgeInsets.only(
+                              top: 150, left: 16, right: 16, bottom: 80),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: participants.length <= 2
+                                ? 1
+                                : participants.length <= 4
+                                    ? 2
+                                    : 3,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 1.0,
+                          ),
+                          itemCount: participants.length,
+                          itemBuilder: (context, index) {
+                            final participant = participants[index];
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Stack(
+                                  children: [
+                                    MirrorFlyCallView(
+                                      key: ValueKey(participant.identity),
+                                      userJID: participant.identity,
+                                      fit: BoxFit.cover,
+                                      viewBgColor:
+                                          AppColors.audioCallerBackground,
+                                      profileImage: getUserProfileImageWithName(
+                                        participantId: participant.identity,
+                                        scale: 1.2,
                                       ),
                                     ),
+                                    Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text(
+                                          controller
+                                              .getParticipantConnectionState(
+                                                  participants[index]
+                                                      .flyCallStatusEvent!),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            shadows: [
+                                              Shadow(
+                                                blurRadius: 4,
+                                                color: Colors.black87,
+                                                offset: Offset(0, 1),
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                                Positioned(
+                                  bottom: 8,
+                                  left: 8,
+                                  right: 8,
+                                  child: Text(
+                                    controller.remoteUserNameMap[
+                                            participant.identity] ??
+                                        participant.identity ??
+                                        '',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4,
+                                          color: Colors.black87,
+                                          offset: Offset(0, 1),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              );
-                            },
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      /// Group call is in ringing state non of the participant joined
+                      : MirrorFlyCallView(
+                          key: ValueKey(controller.groupId.value),
+                          userJID: controller.groupId.value,
+                          fit: BoxFit.cover,
+                          viewBgColor: AppColors.audioCallerBackground,
+                          profileImage: getUserProfileImageWithName(
+                            participantId: controller.groupId.value,
+                            scale: 1,
                           ),
-                  ],
-                );
-              })
+                        ),
+                ],
+              )
             : const Offstage();
       }),
 
