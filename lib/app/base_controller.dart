@@ -166,6 +166,9 @@ class BaseController {
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed();
           break;
+        case FlyCallStatusEvent.permissionDenied:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     });
 
@@ -1917,6 +1920,13 @@ class BaseController {
         }
       });
     } else {
+      MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
+        if(response.isSuccess){
+          debugPrint("[MirrorFlyCallKit] onLogout - success");
+        }else{
+          debugPrint("[MirrorFlyCallKit] onLogout - failed");
+        }
+      });
       debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
     }
 

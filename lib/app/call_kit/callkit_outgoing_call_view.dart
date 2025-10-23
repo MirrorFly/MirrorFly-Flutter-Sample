@@ -213,18 +213,20 @@ class CallKitOutgoingCallView
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Stack(
-            children: [
-              MirrorFlyCallView(
-                viewBgColor: AppColors.callerBackground,
-                key: ValueKey(controller.secondaryCallViewUserId.value),
-                userJID: controller.secondaryCallViewUserId.value,
-                fit: BoxFit.cover,
-                profileImage: getUserProfileImageWithName(
-                  participantId: controller.secondaryCallViewUserId.value,
-                  scale: 2,
-                ),
-              ),
+          MirrorFlyCallView(
+            viewBgColor: AppColors.callerBackground,
+            key: ValueKey(controller.secondaryCallViewUserId.value),
+            userJID: controller.secondaryCallViewUserId.value,
+            fit: BoxFit.cover,
+            profileImage: getUserProfileImageWithName(
+              participantId: controller.secondaryCallViewUserId.value,
+              scale: 2,
+            ),
+            onTap: (){
+              debugPrint("Local preview tapped, swapping views");
+              controller.videoSwap();
+            },
+          ),
 
               // Reconnecting overlay widget
               Visibility(
@@ -519,4 +521,15 @@ class CallKitOutgoingCallView
 //     default:
 //       return Icons.volume_up;
 //   }
+//   // switch (type) {
+//   //   case FlyCallAudioDeviceType.speaker:
+//   //     return Icons.volume_up;
+//   //   case FlyCallAudioDeviceType.earpiece:
+//   //     return Icons.hearing;
+//   //   case FlyCallAudioDeviceType.bluetooth:
+//   //     return Icons.bluetooth_audio;
+//   //   case FlyCallAudioDeviceType.wired:
+//   //     return Icons.headset;
+//   //   default:
+//   //     return Icons.volume_up;
 // }

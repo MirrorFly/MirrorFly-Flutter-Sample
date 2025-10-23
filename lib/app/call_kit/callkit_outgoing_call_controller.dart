@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../app_style_config.dart';
 import '../common/app_localizations.dart';
@@ -36,6 +38,9 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isRemoteVideoMuted = true.obs;
   RxString remoteUserName = "".obs;
   RxString localUserName = "".obs;
+  late AudioPlayer _player;
+  bool _isPlaying = false;
+
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -57,14 +62,23 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
-    await _handleInitialCallStatus();
     debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
+    if (callType.value.isNotEmpty) {
+      _handleWakelock(callType.value);
+    }
+
+    ever(callType, (String type) {
+      _handleWakelock(type);
+    });
     if (NavUtils.arguments != null) {
       callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       debugPrint("[MirrorFly][OutgoingCallController] isIncoming: $isIncoming $callType $callerUsersId");
+      await _handleInitialCallStatus();
       if (isIncoming.value) {
+        debugPrint("[MirrorFly][kingsly][OutgoingCallController] Incoming call setup");
+        callDuration("Connecting...");
         isOnGoingCallView();
         secondaryCallViewUserId.value =
             SessionManagement.getUserJID().checkNull();
@@ -80,6 +94,7 @@ class CallKitOutgoingCallController extends GetxController
       // await initAudioRouting();
       // updateUserId();
     }
+    initPlayer();
     debugPrint("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
   }
@@ -119,9 +134,25 @@ class CallKitOutgoingCallController extends GetxController
   @override
   void dispose(){
     debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
+    _player.dispose();
+    WakelockPlus.disable();
     super.dispose();
-
   }
+
+  void initPlayer() {
+    _player = AudioPlayer();
+  }
+
+  void _handleWakelock(String type) async {
+    if (type == "video") {
+      await WakelockPlus.enable();
+      debugPrint("[MirrorFly][OutgoingCallController] Wakelock ENABLED (video call)");
+    } else {
+      await WakelockPlus.disable();
+      debugPrint("[MirrorFly][OutgoingCallController] Wakelock DISABLED (not video)");
+    }
+  }
+
 
   void toggleControls() {
     showControls.value = !showControls.value;
@@ -262,6 +293,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void audioCallAfterCallSwitch(){
     debugPrint("audioCallAfterCallSwitch change the call type into audio call");
+    switchCamera();
     callType.value = "audio";
   }
 
@@ -289,7 +321,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void callTimeOut() async {
     callStatus("Call Timeout");
-    toToast("Call Timeout");
+    toToast("Unavailable try again later");
     // await handleTimeOutDisconnect();
     _stopTimer();
     final String type = callType.value;
@@ -731,26 +763,41 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void showIncomingCallSwitchRequestDialog() {
+  void showIncomingCallSwitchRequestDialog() async {
+    debugPrint("[MirrorFly][OutgoingCallController][DEBUG] showIncomingCallSwitchRequestDialog called");
+
+    closeDialog();
+
+    try {
+      await _player.setVolume(1.0);
+      await _player.setReleaseMode(ReleaseMode.loop);
+      await _player.play(AssetSource('sounds/reconnecting_ringtone.mp3'));
+      _isPlaying = true;
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
+    } catch (e) {
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
+    }
+
     DialogUtils.showAlert(
-        dialogStyle: AppStyleConfig.dialogStyle,
-        message: getTranslated("videoSwitchRequestedMessage")
-            .replaceFirst("%d", remoteUserName.value),
-        actions: [
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: declineIncomingCallSwitchRequest,
-              child: Text(
-                getTranslated("declineRequest").toUpperCase(),
-              )),
-          TextButton(
-              style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: acceptIncomingCallSwitchRequest,
-              child: Text(
-                getTranslated("acceptRequest"),
-              ))
-        ],
-        barrierDismissible: false);
+      dialogStyle: AppStyleConfig.dialogStyle,
+      message: getTranslated("videoSwitchRequestedMessage")
+          .replaceFirst("%d", remoteUserName.value),
+      actions: [
+        TextButton(
+            onPressed: () async {
+              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Decline pressed");
+              declineIncomingCallSwitchRequest();
+            },
+            child: Text(getTranslated("declineRequest").toUpperCase())),
+        TextButton(
+            onPressed: () async {
+              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Accept pressed");
+              acceptIncomingCallSwitchRequest();
+            },
+            child: Text(getTranslated("acceptRequest"))),
+      ],
+      barrierDismissible: false,
+    );
   }
 
   ///
@@ -760,6 +807,7 @@ class CallKitOutgoingCallController extends GetxController
     // _outgoingSwitchTimer?.cancel();
 
     //
+    closeDialog();
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestMessage"),
@@ -803,12 +851,27 @@ class CallKitOutgoingCallController extends GetxController
   // }
 
   ///
-  void closeDialog() {
+  void closeDialog() async{
     debugPrint("[MirrorFly][OutgoingCallController] _closeDialog called");
+
+    // Stop the ringtone only if it is currently playing
+    if (_isPlaying) {
+      await _player.stop();
+      _isPlaying = false;
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer stopped (manual tracking)");
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer not playing (manual tracking)");
+    }
+
+
+    // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
       NavUtils.back();
+      debugPrint("[MirrorFly][OutgoingCallController] Dialog closed");
     }
   }
+
+
 
   ///
   void onCallFailed() {
@@ -819,6 +882,18 @@ class CallKitOutgoingCallController extends GetxController
       callStatus("Call Failed");
       toToast("Call Failed");
       NavUtils.back();
+    }
+  }
+
+  ///
+  void videoSwap(){
+    debugPrint("[MirrorFly][OutgoingCallController] videoSwap called");
+    if(callType.value == "video"){
+      debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+      final String temp = mainCallViewUserId.value;
+      mainCallViewUserId.value = secondaryCallViewUserId.value;
+      secondaryCallViewUserId.value = temp;
+      debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
     }
   }
 
