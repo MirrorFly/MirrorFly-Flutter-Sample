@@ -213,24 +213,25 @@ class CallKitOutgoingCallView
       child: Stack(
         alignment: Alignment.center,
         children: [
-          MirrorFlyCallView(
-            viewBgColor: AppColors.callerBackground,
-            key: ValueKey(controller.secondaryCallViewUserId.value),
-            userJID: controller.secondaryCallViewUserId.value,
-            fit: BoxFit.cover,
-            profileImage: getUserProfileImageWithName(
-              participantId: controller.secondaryCallViewUserId.value,
-              scale: 2,
-            ),
-            onTap: (){
-              debugPrint("Local preview tapped, swapping views");
-              controller.videoSwap();
-            },
-          ),
-
+          Stack(
+            children: [
+              MirrorFlyCallView(
+                viewBgColor: AppColors.callerBackground,
+                key: ValueKey(controller.secondaryCallViewUserId.value),
+                userJID: controller.secondaryCallViewUserId.value,
+                fit: BoxFit.cover,
+                profileImage: getUserProfileImageWithName(
+                  participantId: controller.secondaryCallViewUserId.value,
+                  scale: 2,
+                ),
+                onTap: (){
+                  debugPrint("Local preview tapped, swapping views");
+                  controller.videoSwap();
+                },
+              ),
               // Reconnecting overlay widget
               Visibility(
-               visible: controller.isLocalUserReconnecting.value,
+                visible: controller.isLocalUserReconnecting.value,
                 child: Positioned.fill(
                   child: Container(
                     color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
@@ -253,23 +254,22 @@ class CallKitOutgoingCallView
 
           Obx(() {
             return controller.muted.value ? Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black54,
-                ),
-                padding: const EdgeInsets.all(12),
-                child: const Icon(
-                  Icons.mic_off_outlined,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ) : const Offstage();
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black54,
+              ),
+              padding: const EdgeInsets.all(12),
+              child: const Icon(
+                Icons.mic_off_outlined,
+                color: Colors.white,
+                size: 18,
+              ),
+            ) : const Offstage();
           }),
         ],
       ),
     );
   }
-
 
   ///  Controls wrapper
   Widget _buildControls(BuildContext context) {
