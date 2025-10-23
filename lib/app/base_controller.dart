@@ -113,7 +113,7 @@ class BaseController {
           callKitOutgoingCallController.reconnecting(participantId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.reconnected:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent reconnected for participants: ${flyCallStatus.participants}, participantIds: ${flyCallStatus.participantsIds}");
+          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent reconnected for participants: , participantIds: ${flyCallStatus.participantsIds}");
             callKitOutgoingCallController.reconnected(
                 participantIds: flyCallStatus.participantsIds);
           break;

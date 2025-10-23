@@ -28,7 +28,7 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isOnGoingCallViewEnable = false.obs;
   RxList<String?> callerUsersId = <String?>[].obs;
   final RxBool cameraSwitch = false.obs;
-  var selectedDevice = "".obs;
+  RxBool selectedDevice = false.obs;
   final RxBool isIncoming = false.obs;
   final RxBool isManualDeviceSelected = false.obs;
   RxString cameraPosition = CameraType.front.obs;
@@ -460,48 +460,59 @@ class CallKitOutgoingCallController extends GetxController
 
   Future<void> initAudioRouting() async {
     debugPrint("[MirrorFly][OutgoingCallController] Initializing audio routing...");
-    FlyMediaDevice? getCurrentAudioOutputDevice = await MirrorFlyCallKit.getCurrentAudioOutputDevice();
-    debugPrint("[MirrorFly][OutgoingCallController] Audio routing Current audio output device: $getCurrentAudioOutputDevice");
+
+    if (callType.value == "audio") {
+      debugPrint("[MirrorFly][OutgoingCallController] Call type is audio, setting to earpiece.");
+      selectedDevice.value = false;
+    } else if (callType.value == "video") {
+      debugPrint("[MirrorFly][OutgoingCallController] Call type is video, setting to speaker.");
+      selectedDevice.value = true;
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController] Unknown call type, defaulting to earpiece.");
+      selectedDevice.value = false;
+    }
 
     // Set the selectedDevice.value based on the passed FlyMediaDevice
-    switch (getCurrentAudioOutputDevice?.deviceId.toLowerCase()) {
-      case 'bluetooth':
-        debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is bluetooth");
-        selectedDevice.value = FlyCallAudioDeviceType.bluetooth.value;
-        break;
-      case 'wired':
-        debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is wired");
-        selectedDevice.value = FlyCallAudioDeviceType.wired.value;
-        break;
-      case 'speaker':
-        debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is speaker");
-        selectedDevice.value = FlyCallAudioDeviceType.speaker.value;
-        break;
-      case 'earpiece':
-      case 'receiver':
-      debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is receiver");
-      selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
-        break;
-      default:
-        debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is receiver");
-        selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
-        break;
-    }
+    // switch (getCurrentAudioOutputDevice?.deviceId.toLowerCase()) {
+    //   case 'bluetooth':
+    //     debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is bluetooth");
+    //     selectedDevice.value = FlyCallAudioDeviceType.bluetooth.value;
+    //     break;
+    //   case 'wired':
+    //     debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is wired");
+    //     selectedDevice.value = FlyCallAudioDeviceType.wired.value;
+    //     break;
+    //   case 'speaker':
+    //     debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is speaker");
+    //     selectedDevice.value = FlyCallAudioDeviceType.speaker.value;
+    //     break;
+    //   case 'earpiece':
+    //   case 'receiver':
+    //   debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is receiver");
+    //   selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
+    //     break;
+    //   default:
+    //     debugPrint("[MirrorFly][OutgoingCallController] Audio routing Device is receiver");
+    //     selectedDevice.value = FlyCallAudioDeviceType.earpiece.value;
+    //     break;
+    // }
     }
 
-  Future<void> _switchTo(String targetDevice) async {
+  Future<void> _switchTo() async {
     // determine target device based on current state
-    final device = targetDevice; // if earpiece active → switch to speaker
+    final targetDevice = selectedDevice.value
+        ? FlyCallAudioDeviceType.earpiece.value  // if speaker active → switch to earpiece
+        : FlyCallAudioDeviceType.speaker.value; // if earpiece active → switch to speaker
 
-    debugPrint("[MirrorFly][OutgoingCallController] Attempting switch to: $device");
+    debugPrint("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
 
     final result = await MirrorFlyCallKit.changeAudioOutputDevice(
       flyMediaDevice: const FlyMediaDevice("", "", "", ""),
-      device: device,
+      device: targetDevice,
     );
 
     if (result) {
-      selectedDevice.value = device;
+      selectedDevice.value = !selectedDevice.value;
       // update state only after success
       debugPrint("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
     } else {
@@ -509,9 +520,9 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  Future<void> changeAudioDevice(String targetDevice) async {
-    debugPrint("[MirrorFly][OutgoingCallController] changeAudioDevice -> $targetDevice");
-    await _switchTo(targetDevice);
+  Future<void> changeAudioDevice() async {
+    debugPrint("[MirrorFly][OutgoingCallController] changeAudioDevice -> ");
+    await _switchTo();
   }
 
 
