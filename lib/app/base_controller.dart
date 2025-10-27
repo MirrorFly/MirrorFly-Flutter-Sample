@@ -22,6 +22,7 @@ import 'call_modules/participants/add_participants_controller.dart';
 import 'common/app_localizations.dart';
 import 'common/constants.dart';
 import 'data/helper.dart';
+import 'data/permissions.dart';
 import 'data/session_management.dart';
 import 'extensions/extensions.dart';
 import 'model/call_user_list.dart';
@@ -63,6 +64,25 @@ class BaseController {
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
+      debugPrint("[MirrorFly][BaseController] flyCallStatus event received: ${event.toJson()}");
+      if (flyCallStatusEvent == FlyCallStatusEvent.permissionDenied && event.reason != null) {
+        try {
+          final Map<String, dynamic> reasonMap = jsonDecode(event.reason!);
+
+          if (reasonMap['action'] == 'goToSettings' && callType == "audio") {
+            debugPrint("[MirrorFly][BaseController] Navigating to app settings for audio permissions");
+            await AppPermission.askAudioCallPermissions();
+          } else if(reasonMap['action'] == 'goToSettings' && callType == "video"){
+            debugPrint("[MirrorFly][BaseController] Navigating to app settings for video permissions");
+            await AppPermission.askVideoCallPermissions();
+          }else {
+            debugPrint('Permission denied: ${reasonMap['message']}');
+          }
+        } catch (e) {
+          debugPrint('Failed to decode re ason JSON: $e');
+        }
+      }
+
 
       // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
