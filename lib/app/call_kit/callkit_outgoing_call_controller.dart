@@ -415,7 +415,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+    final bool callStatus = await MirrorFlyCallKit.isCallConnected();
 
     if (flyCallType == FlyCallType.audio && callStatus) {
       log(
@@ -670,7 +670,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void requestVideoCallSwitch() async {
 
-    final bool callStatus = MirrorFlyCallKit.isCallConnected();
+    final bool callStatus = await MirrorFlyCallKit.isCallConnected();
     final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == FlyCallType.audio && callStatus) {

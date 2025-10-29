@@ -11,6 +11,7 @@ import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
+import 'app/call_kit/callkit_outgoing_call_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
 import 'app/modules/chat/views/chat_view.dart';
@@ -154,8 +155,10 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
     /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+    final ongoing = await MirrorFlyCallKit.isOngoingCall(isTerminate: true);
 
-    isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+    print("#kingsly #Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
+    isOnGoingCall = Constants.useMirrorFlyCallKit ? ongoing : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
     ///
     /// This method will give response from Native Android, iOS will return empty by default.
@@ -192,9 +195,10 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
           /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
           /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+          final ongoing = await MirrorFlyCallKit.isOngoingCall(isTerminate: true);
 
-          isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
-
+          print("#kingsly #Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
+          isOnGoingCall = Constants.useMirrorFlyCallKit ? ongoing : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
           ///
           /// This method will give response from Native Android, iOS will return empty by default.
           /// When the app is opened by clicking the notification. (Notification Types: Media Status update, MissedCall)
@@ -301,6 +305,15 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => const OnGoingCallView(),
               )
             ];
+          case Routes.callKitOutGoingCallView:
+            return [
+              MaterialPageRoute(
+                settings: const RouteSettings(
+                  name: Routes.callKitOutGoingCallView,
+                ),
+                builder: (context) => const CallKitOutgoingCallView(),
+              )
+            ];
           default:
             return [];
         }
@@ -329,7 +342,7 @@ String getInitialRoute() {
   debugPrint("didNotificationLaunchResponse $didNotificationLaunchResponse");
   if (isOnGoingCall) {
     isOnGoingCall = false;
-    return Routes.onGoingCallView;
+    return Routes.callKitOutGoingCallView;
   } else if ((didNotificationLaunchApp || didMediaProgressNotificationLaunchApp) && !SessionManagement.adminBlocked()) {
     if (didNotificationLaunchApp) {
       notificationAppLaunchDetails = null;
