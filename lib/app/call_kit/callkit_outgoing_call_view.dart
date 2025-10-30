@@ -196,6 +196,7 @@ class CallKitOutgoingCallView
   }
 
   Widget _buildLocalPreview({required double width, required double height}) {
+    debugPrint("Building local preview with size: $width x $height");
     return Container(
       width: width,
       height: height,
@@ -226,7 +227,7 @@ class CallKitOutgoingCallView
                 ),
                 onTap: (){
                   debugPrint("Local preview tapped, swapping views");
-                  controller.videoSwap();
+                  // controller.videoSwap();
                 },
               ),
               // Reconnecting overlay widget

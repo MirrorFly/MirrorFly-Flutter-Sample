@@ -93,6 +93,8 @@ class CallKitOutgoingCallController extends GetxController
       }
       // await initAudioRouting();
       // updateUserId();
+    }else{
+      debugPrint("[MirrorFly][OutgoingCallController] No navigation arguments found");
     }
     initPlayer();
     debugPrint("[MirrorFly][OutgoingCallController] callview");
@@ -375,7 +377,9 @@ class CallKitOutgoingCallController extends GetxController
       reason == "reconnectAttemptsExceeded"
           ? toToast("Reconnection attempt exceeded")
           : toToast("Call Disconnected");
-      NavUtils.back();
+      if(NavUtils.canPop){
+        NavUtils.back();
+      }
     }
   }
 
