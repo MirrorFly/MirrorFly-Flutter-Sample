@@ -236,7 +236,7 @@ class CallKitOutgoingCallView
                                     : 3,
                             mainAxisSpacing: 8,
                             crossAxisSpacing: 8,
-                            childAspectRatio: 1.0,
+                            childAspectRatio: 1.3,
                           ),
                           itemCount: participants.length,
                           itemBuilder: (context, index) {
@@ -314,6 +314,7 @@ class CallKitOutgoingCallView
                           fit: BoxFit.cover,
                           viewBgColor: AppColors.audioCallerBackground,
                           profileImage: getUserProfileImageWithName(
+                            isGroup: true,
                             participantId: controller.groupId.value,
                             scale: 1,
                           ),
@@ -495,26 +496,48 @@ class CallKitOutgoingCallView
     });
   }
 
-  Widget getUserProfileImageWithName(
-      {required String participantId, double scale = 1.0}) {
+  Widget getUserProfileImageWithName({
+    required String participantId,
+    bool? isGroup = false,
+    double scale = 1.0,
+  }) {
+    debugPrint("[getUserProfileImageWithName] Called with participantId: $participantId");
+    participantId = isGroup == true ? participantId  : "$participantId@xmpp-uikit-qa.contus.us";
     return FutureBuilder<ProfileDetails>(
-      future: getProfileDetails(participantId),
+      future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails(participantId),
       builder: (ctx, snap) {
+        // Log the state of the FutureBuilder
+        if (snap.connectionState == ConnectionState.waiting) {
+          debugPrint("[getUserProfileImageWithName] Loading profile for: $participantId");
+        } else if (snap.connectionState == ConnectionState.done) {
+          if (snap.hasError) {
+            debugPrint("[getUserProfileImageWithName] Error loading profile for $participantId → ${snap.error}");
+          } else if (!snap.hasData || snap.data == null) {
+            debugPrint("[getUserProfileImageWithName]  No data found for participantId: $participantId");
+          } else {
+            debugPrint("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
+          }
+        }
+
+        // When we actually have valid profile data
         if (snap.hasData && snap.data != null) {
-          final bool isLocalView =
-              participantId == SessionManagement.getUserJID();
+          final bool isLocalView = participantId == SessionManagement.getUserJID();
+          debugPrint("[getUserProfileImageWithName] 👤 Profile Image Loaded for ${snap.data!.name}, isLocalView: $isLocalView");
+
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               buildProfileImage(
                 snap.data!,
-                size: AppStyleConfig
-                    .outgoingCallPageStyle.profileImageSize.width /
-                    scale,
+                size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width / scale,
               ),
               Obx(() {
-                return controller.isOnGoingCallViewEnable.value &&
-                    controller.localParticipantId.value == participantId
+                final isYou = controller.isOnGoingCallViewEnable.value &&
+                    controller.localParticipantId.value == participantId;
+                if (isYou) {
+                  debugPrint("[getUserProfileImageWithName] This is YOU ($participantId)");
+                }
+                return isYou
                     ? const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Align(

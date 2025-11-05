@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -31,6 +32,33 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
 
+}
+
+Future<ProfileDetails> getGroupProfileDetails(String jid) async {
+  final completer = Completer<ProfileDetails>();
+
+  try {
+    debugPrint("getGroupProfileDetails Jid--> $jid");
+    await Mirrorfly.getGroupProfile(
+      groupJid: jid.checkNull(),
+      flyCallBack: (FlyResponse response) {
+        try {
+          var profile = ProfileDetails.fromJson(
+              json.decode(response.data.toString()));
+          debugPrint("getGroupProfileDetails--> ${profile.toJson().toString()}");
+          completer.complete(profile);
+        } catch (e) {
+          debugPrint("getGroupProfileDetails parse error --> $e");
+          completer.complete(ProfileDetails());
+        }
+      },
+    );
+  } catch (e) {
+    debugPrint("getGroupProfileDetails Exception --> $e");
+    completer.complete(ProfileDetails());
+  }
+
+  return completer.future;
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {

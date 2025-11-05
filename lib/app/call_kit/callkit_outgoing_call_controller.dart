@@ -628,21 +628,34 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void callTimeOut() async {
-    // callStatus("Call Timeout");
-    // toToast("Call Timeout");
-    // // await handleTimeOutDisconnect();
-    // _stopTimer();
-    // final String type = callType.value;
-    // final String calleeName = isGroupCall.value ? chatNameForGroupCall.value :  remoteUserName.value;
-    // final List<String?> callUserList = callerUsersId.toList();
-    // _resetValues();
-    // NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
-    //   "callType": type,
-    //   "userJid": callUserList,
-    //   "calleeName": calleeName
-    // });
+  void callTimeOut({required List<String> participantsId}) async {
+    if (!isGroupOnGoingCallEnabled.value) return;
 
+    debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, group call is ongoing");
+    debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, current call participant list: ${callerList.map((e) => e.identity).toList()}");
+
+    if (participantsId.isEmpty) {
+      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, no participantsId found");
+      return;
+    }
+
+    for (final p in participantsId) {
+      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, checking participantId: $p");
+
+      final target = callerList.firstWhereOrNull((participant) => participant.identity == p);
+
+      if (target != null) {
+        debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
+        callerList.remove(target);
+
+        final fullJid = "$p@xmpp-uikit-qa.contus.us";
+        final profile = await getProfileDetails(validId(userId: fullJid, isGroup: false));
+        final username = profile.name ?? profile.nickName ?? "Unknown";
+        toToast("Call timed out for $username");
+      } else {
+        debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
+      }
+    }
   }
 
   void rejected() {
@@ -667,9 +680,6 @@ class CallKitOutgoingCallController extends GetxController
 
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
-          if (!isGroupOnGoingCallEnabled.value) {
-            isGroupOnGoingCallEnabled.value = true;
-          }
           callerList
               .firstWhereOrNull((e) => e.identity == p)
               ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
@@ -697,6 +707,11 @@ class CallKitOutgoingCallController extends GetxController
         debugPrint(
             "[MirrorFly][OutgoingCallController] Timer is already running");
       }
+
+      if (!isGroupOnGoingCallEnabled.value) {
+        isGroupOnGoingCallEnabled.value = true;
+      }
+
       secondaryCallViewUserId.value =
           SessionManagement.getUserJID().checkNull();
       mainCallViewUserId.value = callerUsersId[0] ?? "";

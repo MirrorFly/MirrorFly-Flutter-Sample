@@ -157,7 +157,8 @@ class BaseController {
           break;
         case FlyCallStatusEvent.callTimeout:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
-          callKitOutgoingCallController.callTimeOut();
+          callKitOutgoingCallController.callTimeOut(
+              participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.rejected:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent rejected");
