@@ -204,7 +204,7 @@ class PushNotifications {
     if (Constants.useMirrorFlyCallKit && (isFromMirrorFly && isCallKitPush)) {
       debugPrint("#Mirrorfly #CallKit Notification -> Using MirrorFly Call Kit");
       debugPrint("#Mirrorfly -> #CallKit -> #Notification -> #notificationData: $notificationData");
-      MirrorFlyCallKit.processIncomingCallPayload(payload: notificationData);
+      // MirrorFlyCallKit.processIncomingCallPayload(payload: notificationData);
     } else {
       if (!remoteMessage.data.containsKey("message_id")) {
         notificationData["message_id"] = remoteMessage.messageId;
