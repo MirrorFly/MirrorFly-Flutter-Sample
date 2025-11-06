@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
+import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -12,7 +13,9 @@ import '../app_style_config.dart';
 import '../common/app_localizations.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
+import '../model/arguments.dart';
 import '../routes/route_settings.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
@@ -1206,6 +1209,66 @@ class CallKitOutgoingCallController extends GetxController
       callStatus("Call Failed");
       toToast("Call Failed");
       NavUtils.back();
+    }
+  }
+
+  /// Invite participants to the ongoing call
+  void inviteParticipants() async {
+    final String callMode = this.callMode.value;
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
+    final List<String> pickedContacts =
+    await gotoContacts(isGroupInvite: callMode != "oneToOne");
+    if (pickedContacts.length > 5) {
+      // Temp limit to 5 participants
+      toToast("You can invite up to 5 participants only");
+      return;
+    } else {
+
+      MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) {
+        debugPrint("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
+      });
+    }
+  }
+
+  /// Navigate to contacts screen
+  Future<List<String>> gotoContacts({bool isGroupInvite = false}) async {
+    var topicId = Constants.topicId.obs;
+    if (!Constants.enableContactSync) {
+      final dynamic result = await NavUtils.toNamed(Routes.contacts,
+          arguments: ContactListArguments(
+            // forGroup: isGroupInvite,
+            // groupJid: isGroupInvite ? groupChatId.value : "",
+              topicId: topicId.value,
+              forMakeCall: true,
+              callType: callType.value));
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] gotoContacts contact sync disabled $result");
+      return result;
+    } else {
+      var contactPermissionHandle =
+      await AppPermission.checkAndRequestPermissions(
+          permissions: [Permission.contacts],
+          permissionIcon: contactPermission,
+          permissionContent: getTranslated("contactPermissionContent"),
+          permissionPermanentlyDeniedContent:
+          getTranslated("contactPermissionDeniedContent"));
+      if (contactPermissionHandle) {
+        final dynamic result = await NavUtils.toNamed(Routes.contacts,
+            arguments: ContactListArguments(
+              // forGroup: isGroupInvite,
+              // groupJid: isGroupInvite ? groupChatId.value : "",
+                topicId: topicId.value,
+                forMakeCall: true,
+                callType: callType.value));
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] gotoContacts contact sync enabled $result");
+        return result;
+      } else {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] gotoContacts permission denied");
+        return [];
+      }
     }
   }
 

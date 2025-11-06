@@ -135,12 +135,17 @@ class CallKitOutgoingCallView
                         ),
                       ),
                       Center(
-                        child: Text(
-                          controller.remoteUserName.value,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            controller.remoteUserName.value,
+                            style: const TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
                           ),
                         ),
                       ),
@@ -178,6 +183,23 @@ class CallKitOutgoingCallView
             ],
           ),
         ),
+
+        /// Invite Participants Button
+        Obx(() {
+          final showInviteButton = controller.isOnGoingCallViewEnable.value &&
+              controller.callMode.value == "ONE-TO-ONE";
+          return Visibility(
+            visible: showInviteButton,
+            child: Positioned(
+              top: 66,
+              right: 16,
+              child: IconButton(
+                onPressed: () => controller.inviteParticipants(),
+                icon: const Icon(Icons.add_call, color: Colors.white),
+              ),
+            ),
+          );
+        }),
 
         /// Local Preview / Profile Image
         Obx(() {
