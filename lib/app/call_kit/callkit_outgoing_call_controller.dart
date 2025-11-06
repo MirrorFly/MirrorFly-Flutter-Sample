@@ -425,6 +425,10 @@ class CallKitOutgoingCallController extends GetxController
         return "Disconnected";
       case FlyCallStatusEvent.calling:
         return "Calling";
+      case FlyCallStatusEvent.ringing:
+        return "Ringing";
+      case FlyCallStatusEvent.tryingToConnect:
+        return "Trying to connect";
       default:
         return "Unknown";
     }
@@ -611,7 +615,7 @@ class CallKitOutgoingCallController extends GetxController
     callType.value = "audio";
   }
 
-  static bool isSelfId({required String? id}) {
+   bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
     if (currentUserId == null) {
       debugPrint("[MirrorFly][OutgoingCallController] isSelfId: is null id=$id");
@@ -680,6 +684,7 @@ class CallKitOutgoingCallController extends GetxController
     if (!isGroupCall.value) {
       debugPrint("[MirrorFly][OutgoingCallController] onConnected for one to one call");
       callStatus("Connected");
+      isOnGoingCallView();
 
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
@@ -820,12 +825,45 @@ class CallKitOutgoingCallController extends GetxController
 
   void remoteUserIsEngaged() async {
     debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged");
-    toToast("${remoteUserNameMap.value} is engaged");
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (NavUtils.canPop) {
-      NavUtils.back();
+
+    List<FlyCallParticipant>? participantsList =
+    await MirrorFlyCallKit.getCurrentCallParticipants();
+    debugPrint("isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, participantsList: ${participantsList?.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
+
+    if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
+      // Check if all remote participants are engaged
+      bool allEngaged = participantsList
+          !.where((p) => !p.isLocalParticipant)
+          .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
+
+      if (allEngaged) {
+        debugPrint("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
+        toToast("All users are engaged");
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (NavUtils.canPop) {
+          NavUtils.back();
+        }
+        return;
+      } else {
+        debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
+        toToast("${remoteUserNameMap.value} is engaged");
+        return;
+      }
     }
+    if(!isGroupCall.value && !isGroupOnGoingCallEnabled.value){
+      debugPrint("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
+      // Single call logic (non-group)
+      toToast("${remoteUserNameMap.value} is engaged");
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (NavUtils.canPop) {
+        NavUtils.back();
+      }
+      return;
+    }
+
+
   }
+
 
   void switchCamera() async {
     debugPrint("[MirrorFly][OutgoingCallController] switchCamera start");
