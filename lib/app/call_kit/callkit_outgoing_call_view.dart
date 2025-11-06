@@ -239,9 +239,11 @@ class CallKitOutgoingCallView
       /// Main view
       Obx(() {
         final participants = controller.callerList;
-        return controller.chatNameForGroupCall.value.isNotEmpty
+        return controller.chatNameForGroupCall.value.isNotEmpty ||
+                (controller.titleAfterCallModeChange.value.isNotEmpty &&
+                    controller.isCallModeChangedToOneToMany.value)
             ? Stack(
-                  alignment: Alignment.center,
+                alignment: Alignment.center,
                 children: [
                   controller.isGroupOnGoingCallEnabled.value
                       /// Group call is ongoing with participants joined
@@ -389,7 +391,9 @@ class CallKitOutgoingCallView
                   if (isOngoing) ...[
                     Center(
                       child: Text(
-                        controller.chatNameForGroupCall.value,
+                        controller.isCallModeChangedToOneToMany.value
+                            ? controller.titleAfterCallModeChange.value
+                            : controller.chatNameForGroupCall.value,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,

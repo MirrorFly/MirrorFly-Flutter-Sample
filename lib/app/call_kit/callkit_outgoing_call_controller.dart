@@ -60,6 +60,9 @@ class CallKitOutgoingCallController extends GetxController
   RxString groupCallTitle = "".obs;
   RxMap<String, String> remoteUserNameMap = <String, String>{}.obs;
 
+  RxBool isCallModeChangedToOneToMany = false.obs;
+  RxString titleAfterCallModeChange = "".obs;
+
   /// Over all call participant list
   var callerList = <FlyCallParticipant>[].obs;
 
@@ -237,8 +240,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Verify the call mode
   ///
-  Future<void> configureCallMode(
-      {required String callMode, required String chatId}) async {
+  Future<void> configureCallMode({required String callMode, required String chatId}) async {
 
     debugPrint("[MirrorFly][OutgoingCallController] #configureCallMode with callMode: $callMode, chatId: $chatId");
 
@@ -251,7 +253,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     // Validate for group call
-    final bool yes = callMode == "ONE-TO-MANY" && chatId != "";
+    final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY" && chatId != "";
     isGroupCall.value = yes;
 
     debugPrint(
@@ -336,6 +338,44 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
+  /// Get call title for the one-to-many call.
+  ///
+  Future<void> getCallTitleForOneToManyCall() async {
+    debugPrint("[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall called");
+
+    if (!isGroupCall.value) {
+      debugPrint("[MirrorFly][OutgoingCallController] Not a group call");
+      return;
+    }
+
+    final filteredNames = remoteUserNameMap.values
+        .where((name) => name.trim().toLowerCase() != "you")
+        .toList();
+
+    final int participantCount = filteredNames.length;
+
+    if (participantCount == 0) {
+      titleAfterCallModeChange.value = "You";
+      return;
+    }
+
+    String title;
+
+    if (participantCount == 1) {
+      title = "You and ${filteredNames.first}";
+    } else if (participantCount == 2) {
+      title = "You, ${filteredNames[0]} & ${filteredNames[1]}";
+    } else {
+      title = "You, ${filteredNames.first} & ${participantCount - 1} others";
+    }
+
+    titleAfterCallModeChange.value = title;
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall -> $title");
+  }
+
+  ///
   /// Get group call title
   ///
   Future<void> getGroupCallTitle() async {
@@ -344,13 +384,7 @@ class CallKitOutgoingCallController extends GetxController
           "[MirrorFly][OutgoingCallController] #getGroupCallTitle Not a group call");
       return;
     } else {
-      final String firstMemberName = remoteUserNameMap.values.first;
-      final String remainingMembersCount = (remoteUserNameMap.length - 1).toString();
-      final String suffix = remainingMembersCount == "1" ? "other" : "others";
-      groupCallTitle.value = "$firstMemberName and $remainingMembersCount $suffix";
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] #getGroupCallTitle groupCallTitle: ${groupCallTitle.value}");
-      return;
+
     }
   }
 
@@ -1272,6 +1306,47 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
+
+  ///
+  ///
+  ///
+  void onCallModeChanged(FlyCallModeChanged? callMode) async {
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode: ${callMode?.mode.toString()}");
+    if (callMode == null) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onCallModeChanged: callMode is null");
+      return;
+    }
+
+    final Map<String, dynamic> mode = callMode.toJson();
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged mode: $mode");
+
+    final String modeRaw = mode['mode'] ?? '';
+    final bool isOneToOne = (mode['mode'] ?? '') == "ONE-TO-ONE";
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged modeRaw: $modeRaw, isOneToOne: $isOneToOne");
+    await configureCallMode(callMode: modeRaw, chatId: groupId.value);
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged updated "
+            "local callMode: ${this.callMode.value}, isGroupCall: ${isGroupCall.value} "
+            "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
+
+    isGroupOnGoingCallEnabled(!isOneToOne);
+    isCallModeChangedToOneToMany(!isOneToOne);
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
+            " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
+            "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
+    await getCurrentCallParticipants();
+    await getRemoteAndLocalUserNameForGroupCall();
+    getCallTitleForOneToManyCall();
+  }
+
   ///
   void _resetValues() {
     callType("");
@@ -1304,8 +1379,9 @@ class CallKitOutgoingCallController extends GetxController
     chatNameForGroupCall("");
     isGroupOnGoingCallEnabled(false);
     groupCallTitle("");
+    isCallModeChangedToOneToMany(false);
+    titleAfterCallModeChange("");
 
     debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
   }
-
 }
