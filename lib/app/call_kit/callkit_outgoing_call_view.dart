@@ -282,15 +282,17 @@ class CallKitOutgoingCallView
                                       ),
                                     ),
                                     Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(controller.isSelfId(id: participant.identity)
+                                            ? ''
+                                            :
                                           controller
                                               .getParticipantConnectionState(
                                                   participants[index]
                                                       .flyCallStatusEvent!),
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w500,
                                             shadows: [
                                               Shadow(
