@@ -564,25 +564,24 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Audio mute status update
   ///
-  void isAudioMute(
-      {required bool isAudioMuted, required String? participantId}) {
-    final FlyCallParticipant? targetedParticipant =
-        callerList.firstWhereOrNull((p) => p.identity == participantId);
+  void isAudioMute({
+    required bool isAudioMuted,
+    required String? participantId,
+  }) {
+    final index = callerList.indexWhere((p) => p.identity == participantId);
 
     debugPrint(
-        "[Controller] isAudioMute called for participantId: $participantId, "
-        "isAudioMuted: $isAudioMuted, targetedParticipant: "
-        "${targetedParticipant != null ? targetedParticipant.identity : 'not found'}");
+        "[Controller] isAudioMute called for participantId: $participantId, isAudioMuted: $isAudioMuted, index: $index");
 
-    if (targetedParticipant == null) {
-      debugPrint(
-          "[Controller] isAudioMute: No targeted participant found for id: $participantId");
+    if (index.isNegative) {
+      debugPrint("[Controller] isAudioMute: No participant found for id: $participantId");
       return;
     }
 
-    targetedParticipant.copyWith(isMuted: isAudioMuted);
-    debugPrint("[Controller] isAudioMute: Updated targeted participant "
-        "${targetedParticipant.identity} muted status to $isAudioMuted");
+    final updated = callerList[index].copyWith(isMuted: isAudioMuted);
+    callerList[index] = updated;
+
+    debugPrint("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {

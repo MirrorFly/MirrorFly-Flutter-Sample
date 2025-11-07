@@ -87,7 +87,7 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-              buildMuteIcon(controller.getLocalParticipantId())
+              buildMuteIcon(controller.getRemoteParticipantsId().first)
             ],
           )
               : const Offstage();
@@ -226,7 +226,7 @@ class CallKitOutgoingCallView
       return const SizedBox.shrink();
     }
 
-    final FlyCallParticipant participant = controller.callerList.firstWhere((e) => controller.isSelfId(id: e.identity));
+    final FlyCallParticipant participant = controller.callerList.firstWhere((e) => e.identity == participantId);
     debugPrint("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isMuted}");
     if (participant.isMuted == true) {
       return Center(
@@ -274,9 +274,9 @@ class CallKitOutgoingCallView
                                 : participants.length <= 4
                                     ? 2
                                     : 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            childAspectRatio: 1.3,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 1.2,
                           ),
                           itemCount: participants.length,
                           itemBuilder: (context, index) {
@@ -339,6 +339,7 @@ class CallKitOutgoingCallView
                                     ),
                                   ),
                                 ),
+                                buildMuteIcon(participant.identity),
                               ],
                             );
                           },
