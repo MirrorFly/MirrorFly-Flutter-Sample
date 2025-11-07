@@ -122,7 +122,7 @@ class BaseController {
           break;
         case FlyCallStatusEvent.ringing:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent ringing");
-          callKitOutgoingCallController.ringing();
+          callKitOutgoingCallController.ringing(participantsId: flyCallStatus.participantsIds,ringing: FlyCallStatusEvent.ringing);
           break;
         case FlyCallStatusEvent.tryingToConnect:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent tryingToConnect");

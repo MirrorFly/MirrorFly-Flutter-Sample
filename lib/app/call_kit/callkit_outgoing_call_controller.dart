@@ -560,13 +560,55 @@ class CallKitOutgoingCallController extends GetxController
     timer = null;
   }
 
-  void ringing() {
+  void ringing({ FlyCallStatusEvent? ringing, List<String>? participantsId}) {
     callStatus("Ringing...");
+    updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.ringing);
   }
 
   void tryingToConnect() {
     callStatus("Trying to connect...");
   }
+
+  void updateCallerStatusList({
+     List<String>? participantsId,
+    FlyCallStatusEvent? status,
+  }) {
+    if(participantsId!.isNotEmpty){
+      for (final id in participantsId) {
+        if (!isSelfId(id: id)) {
+          final index = callerList.indexWhere((p) => p.identity == id);
+
+          if (index != -1) {
+            // Participant exists — update status
+            final existing = callerList[index];
+            callerList[index] = FlyCallParticipant(
+              identity: existing.identity,
+              isLocalParticipant: existing.isLocalParticipant,
+              flyCallStatusEvent: status ?? existing.flyCallStatusEvent,
+              flyCallActionEvent: existing.flyCallActionEvent,
+            );
+          } else {
+            // Participant not found — add new
+            callerList.add(
+              FlyCallParticipant(
+                identity: id,
+                isLocalParticipant: false, // or determine based on logic
+                flyCallStatusEvent: status,
+                flyCallActionEvent: null,
+              ),
+            );
+          }
+        }else{
+          debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList: Skipping self id: $id");
+        }
+      }
+      callerList.refresh();
+    }else{
+      debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList: participantsId is empty");
+    }
+
+  }
+
 
   /// Handle reconnecting state for local and remote user
   void reconnecting({required List<String> participantId}) {
@@ -783,6 +825,16 @@ class CallKitOutgoingCallController extends GetxController
       callStatus("Connected");
       isOnGoingCallView();
       updateUserId();
+
+      for(var p in participantIds) {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] onConnected updating participantId: $p");
+
+        callerList
+            .firstWhereOrNull((e) => e.identity == p)
+            ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
+        callerList.refresh();
+      }
 
       if (timer == null || !(timer?.isActive ?? false)) {
         _startTimer();
