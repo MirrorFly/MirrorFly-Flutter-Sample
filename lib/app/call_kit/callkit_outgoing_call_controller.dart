@@ -171,8 +171,20 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     // Validate for group call
-    final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY" && chatId != "";
+    final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY";
     isGroupCall.value = yes;
+    if(yes){
+      debugPrint("[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: true");
+
+      if(chatId.isEmpty && callMode == "ONE-TO-MANY") {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] #configureCallMode with chatId for group call: $chatId");
+        getRemoteAndLocalUserNameForGroupCall();
+        isCallModeChangedToOneToMany(true);
+      }
+      getCallTitleForOneToManyCall();
+
+    }
 
     debugPrint(
         "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall.value}");
@@ -638,7 +650,18 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void callTimeOut({required List<String> participantsId}) async {
-    if (!isGroupOnGoingCallEnabled.value) return;
+    if (!isGroupOnGoingCallEnabled.value && isGroupCall.value){
+      toToast("Call timed out");
+      if(NavUtils.canPop){
+        NavUtils.back();
+      }
+      return;
+    }
+    if(!isGroupCall.value){
+      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, not a group call");
+      return;
+    }
+
 
     participantsId = participantsId
         .map((id) => id.split('@').first.trim())
@@ -750,16 +773,6 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] onConnected for group call");
       callStatus("Connected");
       isOnGoingCallView();
-
-      for(var p in participantIds) {
-        debugPrint(
-            "[MirrorFly][OutgoingCallController] onConnected updating participantId: $p");
-
-        callerList
-            .firstWhereOrNull((e) => e.identity == p)
-            ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
-        callerList.refresh();
-      }
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
 
       if (timer == null || !(timer?.isActive ?? false)) {
@@ -770,7 +783,10 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       if (!isGroupOnGoingCallEnabled.value) {
+        debugPrint("[MirrorFly][OutgoingCallController] Group call is now ongoing");
         isGroupOnGoingCallEnabled.value = true;
+      }else{
+        debugPrint("[MirrorFly][OutgoingCallController] Group call is already ongoing");
       }
     }
   }
