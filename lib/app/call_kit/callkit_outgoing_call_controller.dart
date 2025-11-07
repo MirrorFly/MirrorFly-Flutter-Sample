@@ -775,8 +775,25 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void disconnectCall({required String reason}) {
-    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall invoked with reason: $reason");
+  ///
+  /// Disconnect call
+  ///
+  void disconnectCall({required String userId, required String reason}) {
+    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall invoked with userId: $userId, reason: $reason");
+
+    if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
+      debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
+
+      callerList.removeWhere((e) => e.identity == userId);
+
+      final String name = remoteUserNameMap[userId] ?? "Unknown";
+      toToast("$name disconnected");
+
+      return;
+    }
+
+    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call.");
+
     _resetValues();
     _stopTimer();
     closeDialog();
