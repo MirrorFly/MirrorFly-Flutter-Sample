@@ -761,7 +761,6 @@ class CallKitOutgoingCallController extends GetxController
             ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
         callerList.refresh();
       }
-      updateUserId();
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
 
       if (timer == null || !(timer?.isActive ?? false)) {
