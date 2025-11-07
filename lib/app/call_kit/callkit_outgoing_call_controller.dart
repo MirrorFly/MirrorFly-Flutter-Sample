@@ -173,6 +173,15 @@ class CallKitOutgoingCallController extends GetxController
     final remoteParticipant =
     callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
 
+    final localParticipant =
+    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
+
+    if (localParticipant != null) {
+      secondaryCallViewUserId.value = localParticipant.identity;
+    } else {
+      secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
+    }
+
     if (remoteParticipant != null) {
       mainCallViewUserId.value = remoteParticipant.identity;
     } else {
