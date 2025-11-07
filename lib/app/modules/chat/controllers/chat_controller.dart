@@ -4079,22 +4079,23 @@ class ChatController extends FullLifeCycleController
                     "chatId": ""
                   });
                 } else {
-                  final String errorData = response.data;
-                  if (errorData == "Centrifuge not connected") {
-                    toToast("CF Not connected");
-                  }
-
-                  // Assuming it is permission denied error
-                  final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                  final String? permissionType = errorJson?['type'];
-                  final String? permissionAction = errorJson?['action'];
-                  final String? message = errorJson?['message'];
-                  debugPrint(
-                      "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-                  if (message != null) {
-                    toToast(message);
-                  }
+                  //   final String errorData = response.data;
+                  //   if (errorData == "Centrifuge not connected") {
+                  //     toToast("CF Not connected");
+                  //   }
+                  //
+                  //   // Assuming it is permission denied error
+                  //   final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
+                  //   final String? permissionType = errorJson?['type'];
+                  //   final String? permissionAction = errorJson?['action'];
+                  //   final String? message = errorJson?['message'];
+                  //   debugPrint(
+                  //       "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+                  //
+                  //   if (message != null) {
+                  //     toToast(message);
+                  //   }
+                  // }
                 }
               },
               callersId: [

@@ -672,6 +672,10 @@ class CallKitOutgoingCallController extends GetxController
   void callTimeOut({required List<String> participantsId}) async {
     if (!isGroupOnGoingCallEnabled.value) return;
 
+    participantsId = participantsId
+        .map((id) => id.split('@').first.trim())
+        .toList();
+
     debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, group call is ongoing");
     debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, current call participant list: ${callerList.map((e) => e.identity).toList()}");
 
@@ -693,9 +697,34 @@ class CallKitOutgoingCallController extends GetxController
         final profile = await getProfileDetails(validId(userId: fullJid, isGroup: false));
         final username = profile.name ?? profile.nickName ?? "Unknown";
         toToast("Call timed out for $username");
+        checkParticipantForCallMode();
       } else {
         debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
+    }
+  }
+
+  void checkParticipantForCallMode() async {
+    debugPrint("[MirrorFly][OutgoingCallController] checkParticipantForCallMode called");
+    final List<FlyCallParticipant> participants = await getCurrentCallParticipants();
+    if (participants.isEmpty) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: No participants found");
+      return;
+    }
+    if (participants.length <= 2 &&
+        isGroupCall.value &&
+        isGroupOnGoingCallEnabled.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: Switching to one-to-one call mode");
+      isCallModeChangedToOneToMany.value = false;
+      callMode.value = "TO-ONE-TO-ONE";
+      isGroupCall.value = false;
+      isGroupOnGoingCallEnabled.value = false;
+      titleAfterCallModeChange.value = '';
+    } else {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: No call mode change needed");
     }
   }
 
@@ -1383,6 +1412,20 @@ class CallKitOutgoingCallController extends GetxController
     await getCurrentCallParticipants();
     await getRemoteAndLocalUserNameForGroupCall();
     getCallTitleForOneToManyCall();
+  }
+
+  ///
+  /// To update the call status of a participant in the callerList
+  ///
+  Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
+    final participant = callerList.firstWhereOrNull((p) => p.identity == id);
+    if (participant != null) {
+      participant.flyCallStatusEvent = status;
+      callerList.refresh();
+      debugPrint("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
+    } else {
+      debugPrint("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Participant $id not found in callerList");
+    }
   }
 
   ///

@@ -286,10 +286,7 @@ class CallKitOutgoingCallView
                                         child: Text(controller.isSelfId(id: participant.identity)
                                             ? ''
                                             :
-                                          controller
-                                              .getParticipantConnectionState(
-                                                  participants[index]
-                                                      .flyCallStatusEvent!),
+                                          controller.getParticipantConnectionState(participants[index].flyCallStatusEvent!),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 10,
@@ -566,11 +563,11 @@ class CallKitOutgoingCallView
                   debugPrint("[getUserProfileImageWithName] This is YOU ($participantId)");
                 }
                 return isYou
-                    ? const Padding(
-                  padding: EdgeInsets.all(8.0),
+                    ? Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
+                    child: controller.isGroupCall.value ? const SizedBox.shrink() : const Text(
                       "You",
                       style: TextStyle(
                         color: Colors.white,
