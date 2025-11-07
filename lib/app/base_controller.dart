@@ -397,28 +397,28 @@ class BaseController {
 
         case FlyCallActionEvent.audioMuted:
           debugPrint(
-              "[MirrorFly][BaseController] flyCallActionEvent audioMuted");
+              "[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
           controller.isAudioMute(
               isAudioMuted: true, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.audioUnMuted:
           debugPrint(
-              "[MirrorFly][BaseController] flyCallActionEvent audioMuted");
+              "[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
           controller.isAudioMute(
               isAudioMuted: false, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoMuted:
           debugPrint(
-              "[MirrorFly][BaseController] flyCallActionEvent videoMuted");
+              "[MirrorFly][BaseController] flyCallActionEvent videoMuted with participantId=${flyCallAction.participantId}");
           controller.isVideoMute(
               isVideoMuted: false, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoUnMuted:
           debugPrint(
-              "[MirrorFly][BaseController] flyCallActionEvent videoUnMuted");
+              "[MirrorFly][BaseController] flyCallActionEvent videoUnMuted with participantId=${flyCallAction.participantId}");
           controller.isVideoMute(
               isVideoMuted: true, participantId: flyCallAction.participantId);
           break;

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
-import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../app_style_config.dart';
@@ -30,7 +29,6 @@ class CallKitOutgoingCallController extends GetxController
   RxString callMode = "".obs;
 
   RxBool showControls = true.obs;
-  RxBool muted = false.obs;
   RxBool isVideoEnabled = true.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
@@ -44,7 +42,6 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isManualDeviceSelected = false.obs;
 
   RxString cameraPosition = CameraType.front.obs;
-  RxBool isRemoteAudioMuted = false.obs;
   RxBool isRemoteVideoMuted = true.obs;
 
   /// For one to one call
@@ -69,18 +66,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   final RxBool isLocalTracksPublished = false.obs;
   final RxBool isRemoteTracksPublished = false.obs;
-
-  RxString localParticipantId = "".obs;
-  RxString remoteParticipantId = "".obs; // Temp for now as we do only 1-1 calls
-
-  ///
-  RxString mainCallViewUserId = "".obs;
-  RxString secondaryCallViewUserId = "".obs;
   Timer? timer;
-
-  ///
-  // Timer? _outgoingSwitchTimer;
-  // bool _isWaitingCanceled = false;
 
   RxBool isLocalUserReconnecting = false.obs;
   RxBool isRemoteUserReconnecting = false.obs;
@@ -126,9 +112,9 @@ class CallKitOutgoingCallController extends GetxController
     if (isIncoming.value) {
       _handleIncomingCall();
     } else if (!isIncoming.value && callType.value == "audio") {
-      _handleOutgoingAudioCall();
+      // _handleOutgoingAudioCall();
     } else if (!isIncoming.value && callType.value == "video") {
-      _handleOutgoingVideoCall();
+      // _handleOutgoingVideoCall();
     } else {
       debugPrint("[MirrorFly][OutgoingCallController] Invalid call parameters");
     }
@@ -136,101 +122,22 @@ class CallKitOutgoingCallController extends GetxController
 
   void _handleIncomingCall() {
     isOnGoingCallView();
-
-    final localParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
-    final remoteParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
-
-    if (localParticipant != null) {
-      secondaryCallViewUserId.value = localParticipant.identity;
-    } else {
-      secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-    }
-
-    if (remoteParticipant != null) {
-      mainCallViewUserId.value = remoteParticipant.identity;
-    } else {
-      mainCallViewUserId.value = callerUsersId[0] ?? "";
-    }
-
-    debugPrint("[MirrorFly][IncomingCall] main:${mainCallViewUserId.value} "
-        "secondary:${secondaryCallViewUserId.value}");
-  }
-
-  void _handleOutgoingAudioCall() {
-    if (groupId.value.isNotEmpty) {
-      mainCallViewUserId.value = groupId.value;
-      return;
-    }
-
-    if (callerList.isEmpty) {
-      debugPrint("[MirrorFly][AudioCall] Caller list empty");
-      mainCallViewUserId.value = callerUsersId[0] ?? "";
-      return;
-    }
-
-    final remoteParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
-
-    final localParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
-
-    if (localParticipant != null) {
-      secondaryCallViewUserId.value = localParticipant.identity;
-    } else {
-      secondaryCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-    }
-
-    if (remoteParticipant != null) {
-      mainCallViewUserId.value = remoteParticipant.identity;
-    } else {
-      mainCallViewUserId.value = callerUsersId[0] ?? "";
-    }
-
-    debugPrint("[MirrorFly][AudioCall] main:${mainCallViewUserId.value}");
-  }
-
-  void _handleOutgoingVideoCall() {
-    if (groupId.value.isNotEmpty) {
-      mainCallViewUserId.value = groupId.value;
-      return;
-    }
-
-    if (callerList.isEmpty) {
-      debugPrint("[MirrorFly][VideoCall] Caller list empty");
-      return;
-    }
-
-    final localParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
-    final remoteParticipant =
-    callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
-
-    if (localParticipant != null && remoteParticipant != null) {
-      mainCallViewUserId.value = localParticipant.identity;
-      secondaryCallViewUserId.value = remoteParticipant.identity;
-    } else {
-      mainCallViewUserId.value = SessionManagement.getUserJID().checkNull();
-      secondaryCallViewUserId.value = callerUsersId[0] ?? "";
-    }
-
-    debugPrint("[MirrorFly][VideoCall] main:${mainCallViewUserId.value} "
-        "secondary:${secondaryCallViewUserId.value}");
+    debugPrint("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
 
   @override
   void onReady() async {
     initAudioRouting();
 
+   await getUserNameForOneToOneCall(
+        remoteUserId: getRemoteParticipantsId().first,
+        localUserId: getLocalParticipantId());
+
     await getRemoteAndLocalUserNameForGroupCall();
 
     await getChatNameForGroupCall(chatId: groupId.value);
 
     await getGroupCallTitle();
-
-    getUserNameForOneToOneCall(
-        remoteUserId: remoteParticipantId.value, localUserId: localParticipantId.value);
 
     getLogsOfLocalValues();
     super.onReady();
@@ -241,7 +148,10 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<List<FlyCallParticipant>> getCurrentCallParticipants() async {
     final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
-    debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${callerList.length}, participants: ${callerList.map((p) => p.identity).toList()}");
+
+    debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${participants?.length},"
+        " participants: ${participants?.map((p) => p.identity).toList()}");
+
     callerList.value = participants ?? [];
     return participants ?? []; // Handle null safely
   }
@@ -258,7 +168,6 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint(
           "[MirrorFly][OutgoingCallController] #configureCallMode with remote participantId for "
               "one to one call, callerUsersId: ${callerUsersId.map((e) => e).toList()}");
-      remoteParticipantId.value = callerUsersId.first ?? '';
     }
 
     // Validate for group call
@@ -267,12 +176,6 @@ class CallKitOutgoingCallController extends GetxController
 
     debugPrint(
         "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall.value}");
-
-    // For both
-    localParticipantId.value = SessionManagement.getUserJID() ?? '';
-
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] #configureCallMode localParticipantId: ${localParticipantId.value}, remoteParticipantId: ${remoteParticipantId.value}");
   }
 
   ///
@@ -308,24 +211,46 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get user name of remote user for one to one call
   ///
-  Future<void> getUserNameForOneToOneCall(
-      {required String remoteUserId, required String localUserId}) async {
-    if (!isGroupCall.value) {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] #getUserNameForOneToOneCall User Name for remote: $remoteUserId");
-      ProfileDetails remoteProfile = await getProfileDetails(remoteUserId);
-      String remoteProfileName =
-          remoteProfile.name ?? remoteProfile.nickName ?? "Unknown";
+  Future<void> getUserNameForOneToOneCall({
+    required String remoteUserId,
+    required String localUserId,
+  }) async {
+    const tag = "[MirrorFly][OutgoingCallController]";
+
+    try {
+      localUserId = "$localUserId@xmpp-uikit-qa.contus.us";
+      remoteUserId = "$remoteUserId@xmpp-uikit-qa.contus.us";
+
+      debugPrint("$tag #getUserNameForOneToOneCall called");
+      debugPrint("$tag Local User ID  → $localUserId");
+      debugPrint("$tag Remote User ID → $remoteUserId");
+
+      if (isGroupCall.value) {
+        debugPrint("$tag Skipping — not a one-to-one call");
+        return;
+      }
+
+      // ---- Fetch remote profile ----
+      debugPrint("$tag Fetching remote user profile...");
+      final remoteProfile = await getProfileDetails(remoteUserId);
+
+      final remoteProfileName = remoteProfile.name ?? remoteProfile.nickName ?? "Unknown";
       remoteUserName.value = remoteProfileName;
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] #getUserNameForOneToOneCall User Name for local: $localUserId");
-      ProfileDetails localProfile = await getProfileDetails(localUserId);
-      String localProfileName =
+
+      debugPrint("$tag Remote user name set → $remoteProfileName");
+
+      // ---- Fetch local profile ----
+      debugPrint("$tag Fetching local user profile...");
+      final localProfile = await getProfileDetails(localUserId);
+
+      final localProfileName =
           localProfile.name ?? localProfile.nickName ?? "Unknown";
       localUserName.value = localProfileName;
-    } else {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] #getUserNameForOneToOneCall  a one to one call");
+
+      debugPrint("$tag Local user name set → $localProfileName");
+
+    } catch (e, stack) {
+      debugPrint("$tag Error in #getUserNameForOneToOneCall: $e");
     }
   }
 
@@ -419,40 +344,6 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  /// Handle group call connected state
-  ///
-  void onGroupCallJoinSync(
-      {required Map<String, FlyCallStatusEvent> joinSyncStatus}) async {
-    if (!isGroupCall.value) {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] onGroupCallConnected called for non-group call");
-      return;
-    }
-
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] onGroupCallConnected called with joinSyncStatus: ${joinSyncStatus.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-
-    // // Refresh the participants list
-    // // await getCurrentCallParticipants();
-    //
-    // debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected checking connected participants");
-    //
-    // final List<FlyCallParticipant> onlyRemote =
-    // callerList.where((e) => !e.isLocalParticipant).toList();
-    //
-    // if (onlyRemote.any((p) => p.flyCallStatusEvent == FlyCallStatusEvent.connected)) {
-    //   isGroupOnGoingCallEnabled.value = true;
-    //   callStatus("Connected");
-    //   if (timer == null || !(timer?.isActive ?? false)) {
-    //     debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected starting timer");
-    //     _startTimer();
-    //   } else {
-    //     debugPrint("[MirrorFly][OutgoingCallController] onGroupCallConnected Timer is already running");
-    //   }
-    // }
-  }
-
-  ///
   /// Get participant connection state
   ///
   String getParticipantConnectionState(FlyCallStatusEvent status) {
@@ -490,7 +381,6 @@ class CallKitOutgoingCallController extends GetxController
        groupId: ${groupId.value}
        callMode: ${callMode.value}
        showControls: ${showControls.value}
-       muted: ${muted.value}
        isVideoEnabled: ${isVideoEnabled.value}
        speakerOn: ${speakerOn.value}
        isOnGoingCallViewEnable: ${isOnGoingCallViewEnable.value}
@@ -500,7 +390,6 @@ class CallKitOutgoingCallController extends GetxController
        isIncoming: ${isIncoming.value}
        isManualDeviceSelected: ${isManualDeviceSelected.value}
        cameraPosition: ${cameraPosition.value}
-       isRemoteAudioMuted: ${isRemoteAudioMuted.value}
        isRemoteVideoMuted: ${isRemoteVideoMuted.value}
        remoteUserName: ${remoteUserName.value}
        localUserName: ${localUserName.value}
@@ -510,10 +399,6 @@ class CallKitOutgoingCallController extends GetxController
        callerList length: ${callerList.length}
        isLocalTracksPublished: ${isLocalTracksPublished.value}
        isRemoteTracksPublished: ${isRemoteTracksPublished.value}
-       localParticipantId: ${localParticipantId.value}
-       remoteParticipantId: ${remoteParticipantId.value}
-       mainCallViewUserId: ${mainCallViewUserId.value}
-       secondaryCallViewUserId: ${secondaryCallViewUserId.value}
           ''');
   }
 
@@ -676,14 +561,28 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void isAudioMute({required bool isAudioMuted,required String? participantId}) {
-    if(isSelfId(id: participantId)){
-      muted.value = isAudioMuted;
-    }else{
-      isRemoteAudioMuted.value = isAudioMuted;
+  ///
+  /// Audio mute status update
+  ///
+  void isAudioMute(
+      {required bool isAudioMuted, required String? participantId}) {
+    final FlyCallParticipant? targetedParticipant =
+        callerList.firstWhereOrNull((p) => p.identity == participantId);
+
+    debugPrint(
+        "[Controller] isAudioMute called for participantId: $participantId, "
+        "isAudioMuted: $isAudioMuted, targetedParticipant: "
+        "${targetedParticipant != null ? targetedParticipant.identity : 'not found'}");
+
+    if (targetedParticipant == null) {
+      debugPrint(
+          "[Controller] isAudioMute: No targeted participant found for id: $participantId");
+      return;
     }
 
-    debugPrint("[Controller] Updated => audioMuted=${isRemoteAudioMuted.value}");
+    targetedParticipant.copyWith(isMuted: isAudioMuted);
+    debugPrint("[Controller] isAudioMute: Updated targeted participant "
+        "${targetedParticipant.identity} muted status to $isAudioMuted");
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {
@@ -712,6 +611,25 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;
     }
+  }
+
+  /// Get self id
+  String getLocalParticipantId() {
+    final String localId = callerList
+        .firstWhere((p) => p.isLocalParticipant)
+        .identity;
+    debugPrint("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
+    return localId;
+  }
+
+  ///
+  List<String> getRemoteParticipantsId() {
+    final List<String> remoteIds = callerList
+        .where((p) => !p.isLocalParticipant)
+        .map((p) => p.identity)
+        .toList();
+    debugPrint("[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
+    return remoteIds;
   }
 
   ///
@@ -833,7 +751,6 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] onConnected for group call");
       callStatus("Connected");
       isOnGoingCallView();
-      updateUserId();
 
       for(var p in participantIds) {
         debugPrint(
@@ -855,10 +772,6 @@ class CallKitOutgoingCallController extends GetxController
       if (!isGroupOnGoingCallEnabled.value) {
         isGroupOnGoingCallEnabled.value = true;
       }
-
-      secondaryCallViewUserId.value =
-          SessionManagement.getUserJID().checkNull();
-      mainCallViewUserId.value = callerUsersId[0] ?? "";
     }
   }
 
@@ -1155,7 +1068,6 @@ class CallKitOutgoingCallController extends GetxController
         debugPrint(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Local tracks published for $participantId");
         isLocalTracksPublished(true);
-        localParticipantId(participantId);
       } else {
         debugPrint(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate local publish for $participantId");
@@ -1165,38 +1077,11 @@ class CallKitOutgoingCallController extends GetxController
         debugPrint(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Remote tracks published for $participantId");
         isRemoteTracksPublished(true);
-        remoteParticipantId(participantId);
       } else {
         debugPrint(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
       }
     }
-  }
-
-  void updateUserId() {
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] [MirrorFlyCall] updateUserId called with isIncoming: $isIncoming, callerUsersId: $callerUsersId");
-    if (isIncoming.value) {
-      mainCallViewUserId(callerUsersId.first);
-      if (callerUsersId.length > 1) {
-        secondaryCallViewUserId(callerUsersId.last);
-      }
-    } else {
-      final localParticipant =
-      callerList.firstWhereOrNull((p) => p.isLocalParticipant == true);
-      final remoteParticipant =
-      callerList.firstWhereOrNull((p) => p.isLocalParticipant == false);
-      if(localParticipant != null && remoteParticipant != null){
-        mainCallViewUserId.value = remoteParticipant.identity;
-        secondaryCallViewUserId.value = localParticipant.identity;
-        debugPrint("[MirrorFly][OutgoingCallController] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
-      }else{
-        mainCallViewUserId(callerUsersId.first);
-        secondaryCallViewUserId(SessionManagement.getUserJID());
-      }
-    }
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] [MirrorFlyCall] mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
   }
 
   ///
@@ -1504,7 +1389,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void _resetValues() {
     callType("");
-    muted(false);
+    // muted(false);
     isVideoEnabled(false);
     speakerOn(false);
     isOnGoingCallViewEnable(false);
@@ -1512,15 +1397,10 @@ class CallKitOutgoingCallController extends GetxController
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
-    isRemoteAudioMuted(false);
     isRemoteVideoMuted(false);
     localUserName("");
     isLocalTracksPublished(false);
     isRemoteTracksPublished(false);
-    localParticipantId("");
-    remoteParticipantId("");
-    mainCallViewUserId("");
-    secondaryCallViewUserId("");
     isManualDeviceSelected(false);
     callTryStatus("");
     groupId("");

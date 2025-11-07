@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
-import '../call_modules/audio_level_animation.dart';
 import '../call_modules/call_widgets.dart';
 import '../common/constants.dart';
 import '../data/helper.dart';
-import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
 import 'callkit_outgoing_call_controller.dart';
@@ -48,19 +46,19 @@ class CallKitOutgoingCallView
 
         /// Main view
         Obx(() {
-          return controller.mainCallViewUserId.value.isNotEmpty
+          return controller.callerList.isNotEmpty
               ? Stack(
             alignment: Alignment.center,
             children: [
               Stack(
                 children: [
                   MirrorFlyCallView(
-                    key: ValueKey(controller.mainCallViewUserId.value),
-                    userJID: controller.mainCallViewUserId.value,
+                    key: ValueKey(controller.getRemoteParticipantsId().first),
+                    userJID: controller.getRemoteParticipantsId().first,
                     fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: controller.mainCallViewUserId.value,
+                      participantId: controller.getRemoteParticipantsId().first,
                       scale: 1,
                     ),
                   ),
@@ -87,21 +85,9 @@ class CallKitOutgoingCallView
                   )
                 ],
               ),
-              if (controller.isRemoteAudioMuted.value)
-                Center(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black54,
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    child: const Icon(
-                      Icons.mic_off_outlined,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
+
+              /// Mute Icon
+              buildMuteIcon(controller.getLocalParticipantId())
             ],
           )
               : const Offstage();
@@ -231,6 +217,36 @@ class CallKitOutgoingCallView
     );
   }
 
+  Widget buildMuteIcon(String? participantId) {
+
+    debugPrint("[buildMuteIcon] Called for participantId: $participantId");
+
+    if (participantId == null || participantId.isEmpty) {
+      debugPrint("[buildMuteIcon] participantId is null or empty");
+      return const SizedBox.shrink();
+    }
+
+    final FlyCallParticipant participant = controller.callerList.firstWhere((e) => controller.isSelfId(id: e.identity));
+    debugPrint("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isMuted}");
+    if (participant.isMuted == true) {
+      return Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.black54,
+          ),
+          padding: const EdgeInsets.all(12),
+          child: const Icon(
+            Icons.mic_off_outlined,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   /// Group Call View
   Widget groupCallUI(BuildContext context) {
     debugPrint("#CallKitOutGoingCallView Group Call UI Build Called");
@@ -307,10 +323,7 @@ class CallKitOutgoingCallView
                                   left: 8,
                                   right: 8,
                                   child: Text(
-                                    controller.remoteUserNameMap[
-                                            participant.identity] ??
-                                        participant.identity ??
-                                        '',
+                                    controller.remoteUserNameMap[participant.identity] ?? participant.identity,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       color: Colors.white,
@@ -447,11 +460,11 @@ class CallKitOutgoingCallView
             children: [
               MirrorFlyCallView(
                 viewBgColor: AppColors.callerBackground,
-                key: ValueKey(controller.secondaryCallViewUserId.value),
-                userJID: controller.secondaryCallViewUserId.value,
+                key: ValueKey(controller.getLocalParticipantId()),
+                userJID: controller.getLocalParticipantId(),
                 fit: BoxFit.cover,
                 profileImage: getUserProfileImageWithName(
-                  participantId: controller.secondaryCallViewUserId.value,
+                  participantId: controller.getLocalParticipantId(),
                   scale: 2,
                 ),
               ),
@@ -480,18 +493,7 @@ class CallKitOutgoingCallView
           ),
 
           Obx(() {
-            return controller.muted.value ? Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.black54,
-                ),
-                padding: const EdgeInsets.all(12),
-                child: const Icon(
-                  Icons.mic_off_outlined,
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ) : const Offstage();
+            return buildMuteIcon(controller.getLocalParticipantId());
           }),
         ],
       ),
@@ -527,9 +529,8 @@ class CallKitOutgoingCallView
     double scale = 1.0,
   }) {
     debugPrint("[getUserProfileImageWithName] Called with participantId: $participantId");
-    participantId = isGroup == true ? participantId  : "$participantId@xmpp-uikit-qa.contus.us";
     return FutureBuilder<ProfileDetails>(
-      future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails(participantId),
+      future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails("$participantId@xmpp-uikit-qa.contus.us"),
       builder: (ctx, snap) {
         // Log the state of the FutureBuilder
         if (snap.connectionState == ConnectionState.waiting) {
@@ -546,8 +547,10 @@ class CallKitOutgoingCallView
 
         // When we actually have valid profile data
         if (snap.hasData && snap.data != null) {
-          final bool isLocalView = participantId == SessionManagement.getUserJID();
-          debugPrint("[getUserProfileImageWithName] 👤 Profile Image Loaded for ${snap.data!.name}, isLocalView: $isLocalView");
+
+          final bool isLocalView = participantId == controller.getLocalParticipantId();
+          debugPrint(
+              "[getUserProfileImageWithName] Building profile image for participantId: $participantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
 
           return Column(
             mainAxisSize: MainAxisSize.min,
@@ -557,12 +560,12 @@ class CallKitOutgoingCallView
                 size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width / scale,
               ),
               Obx(() {
-                final isYou = controller.isOnGoingCallViewEnable.value &&
-                    controller.localParticipantId.value == participantId;
-                if (isYou) {
-                  debugPrint("[getUserProfileImageWithName] This is YOU ($participantId)");
-                }
-                return isYou
+
+                debugPrint("[getUserProfileImageWithName] Checking if local view for participantId: "
+                    "$participantId, controller.isOnGoingCallViewEnable: ${controller.isOnGoingCallViewEnable.value}, "
+                    "localParticipantId: ${controller.getLocalParticipantId()}");
+
+                return isLocalView
                     ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Align(
@@ -629,8 +632,8 @@ class CallKitOutgoingCallView
                 },
               ),
               _buildCallOption(
-                isActive: controller.muted.value,
-                icon: controller.muted.value ? Icons.mic_off : Icons.mic,
+                isActive: controller.callerList.firstWhere((e) => e.isLocalParticipant).isMuted ?? false,
+                icon: controller.callerList.firstWhere((e) => e.isLocalParticipant).isMuted ?? false ? Icons.mic_off : Icons.mic,
                 onTap: controller.muteAudio,
               ),
               if (controller.callType.value.toLowerCase() == CallType.video)
