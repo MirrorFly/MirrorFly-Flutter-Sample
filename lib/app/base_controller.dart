@@ -162,7 +162,12 @@ class BaseController {
           break;
         case FlyCallStatusEvent.rejected:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent rejected");
-          callKitOutgoingCallController.rejected();
+          if (flyCallStatus.participantsIds.isEmpty) {
+            debugPrint("[MirrorFly][BaseController]flyCallStatusEvent rejected - No participant IDs found");
+            return;
+          }
+          final String participantId = flyCallStatus.participantsIds.first;
+          callKitOutgoingCallController.rejected(userId: participantId);
           break;
         case FlyCallStatusEvent.engaged:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent engaged");

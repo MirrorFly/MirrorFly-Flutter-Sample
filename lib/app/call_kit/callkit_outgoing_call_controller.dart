@@ -728,7 +728,19 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void rejected() {
+  void rejected({required String userId}) {
+    debugPrint("[MirrorFly][OutgoingCallController] Call rejected by userId: $userId");
+
+    if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Call rejected, but group call is ongoing, "
+              "current remote participant name map: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
+      final String name = remoteUserNameMap[userId] ?? "Unknown";
+      toToast("$name is busy");
+      return;
+    }
+
+    debugPrint("[MirrorFly][OutgoingCallController] Call rejected, ending call");
     toToast("User Busy");
     NavUtils.back();
   }
