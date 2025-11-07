@@ -486,7 +486,7 @@ class CallKitOutgoingCallController extends GetxController
             callerList.add(
               FlyCallParticipant(
                 identity: id,
-                isLocalParticipant: false, // or determine based on logic
+                isLocalParticipant: false,
                 flyCallStatusEvent: status,
                 flyCallActionEvent: null,
               ),
@@ -761,6 +761,8 @@ class CallKitOutgoingCallController extends GetxController
             ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
         callerList.refresh();
       }
+      updateUserId();
+      updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
 
       if (timer == null || !(timer?.isActive ?? false)) {
         _startTimer();
@@ -872,7 +874,7 @@ class CallKitOutgoingCallController extends GetxController
     closeDialog();
   }
 
-  void remoteUserIsEngaged() async {
+  void remoteUserIsEngaged({required List<String> participants}) async {
     debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged");
 
     List<FlyCallParticipant>? participantsList =
@@ -895,14 +897,14 @@ class CallKitOutgoingCallController extends GetxController
         return;
       } else {
         debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
-        toToast("${remoteUserNameMap.value} is engaged");
+        toToast("${remoteUserNameMap[participants.first]} is engaged");
         return;
       }
     }
     if(!isGroupCall.value && !isGroupOnGoingCallEnabled.value){
       debugPrint("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
       // Single call logic (non-group)
-      toToast("${remoteUserNameMap.value} is engaged");
+      toToast("${remoteUserNameMap[participants.first]} is engaged");
       await Future.delayed(const Duration(milliseconds: 500));
       if (NavUtils.canPop) {
         NavUtils.back();
