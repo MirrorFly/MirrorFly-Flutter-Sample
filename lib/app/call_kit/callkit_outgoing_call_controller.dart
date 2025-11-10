@@ -907,16 +907,34 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void remoteUserIsEngaged({required List<String> participants}) async {
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged");
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged with participants: $participants");
 
-    List<FlyCallParticipant>? participantsList =
-    await MirrorFlyCallKit.getCurrentCallParticipants();
-    debugPrint("isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, participantsList: ${participantsList?.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
+    if (callerList.isEmpty) {
+      debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: No participants found");
+      return;
+    }
+
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: Checking current call user list, items: ${callerList.map((p) => p.identity).toList()}");
+
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value},"
+        " participantsList: ${callerList.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
+
+    if (callerList.firstWhere((e) => e.identity == participants.first).flyCallStatusEvent != FlyCallStatusEvent.engaged) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
+      callerList.removeWhere((e) => e.identity == participants.first);
+      final String name = remoteUserNameMap[participants.first] ?? participants.first;
+      toToast("$name is engaged");
+      return;
+    } else {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is engaged already");
+    }
 
     if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
       // Check if all remote participants are engaged
-      bool allEngaged = participantsList
-          !.where((p) => !p.isLocalParticipant)
+      bool allEngaged = callerList
+          .where((p) => !p.isLocalParticipant)
           .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
 
       if (allEngaged) {
@@ -929,11 +947,12 @@ class CallKitOutgoingCallController extends GetxController
         return;
       } else {
         debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
-        toToast("${remoteUserNameMap[participants.first]} is engaged");
         return;
       }
     }
-    if(!isGroupCall.value && !isGroupOnGoingCallEnabled.value){
+
+    /// One - One call user engaged logic
+    if(!isGroupCall.value && !isGroupOnGoingCallEnabled.value) {
       debugPrint("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
       // Single call logic (non-group)
       toToast("${remoteUserNameMap[participants.first]} is engaged");
@@ -943,10 +962,7 @@ class CallKitOutgoingCallController extends GetxController
       }
       return;
     }
-
-
   }
-
 
   void switchCamera() async {
     debugPrint("[MirrorFly][OutgoingCallController] switchCamera start");
@@ -1318,8 +1334,12 @@ class CallKitOutgoingCallController extends GetxController
       return;
     } else {
 
-      MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) {
+      MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
         debugPrint("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
+        if (res.isSuccess) {
+          callerList.value = await getCurrentCallParticipants();
+          debugPrint("[MirrorFly][OutgoingCallController] after inviteParticipants callerList: ${callerList.map((e) => e.identity).toList()}");
+        }
       });
     }
   }
