@@ -253,7 +253,8 @@ class CallKitOutgoingCallController extends GetxController
 
   }
 
-  void rejected() {
+  void rejected() async{
+    await Future.delayed(const Duration(milliseconds: 500));
     toToast("User Busy");
     NavUtils.back();
   }
@@ -378,8 +379,8 @@ class CallKitOutgoingCallController extends GetxController
 
   void remoteUserIsEngaged() async {
     debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged");
-    toToast("${remoteUserName.value} is engaged");
     await Future.delayed(const Duration(milliseconds: 500));
+    toToast("${remoteUserName.value} is engaged");
     if (NavUtils.canPop) {
       NavUtils.back();
     }
