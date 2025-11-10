@@ -33,7 +33,7 @@ class CallKitOutgoingCallController extends GetxController
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
 
-  RxList<String?> callerUsersId = <String?>[].obs;
+  // RxList<String?> callerUsersId = <String?>[].obs;
 
   RxBool selectedDevice = false.obs;
 
@@ -93,7 +93,7 @@ class CallKitOutgoingCallController extends GetxController
   Future<void> _initCallArguments() async{
     try {
       debugPrint("[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
-      callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
+      // callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       groupId(NavUtils.arguments?["chatId"] as String? ?? "");
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
@@ -101,7 +101,7 @@ class CallKitOutgoingCallController extends GetxController
 
       debugPrint(
         "[MirrorFly][OutgoingCallController] "
-            "isIncoming: groupId $groupId incoming $isIncoming callType $callType callerUsersId $callerUsersId callMode $callMode ",
+            "isIncoming: groupId $groupId incoming $isIncoming callType $callType  callMode $callMode ",
       );
     } catch(e) {
       debugPrint("[MirrorFly][OutgoingCallController] Error initializing call arguments: $e");
@@ -167,7 +167,7 @@ class CallKitOutgoingCallController extends GetxController
     if (chatId.isEmpty) {
       debugPrint(
           "[MirrorFly][OutgoingCallController] #configureCallMode with remote participantId for "
-              "one to one call, callerUsersId: ${callerUsersId.map((e) => e).toList()}");
+              "one to one call");
     }
 
     // Validate for group call
@@ -396,7 +396,6 @@ class CallKitOutgoingCallController extends GetxController
        isVideoEnabled: ${isVideoEnabled.value}
        speakerOn: ${speakerOn.value}
        isOnGoingCallViewEnable: ${isOnGoingCallViewEnable.value}
-       callerUsersId: ${callerUsersId.join(', ')}
        selectedDevice: ${selectedDevice.value}
        cameraSwitch: ${cameraSwitch.value}
        isIncoming: ${isIncoming.value}
@@ -1426,7 +1425,7 @@ class CallKitOutgoingCallController extends GetxController
     isVideoEnabled(false);
     speakerOn(false);
     isOnGoingCallViewEnable(false);
-    callerUsersId(<String?>[]);
+    // callerUsersId(<String?>[]);
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
