@@ -740,9 +740,10 @@ class CallKitOutgoingCallController extends GetxController
     debugPrint("[MirrorFly] connecting.. called");
   }
 
-  void outGoingCallCalling() {
+  void outGoingCallCalling({ FlyCallStatusEvent? calling, List<String>? participantsId}) {
     debugPrint("[MirrorFly][OutgoingCallController] outgoing calling");
     callStatus("Calling...");
+    updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.calling);
   }
 
   void onConnected(List<String> participantIds) {

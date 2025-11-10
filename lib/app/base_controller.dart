@@ -131,7 +131,7 @@ class BaseController {
         case FlyCallStatusEvent.calling:
           /// Need to pass this condition to UI, to update the call status from "Trying to connect" to "Calling"
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent FlyCallStatusEvent.calling");
-          callKitOutgoingCallController.outGoingCallCalling();
+          callKitOutgoingCallController.outGoingCallCalling(participantsId: flyCallStatus.participantsIds,calling: FlyCallStatusEvent.calling);
           break;
         case FlyCallStatusEvent.reconnecting:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent reconnecting");
