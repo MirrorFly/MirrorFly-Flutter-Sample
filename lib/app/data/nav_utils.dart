@@ -18,6 +18,8 @@ class NavUtils {
   // Returns the current BuildContext using the navigator key.
   static BuildContext get currentContext => navigatorKey.currentContext!;
 
+  static NavigatorState? get _navigator => navigatorKey.currentState;
+
   // Returns the name of the current route using the MirrorFlyNavigationObserver.
   static String get currentRoute =>
       MirrorFlyNavigationObserver.current?.settings.name ?? '';
@@ -38,11 +40,13 @@ class NavUtils {
           ? MirrorFlyNavigationObserver.current!.settings.arguments
           : null;
 
-  static back({dynamic result}) {
-    return Navigator.pop(currentContext, result);
+  static Future<void> back({dynamic result}) async {
+    final nav = await _waitForNavigator();
+    if (nav.canPop()) nav.pop(result);
   }
 
-  static bool get canPop => Navigator.canPop(currentContext);
+  static bool get canPop => _navigator?.canPop() ?? false;
+
   static String _defaultRouteName = Navigator.defaultRouteName;
 
   static String get defaultRouteName => _defaultRouteName;
@@ -51,13 +55,13 @@ class NavUtils {
     _defaultRouteName = defaultRouteName;
   }
 
-  static offNamed(
+  static Future<dynamic> offNamed(
     String page, {
     dynamic arguments,
     int? id,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
-  }) {
+  }) async {
     if (preventDuplicates &&
         page == MirrorFlyNavigationObserver.current?.settings.name) {
       debugPrint("offNamed: $page return null");
@@ -68,35 +72,45 @@ class NavUtils {
       final uri = Uri(path: page, queryParameters: parameters);
       page = uri.toString();
     }
-    return Navigator.pushReplacementNamed(currentContext, page,
-        arguments: arguments);
+    // return Navigator.pushReplacementNamed(currentContext, page,
+    //     arguments: arguments);
+    final nav = await _waitForNavigator();
+    return nav.pushReplacementNamed(page, arguments: arguments);
   }
 
-  static offAllNamed(String newRouteName,
+  static Future<dynamic> offAllNamed(String newRouteName,
       {RoutePredicate? predicate,
       dynamic arguments,
       int? id,
-      Map<String, String>? parameters}) {
+      Map<String, String>? parameters}) async {
     if (parameters != null) {
       final uri = Uri(path: newRouteName, queryParameters: parameters);
       newRouteName = uri.toString();
     }
-    return Navigator.pushNamedAndRemoveUntil(
-        currentContext, newRouteName, predicate ?? (_) => false,
-        arguments: arguments);
+    // return Navigator.pushNamedAndRemoveUntil(
+    //     currentContext, newRouteName, predicate ?? (_) => false,
+    //     arguments: arguments);
+    final nav = await _waitForNavigator();
+    return nav.pushNamedAndRemoveUntil(
+      newRouteName,
+      predicate ?? (_) => false,
+      arguments: arguments,
+    );
   }
 
-  static popUntil(RoutePredicate predicate) {
-    return Navigator.popUntil(currentContext, predicate);
+  static Future<void> popUntil(RoutePredicate predicate) async {
+    // return Navigator.popUntil(currentContext, predicate);
+    final nav = await _waitForNavigator();
+    nav.popUntil(predicate);
   }
 
-  static toNamed(
+  static Future<dynamic> toNamed(
     String page, {
     dynamic arguments,
     int? id,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
-  }) {
+  }) async {
     if (preventDuplicates &&
         page == MirrorFlyNavigationObserver.current?.settings.name) {
       return null;
@@ -106,18 +120,27 @@ class NavUtils {
       final uri = Uri(path: page, queryParameters: parameters);
       page = uri.toString();
     }
-    return Navigator.pushNamed(currentContext, page, arguments: arguments);
+    // return Navigator.pushNamed(currentContext, page, arguments: arguments);
+    final nav = await _waitForNavigator();
+    return nav.pushNamed(page, arguments: arguments);
   }
 
-  static to(
+  static Future<dynamic> to(
     dynamic page, {
     dynamic arguments,
     int? id,
-  }) {
-    return Navigator.push(
-      currentContext,
+  }) async {
+    // return Navigator.push(
+    //   currentContext,
+    //   MaterialPageRoute<void>(
+    //     builder: (BuildContext context) => page,
+    //   ),
+    // );
+    final nav = await _waitForNavigator();
+    return nav.push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => page,
+        builder: (_) => page,
+        settings: RouteSettings(arguments: arguments),
       ),
     );
   }
@@ -126,7 +149,15 @@ class NavUtils {
       DialogUtils.isDialogOpen() || isModalBottomSheetOpen();
 
   static bool isModalBottomSheetOpen() {
-    var currentRoute = ModalRoute.of(currentContext);
+    final context = currentContext;
+    var currentRoute = ModalRoute.of(context);
     return currentRoute is ModalBottomSheetRoute;
+  }
+
+  static Future<NavigatorState> _waitForNavigator() async {
+    while (_navigator == null) {
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    return _navigator!;
   }
 }

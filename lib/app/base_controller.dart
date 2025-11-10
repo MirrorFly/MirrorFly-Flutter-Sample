@@ -64,6 +64,9 @@ class BaseController {
       final flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
 
+      debugPrint(
+          "[MirrorFly][BaseController] flyCallStatus event ${event.toJson()} flyCallStatusEvent $flyCallStatusEvent");
+
       // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
@@ -72,6 +75,8 @@ class BaseController {
         callerId = flyCallStatus.participantsIds.first;
         callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
         debugPrint("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType");
+      }else{
+        debugPrint("[MirrorFly][BaseController] flyCallStatusEvent $flyCallStatusEvent not incoming call");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
@@ -171,7 +176,7 @@ class BaseController {
     ///
     MirrorFlyCallKit.flyCallAction.listen((event) {
 
-      debugPrint("[MirrorFly] [BaseController] flyCallAction event ${event.toJson()}");
+      debugPrint("[MirrorFly][BaseController] flyCallAction event ${event.toJson()}");
 
       //
       final FlyCallAction flyCallAction = event;
@@ -192,7 +197,7 @@ class BaseController {
           );
         } else {
           debugPrint(
-              "[MirrorFly] [BaseController] ERROR: answerCall received but callerId/callType not set");
+              "[MirrorFly][BaseController] ERROR: answerCall received but callerId/callType not set");
         }
         return;
       }
