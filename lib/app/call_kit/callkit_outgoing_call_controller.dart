@@ -689,6 +689,7 @@ class CallKitOutgoingCallController extends GetxController
         toToast("Call timed out for $username");
         checkParticipantForCallMode();
       } else {
+        callerList.refresh();
         debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
     }
