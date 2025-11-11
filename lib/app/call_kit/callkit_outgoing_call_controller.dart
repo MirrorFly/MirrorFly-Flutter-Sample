@@ -125,24 +125,16 @@ class CallKitOutgoingCallController extends GetxController
   void onReady() async {
     initAudioRouting();
 
-    if (isGroupCall.value) {
+    if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
       debugPrint(
           "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForGroupCall");
       await getRemoteAndLocalUserNameForGroupCall();
+      await getChatNameForGroupCall(chatId: groupId.value);
       await getGroupCallTitle();
     } else {
       debugPrint(
           "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForOneToOneCall");
       await getRemoteAndLocalUserNameForOneToOneCall();
-    }
-
-    if (isGroupCall.value == false && isGroupOnGoingCallEnabled.value) {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] onReady getChatNameForGroupCall");
-      await getChatNameForGroupCall(chatId: groupId.value);
-    } else {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] onReady not getChatNameForGroupCall");
     }
 
     getLogsOfLocalValues();
@@ -756,7 +748,7 @@ class CallKitOutgoingCallController extends GetxController
         toToast("Call timed out for $username");
         checkParticipantForCallMode();
       } else {
-        callerList.refresh();
+        // callerList.refresh();
         debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
     }
