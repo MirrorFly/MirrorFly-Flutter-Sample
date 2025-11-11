@@ -44,12 +44,6 @@ class CallKitOutgoingCallController extends GetxController
   RxString cameraPosition = CameraType.front.obs;
   RxBool isRemoteVideoMuted = true.obs;
 
-  /// For one to one call
-  RxString remoteUserName = "".obs;
-
-  /// For both the calls
-  RxString localUserName = "".obs;
-
   /// For group call handling
   RxBool isGroupCall = false.obs;
   RxBool isGroupOnGoingCallEnabled = false.obs;
@@ -90,9 +84,10 @@ class CallKitOutgoingCallController extends GetxController
     super.onInit();
   }
 
-  Future<void> _initCallArguments() async{
+  Future<void> _initCallArguments() async {
     try {
-      debugPrint("[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
       // callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       groupId(NavUtils.arguments?["chatId"] as String? ?? "");
@@ -103,8 +98,9 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] "
             "isIncoming: groupId $groupId incoming $isIncoming callType $callType  callMode $callMode ",
       );
-    } catch(e) {
-      debugPrint("[MirrorFly][OutgoingCallController] Error initializing call arguments: $e");
+    } catch (e) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Error initializing call arguments: $e");
     }
   }
 
@@ -129,15 +125,25 @@ class CallKitOutgoingCallController extends GetxController
   void onReady() async {
     initAudioRouting();
 
-   await getUserNameForOneToOneCall(
-        remoteUserId: getRemoteParticipantsId().first,
-        localUserId: getLocalParticipantId());
+    if (isGroupCall.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForGroupCall");
+      await getRemoteAndLocalUserNameForGroupCall();
+      await getGroupCallTitle();
+    } else {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForOneToOneCall");
+      await getRemoteAndLocalUserNameForOneToOneCall();
+    }
 
-    await getRemoteAndLocalUserNameForGroupCall();
-
-    await getChatNameForGroupCall(chatId: groupId.value);
-
-    await getGroupCallTitle();
+    if (isGroupCall.value == false && isGroupOnGoingCallEnabled.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onReady getChatNameForGroupCall");
+      await getChatNameForGroupCall(chatId: groupId.value);
+    } else {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] onReady not getChatNameForGroupCall");
+    }
 
     getLogsOfLocalValues();
     super.onReady();
@@ -149,19 +155,60 @@ class CallKitOutgoingCallController extends GetxController
   Future<List<FlyCallParticipant>> getCurrentCallParticipants() async {
     final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
 
-    debugPrint("[MirrorFly][OutgoingCallController] Current call participants: ${participants?.length},"
-        " participants: ${participants?.map((p) => p.identity).toList()}");
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] Current call participants: ${participants
+            ?.length},"
+            " participants: ${participants?.map((p) => p.identity).toList()}");
 
-    callerList.value = participants ?? [];
+    if (participants != null && participants.isNotEmpty) {
+      debugPrint(
+        "[MirrorFly][OutgoingCallController] getCurrentCallParticipants: fetched ${participants
+            .length} "
+            "participants → ${participants.map((e) => e.identity).toList()}",
+      );
+
+      final existingIds = callerList.map((e) => e.identity).toSet();
+      debugPrint(
+        "[MirrorFly][OutgoingCallController] Existing callerList (${callerList
+            .length}): ${existingIds.toList()}",
+      );
+
+      for (var p in participants) {
+        if (!existingIds.contains(p.identity)) {
+          callerList.add(p);
+          debugPrint(
+            "[MirrorFly][OutgoingCallController] ➕ Added new participant: ${p
+                .identity}",
+          );
+        } else {
+          debugPrint(
+            "[MirrorFly][OutgoingCallController]️ Skipped duplicate participant: ${p
+                .identity}",
+          );
+        }
+      }
+
+      callerList.refresh();
+      debugPrint(
+        "[MirrorFly][OutgoingCallController] callerList after merge (${callerList
+            .length}): ${callerList.map((e) => e.identity).toList()}",
+      );
+    } else {
+      debugPrint(
+        "[MirrorFly][OutgoingCallController] getCurrentCallParticipants: No participants fetched (null or empty)",
+      );
+    }
+
     return participants ?? []; // Handle null safely
   }
 
   ///
   /// Verify the call mode
   ///
-  Future<void> configureCallMode({required String callMode, required String chatId}) async {
-
-    debugPrint("[MirrorFly][OutgoingCallController] #configureCallMode with callMode: $callMode, chatId: $chatId");
+  Future<void> configureCallMode(
+      {required String callMode, required String chatId}) async {
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] #configureCallMode with callMode: $callMode, chatId: $chatId");
 
     // Consider as one to one call
     if (chatId.isEmpty) {
@@ -173,21 +220,46 @@ class CallKitOutgoingCallController extends GetxController
     // Validate for group call
     final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY";
     isGroupCall.value = yes;
-    if(yes){
-      debugPrint("[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: true");
+    if (yes) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: true");
 
-      if(chatId.isEmpty && callMode == "ONE-TO-MANY") {
+      if (chatId.isEmpty && callMode == "ONE-TO-MANY") {
         debugPrint(
             "[MirrorFly][OutgoingCallController] #configureCallMode with chatId for group call: $chatId");
         getRemoteAndLocalUserNameForGroupCall();
         isCallModeChangedToOneToMany(true);
       }
       getCallTitleForOneToManyCall();
-
     }
 
     debugPrint(
-        "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall.value}");
+        "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall
+            .value}");
+  }
+
+  Future<void> getRemoteAndLocalUserNameForOneToOneCall() async {
+    if (isGroupCall.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
+      return;
+    }
+
+    for (var user in callerList) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
+      ProfileDetails profile = await getProfileDetails(
+          validId(userId: user.identity, isGroup: false));
+      String username = profile.name ?? profile.nickName ?? "Unknown";
+      remoteUserNameMap[user.identity] =
+          user.isLocalParticipant ? "You" : username;
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
+    }
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, "
+            "remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
+    return;
   }
 
   ///
@@ -200,15 +272,57 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
     for (var user in callerList) {
-      debugPrint("[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
-        ProfileDetails profile = await getProfileDetails(validId(userId: user.identity,isGroup: false));
-        String username = profile.name ?? profile.nickName ?? "Unknown";
-        remoteUserNameMap[user.identity] = user.isLocalParticipant ? "You" : username;
-        debugPrint(
-            "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Getting user name for: ${user
+              .identity}, isLocal: ${user.isLocalParticipant}");
+      ProfileDetails profile = await getProfileDetails(
+          validId(userId: user.identity, isGroup: false));
+      String username = profile.name ?? profile.nickName ?? "Unknown";
+      remoteUserNameMap[user.identity] =
+      user.isLocalParticipant ? "You" : username;
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Remote User Name for ${user
+              .identity}: $username");
     }
-    debugPrint("[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
+            .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
+  }
+
+  ///
+  /// Get remote user name for one-to-one call (remote participant)
+  ///
+  String getOneToOneCallRemoteUserName() {
+    if (isGroupCall.value) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] #getOneToOneCallRemoteUserName Not a one-to-one call");
+      return "";
+    }
+
+    // Find first non-local participant
+    try {
+
+      if (remoteUserNameMap.isEmpty) {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] Remote User name map is empty");
+        return "";
+      }
+
+      final remoteEntry = remoteUserNameMap.entries.firstWhere(
+            (entry) => entry.key != getLocalParticipantId(),
+      );
+
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Remote User -> ID: ${remoteEntry
+              .key}, Name: ${remoteEntry.value}");
+
+      return remoteEntry.value;
+    } catch (e) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] Remote User name error: $e");
+      return "";
+    }
   }
 
   String validId({required String userId,required bool isGroup}) {
@@ -216,53 +330,6 @@ class CallKitOutgoingCallController extends GetxController
       return userId.contains("@") ? userId : "$userId@mix.xmpp-uikit-qa.contus.us";
     }else{
       return userId.contains("@") ? userId : "$userId@xmpp-uikit-qa.contus.us";
-    }
-  }
-
-
-  ///
-  /// Get user name of remote user for one to one call
-  ///
-  Future<void> getUserNameForOneToOneCall({
-    required String remoteUserId,
-    required String localUserId,
-  }) async {
-    const tag = "[MirrorFly][OutgoingCallController]";
-
-    try {
-      localUserId = "$localUserId@xmpp-uikit-qa.contus.us";
-      remoteUserId = "$remoteUserId@xmpp-uikit-qa.contus.us";
-
-      debugPrint("$tag #getUserNameForOneToOneCall called");
-      debugPrint("$tag Local User ID  → $localUserId");
-      debugPrint("$tag Remote User ID → $remoteUserId");
-
-      if (isGroupCall.value) {
-        debugPrint("$tag Skipping — not a one-to-one call");
-        return;
-      }
-
-      // ---- Fetch remote profile ----
-      debugPrint("$tag Fetching remote user profile...");
-      final remoteProfile = await getProfileDetails(remoteUserId);
-
-      final remoteProfileName = remoteProfile.name ?? remoteProfile.nickName ?? "Unknown";
-      remoteUserName.value = remoteProfileName;
-
-      debugPrint("$tag Remote user name set → $remoteProfileName");
-
-      // ---- Fetch local profile ----
-      debugPrint("$tag Fetching local user profile...");
-      final localProfile = await getProfileDetails(localUserId);
-
-      final localProfileName =
-          localProfile.name ?? localProfile.nickName ?? "Unknown";
-      localUserName.value = localProfileName;
-
-      debugPrint("$tag Local user name set → $localProfileName");
-
-    } catch (e, stack) {
-      debugPrint("$tag Error in #getUserNameForOneToOneCall: $e");
     }
   }
 
@@ -402,8 +469,6 @@ class CallKitOutgoingCallController extends GetxController
        isManualDeviceSelected: ${isManualDeviceSelected.value}
        cameraPosition: ${cameraPosition.value}
        isRemoteVideoMuted: ${isRemoteVideoMuted.value}
-       remoteUserName: ${remoteUserName.value}
-       localUserName: ${localUserName.value}
        isGroupCall: ${isGroupCall.value}
        chatNameForGroupCall: ${chatNameForGroupCall.value}
        remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}
@@ -484,6 +549,7 @@ class CallKitOutgoingCallController extends GetxController
           final index = callerList.indexWhere((p) => p.identity == id);
 
           if (index != -1) {
+            debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList updating existing participant");
             // Participant exists — update status
             final existing = callerList[index];
             callerList[index] = FlyCallParticipant(
@@ -494,6 +560,7 @@ class CallKitOutgoingCallController extends GetxController
             );
           } else {
             // Participant not found — add new
+            debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList adding new participant");
             callerList.add(
               FlyCallParticipant(
                 identity: id,
@@ -906,55 +973,64 @@ class CallKitOutgoingCallController extends GetxController
     closeDialog();
   }
 
+  ///
+  /// Remote user engaged handling
+  ///
   void remoteUserIsEngaged({required List<String> participants}) async {
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged with participants: $participants");
+
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged with participants: $participants,"
+        "isGroupCall: ${isGroupCall.value} & isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
 
     if (callerList.isEmpty) {
       debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: No participants found");
       return;
     }
 
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: Checking current call user list, items: ${callerList.map((p) => p.identity).toList()}");
+    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: "
+        "Checking current call user list, items: ${callerList.map((p) => p.identity).toList()}");
 
     debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value},"
         " participantsList: ${callerList.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
 
-    if (callerList.firstWhere((e) => e.identity == participants.first).flyCallStatusEvent != FlyCallStatusEvent.engaged) {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
-      callerList.removeWhere((e) => e.identity == participants.first);
-      final String name = remoteUserNameMap[participants.first] ?? participants.first;
-      toToast("$name is engaged");
-      return;
-    } else {
-      debugPrint(
-          "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is engaged already");
-    }
-
     if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
-      // Check if all remote participants are engaged
-      bool allEngaged = callerList
-          .where((p) => !p.isLocalParticipant)
-          .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
-
-      if (allEngaged) {
-        debugPrint("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
-        toToast("All users are engaged");
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (NavUtils.canPop) {
-          NavUtils.back();
-        }
-        return;
-      } else {
-        debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
-        return;
-      }
-    }
-
-    /// One - One call user engaged logic
-    if(!isGroupCall.value && !isGroupOnGoingCallEnabled.value) {
+      /// One - Many call user engaged logic
       debugPrint("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
-      // Single call logic (non-group)
+
+      if (callerList.firstWhere((e) => e.identity == participants.first).flyCallStatusEvent != FlyCallStatusEvent.engaged) {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
+        callerList.removeWhere((e) => e.identity == participants.first);
+        final String name = remoteUserNameMap[participants.first] ?? participants.first;
+        toToast("$name is engaged");
+
+        // Check if all remote participants are engaged
+        bool allEngaged = callerList
+            .where((p) => !p.isLocalParticipant)
+            .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
+
+        if (allEngaged) {
+          debugPrint("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
+          toToast("All users are engaged");
+          await Future.delayed(const Duration(milliseconds: 500));
+          if (NavUtils.canPop) {
+            NavUtils.back();
+          }
+          return;
+        } else {
+          /// Do not navigate back just to show toast and remove the local maintaining user list
+          debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
+          return;
+        }
+      } else {
+        debugPrint(
+            "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is engaged already");
+      }
+    } else {
+      /// One - One call user engaged logic
+      debugPrint(
+        "[MirrorFly][OutgoingCallController] single user engaged logic,"
+            " remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
+      );
       toToast("${remoteUserNameMap[participants.first]} is engaged");
       await Future.delayed(const Duration(milliseconds: 500));
       if (NavUtils.canPop) {
@@ -1182,8 +1258,9 @@ class CallKitOutgoingCallController extends GetxController
 
   void onVideoCallSwitchTimeOut() {
     closeDialog();
-    toToast(getTranslated("noResponseFrom")
-        .replaceFirst("%d", remoteUserName.value));
+    final String remoteId = getRemoteParticipantsId().first ?? "";
+    final remoteUserName = remoteUserNameMap[remoteId] ?? "";
+    toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
   }
 
   ///
@@ -1231,10 +1308,16 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void showIncomingCallSwitchRequestDialog() {
+    final String remoteParticipantId = getRemoteParticipantsId().first;
+    final remoteUserName = remoteUserNameMap[remoteParticipantId] ?? "";
+
+    debugPrint("[MirrorFly][OutgoingCallController] showIncomingCallSwitchRequestDialog remoteParticipantId: $remoteParticipantId,"
+        " remoteUserName: $remoteUserName");
+
     DialogUtils.showAlert(
         dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("videoSwitchRequestedMessage")
-            .replaceFirst("%d", remoteUserName.value),
+            .replaceFirst("%d", remoteUserName),
         actions: [
           TextButton(
               style: AppStyleConfig.dialogStyle.buttonStyle,
@@ -1337,7 +1420,7 @@ class CallKitOutgoingCallController extends GetxController
       MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
         debugPrint("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
-          callerList.value = await getCurrentCallParticipants();
+          // callerList.value = await getCurrentCallParticipants();
           debugPrint("[MirrorFly][OutgoingCallController] after inviteParticipants callerList: ${callerList.map((e) => e.identity).toList()}");
         }
       });
@@ -1452,7 +1535,6 @@ class CallKitOutgoingCallController extends GetxController
     isIncoming(false);
     cameraPosition(CameraType.front);
     isRemoteVideoMuted(false);
-    localUserName("");
     isLocalTracksPublished(false);
     isRemoteTracksPublished(false);
     isManualDeviceSelected(false);
@@ -1461,8 +1543,6 @@ class CallKitOutgoingCallController extends GetxController
     callerList.clear();
 
     remoteUserNameMap({});
-    remoteUserName("");
-    localUserName("");
     isGroupCall(false);
     chatNameForGroupCall("");
     isGroupOnGoingCallEnabled(false);

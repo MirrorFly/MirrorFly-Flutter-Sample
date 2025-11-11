@@ -124,7 +124,7 @@ class CallKitOutgoingCallView
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: Text(
-                            controller.remoteUserName.value,
+                            controller.getOneToOneCallRemoteUserName(),
                             style: const TextStyle(
                               overflow: TextOverflow.ellipsis,
                               color: Colors.white,
@@ -139,7 +139,7 @@ class CallKitOutgoingCallView
                     if (isOngoing) ...[
                       Center(
                         child: Text(
-                          controller.remoteUserName.value,
+                          controller.getOneToOneCallRemoteUserName(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
