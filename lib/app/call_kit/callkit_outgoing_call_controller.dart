@@ -8,6 +8,7 @@ import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../app_style_config.dart';
 import '../common/app_localizations.dart';
@@ -640,7 +641,6 @@ class CallKitOutgoingCallController extends GetxController
   ///
 
   void onVideoCallSwitchAccept() {
-    closeDialog();
     onVideoCallSwitchRequestAccepted();
     processCallSwitchUI();
   }
@@ -699,12 +699,31 @@ class CallKitOutgoingCallController extends GetxController
     debugPrint("[MirrorFly][OutgoingCallController][DEBUG] showIncomingCallSwitchRequestDialog called");
 
     closeDialog();
-
     try {
+      await _player.setAudioContext(
+        AudioContext(
+          android: const AudioContextAndroid(
+            isSpeakerphoneOn: true,
+            stayAwake: false,
+            contentType: AndroidContentType.sonification,
+            usageType: AndroidUsageType.voiceCommunicationSignalling,
+            audioFocus: AndroidAudioFocus.none,
+          ),
+        ),
+      );
       await _player.setVolume(1.0);
       await _player.setReleaseMode(ReleaseMode.loop);
-      await _player.play(AssetSource('sounds/reconnecting_ringtone.mp3'));
-      _isPlaying = true;
+      await _player.play(AssetSource('sounds/reconnecting.mp3'));
+      await Future.delayed(const Duration(milliseconds: 300));
+      final state = _player.state;
+      debugPrint("[MirrorFly][OutgoingCallController] Player state after play(): $state");
+
+      if (state == PlayerState.playing) {
+        _isPlaying = true;
+        debugPrint("[MirrorFly][OutgoingCallController]  Ringtone is playing!");
+      } else {
+        debugPrint("[MirrorFly][OutgoingCallController]  Not playing, state=$state");
+      }
       debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
     } catch (e) {
       debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
