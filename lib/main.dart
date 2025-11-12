@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -38,43 +39,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'app/routes/route_settings.dart';
 
-final navigatorKey = GlobalKey<NavigatorState>();
-
-
-/*@pragma('vm:entry-point')
-Future<void> pipMain() async {
-  debugPrint("vm:entry-point : pipMain");
-  WidgetsFlutterBinding.ensureInitialized();
-  await SessionManagement.onInit();
-  if (!kIsWeb) {
-    await Firebase.initializeApp();
-  }
-  Get.put<MainController>(MainController());
-  // final PiPStatusInfo? result = await FlPiP().isActive;
-  // debugPrint(" FlPiP().isActive : ${result?.isCreateNewEngine}");
-  runApp(ClipRRect(
-    borderRadius: const BorderRadius.all(Radius.circular(13)),
-    child: MaterialApp(
-      navigatorKey: navigatorKey,
-      theme: MirrorFlyAppTheme.theme,
-      debugShowCheckedModeBanner: false,
-      locale: AppLocalizations.defaultLocale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      navigatorObservers: [
-        MirrorFlyNavigationObserver()
-      ],
-      home: PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle,),
-    ),
-  ));
-  // main();
-}*/
-
+// final navigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = Get.key;
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -89,6 +55,19 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+@pragma('vm:entry-point')
+Future<void> mirrorFlyForegroundEntrypoint() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await SessionManagement.onInit();
+  await MirrorFlyCallKit.ensureHeadlessRegistered(
+    foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
+  );
+  runApp(const MyApp());
+}
+
+
+
 /// check app opened from notification
 NotificationAppLaunchDetails? notificationAppLaunchDetails;
 
@@ -102,6 +81,11 @@ late DashboardViewArguments dashboardViewArg;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
+
+  await MirrorFlyCallKit.ensureHeadlessRegistered(
+    foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
+  );
+
   if (!kIsWeb) {
     await Firebase.initializeApp();
     if (Platform.isAndroid) {
@@ -155,7 +139,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
 
-    isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+    isOnGoingCall = Constants.liveKitEnabled ? MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
     ///
     /// This method will give response from Native Android, iOS will return empty by default.
@@ -193,7 +177,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
           /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
 
-          isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+          isOnGoingCall = Constants.liveKitEnabled ? MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
           ///
           /// This method will give response from Native Android, iOS will return empty by default.
@@ -229,7 +213,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return PiPMaterialApp(
       title: "MirrorFly",
-      navigatorKey: navigatorKey,
+      navigatorKey: Get.key,
       theme: MirrorFlyAppTheme.theme,
       debugShowCheckedModeBanner: false,
       locale: AppLocalizations.defaultLocale,
@@ -241,6 +225,7 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       navigatorObservers: [
+        GetObserver((_) {}, Get.routing),
         MirrorFlyNavigationObserver()
       ],
       initialRoute: SessionManagement.getEnablePin() ? Routes.pin : getInitialRoute(),

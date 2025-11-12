@@ -61,6 +61,13 @@ class SettingsController extends GetxController {
           }
         });
       } else {
+        MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
+          if(response.isSuccess){
+            debugPrint("[MirrorFlyCallKit] onLogout - success");
+          }else{
+            debugPrint("[MirrorFlyCallKit] onLogout - failed");
+          }
+        });
         debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
       }
       Mirrorfly.logoutOfChatSDK(flyCallBack: (response){

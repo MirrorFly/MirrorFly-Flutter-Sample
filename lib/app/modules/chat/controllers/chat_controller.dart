@@ -20,7 +20,7 @@ import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_cont
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyResult;
+import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallCfResponse, FlyResult, MirrorFlyCallKit;
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -4066,10 +4066,10 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
-          if(isAudioRecording.value == Constants.audioRecording){
+                 if(isAudioRecording.value == Constants.audioRecording){
             stopRecording();
           }
-           await Mirrorfly.makeLiveKitAudioCall(
+            await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
@@ -4127,7 +4127,7 @@ class ChatController extends FullLifeCycleController
             if(isAudioRecording.value == Constants.audioRecording){
               stopRecording();
             }
-            await Mirrorfly.makeLiveKitVideoCall(
+            await MirrorFlyCallKit.makeVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
                 flyResult: (FlyResult response) {
