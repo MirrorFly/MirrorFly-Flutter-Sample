@@ -145,7 +145,7 @@ class BaseController {
         case FlyCallStatusEvent.disconnected:
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent disconnect");
           callKitOutgoingCallController.disconnectCall(
-              userId: flyCallStatus.participantsIds.first,
+              userIds: flyCallStatus.participantsIds,
               reason: flyCallStatus.reason ?? '');
           break;
         case FlyCallStatusEvent.declined:

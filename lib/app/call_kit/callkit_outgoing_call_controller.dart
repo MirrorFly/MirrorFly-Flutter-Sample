@@ -898,7 +898,25 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Disconnect call
   ///
-  void disconnectCall({required String userId, required String reason}) {
+  void disconnectCall({required List<String> userIds, required String reason}) {
+
+    if (userIds.isEmpty) {
+      debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: No userIds provided, assuming the overall call ended.");
+      _resetValues();
+      _stopTimer();
+      closeDialog();
+      if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+        callStatus("Disconnected");
+        reason == "reconnectAttemptsExceeded"
+            ? toToast("Reconnection attempt exceeded")
+            : toToast("Call Disconnected");
+        NavUtils.back();
+      }
+      return;
+    }
+
+    final String userId = userIds.first;
+
     debugPrint("[MirrorFly][OutgoingCallController] disconnectCall invoked with userId: $userId, reason: $reason");
 
     if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
