@@ -469,7 +469,7 @@ class BaseController {
               "[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
           if (Get.isRegistered<CallKitOutgoingCallController>()) {
             final controller = Get.find<CallKitOutgoingCallController>();
-            controller.onCallModeChanged(flyCallAction.flyCallModeChanged);
+            controller.onParticipantListUpdated();
           }
       }
       });

@@ -1506,41 +1506,38 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  ///
-  ///
-  void onCallModeChanged(FlyCallModeChanged? callMode) async {
+  void onParticipantListUpdated() async {
     debugPrint(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode: ${callMode?.mode.toString()}");
-    if (callMode == null) {
+        "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode");
+    final preCallUserListCount = callerList.length;
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged preCallUserListCount: $preCallUserListCount");
+    await getCurrentCallParticipants();
+
+    debugPrint(
+        "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
+
+    if (preCallUserListCount != callerList.length) {
       debugPrint(
-          "[MirrorFly][OutgoingCallController] onCallModeChanged: callMode is null");
+          "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
       return;
     }
 
-    final Map<String, dynamic> mode = callMode.toJson();
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged mode: $mode");
+    await configureCallMode(
+        callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
+        chatId: groupId.value);
 
-    final String modeRaw = mode['mode'] ?? '';
-    final bool isOneToOne = (mode['mode'] ?? '') == "ONE-TO-ONE";
+    debugPrint("[MirrorFly][OutgoingCallController] onCallModeChanged updated "
+        "local callMode: ${callMode.value}, isGroupCall: ${isGroupCall.value} "
+        "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
 
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged modeRaw: $modeRaw, isOneToOne: $isOneToOne");
-    await configureCallMode(callMode: modeRaw, chatId: groupId.value);
-
-    debugPrint(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged updated "
-            "local callMode: ${this.callMode.value}, isGroupCall: ${isGroupCall.value} "
-            "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
-
-    isGroupOnGoingCallEnabled(!isOneToOne);
-    isCallModeChangedToOneToMany(!isOneToOne);
+    isGroupOnGoingCallEnabled(!(callerList.length <= 2));
+    isCallModeChangedToOneToMany(!(callerList.length <= 2));
 
     debugPrint(
         "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
-            " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
-            "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
-    await getCurrentCallParticipants();
+        " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
+        "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
     await getRemoteAndLocalUserNameForGroupCall();
     getCallTitleForOneToManyCall();
   }
