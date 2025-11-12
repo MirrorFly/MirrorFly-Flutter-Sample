@@ -29,7 +29,7 @@ import CallKit
     
     let tag = "#Mirrorfly call"
     
-    private lazy var sharedEngine: FlutterEngine = {
+    /*private lazy var sharedEngine: FlutterEngine = {
         if let reused = MirrorFlyHeadlessBridge.sharedEngine() {
             NSLog("[MirrorFly] Engine: Re-Using shared engine")
             return reused
@@ -39,18 +39,18 @@ import CallKit
         engine.run()
         GeneratedPluginRegistrant.register(with: engine)
         return engine
-    }()
+    }()*/
 
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
       
-              let controller = FlutterViewController(engine: sharedEngine, nibName: nil, bundle: nil)
+              /*let controller = FlutterViewController(engine: sharedEngine, nibName: nil, bundle: nil)
               window = UIWindow(frame: UIScreen.main.bounds)
               window?.rootViewController = controller
-              window?.makeKeyAndVisible()
-//      let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
+              window?.makeKeyAndVisible()*/
+      let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
            
       GMSServices.provideAPIKey(googleApiKey)
 
@@ -70,7 +70,7 @@ import CallKit
       NSLog("#Mirrorfly licenseKey \(licenseKey)")
       NSLog("#Mirrorfly containerID \(containerID)")
 
-//      GeneratedPluginRegistrant.register(with: self)
+      GeneratedPluginRegistrant.register(with: self)
       
       return true
   }
