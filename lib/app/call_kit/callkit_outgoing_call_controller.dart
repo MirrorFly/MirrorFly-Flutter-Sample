@@ -62,9 +62,6 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isRemoteTracksPublished = false.obs;
   Timer? timer;
 
-  RxBool isLocalUserReconnecting = false.obs;
-  RxBool isRemoteUserReconnecting = false.obs;
-
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
@@ -573,62 +570,92 @@ class CallKitOutgoingCallController extends GetxController
 
   }
 
-
   /// Handle reconnecting state for local and remote user
-  void reconnecting({required List<String> participantId}) {
-    for (final id in participantId) {
-      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnecting event for id: $id");
-      final isLocal = isSelfId(id: id);
-
-      if (isLocal && isLocalUserReconnecting.value) {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Local user already reconnecting of id: $id");
-        return;
-      }
-
-      if (!isLocal && isRemoteUserReconnecting.value) {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user already reconnecting of id: $id");
-        return;
-      }
-
-      if (isLocal) {
-        isLocalUserReconnecting.value = true;
-        callStatus("Reconnecting...");
-      } else {
-        isRemoteUserReconnecting.value = true;
-      }
-
-      callTryStatus("Reconnecting...");
-      break;
-    }
-  }
-
-  void reconnected({required List<String> participantIds}) {
-    debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event for participantId: $participantIds");
+  void reconnecting({required List<String> participantIds}) {
+    debugPrint(
+        "[MirrorFly] #CallKitOutGoingController → Reconnecting event for participantIds: $participantIds");
 
     if (participantIds.isEmpty) {
-      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event with empty participantId");
+      debugPrint(
+          "[MirrorFly] #CallKitOutGoingController → Reconnecting event with empty participantIds");
       return;
     }
 
     for (final id in participantIds) {
-      debugPrint("[MirrorFly] #CallKitOutGoingController Reconnected event for id: $id");
-      final isLocal = isSelfId(id: id);
+      debugPrint(
+          "[MirrorFly] #CallKitOutGoingController → Reconnecting event for id: $id");
 
-      if (isLocal && isLocalUserReconnecting.value) {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Local user reconnected of id: $id");
-        isLocalUserReconnecting.value = false;
-        callStatus("Connected");
-      } else {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Local user is not in reconnecting state");
-      }
+      try {
+        final index = callerList.indexWhere((e) => e.identity == id);
+        if (!index.isNegative) {
+          final target = callerList[index];
+          if (target.isReconnecting == true) {
+            debugPrint(
+                "[MirrorFly] → Participant $id is already marked as reconnecting");
+          } else {
+            callerList[index] = target.copyWith(isReconnecting: true);
+            debugPrint("[MirrorFly] → Updated participant $id as reconnecting");
+          }
 
-      if (!isLocal && isRemoteUserReconnecting.value) {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user reconnected of id: $id");
-        isRemoteUserReconnecting.value = false;
-      }else {
-        debugPrint("[MirrorFly] #CallKitOutGoingController Remote user is not in reconnecting state");
+          if (target.isLocalParticipant) {
+            callStatus("Reconnecting...");
+            callTryStatus("Reconnecting...");
+          }
+        } else {
+          debugPrint(
+              "[MirrorFly] → No participant found in callerList for id: $id");
+        }
+      } catch (e) {
+        debugPrint(
+            "[MirrorFly] → Error while updating reconnecting state for $id: $e");
       }
     }
+    callerList.refresh();
+  }
+
+  /// Handle reconnected state for local and remote user
+  void reconnected({required List<String> participantIds}) {
+    debugPrint(
+        "[MirrorFly] #CallKitOutGoingController → Reconnected event for participantIds: $participantIds");
+
+    if (participantIds.isEmpty) {
+      debugPrint(
+          "[MirrorFly] #CallKitOutGoingController → Reconnected event with empty participantIds");
+      return;
+    }
+
+    for (final id in participantIds) {
+      debugPrint(
+          "[MirrorFly] #CallKitOutGoingController → Reconnected event for id: $id");
+
+      try {
+        final index = callerList.indexWhere((e) => e.identity == id);
+        if (!index.isNegative) {
+          final target = callerList[index];
+
+          if (target.isReconnecting == true) {
+            callerList[index] = target.copyWith(isReconnecting: false);
+            debugPrint("[MirrorFly] → Participant $id marked as reconnected");
+          } else {
+            debugPrint(
+                "[MirrorFly] → Participant $id was not in reconnecting state");
+          }
+
+          // Local participant UI update
+          if (target.isLocalParticipant) {
+            callStatus("Connected");
+            callTryStatus("Connected");
+          }
+        } else {
+          debugPrint(
+              "[MirrorFly] → No participant found in callerList for id: $id");
+        }
+      } catch (e) {
+        debugPrint(
+            "[MirrorFly] → Error while updating reconnected state for $id: $e");
+      }
+    }
+    callerList.refresh();
   }
 
   ///
@@ -699,6 +726,23 @@ class CallKitOutgoingCallController extends GetxController
         .toList();
     debugPrint("[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
     return remoteIds;
+  }
+
+  ///
+  String getRemoteParticipantIdForOneToOneCall() {
+    try {
+      final String remoteId = callerList
+          .where((p) => !p.isLocalParticipant)
+          .map((p) => p.identity)
+          .first;
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantIdForOneToOneCall: $remoteId");
+      return remoteId;
+    } catch (e) {
+      debugPrint(
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantIdForOneToOneCall error: $e");
+      return "";
+    }
   }
 
   ///

@@ -65,8 +65,14 @@ class CallKitOutgoingCallView
 
                   // Reconnecting overlay widget
                   Visibility(
-                    visible: controller.isRemoteUserReconnecting.value,
-                    child: Positioned.fill(
+                          visible: controller.callerList
+                                  .firstWhere((e) =>
+                                      e.identity ==
+                                      controller
+                                          .getRemoteParticipantIdForOneToOneCall())
+                                  .isReconnecting ??
+                              false,
+                          child: Positioned.fill(
                       child: Container(
                         color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
                         child: const Center(
@@ -472,7 +478,10 @@ class CallKitOutgoingCallView
 
               // Reconnecting overlay widget
               Visibility(
-               visible: controller.isLocalUserReconnecting.value,
+                visible: controller.callerList
+                        .firstWhere((e) => e.isLocalParticipant == true)
+                        .isReconnecting ??
+                    false,
                 child: Positioned.fill(
                   child: Container(
                     color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
