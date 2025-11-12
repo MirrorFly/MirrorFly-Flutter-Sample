@@ -1912,10 +1912,10 @@ class BaseController {
     return (await getProfileDetails(jid)).getName();
   }
 
-  static void onLogout(isLogout) {
+  static void onLogout(isLogout) async {
 
     /// Dispose callkit if isOnGoingCall is true while logout
-    if (MirrorFlyCallKit.isOngoingCall()) {
+    if (await MirrorFlyCallKit.isOngoingCall()) {
       debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
       MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
         if(response.isSuccess){
