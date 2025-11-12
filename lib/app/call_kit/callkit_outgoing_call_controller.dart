@@ -761,9 +761,22 @@ class CallKitOutgoingCallController extends GetxController
     }
     if(!isGroupCall.value){
       debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, not a group call");
+      for(var i in participantsId){
+        final target = callerList.firstWhereOrNull((participant) => participant.identity == i);
+        if(target != null){
+          debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
+          callerList.remove(target);
+          // if(callerList.length <=1){
+          //   debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
+          //   toToast("Call timed out");
+          //   if(NavUtils.canPop){
+          //     NavUtils.back();
+          //   }
+          // }
+        }
+      }
       return;
     }
-
 
     participantsId = participantsId
         .map((id) => id.split('@').first.trim())
@@ -825,12 +838,17 @@ class CallKitOutgoingCallController extends GetxController
   void rejected({required String userId}) {
     debugPrint("[MirrorFly][OutgoingCallController] Call rejected by userId: $userId");
 
-    if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
+    if (isGroupCall.value) {
       debugPrint(
           "[MirrorFly][OutgoingCallController] Call rejected, but group call is ongoing, "
               "current remote participant name map: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
       final String name = remoteUserNameMap[userId] ?? "Unknown";
       toToast("$name is busy");
+      callerList.removeWhere((e) => e.identity == userId);
+      if(callerList.length <=1){
+        debugPrint("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
+       NavUtils.back();
+      }
       return;
     }
 
