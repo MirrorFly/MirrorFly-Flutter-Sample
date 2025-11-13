@@ -179,8 +179,7 @@ class CallKitOutgoingCallView
 
         /// Invite Participants Button
         Obx(() {
-          final showInviteButton = controller.isOnGoingCallViewEnable.value &&
-              controller.callMode.value == "ONE-TO-ONE";
+          final showInviteButton = controller.isOnGoingCallViewEnable.value;
           return Visibility(
             visible: showInviteButton,
             child: Positioned(
@@ -188,7 +187,7 @@ class CallKitOutgoingCallView
               right: 16,
               child: IconButton(
                 onPressed: () => controller.inviteParticipants(),
-                icon: const Icon(Icons.add_call, color: Colors.white),
+                icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
               ),
             ),
           );

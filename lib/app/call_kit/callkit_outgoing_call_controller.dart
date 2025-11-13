@@ -1564,7 +1564,7 @@ class CallKitOutgoingCallController extends GetxController
     debugPrint(
         "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
 
-    if (preCallUserListCount != callerList.length) {
+    if (preCallUserListCount == callerList.length) {
       debugPrint(
           "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
       return;
