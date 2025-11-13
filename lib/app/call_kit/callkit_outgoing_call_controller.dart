@@ -420,6 +420,7 @@ class CallKitOutgoingCallController extends GetxController
     debugPrint("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
       case FlyCallStatusEvent.connected:
+      case FlyCallStatusEvent.reconnected:
         return "";
       case FlyCallStatusEvent.connecting:
         return "Connecting";
@@ -595,7 +596,7 @@ class CallKitOutgoingCallController extends GetxController
             debugPrint(
                 "[MirrorFly] → Participant $id is already marked as reconnecting");
           } else {
-            callerList[index] = target.copyWith(isReconnecting: true);
+            callerList[index] = target.copyWith(isReconnecting: true, flyCallStatus: FlyCallStatusEvent.reconnecting);
             debugPrint("[MirrorFly] → Updated participant $id as reconnecting");
           }
 
@@ -636,7 +637,7 @@ class CallKitOutgoingCallController extends GetxController
           final target = callerList[index];
 
           if (target.isReconnecting == true) {
-            callerList[index] = target.copyWith(isReconnecting: false);
+            callerList[index] = target.copyWith(isReconnecting: false, flyCallStatus: FlyCallStatusEvent.reconnected);
             debugPrint("[MirrorFly] → Participant $id marked as reconnected");
           } else {
             debugPrint(

@@ -432,6 +432,7 @@ class CallKitOutgoingCallView
                                   final connectionState = controller.getParticipantConnectionState(
                                     participant.flyCallStatusEvent!,
                                   );
+                                  debugPrint("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
                                   if (!isSelf && connectionState.isNotEmpty) {
                                     return Positioned.fill(
                                       child: Container(
