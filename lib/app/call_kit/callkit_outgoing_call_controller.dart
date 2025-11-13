@@ -135,6 +135,8 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     getLogsOfLocalValues();
+
+    callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
     super.onReady();
   }
 
@@ -675,16 +677,19 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final updated = callerList[index].copyWith(isMuted: isAudioMuted);
+    final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
     callerList[index] = updated;
 
     debugPrint("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {
+    debugPrint("[Controller] isVideoMute called for participantId: $participantId, isVideoMuted: $isVideoMuted");
     if(isSelfId(id: participantId)){
+      debugPrint("[Controller] Updating local video mute status to $isVideoMuted");
       isVideoEnabled.value = isVideoMuted;
     }else{
+      debugPrint("[Controller] Updating remote video mute status to $isVideoMuted");
       isRemoteVideoMuted.value = isVideoMuted;
     }
     debugPrint("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
@@ -1284,6 +1289,11 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void requestVideoCallSwitch() async {
+    if(isGroupCall.value){
+      debugPrint("[MirrorFly][OutgoingCallController] requestVideoCallSwitch: Call switch  supported in group calls.");
+      MirrorFlyCallKit.toggleVideoForGroupCall();
+      return;
+    }
 
     final bool callStatus = MirrorFlyCallKit.isCallConnected();
     final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();

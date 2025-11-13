@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:path/path.dart';
 import '../app_style_config.dart';
 import '../call_modules/call_widgets.dart';
 import '../common/constants.dart';
@@ -8,6 +9,7 @@ import '../data/helper.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
 import 'callkit_outgoing_call_controller.dart';
+
 
 class CallKitOutgoingCallView
     extends NavViewStateful<CallKitOutgoingCallController> {
@@ -29,7 +31,7 @@ class CallKitOutgoingCallView
           behavior: HitTestBehavior.translucent,
           onTap: controller.toggleControls,
           child: controller.isGroupCall.value
-              ? groupCallUI(context)
+              ? buildGroupGridItem(context)
               : oneToOneCallUI(context),
         ),
       );
@@ -43,7 +45,6 @@ class CallKitOutgoingCallView
     return Stack(
       fit: StackFit.expand,
       children: [
-
         /// Main view
         Obx(() {
           return controller.callerList.isNotEmpty
@@ -233,8 +234,8 @@ class CallKitOutgoingCallView
     }
 
     final FlyCallParticipant participant = controller.callerList.firstWhere((e) => e.identity == participantId);
-    debugPrint("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isMuted}");
-    if (participant.isMuted == true) {
+    debugPrint("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isAudioMuted}");
+    if (participant.isAudioMuted == true) {
       return Center(
         child: Container(
           decoration: const BoxDecoration(
@@ -444,6 +445,294 @@ class CallKitOutgoingCallView
     ]);
   }
 
+  /// Grid view for group call participants
+  Widget buildGroupGridItem(BuildContext context) {
+    return Obx(() {
+      final isGroupCall = controller.isGroupOnGoingCallEnabled.value;
+      return Container(
+        color: Colors.transparent, // fallback background
+        child: Stack(
+          children: [
+            _buildGradientOverlay(controller.callType.value),
+
+            SafeArea(
+              child: Column(
+                children: [
+
+                  /// --- Call Info Header (Top Section) ---
+                  Padding(
+                    padding:  EdgeInsets.symmetric(vertical:  0.00),
+                    child: Obx(() {
+                      final isOngoing = controller.isOnGoingCallViewEnable.value;
+
+                      return Column(
+                        children: [
+
+                          // Container(
+                          //   width: double.infinity,
+                          //   color: AppColors.audioCallerBackground,
+                          //   child: !isOngoing ?  Column(
+                          //     children: [
+                          //       Text(
+                          //         controller.callStatus.value,
+                          //         style: const TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: 18,
+                          //           fontWeight: FontWeight.w500,
+                          //         ),
+                          //       ),
+                          //       const SizedBox(height: 8),
+                          //       Text(
+                          //         "${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                          //         textAlign: TextAlign.center,
+                          //         style: const TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: 18,
+                          //           fontWeight: FontWeight.w500,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ): const SizedBox.shrink(),
+                          // ),
+
+                          if (isOngoing) ...[
+                            Text(
+                              controller.isCallModeChangedToOneToMany.value
+                                  ? controller.titleAfterCallModeChange.value
+                                  : controller.chatNameForGroupCall.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              controller.callDuration.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    }),
+                  ),
+
+
+                  /// --- Grid or Single View (Takes remaining space) ---
+                  Expanded(
+                    child: Stack(
+
+                      children: [
+                        isGroupCall
+                            ? GridView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                            controller.callerList.length > 2 ? 2 : 1,
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 2.0,
+                            childAspectRatio:
+                            controller.callerList.length == 2 ? 1.23 : 1.0,
+                          ),
+                          padding: const EdgeInsets.all(8.0),
+                          itemCount: controller.callerList.length,
+                          itemBuilder: (context, index) {
+                            return Stack(
+                              children: [
+                                MirrorFlyCallView(
+                                  key: ValueKey(controller.callerList[index].identity),
+                                  userJID: controller
+                                      .callerList[index].identity ??
+                                      "",
+                                  fit: BoxFit.cover,
+                                  viewBgColor:
+                                  AppColors.audioCallerBackground,
+                                  profileImage: getUserProfileImageWithName(
+                                    participantId: controller
+                                        .callerList[index].identity,
+                                    scale: 1.2,
+                                  ),
+                                ),
+                                Obx(() {
+                                  return Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        if (controller.callerList[index].isAudioMuted == true) ...[
+                                          CircleAvatar(
+                                            radius: 10,
+                                            backgroundColor: Colors.grey
+                                                , //AppColors.audioMutedIconBgColor,
+                                            child: AppUtils.svgIcon(
+                                              icon: callMutedIcon,
+                                              colorFilter: const ColorFilter.mode(
+                                                  Colors.white,
+                                                  BlendMode.srcIn),
+                                            ),
+                                          ),
+                                        ],
+                                        // if (controller.speakingUsers.isNotEmpty &&
+                                        //     !controller.callList[index].isAudioMuted.value &&
+                                        //     !controller
+                                        //         .audioLevel(
+                                        //         controller.callList[index].userJid!.value)
+                                        //         .isNegative) ...[
+                                        //   AudioLevelAnimation(
+                                        //     radius: 12,
+                                        //     audioLevel: controller.audioLevel(
+                                        //         controller.callList[index].userJid!.value),
+                                        //     bgColor: style.speakingIndicatorStyle
+                                        //         .activeBgColor, //AppColors.speakingBg,
+                                        //     dotsColor: style.speakingIndicatorStyle.activeIconColor,
+                                        //   ),
+                                        // ],
+                                      ],
+                                    ),
+                                  );
+                                }),
+
+
+                                /// Name label
+                                Positioned(
+                                  left: 8,
+                                  bottom: 8,
+                                  right: 8,
+                                  child: Obx(() {
+                                    final name = controller.remoteUserNameMap[
+                                    controller.callerList[index]
+                                        .identity] ??
+                                        controller
+                                            .callerList[index].identity;
+                                    return Text(
+                                      name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  }),
+                                ),
+
+                                /// Call status overlay
+                                Obx(() {
+                                  final participant = controller.callerList[index];
+                                  final isSelf = controller.isSelfId(id: participant.identity);
+                                  final connectionState = controller.getParticipantConnectionState(
+                                    participant.flyCallStatusEvent!,
+                                  );
+                                  if (!isSelf && connectionState.isNotEmpty) {
+                                    return Positioned.fill(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            connectionState,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return const Offstage();
+                                }),
+
+                              ],
+                            );
+                          },
+                              )
+                            : Stack(
+                                children: [
+                                  MirrorFlyCallView(
+                                    key: ValueKey(controller.groupId.value),
+                                    userJID: controller.groupId.value,
+                                    fit: BoxFit.cover,
+                                    viewBgColor:
+                                        AppColors.audioCallerBackground,
+                                    profileImage: getUserProfileImageWithName(
+                                      isGroup: true,
+                                      participantId: controller.groupId.value,
+                                      scale: 1,
+                                    ),
+                                  ),
+                                  _buildGradientOverlay(
+                                      controller.callType.value),
+                                  if (!controller
+                                      .isOnGoingCallViewEnable.value) ...[
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16.0),
+                                      width: double.infinity,
+                                      child: Column(
+                                        // mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        // crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            controller.callStatus.value,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                        ),
+
+                        /// Gradient overlay
+
+                        /// Controls at bottom
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: _buildControls(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          ],
+        ),
+      );
+    });
+  }
+
+
+
+
   ///  Local Preview Widget
   Widget _buildLocalPreview({required double width, required double height}) {
     return Container(
@@ -602,25 +891,27 @@ class CallKitOutgoingCallView
 
   ///  Gradient Overlay
   Widget _buildGradientOverlay(String callType) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: callType == "video"
-              ? [
-            Colors.transparent,
-            Colors.transparent,
-          ]
-              : [
-            const Color(0xFF1D1D35),
-            Colors.transparent,
-            Colors.transparent,
-            const Color(0xFF1D1D35),
-          ],
-          stops: callType == "video"
-              ? [0, 1] // fully transparent
-              : [0, 0.2, 0.6, 1],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Positioned.fill(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: callType == "video"
+                ? [
+              Colors.transparent,
+              Colors.transparent,
+            ]
+                : [
+              const Color(0xFF1D1D35),
+              Colors.transparent,
+              Colors.transparent,
+              const Color(0xFF1D1D35),
+            ],
+            stops: callType == "video"
+                ? [0, 1] // fully transparent
+                : [0, 0.2, 0.6, 1],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
       ),
     );
@@ -642,8 +933,8 @@ class CallKitOutgoingCallView
                 },
               ),
               _buildCallOption(
-                isActive: controller.callerList.firstWhere((e) => e.isLocalParticipant).isMuted ?? false,
-                icon: controller.callerList.firstWhere((e) => e.isLocalParticipant).isMuted ?? false ? Icons.mic_off : Icons.mic,
+                isActive: controller.callerList.firstWhere((e) => e.isLocalParticipant).isAudioMuted ?? false,
+                icon: controller.callerList.firstWhere((e) => e.isLocalParticipant).isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
                 onTap: controller.muteAudio,
               ),
               if (controller.callType.value.toLowerCase() == CallType.video)
@@ -668,7 +959,9 @@ class CallKitOutgoingCallView
               if (controller.callType.value.toLowerCase() == CallType.audio)
                 _buildCallOption(
                   isActive: true,
-                  icon: Icons.videocam_off,
+                  icon: !controller.isVideoEnabled.value
+                      ? Icons.videocam_off
+                      : Icons.videocam,
                   onTap: controller.requestVideoCallSwitch,
                 ),
             ],

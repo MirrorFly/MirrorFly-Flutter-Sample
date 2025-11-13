@@ -155,7 +155,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
     /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
-    final ongoing = await MirrorFlyCallKit.isOngoingCall(isTerminate: true);
+    final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
     debugPrint("#Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
     isOnGoingCall = Constants.useMirrorFlyCallKit ? ongoing : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
@@ -195,7 +195,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
           /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
           /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
-          final ongoing = await MirrorFlyCallKit.isOngoingCall(isTerminate: true);
+          final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
           debugPrint("#Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
           isOnGoingCall = Constants.useMirrorFlyCallKit ? ongoing : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
