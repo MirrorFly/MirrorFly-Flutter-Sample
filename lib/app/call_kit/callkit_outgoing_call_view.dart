@@ -933,8 +933,8 @@ class CallKitOutgoingCallView
                 },
               ),
               _buildCallOption(
-                isActive: controller.callerList.firstWhere((e) => e.isLocalParticipant).isAudioMuted ?? false,
-                icon: controller.callerList.firstWhere((e) => e.isLocalParticipant).isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
+                isActive: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false,
+                icon: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
                 onTap: controller.muteAudio,
               ),
               if (controller.callType.value.toLowerCase() == CallType.video)

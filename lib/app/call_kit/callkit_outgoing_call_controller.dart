@@ -759,9 +759,9 @@ class CallKitOutgoingCallController extends GetxController
   void callTimeOut({required List<String> participantsId}) async {
     if (!isGroupOnGoingCallEnabled.value && isGroupCall.value){
       toToast("Call timed out");
-      if(NavUtils.canPop){
-        NavUtils.back();
-      }
+      // if(NavUtils.canPop){
+      //   NavUtils.back();
+      // }
       return;
     }
     if(!isGroupCall.value){
