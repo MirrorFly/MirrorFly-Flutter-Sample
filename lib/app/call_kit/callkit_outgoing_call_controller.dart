@@ -535,8 +535,8 @@ class CallKitOutgoingCallController extends GetxController
      List<String>? participantsId,
     FlyCallStatusEvent? status,
   }) {
-    if(participantsId!.isNotEmpty){
-      for (final id in participantsId) {
+    if(participantsId?.isNotEmpty ?? false){
+      for (final id in participantsId ?? []) {
         if (!isSelfId(id: id)) {
           final index = callerList.indexWhere((p) => p.identity == id);
 
