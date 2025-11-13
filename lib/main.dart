@@ -139,7 +139,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
 
-    isOnGoingCall = Constants.liveKitEnabled ? MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+    isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
     ///
     /// This method will give response from Native Android, iOS will return empty by default.
@@ -177,7 +177,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
           /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
 
-          isOnGoingCall = Constants.liveKitEnabled ? MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+          isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
           ///
           /// This method will give response from Native Android, iOS will return empty by default.

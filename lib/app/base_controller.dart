@@ -187,8 +187,10 @@ class BaseController {
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
-        debugPrint("incoming call action recieve");
+        debugPrint("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
         if (callerId != null && callType != null) {
+          debugPrint(
+              "[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
@@ -203,6 +205,8 @@ class BaseController {
               "[MirrorFly][BaseController] ERROR: answerCall received but callerId/callType not set");
         }
         return;
+      } else {
+        debugPrint("[MirrorFly][BaseController] flyCallActionEvent $flyCallActionEvent not answerCall");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
@@ -1911,10 +1915,10 @@ class BaseController {
     return (await getProfileDetails(jid)).getName();
   }
 
-  static void onLogout(isLogout) {
+  static void onLogout(isLogout) async {
 
     /// Dispose callkit if isOnGoingCall is true while logout
-    if (MirrorFlyCallKit.isOngoingCall()) {
+    if (await MirrorFlyCallKit.isOngoingCall()) {
       debugPrint("[MirrorFlyCallKit] onLogout - Ending ongoing call before logout");
       MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
         if(response.isSuccess){
