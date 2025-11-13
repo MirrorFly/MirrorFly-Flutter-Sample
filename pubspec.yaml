@@ -113,6 +113,7 @@ flutter:
     - assets/locales/
     - assets/i18n/
     - assets/backup_restore/
+    - assets/sounds/reconnecting.mp3
     - pubspec.yaml
 
   fonts:

@@ -170,6 +170,9 @@ class BaseController {
           debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed();
           break;
+        case FlyCallStatusEvent.permissionDenied:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     });
 
