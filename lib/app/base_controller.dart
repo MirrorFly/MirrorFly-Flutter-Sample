@@ -86,6 +86,9 @@ class BaseController {
       }
 
 
+      debugPrint(
+          "[MirrorFly][BaseController] flyCallStatus event ${event.toJson()} flyCallStatusEvent $flyCallStatusEvent");
+
       // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
@@ -209,7 +212,7 @@ class BaseController {
     ///
     MirrorFlyCallKit.flyCallAction.listen((event) {
 
-      debugPrint("[MirrorFly] [BaseController] flyCallAction event ${event.toJson()}");
+      debugPrint("[MirrorFly][BaseController] flyCallAction event ${event.toJson()}");
 
       //
       final FlyCallAction flyCallAction = event;
@@ -217,8 +220,10 @@ class BaseController {
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
-        debugPrint("incoming call action recieve");
+        debugPrint("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
         if (callerId != null && callType != null) {
+          debugPrint(
+              "[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
@@ -232,9 +237,11 @@ class BaseController {
           );
         } else {
           debugPrint(
-              "[MirrorFly] [BaseController] ERROR: answerCall received but callerId/callType not set");
+              "[MirrorFly][BaseController] ERROR: answerCall received but callerId/callType not set");
         }
         return;
+      } else {
+        debugPrint("[MirrorFly][BaseController] flyCallActionEvent $flyCallActionEvent not answerCall");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
@@ -1999,13 +2006,6 @@ class BaseController {
         }
       });
     } else {
-      MirrorFlyCallKit.logOut(flyResult: (FlyResult response){
-        if(response.isSuccess){
-          debugPrint("[MirrorFlyCallKit] onLogout - success");
-        }else{
-          debugPrint("[MirrorFlyCallKit] onLogout - failed");
-        }
-      });
       debugPrint("[MirrorFlyCallKit] onLogout - No ongoing call");
     }
 
