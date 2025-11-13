@@ -4101,7 +4101,7 @@ class ChatController extends FullLifeCycleController
               callersId: [
                 profile.jid!,
               ],
-                callMode: "ONE-TO-ONE",
+                // callMode: "ONE-TO-ONE",
               //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
               chatId: '');
         }
@@ -4134,7 +4134,7 @@ class ChatController extends FullLifeCycleController
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
-                callMode: "ONE_TO_ONE",
+                // callMode: "ONE_TO_ONE",
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {

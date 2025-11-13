@@ -54,7 +54,6 @@ class CallKitCallTimeoutController extends GetxController {
                 callersId: [
                   users.first ?? "",
                 ],
-                callMode: callMode.value,
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
                 chatId: '',
               flyResult: (FlyResult response) {
@@ -91,7 +90,6 @@ class CallKitCallTimeoutController extends GetxController {
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [users.first ?? "",],
                 chatId: '',
-                callMode: callMode.value,
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {

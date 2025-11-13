@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../app_style_config.dart';
 import '../common/app_localizations.dart';
@@ -61,6 +63,8 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isLocalTracksPublished = false.obs;
   final RxBool isRemoteTracksPublished = false.obs;
   Timer? timer;
+  AudioPlayer? _player;
+  bool _isPlaying = false;
 
   @override
   Future<void> onInit() async {
@@ -82,6 +86,7 @@ class CallKitOutgoingCallController extends GetxController
       debugPrint("[MirrorFly][OutgoingCallController] No call arguments found");
     }
 
+    // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
     debugPrint("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
@@ -486,7 +491,7 @@ class CallKitOutgoingCallController extends GetxController
   @override
   void dispose(){
     debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
-    _player.dispose();
+    _player?.dispose();
     WakelockPlus.disable();
     super.dispose();
   }
@@ -510,20 +515,6 @@ class CallKitOutgoingCallController extends GetxController
     showControls.value = !showControls.value;
   }
 
-  void getRemoteUserName() async {
-    ProfileDetails profile = await getProfileDetails(callerUsersId[0]!);
-    String username = profile.name ?? profile.nickName ?? "Unknown";
-    remoteUserName.value = username;
-    debugPrint("User Name: $username");
-  }
-
-  void getUserName() async {
-    ProfileDetails profile =
-        await getProfileDetails(SessionManagement.getUserJID()!);
-    String username = profile.name ?? profile.nickName ?? "Unknown";
-    localUserName.value = username;
-    debugPrint("User Name: $username");
-  }
 
   void _startTimer({int? time}) {
     if (timer != null) {
@@ -1434,7 +1425,7 @@ class CallKitOutgoingCallController extends GetxController
 
     closeDialog();
     try {
-      await _player.setAudioContext(
+      await _player?.setAudioContext(
         AudioContext(
           android: const AudioContextAndroid(
             isSpeakerphoneOn: true,
@@ -1445,11 +1436,11 @@ class CallKitOutgoingCallController extends GetxController
           ),
         ),
       );
-      await _player.setVolume(1.0);
-      await _player.setReleaseMode(ReleaseMode.loop);
-      await _player.play(AssetSource('sounds/reconnecting.mp3'));
+      await _player?.setVolume(1.0);
+      await _player?.setReleaseMode(ReleaseMode.loop);
+      await _player?.play(AssetSource('sounds/reconnecting.mp3'));
       await Future.delayed(const Duration(milliseconds: 300));
-      final state = _player.state;
+      final state = _player?.state;
       debugPrint("[MirrorFly][OutgoingCallController] Player state after play(): $state");
 
       if (state == PlayerState.playing) {
@@ -1466,7 +1457,7 @@ class CallKitOutgoingCallController extends GetxController
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestedMessage")
-          .replaceFirst("%d", remoteUserName.value),
+          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipantsId().first] ?? ""),
       actions: [
         TextButton(
             onPressed: () async {
@@ -1541,7 +1532,7 @@ class CallKitOutgoingCallController extends GetxController
 
     // Stop the ringtone only if it is currently playing
     if (_isPlaying) {
-      await _player.stop();
+      await _player?.stop();
       _isPlaying = false;
       debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer stopped (manual tracking)");
     } else {
@@ -1672,17 +1663,17 @@ class CallKitOutgoingCallController extends GetxController
     getCallTitleForOneToManyCall();
   }
 
-    ///
-    void videoSwap(){
-      debugPrint("[MirrorFly][OutgoingCallController] videoSwap called");
-      if(callType.value == "video"){
-        debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
-        final String temp = mainCallViewUserId.value;
-        mainCallViewUserId.value = secondaryCallViewUserId.value;
-        secondaryCallViewUserId.value = temp;
-        debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
-      }
-    }
+    // ///
+    // void videoSwap(){
+    //   debugPrint("[MirrorFly][OutgoingCallController] videoSwap called");
+    //   if(callType.value == "video"){
+    //     debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    //     final String temp = mainCallViewUserId.value;
+    //     mainCallViewUserId.value = secondaryCallViewUserId.value;
+    //     secondaryCallViewUserId.value = temp;
+    //     debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    //   }
+    // }
 
   ///
   /// To update the call status of a participant in the callerList
@@ -1724,6 +1715,7 @@ class CallKitOutgoingCallController extends GetxController
     groupCallTitle("");
     isCallModeChangedToOneToMany(false);
     titleAfterCallModeChange("");
+    _isPlaying = false;
 
     debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
   }
