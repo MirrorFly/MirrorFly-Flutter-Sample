@@ -1118,7 +1118,7 @@ class CallKitOutgoingCallController extends GetxController
             .where((p) => !p.isLocalParticipant)
             .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
 
-        if (allEngaged) {
+        if (allEngaged && callerList.length > 1) {
           debugPrint("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
           toToast("All users are engaged");
           await Future.delayed(const Duration(milliseconds: 500));
