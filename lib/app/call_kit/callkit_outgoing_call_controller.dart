@@ -611,7 +611,6 @@ class CallKitOutgoingCallController extends GetxController
           "[MirrorFly] #CallKitOutGoingController → Reconnecting event with empty participantIds");
       return;
     }
-
     for (final id in participantIds) {
       debugPrint(
           "[MirrorFly] #CallKitOutGoingController → Reconnecting event for id: $id");
@@ -620,13 +619,13 @@ class CallKitOutgoingCallController extends GetxController
         final index = callerList.indexWhere((e) => e.identity == id);
         if (!index.isNegative) {
           final target = callerList[index];
-          if (target.isReconnecting == true) {
-            debugPrint(
-                "[MirrorFly] → Participant $id is already marked as reconnecting");
-          } else {
+          // if (target.isReconnecting == true) {
+          //   debugPrint(
+          //       "[MirrorFly] → Participant $id is already marked as reconnecting");
+          // } else {
             callerList[index] = target.copyWith(isReconnecting: true, flyCallStatus: FlyCallStatusEvent.reconnecting);
             debugPrint("[MirrorFly] → Updated participant $id as reconnecting");
-          }
+          // }
 
           if (target.isLocalParticipant) {
             callStatus("Reconnecting...");
@@ -674,6 +673,7 @@ class CallKitOutgoingCallController extends GetxController
 
           // Local participant UI update
           if (target.isLocalParticipant) {
+            callerList[index] = target.copyWith(isReconnecting: false, flyCallStatus: FlyCallStatusEvent.reconnected);
             callStatus("Connected");
             callTryStatus("Connected");
           }
@@ -894,8 +894,9 @@ class CallKitOutgoingCallController extends GetxController
     NavUtils.back();
   }
 
-  void connecting() {
+  void connecting({List<String>? participantsId , FlyCallStatusEvent? connecting}) {
     callStatus("Connecting...");
+    updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.connecting);
     debugPrint("[MirrorFly] connecting.. called");
   }
 
