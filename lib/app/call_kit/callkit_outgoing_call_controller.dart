@@ -18,6 +18,8 @@ import '../model/arguments.dart';
 import '../routes/route_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'callkit_logger.dart';
+
 class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
 
@@ -71,7 +73,7 @@ class CallKitOutgoingCallController extends GetxController
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
 
-    debugPrint("[MirrorFly][OutgoingCallController] callviewinit");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callviewinit");
     if (callType.value.isNotEmpty) {
       _handleWakelock(callType.value);
     }
@@ -83,18 +85,18 @@ class CallKitOutgoingCallController extends GetxController
       await _initCallArguments();
       _handleCallTypeLogic();
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] No call arguments found");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
     }
 
     // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
-    debugPrint("[MirrorFly][OutgoingCallController] callview");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
   }
 
   Future<void> _initCallArguments() async {
     try {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
       // callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
@@ -102,12 +104,12 @@ class CallKitOutgoingCallController extends GetxController
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
 
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] "
             "isIncoming: groupId $groupId incoming $isIncoming callType $callType  callMode $callMode ",
       );
     } catch (e) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Error initializing call arguments: $e");
     }
   }
@@ -120,13 +122,13 @@ class CallKitOutgoingCallController extends GetxController
     } else if (!isIncoming.value && callType.value == "video") {
       // _handleOutgoingVideoCall();
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] Invalid call parameters");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Invalid call parameters");
     }
   }
 
   void _handleIncomingCall() {
     isOnGoingCallView();
-    debugPrint("[MirrorFly][IncomingCall] Incoming call view setup completed");
+    callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
 
   @override
@@ -134,13 +136,13 @@ class CallKitOutgoingCallController extends GetxController
     initAudioRouting();
 
     if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForGroupCall");
       await getRemoteAndLocalUserNameForGroupCall();
       await getChatNameForGroupCall(chatId: groupId.value);
       await getGroupCallTitle();
     } else {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForOneToOneCall");
       await getRemoteAndLocalUserNameForOneToOneCall();
     }
@@ -157,20 +159,20 @@ class CallKitOutgoingCallController extends GetxController
   Future<List<FlyCallParticipant>> getCurrentCallParticipants() async {
     final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
 
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Current call participants: ${participants
             ?.length},"
             " participants: ${participants?.map((p) => p.identity).toList()}");
 
     if (participants != null && participants.isNotEmpty) {
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] getCurrentCallParticipants: fetched ${participants
             .length} "
             "participants → ${participants.map((e) => e.identity).toList()}",
       );
 
       final existingIds = callerList.map((e) => e.identity).toSet();
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Existing callerList (${callerList
             .length}): ${existingIds.toList()}",
       );
@@ -178,12 +180,12 @@ class CallKitOutgoingCallController extends GetxController
       for (var p in participants) {
         if (!existingIds.contains(p.identity)) {
           callerList.add(p);
-          debugPrint(
+          callkitLogger.info(
             "[MirrorFly][OutgoingCallController] ➕ Added new participant: ${p
                 .identity}",
           );
         } else {
-          debugPrint(
+          callkitLogger.info(
             "[MirrorFly][OutgoingCallController]️ Skipped duplicate participant: ${p
                 .identity}",
           );
@@ -191,12 +193,12 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       callerList.refresh();
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] callerList after merge (${callerList
             .length}): ${callerList.map((e) => e.identity).toList()}",
       );
     } else {
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] getCurrentCallParticipants: No participants fetched (null or empty)",
       );
     }
@@ -209,12 +211,12 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> configureCallMode(
       {required String callMode, required String chatId}) async {
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #configureCallMode with callMode: $callMode, chatId: $chatId");
 
     // Consider as one to one call
     if (chatId.isEmpty) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #configureCallMode with remote participantId for "
               "one to one call");
     }
@@ -223,11 +225,11 @@ class CallKitOutgoingCallController extends GetxController
     final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY";
     isGroupCall.value = yes;
     if (yes) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: true");
 
       if (chatId.isEmpty && callMode == "ONE-TO-MANY") {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] #configureCallMode with chatId for group call: $chatId");
         getRemoteAndLocalUserNameForGroupCall();
         isCallModeChangedToOneToMany(true);
@@ -235,30 +237,34 @@ class CallKitOutgoingCallController extends GetxController
       getCallTitleForOneToManyCall();
     }
 
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall
             .value}");
   }
 
   Future<void> getRemoteAndLocalUserNameForOneToOneCall() async {
     if (isGroupCall.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
       return;
     }
 
     for (var user in callerList) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
           validId(userId: user.identity, isGroup: false));
-      String username = profile.name ?? profile.nickName ?? "Unknown";
+      String username = (profile.name?.trim().isNotEmpty == true)
+          ? profile.name!.trim()
+          : (profile.nickName?.trim().isNotEmpty == true)
+              ? profile.nickName!.trim()
+              : trimAfterAt(profile.jid ?? "");
       remoteUserNameMap[user.identity] =
           user.isLocalParticipant ? "You" : username;
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
     }
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, "
             "remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
@@ -269,24 +275,29 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> getRemoteAndLocalUserNameForGroupCall() async {
     if (!isGroupCall.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
       return;
     }
     for (var user in callerList) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Getting user name for: ${user
               .identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
           validId(userId: user.identity, isGroup: false));
-      String username = profile.name ?? profile.nickName ?? "Unknown";
+      String username =
+      (profile.name?.trim().isNotEmpty == true)
+          ? profile.name!.trim()
+          : (profile.nickName?.trim().isNotEmpty == true)
+          ? profile.nickName!.trim()
+          : trimAfterAt(profile.jid ?? "");
       remoteUserNameMap[user.identity] =
       user.isLocalParticipant ? "You" : username;
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User Name for ${user
               .identity}: $username");
     }
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
             .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
@@ -297,7 +308,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   String getOneToOneCallRemoteUserName() {
     if (isGroupCall.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getOneToOneCallRemoteUserName Not a one-to-one call");
       return "";
     }
@@ -306,7 +317,7 @@ class CallKitOutgoingCallController extends GetxController
     try {
 
       if (remoteUserNameMap.isEmpty) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] Remote User name map is empty");
         return "";
       }
@@ -315,13 +326,13 @@ class CallKitOutgoingCallController extends GetxController
             (entry) => entry.key != getLocalParticipantId(),
       );
 
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User -> ID: ${remoteEntry
               .key}, Name: ${remoteEntry.value}");
 
       return remoteEntry.value;
     } catch (e) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User name error: $e");
       return "";
     }
@@ -339,15 +350,20 @@ class CallKitOutgoingCallController extends GetxController
   /// Get chat name for group call
   ///
   Future<void> getChatNameForGroupCall({required String chatId}) async {
-    debugPrint("[MirrorFly][OutgoingCallController] #getChatNameForGroupCall called with chatId: $chatId");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #getChatNameForGroupCall called with chatId: $chatId");
     if (isGroupCall.value && chatId.isNotEmpty) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getChatNameForGroupCall with chatId: ${groupId.value}");
       ProfileDetails profile = await getProfileDetails(validId(userId: chatId,isGroup: true));
-      String chatName = profile.name ?? profile.nickName ?? "Unknown Group";
+      String chatName =
+      (profile.name?.trim().isNotEmpty == true)
+          ? profile.name!.trim()
+          : (profile.nickName?.trim().isNotEmpty == true)
+          ? profile.nickName!.trim()
+          : trimAfterAt(profile.jid ?? "");
       chatNameForGroupCall.value = chatName;
     } else {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getChatNameForGroupCall Not a group call chatId: ${groupId.value}");
     }
   }
@@ -356,37 +372,55 @@ class CallKitOutgoingCallController extends GetxController
   /// Get call title for the one-to-many call.
   ///
   Future<void> getCallTitleForOneToManyCall() async {
-    debugPrint("[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall called");
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall called");
 
     if (!isGroupCall.value) {
-      debugPrint("[MirrorFly][OutgoingCallController] Not a group call");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Not a group call");
       return;
     }
 
-    final filteredNames = remoteUserNameMap.values
-        .where((name) => name.trim().toLowerCase() != "you")
+    // Filter remote participants:
+    // 1. Exclude local user using isSelfId()
+    // 2. Exclude any name that equals "you"
+    final filteredNames = remoteUserNameMap.entries
+        .where((entry) {
+          final id = entry.key;
+          final name = entry.value.trim();
+
+          // Exclude self
+          if (isSelfId(id: id)) return false;
+
+          // Exclude redundant "you"
+          if (name.toLowerCase() == "you") return false;
+
+          return true;
+        })
+        .map((e) => e.value.trim())
         .toList();
 
-    final int participantCount = filteredNames.length;
+    final count = filteredNames.length;
 
-    if (participantCount == 0) {
+    if (count == 0) {
       titleAfterCallModeChange.value = "You";
       return;
     }
 
     String title;
 
-    if (participantCount == 1) {
-      title = "You and ${filteredNames.first}";
-    } else if (participantCount == 2) {
+    if (count == 1) {
+      title = "You and ${filteredNames[0]}";
+    } else if (count == 2) {
       title = "You, ${filteredNames[0]} & ${filteredNames[1]}";
     } else {
-      title = "You, ${filteredNames.first} & ${participantCount - 1} others";
+      final others = count - 1;
+      title =
+          "You, ${filteredNames[0]} & $others ${others == 1 ? 'other' : 'others'}";
     }
 
     titleAfterCallModeChange.value = title;
 
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall -> $title");
   }
 
@@ -395,7 +429,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> getGroupCallTitle() async {
     if (!isGroupCall.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getGroupCallTitle Not a group call");
       return;
     } else {
@@ -407,10 +441,10 @@ class CallKitOutgoingCallController extends GetxController
   /// Handle the UI based on the current call status
   ///
   Future<void> _handleInitialCallStatus() async {
-    debugPrint("[MirrorFly] _handleInitialCallStatus called");
+    callkitLogger.info("[MirrorFly] _handleInitialCallStatus called");
     final FlyCallStatusEvent? currentStatusEvent =
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
-    debugPrint("[MirrorFly] currentStatusEvent: $currentStatusEvent");
+    callkitLogger.info("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
       // onConnected();
     } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
@@ -428,7 +462,7 @@ class CallKitOutgoingCallController extends GetxController
   /// Get participant connection state
   ///
   String getParticipantConnectionState(FlyCallStatusEvent status) {
-    debugPrint("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
       case FlyCallStatusEvent.connected:
       case FlyCallStatusEvent.reconnected:
@@ -454,7 +488,7 @@ class CallKitOutgoingCallController extends GetxController
   /// Get logs for values
   ///
   void getLogsOfLocalValues() {
-    debugPrint('''
+    callkitLogger.info('''
        [Call Logs]
        callStatus: ${callStatus.value}
        callDuration: ${callDuration.value}
@@ -483,14 +517,14 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   void onClose() {
-    debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController onClose called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController onClose called");
     super.onClose();
   }
 
 
   @override
   void dispose(){
-    debugPrint("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
     _player?.dispose();
     WakelockPlus.disable();
     super.dispose();
@@ -503,10 +537,10 @@ class CallKitOutgoingCallController extends GetxController
   void _handleWakelock(String type) async {
     if (type == "video") {
       await WakelockPlus.enable();
-      debugPrint("[MirrorFly][OutgoingCallController] Wakelock ENABLED (video call)");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Wakelock ENABLED (video call)");
     } else {
       await WakelockPlus.disable();
-      debugPrint("[MirrorFly][OutgoingCallController] Wakelock DISABLED (not video)");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Wakelock DISABLED (not video)");
     }
   }
 
@@ -543,7 +577,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void _stopTimer() {
     if (timer == null) {
-      debugPrint("[MirrorFly][OutgoingCallController] Timer is null");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Timer is null");
       return;
     }
     timer?.cancel();
@@ -569,7 +603,7 @@ class CallKitOutgoingCallController extends GetxController
           final index = callerList.indexWhere((p) => p.identity == id);
 
           if (index != -1) {
-            debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList updating existing participant");
+            callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList updating existing participant");
             // Participant exists — update status
             final existing = callerList[index];
             callerList[index] = FlyCallParticipant(
@@ -580,7 +614,7 @@ class CallKitOutgoingCallController extends GetxController
             );
           } else {
             // Participant not found — add new
-            debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList adding new participant");
+            callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList adding new participant");
             callerList.add(
               FlyCallParticipant(
                 identity: id,
@@ -591,28 +625,28 @@ class CallKitOutgoingCallController extends GetxController
             );
           }
         }else{
-          debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList: Skipping self id: $id");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList: Skipping self id: $id");
         }
       }
       callerList.refresh();
     }else{
-      debugPrint("[MirrorFly][OutgoingCallController] updateCallerStatusList: participantsId is empty");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList: participantsId is empty");
     }
 
   }
 
   /// Handle reconnecting state for local and remote user
   void reconnecting({required List<String> participantIds}) {
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly] #CallKitOutGoingController → Reconnecting event for participantIds: $participantIds");
 
     if (participantIds.isEmpty) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly] #CallKitOutGoingController → Reconnecting event with empty participantIds");
       return;
     }
     for (final id in participantIds) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly] #CallKitOutGoingController → Reconnecting event for id: $id");
 
       try {
@@ -620,11 +654,11 @@ class CallKitOutgoingCallController extends GetxController
         if (!index.isNegative) {
           final target = callerList[index];
           // if (target.isReconnecting == true) {
-          //   debugPrint(
+          //   callkitLogger.info(
           //       "[MirrorFly] → Participant $id is already marked as reconnecting");
           // } else {
             callerList[index] = target.copyWith(isReconnecting: true, flyCallStatus: FlyCallStatusEvent.reconnecting);
-            debugPrint("[MirrorFly] → Updated participant $id as reconnecting");
+            callkitLogger.info("[MirrorFly] → Updated participant $id as reconnecting");
           // }
 
           if (target.isLocalParticipant) {
@@ -632,11 +666,11 @@ class CallKitOutgoingCallController extends GetxController
             callTryStatus("Reconnecting...");
           }
         } else {
-          debugPrint(
+          callkitLogger.info(
               "[MirrorFly] → No participant found in callerList for id: $id");
         }
       } catch (e) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly] → Error while updating reconnecting state for $id: $e");
       }
     }
@@ -645,17 +679,17 @@ class CallKitOutgoingCallController extends GetxController
 
   /// Handle reconnected state for local and remote user
   void reconnected({required List<String> participantIds}) {
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly] #CallKitOutGoingController → Reconnected event for participantIds: $participantIds");
 
     if (participantIds.isEmpty) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly] #CallKitOutGoingController → Reconnected event with empty participantIds");
       return;
     }
 
     for (final id in participantIds) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly] #CallKitOutGoingController → Reconnected event for id: $id");
 
       try {
@@ -665,9 +699,9 @@ class CallKitOutgoingCallController extends GetxController
 
           if (target.isReconnecting == true) {
             callerList[index] = target.copyWith(isReconnecting: false, flyCallStatus: FlyCallStatusEvent.reconnected);
-            debugPrint("[MirrorFly] → Participant $id marked as reconnected");
+            callkitLogger.info("[MirrorFly] → Participant $id marked as reconnected");
           } else {
-            debugPrint(
+            callkitLogger.info(
                 "[MirrorFly] → Participant $id was not in reconnecting state");
           }
 
@@ -678,11 +712,11 @@ class CallKitOutgoingCallController extends GetxController
             callTryStatus("Connected");
           }
         } else {
-          debugPrint(
+          callkitLogger.info(
               "[MirrorFly] → No participant found in callerList for id: $id");
         }
       } catch (e) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly] → Error while updating reconnected state for $id: $e");
       }
     }
@@ -698,34 +732,34 @@ class CallKitOutgoingCallController extends GetxController
   }) {
     final index = callerList.indexWhere((p) => p.identity == participantId);
 
-    debugPrint(
+    callkitLogger.info(
         "[Controller] isAudioMute called for participantId: $participantId, isAudioMuted: $isAudioMuted, index: $index");
 
     if (index.isNegative) {
-      debugPrint("[Controller] isAudioMute: No participant found for id: $participantId");
+      callkitLogger.info("[Controller] isAudioMute: No participant found for id: $participantId");
       return;
     }
 
     final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
     callerList[index] = updated;
 
-    debugPrint("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
+    callkitLogger.info("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {
-    debugPrint("[Controller] isVideoMute called for participantId: $participantId, isVideoMuted: $isVideoMuted");
+    callkitLogger.info("[Controller] isVideoMute called for participantId: $participantId, isVideoMuted: $isVideoMuted");
     if(isSelfId(id: participantId)){
-      debugPrint("[Controller] Updating local video mute status to $isVideoMuted");
+      callkitLogger.info("[Controller] Updating local video mute status to $isVideoMuted");
       isVideoEnabled.value = isVideoMuted;
     }else{
-      debugPrint("[Controller] Updating remote video mute status to $isVideoMuted");
+      callkitLogger.info("[Controller] Updating remote video mute status to $isVideoMuted");
       isRemoteVideoMuted.value = isVideoMuted;
     }
-    debugPrint("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
+    callkitLogger.info("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
   }
 
   void audioCallAfterCallSwitch(){
-    debugPrint("audioCallAfterCallSwitch change the call type into audio call");
+    callkitLogger.info("audioCallAfterCallSwitch change the call type into audio call");
     switchCamera();
     callType.value = "audio";
   }
@@ -733,13 +767,13 @@ class CallKitOutgoingCallController extends GetxController
    bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
     if (currentUserId == null) {
-      debugPrint("[MirrorFly][OutgoingCallController] isSelfId: is null id=$id");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] isSelfId: is null id=$id");
       return true;
     } else {
       //
       final String participantId = "$id@xmpp-uikit-qa.contus.us";
-      debugPrint("[MirrorFly][OutgoingCallController] isSelfId $currentUserId $participantId");
-      debugPrint("[MirrorFly][OutgoingCallController] isSelfId: ${currentUserId == participantId}");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] isSelfId $currentUserId $participantId");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;
     }
   }
@@ -749,7 +783,7 @@ class CallKitOutgoingCallController extends GetxController
     final String localId = callerList
         .firstWhere((p) => p.isLocalParticipant)
         .identity;
-    debugPrint("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
     return localId;
   }
 
@@ -759,7 +793,7 @@ class CallKitOutgoingCallController extends GetxController
         .where((p) => !p.isLocalParticipant)
         .map((p) => p.identity)
         .toList();
-    debugPrint("[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
     return remoteIds;
   }
 
@@ -770,11 +804,11 @@ class CallKitOutgoingCallController extends GetxController
           .where((p) => !p.isLocalParticipant)
           .map((p) => p.identity)
           .first;
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getRemoteParticipantIdForOneToOneCall: $remoteId");
       return remoteId;
     } catch (e) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getRemoteParticipantIdForOneToOneCall error: $e");
       return "";
     }
@@ -783,6 +817,10 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void _updateCallDuration({required String duration}) {
     callDuration(duration);
+  }
+
+  String trimAfterAt(String input) {
+    return input.split('@').first.trim();
   }
 
   ///
@@ -795,14 +833,14 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
     if(!isGroupCall.value){
-      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, not a group call");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, not a group call");
       for(var i in participantsId){
         final target = callerList.firstWhereOrNull((participant) => participant.identity == i);
         if(target != null){
-          debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
           callerList.remove(target);
           // if(callerList.length <=1){
-          //   debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
+          //   callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
           //   toToast("Call timed out");
           //   if(NavUtils.canPop){
           //     NavUtils.back();
@@ -817,47 +855,63 @@ class CallKitOutgoingCallController extends GetxController
         .map((id) => id.split('@').first.trim())
         .toList();
 
-    debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, group call is ongoing");
-    debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, current call participant list: ${callerList.map((e) => e.identity).toList()}");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, group call is ongoing");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, current call participant list: ${callerList.map((e) => e.identity).toList()}");
 
     if (participantsId.isEmpty) {
-      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, no participantsId found");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, no participantsId found");
       return;
     }
 
     for (final p in participantsId) {
-      debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, checking participantId: $p");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, checking participantId: $p");
 
       final target = callerList.firstWhereOrNull((participant) => participant.identity == p);
 
       if (target != null) {
-        debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
         callerList.remove(target);
 
         final fullJid = "$p@xmpp-uikit-qa.contus.us";
         final profile = await getProfileDetails(validId(userId: fullJid, isGroup: false));
-        final username = profile.name ?? profile.nickName ?? "Unknown";
+
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout,"
+            " fetched profile for $fullJid: name=${profile.name}, nickName=${profile.nickName}, jid=${profile.jid}");
+
+        String rawName =
+        (profile.name?.trim().isNotEmpty == true)
+            ? profile.name!.trim()
+            : (profile.nickName?.trim().isNotEmpty == true)
+            ? profile.nickName!.trim()
+            : trimAfterAt(profile.jid ?? "");
+
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, rawName for $fullJid: $rawName");
+
+        final username = trimAfterAt(rawName);
+
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, showing toast for $username");
+
         toToast("Call timed out for $username");
         checkParticipantForCallMode();
       } else {
         // callerList.refresh();
-        debugPrint("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
     }
   }
 
   void checkParticipantForCallMode() async {
-    debugPrint("[MirrorFly][OutgoingCallController] checkParticipantForCallMode called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] checkParticipantForCallMode called");
     final List<FlyCallParticipant> participants = await getCurrentCallParticipants();
     if (participants.isEmpty) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: No participants found");
       return;
     }
     if (participants.length <= 2 &&
         isGroupCall.value &&
         isGroupOnGoingCallEnabled.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: Switching to one-to-one call mode");
       isCallModeChangedToOneToMany.value = false;
       callMode.value = "TO-ONE-TO-ONE";
@@ -865,30 +919,37 @@ class CallKitOutgoingCallController extends GetxController
       isGroupOnGoingCallEnabled.value = false;
       titleAfterCallModeChange.value = '';
     } else {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] checkParticipantForCallMode: No call mode change needed");
     }
   }
 
-  void rejected({required String userId}) async{
-    debugPrint("[MirrorFly][OutgoingCallController] Call rejected by userId: $userId");
+  void rejected({required String userId}) async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected by userId: $userId");
 
     if (isGroupCall.value) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Call rejected, but group call is ongoing, "
               "current remote participant name map: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-      final String name = remoteUserNameMap[userId] ?? "Unknown";
+
+      if (!remoteUserNameMap.containsKey(userId)) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Call rejected userId: $userId not found in remoteUserNameMap");
+        return;
+      }
+
+      final String name = remoteUserNameMap[userId] ?? "";
       await Future.delayed(const Duration(milliseconds: 500));
       toToast("$name is busy");
       callerList.removeWhere((e) => e.identity == userId);
       if(callerList.length <=1){
-        debugPrint("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
        NavUtils.back();
       }
       return;
     }
 
-    debugPrint("[MirrorFly][OutgoingCallController] Call rejected, ending call");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, ending call");
     await Future.delayed(const Duration(milliseconds: 500));
     toToast("User Busy");
     NavUtils.back();
@@ -897,18 +958,18 @@ class CallKitOutgoingCallController extends GetxController
   void connecting({List<String>? participantsId , FlyCallStatusEvent? connecting}) {
     callStatus("Connecting...");
     updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.connecting);
-    debugPrint("[MirrorFly] connecting.. called");
+    callkitLogger.info("[MirrorFly] connecting.. called");
   }
 
   void outGoingCallCalling({ FlyCallStatusEvent? calling, List<String>? participantsId}) {
-    debugPrint("[MirrorFly][OutgoingCallController] outgoing calling");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] outgoing calling");
     callStatus("Calling...");
     updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.calling);
   }
 
   void onConnected(List<String> participantIds) {
     if (!isGroupCall.value) {
-      debugPrint("[MirrorFly][OutgoingCallController] onConnected for one to one call");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for one to one call");
       callStatus("Connected");
       isOnGoingCallView();
 
@@ -921,16 +982,16 @@ class CallKitOutgoingCallController extends GetxController
           if (timer == null || !(timer?.isActive ?? false)) {
             _startTimer();
           } else {
-            debugPrint(
+            callkitLogger.info(
                 "[MirrorFly][OutgoingCallController] Timer is already running");
           }
         } else {
-          debugPrint(
+          callkitLogger.info(
               "[MirrorFly][OutgoingCallController] onConnected: Skipping self id: $p");
         }
       }
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] onConnected for group call");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for group call");
       callStatus("Connected");
       isOnGoingCallView();
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
@@ -938,15 +999,15 @@ class CallKitOutgoingCallController extends GetxController
       if (timer == null || !(timer?.isActive ?? false)) {
         _startTimer();
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] Timer is already running");
       }
 
       if (!isGroupOnGoingCallEnabled.value) {
-        debugPrint("[MirrorFly][OutgoingCallController] Group call is now ongoing");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is now ongoing");
         isGroupOnGoingCallEnabled.value = true;
       }else{
-        debugPrint("[MirrorFly][OutgoingCallController] Group call is already ongoing");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is already ongoing");
       }
     }
   }
@@ -957,7 +1018,7 @@ class CallKitOutgoingCallController extends GetxController
   void disconnectCall({required List<String> userIds, required String reason}) {
 
     if (userIds.isEmpty) {
-      debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: No userIds provided, assuming the overall call ended.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: No userIds provided, assuming the overall call ended.");
       _resetValues();
       _stopTimer();
       closeDialog();
@@ -973,20 +1034,20 @@ class CallKitOutgoingCallController extends GetxController
 
     final String userId = userIds.first;
 
-    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall invoked with userId: $userId, reason: $reason");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall invoked with userId: $userId, reason: $reason");
 
     if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
-      debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
 
       callerList.removeWhere((e) => e.identity == userId);
 
-      final String name = remoteUserNameMap[userId] ?? "Unknown";
+      final String name = remoteUserNameMap[userId] ?? "";
       toToast("$name disconnected");
 
       return;
     }
 
-    debugPrint("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call.");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call.");
 
     _resetValues();
     _stopTimer();
@@ -1009,30 +1070,30 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void muteAudio() async {
-    debugPrint("[MirrorFly][OutgoingCallController] muteAudio start");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start");
 
     MirrorFlyCallKit.toggleMicrophone(result: (result) async {
-      debugPrint("[MirrorFly][OutgoingCallController] muteAudio toggleMicrophone result : $result");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio toggleMicrophone result : $result");
 
       if (result) {
         final bool isMicEnabled =
             await MirrorFlyCallKit.getIsMicrophoneEnabled();
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone result : $result");
       }
     });
   }
 
   void setCameraEnable({required bool enable}) async {
-    debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable start");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable start");
     final FlyCallType? flyCallType =
         await MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == null) {
-      debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable: Unable to get current call type.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Unable to get current call type.");
       return;
     }
 
@@ -1053,16 +1114,16 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
 
     MirrorFlyCallKit.setCameraEnable(
         enable: enable,
         result: (result) async {
           if (result) {
-            debugPrint("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
+            callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
             isVideoEnabled.value = enable;
           } else {
-            debugPrint(
+            callkitLogger.info(
                 "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
           }
         });
@@ -1071,14 +1132,14 @@ class CallKitOutgoingCallController extends GetxController
 
 
   void onCallSwitchRemoteUserDeclined() {
-    debugPrint("[MirrorFly][OutgoingCallController] onCallSwitchRemoteUserDeclined");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallSwitchRemoteUserDeclined");
     toToast("Video call switch declined");
     closeDialog();
   }
 
   ///
   void onRemoteUserCancelledTheSwitchRequest() {
-    debugPrint("[MirrorFly][OutgoingCallController] onRemoteUserCancelledTheSwitchRequest");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onRemoteUserCancelledTheSwitchRequest");
     toToast("Video call switch canceled");
     closeDialog();
   }
@@ -1088,26 +1149,26 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void remoteUserIsEngaged({required List<String> participants}) async {
 
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged with participants: $participants,"
+    callkitLogger.info("[MirrorFly][OutgoingCallController] remoteUserIsEngaged with participants: $participants,"
         "isGroupCall: ${isGroupCall.value} & isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
 
     if (callerList.isEmpty) {
-      debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: No participants found");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: No participants found");
       return;
     }
 
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: "
+    callkitLogger.info("[MirrorFly][OutgoingCallController] remoteUserIsEngaged: "
         "Checking current call user list, items: ${callerList.map((p) => p.identity).toList()}");
 
-    debugPrint("[MirrorFly][OutgoingCallController] remoteUserIsEngaged isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value},"
+    callkitLogger.info("[MirrorFly][OutgoingCallController] remoteUserIsEngaged isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value},"
         " participantsList: ${callerList.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
 
     if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
       /// One - Many call user engaged logic
-      debugPrint("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
 
       if (callerList.firstWhere((e) => e.identity == participants.first).flyCallStatusEvent != FlyCallStatusEvent.engaged) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
         callerList.removeWhere((e) => e.identity == participants.first);
         final String name = remoteUserNameMap[participants.first] ?? participants.first;
@@ -1119,7 +1180,7 @@ class CallKitOutgoingCallController extends GetxController
             .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
 
         if (allEngaged && callerList.length > 1) {
-          debugPrint("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] All remote users are engaged → navigating back");
           toToast("All users are engaged");
           await Future.delayed(const Duration(milliseconds: 500));
           if (NavUtils.canPop) {
@@ -1128,16 +1189,16 @@ class CallKitOutgoingCallController extends GetxController
           return;
         } else {
           /// Do not navigate back just to show toast and remove the local maintaining user list
-          debugPrint("[MirrorFly][OutgoingCallController] Not all users are engaged");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] Not all users are engaged");
           return;
         }
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is engaged already");
       }
     } else {
       /// One - One call user engaged logic
-      debugPrint(
+      callkitLogger.info(
         "[MirrorFly][OutgoingCallController] single user engaged logic,"
             " remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
       );
@@ -1151,10 +1212,10 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void switchCamera() async {
-    debugPrint("[MirrorFly][OutgoingCallController] switchCamera start");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] switchCamera start");
 
     MirrorFlyCallKit.switchCameraPosition(result: (result) async {
-      debugPrint("[MirrorFly][OutgoingCallController] switchCameraPosition result : $result");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] switchCameraPosition result : $result");
 
       // After switching, get the updated position
       var pos = await MirrorFlyCallKit.getCurrentCameraPosition();
@@ -1163,23 +1224,23 @@ class CallKitOutgoingCallController extends GetxController
       } else if (pos == CameraType.back) {
         cameraPosition.value = pos;
       }
-      debugPrint("[MirrorFly][OutgoingCallController] updated pos : $pos");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] updated pos : $pos");
 
       // Update state
     });
   }
 
   Future<void> initAudioRouting() async {
-    debugPrint("[MirrorFly][OutgoingCallController] Initializing audio routing...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Initializing audio routing...");
 
     if (callType.value == "audio") {
-      debugPrint("[MirrorFly][OutgoingCallController] Call type is audio, setting to earpiece.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Call type is audio, setting to earpiece.");
       selectedDevice.value = false;
     } else if (callType.value == "video") {
-      debugPrint("[MirrorFly][OutgoingCallController] Call type is video, setting to speaker.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Call type is video, setting to speaker.");
       selectedDevice.value = true;
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] Unknown call type, defaulting to earpiece.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Unknown call type, defaulting to earpiece.");
       selectedDevice.value = false;
     }
 
@@ -1210,7 +1271,7 @@ class CallKitOutgoingCallController extends GetxController
         ? FlyCallAudioDeviceType.earpiece.value  // if speaker active → switch to earpiece
         : FlyCallAudioDeviceType.speaker.value; // if earpiece active → switch to speaker
 
-    debugPrint("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
 
     final result = await MirrorFlyCallKit.changeAudioOutputDevice(
       flyMediaDevice: const FlyMediaDevice("", "", "", ""),
@@ -1220,14 +1281,14 @@ class CallKitOutgoingCallController extends GetxController
     if (result) {
       // update state only after success
       selectedDevice.value = !selectedDevice.value;
-      debugPrint("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
     }
   }
 
   Future<void> changeAudioDevice() async {
-    debugPrint("[MirrorFly][OutgoingCallController] changeAudioDevice -> ");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] changeAudioDevice -> ");
     await _switchTo();
   }
 
@@ -1275,23 +1336,23 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void localHangup() async {
-    debugPrint("[MirrorFly][OutgoingCallController]  disconnectCall invoked...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController]  disconnectCall invoked...");
     _stopTimer();
     try {
       var result = await MirrorFlyCallKit.localHangup();
-      debugPrint("[MirrorFly][OutgoingCallController] localHangup() result: $result");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] localHangup() result: $result");
 
       if (result == true) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
         NavUtils.back();
       } else {
         NavUtils.back();
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
       }
     } catch (e, stack) {
-      debugPrint("[MirrorFly][OutgoingCallController]  Exception in disconnectCall: $e");
+      callkitLogger.info("[MirrorFly][OutgoingCallController]  Exception in disconnectCall: $e");
       print(stack);
     }
   }
@@ -1301,20 +1362,20 @@ class CallKitOutgoingCallController extends GetxController
       {required bool isSelf, required String participantId}) {
     if (isSelf) {
       if (!isLocalTracksPublished.value) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Local tracks published for $participantId");
         isLocalTracksPublished(true);
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate local publish for $participantId");
       }
     } else {
       if (!isRemoteTracksPublished.value) {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Remote tracks published for $participantId");
         isRemoteTracksPublished(true);
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] [MirrorFlyCall] Ignoring duplicate remote publish for $participantId");
       }
     }
@@ -1323,7 +1384,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void requestVideoCallSwitch() async {
     if(isGroupCall.value){
-      debugPrint("[MirrorFly][OutgoingCallController] requestVideoCallSwitch: Call switch  supported in group calls.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] requestVideoCallSwitch: Call switch  supported in group calls.");
       MirrorFlyCallKit.toggleVideoForGroupCall();
       return;
     }
@@ -1342,7 +1403,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void cancelVideoCallSwitchRequest() async {
-    debugPrint("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
     toToast("Video call switch canceled");
     closeDialog();
@@ -1351,14 +1412,14 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void acceptIncomingCallSwitchRequest() async {
-    debugPrint("[MirrorFly][OutgoingCallController]  acceptIncomingCallSwitchRequest invoked...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController]  acceptIncomingCallSwitchRequest invoked...");
     closeDialog();
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
   }
 
   ///
   void declineIncomingCallSwitchRequest() async {
-    debugPrint("[MirrorFly][OutgoingCallController]  declineIncomingCallSwitchRequest invoked...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController]  declineIncomingCallSwitchRequest invoked...");
     await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
     closeDialog();
   }
@@ -1379,11 +1440,11 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void processCallSwitchUI() async {
-    debugPrint("[MirrorFly][OutgoingCallController] Processing call switch UI changes...");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Processing call switch UI changes...");
     final FlyCallType? flyCallType =
         await MirrorFlyCallKit.getCurrentCallType();
     if (flyCallType == null && flyCallType == FlyCallType.none) {
-      debugPrint("[MirrorFly][OutgoingCallController] Unable to get current call type after switch.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Unable to get current call type after switch.");
       return;
     }
     flyCallType == FlyCallType.audio ? callType("audio") : callType("video");
@@ -1391,7 +1452,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void onVideoCallSwitchRequestAccepted() {
-    debugPrint("[MirrorFly][OutgoingCallController] Video call switch request accepted.");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Video call switch request accepted.");
     closeDialog();
   }
 
@@ -1422,7 +1483,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void showIncomingCallSwitchRequestDialog() async {
-    debugPrint("[MirrorFly][OutgoingCallController][DEBUG] showIncomingCallSwitchRequestDialog called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] showIncomingCallSwitchRequestDialog called");
 
     closeDialog();
     try {
@@ -1442,17 +1503,17 @@ class CallKitOutgoingCallController extends GetxController
       await _player?.play(AssetSource('sounds/reconnecting.mp3'));
       await Future.delayed(const Duration(milliseconds: 300));
       final state = _player?.state;
-      debugPrint("[MirrorFly][OutgoingCallController] Player state after play(): $state");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Player state after play(): $state");
 
       if (state == PlayerState.playing) {
         _isPlaying = true;
-        debugPrint("[MirrorFly][OutgoingCallController]  Ringtone is playing!");
+        callkitLogger.info("[MirrorFly][OutgoingCallController]  Ringtone is playing!");
       } else {
-        debugPrint("[MirrorFly][OutgoingCallController]  Not playing, state=$state");
+        callkitLogger.info("[MirrorFly][OutgoingCallController]  Not playing, state=$state");
       }
-      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
+      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
     } catch (e) {
-      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
+      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
     }
 
     DialogUtils.showAlert(
@@ -1462,13 +1523,13 @@ class CallKitOutgoingCallController extends GetxController
       actions: [
         TextButton(
             onPressed: () async {
-              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Decline pressed");
+              callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] Decline pressed");
               declineIncomingCallSwitchRequest();
             },
             child: Text(getTranslated("declineRequest").toUpperCase())),
         TextButton(
             onPressed: () async {
-              debugPrint("[MirrorFly][OutgoingCallController][DEBUG] Accept pressed");
+              callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] Accept pressed");
               acceptIncomingCallSwitchRequest();
             },
             child: Text(getTranslated("acceptRequest"))),
@@ -1529,22 +1590,22 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void closeDialog() async{
-    debugPrint("[MirrorFly][OutgoingCallController] _closeDialog called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] _closeDialog called");
 
     // Stop the ringtone only if it is currently playing
     if (_isPlaying) {
       await _player?.stop();
       _isPlaying = false;
-      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer stopped (manual tracking)");
+      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer stopped (manual tracking)");
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer not playing (manual tracking)");
+      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer not playing (manual tracking)");
     }
 
 
     // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
       NavUtils.back();
-      debugPrint("[MirrorFly][OutgoingCallController] Dialog closed");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Dialog closed");
     }
   }
 
@@ -1552,7 +1613,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void onCallFailed() {
-    debugPrint("[MirrorFly][OutgoingCallController] onCallFailed called");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
     _resetValues();
     _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
@@ -1565,7 +1626,7 @@ class CallKitOutgoingCallController extends GetxController
   /// Invite participants to the ongoing call
   void inviteParticipants() async {
     final String callMode = this.callMode.value;
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final List<String> pickedContacts =
     await gotoContacts(isGroupInvite: callMode != "oneToOne");
@@ -1576,10 +1637,10 @@ class CallKitOutgoingCallController extends GetxController
     } else {
 
       MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
-        debugPrint("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
           // callerList.value = await getCurrentCallParticipants();
-          debugPrint("[MirrorFly][OutgoingCallController] after inviteParticipants callerList: ${callerList.map((e) => e.identity).toList()}");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] after inviteParticipants callerList: ${callerList.map((e) => e.identity).toList()}");
         }
       });
     }
@@ -1596,7 +1657,7 @@ class CallKitOutgoingCallController extends GetxController
               topicId: topicId.value,
               forMakeCall: true,
               callType: callType.value));
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] gotoContacts contact sync disabled $result");
       return result;
     } else {
@@ -1615,11 +1676,11 @@ class CallKitOutgoingCallController extends GetxController
                 topicId: topicId.value,
                 forMakeCall: true,
                 callType: callType.value));
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] gotoContacts contact sync enabled $result");
         return result;
       } else {
-        debugPrint(
+        callkitLogger.info(
             "[MirrorFly][OutgoingCallController] gotoContacts permission denied");
         return [];
       }
@@ -1629,18 +1690,18 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void onParticipantListUpdated() async {
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode");
     final preCallUserListCount = callerList.length;
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged preCallUserListCount: $preCallUserListCount");
     await getCurrentCallParticipants();
 
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
 
     if (preCallUserListCount == callerList.length) {
-      debugPrint(
+      callkitLogger.info(
           "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
       return;
     }
@@ -1649,14 +1710,14 @@ class CallKitOutgoingCallController extends GetxController
         callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
         chatId: groupId.value);
 
-    debugPrint("[MirrorFly][OutgoingCallController] onCallModeChanged updated "
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallModeChanged updated "
         "local callMode: ${callMode.value}, isGroupCall: ${isGroupCall.value} "
         "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
 
     isGroupOnGoingCallEnabled(!(callerList.length <= 2));
     isCallModeChangedToOneToMany(!(callerList.length <= 2));
 
-    debugPrint(
+    callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
         " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
         "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
@@ -1666,13 +1727,13 @@ class CallKitOutgoingCallController extends GetxController
 
     // ///
     // void videoSwap(){
-    //   debugPrint("[MirrorFly][OutgoingCallController] videoSwap called");
+    //   callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called");
     //   if(callType.value == "video"){
-    //     debugPrint("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    //     callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
     //     final String temp = mainCallViewUserId.value;
     //     mainCallViewUserId.value = secondaryCallViewUserId.value;
     //     secondaryCallViewUserId.value = temp;
-    //     debugPrint("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
+    //     callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
     //   }
     // }
 
@@ -1684,9 +1745,9 @@ class CallKitOutgoingCallController extends GetxController
     if (participant != null) {
       participant.flyCallStatusEvent = status;
       callerList.refresh();
-      debugPrint("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {
-      debugPrint("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Participant $id not found in callerList");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Participant $id not found in callerList");
     }
   }
 
@@ -1718,7 +1779,7 @@ class CallKitOutgoingCallController extends GetxController
     titleAfterCallModeChange("");
     _isPlaying = false;
 
-    debugPrint("[MirrorFly][OutgoingCallController] _resetValues");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
 
 }

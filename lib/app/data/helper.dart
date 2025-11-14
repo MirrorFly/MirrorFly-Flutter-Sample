@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../common/constants.dart';
 import '../data/permissions.dart';
 import '../data/session_management.dart';
@@ -23,6 +24,7 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
   try {
     var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
     var profile = ProfileDetails.fromJson(json.decode(value.toString()));
+    debugPrint("getProfileDetails--> ${profile.toJson().toString()}");
     return profile;
   } catch(e) {
     debugPrint("getProfileDetails Exception--> $e");

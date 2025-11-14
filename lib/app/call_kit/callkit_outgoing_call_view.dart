@@ -8,6 +8,7 @@ import '../common/constants.dart';
 import '../data/helper.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import 'callkit_logger.dart';
 import 'callkit_outgoing_call_controller.dart';
 
 
@@ -40,7 +41,7 @@ class CallKitOutgoingCallView
 
   /// One-to-One Call View
   Widget oneToOneCallUI(BuildContext context) {
-    debugPrint("#CallKitOutGoingCallView One-One Call UI Build Called");
+    callkitLogger.info("#CallKitOutGoingCallView One-One Call UI Build Called");
 
     return Stack(
       fit: StackFit.expand,
@@ -225,15 +226,15 @@ class CallKitOutgoingCallView
 
   Widget buildMuteIcon(String? participantId) {
 
-    debugPrint("[buildMuteIcon] Called for participantId: $participantId");
+    callkitLogger.info("[buildMuteIcon] Called for participantId: $participantId");
 
     if (participantId == null || participantId.isEmpty) {
-      debugPrint("[buildMuteIcon] participantId is null or empty");
+      callkitLogger.info("[buildMuteIcon] participantId is null or empty");
       return const SizedBox.shrink();
     }
 
     final FlyCallParticipant participant = controller.callerList.firstWhere((e) => e.identity == participantId);
-    debugPrint("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isAudioMuted}");
+    callkitLogger.info("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isAudioMuted}");
     if (participant.isAudioMuted == true) {
       return Center(
         child: Container(
@@ -418,7 +419,7 @@ class CallKitOutgoingCallView
                                       final connectionState = controller.getParticipantConnectionState(
                                         participant.flyCallStatusEvent!,
                                       );
-                                      debugPrint("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
+                                      callkitLogger.info("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
                                       if ((!isSelf && connectionState.isNotEmpty) ||( isSelf && connectionState == "Reconnecting" && connectionState.isNotEmpty)) {
                                         return Positioned.fill(
                                           child: Container(
@@ -634,20 +635,20 @@ class CallKitOutgoingCallView
     bool? isGroup = false,
     double scale = 1.0,
   }) {
-    debugPrint("[getUserProfileImageWithName] Called with participantId: $participantId");
+    callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
     return FutureBuilder<ProfileDetails>(
       future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails("$participantId@xmpp-uikit-qa.contus.us"),
       builder: (ctx, snap) {
         // Log the state of the FutureBuilder
         if (snap.connectionState == ConnectionState.waiting) {
-          debugPrint("[getUserProfileImageWithName] Loading profile for: $participantId");
+          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $participantId");
         } else if (snap.connectionState == ConnectionState.done) {
           if (snap.hasError) {
-            debugPrint("[getUserProfileImageWithName] Error loading profile for $participantId → ${snap.error}");
+            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $participantId → ${snap.error}");
           } else if (!snap.hasData || snap.data == null) {
-            debugPrint("[getUserProfileImageWithName]  No data found for participantId: $participantId");
+            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $participantId");
           } else {
-            debugPrint("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
+            callkitLogger.info("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
           }
         }
 
@@ -667,7 +668,7 @@ class CallKitOutgoingCallView
               ),
               Obx(() {
 
-                debugPrint("[getUserProfileImageWithName] Checking if local view for participantId: "
+                callkitLogger.info("[getUserProfileImageWithName] Checking if local view for participantId: "
                     "$participantId, controller.isOnGoingCallViewEnable: ${controller.isOnGoingCallViewEnable.value}, "
                     "localParticipantId: ${controller.getLocalParticipantId()}");
 
