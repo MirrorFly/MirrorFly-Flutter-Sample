@@ -4074,30 +4074,34 @@ class ChatController extends FullLifeCycleController
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "userJid": [profile.jid],
-                    "callType": CallType.audio
+                    "callType": CallType.audio,
+                    "callMode": "ONE-TO-ONE",
+                    "chatId": ""
                   });
                 } else {
-                  final String errorData = response.data;
-                  if (errorData == "Centrifuge not connected") {
-                    toToast("CF Not connected");
-                  }
-
-                  // Assuming it is permission denied error
-                  final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                  final String? permissionType = errorJson?['type'];
-                  final String? permissionAction = errorJson?['action'];
-                  final String? message = errorJson?['message'];
-                  debugPrint(
-                      "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-                  if (message != null) {
-                    toToast(message);
-                  }
+                  //   final String errorData = response.data;
+                  //   if (errorData == "Centrifuge not connected") {
+                  //     toToast("CF Not connected");
+                  //   }
+                  //
+                  //   // Assuming it is permission denied error
+                  //   final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
+                  //   final String? permissionType = errorJson?['type'];
+                  //   final String? permissionAction = errorJson?['action'];
+                  //   final String? message = errorJson?['message'];
+                  //   debugPrint(
+                  //       "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
+                  //
+                  //   if (message != null) {
+                  //     toToast(message);
+                  //   }
+                  // }
                 }
               },
               callersId: [
                 profile.jid!,
               ],
+                // callMode: "ONE-TO-ONE",
               //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
               chatId: '');
         }
@@ -4130,11 +4134,14 @@ class ChatController extends FullLifeCycleController
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [profile.jid ?? ""],
                 chatId: '',
+                // callMode: "ONE_TO_ONE",
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": [profile.jid],
-                      "callType": CallType.video
+                      "callType": CallType.video,
+                      "callMode": "ONE_TO_ONE",
+                      "chatId": ""
                     });
                   } else {
                     toToast("CF Not connected");

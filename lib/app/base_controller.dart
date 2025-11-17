@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_r
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'call_kit/callkit_logger.dart';
 import 'call_kit/callkit_outgoing_call_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
@@ -22,6 +23,7 @@ import 'call_modules/participants/add_participants_controller.dart';
 import 'common/app_localizations.dart';
 import 'common/constants.dart';
 import 'data/helper.dart';
+import 'data/permissions.dart';
 import 'data/session_management.dart';
 import 'extensions/extensions.dart';
 import 'model/call_user_list.dart';
@@ -58,30 +60,51 @@ class BaseController {
     //
     String? callerId;
     String? callType;
+    String? callMode;
+    String? groupId;
 
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
-      final flyCallStatus = event;
+      final FlyCallStatus flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
+      callkitLogger.info("[MirrorFly][BaseController] flyCallStatus event received: ${event.toJson()}");
+      if (flyCallStatusEvent == FlyCallStatusEvent.permissionDenied && event.reason != null) {
+        try {
+          final Map<String, dynamic> reasonMap = jsonDecode(event.reason!);
+
+          if (reasonMap['action'] == 'goToSettings' && callType == "audio") {
+            callkitLogger.info("[MirrorFly][BaseController] Navigating to app settings for audio permissions");
+            await AppPermission.askAudioCallPermissions();
+          } else if(reasonMap['action'] == 'goToSettings' && callType == "video"){
+            callkitLogger.info("[MirrorFly][BaseController] Navigating to app settings for video permissions");
+            await AppPermission.askVideoCallPermissions();
+          }else {
+            debugPrint('Permission denied: ${reasonMap['message']}');
+          }
+        } catch (e) {
+          debugPrint('Failed to decode re ason JSON: $e');
+        }
+      }
+
 
       debugPrint(
           "[MirrorFly][BaseController] flyCallStatus event ${event.toJson()} flyCallStatusEvent $flyCallStatusEvent");
 
       // Incoming call - set the callerId and callType to be used when answering the call
-      if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
+      if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
         }
         callerId = flyCallStatus.participantsIds.first;
         callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
-        debugPrint("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType");
-      }else{
-        debugPrint("[MirrorFly][BaseController] flyCallStatusEvent $flyCallStatusEvent not incoming call");
+        callMode =  MirrorFlyCallKit.getCurrentCallMode();
+        groupId =  MirrorFlyCallKit.getCurrentCallGroupId();
+
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType callMode=$callMode groupId=$groupId");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
-        debugPrint(
-            "[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered for event $flyCallStatusEvent");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered for event $flyCallStatusEvent");
         return;
       }
 
@@ -93,68 +116,73 @@ class BaseController {
 
       switch (flyCallStatusEvent) {
         case FlyCallStatusEvent.connecting:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent connecting");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent connecting");
           callKitOutgoingCallController.connecting();
           break;
         case FlyCallStatusEvent.connected:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent connected");
-          callKitOutgoingCallController.connected();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent connected");
+          callKitOutgoingCallController.onConnected(flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.ringing:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent ringing");
-          callKitOutgoingCallController.ringing();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent ringing");
+          callKitOutgoingCallController.ringing(participantsId: flyCallStatus.participantsIds,ringing: FlyCallStatusEvent.ringing);
           break;
         case FlyCallStatusEvent.tryingToConnect:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent tryingToConnect");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent tryingToConnect");
           callKitOutgoingCallController.tryingToConnect();
           break;
         case FlyCallStatusEvent.calling:
           /// Need to pass this condition to UI, to update the call status from "Trying to connect" to "Calling"
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent FlyCallStatusEvent.calling");
-          callKitOutgoingCallController.outGoingCallCalling();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent FlyCallStatusEvent.calling");
+          callKitOutgoingCallController.outGoingCallCalling(participantsId: flyCallStatus.participantsIds,calling: FlyCallStatusEvent.calling);
           break;
         case FlyCallStatusEvent.reconnecting:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent reconnecting");
-          callKitOutgoingCallController.reconnecting();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent reconnecting");
+          callKitOutgoingCallController.reconnecting(participantIds: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.reconnected:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent reconnected");
-          callKitOutgoingCallController.reconnected();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent reconnected for participants: , participantIds: ${flyCallStatus.participantsIds}");
+            callKitOutgoingCallController.reconnected(
+                participantIds: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.disconnected:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent disconnect");
-          callKitOutgoingCallController.disconnectCall();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent disconnect");
+          callKitOutgoingCallController.disconnectCall(
+              userIds: flyCallStatus.participantsIds,
+              reason: flyCallStatus.reason ?? '');
           break;
         case FlyCallStatusEvent.declined:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent declined");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent declined");
           break;
         case FlyCallStatusEvent.callHold:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callHold");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callHold");
           break;
         case FlyCallStatusEvent.callResume:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callResume");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callResume");
           break;
         case FlyCallStatusEvent.callTimeout:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
-          callKitOutgoingCallController.callTimeOut();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
+          callKitOutgoingCallController.callTimeOut(
+              participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.rejected:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent rejected");
-          callKitOutgoingCallController.rejected();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent rejected");
+          if (flyCallStatus.participantsIds.isEmpty) {
+            callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent rejected - No participant IDs found");
+            return;
+          }
+          final String participantId = flyCallStatus.participantsIds.first;
+          callKitOutgoingCallController.rejected(userId: participantId);
           break;
         case FlyCallStatusEvent.engaged:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent engaged");
-          callKitOutgoingCallController.remoteUserIsEngaged();
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent engaged");
+          callKitOutgoingCallController.remoteUserIsEngaged(participants: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.none:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent none");
-          break;
-        case FlyCallStatusEvent.incomingCall:
-          /// This will be triggered when we receive the incoming call in call status stream.
-        /// This condition is already handled above to set the callerId and callType
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent none");
           break;
         case FlyCallStatusEvent.permissionDenied:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent permissionDenied");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent permissionDenied");
           final Map<String, dynamic>? errorJson =
               jsonDecode(flyCallStatus.reason ?? '') as Map<String, dynamic>?;
           final String? permissionType = errorJson?['type'];
@@ -167,9 +195,14 @@ class BaseController {
             toToast(message);
           }
         case FlyCallStatusEvent.callFailed:
-          debugPrint("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed();
           break;
+        case FlyCallStatusEvent.joinSync:
+          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent joinSync");
+          // if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
+          //   callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
+          // }
         case FlyCallStatusEvent.permissionDenied:
           // TODO: Handle this case.
           throw UnimplementedError();
@@ -179,7 +212,7 @@ class BaseController {
     ///
     MirrorFlyCallKit.flyCallAction.listen((event) {
 
-      debugPrint("[MirrorFly][BaseController] flyCallAction event ${event.toJson()}");
+      callkitLogger.info("[MirrorFly][BaseController] flyCallAction event ${event.toJson()}");
 
       //
       final FlyCallAction flyCallAction = event;
@@ -187,10 +220,9 @@ class BaseController {
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
-        debugPrint("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
         if (callerId != null && callType != null) {
-          debugPrint(
-              "[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
+          callkitLogger.info("[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
@@ -198,20 +230,20 @@ class BaseController {
               "userJid": [jid], // pass modified JID
               "callType": callType,
               "isIncoming": true,
+              "callMode": callMode,
+              "chatId": groupId,
             },
           );
         } else {
-          debugPrint(
-              "[MirrorFly][BaseController] ERROR: answerCall received but callerId/callType not set");
+          callkitLogger.info("[MirrorFly][BaseController] ERROR: answerCall received but callerId/callType not set");
         }
         return;
       } else {
-        debugPrint("[MirrorFly][BaseController] flyCallActionEvent $flyCallActionEvent not answerCall");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent $flyCallActionEvent not answerCall");
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
-        debugPrint(
-            "[MirrorFly][BaseController] flyCallAction CallKitOutgoingCallController not registered for event $flyCallActionEvent");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallAction CallKitOutgoingCallController not registered for event $flyCallActionEvent");
         return;
       }
       final controller = Get.find<CallKitOutgoingCallController>();
@@ -221,187 +253,197 @@ class BaseController {
 
       switch (flyCallActionEvent) {
         case FlyCallActionEvent.outgoingCall:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent outgoingCall");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingCall");
           break;
 
-        // case FlyCallActionEvent.incomingCall:
-        //   print("[MirrorFly][BaseController] flyCallActionEvent incomingCall");
-        //   break;
+      // case FlyCallActionEvent.incomingCall:
+      //   print("[MirrorFly][BaseController] flyCallActionEvent incomingCall");
+      //   break;
 
         case FlyCallActionEvent.answerCall:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent answerCall");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall");
           break;
 
         case FlyCallActionEvent.denyCall:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent denyCall");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent denyCall");
           break;
 
         case FlyCallActionEvent.localHangup:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent localHangup");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent localHangup");
           break;
 
         case FlyCallActionEvent.muteAudio:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent muteAudio");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent muteAudio");
           break;
 
         case FlyCallActionEvent.muteVideo:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent muteVideo");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent muteVideo");
           break;
 
         case FlyCallActionEvent.flipCamera:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent flipCamera");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent flipCamera");
           break;
 
         case FlyCallActionEvent.initAudioOutput:
-          // final flyMediaDevice = flyCallAction.flyMediaDevice;
-          // controller.initAudioRouting();
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent initAudioOutput");
+        // final flyMediaDevice = flyCallAction.flyMediaDevice;
+        // controller.initAudioRouting();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent initAudioOutput");
           break;
 
         case FlyCallActionEvent.audioOutput:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent audioOutput");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioOutput");
           break;
 
         case FlyCallActionEvent.screenShare:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent screenShare");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent screenShare");
           break;
 
         case FlyCallActionEvent.engagedCall:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent engagedCall");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent engagedCall");
           break;
 
         case FlyCallActionEvent.actionCallSwitch:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent actionCallSwitch");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent actionCallSwitch");
           break;
 
         case FlyCallActionEvent.toAudioCallAfterCallSwitch:
           controller.audioCallAfterCallSwitch();
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent toAudioCallAfterCallSwitch");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent toAudioCallAfterCallSwitch");
           break;
 
         case FlyCallActionEvent.none:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent none");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent none");
           break;
 
         case FlyCallActionEvent.outgoingRequest:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest");
           controller.showOutGoingCallSwitchRequestDialog();
           break;
 
         case FlyCallActionEvent.incomingRequest:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent incomingRequest");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest");
           controller.showIncomingCallSwitchRequestDialog();
           break;
 
         case FlyCallActionEvent.accept:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent accept");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept");
           controller.onVideoCallSwitchAccept();
           break;
 
         case FlyCallActionEvent.cancel:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent cancel");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel");
           controller.onRemoteUserCancelledTheSwitchRequest();
           break;
 
         case FlyCallActionEvent.decline:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent decline");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline");
           controller.onCallSwitchRemoteUserDeclined();
           break;
 
         case FlyCallActionEvent.timeout:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent timeout");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout");
           controller.onVideoCallSwitchTimeOut();
           break;
 
         case FlyCallActionEvent.unknown:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent unknown");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent unknown");
           break;
 
         case FlyCallActionEvent.joined:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent joined");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent joined");
           break;
 
         case FlyCallActionEvent.left:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent left");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent left");
           break;
 
         case FlyCallActionEvent.audioTrackPublished:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent audioTrackPublished");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioTrackPublished");
           break;
 
         case FlyCallActionEvent.audioTrackUnPublished:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent audioTrackUnPublished");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioTrackUnPublished");
           break;
 
         case FlyCallActionEvent.videoTrackPublished:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent videoTrackPublished");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoTrackPublished");
           break;
 
         case FlyCallActionEvent.videoTrackUnpublished:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent videoTrackUnpublished");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoTrackUnpublished");
           break;
 
         case FlyCallActionEvent.trackSubscribed:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent trackSubscribed");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackSubscribed");
           break;
 
         case FlyCallActionEvent.trackUnsubscribed:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent trackUnsubscribed");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackUnsubscribed");
           break;
 
         case FlyCallActionEvent.audioMuted:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
-            controller.isAudioMute(isAudioMuted: true,participantId: flyCallAction.participantId);
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
+          controller.isAudioMute(
+              isAudioMuted: true, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.audioUnMuted:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent audioMuted");
-            controller.isAudioMute(isAudioMuted: false,participantId: flyCallAction.participantId);
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
+          controller.isAudioMute(
+              isAudioMuted: false, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoMuted:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent videoMuted");
-          controller.isVideoMute(isVideoMuted: false,participantId: flyCallAction.participantId);
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoMuted with participantId=${flyCallAction.participantId}");
+          controller.isVideoMute(
+              isVideoMuted: false, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.videoUnMuted:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent videoUnMuted");
-          controller.isVideoMute(isVideoMuted: true,participantId: flyCallAction.participantId);
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoUnMuted with participantId=${flyCallAction.participantId}");
+          controller.isVideoMute(
+              isVideoMuted: true, participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.speakingChanged:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent speakingChanged");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent speakingChanged");
           break;
 
         case FlyCallActionEvent.connectionQualityUpdated:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
           break;
 
         case FlyCallActionEvent.attributesChanged:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent attributesChanged");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent attributesChanged");
           break;
 
         case FlyCallActionEvent.metadataUpdated:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent metadataUpdated");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent metadataUpdated");
           break;
 
         case FlyCallActionEvent.permissionsUpdated:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent permissionsUpdated");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent permissionsUpdated");
           break;
 
         case FlyCallActionEvent.streamStateUpdated:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent streamStateUpdated");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent streamStateUpdated");
           break;
 
         case FlyCallActionEvent.activeSpeaker:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
           break;
 
         case FlyCallActionEvent.subscriptionException:
-          debugPrint("[MirrorFly][BaseController] flyCallActionEvent subscriptionException");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent subscriptionException");
           break;
+        case FlyCallActionEvent.onCallModeChange:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
+          if (Get.isRegistered<CallKitOutgoingCallController>()) {
+            final controller = Get.find<CallKitOutgoingCallController>();
+            controller.onParticipantListUpdated();
+          }
       }
-    });
+      });
   }
 
   static bool isSelfId({required String? id}) {
@@ -1915,7 +1957,7 @@ class BaseController {
     return (await getProfileDetails(jid)).getName();
   }
 
-  static void onLogout(isLogout) async {
+  static void onLogout(isLogout) async{
 
     /// Dispose callkit if isOnGoingCall is true while logout
     if (await MirrorFlyCallKit.isOngoingCall()) {

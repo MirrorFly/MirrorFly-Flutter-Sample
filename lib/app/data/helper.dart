@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../common/constants.dart';
 import '../data/permissions.dart';
 import '../data/session_management.dart';
@@ -18,12 +20,47 @@ import '../routes/route_settings.dart';
 import 'utils.dart';
 
 Future<ProfileDetails> getProfileDetails(String jid) async {
-  var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
+
+  try {
+    var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
+    var profile = ProfileDetails.fromJson(json.decode(value.toString()));
+    debugPrint("getProfileDetails--> ${profile.toJson().toString()}");
+    return profile;
+  } catch(e) {
+    debugPrint("getProfileDetails Exception--> $e");
+    return ProfileDetails();
+  }
   // profileDataFromJson(value);
   // debugPrint("getProfileDetails--> $value");
   // var profile = await compute(profiledata, value.toString());
-  var profile = ProfileDetails.fromJson(json.decode(value.toString()));
-  return profile;
+
+}
+
+Future<ProfileDetails> getGroupProfileDetails(String jid) async {
+  final completer = Completer<ProfileDetails>();
+
+  try {
+    debugPrint("getGroupProfileDetails Jid--> $jid");
+    await Mirrorfly.getGroupProfile(
+      groupJid: jid.checkNull(),
+      flyCallBack: (FlyResponse response) {
+        try {
+          var profile = ProfileDetails.fromJson(
+              json.decode(response.data.toString()));
+          debugPrint("getGroupProfileDetails--> ${profile.toJson().toString()}");
+          completer.complete(profile);
+        } catch (e) {
+          debugPrint("getGroupProfileDetails parse error --> $e");
+          completer.complete(ProfileDetails());
+        }
+      },
+    );
+  } catch (e) {
+    debugPrint("getGroupProfileDetails Exception --> $e");
+    completer.complete(ProfileDetails());
+  }
+
+  return completer.future;
 }
 
 Future<ChatMessageModel> getMessageOfId(String mid) async {

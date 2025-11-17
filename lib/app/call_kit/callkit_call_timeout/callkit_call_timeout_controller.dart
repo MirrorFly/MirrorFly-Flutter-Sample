@@ -29,6 +29,7 @@ class CallKitCallTimeoutController extends GetxController {
       callType.value = (NavUtils.arguments["callType"]);
       users.value = (NavUtils.arguments["userJid"] as List<String?>);
       calleeName.value = (NavUtils.arguments["calleeName"]);
+      callMode.value = (NavUtils.arguments["callMode"]);
       debugPrint("Call Timeout OnInit arguments => $callType $users $calleeName");
     }
     super.onInit();

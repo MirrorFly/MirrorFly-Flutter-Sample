@@ -593,6 +593,17 @@ class ContactController extends FullLifeCycleController
   }
 
   void makeCall() async {
+    // For live-kit calls
+    if (Constants.useMirrorFlyCallKit) {
+      if (selectedUsersJIDList.isEmpty) {
+        debugPrint("#Mirrorfly selectedUsersJIDList is empty");
+        return;
+      }
+      await NavUtils.back(result: selectedUsersJIDList);
+      return;
+    }
+
+    // For janus calls
     if (selectedUsersJIDList.isEmpty) {
       return;
     }

@@ -12,6 +12,7 @@ import 'package:flutter_in_app_pip/flutter_in_app_pip.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
+import 'app/call_kit/callkit_outgoing_call_view.dart';
 import 'app/call_modules/ongoing_call/ongoingcall_view.dart';
 import 'app/common/app_localizations.dart';
 import 'app/modules/chat/views/chat_view.dart';
@@ -138,6 +139,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
     /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+    final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
     isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
@@ -176,7 +178,9 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           /// This leads to the call screen opening upon app launch, even though the SDK isn't reinitialized.
           /// This behavior is intended for redirecting to the ongoing call page after the app is terminated and reopened.
           /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
+          final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
+          debugPrint("#Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
           isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
           ///
@@ -284,6 +288,15 @@ class _MyAppState extends State<MyApp> {
                   name: Routes.onGoingCallView,
                 ),
                 builder: (context) => const OnGoingCallView(),
+              )
+            ];
+          case Routes.callKitOutGoingCallView:
+            return [
+              MaterialPageRoute(
+                settings: const RouteSettings(
+                  name: Routes.callKitOutGoingCallView,
+                ),
+                builder: (context) => const CallKitOutgoingCallView(),
               )
             ];
           default:
