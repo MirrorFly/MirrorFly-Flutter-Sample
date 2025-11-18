@@ -244,7 +244,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  Widget buildMuteIcon(String? participantId) {
+  Widget buildMuteIcon(String? participantId, {bool isLocalParticipant = false}) {
 
     callkitLogger.info("[buildMuteIcon] Called for participantId: $participantId");
 
@@ -276,12 +276,15 @@ class CallKitOutgoingCallView
           controller.callerList.firstWhereOrNull((e) => !e.isLocalParticipant);
       final participantId = remoteParticipant?.identity ?? "";
 
-      return AudioLevelAnimation(
-        radius: 12,
-        audioLevel: controller.getAudioLevelForParticipant(participantId),
-        bgColor: Colors.green,
-        dotsColor: Colors.brown,
-        useLiveKitAudio: true,
+      return Visibility(
+        visible: !isLocalParticipant,
+        child: AudioLevelAnimation(
+          radius: 12,
+          audioLevel: controller.getAudioLevelForParticipant(participantId),
+          bgColor: Colors.blue,
+          dotsColor: Colors.white,
+          useLiveKitAudio: true,
+        ),
       );
     }
   }
@@ -399,22 +402,21 @@ class CallKitOutgoingCallView
                                                       BlendMode.srcIn),
                                                 ),
                                               ),
-                                            ],
-                                            // if (controller.speakingUsers.isNotEmpty &&
-                                            //     !controller.callList[index].isAudioMuted.value &&
-                                            //     !controller
-                                            //         .audioLevel(
-                                            //         controller.callList[index].userJid!.value)
-                                            //         .isNegative) ...[
-                                            //   AudioLevelAnimation(
-                                            //     radius: 12,
-                                            //     audioLevel: controller.audioLevel(
-                                            //         controller.callList[index].userJid!.value),
-                                            //     bgColor: style.speakingIndicatorStyle
-                                            //         .activeBgColor, //AppColors.speakingBg,
-                                            //     dotsColor: style.speakingIndicatorStyle.activeIconColor,
-                                            //   ),
-                                            // ],
+                                          ],
+                                            if (controller.callerList[index].isAudioMuted != true) ...[
+                                              AudioLevelAnimation(
+                                                radius: 12,
+                                                audioLevel: controller
+                                                    .getAudioLevelForParticipant(
+                                                    controller
+                                                        .callerList[
+                                                    index]
+                                                        .identity),
+                                                bgColor: Colors.blue,
+                                                dotsColor: Colors.white,
+                                                useLiveKitAudio: true,
+                                              )
+                                            ]
                                           ],
                                         ),
                                       );
@@ -632,7 +634,7 @@ class CallKitOutgoingCallView
           ),
 
           Obx(() {
-            return buildMuteIcon(controller.getLocalParticipantId());
+            return buildMuteIcon(controller.getLocalParticipantId(), isLocalParticipant: true);
           }),
         ],
       ),
