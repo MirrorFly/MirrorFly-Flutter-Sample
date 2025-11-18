@@ -8,13 +8,14 @@ class AudioLevelAnimation extends StatefulWidget {
   final double radius;
   final int audioLevel;
   final Color dotsColor;
-
+  final bool useLiveKitAudio;
   const AudioLevelAnimation({
     Key? key,
     required this.bgColor,
     this.radius = 14,
     required this.audioLevel,
     this.dotsColor = Colors.white,
+    this.useLiveKitAudio = false,
   }) : super(key: key);
 
   @override
@@ -67,13 +68,39 @@ class AudioLevelAnimationState extends State<AudioLevelAnimation> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
-              children: showAudioLevel(widget.audioLevel),
+              children: showAudioLevel(
+                  audioLevel: widget.audioLevel,
+                  useLiveKitAudio: widget.useLiveKitAudio),
             ),
           )
         : const SizedBox.shrink();
   }
 
-  List<Widget> showAudioLevel(int audioLevel) {
+  List<Widget> showAudioLevel({
+    required int audioLevel,
+    required bool useLiveKitAudio,
+  }) {
+    if (useLiveKitAudio) {
+      // Convert percentage (0-100) back to double (0.0-1.0) for LiveKit logic
+      final level = (audioLevel / 100.0).clamp(0.0, 1.0);
+
+      debugPrint(
+          'AudioLevelAnimation: LiveKit audio level received: $audioLevel, normalized level: $level');
+
+      if (level <= 0.15) {
+        return createAudioLevelContainers([0.3, 0.3, 0.3]); // too low
+      } else if (level <= 0.35) {
+        return createAudioLevelContainers([0.3, 0.7, 0.3]); // low
+      } else if (level <= 0.6) {
+        return createAudioLevelContainers([0.5, 0.9, 0.5]); // medium
+      } else if (level <= 0.85) {
+        return createAudioLevelContainers([0.7, 0.9, 0.7]); // high
+      } else {
+        return createAudioLevelContainers([0.9, 0.9, 0.9]); // peak
+      }
+    }
+
+    // FALLBACK – original behavior
     switch (audioLevel.getAudioLevel()) {
       case AudioLevel.audioTooLow:
         return createAudioLevelContainers([0.3, 0.3, 0.3]);

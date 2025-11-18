@@ -60,6 +60,7 @@ class CallKitOutgoingCallController extends GetxController
 
   /// Over all call participant list
   var callerList = <FlyCallParticipant>[].obs;
+  RxMap<String, double> callerAudioLevel = <String, double>{}.obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -993,9 +994,17 @@ class CallKitOutgoingCallController extends GetxController
 
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
-          callerList
-              .firstWhereOrNull((e) => e.identity == p)
-              ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
+
+          final index = callerList.indexWhere((e) => e.identity == p);
+          callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Updating participantId: $p at index: $index");
+
+          if (index != -1) {
+            final old = callerList[index];
+            callerList[index] = old.copyWith(
+              flyCallStatus: FlyCallStatusEvent.connected,
+            );
+          }
+
           callerList.refresh();
           if (timer == null || !(timer?.isActive ?? false)) {
             _startTimer();
@@ -1775,9 +1784,9 @@ class CallKitOutgoingCallController extends GetxController
   /// To update the call status of a participant in the callerList
   ///
   Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
-    final participant = callerList.firstWhereOrNull((p) => p.identity == id);
+    final FlyCallParticipant? participant = callerList.firstWhereOrNull((p) => p.identity == id);
     if (participant != null) {
-      participant.flyCallStatusEvent = status;
+      participant?.copyWith(flyCallStatus: status);
       callerList.refresh();
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {
@@ -1826,6 +1835,42 @@ class CallKitOutgoingCallController extends GetxController
       callStatus("");
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Group call - not updating overall call status.");
+    }
+  }
+
+  ///
+  /// Method triggered for the audio level change
+  /// User speaking detection
+  ///
+  void onActiveSpeakerChange({required bool isSpeaking, required double audioLevel, required String participantId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange called for participantId: $participantId, isSpeaking: $isSpeaking, audioLevel: $audioLevel");
+
+    final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+    if (participant != null) {
+      participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
+
+      callerAudioLevel[participantId] = isSpeaking ? audioLevel : 0;
+      callerAudioLevel.refresh();
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange:"
+          "newEntries: $callerAudioLevel Updated participant $participantId with isSpeaking: $isSpeaking, audioLevel: $audioLevel");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange: Participant $participantId not found in callerList");
+    }
+  }
+
+  int getAudioLevelForParticipant(String participantId) {
+    // convert double audio level (0.0 to 1.0) to int percentage (0 to 100)
+    if (callerAudioLevel.containsKey(participantId)) {
+      double level = callerAudioLevel[participantId] ?? 0.0;
+      var value = ((level * 100).clamp(0, 100)).toInt();
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getAudioLevelForParticipant called for participantId: $participantId, is returning audio level: $value");
+      return value;
+    } else {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getAudioLevelForParticipant called for participantId: $participantId, no audio level found, returning 0");
+      return 0;
     }
   }
 

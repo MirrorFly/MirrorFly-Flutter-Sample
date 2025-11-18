@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:path/path.dart';
 import '../app_style_config.dart';
+import '../call_modules/audio_level_animation.dart';
 import '../call_modules/call_widgets.dart';
 import '../common/constants.dart';
 import '../data/helper.dart';
@@ -269,8 +270,20 @@ class CallKitOutgoingCallView
           ),
         ),
       );
+    } else {
+      /// Speaking indicator
+      final remoteParticipant =
+          controller.callerList.firstWhereOrNull((e) => !e.isLocalParticipant);
+      final participantId = remoteParticipant?.identity ?? "";
+
+      return AudioLevelAnimation(
+        radius: 12,
+        audioLevel: controller.getAudioLevelForParticipant(participantId),
+        bgColor: Colors.green,
+        dotsColor: Colors.brown,
+        useLiveKitAudio: true,
+      );
     }
-    return const SizedBox.shrink();
   }
 
   /// Grid view for group call participants

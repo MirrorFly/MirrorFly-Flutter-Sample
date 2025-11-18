@@ -433,6 +433,10 @@ class BaseController {
 
         case FlyCallActionEvent.activeSpeaker:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
+          controller.onActiveSpeakerChange(
+              isSpeaking: flyCallAction.isSpeaking ?? false,
+              audioLevel: flyCallAction.audioLevel ?? 0,
+              participantId: flyCallAction.participantId ?? '');
           break;
 
         case FlyCallActionEvent.subscriptionException:
