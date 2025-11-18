@@ -156,9 +156,11 @@ class BaseController {
           break;
         case FlyCallStatusEvent.callHold:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callHold");
+          callKitOutgoingCallController.callHold(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.callResume:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callResume");
+          callKitOutgoingCallController.callResume(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.callTimeout:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");

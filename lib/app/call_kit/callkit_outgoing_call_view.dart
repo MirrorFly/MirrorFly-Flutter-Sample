@@ -165,6 +165,25 @@ class CallKitOutgoingCallView
                           ),
                         ),
                       ),
+                      Visibility(
+                        visible: controller.callerList
+                                .firstWhere((e) =>
+                                    e.identity ==
+                                    controller
+                                        .getRemoteParticipantIdForOneToOneCall())
+                                .flyCallStatusEvent ==
+                            FlyCallStatusEvent.callHold,
+                        child: const Center(
+                          child: Text(
+                            "On Hold",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ],
                 );

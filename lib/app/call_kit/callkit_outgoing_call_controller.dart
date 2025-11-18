@@ -479,6 +479,8 @@ class CallKitOutgoingCallController extends GetxController
         return "Ringing";
       case FlyCallStatusEvent.tryingToConnect:
         return "Trying to connect";
+      case FlyCallStatusEvent.callHold:
+        return "On Hold";
       default:
         return "Unknown";
     }
@@ -969,6 +971,22 @@ class CallKitOutgoingCallController extends GetxController
 
   void onConnected(List<String> participantIds) {
     if (!isGroupCall.value) {
+
+      final bool isUserOnHold = callerList.any((p) =>
+      participantIds.contains(p.identity) &&
+          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
+      if (isUserOnHold) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
+        updateCallerStatusList(
+            participantsId: participantIds,
+            status: FlyCallStatusEvent.connected);
+        return;
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
+      }
+
       callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for one to one call");
       callStatus("Connected");
       isOnGoingCallView();
@@ -992,6 +1010,22 @@ class CallKitOutgoingCallController extends GetxController
       }
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for group call");
+
+      final bool isUserOnHold = callerList.any((p) =>
+      participantIds.contains(p.identity) &&
+          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
+      if (isUserOnHold) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
+        updateCallerStatusList(
+            participantsId: participantIds,
+            status: FlyCallStatusEvent.connected);
+        return;
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
+      }
+
       callStatus("Connected");
       isOnGoingCallView();
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
@@ -1752,6 +1786,50 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
+  /// Call hold - When the user puts the call on hold
+  ///
+  void callHold({required List<String> participantsId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callHold called with participantsId: $participantsId");
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: No participantsId provided.");
+      return;
+    }
+
+    final String userId = participantsId.first;
+    updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.callHold);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Updated participant $userId to callHold status.");
+
+    if (callMode.string == "ONE-TO-ONE") {
+      callStatus("On Hold");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Group call - not updating overall call status.");
+    }
+  }
+
+  ///
+  /// Call resume - When the user resumes the call from hold
+  ///
+  void callResume({required List<String> participantsId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callResume called with participantsId: $participantsId");
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: No participantsId provided.");
+      return;
+    }
+
+    final String userId = participantsId.first;
+    updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.connected);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Updated participant $userId to connected status.");
+
+    if (callMode.string == "ONE-TO-ONE") {
+      callStatus("");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Group call - not updating overall call status.");
+    }
+  }
+
+  ///
   void _resetValues() {
     callType("");
     // muted(false);
@@ -1781,5 +1859,4 @@ class CallKitOutgoingCallController extends GetxController
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
-
 }
