@@ -413,6 +413,9 @@ class BaseController {
 
         case FlyCallActionEvent.connectionQualityUpdated:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
+          controller.onConnectionQualityUpdated(
+              quality: flyCallAction.connectionQuality,
+              participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.attributesChanged:

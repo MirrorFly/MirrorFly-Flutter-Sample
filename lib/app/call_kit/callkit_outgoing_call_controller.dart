@@ -61,6 +61,7 @@ class CallKitOutgoingCallController extends GetxController
   /// Over all call participant list
   var callerList = <FlyCallParticipant>[].obs;
   RxMap<String, double> callerAudioLevel = <String, double>{}.obs;
+  RxMap<String, FlyConnectionQuality?> callerConnectionQuality = <String, FlyConnectionQuality?>{}.obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -1871,6 +1872,38 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getAudioLevelForParticipant called for participantId: $participantId, no audio level found, returning 0");
       return 0;
+    }
+  }
+
+  ///
+  /// When the connection quality is updated for a participant
+  ///
+  void onConnectionQualityUpdated({FlyConnectionQuality? quality, String? participantId}) {
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated called for participantId: $participantId, quality: $quality");
+
+    if (participantId == null && quality == null) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: participantId and quality is null, aborting.");
+      return;
+    }
+
+    try {
+      final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+      if (participant != null) {
+        participant.copyWith(connectionQuality: quality);
+        // callerList.refresh();
+        callerConnectionQuality[participantId!] = quality!;
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Updated participant $participantId with connectionQuality: "
+                "$quality, callerConnectionQuality: $callerConnectionQuality");
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Participant $participantId not found in callerList");
+      }
+    } catch (e) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Exception occurred - $e");
     }
   }
 
