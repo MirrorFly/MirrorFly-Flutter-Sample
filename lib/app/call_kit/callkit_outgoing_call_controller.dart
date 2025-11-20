@@ -845,10 +845,10 @@ class CallKitOutgoingCallController extends GetxController
           callerList.remove(target);
           // if(callerList.length <=1){
           //   callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
-          //   toToast("Call timed out");
-          //   if(NavUtils.canPop){
-          //     NavUtils.back();
-          //   }
+            toToast("Call timed out");
+            if(NavUtils.canPop){
+              NavUtils.back();
+            }
           // }
         }
       }
