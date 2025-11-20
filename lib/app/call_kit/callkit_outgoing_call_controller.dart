@@ -1386,15 +1386,18 @@ class CallKitOutgoingCallController extends GetxController
       var result = await MirrorFlyCallKit.localHangup();
       callkitLogger.info("[MirrorFly][OutgoingCallController] localHangup() result: $result");
 
-      if (result == true) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
-        NavUtils.back();
-      } else {
-        NavUtils.back();
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
-      }
+      /// While the local hangup we get the disconnect emit from the plugin
+      /// from there we get onDisconnect call and navigate back
+
+      // if (result == true) {
+      //   callkitLogger.info(
+      //       "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
+      //   NavUtils.back();
+      // } else {
+      //   NavUtils.back();
+      //   callkitLogger.info(
+      //       "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
+      // }
     } catch (e, stack) {
       callkitLogger.info("[MirrorFly][OutgoingCallController]  Exception in disconnectCall: $e");
       print(stack);
