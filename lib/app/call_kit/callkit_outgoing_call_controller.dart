@@ -60,6 +60,8 @@ class CallKitOutgoingCallController extends GetxController
 
   /// Over all call participant list
   var callerList = <FlyCallParticipant>[].obs;
+  RxMap<String, double> callerAudioLevel = <String, double>{}.obs;
+  RxMap<String, FlyConnectionQuality?> callerConnectionQuality = <String, FlyConnectionQuality?>{}.obs;
 
   ///
   final RxBool isLocalTracksPublished = false.obs;
@@ -479,6 +481,8 @@ class CallKitOutgoingCallController extends GetxController
         return "Ringing";
       case FlyCallStatusEvent.tryingToConnect:
         return "Trying to connect";
+      case FlyCallStatusEvent.callHold:
+        return "On Hold";
       default:
         return "Unknown";
     }
@@ -841,10 +845,10 @@ class CallKitOutgoingCallController extends GetxController
           callerList.remove(target);
           // if(callerList.length <=1){
           //   callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
-          //   toToast("Call timed out");
-          //   if(NavUtils.canPop){
-          //     NavUtils.back();
-          //   }
+            toToast("Call timed out");
+            if(NavUtils.canPop){
+              NavUtils.back();
+            }
           // }
         }
       }
@@ -969,15 +973,39 @@ class CallKitOutgoingCallController extends GetxController
 
   void onConnected(List<String> participantIds) {
     if (!isGroupCall.value) {
+
+      final bool isUserOnHold = callerList.any((p) =>
+      participantIds.contains(p.identity) &&
+          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
+      if (isUserOnHold) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
+        updateCallerStatusList(
+            participantsId: participantIds,
+            status: FlyCallStatusEvent.connected);
+        return;
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
+      }
+
       callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for one to one call");
       callStatus("Connected");
       isOnGoingCallView();
 
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
-          callerList
-              .firstWhereOrNull((e) => e.identity == p)
-              ?.flyCallStatusEvent = FlyCallStatusEvent.connected;
+
+          final index = callerList.indexWhere((e) => e.identity == p);
+          callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Updating participantId: $p at index: $index");
+
+          if (index != -1) {
+            final old = callerList[index];
+            callerList[index] = old.copyWith(
+              flyCallStatus: FlyCallStatusEvent.connected,
+            );
+          }
+
           callerList.refresh();
           if (timer == null || !(timer?.isActive ?? false)) {
             _startTimer();
@@ -992,6 +1020,22 @@ class CallKitOutgoingCallController extends GetxController
       }
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for group call");
+
+      final bool isUserOnHold = callerList.any((p) =>
+      participantIds.contains(p.identity) &&
+          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
+      if (isUserOnHold) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
+        updateCallerStatusList(
+            participantsId: participantIds,
+            status: FlyCallStatusEvent.connected);
+        return;
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
+      }
+
       callStatus("Connected");
       isOnGoingCallView();
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
@@ -1040,10 +1084,15 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
 
       callerList.removeWhere((e) => e.identity == userId);
-
       final String name = remoteUserNameMap[userId] ?? "";
       toToast("$name disconnected");
-
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
+      if(callerList.length <=1){
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call disconnectCall");
+        if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+          NavUtils.back();
+        }
+      }
       return;
     }
 
@@ -1342,15 +1391,18 @@ class CallKitOutgoingCallController extends GetxController
       var result = await MirrorFlyCallKit.localHangup();
       callkitLogger.info("[MirrorFly][OutgoingCallController] localHangup() result: $result");
 
-      if (result == true) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
-        NavUtils.back();
-      } else {
-        NavUtils.back();
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
-      }
+      /// While the local hangup we get the disconnect emit from the plugin
+      /// from there we get onDisconnect call and navigate back
+
+      // if (result == true) {
+      //   callkitLogger.info(
+      //       "[MirrorFly][OutgoingCallController]  Call disconnected successfully. Navigating back...");
+      //   NavUtils.back();
+      // } else {
+      //   NavUtils.back();
+      //   callkitLogger.info(
+      //       "[MirrorFly][OutgoingCallController]  Call disconnect failed. Retrying or handling failure...");
+      // }
     } catch (e, stack) {
       callkitLogger.info("[MirrorFly][OutgoingCallController]  Exception in disconnectCall: $e");
       print(stack);
@@ -1741,13 +1793,125 @@ class CallKitOutgoingCallController extends GetxController
   /// To update the call status of a participant in the callerList
   ///
   Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
-    final participant = callerList.firstWhereOrNull((p) => p.identity == id);
+    final FlyCallParticipant? participant = callerList.firstWhereOrNull((p) => p.identity == id);
     if (participant != null) {
-      participant.flyCallStatusEvent = status;
+      participant?.copyWith(flyCallStatus: status);
       callerList.refresh();
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Participant $id not found in callerList");
+    }
+  }
+
+  ///
+  /// Call hold - When the user puts the call on hold
+  ///
+  void callHold({required List<String> participantsId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callHold called with participantsId: $participantsId");
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: No participantsId provided.");
+      return;
+    }
+
+    final String userId = participantsId.first;
+    updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.callHold);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Updated participant $userId to callHold status.");
+
+    if (callMode.string == "ONE-TO-ONE") {
+      callStatus("On Hold");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Group call - not updating overall call status.");
+    }
+  }
+
+  ///
+  /// Call resume - When the user resumes the call from hold
+  ///
+  void callResume({required List<String> participantsId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callResume called with participantsId: $participantsId");
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: No participantsId provided.");
+      return;
+    }
+
+    final String userId = participantsId.first;
+    updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.connected);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Updated participant $userId to connected status.");
+
+    if (callMode.string == "ONE-TO-ONE") {
+      callStatus("");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Group call - not updating overall call status.");
+    }
+  }
+
+  ///
+  /// Method triggered for the audio level change
+  /// User speaking detection
+  ///
+  void onActiveSpeakerChange({required bool isSpeaking, required double audioLevel, required String participantId}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange called for participantId: $participantId, isSpeaking: $isSpeaking, audioLevel: $audioLevel");
+
+    final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+    if (participant != null) {
+      participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
+
+      callerAudioLevel[participantId] = isSpeaking ? audioLevel : 0;
+      callerAudioLevel.refresh();
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange:"
+          "newEntries: $callerAudioLevel Updated participant $participantId with isSpeaking: $isSpeaking, audioLevel: $audioLevel");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange: Participant $participantId not found in callerList");
+    }
+  }
+
+  int getAudioLevelForParticipant(String participantId) {
+    // convert double audio level (0.0 to 1.0) to int percentage (0 to 100)
+    if (callerAudioLevel.containsKey(participantId)) {
+      double level = callerAudioLevel[participantId] ?? 0.0;
+      var value = ((level * 100).clamp(0, 100)).toInt();
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getAudioLevelForParticipant called for participantId: $participantId, is returning audio level: $value");
+      return value;
+    } else {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getAudioLevelForParticipant called for participantId: $participantId, no audio level found, returning 0");
+      return 0;
+    }
+  }
+
+  ///
+  /// When the connection quality is updated for a participant
+  ///
+  void onConnectionQualityUpdated({FlyConnectionQuality? quality, String? participantId}) {
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated called for participantId: $participantId, quality: $quality");
+
+    if (participantId == null && quality == null) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: participantId and quality is null, aborting.");
+      return;
+    }
+
+    try {
+      final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+      if (participant != null) {
+        participant.copyWith(connectionQuality: quality);
+        // callerList.refresh();
+        callerConnectionQuality[participantId!] = quality!;
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Updated participant $participantId with connectionQuality: "
+                "$quality, callerConnectionQuality: $callerConnectionQuality");
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Participant $participantId not found in callerList");
+      }
+    } catch (e) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Exception occurred - $e");
     }
   }
 
@@ -1781,5 +1945,4 @@ class CallKitOutgoingCallController extends GetxController
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
-
 }

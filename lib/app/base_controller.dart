@@ -156,9 +156,11 @@ class BaseController {
           break;
         case FlyCallStatusEvent.callHold:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callHold");
+          callKitOutgoingCallController.callHold(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.callResume:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callResume");
+          callKitOutgoingCallController.callResume(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.callTimeout:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
@@ -411,6 +413,9 @@ class BaseController {
 
         case FlyCallActionEvent.connectionQualityUpdated:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
+          controller.onConnectionQualityUpdated(
+              quality: flyCallAction.connectionQuality,
+              participantId: flyCallAction.participantId);
           break;
 
         case FlyCallActionEvent.attributesChanged:
@@ -431,6 +436,10 @@ class BaseController {
 
         case FlyCallActionEvent.activeSpeaker:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
+          controller.onActiveSpeakerChange(
+              isSpeaking: flyCallAction.isSpeaking ?? false,
+              audioLevel: flyCallAction.audioLevel ?? 0,
+              participantId: flyCallAction.participantId ?? '');
           break;
 
         case FlyCallActionEvent.subscriptionException:
