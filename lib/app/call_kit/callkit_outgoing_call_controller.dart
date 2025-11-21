@@ -1087,6 +1087,16 @@ class CallKitOutgoingCallController extends GetxController
       final String name = remoteUserNameMap[userId] ?? "";
       toToast("$name disconnected");
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
+
+      final bool isLocalHangup = isSelfId(id: userId);
+      if (isLocalHangup) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Local user hung up, checking remaining participants.");
+        if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+          NavUtils.back();
+        }
+        return;
+      }
+
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call disconnectCall");
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
