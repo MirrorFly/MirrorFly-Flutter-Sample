@@ -70,6 +70,9 @@ class CallKitOutgoingCallController extends GetxController
   AudioPlayer? _player;
   bool _isPlaying = false;
 
+  ///
+  var callAgainUserList = <String>[].obs;
+
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
@@ -829,31 +832,33 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void callTimeOut({required List<String> participantsId}) async {
-    if (!isGroupOnGoingCallEnabled.value && isGroupCall.value){
-      toToast("Call timed out");
-      // if(NavUtils.canPop){
-      //   NavUtils.back();
-      // }
-      return;
-    }
-    if(!isGroupCall.value){
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, not a group call");
-      for(var i in participantsId){
-        final target = callerList.firstWhereOrNull((participant) => participant.identity == i);
-        if(target != null){
-          callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
-          callerList.remove(target);
-          // if(callerList.length <=1){
-          //   callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, ending call as no participants left");
-            toToast("Call timed out");
-            if(NavUtils.canPop){
-              NavUtils.back();
-            }
-          // }
-        }
+
+    for (final id in participantsId) {
+      if (!callAgainUserList.contains(id)) {
+        callAgainUserList.add(id);
       }
-      return;
     }
+    for (var id in participantsId) {
+      final target = callerList.firstWhereOrNull((p) => p.identity == id);
+      if (target != null) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Timeout, removing participantId: ${target.identity}");
+        callerList.remove(target);
+      }
+    }
+
+    bool shouldNavigate = false;
+
+    if (!isGroupOnGoingCallEnabled.value && isGroupCall.value) {
+      shouldNavigate = callerList.length <= 1;
+    } else if (!isGroupCall.value) {
+      shouldNavigate = true;
+    }
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
+
+    if (shouldNavigate) {
+      _navigateToTimeout();
+    }
+
 
     participantsId = participantsId
         .map((id) => id.split('@').first.trim())
@@ -902,6 +907,32 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
     }
+  }
+
+  void _navigateToTimeout() {
+    toToast("Call timed out");
+
+    final String type       = callType.value;
+    final String calleeName = isGroupCall.value
+        ? chatNameForGroupCall.value
+        : getOneToOneCallRemoteUserName();
+
+    final List<dynamic> callUserList = callAgainUserList.toList();
+    final String callsMode = callMode.value;
+    final String chatId    = groupId.value;
+
+    callkitLogger.info(
+      "[MirrorFly][OutgoingCallController] Timeout → navigating to CallKitTimeOutView "
+          "type:$type, calleeName:$calleeName, userList:$callUserList",
+    );
+
+    NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
+      "callType": type,
+      "userJid": callUserList,
+      "calleeName": calleeName,
+      "callMode": callsMode,
+      "groupId": chatId,
+    });
   }
 
   void checkParticipantForCallMode() async {
@@ -1124,9 +1155,6 @@ class CallKitOutgoingCallController extends GetxController
     isOnGoingCallViewEnable.value = true;
   }
 
-  Future<void> handleTimeOutDisconnect() async {
-    await MirrorFlyCallKit.disconnectCall();
-  }
 
   void muteAudio() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start");
@@ -1943,7 +1971,7 @@ class CallKitOutgoingCallController extends GetxController
     callTryStatus("");
     groupId("");
     callerList.clear();
-
+    callAgainUserList.clear();
     remoteUserNameMap({});
     isGroupCall(false);
     chatNameForGroupCall("");

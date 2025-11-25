@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../common/app_localizations.dart';
@@ -18,8 +19,10 @@ class CallKitCallTimeoutController extends GetxController {
 
   // Rx<Profile> profile = Profile().obs;
 
-  RxList<String?> users = <String?>[].obs;
+  RxList<String> users = <String>[].obs;
+  RxList<String> usersJid = <String>[].obs;
   var groupId = ''.obs;
+  var groupJid = ''.obs;
 
 
 
@@ -27,15 +30,36 @@ class CallKitCallTimeoutController extends GetxController {
   Future<void> onInit() async {
     if (NavUtils.arguments != null) {
       callType.value = (NavUtils.arguments["callType"]);
-      users.value = (NavUtils.arguments["userJid"] as List<String?>);
+      users.value = (NavUtils.arguments["userJid"] as List<String>);
       calleeName.value = (NavUtils.arguments["calleeName"]);
       callMode.value = (NavUtils.arguments["callMode"]);
+      groupId.value = (NavUtils.arguments["groupId"] ?? '');
       debugPrint("Call Timeout OnInit arguments => $callType $users $calleeName");
+      addDomainToJid();
+      addDomainToGroupJid();
     }
     super.onInit();
 
     // var data = await getProfileDetails(userJID.value);
     // profile(data);
+  }
+
+  void addDomainToJid() {
+    const domain = "@xmpp-uikit-qa.contus.us";
+
+    final formatted = users.map((id) {
+      return id.endsWith(domain) ? id : "$id$domain";
+    }).toList();
+
+    usersJid.addAll(formatted);
+  }
+
+  void addDomainToGroupJid(){
+    const domain = "@mix-xmpp-uikit-qa.contus.us";
+    if(groupId.value.isEmpty) return;
+    if(!groupId.value.endsWith(domain)){
+      groupJid.value = "${groupId.value}$domain";
+    }
   }
 
 
@@ -46,75 +70,56 @@ class CallKitCallTimeoutController extends GetxController {
 
   callAgain() async {
     // NavUtils.offNamed(Routes.outGoingCallView, arguments: {"userJid": userJID.value});
+    callkitLogger.info("Call Again Pressed");
     if (await AppUtils.isNetConnected()) {
       if (callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
-          if (users.length == 1) {
+            final List<String> userList = users.toList();
+            callkitLogger.info("Making Audio Call to ${userList.toString()}");
             await MirrorFlyCallKit.makeAudioCall(
-                callersId: [
-                  users.first ?? "",
-                ],
+                flyResult: (FlyResult response) {
+                  if (response.isSuccess) {
+                    NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                      "userJid": userList,
+                      "callType": CallType.audio,
+                      "callMode": callMode.value,
+                      "chatId": groupId.value,
+                    });
+                  } else {
+                    callkitLogger.info("CF Not connected");
+                  }
+                },
+                callersId:
+                userList,
+                // callMode: "ONE-TO-ONE",
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-                chatId: '',
-              flyResult: (FlyResult response) {
-                if (response.isSuccess) {
-                  NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-                    "userJid": users.toList(),
-                    "callType": callType.value
-                  });
-                } else {
-                  toToast("CF Not connected");
-                }
-              },);
-          } else {
-            var usersList = <String>[];
-            for (var element in users) {
-              if (element != null) {
-                usersList.add(element);
-              }
-            }
-            // Mirrorfly.makeGroupVoiceCall(
-            //     groupJid: groupId.value,
-            //     toUserJidList: usersList,
-            //     flyCallBack: (FlyResponse response) {
-            //       NavUtils.offNamed(Routes.outGoingCallView,
-            //           arguments: {"userJid": users});
-            //     });
-          }
+                chatId: groupId.value);
+
         } else {
           debugPrint("permission not given");
         }
       } else {
         if (await AppPermission.askVideoCallPermissions()) {
-          if (users.length == 1) {
-            await MirrorFlyCallKit.makeVideoCall(
-                callersId: [users.first ?? "",],
-                chatId: '',
+          final List<String> userList = users.toList();
+          await MirrorFlyCallKit.makeVideoCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": users.toList(),
-                      "callType": CallType.video
+                      "userJid": userList,
+                      "callType": CallType.video,
+                      "callMode": callMode.value,
+                      "chatId": groupId.value,
                     });
                   } else {
-                    toToast("CF Not connected");
+                    callkitLogger.info("CF Not connected");
                   }
-                });
-          } else {
-            var usersList = <String>[];
-            for (var element in users) {
-              if (element != null) {
-                usersList.add(element);
-              }
-            }
-            // Mirrorfly.makeGroupVideoCall(
-            //     groupJid: groupId.value,
-            //     toUserJidList: usersList,
-            //     flyCallBack: (FlyResponse response) {
-            //       NavUtils.offNamed(Routes.outGoingCallView,
-            //           arguments: {"userJid": users,"callType": CallType.video});
-            //     });
-          }
+                },
+                callersId:
+                userList,
+                // callMode: "ONE-TO-ONE",
+                //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
+                chatId: groupId.value);
+
         } else {
           LogMessage.d("askVideoCallPermissions", "false");
         }
