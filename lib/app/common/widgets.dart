@@ -79,6 +79,9 @@ class ProfileTextImage extends StatelessWidget {
 
   String getString(String str) {
     String string = "";
+    if(str.toUpperCase() == "YOU"){
+      return str;
+    }
     if (str.characters.length >= 2) {
       if (str.trim().contains(" ")) {
         var st = str.trim().split(" ");
