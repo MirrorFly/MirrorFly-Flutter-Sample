@@ -1360,18 +1360,18 @@ class CallKitOutgoingCallController extends GetxController
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
 
-    final result = await MirrorFlyCallKit.changeAudioOutputDevice(
-      flyMediaDevice: const FlyMediaDevice("", "", "", ""),
-      device: targetDevice,
-    );
-
-    if (result) {
-      // update state only after success
-      selectedDevice.value = !selectedDevice.value;
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
-    } else {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
-    }
+    // final result = await MirrorFlyCallKit.changeAudioOutputDevice(
+    //   flyMediaDevice: const FlyMediaDevice("", "", "", ""),
+    //   device: targetDevice,
+    // );
+    //
+    // if (result) {
+    //   // update state only after success
+    //   selectedDevice.value = !selectedDevice.value;
+    //   callkitLogger.info("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
+    // } else {
+    //   callkitLogger.info("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
+    // }
   }
 
   Future<void> changeAudioDevice() async {
@@ -1708,7 +1708,7 @@ class CallKitOutgoingCallController extends GetxController
     _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Call Failed");
-      toToast("Call Failed");
+      // toToast("Call Failed");
       NavUtils.back();
     }
   }
