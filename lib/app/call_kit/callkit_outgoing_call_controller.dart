@@ -1125,6 +1125,11 @@ class CallKitOutgoingCallController extends GetxController
       final bool isLocalHangup = isSelfId(id: userId);
       if (isLocalHangup) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Local user hung up, checking remaining participants.");
+        if(NavUtils.previousRoute == Routes.groupParticipants){
+          NavUtils.back();
+          NavUtils.back();
+          return;
+        }
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
@@ -1145,6 +1150,11 @@ class CallKitOutgoingCallController extends GetxController
     _resetValues();
     _stopTimer();
     closeDialog();
+    if(NavUtils.previousRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
       reason == "reconnectAttemptsExceeded"
