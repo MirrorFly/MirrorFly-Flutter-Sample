@@ -132,6 +132,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void _handleIncomingCall() {
+    callDuration("Connecting..");
     isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
