@@ -77,6 +77,7 @@ class CallKitOutgoingCallController extends GetxController
   Future<void> onInit() async {
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
+    initPlayer();
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] callviewinit");
     if (callType.value.isNotEmpty) {
@@ -539,6 +540,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void initPlayer() {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] audio player initialize success");
     _player = AudioPlayer();
   }
 
