@@ -1541,6 +1541,9 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
     flyCallType == FlyCallType.audio ? callType("audio") : callType("video");
+    if(flyCallType == FlyCallType.video){
+      isVideoEnabled.value = true;
+    }
   }
 
   ///
