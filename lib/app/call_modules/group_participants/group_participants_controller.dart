@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
@@ -181,7 +182,7 @@ class GroupParticipantsController extends GetxController {
                       userJid: item.jid.checkNull(),
                       flyCallBack: (FlyResponse response) {
                         DialogUtils.hideLoading();
-                        if (response.isSuccess && response.hasData) {
+                        if (response.isSuccess) {
                           toToast(getTranslated("hasUnBlocked")
                               .replaceFirst("%d", getName(item)));
                           userUpdatedHisProfile(item.jid.checkNull());
