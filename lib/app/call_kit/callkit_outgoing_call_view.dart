@@ -56,8 +56,8 @@ class CallKitOutgoingCallView
               Stack(
                 children: [
                   MirrorFlyCallView(
-                    key: ValueKey(controller.getRemoteParticipantsId().first),
-                    userJID: controller.getRemoteParticipantsId().first,
+                    key: ValueKey(!controller.isOnGoingCallViewEnable.value && controller.callType.toUpperCase() == "VIDEO" ?controller.getLocalParticipantId(): controller.getRemoteParticipantsId().first),
+                    userJID: !controller.isOnGoingCallViewEnable.value && controller.callType.toUpperCase() == "VIDEO" ?controller.getLocalParticipantId(): controller.getRemoteParticipantsId().first,
                     fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
