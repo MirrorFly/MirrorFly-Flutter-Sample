@@ -799,20 +799,28 @@ class CallKitOutgoingCallController extends GetxController
   /// Get self id
   String getLocalParticipantId() {
     final String localId = callerList
-        .firstWhere((p) => p.isLocalParticipant)
-        .identity;
+        .firstWhereOrNull((p) => p.isLocalParticipant)
+        ?.identity ?? "";
     callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
     return localId;
   }
 
   ///
   List<String> getRemoteParticipantsId() {
-    final List<String> remoteIds = callerList
-        .where((p) => !p.isLocalParticipant)
-        .map((p) => p.identity)
-        .toList();
-    callkitLogger.info("[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
-    return remoteIds;
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getRemoteParticipantsId called with callerList length: ${callerList.length}");
+    try {
+      final List<String> remoteIds = callerList
+          .where((p) => !p.isLocalParticipant)
+          .map((p) => p.identity)
+          .toList();
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
+      return remoteIds;
+    } catch (e) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId error: $e");
+      return [];
+    }
   }
 
   ///
@@ -821,7 +829,7 @@ class CallKitOutgoingCallController extends GetxController
       final String remoteId = callerList
           .where((p) => !p.isLocalParticipant)
           .map((p) => p.identity)
-          .first;
+          .firstOrNull ?? "";
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getRemoteParticipantIdForOneToOneCall: $remoteId");
       return remoteId;
@@ -838,7 +846,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   String trimAfterAt(String input) {
-    return input.split('@').first.trim();
+    return input.split('@').firstOrNull?.trim() ?? "";
   }
 
   ///
@@ -872,7 +880,7 @@ class CallKitOutgoingCallController extends GetxController
 
 
     participantsId = participantsId
-        .map((id) => id.split('@').first.trim())
+        .map((id) => id.split('@').firstOrNull?.trim() ?? "")
         .toList();
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, group call is ongoing");
@@ -1117,7 +1125,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final String userId = userIds.first;
+    final String userId = userIds.firstOrNull ?? "";
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall invoked with userId: $userId, reason: $reason");
 
@@ -1279,11 +1287,11 @@ class CallKitOutgoingCallController extends GetxController
       /// One - Many call user engaged logic
       callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
 
-      if (callerList.firstWhere((e) => e.identity == participants.first).flyCallStatusEvent != FlyCallStatusEvent.engaged) {
+      if (callerList.firstWhereOrNull((e) => e.identity == participants.first)?.flyCallStatusEvent != FlyCallStatusEvent.engaged) {
         callkitLogger.info(
             "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
-        callerList.removeWhere((e) => e.identity == participants.first);
-        final String name = remoteUserNameMap[participants.first] ?? participants.first;
+        callerList.removeWhere((e) => e.identity == participants.firstOrNull);
+        final String name = remoteUserNameMap[participants.firstOrNull] ?? participants.firstOrNull ?? "";
         toToast("$name is engaged");
 
         // Check if all remote participants are engaged
@@ -1314,7 +1322,7 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] single user engaged logic,"
             " remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
       );
-      toToast("${remoteUserNameMap[participants.first]} is engaged");
+      toToast("${remoteUserNameMap[participants.firstOrNull]} is engaged");
       await Future.delayed(const Duration(milliseconds: 500));
       if (NavUtils.canPop) {
         NavUtils.back();
@@ -1548,7 +1556,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void onVideoCallSwitchTimeOut() {
     closeDialog();
-    final String remoteId = getRemoteParticipantsId().first ?? "";
+    final String remoteId = getRemoteParticipantsId().firstOrNull ?? "";
     final remoteUserName = remoteUserNameMap[remoteId] ?? "";
     toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
   }
@@ -1637,7 +1645,7 @@ class CallKitOutgoingCallController extends GetxController
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestedMessage")
-          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipantsId().first] ?? ""),
+          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipantsId().firstOrNull] ?? ""),
       actions: [
         TextButton(
             onPressed: () async {
@@ -1880,7 +1888,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final String userId = participantsId.first;
+    final String userId = participantsId.firstOrNull ?? "";
     updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.callHold);
     callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Updated participant $userId to callHold status.");
 
@@ -1902,7 +1910,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final String userId = participantsId.first;
+    final String userId = participantsId.firstOrNull ?? "";
     updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.connected);
     callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Updated participant $userId to connected status.");
 

@@ -44,6 +44,13 @@ class CallKitOutgoingCallView
   Widget oneToOneCallUI(BuildContext context) {
     callkitLogger.info("#CallKitOutGoingCallView One-One Call UI Build Called");
 
+    final String remoteTileParticipantId = !controller.isOnGoingCallViewEnable.value &&
+        controller.callType.toUpperCase() == "VIDEO"
+        ? controller.getLocalParticipantId()
+        : controller.getRemoteParticipantsId().firstOrNull ?? "";
+
+    callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -56,12 +63,12 @@ class CallKitOutgoingCallView
               Stack(
                 children: [
                   MirrorFlyCallView(
-                    key: ValueKey(!controller.isOnGoingCallViewEnable.value && controller.callType.toUpperCase() == "VIDEO" ?controller.getLocalParticipantId(): controller.getRemoteParticipantsId().first),
-                    userJID: !controller.isOnGoingCallViewEnable.value && controller.callType.toUpperCase() == "VIDEO" ?controller.getLocalParticipantId(): controller.getRemoteParticipantsId().first,
-                    fit: BoxFit.cover,
+                          key: ValueKey(remoteTileParticipantId),
+                          userJID: remoteTileParticipantId,
+                          fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: controller.getRemoteParticipantsId().first,
+                      participantId: controller.getRemoteParticipantsId().firstOrNull ?? "",
                       scale: 1,
                     ),
                   ),
@@ -69,11 +76,11 @@ class CallKitOutgoingCallView
                   // Reconnecting overlay widget
                   Visibility(
                           visible: controller.callerList
-                                  .firstWhere((e) =>
+                                  .firstWhereOrNull((e) =>
                                       e.identity ==
                                       controller
                                           .getRemoteParticipantIdForOneToOneCall())
-                                  .isReconnecting ??
+                                  ?.isReconnecting ??
                               false,
                           child: Positioned.fill(
                       child: Container(
@@ -96,28 +103,28 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-              buildMuteIcon(controller.getRemoteParticipantsId().first, radius: 10),
+             buildMuteIcon(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? "", radius: 10),
 
               /// Connection Quality Icon
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().first),
+                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? ""),
                 child: Positioned(
                   left: 30,
                   top: 150,
                   child: getConnectionQualityIcon(
                       controller.callerConnectionQuality[
-                        controller.getRemoteParticipantsId().first] ??
+                        controller.getRemoteParticipantsId().firstOrNull ?? ""] ??
                           FlyConnectionQuality.unknown),
                 ),
               ),
 
               /// Speaking Indicator
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().first),
+                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 child: Positioned(
                   left: 30,
                   top: 190,
-                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().first),
+                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 ),
               ),
                   ],
@@ -191,11 +198,11 @@ class CallKitOutgoingCallView
                       ),
                       Visibility(
                         visible: controller.callerList
-                                .firstWhere((e) =>
+                                .firstWhereOrNull((e) =>
                                     e.identity ==
                                     controller
                                         .getRemoteParticipantIdForOneToOneCall())
-                                .flyCallStatusEvent ==
+                                ?.flyCallStatusEvent ==
                             FlyCallStatusEvent.callHold,
                         child: const Center(
                           child: Text(
@@ -276,9 +283,9 @@ class CallKitOutgoingCallView
       return const SizedBox.shrink();
     }
 
-    final FlyCallParticipant participant = controller.callerList.firstWhere((e) => e.identity == participantId);
-    callkitLogger.info("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isAudioMuted}");
-    if (participant.isAudioMuted == true) {
+    final FlyCallParticipant? participant = controller.callerList.firstWhereOrNull((e) => e.identity == participantId);
+    callkitLogger.info("[buildMuteIcon] Participant found: ${participant?.identity}, isMuted: ${participant?.isAudioMuted}");
+    if (participant?.isAudioMuted == true) {
       return  CircleAvatar(
         radius: radius,
         backgroundColor: Colors.grey
@@ -612,8 +619,8 @@ class CallKitOutgoingCallView
               // Reconnecting overlay widget
               Visibility(
                 visible: controller.callerList
-                        .firstWhere((e) => e.isLocalParticipant == true)
-                        .isReconnecting ??
+                        .firstWhereOrNull((e) => e.isLocalParticipant == true)
+                        ?.isReconnecting ??
                     false,
                 child: Positioned.fill(
                   child: Container(
@@ -716,6 +723,13 @@ class CallKitOutgoingCallView
     double scale = 1.0,
     bool useMaxSize = false,
   }) {
+
+    if (participantId == "") {
+      callkitLogger
+          .info("[getUserProfileImageWithName] participantId is empty");
+      return const SizedBox();
+    }
+
     callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
     return FutureBuilder<ProfileDetails>(
       future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails("$participantId@xmpp-uikit-qa.contus.us"),
