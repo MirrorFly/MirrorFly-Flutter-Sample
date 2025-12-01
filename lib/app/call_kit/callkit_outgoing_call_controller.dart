@@ -1145,6 +1145,11 @@ class CallKitOutgoingCallController extends GetxController
 
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call disconnectCall");
+        if(NavUtils.previousRoute == Routes.groupParticipants){
+          NavUtils.back();
+          NavUtils.back();
+          return;
+        }
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
