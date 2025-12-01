@@ -227,6 +227,7 @@ class CallKitOutgoingCallController extends GetxController
           "[MirrorFly][OutgoingCallController] #configureCallMode with remote participantId for "
               "one to one call");
     }
+    await getRemoteAndLocalUserNameForOneToOneCall();
 
     // Validate for group call
     final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY";
@@ -242,7 +243,13 @@ class CallKitOutgoingCallController extends GetxController
         isCallModeChangedToOneToMany(true);
       }
       getCallTitleForOneToManyCall();
+    } else if(callerList.length > 2){
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callerList.length ${callerList.length}");
+      isGroupCall.value = true;
+      isCallModeChangedToOneToMany(true);
+      getCallTitleForOneToManyCall();
     }
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callerList.length ${callerList.length}");
 
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #configureCallMode isGroupCall: ${isGroupCall
@@ -430,6 +437,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall -> $title");
   }
+
 
   ///
   /// Get group call title
@@ -1043,7 +1051,6 @@ class CallKitOutgoingCallController extends GetxController
           callerList.refresh();
           if (timer == null || !(timer?.isActive ?? false)) {
             _startTimer();
-          } else {
             callkitLogger.info(
                 "[MirrorFly][OutgoingCallController] Timer is already running");
           }
