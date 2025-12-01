@@ -243,8 +243,8 @@ class CallKitOutgoingCallController extends GetxController
         isCallModeChangedToOneToMany(true);
       }
       getCallTitleForOneToManyCall();
-    } else if(callerList.length > 2){
-      callkitLogger.info("[MirrorFly][OutgoingCallController] callerList.length ${callerList.length}");
+    } else if(callerList.length > 2 && isIncoming.value){
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callerList.length value  ${callerList.length} isIncoming.value ${isIncoming.value}");
       isGroupCall.value = true;
       isCallModeChangedToOneToMany(true);
       getCallTitleForOneToManyCall();
