@@ -505,8 +505,10 @@ class CallKitOutgoingCallView
                                 : Stack(
                                     children: [
                                       MirrorFlyCallView(
-                                        key: ValueKey(controller.groupId.value),
-                                        userJID: controller.groupId.value,
+                                        // key: ValueKey(controller.groupId.value),
+                                        userJID: !controller.isOnGoingCallViewEnable.value &&
+                                            controller.callType.toUpperCase() == "VIDEO"
+                                            ? controller.getLocalParticipantId():controller.groupId.value,
                                         fit: BoxFit.cover,
                                         viewBgColor:
                                             AppColors.audioCallerBackground,
