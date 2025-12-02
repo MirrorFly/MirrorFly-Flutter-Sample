@@ -1755,10 +1755,10 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: callMode != "oneToOne");
-    if (pickedContacts.length > 5) {
+    await gotoContacts(isGroupInvite: isGroupCall.value, groupChatId: groupId.value);
+    if (pickedContacts.length > 8) {
       // Temp limit to 5 participants
-      toToast("You can invite up to 5 participants only");
+      toToast("You can invite up to 8 participants only");
       return;
     } else {
 
@@ -1773,7 +1773,22 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   /// Navigate to contacts screen
-  Future<List<String>> gotoContacts({bool isGroupInvite = false}) async {
+  Future<List<String>> gotoContacts({bool isGroupInvite = false, String? groupChatId}) async {
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] gotoContacts called with isGroupInvite: $isGroupInvite, groupChatId: $groupChatId");
+    if (isGroupInvite && groupChatId != null) {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] gotoContacts for group invite with groupChatId: $groupChatId");
+      final dynamic result = await NavUtils.toNamed(Routes.groupParticipants, arguments: {
+        "groupId": groupChatId,
+        "isFromLiveKitCalls": true,
+        "participantsListInCall": callerList.map((e) => e.identity).toList(),
+      });
+      callkitLogger.info("[MirrorFly][OutgoingCallController] gotoContacts group invite result: $result");
+      return result;
+    } else {
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] gotoContacts for one-to-one call invite");
     var topicId = Constants.topicId.obs;
     if (!Constants.enableContactSync) {
       final dynamic result = await NavUtils.toNamed(Routes.contacts,
@@ -1809,10 +1824,10 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info(
             "[MirrorFly][OutgoingCallController] gotoContacts permission denied");
         return [];
+        }
       }
     }
   }
-
 
   ///
   void onParticipantListUpdated() async {
