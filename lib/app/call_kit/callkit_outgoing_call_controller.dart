@@ -73,10 +73,16 @@ class CallKitOutgoingCallController extends GetxController
   ///
   var callAgainUserList = <String>[].obs;
 
+  ///
+  RxString mainCallViewUserId = "".obs;
+  RxString secondaryCallViewUserId = "".obs;
+
+
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
+    await initCallViewIds();
     initPlayer();
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] callviewinit");
@@ -137,6 +143,15 @@ class CallKitOutgoingCallController extends GetxController
     isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
+
+  Future<void> initCallViewIds() async{
+    final localId = getLocalParticipantId();
+    final remoteId = getRemoteParticipantsId().firstOrNull ?? "";
+
+    mainCallViewUserId.value = remoteId;     // show remote as main view
+    secondaryCallViewUserId.value = localId; // local goes to small preview
+  }
+
 
   @override
   void onReady() async {
@@ -1852,16 +1867,22 @@ class CallKitOutgoingCallController extends GetxController
   }
 
     // ///
-    // void videoSwap(){
-    //   callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called");
-    //   if(callType.value == "video"){
-    //     callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap before: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
-    //     final String temp = mainCallViewUserId.value;
-    //     mainCallViewUserId.value = secondaryCallViewUserId.value;
-    //     secondaryCallViewUserId.value = temp;
-    //     callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap: mainCallViewUserId: $mainCallViewUserId, secondaryCallViewUserId: $secondaryCallViewUserId");
-    //   }
-    // }
+  void videoSwap() {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called");
+
+    if (callType.value == "video") {
+      callkitLogger.info(
+          "[MirrorFly] before swap → main: ${mainCallViewUserId.value}, pip: ${secondaryCallViewUserId.value}");
+
+      final temp = mainCallViewUserId.value;
+      mainCallViewUserId.value = secondaryCallViewUserId.value;
+      secondaryCallViewUserId.value = temp;
+
+      callkitLogger.info(
+          "[MirrorFly] after swap → main: ${mainCallViewUserId.value}, pip: ${secondaryCallViewUserId.value}");
+    }
+  }
+
 
   ///
   /// To update the call status of a participant in the callerList
@@ -2016,6 +2037,8 @@ class CallKitOutgoingCallController extends GetxController
     isCallModeChangedToOneToMany(false);
     titleAfterCallModeChange("");
     _isPlaying = false;
+    mainCallViewUserId.value = "";
+    secondaryCallViewUserId.value = "";
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }

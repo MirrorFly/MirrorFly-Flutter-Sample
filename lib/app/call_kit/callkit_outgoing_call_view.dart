@@ -47,7 +47,7 @@ class CallKitOutgoingCallView
     final String remoteTileParticipantId = !controller.isOnGoingCallViewEnable.value &&
         controller.callType.toUpperCase() == "VIDEO"
         ? controller.getLocalParticipantId()
-        : controller.getRemoteParticipantsId().firstOrNull ?? "";
+        : controller.mainCallViewUserId.value;
 
     callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
 
@@ -63,7 +63,7 @@ class CallKitOutgoingCallView
               Stack(
                 children: [
                   MirrorFlyCallView(
-                          key: ValueKey(remoteTileParticipantId),
+                          // key: ValueKey(remoteTileParticipantId),
                           userJID: remoteTileParticipantId,
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
@@ -252,7 +252,7 @@ class CallKitOutgoingCallView
           final screenSize = MediaQuery
               .of(context)
               .size;
-          final previewWidth = (screenSize.width * 0.25).clamp(80.0, 140.0);
+          final previewWidth = (screenSize.width * 0.32).clamp(100.0, 180.0);
           final previewHeight = previewWidth *
               1.3; // maintain 4:3-ish aspect ratio
           final bottomOffset = controller.showControls.value
@@ -606,14 +606,14 @@ class CallKitOutgoingCallView
             children: [
               MirrorFlyCallView(
                 viewBgColor: AppColors.callerBackground,
-                key: ValueKey(controller.getLocalParticipantId()),
-                userJID: controller.getLocalParticipantId(),
+                // key: ValueKey(controller.getLocalParticipantId()),
+                userJID: controller.secondaryCallViewUserId.value,
                 fit: BoxFit.cover,
                 profileImage: getUserProfileImageWithName(
                   participantId: controller.getLocalParticipantId(),
                   scale: 2,
                   useMaxSize: true
-                ),
+                ),onTap: (){controller.videoSwap();},
               ),
 
               // Reconnecting overlay widget
