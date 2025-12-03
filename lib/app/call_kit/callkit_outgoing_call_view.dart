@@ -28,6 +28,7 @@ class CallKitOutgoingCallView
       debugPrint(
           "#CallKitOutGoingCallView Build Called, isGroupCall: ${controller.isGroupCall.value}");
       return Scaffold(
+        resizeToAvoidBottomInset:false,
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         body: GestureDetector(
@@ -876,6 +877,14 @@ class CallKitOutgoingCallView
                   },
                 ),
               if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value)
+                _buildCallOption(
+                  isActive: false,
+                  icon: controller.cameraPosition.value == CameraType.front
+                      ? Icons.cameraswitch
+                      : Icons.flip_camera_android,
+                  onTap: controller.switchCamera,
+                ),
+              if (controller.callType.value.toLowerCase() == CallType.audio && controller.isVideoEnabled.value)
                 _buildCallOption(
                   isActive: false,
                   icon: controller.cameraPosition.value == CameraType.front
