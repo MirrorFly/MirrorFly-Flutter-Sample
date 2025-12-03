@@ -338,7 +338,7 @@ class GroupParticipantsController extends GetxController {
         await MirrorFlyCallKit.makeAudioCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
-                NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
                   "userJid": selectedUsersJIDList,
                   "callType": CallType.audio,
                   "callMode": "ONE-TO-MANY",
@@ -360,7 +360,7 @@ class GroupParticipantsController extends GetxController {
         await MirrorFlyCallKit.makeVideoCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
-                NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
                   "userJid": normalizedJid,
                   "callType": CallType.video,
                   "callMode": "ONE-TO-MANY",
