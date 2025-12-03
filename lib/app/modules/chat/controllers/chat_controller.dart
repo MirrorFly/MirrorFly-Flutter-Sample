@@ -4084,8 +4084,8 @@ class ChatController extends FullLifeCycleController
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "userJid": [normalizedJid],
                     "callType": CallType.audio,
-                    "callMode": profile.isGroupProfile == true ? "ONE-TO-ONE" : "ONE-TO-MANY",
-                    "chatId": profile.isGroupProfile == true ? profile.jid : ''
+                    "callMode": "ONE-TO-ONE",
+                    "chatId": ''
                   });
                 }
               },
@@ -4135,8 +4135,8 @@ class ChatController extends FullLifeCycleController
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": [profile.jid],
                       "callType": CallType.video,
-                      "callMode": profile.isGroupProfile == true ? "ONE-TO-ONE" : "ONE-TO-MANY",
-                      "chatId": profile.isGroupProfile == true ? profile.jid : ''
+                      "callMode": "ONE-TO-ONE",
+                      "chatId": ''
                     });
                   } else {
                     toToast("CF Not connected");
