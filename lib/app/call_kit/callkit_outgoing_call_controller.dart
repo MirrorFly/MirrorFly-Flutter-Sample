@@ -102,6 +102,7 @@ class CallKitOutgoingCallController extends GetxController
 
     // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
+    onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
     super.onInit();
   }
@@ -1841,11 +1842,11 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
 
-    if (preCallUserListCount == callerList.length) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
-      return;
-    }
+    // if (preCallUserListCount == callerList.length) {
+    //   callkitLogger.info(
+    //       "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
+    //   return;
+    // }
 
     await configureCallMode(
         callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
@@ -1856,7 +1857,9 @@ class CallKitOutgoingCallController extends GetxController
         "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
 
     isGroupOnGoingCallEnabled(!(callerList.length <= 2));
-    isCallModeChangedToOneToMany(!(callerList.length <= 2));
+    if(!isGroupCall.value){
+      isCallModeChangedToOneToMany(!(callerList.length <= 2));
+    }
 
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
