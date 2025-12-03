@@ -1771,7 +1771,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: isGroupCall.value, groupChatId: groupId.value);
+    await gotoContacts(isGroupInvite: groupId.value != "", groupChatId: groupId.value);
     if (pickedContacts.length > 8) {
       // Temp limit to 5 participants
       toToast("You can invite up to 8 participants only");
