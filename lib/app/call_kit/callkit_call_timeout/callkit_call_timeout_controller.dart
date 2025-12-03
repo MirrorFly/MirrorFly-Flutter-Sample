@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../common/app_localizations.dart';
@@ -74,51 +75,66 @@ class CallKitCallTimeoutController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if (callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
+
             final List<String> userList = users.toList();
             callkitLogger.info("Making Audio Call to ${userList.toString()}");
+
+            final List<String> normalizedUserList = userList.map((jid) => CallUtils.getIdFromJidList(jid)).toList();
+            CallkitLogger().info("Normalized User List for Audio Call: ${normalizedUserList.toString()}");
+
+            final String normalizedGroupId = CallUtils.getIdFromJidList(groupJid.value);
+            CallkitLogger().info("Normalized Group ID for Audio Call: $normalizedGroupId");
+
             await MirrorFlyCallKit.makeAudioCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": userList,
+                      "userJid": normalizedUserList,
                       "callType": CallType.audio,
                       "callMode": callMode.value,
-                      "chatId": groupId.value,
+                      "chatId": normalizedGroupId,
                     });
                   } else {
                     callkitLogger.info("CF Not connected");
                   }
                 },
                 callersId:
-                userList,
+                normalizedUserList,
                 // callMode: "ONE-TO-ONE",
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-                chatId: groupId.value);
+                chatId: normalizedGroupId);
 
         } else {
           debugPrint("permission not given");
         }
       } else {
         if (await AppPermission.askVideoCallPermissions()) {
+
+          final List<String> normalizedUserList = users.map((jid) => CallUtils.getIdFromJidList(jid)).toList();
+          CallkitLogger().info("Normalized User List for Video Call: ${normalizedUserList.toString()}");
+
+          final String normalizedGroupId = CallUtils.getIdFromJidList(groupJid.value);
+          CallkitLogger().info("Normalized Group ID for Video Call: $normalizedGroupId");
+
           final List<String> userList = users.toList();
           await MirrorFlyCallKit.makeVideoCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": userList,
+                      "userJid": normalizedUserList,
                       "callType": CallType.video,
                       "callMode": callMode.value,
-                      "chatId": groupId.value,
+                      "chatId": normalizedGroupId,
                     });
                   } else {
                     callkitLogger.info("CF Not connected");
                   }
                 },
                 callersId:
-                userList,
+                normalizedUserList,
                 // callMode: "ONE-TO-ONE",
                 //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-                chatId: groupId.value);
+                chatId: normalizedGroupId);
 
         } else {
           LogMessage.d("askVideoCallPermissions", "false");
