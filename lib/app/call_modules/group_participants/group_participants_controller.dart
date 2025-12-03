@@ -27,24 +27,36 @@ class GroupParticipantsController extends GetxController {
 
   var groupId = "".obs;
   var callType = "".obs;
+  var participantsListInCall = [].obs;
+  RxBool isFromLiveKitCalls = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    isFromLiveKitCalls(NavUtils.arguments["isFromLiveKitCalls"] ?? false);
+    participantsListInCall(NavUtils.arguments["participantsListInCall"] ?? []);
+
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     groupId(NavUtils.arguments["groupId"]);
     callType(NavUtils.arguments["callType"]);
-    getGroupMembers();
+    await getGroupMembers();
+
+    checkForAlreadyParticipantInCall();
+    callkitLogger.info(
+        "GroupParticipantsController initialized with groupId: ${groupId.value}, "
+            "callType: ${callType.value}, isFromLiveKitCalls: ${isFromLiveKitCalls.value}, participantsListInCall: $participantsListInCall");
   }
 
   @override
   void onClose() {
     super.onClose();
     searchQuery.dispose();
+    callkitLogger.info("GroupParticipantsController disposed");
   }
 
-  void getGroupMembers() {
-    Mirrorfly.getGroupMembersList(
+  Future<void> getGroupMembers() async {
+    await Mirrorfly.getGroupMembersList(
         jid: groupId.value.checkNull(),
         fetchFromServer: false,
         flyCallBack: (FlyResponse response) {
@@ -59,6 +71,51 @@ class GroupParticipantsController extends GetxController {
             usersList(withoutMe);
           }
         });
+  }
+
+  void checkForAlreadyParticipantInCall() {
+    callkitLogger.info("Checking for participants already in call..., "
+        "isFromLiveKitCalls=${isFromLiveKitCalls.value}, "
+        "participantsListInCall=$participantsListInCall, mainUserList=${mainUserList.length}, usersList=${usersList.length}");
+
+    if (!isFromLiveKitCalls.value || participantsListInCall.isEmpty) {
+      callkitLogger.info("Skipping removal — no participants to process.");
+      return;
+    }
+
+    String normalizeJid(String jid) => jid.split('/').first;
+    callkitLogger.info("Existing users in list:");
+    for (var user in mainUserList) {
+      callkitLogger
+          .info("checkForAlreadyParticipantInCall usersList  → ${user.jid}");
+    }
+
+    mainUserList.removeWhere((user) {
+      if (user.jid == null) return false;
+      final listJid = normalizeJid(user.jid!);
+      final matched = participantsListInCall.any((incomingJid) {
+        return listJid.contains(incomingJid);
+      });
+      if (matched) {
+        callkitLogger.info("Removing from mainUserList → ${user.jid}");
+      }
+      return matched;
+    });
+
+    usersList.removeWhere((user) {
+      if (user.jid == null) return false;
+      final listJid = normalizeJid(user.jid!);
+      final matched = participantsListInCall.any((incomingJid) {
+        return listJid.contains(incomingJid);
+      });
+      if (matched) {
+        callkitLogger.info("Removing from usersList → ${user.jid}");
+      }
+      return matched;
+    });
+
+    callkitLogger.info("Final mainUserList count: ${mainUserList.length}");
+    callkitLogger.info("Final usersList count: ${usersList.length}");
   }
 
   //Search Start Here
@@ -248,6 +305,13 @@ class GroupParticipantsController extends GetxController {
     if (selectedUsersJIDList.isEmpty) {
       return;
     }
+
+    if (isFromLiveKitCalls.value) {
+      callkitLogger.info("Making LiveKit Group Call with users: $selectedUsersJIDList");
+      await NavUtils.back(result: selectedUsersJIDList);
+      return;
+    }
+
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
       DialogUtils.showFeatureUnavailable();
       return;

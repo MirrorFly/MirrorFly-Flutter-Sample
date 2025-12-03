@@ -752,6 +752,11 @@ class CallKitOutgoingCallView
         // When we actually have valid profile data
         if (snap.hasData && snap.data != null) {
 
+          if(!Get.isRegistered<CallKitOutgoingCallController>()) {
+            callkitLogger.info("[getUserProfileImageWithName] CallKitOutgoingCallController is not registered in GetX");
+            return const SizedBox.shrink();
+          }
+
           final bool isLocalView = participantId == controller.getLocalParticipantId();
           debugPrint(
               "[getUserProfileImageWithName] Building profile image for participantId: $participantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
