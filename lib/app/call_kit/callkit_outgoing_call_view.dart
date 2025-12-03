@@ -70,7 +70,7 @@ class CallKitOutgoingCallView
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: "919600756242",
+                      participantId: controller.getRemoteParticipantsId().firstOrNull ?? "",
                       scale: 1,
                     ),
                   ),
