@@ -27,6 +27,7 @@ class CallKitOutgoingCallView
       debugPrint(
           "#CallKitOutGoingCallView Build Called, isGroupCall: ${controller.isGroupCall.value}");
       return Scaffold(
+        resizeToAvoidBottomInset:false,
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         body: GestureDetector(
