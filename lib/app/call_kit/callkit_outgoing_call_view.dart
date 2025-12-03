@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:path/path.dart';
 import '../app_style_config.dart';
@@ -68,7 +69,7 @@ class CallKitOutgoingCallView
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: controller.getRemoteParticipantsId().firstOrNull ?? "",
+                      participantId: "919600756242",
                       scale: 1,
                     ),
                   ),
@@ -724,24 +725,35 @@ class CallKitOutgoingCallView
     bool useMaxSize = false,
   }) {
 
+    callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
+
     if (participantId == "") {
       callkitLogger
           .info("[getUserProfileImageWithName] participantId is empty");
-      return const SizedBox();
+      return const Offstage();
     }
 
-    callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
+    final bool isGroupCall = isGroup == true;
+    callkitLogger.info("[getUserProfileImageWithName] isGroupCall: $isGroupCall");
+
+    final String normalizedParticipantId = controller.validId(userId: participantId, isGroup: isGroupCall);
+    callkitLogger.info("[getUserProfileImageWithName] normalizedParticipantId: $normalizedParticipantId");
+
+    final Future<ProfileDetails> profileDetails = isGroup == true
+        ? getGroupProfileDetails(normalizedParticipantId)
+        : getProfileDetails(normalizedParticipantId);
+
     return FutureBuilder<ProfileDetails>(
-      future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails("$participantId@xmpp-uikit-qa.contus.us"),
+      future: profileDetails,
       builder: (ctx, snap) {
         // Log the state of the FutureBuilder
         if (snap.connectionState == ConnectionState.waiting) {
-          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $participantId");
+          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $normalizedParticipantId");
         } else if (snap.connectionState == ConnectionState.done) {
           if (snap.hasError) {
-            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $participantId → ${snap.error}");
+            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $normalizedParticipantId → ${snap.error}");
           } else if (!snap.hasData || snap.data == null) {
-            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $participantId");
+            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $normalizedParticipantId");
           } else {
             callkitLogger.info("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
           }
@@ -757,7 +769,7 @@ class CallKitOutgoingCallView
 
           final bool isLocalView = participantId == controller.getLocalParticipantId();
           debugPrint(
-              "[getUserProfileImageWithName] Building profile image for participantId: $participantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
+              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
 
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,

@@ -267,7 +267,8 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
-          validId(userId: user.identity, isGroup: false));
+          validId(userId: user.identity, isGroup: false),
+          isFromCallKit: true);
       String username = (profile.name?.trim().isNotEmpty == true)
           ? profile.name!.trim()
           : (profile.nickName?.trim().isNotEmpty == true)
@@ -298,7 +299,7 @@ class CallKitOutgoingCallController extends GetxController
           "[MirrorFly][OutgoingCallController] Getting user name for: ${user
               .identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
-          validId(userId: user.identity, isGroup: false));
+          validId(userId: user.identity, isGroup: false), isFromCallKit: true);
       String username =
       (profile.name?.trim().isNotEmpty == true)
           ? profile.name!.trim()
@@ -354,6 +355,7 @@ class CallKitOutgoingCallController extends GetxController
 
   String validId({required String userId,required bool isGroup}) {
     if(isGroup){
+      callkitLogger.info("[MirrorFly][OutgoingCallController] validId for group called with userId: $userId isGroup: $isGroup, containing @: ${userId.contains("@")}");
       return userId.contains("@") ? userId : "$userId@mix.xmpp-uikit-qa.contus.us";
     }else{
       return userId.contains("@") ? userId : "$userId@xmpp-uikit-qa.contus.us";
@@ -368,7 +370,7 @@ class CallKitOutgoingCallController extends GetxController
     if (isGroupCall.value && chatId.isNotEmpty) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getChatNameForGroupCall with chatId: ${groupId.value}");
-      ProfileDetails profile = await getProfileDetails(validId(userId: chatId,isGroup: true));
+      ProfileDetails profile = await getProfileDetails(validId(userId: chatId,isGroup: true), isFromCallKit: true);
       String chatName =
       (profile.name?.trim().isNotEmpty == true)
           ? profile.name!.trim()
@@ -900,11 +902,10 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, removing participantId: ${target.identity}");
         callerList.remove(target);
 
-        final fullJid = "$p@xmpp-uikit-qa.contus.us";
-        final profile = await getProfileDetails(validId(userId: fullJid, isGroup: false));
+        final profile = await getProfileDetails(validId(userId: p, isGroup: false), isFromCallKit: true);
 
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout,"
-            " fetched profile for $fullJid: name=${profile.name}, nickName=${profile.nickName}, jid=${profile.jid}");
+            " fetched profile for $p: name=${profile.name}, nickName=${profile.nickName}, jid=${profile.jid}");
 
         String rawName =
         (profile.name?.trim().isNotEmpty == true)
@@ -913,7 +914,7 @@ class CallKitOutgoingCallController extends GetxController
             ? profile.nickName!.trim()
             : trimAfterAt(profile.jid ?? "");
 
-        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, rawName for $fullJid: $rawName");
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, rawName for $p: $rawName");
 
         final username = trimAfterAt(rawName);
 
@@ -1743,9 +1744,11 @@ class CallKitOutgoingCallController extends GetxController
     _resetValues();
     _stopTimer();
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
-      callStatus("Call Failed");
+      // callStatus("Call Failed");
       // toToast("Call Failed");
       NavUtils.back();
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Current route is not OutgoingCallView, skipping navigation.");
     }
   }
 
