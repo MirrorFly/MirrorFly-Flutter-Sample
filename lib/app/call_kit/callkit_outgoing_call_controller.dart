@@ -1847,39 +1847,59 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void onParticipantListUpdated() async {
+
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode");
+        "[MirrorFly][OutgoingCallController] onParticipantListUpdated called with callMode");
+
     final preCallUserListCount = callerList.length;
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged preCallUserListCount: $preCallUserListCount");
+        "[MirrorFly][OutgoingCallController] onParticipantListUpdated preCallUserListCount: $preCallUserListCount");
     await getCurrentCallParticipants();
 
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
-
-    // if (preCallUserListCount == callerList.length) {
-    //   callkitLogger.info(
-    //       "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
-    //   return;
-    // }
+        "[MirrorFly][OutgoingCallController] onParticipantListUpdated fetched callerList with length: ${callerList
+            .length}");
 
     await configureCallMode(
         callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
         chatId: groupId.value);
 
-    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallModeChanged updated "
-        "local callMode: ${callMode.value}, isGroupCall: ${isGroupCall.value} "
-        "isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}");
-
-    isGroupOnGoingCallEnabled(!(callerList.length <= 2));
-    if(!isGroupCall.value){
-      isCallModeChangedToOneToMany(!(callerList.length <= 2));
-    }
+    final bool isNowGroup = isGroupCall.value;
+    final bool wasGroup = isGroupOnGoingCallEnabled.value;
+    final bool shouldBeGroup = callerList.length > 2;
 
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
-        " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
-        "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
+        "[MirrorFly][OutgoingCallController] onParticipantListUpdated BEFORE UPDATE => "
+            "wasGroup=$wasGroup, "
+            "isNowGroup=$isNowGroup, "
+            "shouldBeGroup=$shouldBeGroup, "
+            "participants=${callerList.length}"
+    );
+
+    /// CASE 1: 1–1 → Add participant (becomes group)
+    if (!wasGroup && shouldBeGroup) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onParticipantListUpdated Transition: ONE-TO-ONE → GROUP (Enable group mode)");
+      isGroupOnGoingCallEnabled(true);
+      isCallModeChangedToOneToMany(true);
+    }
+
+    /// CASE 2: Group → Remove participants until only 2 left
+    else if (wasGroup && !shouldBeGroup) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onParticipantListUpdated Transition: GROUP → ONE-TO-ONE (Disable group mode)");
+      isGroupOnGoingCallEnabled(false);
+      isCallModeChangedToOneToMany(false);
+    }
+
+    /// CASE 3: Still Group (adding/removing participants inside group)
+    else if (wasGroup && shouldBeGroup) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onParticipantListUpdated Staying in GROUP mode (no navigation)");
+    }
+
+    /// CASE 4: Still one–one
+    else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onParticipantListUpdated Staying in ONE-TO-ONE mode");
+    }
+
     await getRemoteAndLocalUserNameForGroupCall();
     getCallTitleForOneToManyCall();
   }
