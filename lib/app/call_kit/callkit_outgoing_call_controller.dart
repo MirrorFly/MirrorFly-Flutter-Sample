@@ -1874,11 +1874,6 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
 
-    // if (preCallUserListCount != callerList.length) {
-    //   debugPrint(
-    //       "[MirrorFly][OutgoingCallController] onCallModeChanged: callerList length changed during fetch, aborting call mode change.");
-    //   return;
-    // }
 
     await configureCallMode(
         callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
