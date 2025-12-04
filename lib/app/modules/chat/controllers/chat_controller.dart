@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 // import 'package:google_cloud_translation/google_cloud_translation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 import 'package:mirror_fly_demo/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
@@ -4066,44 +4068,31 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
-                 if(isAudioRecording.value == Constants.audioRecording){
+          if (isAudioRecording.value == Constants.audioRecording) {
             stopRecording();
           }
-            await MirrorFlyCallKit.makeAudioCall(
+
+          final String normalizedJid = CallUtils.getIdFromJidList(profile.jid ?? "");
+          callkitLogger.info("Making audio call to $normalizedJid");
+
+          final String normalizedChatId = profile.isGroupProfile == true ? CallUtils.getIdFromJidList(profile.jid ?? "") : '';
+          callkitLogger.info("Chat ID for audio call $normalizedChatId");
+
+          await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                    "userJid": [profile.jid],
+                    "userJid": [normalizedJid],
                     "callType": CallType.audio,
                     "callMode": "ONE-TO-ONE",
-                    "chatId": ""
+                    "chatId": ''
                   });
-                } else {
-                  //   final String errorData = response.data;
-                  //   if (errorData == "Centrifuge not connected") {
-                  //     toToast("CF Not connected");
-                  //   }
-                  //
-                  //   // Assuming it is permission denied error
-                  //   final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                  //   final String? permissionType = errorJson?['type'];
-                  //   final String? permissionAction = errorJson?['action'];
-                  //   final String? message = errorJson?['message'];
-                  //   debugPrint(
-                  //       "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-                  //
-                  //   if (message != null) {
-                  //     toToast(message);
-                  //   }
-                  // }
                 }
               },
               callersId: [
-                profile.jid!,
+                normalizedJid,
               ],
-                // callMode: "ONE-TO-ONE",
-              //callersId: ["919000000007"], //callersId: ["919944964758"], // callersId: ["919000000008"], //
-              chatId: '');
+              chatId: normalizedChatId);
         }
       } else {
         toToast("Permission is not granted");
@@ -4131,17 +4120,23 @@ class ChatController extends FullLifeCycleController
             if(isAudioRecording.value == Constants.audioRecording){
               stopRecording();
             }
+
+            final String normalizedJidList = CallUtils.getIdFromJidList(profile.jid ?? "");
+            callkitLogger.info("Making video call to $normalizedJidList");
+
+            final String normalizedChatId = profile.isGroupProfile == true ? CallUtils.getIdFromJidList(profile.jid ?? "") : '';
+            callkitLogger.info("Chat ID for audio call $normalizedChatId");
+
             await MirrorFlyCallKit.makeVideoCall(
-                callersId: [profile.jid ?? ""],
-                chatId: '',
-                // callMode: "ONE_TO_ONE",
+                callersId: [normalizedJidList],
+                chatId: normalizedChatId,
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                       "userJid": [profile.jid],
                       "callType": CallType.video,
-                      "callMode": "ONE_TO_ONE",
-                      "chatId": ""
+                      "callMode": "ONE-TO-ONE",
+                      "chatId": ''
                     });
                   } else {
                     toToast("CF Not connected");

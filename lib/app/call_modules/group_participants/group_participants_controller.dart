@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
@@ -26,24 +28,36 @@ class GroupParticipantsController extends GetxController {
 
   var groupId = "".obs;
   var callType = "".obs;
+  var participantsListInCall = [].obs;
+  RxBool isFromLiveKitCalls = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
+
+    isFromLiveKitCalls(NavUtils.arguments["isFromLiveKitCalls"] ?? false);
+    participantsListInCall(NavUtils.arguments["participantsListInCall"] ?? []);
+
     getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
     groupId(NavUtils.arguments["groupId"]);
     callType(NavUtils.arguments["callType"]);
-    getGroupMembers();
+    await getGroupMembers();
+
+    checkForAlreadyParticipantInCall();
+    callkitLogger.info(
+        "GroupParticipantsController initialized with groupId: ${groupId.value}, "
+            "callType: ${callType.value}, isFromLiveKitCalls: ${isFromLiveKitCalls.value}, participantsListInCall: $participantsListInCall");
   }
 
   @override
   void onClose() {
     super.onClose();
     searchQuery.dispose();
+    callkitLogger.info("GroupParticipantsController disposed");
   }
 
-  void getGroupMembers() {
-    Mirrorfly.getGroupMembersList(
+  Future<void> getGroupMembers() async {
+    await Mirrorfly.getGroupMembersList(
         jid: groupId.value.checkNull(),
         fetchFromServer: false,
         flyCallBack: (FlyResponse response) {
@@ -58,6 +72,51 @@ class GroupParticipantsController extends GetxController {
             usersList(withoutMe);
           }
         });
+  }
+
+  void checkForAlreadyParticipantInCall() {
+    callkitLogger.info("Checking for participants already in call..., "
+        "isFromLiveKitCalls=${isFromLiveKitCalls.value}, "
+        "participantsListInCall=$participantsListInCall, mainUserList=${mainUserList.length}, usersList=${usersList.length}");
+
+    if (!isFromLiveKitCalls.value || participantsListInCall.isEmpty) {
+      callkitLogger.info("Skipping removal — no participants to process.");
+      return;
+    }
+
+    String normalizeJid(String jid) => jid.split('/').first;
+    callkitLogger.info("Existing users in list:");
+    for (var user in mainUserList) {
+      callkitLogger
+          .info("checkForAlreadyParticipantInCall usersList  → ${user.jid}");
+    }
+
+    mainUserList.removeWhere((user) {
+      if (user.jid == null) return false;
+      final listJid = normalizeJid(user.jid!);
+      final matched = participantsListInCall.any((incomingJid) {
+        return listJid.contains(incomingJid);
+      });
+      if (matched) {
+        callkitLogger.info("Removing from mainUserList → ${user.jid}");
+      }
+      return matched;
+    });
+
+    usersList.removeWhere((user) {
+      if (user.jid == null) return false;
+      final listJid = normalizeJid(user.jid!);
+      final matched = participantsListInCall.any((incomingJid) {
+        return listJid.contains(incomingJid);
+      });
+      if (matched) {
+        callkitLogger.info("Removing from usersList → ${user.jid}");
+      }
+      return matched;
+    });
+
+    callkitLogger.info("Final mainUserList count: ${mainUserList.length}");
+    callkitLogger.info("Final usersList count: ${usersList.length}");
   }
 
   //Search Start Here
@@ -181,7 +240,7 @@ class GroupParticipantsController extends GetxController {
                       userJid: item.jid.checkNull(),
                       flyCallBack: (FlyResponse response) {
                         DialogUtils.hideLoading();
-                        if (response.isSuccess && response.hasData) {
+                        if (response.isSuccess) {
                           toToast(getTranslated("hasUnBlocked")
                               .replaceFirst("%d", getName(item)));
                           userUpdatedHisProfile(item.jid.checkNull());
@@ -247,6 +306,13 @@ class GroupParticipantsController extends GetxController {
     if (selectedUsersJIDList.isEmpty) {
       return;
     }
+
+    if (isFromLiveKitCalls.value) {
+      callkitLogger.info("Making LiveKit Group Call with users: $selectedUsersJIDList");
+      await NavUtils.back(result: selectedUsersJIDList);
+      return;
+    }
+
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
       DialogUtils.showFeatureUnavailable();
       return;
@@ -262,59 +328,43 @@ class GroupParticipantsController extends GetxController {
     }
     if (callType.value == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
+
+        final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
+        callkitLogger.info("Making Audio Group Call with users: $normalizedJid");
+
+        final normalizedGroupJid = CallUtils.getIdFromJidList(groupId.value);
+        callkitLogger.info("Group JID normalized: $normalizedGroupJid");
+
         await MirrorFlyCallKit.makeAudioCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
-                NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
                   "userJid": selectedUsersJIDList,
                   "callType": CallType.audio,
                   "callMode": "ONE-TO-MANY",
                   "chatId": groupId.value,
                 });
-              } else {
-                // final String errorData = response.data;
-                // if (errorData == "Centrifuge not connected") {
-                //   toToast("CF Not connected");
-                // }
-                //
-                // // Assuming it is permission denied error
-                // final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                // final String? permissionType = errorJson?['type'];
-                // final String? permissionAction = errorJson?['action'];
-                // final String? message = errorJson?['message'];
-                // debugPrint(
-                //     "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-                // if (message != null) {
-                //   toToast(message);
-                // }
               }
             },
-            callersId: selectedUsersJIDList,
-            // callMode: "ONE-TO-MANY",
-            chatId: groupId.value);
-        // Mirrorfly.makeGroupVoiceCall(
-        //     groupJid: groupId.value,
-        //     toUserJidList: selectedUsersJIDList,
-        //     flyCallBack: (FlyResponse response) {
-        //       if (response.isSuccess) {
-        //         NavUtils.offNamed(Routes.outGoingCallView, arguments: {
-        //           "userJid": selectedUsersJIDList,
-        //           "callType": CallType.audio
-        //         });
-        //       }
-        //     });
+            callersId: normalizedJid,
+            chatId: normalizedGroupJid);
       }
     } else if (callType.value == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
+        final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
+        callkitLogger.info("Making Video Group Call with users: $normalizedJid");
+
+        final normalizedGroupJid = CallUtils.getIdFromJidList(groupId.value);
+        callkitLogger.info("Group JID normalized: $normalizedGroupJid");
+
         await MirrorFlyCallKit.makeVideoCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
-                NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                  "userJid": selectedUsersJIDList,
+                NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                  "userJid": normalizedJid,
                   "callType": CallType.video,
                   "callMode": "ONE-TO-MANY",
-                  "chatId": groupId.value,
+                  "chatId": normalizedGroupJid,
                 });
               } else {
                 final String errorData = response.data;
@@ -335,9 +385,9 @@ class GroupParticipantsController extends GetxController {
                 }
               }
             },
-            callersId: selectedUsersJIDList,
+            callersId: normalizedJid,
             // callMode: "ONE-TO-MANY",
-            chatId: groupId.value);
+            chatId: normalizedGroupJid);
         // Mirrorfly.makeGroupVideoCall(
         //     groupJid: groupId.value,
         //     toUserJidList: selectedUsersJIDList,

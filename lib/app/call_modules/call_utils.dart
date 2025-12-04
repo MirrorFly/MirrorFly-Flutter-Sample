@@ -10,6 +10,12 @@ import '../common/constants.dart';
 import '../data/utils.dart';
 
 class CallUtils {
+
+  /// Removes everything after '@' from each caller ID.
+  static String getIdFromJidList(String callersId) {
+    return callersId.split('@').first;
+  }
+
   static Future<String> getCallersName(List<String?> callUsers,
       [bool addYou = false]) async {
     LogMessage.d("getCallersName callUsers", callUsers);

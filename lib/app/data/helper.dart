@@ -19,7 +19,9 @@ import '../model/chat_message_model.dart';
 import '../routes/route_settings.dart';
 import 'utils.dart';
 
-Future<ProfileDetails> getProfileDetails(String jid) async {
+Future<ProfileDetails> getProfileDetails(String jid, {bool isFromCallKit = false}) async {
+
+  callkitLogger.info("getProfileDetails Jid isFromCallKit: $isFromCallKit--> $jid");
 
   try {
     var value = await Mirrorfly.getProfileDetails(jid: jid.checkNull());
@@ -39,10 +41,14 @@ Future<ProfileDetails> getProfileDetails(String jid) async {
 Future<ProfileDetails> getGroupProfileDetails(String jid) async {
   final completer = Completer<ProfileDetails>();
 
+  callkitLogger.info("getGroupProfileDetails Jid--> $jid");
+  final String normalizedJid = "$jid@mix.xmpp-uikit-qa.contus.us";
+  callkitLogger.info("getGroupProfileDetails Normalized Jid--> $normalizedJid");
+
   try {
-    debugPrint("getGroupProfileDetails Jid--> $jid");
+    debugPrint("getGroupProfileDetails Jid--> $normalizedJid");
     await Mirrorfly.getGroupProfile(
-      groupJid: jid.checkNull(),
+      groupJid: normalizedJid.checkNull(),
       flyCallBack: (FlyResponse response) {
         try {
           var profile = ProfileDetails.fromJson(

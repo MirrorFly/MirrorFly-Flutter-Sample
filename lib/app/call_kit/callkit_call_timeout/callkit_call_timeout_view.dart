@@ -74,8 +74,8 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                             const EdgeInsets.symmetric(horizontal: 30.0),
                             child: FutureBuilder(
                                 future: CallUtils.getCallersName(
-                                    controller.users,
-                                    controller.users.length == 1),
+                                    controller.usersJid,
+                                    ),
                                 builder: (ctx, snap) {
                                   return snap.hasData && snap.data != null
                                       ? Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:path/path.dart';
 import '../app_style_config.dart';
@@ -27,6 +28,7 @@ class CallKitOutgoingCallView
       debugPrint(
           "#CallKitOutGoingCallView Build Called, isGroupCall: ${controller.isGroupCall.value}");
       return Scaffold(
+        resizeToAvoidBottomInset:false,
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         body: GestureDetector(
@@ -44,6 +46,13 @@ class CallKitOutgoingCallView
   Widget oneToOneCallUI(BuildContext context) {
     callkitLogger.info("#CallKitOutGoingCallView One-One Call UI Build Called");
 
+    final String remoteTileParticipantId = !controller.isOnGoingCallViewEnable.value &&
+        controller.callType.toUpperCase() == "VIDEO"
+        ? controller.getLocalParticipantId()
+        : controller.mainCallViewUserId.value;
+
+    callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -56,12 +65,12 @@ class CallKitOutgoingCallView
               Stack(
                 children: [
                   MirrorFlyCallView(
-                    key: ValueKey(controller.getRemoteParticipantsId().first),
-                    userJID: controller.getRemoteParticipantsId().first,
-                    fit: BoxFit.cover,
+                          // key: ValueKey(remoteTileParticipantId),
+                          userJID: remoteTileParticipantId,
+                          fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: controller.getRemoteParticipantsId().first,
+                      participantId: controller.getRemoteParticipantsId().firstOrNull ?? "",
                       scale: 1,
                     ),
                   ),
@@ -69,11 +78,11 @@ class CallKitOutgoingCallView
                   // Reconnecting overlay widget
                   Visibility(
                           visible: controller.callerList
-                                  .firstWhere((e) =>
+                                  .firstWhereOrNull((e) =>
                                       e.identity ==
                                       controller
                                           .getRemoteParticipantIdForOneToOneCall())
-                                  .isReconnecting ??
+                                  ?.isReconnecting ??
                               false,
                           child: Positioned.fill(
                       child: Container(
@@ -96,28 +105,28 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-              buildMuteIcon(controller.getRemoteParticipantsId().first, radius: 10),
+             buildMuteIcon(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? "", radius: 10),
 
               /// Connection Quality Icon
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().first),
+                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? ""),
                 child: Positioned(
                   left: 30,
                   top: 150,
                   child: getConnectionQualityIcon(
                       controller.callerConnectionQuality[
-                        controller.getRemoteParticipantsId().first] ??
+                        controller.getRemoteParticipantsId().firstOrNull ?? ""] ??
                           FlyConnectionQuality.unknown),
                 ),
               ),
 
               /// Speaking Indicator
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().first),
+                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 child: Positioned(
                   left: 30,
                   top: 190,
-                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().first),
+                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 ),
               ),
                   ],
@@ -191,11 +200,11 @@ class CallKitOutgoingCallView
                       ),
                       Visibility(
                         visible: controller.callerList
-                                .firstWhere((e) =>
+                                .firstWhereOrNull((e) =>
                                     e.identity ==
                                     controller
                                         .getRemoteParticipantIdForOneToOneCall())
-                                .flyCallStatusEvent ==
+                                ?.flyCallStatusEvent ==
                             FlyCallStatusEvent.callHold,
                         child: const Center(
                           child: Text(
@@ -245,7 +254,7 @@ class CallKitOutgoingCallView
           final screenSize = MediaQuery
               .of(context)
               .size;
-          final previewWidth = (screenSize.width * 0.25).clamp(80.0, 140.0);
+          final previewWidth = (screenSize.width * 0.32).clamp(100.0, 180.0);
           final previewHeight = previewWidth *
               1.3; // maintain 4:3-ish aspect ratio
           final bottomOffset = controller.showControls.value
@@ -276,9 +285,9 @@ class CallKitOutgoingCallView
       return const SizedBox.shrink();
     }
 
-    final FlyCallParticipant participant = controller.callerList.firstWhere((e) => e.identity == participantId);
-    callkitLogger.info("[buildMuteIcon] Participant found: ${participant.identity}, isMuted: ${participant.isAudioMuted}");
-    if (participant.isAudioMuted == true) {
+    final FlyCallParticipant? participant = controller.callerList.firstWhereOrNull((e) => e.identity == participantId);
+    callkitLogger.info("[buildMuteIcon] Participant found: ${participant?.identity}, isMuted: ${participant?.isAudioMuted}");
+    if (participant?.isAudioMuted == true) {
       return  CircleAvatar(
         radius: radius,
         backgroundColor: Colors.grey
@@ -498,8 +507,10 @@ class CallKitOutgoingCallView
                                 : Stack(
                                     children: [
                                       MirrorFlyCallView(
-                                        key: ValueKey(controller.groupId.value),
-                                        userJID: controller.groupId.value,
+                                        // key: ValueKey(controller.groupId.value),
+                                        userJID: !controller.isOnGoingCallViewEnable.value &&
+                                            controller.callType.toUpperCase() == "VIDEO"
+                                            ? controller.getLocalParticipantId():controller.groupId.value,
                                         fit: BoxFit.cover,
                                         viewBgColor:
                                             AppColors.audioCallerBackground,
@@ -599,21 +610,21 @@ class CallKitOutgoingCallView
             children: [
               MirrorFlyCallView(
                 viewBgColor: AppColors.callerBackground,
-                key: ValueKey(controller.getLocalParticipantId()),
-                userJID: controller.getLocalParticipantId(),
+                // key: ValueKey(controller.getLocalParticipantId()),
+                userJID: controller.secondaryCallViewUserId.value,
                 fit: BoxFit.cover,
                 profileImage: getUserProfileImageWithName(
                   participantId: controller.getLocalParticipantId(),
                   scale: 2,
                   useMaxSize: true
-                ),
+                ),onTap: (){controller.videoSwap();},
               ),
 
               // Reconnecting overlay widget
               Visibility(
                 visible: controller.callerList
-                        .firstWhere((e) => e.isLocalParticipant == true)
-                        .isReconnecting ??
+                        .firstWhereOrNull((e) => e.isLocalParticipant == true)
+                        ?.isReconnecting ??
                     false,
                 child: Positioned.fill(
                   child: Container(
@@ -716,18 +727,36 @@ class CallKitOutgoingCallView
     double scale = 1.0,
     bool useMaxSize = false,
   }) {
+
     callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
+
+    if (participantId == "") {
+      callkitLogger
+          .info("[getUserProfileImageWithName] participantId is empty");
+      return const Offstage();
+    }
+
+    final bool isGroupCall = isGroup == true;
+    callkitLogger.info("[getUserProfileImageWithName] isGroupCall: $isGroupCall");
+
+    final String normalizedParticipantId = controller.validId(userId: participantId, isGroup: isGroupCall);
+    callkitLogger.info("[getUserProfileImageWithName] normalizedParticipantId: $normalizedParticipantId");
+
+    final Future<ProfileDetails> profileDetails = isGroup == true
+        ? getGroupProfileDetails(normalizedParticipantId)
+        : getProfileDetails(normalizedParticipantId);
+
     return FutureBuilder<ProfileDetails>(
-      future: isGroup == true ? getGroupProfileDetails(participantId) : getProfileDetails("$participantId@xmpp-uikit-qa.contus.us"),
+      future: profileDetails,
       builder: (ctx, snap) {
         // Log the state of the FutureBuilder
         if (snap.connectionState == ConnectionState.waiting) {
-          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $participantId");
+          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $normalizedParticipantId");
         } else if (snap.connectionState == ConnectionState.done) {
           if (snap.hasError) {
-            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $participantId → ${snap.error}");
+            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $normalizedParticipantId → ${snap.error}");
           } else if (!snap.hasData || snap.data == null) {
-            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $participantId");
+            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $normalizedParticipantId");
           } else {
             callkitLogger.info("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
           }
@@ -736,9 +765,14 @@ class CallKitOutgoingCallView
         // When we actually have valid profile data
         if (snap.hasData && snap.data != null) {
 
+          if(!Get.isRegistered<CallKitOutgoingCallController>()) {
+            callkitLogger.info("[getUserProfileImageWithName] CallKitOutgoingCallController is not registered in GetX");
+            return const SizedBox.shrink();
+          }
+
           final bool isLocalView = participantId == controller.getLocalParticipantId();
           debugPrint(
-              "[getUserProfileImageWithName] Building profile image for participantId: $participantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
+              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
 
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
@@ -842,7 +876,15 @@ class CallKitOutgoingCallView
                         enable: !(controller.isVideoEnabled.value));
                   },
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.video)
+              if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value)
+                _buildCallOption(
+                  isActive: false,
+                  icon: controller.cameraPosition.value == CameraType.front
+                      ? Icons.cameraswitch
+                      : Icons.flip_camera_android,
+                  onTap: controller.switchCamera,
+                ),
+              if (controller.callType.value.toLowerCase() == CallType.audio && controller.isVideoEnabled.value)
                 _buildCallOption(
                   isActive: false,
                   icon: controller.cameraPosition.value == CameraType.front

@@ -57,6 +57,8 @@ import 'model/chat_message_model.dart' as model;
 class BaseController {
   static void initializeCallKitListeners() {
 
+    callkitLogger.info("[MirrorFly] [BaseController] initializeCallKitListeners");
+
     //
     String? callerId;
     String? callType;
@@ -65,6 +67,9 @@ class BaseController {
 
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
+
+      callkitLogger.info("[MirrorFly] [BaseController] MirrorFlyCallKit.flyCallStatus event");
+
       final FlyCallStatus flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
       callkitLogger.info("[MirrorFly][BaseController] flyCallStatus event received: ${event.toJson()}");
@@ -212,13 +217,23 @@ class BaseController {
     });
 
     ///
-    MirrorFlyCallKit.flyCallAction.listen((event) {
+    MirrorFlyCallKit.flyCallAction.listen((event) async {
 
       callkitLogger.info("[MirrorFly][BaseController] flyCallAction event ${event.toJson()}");
 
       //
       final FlyCallAction flyCallAction = event;
       final FlyCallActionEvent flyCallActionEvent = flyCallAction.flyCallEvent;
+      callkitLogger.info("[MirrorFly][BaseController] flyCallAction event received: ${event.toJson()}");
+
+      ///
+      /// From the terminated state in some case we get the emit for action call first before the
+      /// calling status arrives so we check and set the values of the call here
+      ///
+      callerId = flyCallAction.participantId;
+      callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
+      callMode =  MirrorFlyCallKit.getCurrentCallMode();
+      groupId =  MirrorFlyCallKit.getCurrentCallGroupId();
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
@@ -375,13 +390,13 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoTrackUnpublished");
           break;
 
-        case FlyCallActionEvent.trackSubscribed:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackSubscribed");
-          break;
-
-        case FlyCallActionEvent.trackUnsubscribed:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackUnsubscribed");
-          break;
+        // case FlyCallActionEvent.trackSubscribed:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackSubscribed");
+        //   break;
+        //
+        // case FlyCallActionEvent.trackUnsubscribed:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent trackUnsubscribed");
+        //   break;
 
         case FlyCallActionEvent.audioMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
@@ -451,6 +466,8 @@ class BaseController {
             final controller = Get.find<CallKitOutgoingCallController>();
             controller.onParticipantListUpdated();
           }
+        default:
+          break;
       }
       });
   }
@@ -471,6 +488,7 @@ class BaseController {
 
   ///
   static void initListeners() {
+    debugPrint("[Mirrorfly] Base controller init listeners");
     initializeCallKitListeners();
     Mirrorfly.getCurrentCallDuration().then((value) {
       var startTime = value ?? 0;
