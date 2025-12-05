@@ -494,7 +494,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get participant connection state
   ///
-  String getParticipantConnectionState(FlyCallStatusEvent status) {
+  String getParticipantConnectionState(FlyCallStatusEvent? status) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
       case FlyCallStatusEvent.connected:
@@ -902,6 +902,8 @@ class CallKitOutgoingCallController extends GetxController
       shouldNavigate = callerList.length <= 1;
     } else if (!isGroupCall.value) {
       shouldNavigate = true;
+    }else if(callerList.length <= 1){
+      shouldNavigate = true;
     }
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
@@ -1190,6 +1192,16 @@ class CallKitOutgoingCallController extends GetxController
         }
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
+        }
+      }else if (callerList.any((e) =>
+      e.isLocalParticipant == false &&
+          e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
+        /// No user is connect so set the value isGroupOnGoingCallEnabled is false
+        if(callerList.length <= 2){
+          _stopTimer();
+          final remoteParticipant = callerList.firstWhere((e) => e.isLocalParticipant != true);
+          callkitLogger.info("[MirrorFly][OutgoingCallController] callerList value  ${remoteParticipant.identity} ${remoteParticipant.flyCallStatusEvent}");
+          callDuration.value = getParticipantConnectionState(remoteParticipant.flyCallStatusEvent);
         }
       }
       return;
@@ -1898,6 +1910,7 @@ class CallKitOutgoingCallController extends GetxController
             "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
     await getRemoteAndLocalUserNameForGroupCall();
     getCallTitleForOneToManyCall();
+    await initCallViewIds();
     await moveLocalParticipantToLast();
   }
     // ///
