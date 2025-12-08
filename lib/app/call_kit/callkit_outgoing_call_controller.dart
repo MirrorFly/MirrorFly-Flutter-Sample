@@ -809,7 +809,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void audioCallAfterCallSwitch(){
     callkitLogger.info("audioCallAfterCallSwitch change the call type into audio call");
-    switchCamera();
+    // switchCamera();
     callType.value = "audio";
   }
 
