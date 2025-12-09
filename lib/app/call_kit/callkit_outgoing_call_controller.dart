@@ -39,8 +39,6 @@ class CallKitOutgoingCallController extends GetxController
 
   // RxList<String?> callerUsersId = <String?>[].obs;
 
-  RxBool selectedDevice = false.obs;
-
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
   final RxBool isManualDeviceSelected = false.obs;
@@ -77,6 +75,9 @@ class CallKitOutgoingCallController extends GetxController
   RxString mainCallViewUserId = "".obs;
   RxString secondaryCallViewUserId = "".obs;
 
+  final String audioRoutingTag = "[AUDIO_ROUTING]";
+  RxString selectedAudioDeviceId = "".obs;
+  List<FlyMediaDevice> flyMediaDevices = <FlyMediaDevice>[];
 
   @override
   Future<void> onInit() async {
@@ -156,8 +157,6 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   void onReady() async {
-    initAudioRouting();
-
     if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForGroupCall");
@@ -535,7 +534,6 @@ class CallKitOutgoingCallController extends GetxController
        isVideoEnabled: ${isVideoEnabled.value}
        speakerOn: ${speakerOn.value}
        isOnGoingCallViewEnable: ${isOnGoingCallViewEnable.value}
-       selectedDevice: ${selectedDevice.value}
        cameraSwitch: ${cameraSwitch.value}
        isIncoming: ${isIncoming.value}
        isManualDeviceSelected: ${isManualDeviceSelected.value}
@@ -1392,111 +1390,6 @@ class CallKitOutgoingCallController extends GetxController
     });
   }
 
-  Future<void> initAudioRouting() async {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] Initializing audio routing...");
-
-    if (callType.value == "audio") {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Call type is audio, setting to earpiece.");
-      selectedDevice.value = false;
-    } else if (callType.value == "video") {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Call type is video, setting to speaker.");
-      selectedDevice.value = true;
-    } else {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Unknown call type, defaulting to earpiece.");
-      selectedDevice.value = false;
-    }
-
-    // // Set the selectedDevice.value based on the passed FlyMediaDevice
-    // switch (initialDevice.deviceId.toLowerCase()) {
-    //   case 'bluetooth':
-    //     selectedDevice.value = FlyCallAudioDeviceType.bluetooth;
-    //     break;
-    //   case 'wired':
-    //     selectedDevice.value = FlyCallAudioDeviceType.wired;
-    //     break;
-    //   case 'speaker':
-    //     selectedDevice.value = FlyCallAudioDeviceType.speaker;
-    //     break;
-    //   case 'earpiece':
-    //   case 'receiver':
-    //     selectedDevice.value = FlyCallAudioDeviceType.earpiece;
-    //     break;
-    //   default:
-    //     selectedDevice.value = FlyCallAudioDeviceType.earpiece;
-    //     break;
-    // }
-    }
-
-  Future<void> _switchTo() async {
-    // determine target device based on current state
-    final targetDevice = selectedDevice.value
-        ? FlyCallAudioDeviceType.earpiece.value  // if speaker active → switch to earpiece
-        : FlyCallAudioDeviceType.speaker.value; // if earpiece active → switch to speaker
-
-    callkitLogger.info("[MirrorFly][OutgoingCallController] Attempting switch to: $targetDevice");
-
-    // final result = await MirrorFlyCallKit.changeAudioOutputDevice(
-    //   flyMediaDevice: const FlyMediaDevice("", "", "", ""),
-    //   device: targetDevice,
-    // );
-    //
-    // if (result) {
-    //   // update state only after success
-    //   selectedDevice.value = !selectedDevice.value;
-    //   callkitLogger.info("[MirrorFly][OutgoingCallController] Switched to: $targetDevice");
-    // } else {
-    //   callkitLogger.info("[MirrorFly][OutgoingCallController] Failed to switch to: $targetDevice");
-    // }
-  }
-
-  Future<void> changeAudioDevice() async {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] changeAudioDevice -> ");
-    await _switchTo();
-  }
-
-
-  // Future<FlyMediaDevice?> _getAudioDevice(String type) async {
-  //   final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
-  //   return devices.firstWhereOrNull(
-  //     (d) =>
-  //         d.deviceId.toLowerCase().contains(type.toLowerCase()) &&
-  //         d.kind == "audiooutput",
-  //   );
-  // }
-
-  Future<List<FlyCallAudioDeviceType>> getAvailableTypes() async {
-    // final devices = await MirrorFlyCallKit.getAvailableMediaDevices();
-    // final audioOutputs = devices.where((d) => d.kind == "audiooutput").toList();
-
-    // final types = <FlyCallAudioDeviceType>[];
-    // if (audioOutputs.any((d) => d.deviceId
-    //     .toLowerCase()
-    //     .contains(FlyCallAudioDeviceType.speaker.value))) {
-    //   types.add(FlyCallAudioDeviceType.speaker);
-    // }
-    // if (audioOutputs.any((d) =>
-    //     d.deviceId
-    //         .toLowerCase()
-    //         .contains(FlyCallAudioDeviceType.earpiece.value) ||
-    //     d.deviceId.toLowerCase().contains("receiver"))) {
-    //   types.add(FlyCallAudioDeviceType.earpiece);
-    // }
-    // if (audioOutputs.any((d) =>
-    //     d.groupId
-    //         ?.toLowerCase()
-    //         .contains(FlyCallAudioDeviceType.bluetooth.value) ??
-    //     false)) {
-    //   types.add(FlyCallAudioDeviceType.bluetooth);
-    // }
-    // if (audioOutputs.any((d) => d.deviceId
-    //     .toLowerCase()
-    //     .contains(FlyCallAudioDeviceType.wired.value))) {
-    //   types.add(FlyCallAudioDeviceType.wired);
-    // }
-
-    return [FlyCallAudioDeviceType.speaker, FlyCallAudioDeviceType.earpiece];
-  }
-
   void localHangup() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  disconnectCall invoked...");
     _stopTimer();
@@ -2088,5 +1981,42 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = "";
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
+  }
+
+  /// -------------------------------------------------------------------
+  /// AUDIO ROUTING
+  /// -------------------------------------------------------------------
+
+  /// Get the available audio output devices
+  Future<List<FlyMediaDevice>> getAvailableAudioOutputDevices() async {
+    callkitLogger.info(
+        "$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
+    final List<FlyMediaDevice> devices = await MirrorFlyCallKit.getAvailableMediaDevices();
+    flyMediaDevices.clear();
+    flyMediaDevices = devices;
+
+    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices:"
+        " Retrieved devices: ${devices.map((d) => d.deviceId).toList()}");
+
+    return devices;
+  }
+
+  /// Change the audio output device
+  Future<void> changeAudioDevice(String deviceId) async {
+    callkitLogger.info(
+        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with deviceId: $deviceId");
+    try {
+      final FlyMediaDevice? flyMediaDevice = flyMediaDevices
+          .firstWhereOrNull((device) => device.deviceId == deviceId);
+      if (flyMediaDevice == null) {
+        callkitLogger.info(
+            "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: No matching device found for deviceId: $deviceId");
+        return;
+      }
+      await MirrorFlyCallKit.changeAudioOutputDevice(flyMediaDevice: flyMediaDevice);
+    } catch (e) {
+      callkitLogger.info(
+          "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: Exception occurred - $e");
+    }
   }
 }

@@ -854,10 +854,10 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: controller.selectedDevice.value,
+                isActive: false,
                 icon: Icons.volume_up,
                 onTap: () async {
-                  controller.changeAudioDevice();
+                  _showAudioDeviceSelector(context);
                 },
               ),
               _buildCallOption(
@@ -989,6 +989,61 @@ class CallKitOutgoingCallView
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is lost");
         return const Icon(Icons.signal_cellular_connected_no_internet_0_bar,
             color: Colors.red);
+    }
+  }
+
+  ///
+  ///
+  ///
+  void _showAudioDeviceSelector(BuildContext context) async {
+    final List<FlyMediaDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
+    await showDialog(
+      context: context.mounted ? context : Get.context!,
+      barrierDismissible: true,
+      builder: (_) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 250,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: availableTypes.map((type) {
+                return ListTile(
+                  leading: getAudioDeviceIcon(type.groupId ?? ""),
+                  title: Text(type.label),
+                  trailing: controller.selectedAudioDeviceId.value == type.deviceId
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () {
+                    controller.changeAudioDevice(type.deviceId);
+                    Navigator.of(context).pop();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Get audio device icon
+  Icon getAudioDeviceIcon(String kind) {
+    callkitLogger.info("${controller.audioRoutingTag} [getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+    switch (kind) {
+      case FlyMediaDevice.bluetoothOutput:
+        return const Icon(Icons.bluetooth, color: Colors.black);
+      case FlyMediaDevice.speakerOutput:
+        return const Icon(Icons.volume_up, color: Colors.black);
+      case FlyMediaDevice.earPieceOutput:
+        return const Icon(Icons.hearing, color: Colors.black);
+      default:
+        return const Icon(Icons.volume_up, color: Colors.black);
     }
   }
 }
