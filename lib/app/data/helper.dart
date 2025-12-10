@@ -42,7 +42,7 @@ Future<ProfileDetails> getGroupProfileDetails(String jid) async {
   final completer = Completer<ProfileDetails>();
 
   callkitLogger.info("getGroupProfileDetails Jid--> $jid");
-  final String normalizedJid = "$jid@mix.xmpp-uikit-qa.contus.us";
+  final String normalizedJid = jid;
   callkitLogger.info("getGroupProfileDetails Normalized Jid--> $normalizedJid");
 
   try {

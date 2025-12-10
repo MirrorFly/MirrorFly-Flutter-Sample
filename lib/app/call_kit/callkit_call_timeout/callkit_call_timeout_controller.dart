@@ -144,4 +144,13 @@ class CallKitCallTimeoutController extends GetxController {
       toToast(getTranslated("noInternetConnection"));
     }
   }
+
+  String getJidFromUserId({required String userId, required bool isGroup}) {
+    final domain = isGroup ? "@mix.xmpp-uikit-qa.contus.us" : "@xmpp-uikit-qa.contus.us";
+    if (userId.endsWith(domain)) {
+      return userId;
+    } else {
+      return "$userId$domain";
+    }
+  }
 }

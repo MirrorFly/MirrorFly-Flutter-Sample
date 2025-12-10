@@ -53,9 +53,11 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                             padding: const EdgeInsets.only(
                                 left: 30.0, right: 30.0, bottom: 16.0),
                             child: FutureBuilder(
-                                future: getProfileDetails(
-                                    controller.groupId.value),
-                                builder: (ctx, snap) {
+                                    future: getProfileDetails(
+                                        controller.getJidFromUserId(
+                                            userId: controller.groupId.value,
+                                            isGroup: true)),
+                                    builder: (ctx, snap) {
                                   return snap.hasData && snap.data != null
                                       ? Text(
                                     snap.data!.getName(),
@@ -97,7 +99,7 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                         return controller.groupId.isNotEmpty
                             ? FutureBuilder(
                             future:
-                            getProfileDetails(controller.groupId.value),
+                            getProfileDetails(controller.getJidFromUserId(userId: controller.groupId.value, isGroup: true)),
                             builder: (ctx, snap) {
                               return snap.hasData && snap.data != null
                                   ? buildProfileImage(snap.data!,
@@ -110,7 +112,7 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                             : controller.users.length == 1
                             ? FutureBuilder(
                             future:
-                            getProfileDetails(controller.users[0]!),
+                            getProfileDetails(controller.getJidFromUserId(userId: controller.users[0], isGroup: false)),
                             builder: (ctx, snap) {
                               return snap.hasData && snap.data != null
                                   ? buildProfileImage(snap.data!,
@@ -135,8 +137,7 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                                 fontColor: Colors.grey,
                               )
                                   : FutureBuilder(
-                                  future: getProfileDetails(
-                                      controller.users[index]!),
+                                  future: getProfileDetails(controller.getJidFromUserId(userId: controller.users[index], isGroup: false)),
                                   builder: (ctx, snap) {
                                     return snap.hasData &&
                                         snap.data != null
