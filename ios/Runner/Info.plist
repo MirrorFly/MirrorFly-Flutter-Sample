@@ -33,34 +33,11 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-                <string>app-1-695832127329-ios-f8b6b0fab296a800</string>
+				<string>app-1-695832127329-ios-f8b6b0fab296a800</string>
 				<string>app-1-235373697524-ios-2d40908026b55394a0c1a1</string>
 			</array>
 		</dict>
 	</array>
-	<key>UTExportedTypeDeclarations</key>
-    <array>
-      <dict>
-        <key>UTTypeIdentifier</key>
-        <string>com.example.rar</string>
-        <key>UTTypeDescription</key>
-        <string>RAR Archive</string>
-        <key>UTTypeConformsTo</key>
-        <array>
-          <string>public.data</string>
-          <string>public.archive</string>
-        </array>
-        <key>UTTypeTagSpecification</key>
-        <dict>
-          <key>public.filename-extension</key>
-          <array>
-            <string>rar</string>
-          </array>
-          <key>public.mime-type</key>
-          <string>application/x-rar-compressed</string>
-        </dict>
-      </dict>
-    </array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -90,6 +67,10 @@
 	<array>
 		<string>_dartVmService._tcp</string>
 	</array>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>We need this permission to add event in calendar within Mirrorfly</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need this permission to add event in calendar within Mirrorfly</string>
 	<key>NSCameraUsageDescription</key>
 	<string>MirrorFly need to access to the Camera to Capture and share the image</string>
 	<key>NSContactsUsageDescription</key>
@@ -114,12 +95,6 @@
 	<string>We need this permission to share your photos and videos to your friends from your photo library within MirrorFly</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>We need access to Apple Music to share your music to your friends within MirrorFly.</string>
-    <key>NSCalendarsUsageDescription</key>
-    <string>We need this permission to add event in calendar within Mirrorfly</string>
-    <key>NSCalendarsFullAccessUsageDescription</key>
-    <string>We need this permission to add event in calendar within Mirrorfly</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -151,5 +126,28 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.archive</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>RAR Archive</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.example.rar</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rar</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/x-rar-compressed</string>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>

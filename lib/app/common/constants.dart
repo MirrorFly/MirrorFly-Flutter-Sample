@@ -361,7 +361,7 @@ class Constants {
   static ChatBuilder chatBuilder = ChatBuilder(
       domainBaseUrl: "",
       licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
-      iOSContainerID: 'group.com.mirrorfly.flutter',
+      iOSContainerID: 'group.com.mirrorfly.flutterapps',
       chatHistoryEnable: true,
       enableDebugLog: true,
       storageFolderName: "Mirrorfly Flutter",

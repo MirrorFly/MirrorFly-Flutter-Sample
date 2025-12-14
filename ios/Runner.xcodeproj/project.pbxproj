@@ -10,13 +10,13 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		31E69C5E96365E9A576A0300 /* Pods_NotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26889C247507DB0C2B5C2907 /* Pods_NotificationExtension.framework */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		6B5A07EE2EEDEE2600B95880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6B5A07ED2EEDEE2600B95880 /* GoogleService-Info.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		CE6BE9022A790FCA0011D723 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6BE9012A790FCA0011D723 /* NotificationService.swift */; };
 		CE6BE9062A790FCA0011D723 /* NotificationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CE6BE8FF2A790FCA0011D723 /* NotificationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */; };
 		CEF99C2D2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEF99C2B2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 */; };
 		CEF99C2E2AA61BC800A948C1 /* fly_call_ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEF99C2C2AA61BC800A948C1 /* fly_call_ringtone.mp3 */; };
 		EE5A9B147C57E370CA4E0CD9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 846B016F08E561D5EC35EA04 /* Pods_Runner.framework */; };
@@ -54,6 +54,8 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		57C2FFDB6D55E59DB43BA766 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		69DE6AF59D4895CF4F7A9E20 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		6B5A07ED2EEDEE2600B95880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6B5A07EF2EEDEE7900B95880 /* RunnerDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunnerDebug.entitlements; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -72,7 +74,6 @@
 		CE6BE9012A790FCA0011D723 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		CE6BE9032A790FCA0011D723 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE7704482A798C6600606645 /* NotificationExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationExtension.entitlements; sourceTree = "<group>"; };
-		CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CED95E2229472EC900B02558 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		CEEEA7EC2AD3DCDA004DAD6E /* NotificationExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationExtensionRelease.entitlements; sourceTree = "<group>"; };
 		CEF99C2B2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fly_reconnecting_tone.mp3; sourceTree = "<group>"; };
@@ -159,8 +160,8 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				6B5A07EF2EEDEE7900B95880 /* RunnerDebug.entitlements */,
 				CE03B7B32ACFE79900A6F405 /* RunnerRelease.entitlements */,
-				CEB9F2DA2948F9E10080BC48 /* GoogleService-Info.plist */,
 				CED95E2229472EC900B02558 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -170,6 +171,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
+				6B5A07ED2EEDEE2600B95880 /* GoogleService-Info.plist */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -276,10 +278,10 @@
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				CEF99C2E2AA61BC800A948C1 /* fly_call_ringtone.mp3 in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				CEB9F2DB2948F9E10080BC48 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				CEF99C2D2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 in Resources */,
+				6B5A07EE2EEDEE2600B95880 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,9 +331,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -390,9 +396,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -509,12 +519,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
@@ -699,10 +709,10 @@
 					"-weak_framework",
 					"\"UserNotifications\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Mirrorfly Flutter In house";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Mirrorfly Flutter In house";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Adhoc";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -830,13 +840,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_ENTITLEMENTS = Runner/RunnerDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
@@ -1021,10 +1031,10 @@
 					"-weak_framework",
 					"\"UserNotifications\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Flutter QA";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Flutter QA";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Development";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1045,12 +1055,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/RunnerRelease.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
@@ -1235,10 +1245,10 @@
 					"-weak_framework",
 					"\"UserNotifications\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Mirrorfly Flutter In house";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Mirrorfly Flutter In house";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Adhoc";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1260,12 +1270,12 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Balasubramaniyam Kandaswamy (HSBG5S6ZV9)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1282,10 +1292,10 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa.notificationextention;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter.notificationextension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly QA Flutter Notification Dev";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Notification Extension Dev";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1306,12 +1316,12 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtensionRelease.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1327,10 +1337,10 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa.notificationextention;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter.notificationextension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly QA Flutter notification in house";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Notification Extension Adhoc";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1349,12 +1359,12 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtension.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: CONTUS SUPPORT INTERACTIVE PRIVATE LIMITED";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = G44VFA67ZG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 26VP8T9LM7;
 				"EXCLUDED_ARCHS[sdk=*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1369,10 +1379,10 @@
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.uikitflutter.qa.notificationextention;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter.notificationextension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly QA Flutter notification in house";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Notification Extension Adhoc";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
