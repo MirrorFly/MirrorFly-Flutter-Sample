@@ -111,8 +111,8 @@ class CallKitOutgoingCallView
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? ""),
                 child: Positioned(
-                  left: 30,
-                  top: 150,
+                  right: 30,
+                  top: 190,
                   child: getConnectionQualityIcon(
                       controller.callerConnectionQuality[
                         controller.getRemoteParticipantsId().firstOrNull ?? ""] ??
@@ -124,8 +124,8 @@ class CallKitOutgoingCallView
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 child: Positioned(
-                  left: 30,
-                  top: 190,
+                  right: 30,
+                  top: 150,
                   child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 ),
               ),

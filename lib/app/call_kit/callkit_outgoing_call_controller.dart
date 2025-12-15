@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
@@ -1691,8 +1692,9 @@ class CallKitOutgoingCallController extends GetxController
     final String callMode = this.callMode.value;
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
+    final groupJid = CallUtils.getJidFromId(groupId.value);
     final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: groupId.value != "", groupChatId: groupId.value);
+    await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
     if (pickedContacts.length > 8) {
       // Temp limit to 5 participants
       toToast("You can invite up to 8 participants only");

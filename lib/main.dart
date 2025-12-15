@@ -61,7 +61,7 @@ Future<void> mirrorFlyForegroundEntrypoint() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await SessionManagement.onInit();
-  await MirrorFlyCallKit.ensureHeadlessRegistered(
+  await MirrorFlyCallKit.registerAndroidHeadless(
     foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
   );
   runApp(const MyApp());
@@ -83,7 +83,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
 
-  await MirrorFlyCallKit.ensureHeadlessRegistered(
+  await MirrorFlyCallKit.registerAndroidHeadless(
     foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
   );
 
