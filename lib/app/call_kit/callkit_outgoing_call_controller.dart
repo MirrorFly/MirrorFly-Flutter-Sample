@@ -34,7 +34,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString callMode = "".obs;
 
   RxBool showControls = true.obs;
-  RxBool isVideoEnabled = true.obs;
+  RxBool isVideoEnabled = false.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
 
@@ -356,6 +356,11 @@ class CallKitOutgoingCallController extends GetxController
       final remoteEntry = remoteUserNameMap.entries.firstWhere(
             (entry) => entry.key != getLocalParticipantId(),
       );
+      remoteUserNameMap.forEach((key, value) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Remote User full list -> ID: $key, Name: $value");
+      });
+
 
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User -> ID: ${remoteEntry
@@ -953,6 +958,7 @@ class CallKitOutgoingCallController extends GetxController
         toToast("Call timed out for $username");
         checkParticipantForCallMode();
       } else {
+        checkParticipantForCallMode();
         // callerList.refresh();
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
@@ -1165,6 +1171,7 @@ class CallKitOutgoingCallController extends GetxController
 
       callerList.removeWhere((e) => e.identity == userId);
       final String name = remoteUserNameMap[userId] ?? "";
+      remoteUserNameMap.remove(userId);
       toToast("$name disconnected");
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
 
