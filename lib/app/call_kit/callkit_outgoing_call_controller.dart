@@ -1186,6 +1186,11 @@ class CallKitOutgoingCallController extends GetxController
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
+        if(NavUtils.currentRoute == Routes.contacts){
+          NavUtils.back();
+          NavUtils.back();
+          return;
+        }
         return;
       }
 
@@ -1229,6 +1234,11 @@ class CallKitOutgoingCallController extends GetxController
           ? toToast("Reconnection attempt exceeded")
           : toToast("Call Disconnected");
       NavUtils.back();
+    }
+    if(NavUtils.currentRoute == Routes.contacts){
+      NavUtils.back();
+      NavUtils.back();
+      return;
     }
   }
 
