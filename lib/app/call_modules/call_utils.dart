@@ -18,10 +18,14 @@ class CallUtils {
 
   static String getJidFromId(String groupId){
     const domain =  "@mix.xmpp-uikit-qa.contus.us";
-    if (groupId.endsWith(domain)) {
+    if(groupId != "") {
+      if (groupId.endsWith(domain)) {
+        return groupId;
+      } else {
+        return "$groupId$domain";
+      }
+    }else{
       return groupId;
-    } else {
-      return "$groupId$domain";
     }
 
   }
