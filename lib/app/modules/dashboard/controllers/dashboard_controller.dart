@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../../../call_modules/call_utils.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -98,17 +100,19 @@ class DashboardController extends FullLifeCycleController
   late DashboardViewArguments? arguments;
 
   @override
-  void onInit() {
-
+  void onInit() async {
     Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
       if(response.isSuccess) {
         print("centrifuge CallKit initialized successfully");
-        LogMessage.d("CallKit", "CallKit initialized successfully");
       } else {
         print("centrifuge CallKit initialization failed: ${response.exception}");
         LogMessage.d("CallKit", "CallKit initialization failed: ${response.exception}");
       }
     });
+
+    LogMessage.d("CallKit", "CallKit initialized successfully");
+    await Mirrorfly.updateVoipTokenForLiveKitCalls();
+    LogMessage.d("CallKit", "updateVoipTokenForLiveKitCalls successfully");
 
     arguments = NavUtils.arguments as DashboardViewArguments?;
     tabController = TabController(length: 2, vsync: this);
