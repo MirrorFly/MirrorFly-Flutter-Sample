@@ -81,7 +81,7 @@
 
        <meta-data
            android:name="com.google.android.geo.API_THUMP_KEY"
-           android:value="xxx" />
+           android:value="AIzaSyBCRkHya0cuJ07bog1gs-1B1z6WQUdSx24" />
        <meta-data
            android:name="com.google.android.geo.API_TRANSLATE_KEY"
            android:value="xxx" />
