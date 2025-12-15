@@ -1,4 +1,4 @@
-package com.contusdemo.mirror_fly_demo
+package com.mirrorfly.flutter
 
 import android.content.Intent
 import android.content.ServiceConnection

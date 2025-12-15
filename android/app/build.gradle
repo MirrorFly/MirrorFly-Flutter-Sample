@@ -36,8 +36,8 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'*/
 
 android {
-    namespace = "com.contusdemo.mirror_fly_demo"
-    compileSdk = 35
+    namespace = "com.mirrorfly.flutter"
+    compileSdk = 36
     ndkVersion = " 26.1.10909125"
 
     signingConfigs {
@@ -67,10 +67,10 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mirrorfly.uikit_flutter.qa"
+        applicationId "com.mirrorfly.flutter"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdk = 23
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -102,13 +102,13 @@ android {
     productFlavors {
         dev {
             dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.dev"
+            applicationId "com.mirrorfly.flutter"
             resValue("string", "app_name", "MF-Flutter-Dev")
         }
         qa {
             //Normal
             dimension "version"
-            applicationId "com.mirrorfly.uikit_flutter.qa"
+            applicationId "com.mirrorfly.flutter"
             resValue("string", "app_name", "MF-Flutter-QA")
         }
         /* contactSync {
