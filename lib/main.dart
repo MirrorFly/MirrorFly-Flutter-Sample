@@ -61,7 +61,7 @@ Future<void> mirrorFlyForegroundEntrypoint() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await SessionManagement.onInit();
-  await MirrorFlyCallKit.ensureHeadlessRegistered(
+  await MirrorFlyCallKit.registerAndroidHeadless(
     foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
   );
   runApp(const MyApp());
@@ -83,7 +83,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   debugPrint("#Mirrorfly Notification main function init");
 
-  await MirrorFlyCallKit.ensureHeadlessRegistered(
+  await MirrorFlyCallKit.registerAndroidHeadless(
     foregroundHandle: PluginUtilities.getCallbackHandle(mirrorFlyForegroundEntrypoint),
   );
 
@@ -191,6 +191,17 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           appLaunchDetails = await Mirrorfly.getAppLaunchedDetails();
           runApp(const MyApp());
         });
+  }
+
+  if (SessionManagement.getLogin()) {
+    debugPrint("#Mirrorfly Initializing CallKit at Main.dart");
+    Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
+      if(response.isSuccess) {
+        LogMessage.d("CallKit", "CallKit initialized successfully");
+      } else {
+        LogMessage.d("CallKit", "CallKit initialization failed: ${response.exception}");
+      }
+    });
   }
 }
 
