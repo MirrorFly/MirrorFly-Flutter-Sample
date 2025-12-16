@@ -26,7 +26,7 @@ class CallKitOutgoingCallView
   Widget build(BuildContext context) {
     return Obx(() {
       debugPrint(
-          "#CallKitOutGoingCallView Build Called, isGroupCall: ${controller.isGroupCall.value}");
+          "#CallKitOutGoingCallView Build Called, isGroupCall");
       return Scaffold(
         resizeToAvoidBottomInset:false,
         extendBodyBehindAppBar: true,
@@ -111,8 +111,8 @@ class CallKitOutgoingCallView
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? ""),
                 child: Positioned(
-                  left: 30,
-                  top: 150,
+                  right: 30,
+                  top: 190,
                   child: getConnectionQualityIcon(
                       controller.callerConnectionQuality[
                         controller.getRemoteParticipantsId().firstOrNull ?? ""] ??
@@ -124,8 +124,8 @@ class CallKitOutgoingCallView
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 child: Positioned(
-                  left: 30,
-                  top: 190,
+                  right: 30,
+                  top: 150,
                   child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
                 ),
               ),
@@ -200,12 +200,8 @@ class CallKitOutgoingCallView
                       ),
                       Visibility(
                         visible: controller.callerList
-                                .firstWhereOrNull((e) =>
-                                    e.identity ==
-                                    controller
-                                        .getRemoteParticipantIdForOneToOneCall())
-                                ?.flyCallStatusEvent ==
-                            FlyCallStatusEvent.callHold,
+                                .any((FlyCallParticipant e) =>
+                                    e.flyCallStatusEvent == FlyCallStatusEvent.callHold),
                         child: const Center(
                           child: Text(
                             "On Hold",
@@ -474,7 +470,7 @@ class CallKitOutgoingCallView
                                       final participant = controller.callerList[index];
                                       final isSelf = controller.isSelfId(id: participant.identity);
                                       final connectionState = controller.getParticipantConnectionState(
-                                        participant.flyCallStatusEvent!,
+                                        participant.flyCallStatusEvent,
                                       );
                                       callkitLogger.info("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
                                       if ((!isSelf && connectionState.isNotEmpty) ||( isSelf && connectionState == "Reconnecting" && connectionState.isNotEmpty)) {
@@ -770,10 +766,7 @@ class CallKitOutgoingCallView
             return const SizedBox.shrink();
           }
 
-          final bool isLocalView = participantId == controller.getLocalParticipantId();
-          debugPrint(
-              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
-
+          RxBool isLocalView = (participantId == controller.getLocalParticipantId()).obs;
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -787,12 +780,7 @@ class CallKitOutgoingCallView
               ),
 
               Obx(() {
-
-                callkitLogger.info("[getUserProfileImageWithName] Checking if local view for participantId: "
-                    "$participantId, controller.isOnGoingCallViewEnable: ${controller.isOnGoingCallViewEnable.value}, "
-                    "localParticipantId: ${controller.getLocalParticipantId()}");
-
-                return isLocalView
+                return isLocalView.value
                     ? Padding(
                      padding: const EdgeInsets.only(top: 14, left: 8),
                       child: Align(
@@ -1034,7 +1022,7 @@ class CallKitOutgoingCallView
 
   /// Get audio device icon
   Icon getAudioDeviceIcon(String kind) {
-    callkitLogger.info("${controller.audioRoutingTag} [getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+    callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
     switch (kind) {
       case FlyMediaDevice.bluetoothOutput:
         return const Icon(Icons.bluetooth, color: Colors.black);

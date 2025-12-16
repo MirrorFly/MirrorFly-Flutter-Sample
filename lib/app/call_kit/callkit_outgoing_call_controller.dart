@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/permissions.dart';
@@ -33,7 +34,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString callMode = "".obs;
 
   RxBool showControls = true.obs;
-  RxBool isVideoEnabled = true.obs;
+  RxBool isVideoEnabled = false.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
 
@@ -355,6 +356,11 @@ class CallKitOutgoingCallController extends GetxController
       final remoteEntry = remoteUserNameMap.entries.firstWhere(
             (entry) => entry.key != getLocalParticipantId(),
       );
+      remoteUserNameMap.forEach((key, value) {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Remote User full list -> ID: $key, Name: $value");
+      });
+
 
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User -> ID: ${remoteEntry
@@ -514,7 +520,7 @@ class CallKitOutgoingCallController extends GetxController
       case FlyCallStatusEvent.callHold:
         return "On Hold";
       default:
-        return "Unknown";
+        return "";
     }
   }
 
@@ -952,6 +958,7 @@ class CallKitOutgoingCallController extends GetxController
         toToast("Call timed out for $username");
         checkParticipantForCallMode();
       } else {
+        checkParticipantForCallMode();
         // callerList.refresh();
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
@@ -1164,6 +1171,7 @@ class CallKitOutgoingCallController extends GetxController
 
       callerList.removeWhere((e) => e.identity == userId);
       final String name = remoteUserNameMap[userId] ?? "";
+      remoteUserNameMap.remove(userId);
       toToast("$name disconnected");
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
 
@@ -1177,6 +1185,11 @@ class CallKitOutgoingCallController extends GetxController
         }
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
+        }
+        if(NavUtils.currentRoute == Routes.contacts){
+          NavUtils.back();
+          NavUtils.back();
+          return;
         }
         return;
       }
@@ -1221,6 +1234,11 @@ class CallKitOutgoingCallController extends GetxController
           ? toToast("Reconnection attempt exceeded")
           : toToast("Call Disconnected");
       NavUtils.back();
+    }
+    if(NavUtils.currentRoute == Routes.contacts){
+      NavUtils.back();
+      NavUtils.back();
+      return;
     }
   }
 
@@ -1691,8 +1709,9 @@ class CallKitOutgoingCallController extends GetxController
     final String callMode = this.callMode.value;
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
+    final groupJid = CallUtils.getJidFromId(groupId.value);
     final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: groupId.value != "", groupChatId: groupId.value);
+    await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
     if (pickedContacts.length > 8) {
       // Temp limit to 5 participants
       toToast("You can invite up to 8 participants only");
@@ -1829,8 +1848,14 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
     final FlyCallParticipant? participant = callerList.firstWhereOrNull((p) => p.identity == id);
+
+    final int index = callerList.indexWhere((p) => p.identity == id);
+
     if (participant != null) {
-      participant?.copyWith(flyCallStatus: status);
+      participant.copyWith(flyCallStatus: status);
+      // participant.copyWith(flyCallStatus: status);
+      final prevCallList = callerList[index];
+      callerList[index] = prevCallList.copyWith(flyCallStatus: status);
       callerList.refresh();
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {

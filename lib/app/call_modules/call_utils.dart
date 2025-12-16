@@ -16,6 +16,20 @@ class CallUtils {
     return callersId.split('@').first;
   }
 
+  static String getJidFromId(String groupId){
+    const domain =  "@mix.xmpp-uikit-qa.contus.us";
+    if(groupId != "") {
+      if (groupId.endsWith(domain)) {
+        return groupId;
+      } else {
+        return "$groupId$domain";
+      }
+    }else{
+      return groupId;
+    }
+
+  }
+
   static Future<String> getCallersName(List<String?> callUsers,
       [bool addYou = false]) async {
     LogMessage.d("getCallersName callUsers", callUsers);

@@ -364,7 +364,7 @@ class GroupParticipantsController extends GetxController {
                   "userJid": normalizedJid,
                   "callType": CallType.video,
                   "callMode": "ONE-TO-MANY",
-                  "chatId": normalizedGroupJid,
+                  "chatId": groupId.value,
                 });
               } else {
                 final String errorData = response.data;
