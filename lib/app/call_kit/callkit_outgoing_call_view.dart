@@ -474,7 +474,7 @@ class CallKitOutgoingCallView
                                       final participant = controller.callerList[index];
                                       final isSelf = controller.isSelfId(id: participant.identity);
                                       final connectionState = controller.getParticipantConnectionState(
-                                        participant.flyCallStatusEvent ?? FlyCallStatusEvent.calling,
+                                        participant.flyCallStatusEvent,
                                       );
                                       callkitLogger.info("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
                                       if ((!isSelf && connectionState.isNotEmpty) ||( isSelf && connectionState == "Reconnecting" && connectionState.isNotEmpty)) {
