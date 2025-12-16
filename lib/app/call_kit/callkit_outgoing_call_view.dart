@@ -200,12 +200,8 @@ class CallKitOutgoingCallView
                       ),
                       Visibility(
                         visible: controller.callerList
-                                .firstWhereOrNull((e) =>
-                                    e.identity ==
-                                    controller
-                                        .getRemoteParticipantIdForOneToOneCall())
-                                ?.flyCallStatusEvent ==
-                            FlyCallStatusEvent.callHold,
+                                .any((FlyCallParticipant e) =>
+                                    e.flyCallStatusEvent == FlyCallStatusEvent.callHold),
                         child: const Center(
                           child: Text(
                             "On Hold",

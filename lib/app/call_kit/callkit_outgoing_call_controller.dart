@@ -217,7 +217,7 @@ class CallKitOutgoingCallController extends GetxController
       callerList.refresh();
       callkitLogger.info(
         "[MirrorFly][OutgoingCallController] callerList after merge (${callerList
-            .length}): ${callerList.map((e) => e.identity).toList()}",
+            .length}): ${callerList.map((e) => e.identity).toList()} ${callerList.map((FlyCallParticipant e) => e.flyCallStatusEvent).toList()}",
       );
     } else {
       callkitLogger.info(
@@ -1829,8 +1829,13 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
     final FlyCallParticipant? participant = callerList.firstWhereOrNull((p) => p.identity == id);
+
+    final int index = callerList.indexWhere((p) => p.identity == id);
+
     if (participant != null) {
-      participant?.copyWith(flyCallStatus: status);
+      // participant.copyWith(flyCallStatus: status);
+      final prevCallList = callerList[index];
+      callerList[index] = prevCallList.copyWith(flyCallStatus: status);
       callerList.refresh();
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {
