@@ -1849,7 +1849,7 @@ class CallKitOutgoingCallController extends GetxController
   Future<void> updateCurrentCallParticipant({required String id, required FlyCallStatusEvent status}) async {
     final FlyCallParticipant? participant = callerList.firstWhereOrNull((p) => p.identity == id);
     if (participant != null) {
-      participant?.copyWith(flyCallStatus: status);
+      participant.copyWith(flyCallStatus: status);
       callerList.refresh();
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCurrentCallParticipant: Updated participant $id to status $status");
     } else {
