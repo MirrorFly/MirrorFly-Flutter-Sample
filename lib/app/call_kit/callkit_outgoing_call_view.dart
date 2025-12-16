@@ -770,10 +770,7 @@ class CallKitOutgoingCallView
             return const SizedBox.shrink();
           }
 
-          final bool isLocalView = participantId == controller.getLocalParticipantId();
-          debugPrint(
-              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, isLocalView: $isLocalView");
-
+          RxBool isLocalView = (participantId == controller.getLocalParticipantId()).obs;
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -787,11 +784,7 @@ class CallKitOutgoingCallView
               ),
 
               Obx(() {
-
-                callkitLogger.info("[getUserProfileImageWithName] Checking if local view for participantId: "
-                    "$participantId");
-
-                return isLocalView
+                return isLocalView.value
                     ? Padding(
                      padding: const EdgeInsets.only(top: 14, left: 8),
                       child: Align(
