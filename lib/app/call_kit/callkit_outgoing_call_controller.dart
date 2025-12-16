@@ -520,7 +520,7 @@ class CallKitOutgoingCallController extends GetxController
       case FlyCallStatusEvent.callHold:
         return "On Hold";
       default:
-        return "Unknown";
+        return "";
     }
   }
 
