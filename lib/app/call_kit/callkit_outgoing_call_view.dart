@@ -26,7 +26,7 @@ class CallKitOutgoingCallView
   Widget build(BuildContext context) {
     return Obx(() {
       debugPrint(
-          "#CallKitOutGoingCallView Build Called, isGroupCall: ${controller.isGroupCall.value}");
+          "#CallKitOutGoingCallView Build Called, isGroupCall");
       return Scaffold(
         resizeToAvoidBottomInset:false,
         extendBodyBehindAppBar: true,
@@ -772,7 +772,7 @@ class CallKitOutgoingCallView
 
           final bool isLocalView = participantId == controller.getLocalParticipantId();
           debugPrint(
-              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, getLocalParticipant: ${controller.getLocalParticipantId()}, isLocalView: $isLocalView");
+              "[getUserProfileImageWithName] Building profile image for participantId: $normalizedParticipantId, isLocalView: $isLocalView");
 
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
@@ -789,8 +789,7 @@ class CallKitOutgoingCallView
               Obx(() {
 
                 callkitLogger.info("[getUserProfileImageWithName] Checking if local view for participantId: "
-                    "$participantId, controller.isOnGoingCallViewEnable: ${controller.isOnGoingCallViewEnable.value}, "
-                    "localParticipantId: ${controller.getLocalParticipantId()}");
+                    "$participantId");
 
                 return isLocalView
                     ? Padding(
@@ -1034,7 +1033,7 @@ class CallKitOutgoingCallView
 
   /// Get audio device icon
   Icon getAudioDeviceIcon(String kind) {
-    callkitLogger.info("${controller.audioRoutingTag} [getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+    callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
     switch (kind) {
       case FlyMediaDevice.bluetoothOutput:
         return const Icon(Icons.bluetooth, color: Colors.black);
