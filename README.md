@@ -3,6 +3,9 @@
 </p>
 
 # **MirrorFly Flutter SDK For Video Chat & Calls**
+![Static Badge](https://img.shields.io/badge/Flutter%20Video%20SDK-blue?link=https%3A%2F%2Fwww.mirrorfly.com%2Fflutter-chat-sdk.php) ![Static Badge](https://img.shields.io/badge/Docs-grey?link=https%3A%2F%2Fwww.mirrorfly.com%2Fdocs%2Faudio-video%2Fflutter%2Fv1%2Fquick-start%2F)
+
+
 
 MirrorFly Flutter Plugin is a custom real-time communication solution that adds 1000+ features including video, voice, chat, live streaming and activity feeds into any app. The solution is fully customizable and comprises over 500+ AI-powered features like  AI voice agents, chatbots, speech-to-text API, AI contact centers and AI video KYC.
 
