@@ -3,7 +3,8 @@
 </p>
 
 # **MirrorFly Flutter SDK For Video Chat & Calls**
-![Static Badge](https://img.shields.io/badge/Flutter%20Video%20SDK-blue?link=https%3A%2F%2Fwww.mirrorfly.com%2Fflutter-chat-sdk.php) ![Static Badge](https://img.shields.io/badge/Docs-grey?link=https%3A%2F%2Fwww.mirrorfly.com%2Fdocs%2Faudio-video%2Fflutter%2Fv1%2Fquick-start%2F)
+[![Flutter Video SDK](https://img.shields.io/badge/Flutter%20Video%20SDK-blue)](https://www.mirrorfly.com/flutter-chat-sdk.php)
+[![Docs](https://img.shields.io/badge/Docs-grey)](https://www.mirrorfly.com/docs/chat/flutter-plugin/v1/quick-start/)
 
 
 
