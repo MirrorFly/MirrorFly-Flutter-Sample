@@ -50,6 +50,8 @@ class CallKitOutgoingCallView
         controller.callType.toUpperCase() == "VIDEO"
         ? controller.getLocalParticipantId()
         : controller.mainCallViewUserId.value;
+    final String remoteParticipantId =
+        controller.getRemoteParticipantsId().firstOrNull ?? "";
 
     callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
 
@@ -126,7 +128,7 @@ class CallKitOutgoingCallView
                 child: Positioned(
                   right: 30,
                   top: 150,
-                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
+                  child:Obx((){ return buildSpeakingIndicatorIcon(remoteParticipantId);}),
                 ),
               ),
                   ],
@@ -188,7 +190,8 @@ class CallKitOutgoingCallView
                           ),
                         ),
                       ),
-                      Center(
+                      Obx((){
+                        return Center(
                         child: Text(
                           controller.callDuration.value,
                           style: const TextStyle(
@@ -197,7 +200,7 @@ class CallKitOutgoingCallView
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
+                      );}),
                       Visibility(
                         visible: controller.callerList
                                 .any((FlyCallParticipant e) =>
@@ -595,6 +598,8 @@ class CallKitOutgoingCallView
 
   ///  Local Preview Widget
   Widget _buildLocalPreview({required double width, required double height}) {
+    final participantId =
+    controller.getLocalParticipantId();
     return Container(
       width: width,
       height: height,
@@ -686,7 +691,7 @@ class CallKitOutgoingCallView
             right: 8,
             child: Obx(() {
               return buildSpeakingIndicatorIcon(
-                  controller.getLocalParticipantId());
+                  participantId);
             }),
           ),
         ],

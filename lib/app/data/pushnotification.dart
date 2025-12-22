@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' show MirrorFlyCallKit;
 // import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -74,10 +75,19 @@ class PushNotifications {
       if(value!=null) {
         LogMessage.d("firebase_token", value);
         debugPrint("#Mirrorfly Notification -> firebase_token_1 $value");
+        callkitLogger.info("updateFcmToken token value $value");
         SessionManagement.setToken(value);
-        Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
-          LogMessage.d("updateFcmToken", response.isSuccess);
-        });
+        if(SessionManagement.getLogin()){
+          Mirrorfly.updateFcmToken(firebaseToken: value, flyCallBack: (FlyResponse response) {
+            LogMessage.d("updateFcmToken", response.isSuccess);
+            callkitLogger.info("updateFcmToken User logIn updated fcm token");
+            LogMessage.d("updateFcmToken","User logIn updated fcm token");
+          });
+        }else{
+          callkitLogger.info("notUpdateFcmToken User not logIn updated fcm token");
+          LogMessage.d("notUpdateFcmToken","User not logIn not updated fcm token");
+        }
+
       }
     }).catchError((er){
       LogMessage.d("FirebaseMessaging", er.toString());
