@@ -2013,35 +2013,17 @@ class CallKitOutgoingCallController extends GetxController
   /// -------------------------------------------------------------------
 
   /// Get the available audio output devices
-  Future<List<FlyMediaDevice>> getAvailableAudioOutputDevices() async {
-    callkitLogger.info(
-        "$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
-    final List<FlyMediaDevice> devices = await MirrorFlyCallKit.getAvailableMediaDevices();
-    flyMediaDevices.clear();
-    flyMediaDevices = devices;
-
-    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices:"
-        " Retrieved devices: ${devices.map((d) => d.deviceId).toList()}");
-
-    return devices;
+  Future<List<FlyAudioDevice>> getAvailableAudioOutputDevices() async {
+    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
+    return await MirrorFlyCallKit.getAvailableAudioRoutes();
   }
 
   /// Change the audio output device
-  Future<void> changeAudioDevice(String deviceId) async {
+  Future<void> changeAudioDevice(String type) async {
     callkitLogger.info(
-        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with deviceId: $deviceId");
-    try {
-      final FlyMediaDevice? flyMediaDevice = flyMediaDevices
-          .firstWhereOrNull((device) => device.deviceId == deviceId);
-      if (flyMediaDevice == null) {
-        callkitLogger.info(
-            "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: No matching device found for deviceId: $deviceId");
-        return;
-      }
-      await MirrorFlyCallKit.changeAudioOutputDevice(flyMediaDevice: flyMediaDevice);
-    } catch (e) {
-      callkitLogger.info(
-          "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: Exception occurred - $e");
-    }
+        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with deviceId: $type");
+    MirrorFlyCallKit.changeAudioRoute(type: type);
   }
+
+  void onAudioRouteChanged() {}
 }

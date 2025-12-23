@@ -460,12 +460,21 @@ class BaseController {
         case FlyCallActionEvent.subscriptionException:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent subscriptionException");
           break;
+
         case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
           if (Get.isRegistered<CallKitOutgoingCallController>()) {
             final controller = Get.find<CallKitOutgoingCallController>();
             controller.onParticipantListUpdated();
           }
+
+        case FlyCallActionEvent.onAudioRouteChanged:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onAudioRouteChanged, audioDevice=${flyCallAction.flyAudioDevice}");
+          if (Get.isRegistered<CallKitOutgoingCallController>()) {
+            final controller = Get.find<CallKitOutgoingCallController>();
+            controller.onAudioRouteChanged();
+          }
+
         default:
           break;
       }

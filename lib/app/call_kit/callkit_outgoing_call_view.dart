@@ -989,7 +989,7 @@ class CallKitOutgoingCallView
   ///
   ///
   void _showAudioDeviceSelector(BuildContext context) async {
-    final List<FlyMediaDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
+    final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
     await showDialog(
       context: context.mounted ? context : Get.context!,
       barrierDismissible: true,
@@ -1007,13 +1007,13 @@ class CallKitOutgoingCallView
               mainAxisSize: MainAxisSize.min,
               children: availableTypes.map((type) {
                 return ListTile(
-                  leading: getAudioDeviceIcon(type.groupId ?? ""),
-                  title: Text(type.label),
-                  trailing: controller.selectedAudioDeviceId.value == type.deviceId
+                  leading: getAudioDeviceIcon(type.name ?? ""),
+                  title: Text(type.name),
+                  trailing: controller.selectedAudioDeviceId.value == type.id
                       ? const Icon(Icons.check, color: Colors.green)
                       : null,
                   onTap: () {
-                    controller.changeAudioDevice(type.deviceId);
+                    controller.changeAudioDevice(type.type.value);
                     Navigator.of(context).pop();
                   },
                 );
@@ -1024,19 +1024,19 @@ class CallKitOutgoingCallView
       ),
     );
   }
+}
 
-  /// Get audio device icon
-  Icon getAudioDeviceIcon(String kind) {
-    callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
-    switch (kind) {
-      case FlyMediaDevice.bluetoothOutput:
-        return const Icon(Icons.bluetooth, color: Colors.black);
-      case FlyMediaDevice.speakerOutput:
-        return const Icon(Icons.volume_up, color: Colors.black);
-      case FlyMediaDevice.earPieceOutput:
-        return const Icon(Icons.hearing, color: Colors.black);
-      default:
-        return const Icon(Icons.volume_up, color: Colors.black);
-    }
+/// Get audio device icon
+Icon getAudioDeviceIcon(String kind) {
+  callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+  switch (kind) {
+    case FlyMediaDevice.bluetoothOutput:
+      return const Icon(Icons.bluetooth, color: Colors.black);
+    case "Speaker":
+      return const Icon(Icons.volume_up, color: Colors.black);
+    case "iPhone":
+      return const Icon(Icons.hearing, color: Colors.black);
+    default:
+      return const Icon(Icons.volume_up, color: Colors.black);
   }
 }
