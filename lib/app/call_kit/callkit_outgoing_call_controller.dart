@@ -1691,17 +1691,13 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  void onCallFailed() {
+  void onCallFailed({required List<String>? participantsId}) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
-    _resetValues();
-    _stopTimer();
-    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
-      // callStatus("Call Failed");
-      // toToast("Call Failed");
-      NavUtils.back();
-    } else {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Current route is not OutgoingCallView, skipping navigation.");
+    if (participantsId == null || participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: No participantsId provided");
+      return;
     }
+    callTimeOut(participantsId: participantsId);
   }
 
   /// Invite participants to the ongoing call
