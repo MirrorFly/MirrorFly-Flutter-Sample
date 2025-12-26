@@ -170,7 +170,7 @@ class BaseController {
         case FlyCallStatusEvent.callTimeout:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
           callKitOutgoingCallController.callTimeOut(
-              participantsId: flyCallStatus.participantsIds);
+              participantsId: flyCallStatus.participantsIds, isCallFailed: false);
           break;
         case FlyCallStatusEvent.rejected:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent rejected");

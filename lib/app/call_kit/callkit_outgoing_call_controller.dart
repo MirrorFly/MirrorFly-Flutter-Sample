@@ -502,13 +502,8 @@ class CallKitOutgoingCallController extends GetxController
   String getParticipantConnectionState(FlyCallStatusEvent? status) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
-      case FlyCallStatusEvent.connected:
-      case FlyCallStatusEvent.reconnected:
-        return "";
       case FlyCallStatusEvent.connecting:
         return "Connecting";
-      case FlyCallStatusEvent.reconnecting:
-        return "Reconnecting";
       case FlyCallStatusEvent.disconnected:
         return "Disconnected";
       case FlyCallStatusEvent.calling:
@@ -706,18 +701,11 @@ class CallKitOutgoingCallController extends GetxController
         final index = callerList.indexWhere((e) => e.identity == id);
         if (!index.isNegative) {
           final target = callerList[index];
-          // if (target.isReconnecting == true) {
-          //   callkitLogger.info(
-          //       "[MirrorFly] → Participant $id is already marked as reconnecting");
-          // } else {
-            callerList[index] = target.copyWith(isReconnecting: true, flyCallStatus: FlyCallStatusEvent.reconnecting);
-            callkitLogger.info("[MirrorFly] → Updated participant $id as reconnecting");
-          // }
-
-          if (target.isLocalParticipant) {
-            callStatus("Reconnecting...");
-            callTryStatus("Reconnecting...");
-          }
+          callerList[index] = target.copyWith(
+              isReconnecting: true,
+              flyCallStatus: FlyCallStatusEvent.reconnecting);
+          callkitLogger
+              .info("[MirrorFly] → Updated participant $id as reconnecting");
         } else {
           callkitLogger.info(
               "[MirrorFly] → No participant found in callerList for id: $id");
@@ -885,7 +873,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void callTimeOut({required List<String> participantsId}) async {
+  void callTimeOut({required List<String> participantsId, required bool isCallFailed}) async {
 
     for (final id in participantsId) {
       if (!callAgainUserList.contains(id)) {
@@ -912,7 +900,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
-      _navigateToTimeout();
+      _navigateToTimeout(isCallFailed: isCallFailed);
     }
 
 
@@ -965,8 +953,11 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _navigateToTimeout() {
-    toToast("Call timed out");
+  void _navigateToTimeout({required bool isCallFailed}) {
+    final String message = isCallFailed ? "Call Failed" : "Call timed out";
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating to timeout view with message: $message");
+
+    toToast(message);
 
     final String type       = callType.value;
     final String calleeName = isGroupCall.value
@@ -1697,7 +1688,7 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: No participantsId provided");
       return;
     }
-    callTimeOut(participantsId: participantsId);
+    callTimeOut(participantsId: participantsId, isCallFailed: true);
   }
 
   /// Invite participants to the ongoing call
