@@ -514,6 +514,8 @@ class CallKitOutgoingCallController extends GetxController
         return "Trying to connect";
       case FlyCallStatusEvent.callHold:
         return "On Hold";
+      case FlyCallStatusEvent.reconnecting:
+        return "Reconnecting";
       default:
         return "";
     }
@@ -1269,18 +1271,11 @@ class CallKitOutgoingCallController extends GetxController
     final bool callStatus = await MirrorFlyCallKit.isCallConnected();
 
     if (flyCallType == FlyCallType.audio && callStatus) {
-      log(
-          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
       requestVideoCallSwitch();
       return;
-    }else {
-      log("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
-    }
-
-    if (flyCallType == FlyCallType.video && !callStatus) {
-      log(
-          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not connected, cannot change camera state. callStatus- $callStatus");
-      return;
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
     }
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
@@ -1297,8 +1292,6 @@ class CallKitOutgoingCallController extends GetxController
           }
         });
   }
-
-
 
   void onCallSwitchRemoteUserDeclined() {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallSwitchRemoteUserDeclined");
@@ -1460,10 +1453,10 @@ class CallKitOutgoingCallController extends GetxController
     final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == FlyCallType.audio && callStatus) {
-      log("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
+      callkitLogger.info("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
       _videoCallSwitchRequestConfirmationPopup();
     }else{
-      log("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
     }
 
   }
