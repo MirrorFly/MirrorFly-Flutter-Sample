@@ -78,12 +78,8 @@ class CallKitOutgoingCallController extends GetxController
 
   final String audioRoutingTag = "[AUDIO_ROUTING]";
   RxString selectedAudioDeviceId = "".obs;
-  var selectedAudioDevice = const FlyAudioDevice(
-    deviceName: "Receiver",
-    id: "receiver",
-    type: FlyAudioDeviceType.receiver,
-  ).obs;
-  // List<FlyAudioDevice> flyMediaDevices = <FlyAudioDevice>[];
+  final selectedAudioDevice = Rxn<FlyAudioDevice>();
+
 
   @override
   Future<void> onInit() async {
@@ -100,6 +96,7 @@ class CallKitOutgoingCallController extends GetxController
     ever(callType, (String type) {
       _handleWakelock(type);
     });
+
     if (NavUtils.arguments != null) {
       await _initCallArguments();
       _handleCallTypeLogic();
@@ -111,7 +108,26 @@ class CallKitOutgoingCallController extends GetxController
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
+
+    if (isIncoming.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for incoming call");
+      await setInitialAudioRouteDevice();
+    }
+
     super.onInit();
+  }
+
+  Future<void> setInitialAudioRouteDevice() async {
+    final FlyAudioDevice? initialDevice = await MirrorFlyCallKit.getCurrentAudioRoute();
+    callkitLogger.info("$audioRoutingTag Initial audio device found: ${initialDevice?.toMap()}");
+
+    if (initialDevice != null) {
+      selectedAudioDeviceId.value = initialDevice.id;
+      selectedAudioDevice.value = initialDevice;
+        callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice?.value?.toMap()}");
+    } else {
+      callkitLogger.info("$audioRoutingTag No initial audio device found");
+    }
   }
 
   Future<void> _initCallArguments() async {
@@ -1057,7 +1073,13 @@ class CallKitOutgoingCallController extends GetxController
     updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.calling);
   }
 
-  void onConnected(List<String> participantIds) {
+  void onConnected(List<String> participantIds) async {
+
+    if (!isIncoming.value) {
+      await setInitialAudioRouteDevice();
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for outgoing call");
+    }
+
     if (!isGroupCall.value) {
 
       final bool isUserOnHold = callerList.any((p) =>
@@ -2025,7 +2047,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) {
-    selectedAudioDevice.value = flyAudioDevice;
+    selectedAudioDevice?.value = flyAudioDevice;
     selectedAudioDeviceId.value = flyAudioDevice.id;
   }
 }

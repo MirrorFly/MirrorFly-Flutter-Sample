@@ -844,17 +844,18 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: controller.selectedAudioDevice.value.type ==
+                isActive: controller.selectedAudioDevice.value?.type ==
                     FlyAudioDeviceType.speaker ? true : false,
-                icon: controller.selectedAudioDevice.value.type ==
+                icon: controller.selectedAudioDevice.value?.type ==
                     FlyAudioDeviceType.speaker ? Icons.volume_up
-                    : controller.selectedAudioDevice.value.type ==
+                    : controller.selectedAudioDevice.value?.type ==
                     FlyAudioDeviceType.headset ? Icons.headset
-                    : controller.selectedAudioDevice.value.type ==
+                    : controller.selectedAudioDevice.value?.type ==
                     FlyAudioDeviceType.bluetooth ? Icons.bluetooth_connected
                     : Icons.volume_up,
                 onTap: () async {
                   callkitLogger.info("[_buildCallControls] Audio device selector tapped");
+                  print("Audio device selector tapped");
                   _showAudioDeviceSelector(context);
                 },
               ),
@@ -995,6 +996,7 @@ class CallKitOutgoingCallView
   ///
   void _showAudioDeviceSelector(BuildContext context) async {
     final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
+    callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${availableTypes.map((e) => e.toMap()).toList()}");
     if (availableTypes.length > 2) {
       await showDialog(
         context: context.mounted ? context : Get.context!,
@@ -1021,9 +1023,7 @@ class CallKitOutgoingCallView
                             ? const Icon(Icons.check, color: Colors.green)
                             : null,
                         onTap: () {
-                          callkitLogger.info(
-                              "[_showAudioDeviceSelector] Selected audio device: ${type
-                                  .deviceName} (${type.id})");
+                          callkitLogger.info("#[_showAudioDeviceSelector] Selected audio device: ${type.toMap()}");
                           controller.changeAudioDevice(type);
                           Navigator.of(context).pop();
                         },
@@ -1035,9 +1035,18 @@ class CallKitOutgoingCallView
             ),
       );
     } else {
-      controller.selectedAudioDevice.value.type == FlyAudioDeviceType.receiver ?
-      controller.changeAudioDevice(availableTypes.firstWhere((element) => element.type == FlyAudioDeviceType.speaker)) :
-      controller.changeAudioDevice(availableTypes.firstWhere((element) => element.type == FlyAudioDeviceType.receiver));
+      final bool isReceiverSelected = controller.selectedAudioDevice?.value?.type == FlyAudioDeviceType.receiver;
+      callkitLogger.info(
+          "[_showAudioDeviceSelector] Toggling audio device between speaker and "
+          "selectedAudioDevice: ${controller.selectedAudioDevice?.value?.type}, "
+              "isReceiverSelected: $isReceiverSelected, "
+              "receiver currently selected: ${controller.selectedAudioDevice?.value?.toMap()}");
+
+      isReceiverSelected
+          ? controller.changeAudioDevice(availableTypes.firstWhere(
+              (element) => element.type == FlyAudioDeviceType.speaker))
+          : controller.changeAudioDevice(availableTypes.firstWhere(
+              (element) => element.type == FlyAudioDeviceType.receiver));
     }
   }
 }
