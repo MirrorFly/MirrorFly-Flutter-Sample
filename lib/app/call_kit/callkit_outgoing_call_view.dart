@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:path/path.dart';
 import '../app_style_config.dart';
 import '../call_modules/audio_level_animation.dart';
 import '../call_modules/call_widgets.dart';
@@ -384,8 +382,7 @@ class CallKitOutgoingCallView
                                     MirrorFlyCallView(
                                       key: ValueKey(controller.callerList[index].identity),
                                       userJID: controller
-                                          .callerList[index].identity ??
-                                          "",
+                                          .callerList[index].identity,
                                       fit: BoxFit.cover,
                                       viewBgColor:
                                       AppColors.audioCallerBackground,
@@ -847,9 +844,17 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: false,
-                icon: Icons.volume_up,
+                isActive: controller.selectedAudioDevice.value.type ==
+                    FlyAudioDeviceType.speaker ? true : false,
+                icon: controller.selectedAudioDevice.value.type ==
+                    FlyAudioDeviceType.speaker ? Icons.volume_up
+                    : controller.selectedAudioDevice.value.type ==
+                    FlyAudioDeviceType.headset ? Icons.headset
+                    : controller.selectedAudioDevice.value.type ==
+                    FlyAudioDeviceType.bluetooth ? Icons.bluetooth_connected
+                    : Icons.volume_up,
                 onTap: () async {
+                  callkitLogger.info("[_buildCallControls] Audio device selector tapped");
                   _showAudioDeviceSelector(context);
                 },
               ),
@@ -990,53 +995,64 @@ class CallKitOutgoingCallView
   ///
   void _showAudioDeviceSelector(BuildContext context) async {
     final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
-    await showDialog(
-      context: context.mounted ? context : Get.context!,
-      barrierDismissible: true,
-      builder: (_) => Center(
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: 250,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+    if (availableTypes.length > 2) {
+      await showDialog(
+        context: context.mounted ? context : Get.context!,
+        barrierDismissible: true,
+        builder: (_) =>
+            Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  width: 250,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: availableTypes.map((type) {
+                      return ListTile(
+                        leading: getAudioDeviceIcon(type.type),
+                        title: Text(type.deviceName),
+                        trailing: controller.selectedAudioDeviceId.value ==
+                            type.id
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : null,
+                        onTap: () {
+                          callkitLogger.info(
+                              "[_showAudioDeviceSelector] Selected audio device: ${type
+                                  .deviceName} (${type.id})");
+                          controller.changeAudioDevice(type);
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: availableTypes.map((type) {
-                return ListTile(
-                  leading: getAudioDeviceIcon(type.name ?? ""),
-                  title: Text(type.name),
-                  trailing: controller.selectedAudioDeviceId.value == type.id
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    controller.changeAudioDevice(type.type.value);
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
-    );
+      );
+    } else {
+      controller.selectedAudioDevice.value.type == FlyAudioDeviceType.receiver ?
+      controller.changeAudioDevice(availableTypes.firstWhere((element) => element.type == FlyAudioDeviceType.speaker)) :
+      controller.changeAudioDevice(availableTypes.firstWhere((element) => element.type == FlyAudioDeviceType.receiver));
+    }
   }
 }
 
 /// Get audio device icon
-Icon getAudioDeviceIcon(String kind) {
+Icon getAudioDeviceIcon(FlyAudioDeviceType kind) {
   callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
   switch (kind) {
-    case FlyMediaDevice.bluetoothOutput:
-      return const Icon(Icons.bluetooth, color: Colors.black);
-    case "Speaker":
+    case FlyAudioDeviceType.bluetooth:
+      return const Icon(Icons.bluetooth_connected, color: Colors.black);
+    case FlyAudioDeviceType.speaker:
       return const Icon(Icons.volume_up, color: Colors.black);
-    case "iPhone":
-      return const Icon(Icons.hearing, color: Colors.black);
-    default:
-      return const Icon(Icons.volume_up, color: Colors.black);
-  }
+    case FlyAudioDeviceType.receiver:
+      return const Icon(Icons.phone_iphone, color: Colors.black);
+    case FlyAudioDeviceType.headset:
+      return const Icon(Icons.headset, color: Colors.black);
+    }
 }

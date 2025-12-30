@@ -30,7 +30,6 @@ class CallkitLogger {
     final formattedMessage = '$emoji [MirrorFly] [$level][$now] $message';
 
     log(formattedMessage, name: _tag);
-    print(formattedMessage);
 
     if (_enableFileLogging) {
       _addToLogQueue(level, formattedMessage);

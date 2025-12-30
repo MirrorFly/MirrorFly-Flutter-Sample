@@ -78,7 +78,12 @@ class CallKitOutgoingCallController extends GetxController
 
   final String audioRoutingTag = "[AUDIO_ROUTING]";
   RxString selectedAudioDeviceId = "".obs;
-  List<FlyMediaDevice> flyMediaDevices = <FlyMediaDevice>[];
+  var selectedAudioDevice = const FlyAudioDevice(
+    deviceName: "Receiver",
+    id: "receiver",
+    type: FlyAudioDeviceType.receiver,
+  ).obs;
+  // List<FlyAudioDevice> flyMediaDevices = <FlyAudioDevice>[];
 
   @override
   Future<void> onInit() async {
@@ -2019,11 +2024,14 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   /// Change the audio output device
-  Future<void> changeAudioDevice(String type) async {
+  Future<void> changeAudioDevice(FlyAudioDevice flyAudioDevice) async {
     callkitLogger.info(
-        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with deviceId: $type");
-    MirrorFlyCallKit.changeAudioRoute(type: type);
+        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with flyAudioDevice: $flyAudioDevice");
+    MirrorFlyCallKit.changeAudioRoute(flyAudioDevice: flyAudioDevice);
   }
 
-  void onAudioRouteChanged() {}
+  void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) {
+    selectedAudioDevice.value = flyAudioDevice;
+    selectedAudioDeviceId.value = flyAudioDevice.id;
+  }
 }

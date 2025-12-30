@@ -428,6 +428,19 @@ class LoginController extends GetxController {
               setUserJID(userData.data!.username!);
             }
 
+            Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
+              if(response.isSuccess) {
+                debugPrint("centrifuge CallKit initialized successfully");
+              } else {
+                debugPrint("centrifuge CallKit issue===> ${response.errorMessage.toString()} exception: ${response.exception}");
+              }
+            });
+
+            LogMessage.d("CallKit", "CallKit initialized successfully");
+            await Mirrorfly.updateVoipTokenForLiveKitCalls();
+            LogMessage.d("CallKit", "updateVoipTokenForLiveKitCalls successfully");
+
+
           } else {
             debugPrint("issue===> ${response.errorMessage.toString()}");
             hideLoading();

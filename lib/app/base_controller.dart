@@ -210,9 +210,9 @@ class BaseController {
           // if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
           //   callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
           // }
-        case FlyCallStatusEvent.permissionDenied:
+       /* case FlyCallStatusEvent.permissionDenied:
           // TODO: Handle this case.
-          throw UnimplementedError();
+          throw UnimplementedError();*/
       }
     });
 
@@ -472,7 +472,11 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onAudioRouteChanged, audioDevice=${flyCallAction.flyAudioDevice}");
           if (Get.isRegistered<CallKitOutgoingCallController>()) {
             final controller = Get.find<CallKitOutgoingCallController>();
-            controller.onAudioRouteChanged();
+            if (flyCallAction.flyAudioDevice == null) {
+              callkitLogger.info("[MirrorFly][BaseController] onAudioRouteChanged - flyAudioDevice is null");
+              return;
+            }
+            controller.onAudioRouteChanged(flyCallAction.flyAudioDevice!);
           }
 
         default:
