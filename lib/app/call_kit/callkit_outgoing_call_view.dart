@@ -610,7 +610,7 @@ class CallKitOutgoingCallView
           Stack(
             children: [
               MirrorFlyCallView(
-                viewBgColor: AppColors.callerBackground,
+                viewBgColor: AppColors.audioCallerBackground,
                 // key: ValueKey(controller.getLocalParticipantId()),
                 userJID: controller.secondaryCallViewUserId.value,
                 fit: BoxFit.cover,

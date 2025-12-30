@@ -1675,13 +1675,26 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  void onCallFailed({required List<String>? participantsId}) {
+  void onCallFailed({required List<String>? participantsId}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
+
     if (participantsId == null || participantsId.isEmpty) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: No participantsId provided");
       return;
     }
-    callTimeOut(participantsId: participantsId, isCallFailed: true);
+
+    final FlyCallDirection flyCallDirection = await MirrorFlyCallKit.getCallDirection();
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Call direction is $flyCallDirection");
+
+    if (flyCallDirection == FlyCallDirection.incoming) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Incoming call, skipping timeout handling");
+      toToast("Call failed");
+      await NavUtils.back();
+      return;
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Outgoing call, processing timeout handling");
+      callTimeOut(participantsId: participantsId, isCallFailed: true);
+    }
   }
 
   /// Invite participants to the ongoing call
