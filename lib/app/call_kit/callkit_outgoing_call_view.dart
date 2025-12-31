@@ -864,7 +864,7 @@ class CallKitOutgoingCallView
                 icon: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
                 onTap: controller.muteAudio,
               ),
-              if (controller.callType.value.toLowerCase() == CallType.video)
+              // if (controller.callType.value.toLowerCase() == CallType.video)
                 _buildCallOption(
                   isActive: true,
                   icon: !controller.isVideoEnabled.value
@@ -891,14 +891,14 @@ class CallKitOutgoingCallView
                       : Icons.flip_camera_android,
                   onTap: controller.switchCamera,
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.audio)
-                _buildCallOption(
-                  isActive: true,
-                  icon: !controller.isVideoEnabled.value
-                      ? Icons.videocam_off
-                      : Icons.videocam,
-                  onTap: controller.requestVideoCallSwitch,
-                ),
+              // if (controller.callType.value.toLowerCase() == CallType.audio)
+              //   _buildCallOption(
+              //     isActive: true,
+              //     icon: !controller.isVideoEnabled.value
+              //         ? Icons.videocam_off
+              //         : Icons.videocam,
+              //     onTap: controller.requestVideoCallSwitch,
+              //   ),
             ],
           )),
     );
