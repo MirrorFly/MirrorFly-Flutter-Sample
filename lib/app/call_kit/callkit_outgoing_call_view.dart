@@ -883,14 +883,6 @@ class CallKitOutgoingCallView
                       : Icons.flip_camera_android,
                   onTap: controller.switchCamera,
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.audio && controller.isVideoEnabled.value)
-                _buildCallOption(
-                  isActive: false,
-                  icon: controller.cameraPosition.value == CameraType.front
-                      ? Icons.cameraswitch
-                      : Icons.flip_camera_android,
-                  onTap: controller.switchCamera,
-                ),
               // if (controller.callType.value.toLowerCase() == CallType.audio)
               //   _buildCallOption(
               //     isActive: true,

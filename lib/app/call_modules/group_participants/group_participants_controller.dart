@@ -309,7 +309,8 @@ class GroupParticipantsController extends GetxController {
 
     if (isFromLiveKitCalls.value) {
       callkitLogger.info("Making LiveKit Group Call with users: $selectedUsersJIDList");
-      await NavUtils.back(result: selectedUsersJIDList);
+      final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
+      await NavUtils.back(result: normalizedJid);
       return;
     }
 
