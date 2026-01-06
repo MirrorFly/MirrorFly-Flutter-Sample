@@ -80,6 +80,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString selectedAudioDeviceId = "".obs;
   final selectedAudioDevice = Rxn<FlyAudioDevice>();
 
+  final int _maxCallInvitedParticipant = Constants.maxCallUsersLimitForMirrorFlyCallKit;
 
   @override
   Future<void> onInit() async {
@@ -1731,14 +1732,24 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final groupJid = CallUtils.getJidFromId(groupId.value);
-    final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
-    if (pickedContacts.length > 8) {
-      // Temp limit to 5 participants
-      toToast("You can invite up to 8 participants only");
+    final List<String> pickedContacts = await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
+
+    final int currentCallParticipantsCount = callerList.length;
+    final int pickedCount = pickedContacts.length;
+
+    final int totalAfterInvite = currentCallParticipantsCount + pickedCount;
+    if (totalAfterInvite > _maxCallInvitedParticipant) {
+      final int exceededCount = totalAfterInvite - _maxCallInvitedParticipant;
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: Exceeded max participants limit. Current:"
+          " $currentCallParticipantsCount,"
+          " Picked: $pickedCount,"
+          " Max: $_maxCallInvitedParticipant,"
+          " Exceeded by: $exceededCount");
+
+      toToast("You can invite only $_maxCallInvitedParticipant participants. You have exceeded by $exceededCount participants.");
       return;
     } else {
-
       MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
         callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
