@@ -860,9 +860,13 @@ class CallKitOutgoingCallView
                 },
               ),
               _buildCallOption(
-                isActive: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false,
-                icon: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
-                onTap: controller.muteAudio,
+                isActive: controller.isAudioEnabled.value,
+                icon: !controller.isAudioEnabled.value ? Icons.mic_off : Icons.mic,
+                onTap: () {
+                  final bool enable = !(controller.isAudioEnabled.value);
+                  callkitLogger.info("[_buildCallControls] Local participant found enable: $enable");
+                  controller.setMicroPhoneEnabled(enabled: enable);
+                },
               ),
               // if (controller.callType.value.toLowerCase() == CallType.video)
                 _buildCallOption(
