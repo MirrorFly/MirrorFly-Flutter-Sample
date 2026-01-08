@@ -38,7 +38,10 @@ class GroupParticipantsController extends GetxController {
     isFromLiveKitCalls(NavUtils.arguments["isFromLiveKitCalls"] ?? false);
     participantsListInCall(NavUtils.arguments["participantsListInCall"] ?? []);
 
-    getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+    getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+        ? Constants.maxCallUsersLimitForMirrorFlyCallKit
+        : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+
     groupId(NavUtils.arguments["groupId"]);
     callType(NavUtils.arguments["callType"]);
     await getGroupMembers();
@@ -281,7 +284,9 @@ class GroupParticipantsController extends GetxController {
   }
 
   //Call Functions Start Here
-  var getMaxCallUsersCount = 8;
+  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+      ? Constants.maxCallUsersLimitForMirrorFlyCallKit
+      : 8;
   var groupCallMembersCount =
       1.obs; //initially its 1 because me also added into call
   void validateForCall(ProfileDetails item) {
