@@ -663,7 +663,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
         ));
   }
 
-  Widget? createScaledFab(BuildContext context) {
+  /*Widget? createScaledFab(BuildContext context) {
     // Searching for index of a tab with not 0.0 scale
     final indexOfCurrentFab =
         controller.tabScales.indexWhere((fabScale) => fabScale != 0);
@@ -674,16 +674,16 @@ class DashboardView extends NavViewStateful<DashboardController> {
     // Creating fab for current index
     final fab = createFab(indexOfCurrentFab, context);
     // If no fab created return nothing
-    /*if (fab == null) {
+    *//*if (fab == null) {
       return null;
-    }*/
+    }*//*
     final currentFabScale = controller.tabScales[indexOfCurrentFab];
     // Scale created fab with
     // You can use different Widgets to create different effects of switching
     // fabs. E.g. you can use Opacity widget or Transform.translate to create
     // custom animation effects
     return Transform.scale(scale: currentFabScale, child: fab);
-  }
+  }*/
 
   // Create fab for provided index
   Widget createFab(final int index, BuildContext context) {
@@ -706,27 +706,45 @@ class DashboardView extends NavViewStateful<DashboardController> {
     }
     // Not created fab for 1 index deliberately
     if (index == 1) {
-      return AnimatedFloatingAction(
-        tooltip: "New Call",
-        backgroundColor:
-            Theme.of(context).floatingActionButtonTheme.backgroundColor,
-        foregroundColor:
-            Theme.of(context).floatingActionButtonTheme.foregroundColor,
-        icon: AppUtils.svgIcon(
-          icon: plusIcon,
-          width: Theme.of(context).floatingActionButtonTheme.iconSize,
-          colorFilter: ColorFilter.mode(
-              Theme.of(context).floatingActionButtonTheme.foregroundColor ??
-                  Colors.white,
-              BlendMode.srcIn),
-          fit: BoxFit.contain,
-        ),
-        audioCallOnPressed: () {
-          controller.gotoContacts(forCalls: true, callType: CallType.audio);
-        },
-        videoCallOnPressed: () {
-          controller.gotoContacts(forCalls: true, callType: CallType.video);
-        },
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          AnimatedFloatingAction(
+            tooltip: "New Call",
+            backgroundColor:
+                Theme.of(context).floatingActionButtonTheme.backgroundColor,
+            foregroundColor:
+                Theme.of(context).floatingActionButtonTheme.foregroundColor,
+            icon: AppUtils.svgIcon(
+              icon: plusIcon,
+              width: Theme.of(context).floatingActionButtonTheme.iconSize,
+              colorFilter: ColorFilter.mode(
+                  Theme.of(context).floatingActionButtonTheme.foregroundColor ??
+                      Colors.white,
+                  BlendMode.srcIn),
+              fit: BoxFit.contain,
+            ),
+            audioCallOnPressed: () {
+              controller.gotoContacts(forCalls: true, callType: CallType.audio);
+            },
+            videoCallOnPressed: () {
+              controller.gotoContacts(forCalls: true, callType: CallType.video);
+            },
+          ),
+          const SizedBox(height: 15),
+          FloatingActionButton(
+            tooltip: "SIP Call",
+            heroTag: "SIP Call",
+            onPressed: () {
+              controller.openDialerPad();
+            },
+            elevation: 10,
+            child: Icon(Icons.dialpad_sharp, size: Theme.of(context).floatingActionButtonTheme.iconSize, color: Theme.of(context).floatingActionButtonTheme.foregroundColor ?? Colors.white),
+          ),
+          const SizedBox(height: 10),
+        ],
       );
     }
     return const Offstage();

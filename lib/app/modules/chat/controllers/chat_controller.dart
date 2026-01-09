@@ -4082,7 +4082,6 @@ class ChatController extends FullLifeCycleController
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                    "userJid": [normalizedJid],
                     "callType": CallType.audio,
                     "callMode": "ONE-TO-ONE",
                     "chatId": ''
@@ -4133,7 +4132,6 @@ class ChatController extends FullLifeCycleController
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
                     NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
-                      "userJid": [profile.jid],
                       "callType": CallType.video,
                       "callMode": "ONE-TO-ONE",
                       "chatId": ''

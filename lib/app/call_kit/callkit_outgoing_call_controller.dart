@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +36,6 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isVideoEnabled = false.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
-
-  // RxList<String?> callerUsersId = <String?>[].obs;
 
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
@@ -124,7 +121,7 @@ class CallKitOutgoingCallController extends GetxController
     if (initialDevice != null) {
       selectedAudioDeviceId.value = initialDevice.id;
       selectedAudioDevice.value = initialDevice;
-        callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice?.value?.toMap()}");
+        callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice.value?.toMap()}");
     } else {
       callkitLogger.info("$audioRoutingTag No initial audio device found");
     }
@@ -134,7 +131,6 @@ class CallKitOutgoingCallController extends GetxController
     try {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
-      // callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       groupId(NavUtils.arguments?["chatId"] as String? ?? "");
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
@@ -169,8 +165,8 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> initCallViewIds() async{
-    final localId = getLocalParticipantId();
-    final remoteId = getRemoteParticipantsId().firstOrNull ?? "";
+    final localId = getLocalParticipant()?.identity ?? "";
+    final remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
 
     mainCallViewUserId.value = remoteId;     // show remote as main view
     secondaryCallViewUserId.value = localId; // local goes to small preview
@@ -375,7 +371,7 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       final remoteEntry = remoteUserNameMap.entries.firstWhere(
-            (entry) => entry.key != getLocalParticipantId(),
+            (entry) => entry.key != getLocalParticipant()?.identity,
       );
       remoteUserNameMap.forEach((key, value) {
         callkitLogger.info(
@@ -842,26 +838,33 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  /// Get self id
+/*  /// Get self id
   String getLocalParticipantId() {
     final String localId = callerList
         .firstWhereOrNull((p) => p.isLocalParticipant)
         ?.identity ?? "";
-    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipantID: $localId");
     return localId;
+  }*/
+
+  /// Get Local participant
+  FlyCallParticipant? getLocalParticipant() {
+    final FlyCallParticipant? localParticipant = callerList
+        .firstWhereOrNull((p) => p.isLocalParticipant);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localParticipant");
+    return localParticipant;
   }
 
   ///
-  List<String> getRemoteParticipantsId() {
+  List<FlyCallParticipant> getRemoteParticipants() {
     callkitLogger.info("[MirrorFly][OutgoingCallController] getRemoteParticipantsId called with callerList length: ${callerList.length}");
     try {
-      final List<String> remoteIds = callerList
+      final List<FlyCallParticipant> remoteParticipants = callerList
           .where((p) => !p.isLocalParticipant)
-          .map((p) => p.identity)
           .toList();
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
-      return remoteIds;
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteParticipants");
+      return remoteParticipants;
     } catch (e) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getRemoteParticipantsId error: $e");
@@ -1521,7 +1524,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void onVideoCallSwitchTimeOut() {
     closeDialog();
-    final String remoteId = getRemoteParticipantsId().firstOrNull ?? "";
+    final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
     final remoteUserName = remoteUserNameMap[remoteId] ?? "";
     toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
   }
@@ -1610,7 +1613,7 @@ class CallKitOutgoingCallController extends GetxController
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestedMessage")
-          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipantsId().firstOrNull] ?? ""),
+          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipants().firstOrNull?.identity] ?? ""),
       actions: [
         TextButton(
             onPressed: () async {
@@ -2003,7 +2006,6 @@ class CallKitOutgoingCallController extends GetxController
     isVideoEnabled(false);
     speakerOn(false);
     isOnGoingCallViewEnable(false);
-    // callerUsersId(<String?>[]);
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
@@ -2047,7 +2049,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) {
-    selectedAudioDevice?.value = flyAudioDevice;
+    selectedAudioDevice.value = flyAudioDevice;
     selectedAudioDeviceId.value = flyAudioDevice.id;
   }
 }

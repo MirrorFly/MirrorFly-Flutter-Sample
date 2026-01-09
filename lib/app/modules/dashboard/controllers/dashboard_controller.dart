@@ -2388,6 +2388,14 @@ class DashboardController extends FullLifeCycleController
     });
     recentChats.refresh();
   }
+
+  /// ------------------ ///
+  /// SIP call related ///
+  /// ------------------ ///
+  void openDialerPad() {
+    NavUtils.toNamed(Routes.dialerPad);
+  }
+
 }
 
 class MyController extends GetxController {
