@@ -1271,7 +1271,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void setMicroPhoneEnabled({required bool enabled}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start with enabled : $enabled");
-    await MirrorFlyCallKit.setMicroPhoneEnable(enabled: enabled,result: (result) async {});
+    await MirrorFlyCallKit.setMicrophoneMuted(mute: !enabled, result: (_) {});
     final bool isMicEnabled = await MirrorFlyCallKit.getIsMicrophoneEnabled();
     isAudioEnabled.value = isMicEnabled;
   }
