@@ -34,6 +34,7 @@ class CallKitOutgoingCallController extends GetxController
 
   RxBool showControls = true.obs;
   RxBool isVideoEnabled = false.obs;
+  RxBool isAudioEnabled = true.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
 
@@ -77,6 +78,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString selectedAudioDeviceId = "".obs;
   final selectedAudioDevice = Rxn<FlyAudioDevice>();
 
+  final int _maxCallInvitedParticipant = Constants.maxCallUsersLimitForMirrorFlyCallKit;
 
   @override
   Future<void> onInit() async {
@@ -1270,23 +1272,11 @@ class CallKitOutgoingCallController extends GetxController
     isOnGoingCallViewEnable.value = true;
   }
 
-
-  void muteAudio() async {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start");
-
-    MirrorFlyCallKit.toggleMicrophone(result: (result) async {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio toggleMicrophone result : $result");
-
-      if (result) {
-        final bool isMicEnabled =
-            await MirrorFlyCallKit.getIsMicrophoneEnabled();
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
-      } else {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone result : $result");
-      }
-    });
+  void setMicroPhoneEnabled({required bool enabled}) async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start with enabled : $enabled");
+    await MirrorFlyCallKit.setMicroPhoneEnable(enabled: enabled,result: (result) async {});
+    final bool isMicEnabled = await MirrorFlyCallKit.getIsMicrophoneEnabled();
+    isAudioEnabled.value = isMicEnabled;
   }
 
   void setCameraEnable({required bool enable}) async {
@@ -1497,12 +1487,12 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
     toToast("Video call switch canceled");
-    closeDialog();
+    // closeDialog();
     // _cancelCallSwitchReqWaiting();
   }
 
   ///
-  void acceptIncomingCallSwitchRequest() async {
+  void acceptIncomingCallSwitchRequest() async{
     callkitLogger.info("[MirrorFly][OutgoingCallController]  acceptIncomingCallSwitchRequest invoked...");
     closeDialog();
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
@@ -1734,14 +1724,24 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final groupJid = CallUtils.getJidFromId(groupId.value);
-    final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
-    if (pickedContacts.length > 8) {
-      // Temp limit to 5 participants
-      toToast("You can invite up to 8 participants only");
+    final List<String> pickedContacts = await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
+
+    final int currentCallParticipantsCount = callerList.length;
+    final int pickedCount = pickedContacts.length;
+
+    final int totalAfterInvite = currentCallParticipantsCount + pickedCount;
+    if (totalAfterInvite > _maxCallInvitedParticipant) {
+      final int exceededCount = totalAfterInvite - _maxCallInvitedParticipant;
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: Exceeded max participants limit. Current:"
+          " $currentCallParticipantsCount,"
+          " Picked: $pickedCount,"
+          " Max: $_maxCallInvitedParticipant,"
+          " Exceeded by: $exceededCount");
+
+      toToast("You can invite only $_maxCallInvitedParticipant participants. You have exceeded by $exceededCount participants.");
       return;
     } else {
-
       MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
         callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {

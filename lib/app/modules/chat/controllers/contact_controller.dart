@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
@@ -33,7 +34,7 @@ class ContactController extends FullLifeCycleController
   var _first = true;
   var isSearchingNew = false.obs;
 
-  var getMaxCallUsersCount = 8;
+  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit ? Constants.maxCallUsersLimitForMirrorFlyCallKit : 8;
   ContactListArguments get arguments =>
       NavUtils.arguments as ContactListArguments;
 
@@ -46,8 +47,13 @@ class ContactController extends FullLifeCycleController
   @override
   Future<void> onInit() async {
     super.onInit();
-    getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+
+    getMaxCallUsersCount = !Constants.useMirrorFlyCallKit
+        ? (await Mirrorfly.getMaxCallUsersCount()) ?? 8
+        : Constants.maxCallUsersLimitForMirrorFlyCallKit;
     scrollController.addListener(_scrollListener);
+
+    callkitLogger.info("ContactController onInit called with max call users count: $getMaxCallUsersCount");
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       isPageLoading(true);
       fetchUsers(false);
@@ -578,6 +584,7 @@ class ContactController extends FullLifeCycleController
         //item.isSelected = false;
         groupCallMembersCount(groupCallMembersCount.value - 1);
       } else {
+        callkitLogger.info("validateForCall: current count: ${groupCallMembersCount.value}, max count: $getMaxCallUsersCount");
         if (getMaxCallUsersCount > groupCallMembersCount.value) {
           selectedUsersList.add(item);
           selectedUsersJIDList.add(item.jid!);

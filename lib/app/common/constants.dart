@@ -356,6 +356,7 @@ class Constants {
   static bool useDeprecatedInit = false;
   static bool useMirrorFlyCallKit = true;
   static const bool isBackupFeatureEnabled = true;
+  static const maxCallUsersLimitForMirrorFlyCallKit = 20;
 
   // Dummy OTP View
   static const bool isOTPViewEnabled = false;
