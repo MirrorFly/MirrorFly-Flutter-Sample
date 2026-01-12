@@ -85,6 +85,12 @@ class CallKitCallTimeoutController extends GetxController {
             final String normalizedGroupId = CallUtils.getIdFromJidList(groupJid.value);
             CallkitLogger().info("Normalized Group ID for Audio Call: $normalizedGroupId");
 
+            if (!await AppUtils.isNetConnected()) {
+              callkitLogger.info('#callAgain No internet connection available');
+              toToast(getTranslated("noInternetConnection"));
+              return;
+            }
+
             await MirrorFlyCallKit.makeAudioCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
@@ -95,7 +101,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    callkitLogger.info("CF Not connected");
+                    toToast(response.message ?? "");
                   }
                 },
                 callersId:
@@ -116,6 +122,12 @@ class CallKitCallTimeoutController extends GetxController {
           final String normalizedGroupId = CallUtils.getIdFromJidList(groupJid.value);
           CallkitLogger().info("Normalized Group ID for Video Call: $normalizedGroupId");
 
+          if (!await AppUtils.isNetConnected()) {
+            callkitLogger.info('#makeVideoCall No internet connection available');
+            toToast(getTranslated("noInternetConnection"));
+            return;
+          }
+
           final List<String> userList = users.toList();
           await MirrorFlyCallKit.makeVideoCall(
                 flyResult: (FlyResult response) {
@@ -127,7 +139,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    callkitLogger.info("CF Not connected");
+                    toToast(response.message ?? "");
                   }
                 },
                 callersId:

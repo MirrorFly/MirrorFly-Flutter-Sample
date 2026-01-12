@@ -4078,6 +4078,12 @@ class ChatController extends FullLifeCycleController
           final String normalizedChatId = profile.isGroupProfile == true ? CallUtils.getIdFromJidList(profile.jid ?? "") : '';
           callkitLogger.info("Chat ID for audio call $normalizedChatId");
 
+          if (!await AppUtils.isNetConnected()) {
+            callkitLogger.info('#makeAudioCall No internet connection available');
+            toToast(getTranslated("noInternetConnection"));
+            return;
+          }
+
           await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
@@ -4086,6 +4092,8 @@ class ChatController extends FullLifeCycleController
                     "callMode": "ONE-TO-ONE",
                     "chatId": ''
                   });
+                } else {
+                  toToast(response.message ?? "");
                 }
               },
               callersId: [
@@ -4126,6 +4134,12 @@ class ChatController extends FullLifeCycleController
             final String normalizedChatId = profile.isGroupProfile == true ? CallUtils.getIdFromJidList(profile.jid ?? "") : '';
             callkitLogger.info("Chat ID for audio call $normalizedChatId");
 
+            if (!await AppUtils.isNetConnected()) {
+              callkitLogger.info('#makeVideoCall No internet connection available');
+              toToast(getTranslated("noInternetConnection"));
+              return;
+            }
+
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [normalizedJidList],
                 chatId: normalizedChatId,
@@ -4137,7 +4151,7 @@ class ChatController extends FullLifeCycleController
                       "chatId": ''
                     });
                   } else {
-                    toToast("CF Not connected");
+                    toToast(response.message ?? "");
                   }
               });
         }catch(e){
