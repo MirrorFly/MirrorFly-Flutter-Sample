@@ -312,6 +312,11 @@ class GroupParticipantsController extends GetxController {
       return;
     }
 
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
+
     if (isFromLiveKitCalls.value) {
       callkitLogger.info("Making LiveKit Group Call with users: $selectedUsersJIDList");
       final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
@@ -328,10 +333,7 @@ class GroupParticipantsController extends GetxController {
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
-    if (!(await AppUtils.isNetConnected())) {
-      toToast(getTranslated("noInternetConnection"));
-      return;
-    }
+
     if (callType.value == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
 
