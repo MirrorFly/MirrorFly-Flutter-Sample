@@ -1388,7 +1388,7 @@ class CallKitOutgoingCallController extends GetxController
       toToast(
           getTranslated("usernameIsBusy").replaceFirst("%d", remoteUserNameMap[participants.firstOrNull] ?? ""));
       await Future.delayed(const Duration(milliseconds: 500));
-      if (NavUtils.canPop) {
+      if (NavUtils.canPop && NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         NavUtils.back();
       }
       return;
