@@ -204,7 +204,7 @@ class CallKitOutgoingCallView
                       Visibility(
                         visible: controller.callerList
                                 .any((FlyCallParticipant e) =>
-                                    e.flyCallStatusEvent == FlyCallStatusEvent.callHold),
+                                    e.flyCallStatusEvent == FlyCallStatusEvent.callHold && e.flyCallStatusEvent != FlyCallStatusEvent.reconnecting),
                         child: const Center(
                           child: Text(
                             "On Hold",
