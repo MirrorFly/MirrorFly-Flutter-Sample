@@ -33,7 +33,8 @@ class AddParticipantsController extends GetxController
 
   bool get isCheckBoxVisible => true;
   TabController? tabController;
-  var getMaxCallUsersCount = 8;
+  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+      ? Constants.maxCallUsersLimitForMirrorFlyCallKit : 8;
   var joinViaLink = false;
 
   @override
@@ -45,7 +46,9 @@ class AddParticipantsController extends GetxController
     getCallLink();
     groupId(await Mirrorfly.getCallGroupJid());
 
-    getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+    getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+        ? Constants.maxCallUsersLimitForMirrorFlyCallKit : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+
     // callList = Get.find<CallController>().callList;
     scrollController.addListener(_scrollListener);
 

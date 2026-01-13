@@ -6,7 +6,7 @@ class DateTimeUtils {
   /// @param duration The Duration object to be converted.
   /// @return A string representing the duration in the format "HH:MM:SS".
   static String durationToString(Duration duration) {
-    debugPrint("duration conversion $duration");
+    // debugPrint("duration conversion $duration");
     String hours = (duration.inHours == 00)
         ? ""
         : "${duration.inHours.toStringAsFixed(0).padLeft(2, '0')}:"; // Get hours

@@ -38,7 +38,10 @@ class GroupParticipantsController extends GetxController {
     isFromLiveKitCalls(NavUtils.arguments["isFromLiveKitCalls"] ?? false);
     participantsListInCall(NavUtils.arguments["participantsListInCall"] ?? []);
 
-    getMaxCallUsersCount = (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+    getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+        ? Constants.maxCallUsersLimitForMirrorFlyCallKit
+        : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+
     groupId(NavUtils.arguments["groupId"]);
     callType(NavUtils.arguments["callType"]);
     await getGroupMembers();
@@ -281,7 +284,9 @@ class GroupParticipantsController extends GetxController {
   }
 
   //Call Functions Start Here
-  var getMaxCallUsersCount = 8;
+  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+      ? Constants.maxCallUsersLimitForMirrorFlyCallKit
+      : 8;
   var groupCallMembersCount =
       1.obs; //initially its 1 because me also added into call
   void validateForCall(ProfileDetails item) {
@@ -307,9 +312,15 @@ class GroupParticipantsController extends GetxController {
       return;
     }
 
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
+
     if (isFromLiveKitCalls.value) {
       callkitLogger.info("Making LiveKit Group Call with users: $selectedUsersJIDList");
-      await NavUtils.back(result: selectedUsersJIDList);
+      final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
+      await NavUtils.back(result: normalizedJid);
       return;
     }
 
@@ -322,10 +333,7 @@ class GroupParticipantsController extends GetxController {
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
-    if (!(await AppUtils.isNetConnected())) {
-      toToast(getTranslated("noInternetConnection"));
-      return;
-    }
+
     if (callType.value == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
 
@@ -334,6 +342,12 @@ class GroupParticipantsController extends GetxController {
 
         final normalizedGroupJid = CallUtils.getIdFromJidList(groupId.value);
         callkitLogger.info("Group JID normalized: $normalizedGroupJid");
+
+        if (!await AppUtils.isNetConnected()) {
+          callkitLogger.info('#makeVideoCall No internet connection available');
+          toToast(getTranslated("noInternetConnection"));
+          return;
+        }
 
         await MirrorFlyCallKit.makeAudioCall(
             flyResult: (FlyResult response) {
@@ -344,6 +358,8 @@ class GroupParticipantsController extends GetxController {
                   "callMode": "ONE-TO-MANY",
                   "chatId": groupId.value,
                 });
+              } else {
+                toToast(response.message ?? "");
               }
             },
             callersId: normalizedJid,
@@ -357,6 +373,12 @@ class GroupParticipantsController extends GetxController {
         final normalizedGroupJid = CallUtils.getIdFromJidList(groupId.value);
         callkitLogger.info("Group JID normalized: $normalizedGroupJid");
 
+        if (!await AppUtils.isNetConnected()) {
+          callkitLogger.info('#makeVideoCall No internet connection available');
+          toToast(getTranslated("noInternetConnection"));
+          return;
+        }
+
         await MirrorFlyCallKit.makeVideoCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
@@ -367,22 +389,7 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                final String errorData = response.data;
-                if (errorData == "Centrifuge not connected") {
-                  toToast("CF Not connected");
-                }
-
-                // Assuming it is permission denied error
-                final Map<String, dynamic>? errorJson = jsonDecode(response.data) as Map<String, dynamic>?;
-                final String? permissionType = errorJson?['type'];
-                final String? permissionAction = errorJson?['action'];
-                final String? message = errorJson?['message'];
-                debugPrint(
-                    "Mirrorfly.makeLiveKitAudioCall -> errorJson: permissionType: $permissionType, permissionAction: $permissionAction, message: $message");
-
-                if (message != null) {
-                  toToast(message);
-                }
+                toToast(response.message ?? "");
               }
             },
             callersId: normalizedJid,

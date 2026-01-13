@@ -70,6 +70,8 @@ abstract class Routes {
   static const callKitTimeOutView = _Paths.callKitTimeOutView;
 
 
+  //dialer pad
+  static const dialerPad = _Paths.dialerPad;
 
 
 }
@@ -144,5 +146,7 @@ abstract class _Paths {
   static const callKitTimeOutView = '/callKitTimeOutView';
 
 
+  //dialer pad
+  static const dialerPad = '/dialerPad';
 
 }

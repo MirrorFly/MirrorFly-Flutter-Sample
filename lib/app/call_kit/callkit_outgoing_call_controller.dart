@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +34,9 @@ class CallKitOutgoingCallController extends GetxController
 
   RxBool showControls = true.obs;
   RxBool isVideoEnabled = false.obs;
+  RxBool isAudioEnabled = true.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
-
-  // RxList<String?> callerUsersId = <String?>[].obs;
 
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
@@ -78,7 +76,9 @@ class CallKitOutgoingCallController extends GetxController
 
   final String audioRoutingTag = "[AUDIO_ROUTING]";
   RxString selectedAudioDeviceId = "".obs;
-  List<FlyMediaDevice> flyMediaDevices = <FlyMediaDevice>[];
+  final selectedAudioDevice = Rxn<FlyAudioDevice>();
+
+  final int _maxCallInvitedParticipant = Constants.maxCallUsersLimitForMirrorFlyCallKit;
 
   @override
   Future<void> onInit() async {
@@ -95,6 +95,7 @@ class CallKitOutgoingCallController extends GetxController
     ever(callType, (String type) {
       _handleWakelock(type);
     });
+
     if (NavUtils.arguments != null) {
       await _initCallArguments();
       _handleCallTypeLogic();
@@ -106,14 +107,32 @@ class CallKitOutgoingCallController extends GetxController
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
+
+    if (isIncoming.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for incoming call");
+      await setInitialAudioRouteDevice();
+    }
+
     super.onInit();
+  }
+
+  Future<void> setInitialAudioRouteDevice() async {
+    final FlyAudioDevice? initialDevice = await MirrorFlyCallKit.getCurrentAudioRoute();
+    callkitLogger.info("$audioRoutingTag Initial audio device found: ${initialDevice?.toMap()}");
+
+    if (initialDevice != null) {
+      selectedAudioDeviceId.value = initialDevice.id;
+      selectedAudioDevice.value = initialDevice;
+        callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice.value?.toMap()}");
+    } else {
+      callkitLogger.info("$audioRoutingTag No initial audio device found");
+    }
   }
 
   Future<void> _initCallArguments() async {
     try {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Initializing call arguments from NavUtils");
-      // callerUsersId.value = NavUtils.arguments?["userJid"] as List<String?>;
       callType(NavUtils.arguments?["callType"]);
       groupId(NavUtils.arguments?["chatId"] as String? ?? "");
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
@@ -148,8 +167,8 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> initCallViewIds() async{
-    final localId = getLocalParticipantId();
-    final remoteId = getRemoteParticipantsId().firstOrNull ?? "";
+    final localId = getLocalParticipant()?.identity ?? "";
+    final remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
 
     mainCallViewUserId.value = remoteId;     // show remote as main view
     secondaryCallViewUserId.value = localId; // local goes to small preview
@@ -354,7 +373,7 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       final remoteEntry = remoteUserNameMap.entries.firstWhere(
-            (entry) => entry.key != getLocalParticipantId(),
+            (entry) => entry.key != getLocalParticipant()?.identity,
       );
       remoteUserNameMap.forEach((key, value) {
         callkitLogger.info(
@@ -502,13 +521,8 @@ class CallKitOutgoingCallController extends GetxController
   String getParticipantConnectionState(FlyCallStatusEvent? status) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] getParticipantConnectionState called with status: $status");
     switch (status) {
-      case FlyCallStatusEvent.connected:
-      case FlyCallStatusEvent.reconnected:
-        return "";
       case FlyCallStatusEvent.connecting:
         return "Connecting";
-      case FlyCallStatusEvent.reconnecting:
-        return "Reconnecting";
       case FlyCallStatusEvent.disconnected:
         return "Disconnected";
       case FlyCallStatusEvent.calling:
@@ -519,6 +533,8 @@ class CallKitOutgoingCallController extends GetxController
         return "Trying to connect";
       case FlyCallStatusEvent.callHold:
         return "On Hold";
+      case FlyCallStatusEvent.reconnecting:
+        return "Reconnecting";
       default:
         return "";
     }
@@ -706,18 +722,11 @@ class CallKitOutgoingCallController extends GetxController
         final index = callerList.indexWhere((e) => e.identity == id);
         if (!index.isNegative) {
           final target = callerList[index];
-          // if (target.isReconnecting == true) {
-          //   callkitLogger.info(
-          //       "[MirrorFly] → Participant $id is already marked as reconnecting");
-          // } else {
-            callerList[index] = target.copyWith(isReconnecting: true, flyCallStatus: FlyCallStatusEvent.reconnecting);
-            callkitLogger.info("[MirrorFly] → Updated participant $id as reconnecting");
-          // }
-
-          if (target.isLocalParticipant) {
-            callStatus("Reconnecting...");
-            callTryStatus("Reconnecting...");
-          }
+          callerList[index] = target.copyWith(
+              isReconnecting: true,
+              flyCallStatus: FlyCallStatusEvent.reconnecting);
+          callkitLogger
+              .info("[MirrorFly] → Updated participant $id as reconnecting");
         } else {
           callkitLogger.info(
               "[MirrorFly] → No participant found in callerList for id: $id");
@@ -831,26 +840,33 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  /// Get self id
+/*  /// Get self id
   String getLocalParticipantId() {
     final String localId = callerList
         .firstWhereOrNull((p) => p.isLocalParticipant)
         ?.identity ?? "";
-    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localId");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipantID: $localId");
     return localId;
+  }*/
+
+  /// Get Local participant
+  FlyCallParticipant? getLocalParticipant() {
+    final FlyCallParticipant? localParticipant = callerList
+        .firstWhereOrNull((p) => p.isLocalParticipant);
+    callkitLogger.info("[MirrorFly][OutgoingCallController] getLocalParticipant: $localParticipant");
+    return localParticipant;
   }
 
   ///
-  List<String> getRemoteParticipantsId() {
+  List<FlyCallParticipant> getRemoteParticipants() {
     callkitLogger.info("[MirrorFly][OutgoingCallController] getRemoteParticipantsId called with callerList length: ${callerList.length}");
     try {
-      final List<String> remoteIds = callerList
+      final List<FlyCallParticipant> remoteParticipants = callerList
           .where((p) => !p.isLocalParticipant)
-          .map((p) => p.identity)
           .toList();
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteIds");
-      return remoteIds;
+          "[MirrorFly][OutgoingCallController] getRemoteParticipantsId: $remoteParticipants");
+      return remoteParticipants;
     } catch (e) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] getRemoteParticipantsId error: $e");
@@ -885,7 +901,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void callTimeOut({required List<String> participantsId}) async {
+  void callTimeOut({required List<String> participantsId, required bool isCallFailed}) async {
 
     for (final id in participantsId) {
       if (!callAgainUserList.contains(id)) {
@@ -912,7 +928,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
-      _navigateToTimeout();
+      _navigateToTimeout(isCallFailed: isCallFailed);
     }
 
 
@@ -965,8 +981,11 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _navigateToTimeout() {
-    toToast("Call timed out");
+  void _navigateToTimeout({required bool isCallFailed}) {
+    final String message = isCallFailed ? "Call Failed" : "Call timed out";
+    callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating to timeout view with message: $message");
+
+    toToast(message);
 
     final String type       = callType.value;
     final String calleeName = isGroupCall.value
@@ -1030,13 +1049,14 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       final String name = remoteUserNameMap[userId] ?? "";
-      await Future.delayed(const Duration(milliseconds: 500));
-      toToast("$name is busy");
       callerList.removeWhere((e) => e.identity == userId);
+      callerList.refresh();
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
        NavUtils.back();
       }
+      await Future.delayed(const Duration(milliseconds: 500));
+      toToast("$name is busy");
       return;
     }
 
@@ -1058,7 +1078,13 @@ class CallKitOutgoingCallController extends GetxController
     updateCallerStatusList(participantsId: participantsId, status: FlyCallStatusEvent.calling);
   }
 
-  void onConnected(List<String> participantIds) {
+  void onConnected(List<String> participantIds) async {
+
+    if (!isIncoming.value) {
+      await setInitialAudioRouteDevice();
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for outgoing call");
+    }
+
     if (!isGroupCall.value) {
 
       final bool isUserOnHold = callerList.any((p) =>
@@ -1246,23 +1272,11 @@ class CallKitOutgoingCallController extends GetxController
     isOnGoingCallViewEnable.value = true;
   }
 
-
-  void muteAudio() async {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start");
-
-    MirrorFlyCallKit.toggleMicrophone(result: (result) async {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio toggleMicrophone result : $result");
-
-      if (result) {
-        final bool isMicEnabled =
-            await MirrorFlyCallKit.getIsMicrophoneEnabled();
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone isMicEnabled : $isMicEnabled");
-      } else {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] muteAudio failure toggleMicrophone result : $result");
-      }
-    });
+  void setMicroPhoneEnabled({required bool enabled}) async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start with enabled : $enabled");
+    await MirrorFlyCallKit.setMicrophoneMuted(mute: !enabled, result: (_) {});
+    final bool isMicEnabled = await MirrorFlyCallKit.getIsMicrophoneEnabled();
+    isAudioEnabled.value = isMicEnabled;
   }
 
   void setCameraEnable({required bool enable}) async {
@@ -1278,18 +1292,11 @@ class CallKitOutgoingCallController extends GetxController
     final bool callStatus = await MirrorFlyCallKit.isCallConnected();
 
     if (flyCallType == FlyCallType.audio && callStatus) {
-      log(
-          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
       requestVideoCallSwitch();
       return;
-    }else {
-      log("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
-    }
-
-    if (flyCallType == FlyCallType.video && !callStatus) {
-      log(
-          "[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not connected, cannot change camera state. callStatus- $callStatus");
-      return;
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Current call type is $flyCallType callStatus $callStatus");
     }
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
@@ -1306,8 +1313,6 @@ class CallKitOutgoingCallController extends GetxController
           }
         });
   }
-
-
 
   void onCallSwitchRemoteUserDeclined() {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallSwitchRemoteUserDeclined");
@@ -1350,8 +1355,8 @@ class CallKitOutgoingCallController extends GetxController
             "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
         callerList.removeWhere((e) => e.identity == participants.firstOrNull);
         final String name = remoteUserNameMap[participants.firstOrNull] ?? participants.firstOrNull ?? "";
-        toToast("$name is engaged");
-
+        toToast(
+            getTranslated("usernameIsBusy").replaceFirst("%d", name));
         // Check if all remote participants are engaged
         bool allEngaged = callerList
             .where((p) => !p.isLocalParticipant)
@@ -1380,9 +1385,10 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] single user engaged logic,"
             " remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
       );
-      toToast("${remoteUserNameMap[participants.firstOrNull]} is engaged");
+      toToast(
+          getTranslated("usernameIsBusy").replaceFirst("%d", remoteUserNameMap[participants.firstOrNull] ?? ""));
       await Future.delayed(const Duration(milliseconds: 500));
-      if (NavUtils.canPop) {
+      if (NavUtils.canPop && NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         NavUtils.back();
       }
       return;
@@ -1469,10 +1475,10 @@ class CallKitOutgoingCallController extends GetxController
     final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == FlyCallType.audio && callStatus) {
-      log("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
+      callkitLogger.info("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
       _videoCallSwitchRequestConfirmationPopup();
     }else{
-      log("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
     }
 
   }
@@ -1482,12 +1488,12 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
     toToast("Video call switch canceled");
-    closeDialog();
+    // closeDialog();
     // _cancelCallSwitchReqWaiting();
   }
 
   ///
-  void acceptIncomingCallSwitchRequest() async {
+  void acceptIncomingCallSwitchRequest() async{
     callkitLogger.info("[MirrorFly][OutgoingCallController]  acceptIncomingCallSwitchRequest invoked...");
     closeDialog();
     await MirrorFlyCallKit.acceptIncomingVideoCallSwitchRequest();
@@ -1509,7 +1515,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void onVideoCallSwitchTimeOut() {
     closeDialog();
-    final String remoteId = getRemoteParticipantsId().firstOrNull ?? "";
+    final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
     final remoteUserName = remoteUserNameMap[remoteId] ?? "";
     toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
   }
@@ -1598,7 +1604,7 @@ class CallKitOutgoingCallController extends GetxController
     DialogUtils.showAlert(
       dialogStyle: AppStyleConfig.dialogStyle,
       message: getTranslated("videoSwitchRequestedMessage")
-          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipantsId().firstOrNull] ?? ""),
+          .replaceFirst("%d", remoteUserNameMap[getRemoteParticipants().firstOrNull?.identity] ?? ""),
       actions: [
         TextButton(
             onPressed: () async {
@@ -1691,16 +1697,25 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  void onCallFailed() {
+  void onCallFailed({required List<String>? participantsId}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
-    _resetValues();
-    _stopTimer();
-    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
-      // callStatus("Call Failed");
-      // toToast("Call Failed");
-      NavUtils.back();
+
+    if (participantsId == null || participantsId.isEmpty) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: No participantsId provided");
+      return;
+    }
+
+    final FlyCallDirection flyCallDirection = await MirrorFlyCallKit.getCallDirection();
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Call direction is $flyCallDirection");
+
+    if (flyCallDirection == FlyCallDirection.incoming) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Incoming call, skipping timeout handling");
+      toToast("Call failed");
+      await NavUtils.back();
+      return;
     } else {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Current route is not OutgoingCallView, skipping navigation.");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Outgoing call, processing timeout handling");
+      callTimeOut(participantsId: participantsId, isCallFailed: true);
     }
   }
 
@@ -1710,14 +1725,24 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
     final groupJid = CallUtils.getJidFromId(groupId.value);
-    final List<String> pickedContacts =
-    await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
-    if (pickedContacts.length > 8) {
-      // Temp limit to 5 participants
-      toToast("You can invite up to 8 participants only");
+    final List<String> pickedContacts = await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
+
+    final int currentCallParticipantsCount = callerList.length;
+    final int pickedCount = pickedContacts.length;
+
+    final int totalAfterInvite = currentCallParticipantsCount + pickedCount;
+    if (totalAfterInvite > _maxCallInvitedParticipant) {
+      final int exceededCount = totalAfterInvite - _maxCallInvitedParticipant;
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: Exceeded max participants limit. Current:"
+          " $currentCallParticipantsCount,"
+          " Picked: $pickedCount,"
+          " Max: $_maxCallInvitedParticipant,"
+          " Exceeded by: $exceededCount");
+
+      toToast("You can invite only $_maxCallInvitedParticipant participants. You have exceeded by $exceededCount participants.");
       return;
     } else {
-
       MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
         callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
@@ -1982,7 +2007,6 @@ class CallKitOutgoingCallController extends GetxController
     isVideoEnabled(false);
     speakerOn(false);
     isOnGoingCallViewEnable(false);
-    // callerUsersId(<String?>[]);
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
@@ -2013,35 +2037,20 @@ class CallKitOutgoingCallController extends GetxController
   /// -------------------------------------------------------------------
 
   /// Get the available audio output devices
-  Future<List<FlyMediaDevice>> getAvailableAudioOutputDevices() async {
-    callkitLogger.info(
-        "$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
-    final List<FlyMediaDevice> devices = await MirrorFlyCallKit.getAvailableMediaDevices();
-    flyMediaDevices.clear();
-    flyMediaDevices = devices;
-
-    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices:"
-        " Retrieved devices: ${devices.map((d) => d.deviceId).toList()}");
-
-    return devices;
+  Future<List<FlyAudioDevice>> getAvailableAudioOutputDevices() async {
+    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
+    return await MirrorFlyCallKit.getAvailableAudioRoutes();
   }
 
   /// Change the audio output device
-  Future<void> changeAudioDevice(String deviceId) async {
+  Future<void> changeAudioDevice(FlyAudioDevice flyAudioDevice) async {
     callkitLogger.info(
-        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with deviceId: $deviceId");
-    try {
-      final FlyMediaDevice? flyMediaDevice = flyMediaDevices
-          .firstWhereOrNull((device) => device.deviceId == deviceId);
-      if (flyMediaDevice == null) {
-        callkitLogger.info(
-            "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: No matching device found for deviceId: $deviceId");
-        return;
-      }
-      await MirrorFlyCallKit.changeAudioOutputDevice(flyMediaDevice: flyMediaDevice);
-    } catch (e) {
-      callkitLogger.info(
-          "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice: Exception occurred - $e");
-    }
+        "$audioRoutingTag [MirrorFly][OutgoingCallController] changeAudioDevice called with flyAudioDevice: $flyAudioDevice");
+    MirrorFlyCallKit.changeAudioRoute(flyAudioDevice: flyAudioDevice);
+  }
+
+  void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) {
+    selectedAudioDevice.value = flyAudioDevice;
+    selectedAudioDeviceId.value = flyAudioDevice.id;
   }
 }

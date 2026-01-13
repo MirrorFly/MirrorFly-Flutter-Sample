@@ -29,6 +29,7 @@ import '../modules/chat/views/location_sent_view.dart';
 import '../modules/chatInfo/views/chat_info_view.dart';
 import '../modules/contact_sync/views/contact_sync_view.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
+import '../call_kit/sip_call/dialer_view.dart';
 import '../modules/delete_account/views/delete_account_view.dart';
 import '../modules/delete_account_reason/views/delete_account_reason_view.dart';
 import '../modules/gallery_picker/views/gallery_picker_view.dart';
@@ -258,6 +259,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
           builder: (_) =>
               const CallKitTimeoutView(),
           settings: settings);
+
+      case Routes.dialerPad:
+      return MaterialPageRoute(
+          builder: (_) => const DialerView(), settings: settings);
 
     default:
       if (settings.name!.startsWith(Routes.dashboard)) {

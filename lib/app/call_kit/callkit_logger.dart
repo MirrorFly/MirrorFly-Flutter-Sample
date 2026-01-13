@@ -29,7 +29,6 @@ class CallkitLogger {
     final emoji = _emojiForLevel(level);
     final formattedMessage = '$emoji [MirrorFly] [$level][$now] $message';
 
-    log(formattedMessage, name: _tag);
     print(formattedMessage);
 
     if (_enableFileLogging) {

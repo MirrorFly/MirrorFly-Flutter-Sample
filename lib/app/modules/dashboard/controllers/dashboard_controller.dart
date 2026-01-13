@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../../../call_modules/call_utils.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -101,18 +99,6 @@ class DashboardController extends FullLifeCycleController
 
   @override
   void onInit() async {
-    Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
-      if(response.isSuccess) {
-        print("centrifuge CallKit initialized successfully");
-      } else {
-        print("centrifuge CallKit initialization failed: ${response.exception}");
-        LogMessage.d("CallKit", "CallKit initialization failed: ${response.exception}");
-      }
-    });
-
-    LogMessage.d("CallKit", "CallKit initialized successfully");
-    await Mirrorfly.updateVoipTokenForLiveKitCalls();
-    LogMessage.d("CallKit", "updateVoipTokenForLiveKitCalls successfully");
 
     arguments = NavUtils.arguments as DashboardViewArguments?;
     tabController = TabController(length: 2, vsync: this);
@@ -203,7 +189,7 @@ class DashboardController extends FullLifeCycleController
 
   infoPage(ProfileDetails profile) {
     if (profile.isGroupProfile ?? false) {
-      NavUtils.toNamed(Routes.groupInfo, arguments: profile)?.then((value) {
+      NavUtils.toNamed(Routes.groupInfo, arguments: profile).then((value) {
         if (value != null) {
           // profile_(value as Profile);
           // isBlocked(profile.isBlocked);
@@ -217,7 +203,7 @@ class DashboardController extends FullLifeCycleController
     } else {
       NavUtils.toNamed(Routes.chatInfo,
               arguments: ChatInfoArguments(chatJid: profile.jid.checkNull()))
-          ?.then((value) {});
+          .then((value) {});
     }
   }
 
@@ -1945,7 +1931,7 @@ class DashboardController extends FullLifeCycleController
                 NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                   "userJid": [fromUser],
                   "callType": CallType.video
-                })?.then((value) => setOnGoingUserAvail());
+                }).then((value) => setOnGoingUserAvail());
               }
             });
       } else {
@@ -1985,7 +1971,7 @@ class DashboardController extends FullLifeCycleController
               NavUtils.toNamed(Routes.outGoingCallView, arguments: {
                 "userJid": [toUser],
                 "callType": CallType.audio
-              })?.then((value) => setOnGoingUserAvail());
+              }).then((value) => setOnGoingUserAvail());
             }
           });
     } else {
@@ -2402,6 +2388,14 @@ class DashboardController extends FullLifeCycleController
     });
     recentChats.refresh();
   }
+
+  /// ------------------ ///
+  /// SIP call related ///
+  /// ------------------ ///
+  void openDialerPad() {
+    NavUtils.toNamed(Routes.dialerPad);
+  }
+
 }
 
 class MyController extends GetxController {

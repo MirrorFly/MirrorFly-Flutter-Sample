@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-import 'package:path/path.dart';
 import '../app_style_config.dart';
 import '../call_modules/audio_level_animation.dart';
 import '../call_modules/call_widgets.dart';
@@ -48,8 +46,12 @@ class CallKitOutgoingCallView
 
     final String remoteTileParticipantId = !controller.isOnGoingCallViewEnable.value &&
         controller.callType.toUpperCase() == "VIDEO"
-        ? controller.getLocalParticipantId()
+        ? controller.getLocalParticipant()?.identity ?? ""
         : controller.mainCallViewUserId.value;
+    final FlyCallParticipant? remoteParticipant =
+        controller.callerList.firstWhereOrNull(
+            (e) => e.identity == remoteTileParticipantId);
+    final String remoteParticipantId = remoteParticipant?.identity ?? "";
 
     callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
 
@@ -70,7 +72,8 @@ class CallKitOutgoingCallView
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
-                      participantId: controller.getRemoteParticipantsId().firstOrNull ?? "",
+                      participantId: remoteParticipantId,
+                      callKind: remoteParticipant?.kind,
                       scale: 1,
                     ),
                   ),
@@ -105,28 +108,27 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-             buildMuteIcon(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? "", radius: 10),
+             buildMuteIcon(remoteParticipantId, radius: 10),
 
               /// Connection Quality Icon
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstWhereOrNull((id) => id.isNotEmpty) ?? ""),
+                visible: controller.callerConnectionQuality.containsKey(remoteParticipantId),
                 child: Positioned(
                   right: 30,
                   top: 190,
                   child: getConnectionQualityIcon(
-                      controller.callerConnectionQuality[
-                        controller.getRemoteParticipantsId().firstOrNull ?? ""] ??
+                      controller.callerConnectionQuality[remoteParticipantId] ??
                           FlyConnectionQuality.unknown),
                 ),
               ),
 
               /// Speaking Indicator
               Visibility(
-                visible: controller.callerConnectionQuality.containsKey(controller.getRemoteParticipantsId().firstOrNull ?? ""),
+                visible: controller.callerConnectionQuality.containsKey(remoteParticipantId),
                 child: Positioned(
                   right: 30,
                   top: 150,
-                  child: buildSpeakingIndicatorIcon(controller.getRemoteParticipantsId().firstOrNull ?? ""),
+                  child:Obx((){ return buildSpeakingIndicatorIcon(remoteParticipantId);}),
                 ),
               ),
                   ],
@@ -188,7 +190,8 @@ class CallKitOutgoingCallView
                           ),
                         ),
                       ),
-                      Center(
+                      Obx((){
+                        return Center(
                         child: Text(
                           controller.callDuration.value,
                           style: const TextStyle(
@@ -197,7 +200,7 @@ class CallKitOutgoingCallView
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
+                      );}),
                       Visibility(
                         visible: controller.callerList
                                 .any((FlyCallParticipant e) =>
@@ -381,15 +384,15 @@ class CallKitOutgoingCallView
                                     MirrorFlyCallView(
                                       key: ValueKey(controller.callerList[index].identity),
                                       userJID: controller
-                                          .callerList[index].identity ??
-                                          "",
+                                          .callerList[index].identity,
                                       fit: BoxFit.cover,
                                       viewBgColor:
                                       AppColors.audioCallerBackground,
                                       profileImage: getUserProfileImageWithName(
                                         participantId: controller
                                             .callerList[index].identity,
-                                        scale: 1.2,
+                                        scale: 1.2, callKind: controller
+                                            .callerList[index].kind,
                                       ),
                                     ),
 
@@ -506,14 +509,14 @@ class CallKitOutgoingCallView
                                         // key: ValueKey(controller.groupId.value),
                                         userJID: !controller.isOnGoingCallViewEnable.value &&
                                             controller.callType.toUpperCase() == "VIDEO"
-                                            ? controller.getLocalParticipantId():controller.groupId.value,
+                                            ? controller.getLocalParticipant()?.identity ?? "" :controller.groupId.value,
                                         fit: BoxFit.cover,
                                         viewBgColor:
                                             AppColors.audioCallerBackground,
                                         profileImage: getUserProfileImageWithName(
                                           isGroup: true,
                                           participantId: controller.groupId.value,
-                                          scale: 1,
+                                          scale: 1, callKind: null,
                                         ),
                                       ),
                                       _buildGradientOverlay(
@@ -595,6 +598,8 @@ class CallKitOutgoingCallView
 
   ///  Local Preview Widget
   Widget _buildLocalPreview({required double width, required double height}) {
+    final participantId =
+    controller.getLocalParticipant()?.identity ?? "";
     return Container(
       width: width,
       height: height,
@@ -605,14 +610,14 @@ class CallKitOutgoingCallView
           Stack(
             children: [
               MirrorFlyCallView(
-                viewBgColor: AppColors.callerBackground,
+                viewBgColor: AppColors.audioCallerBackground,
                 // key: ValueKey(controller.getLocalParticipantId()),
                 userJID: controller.secondaryCallViewUserId.value,
                 fit: BoxFit.cover,
                 profileImage: getUserProfileImageWithName(
-                  participantId: controller.getLocalParticipantId(),
+                  participantId: controller.getLocalParticipant()?.identity ?? "",
                   scale: 2,
-                  useMaxSize: true
+                  useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
                 ),onTap: (){controller.videoSwap();},
               ),
 
@@ -645,7 +650,7 @@ class CallKitOutgoingCallView
           // Connection Quality Icon
           Visibility(
             visible: controller.callerConnectionQuality
-                .containsKey(controller.getLocalParticipantId()),
+                .containsKey(controller.getLocalParticipant()?.identity ?? ""),
             child: Positioned(
               top: 8,
               left: 8,
@@ -659,7 +664,7 @@ class CallKitOutgoingCallView
                       data: const IconThemeData(size: 12, color: Colors.transparent),
                       child: getConnectionQualityIcon(
                           controller.callerConnectionQuality[
-                                  controller.getLocalParticipantId()] ??
+                                  controller.getLocalParticipant()?.identity ?? ""] ??
                               FlyConnectionQuality.unknown),
                     ),
                   ),
@@ -674,7 +679,7 @@ class CallKitOutgoingCallView
             right: 8,
             child: Obx(() {
               return buildMuteIcon(
-                controller.getLocalParticipantId(),
+                controller.getLocalParticipant()?.identity ?? "",
                 isLocalParticipant: true,
               );
             }),
@@ -686,7 +691,7 @@ class CallKitOutgoingCallView
             right: 8,
             child: Obx(() {
               return buildSpeakingIndicatorIcon(
-                  controller.getLocalParticipantId());
+                  participantId);
             }),
           ),
         ],
@@ -719,9 +724,9 @@ class CallKitOutgoingCallView
 
   Widget getUserProfileImageWithName({
     required String participantId,
-    bool? isGroup = false,
+    bool isGroup = false,
     double scale = 1.0,
-    bool useMaxSize = false,
+    bool useMaxSize = false, required callKind,
   }) {
 
     callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
@@ -732,10 +737,9 @@ class CallKitOutgoingCallView
       return const Offstage();
     }
 
-    final bool isGroupCall = isGroup == true;
-    callkitLogger.info("[getUserProfileImageWithName] isGroupCall: $isGroupCall");
+    callkitLogger.info("[getUserProfileImageWithName] isGroupCall: $isGroup");
 
-    final String normalizedParticipantId = controller.validId(userId: participantId, isGroup: isGroupCall);
+    final String normalizedParticipantId = controller.validId(userId: participantId, isGroup: isGroup);
     callkitLogger.info("[getUserProfileImageWithName] normalizedParticipantId: $normalizedParticipantId");
 
     final Future<ProfileDetails> profileDetails = isGroup == true
@@ -766,7 +770,7 @@ class CallKitOutgoingCallView
             return const SizedBox.shrink();
           }
 
-          RxBool isLocalView = (participantId == controller.getLocalParticipantId()).obs;
+          RxBool isLocalView = (participantId == controller.getLocalParticipant()?.identity).obs;
           return Column(
             mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -842,18 +846,31 @@ class CallKitOutgoingCallView
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildCallOption(
-                isActive: false,
-                icon: Icons.volume_up,
+                isActive: controller.selectedAudioDevice.value?.type ==
+                    FlyAudioDeviceType.speaker ? true : false,
+                icon: controller.selectedAudioDevice.value?.type ==
+                    FlyAudioDeviceType.speaker ? Icons.volume_up
+                    : controller.selectedAudioDevice.value?.type ==
+                    FlyAudioDeviceType.headset ? Icons.headset
+                    : controller.selectedAudioDevice.value?.type ==
+                    FlyAudioDeviceType.bluetooth ? Icons.bluetooth_connected
+                    : Icons.volume_up,
                 onTap: () async {
+                  callkitLogger.info("[_buildCallControls] Audio device selector tapped");
+                  print("Audio device selector tapped");
                   _showAudioDeviceSelector(context);
                 },
               ),
               _buildCallOption(
-                isActive: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false,
-                icon: controller.callerList.firstWhereOrNull((e) => e.isLocalParticipant)?.isAudioMuted ?? false ? Icons.mic_off : Icons.mic,
-                onTap: controller.muteAudio,
+                isActive: controller.isAudioEnabled.value,
+                icon: !controller.isAudioEnabled.value ? Icons.mic_off : Icons.mic,
+                onTap: () {
+                  final bool enable = !(controller.isAudioEnabled.value);
+                  callkitLogger.info("[_buildCallControls] Local participant found enable: $enable");
+                  controller.setMicroPhoneEnabled(enabled: enable);
+                },
               ),
-              if (controller.callType.value.toLowerCase() == CallType.video)
+              // if (controller.callType.value.toLowerCase() == CallType.video)
                 _buildCallOption(
                   isActive: true,
                   icon: !controller.isVideoEnabled.value
@@ -872,22 +889,14 @@ class CallKitOutgoingCallView
                       : Icons.flip_camera_android,
                   onTap: controller.switchCamera,
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.audio && controller.isVideoEnabled.value)
-                _buildCallOption(
-                  isActive: false,
-                  icon: controller.cameraPosition.value == CameraType.front
-                      ? Icons.cameraswitch
-                      : Icons.flip_camera_android,
-                  onTap: controller.switchCamera,
-                ),
-              if (controller.callType.value.toLowerCase() == CallType.audio)
-                _buildCallOption(
-                  isActive: true,
-                  icon: !controller.isVideoEnabled.value
-                      ? Icons.videocam_off
-                      : Icons.videocam,
-                  onTap: controller.requestVideoCallSwitch,
-                ),
+              // if (controller.callType.value.toLowerCase() == CallType.audio)
+              //   _buildCallOption(
+              //     isActive: true,
+              //     icon: !controller.isVideoEnabled.value
+              //         ? Icons.videocam_off
+              //         : Icons.videocam,
+              //     onTap: controller.requestVideoCallSwitch,
+              //   ),
             ],
           )),
     );
@@ -984,54 +993,73 @@ class CallKitOutgoingCallView
   ///
   ///
   void _showAudioDeviceSelector(BuildContext context) async {
-    final List<FlyMediaDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
-    await showDialog(
-      context: context.mounted ? context : Get.context!,
-      barrierDismissible: true,
-      builder: (_) => Center(
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: 250,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+    final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
+    callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${availableTypes.map((e) => e.toMap()).toList()}");
+    if (availableTypes.length > 2) {
+      await showDialog(
+        context: context.mounted ? context : Get.context!,
+        barrierDismissible: true,
+        builder: (_) =>
+            Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  width: 250,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: availableTypes.map((type) {
+                      return ListTile(
+                        leading: getAudioDeviceIcon(type.type),
+                        title: Text(type.deviceName),
+                        trailing: controller.selectedAudioDeviceId.value ==
+                            type.id
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : null,
+                        onTap: () {
+                          callkitLogger.info("#[_showAudioDeviceSelector] Selected audio device: ${type.toMap()}");
+                          controller.changeAudioDevice(type);
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: availableTypes.map((type) {
-                return ListTile(
-                  leading: getAudioDeviceIcon(type.groupId ?? ""),
-                  title: Text(type.label),
-                  trailing: controller.selectedAudioDeviceId.value == type.deviceId
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    controller.changeAudioDevice(type.deviceId);
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+      );
+    } else {
+      final bool isReceiverSelected = controller.selectedAudioDevice?.value?.type == FlyAudioDeviceType.receiver;
+      callkitLogger.info(
+          "[_showAudioDeviceSelector] Toggling audio device between speaker and "
+          "selectedAudioDevice: ${controller.selectedAudioDevice?.value?.type}, "
+              "isReceiverSelected: $isReceiverSelected, "
+              "receiver currently selected: ${controller.selectedAudioDevice?.value?.toMap()}");
 
-  /// Get audio device icon
-  Icon getAudioDeviceIcon(String kind) {
-    callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
-    switch (kind) {
-      case FlyMediaDevice.bluetoothOutput:
-        return const Icon(Icons.bluetooth, color: Colors.black);
-      case FlyMediaDevice.speakerOutput:
-        return const Icon(Icons.volume_up, color: Colors.black);
-      case FlyMediaDevice.earPieceOutput:
-        return const Icon(Icons.hearing, color: Colors.black);
-      default:
-        return const Icon(Icons.volume_up, color: Colors.black);
+      isReceiverSelected
+          ? controller.changeAudioDevice(availableTypes.firstWhere(
+              (element) => element.type == FlyAudioDeviceType.speaker))
+          : controller.changeAudioDevice(availableTypes.firstWhere(
+              (element) => element.type == FlyAudioDeviceType.receiver));
     }
   }
+}
+
+/// Get audio device icon
+Icon getAudioDeviceIcon(FlyAudioDeviceType kind) {
+  callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+  switch (kind) {
+    case FlyAudioDeviceType.bluetooth:
+      return const Icon(Icons.bluetooth_connected, color: Colors.black);
+    case FlyAudioDeviceType.speaker:
+      return const Icon(Icons.volume_up, color: Colors.black);
+    case FlyAudioDeviceType.receiver:
+      return const Icon(Icons.phone_iphone, color: Colors.black);
+    case FlyAudioDeviceType.headset:
+      return const Icon(Icons.headset, color: Colors.black);
+    }
 }

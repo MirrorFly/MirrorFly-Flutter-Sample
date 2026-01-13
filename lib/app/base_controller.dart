@@ -170,7 +170,7 @@ class BaseController {
         case FlyCallStatusEvent.callTimeout:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callTimeOut");
           callKitOutgoingCallController.callTimeOut(
-              participantsId: flyCallStatus.participantsIds);
+              participantsId: flyCallStatus.participantsIds, isCallFailed: false);
           break;
         case FlyCallStatusEvent.rejected:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent rejected");
@@ -203,16 +203,16 @@ class BaseController {
           }
         case FlyCallStatusEvent.callFailed:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
-          callKitOutgoingCallController.onCallFailed();
+          callKitOutgoingCallController.onCallFailed(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.joinSync:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent joinSync");
           // if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
           //   callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
           // }
-        case FlyCallStatusEvent.permissionDenied:
+       /* case FlyCallStatusEvent.permissionDenied:
           // TODO: Handle this case.
-          throw UnimplementedError();
+          throw UnimplementedError();*/
       }
     });
 
@@ -460,12 +460,25 @@ class BaseController {
         case FlyCallActionEvent.subscriptionException:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent subscriptionException");
           break;
+
         case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
           if (Get.isRegistered<CallKitOutgoingCallController>()) {
             final controller = Get.find<CallKitOutgoingCallController>();
             controller.onParticipantListUpdated();
           }
+
+        case FlyCallActionEvent.onAudioRouteChanged:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onAudioRouteChanged, audioDevice=${flyCallAction.flyAudioDevice}");
+          if (Get.isRegistered<CallKitOutgoingCallController>()) {
+            final controller = Get.find<CallKitOutgoingCallController>();
+            if (flyCallAction.flyAudioDevice == null) {
+              callkitLogger.info("[MirrorFly][BaseController] onAudioRouteChanged - flyAudioDevice is null");
+              return;
+            }
+            controller.onAudioRouteChanged(flyCallAction.flyAudioDevice!);
+          }
+
         default:
           break;
       }
