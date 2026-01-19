@@ -5,6 +5,7 @@ import '../app_style_config.dart';
 import '../call_modules/audio_level_animation.dart';
 import '../call_modules/call_widgets.dart';
 import '../common/constants.dart';
+import '../common/widgets.dart';
 import '../data/helper.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
@@ -231,7 +232,7 @@ class CallKitOutgoingCallView
 
         /// Invite Participants Button
         Obx(() {
-          final showInviteButton = controller.isOnGoingCallViewEnable.value;
+          final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
           return Visibility(
             visible: showInviteButton,
             child: Positioned(
@@ -575,7 +576,7 @@ class CallKitOutgoingCallView
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Obx(() {
-                        final showInviteButton = controller.isOnGoingCallViewEnable.value;
+                        final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
                         return Visibility(
                           visible: showInviteButton,
                           child: IconButton(
@@ -778,10 +779,21 @@ class CallKitOutgoingCallView
 
               SizedBox(height: useMaxSize ? 18 : 0),
 
-              buildProfileImage(
-                snap.data!,
-                size: AppStyleConfig.outgoingCallPageStyle.profileImageSize.width / scale,
-              ),
+              (!isLocalView.value && controller.callKind == FlyCallKind.sip) ?
+                ProfileTextImage(
+                  text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
+                      ? controller.remoteUserNameMap[participantId]!.trim().substring(3)
+                      : "User",
+                  radius: (AppStyleConfig.outgoingCallPageStyle.profileImageSize
+                      .width / scale) / 2,
+                ):
+
+                buildProfileImage(
+                  snap.data!,
+                  size: AppStyleConfig.outgoingCallPageStyle.profileImageSize
+                      .width / scale,
+                ),
+
 
               Obx(() {
                 return isLocalView.value
@@ -870,7 +882,7 @@ class CallKitOutgoingCallView
                   controller.setMicroPhoneEnabled(enabled: enable);
                 },
               ),
-              // if (controller.callType.value.toLowerCase() == CallType.video)
+              if (controller.callKind != FlyCallKind.sip)
                 _buildCallOption(
                   isActive: true,
                   icon: !controller.isVideoEnabled.value
@@ -881,7 +893,7 @@ class CallKitOutgoingCallView
                         enable: !(controller.isVideoEnabled.value));
                   },
                 ),
-              if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value)
+              if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value && controller.callKind != FlyCallKind.sip)
                 _buildCallOption(
                   isActive: false,
                   icon: controller.cameraPosition.value == CameraType.front

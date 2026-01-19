@@ -80,6 +80,8 @@ class CallKitOutgoingCallController extends GetxController
 
   final int _maxCallInvitedParticipant = Constants.maxCallUsersLimitForMirrorFlyCallKit;
 
+  FlyCallKind callKind = FlyCallKind.standard;
+
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
@@ -105,6 +107,7 @@ class CallKitOutgoingCallController extends GetxController
 
     // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
+     callKind = await MirrorFlyCallKit.getCallKind();
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
@@ -295,6 +298,16 @@ class CallKitOutgoingCallController extends GetxController
     if (isGroupCall.value) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
+      return;
+    }
+
+    if(callKind == FlyCallKind.sip){
+      callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
+      for(var user in callerList){
+          remoteUserNameMap[user.identity] =
+          user.isLocalParticipant ? "You" : user.identity;
+          callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
+      }
       return;
     }
 
