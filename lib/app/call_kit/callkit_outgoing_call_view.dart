@@ -862,7 +862,7 @@ class CallKitOutgoingCallView
                 },
               ),
               _buildCallOption(
-                isActive: controller.isAudioEnabled.value,
+                isActive: !controller.isAudioEnabled.value,
                 icon: !controller.isAudioEnabled.value ? Icons.mic_off : Icons.mic,
                 onTap: () {
                   final bool enable = !(controller.isAudioEnabled.value);
