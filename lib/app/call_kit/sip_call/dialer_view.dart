@@ -26,7 +26,7 @@ class DialerView extends NavViewStateful<SipCallController> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -84,23 +84,18 @@ class DialerView extends NavViewStateful<SipCallController> {
               ],
             ),
 
-            /// NUMBER DISPLAY
-
-            const SizedBox(height: 32),
-
             /// DIAL PAD
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: _DialPad(
                   onTap: controller.addDialledNumber,
                 ),
               ),
             ),
-
             /// CALL + BACKSPACE
             Padding(
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -159,8 +154,8 @@ class _DialPad extends StatelessWidget {
       itemCount: keys.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        mainAxisSpacing: 18,
-        crossAxisSpacing: 18,
+        mainAxisSpacing: 1,
+        crossAxisSpacing: 1,
       ),
       itemBuilder: (_, index) {
         final digit = keys[index][0];
@@ -176,7 +171,7 @@ class _DialPad extends StatelessWidget {
               Text(
                 digit,
                 style: const TextStyle(
-                  fontSize: 28,
+                  fontSize: 25,
                   fontWeight: FontWeight.w500,
                 ),
               ),
