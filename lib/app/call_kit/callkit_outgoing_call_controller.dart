@@ -1355,8 +1355,8 @@ class CallKitOutgoingCallController extends GetxController
             "[MirrorFly][OutgoingCallController] remoteUserIsEngaged: The specified participant is not engaged, so removing the user");
         callerList.removeWhere((e) => e.identity == participants.firstOrNull);
         final String name = remoteUserNameMap[participants.firstOrNull] ?? participants.firstOrNull ?? "";
-        toToast("$name is engaged");
-
+        toToast(
+            getTranslated("usernameIsBusy").replaceFirst("%d", name));
         // Check if all remote participants are engaged
         bool allEngaged = callerList
             .where((p) => !p.isLocalParticipant)
@@ -1385,9 +1385,10 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] single user engaged logic,"
             " remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}",
       );
-      toToast("${remoteUserNameMap[participants.firstOrNull]} is engaged");
+      toToast(
+          getTranslated("usernameIsBusy").replaceFirst("%d", remoteUserNameMap[participants.firstOrNull] ?? ""));
       await Future.delayed(const Duration(milliseconds: 500));
-      if (NavUtils.canPop) {
+      if (NavUtils.canPop && NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         NavUtils.back();
       }
       return;
