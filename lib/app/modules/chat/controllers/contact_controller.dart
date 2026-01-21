@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import '../../../call_modules/call_utils.dart';
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
@@ -606,7 +607,8 @@ class ContactController extends FullLifeCycleController
         debugPrint("#Mirrorfly selectedUsersJIDList is empty");
         return;
       }
-      await NavUtils.back(result: selectedUsersJIDList);
+      final List<String> normalizedJid = selectedUsersJIDList.map((e) => CallUtils.getIdFromJidList(e)).toList();
+      await NavUtils.back(result: normalizedJid);
       return;
     }
 
