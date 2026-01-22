@@ -10,6 +10,7 @@ import '../common/widgets.dart';
 import '../data/helper.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import '../stylesheet/stylesheet.dart';
 import 'callkit_logger.dart';
 import 'callkit_outgoing_call_controller.dart';
 
@@ -113,7 +114,7 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-             buildMuteIcon(remoteParticipantId, radius: 10),
+              buildMuteIcon(remoteParticipantId, radius: 10),
 
               /// Connection Quality Icon
               Visibility(
@@ -262,14 +263,14 @@ class CallKitOutgoingCallView
           final previewHeight = previewWidth *
               1.3; // maintain 4:3-ish aspect ratio
           final bottomOffset = controller.showControls.value
-              ? screenSize.height * 0.28
-              : screenSize.height * 0.14;
+              ? screenSize.height * 0.20
+              : screenSize.height * 0.06;
 
           return AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             bottom: bottomOffset,
-            right: screenSize.width * 0.05,
+            right: screenSize.width * 0.0015,
             child: _buildLocalPreview(
               width: previewWidth,
               height: previewHeight,
@@ -305,15 +306,13 @@ class CallKitOutgoingCallView
         height: radius * 2,
         child: Material(
           shape: style.shape,
-          color: isMuted ? style.activeBgColor : style.inactiveBgColor,
+          color: Colors.transparent,
           elevation: 0,
           child: Center(
             child: AppUtils.svgIcon(
-              icon: isMuted ? callMutedIcon : muteInactive,
+              icon: callMutedIcon,
               colorFilter: ColorFilter.mode(
-                isMuted
-                    ? style.activeIconColor
-                    : style.inactiveIconColor,
+                style.activeBgColor,
                 BlendMode.srcIn,
               ),
             ),
@@ -650,29 +649,35 @@ class CallKitOutgoingCallView
     });
   }
 
-  ///  Local Preview Widget
+  ///  Local Preview Widgetx
   Widget _buildLocalPreview({required double width, required double height}) {
     final participantId =
     controller.getLocalParticipant()?.identity ?? "";
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
-      color: Colors.black12,
       child: Stack(
         alignment: Alignment.center,
         children: [
           Stack(
             children: [
               MirrorFlyCallView(
-                viewBgColor: AppColors.audioCallerBackground,
+                radius: 20.0,
+                viewBgColor: Colors.black.withAlpha(65),
                 // key: ValueKey(controller.getLocalParticipantId()),
                 userJID: controller.secondaryCallViewUserId.value,
+                isLocalUser: true,
+                localTileWidth: 90,
+                localTileHeight: 120,
                 fit: BoxFit.cover,
                 profileImage: getUserProfileImageWithName(
                   participantId: controller.getLocalParticipant()?.identity ?? "",
                   scale: 2,
                   useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
-                ),onTap: (){controller.videoSwap();},
+                ),
+                onTap: () {
+                  controller.videoSwap();
+                },
               ),
 
               // Reconnecting overlay widget
@@ -729,8 +734,8 @@ class CallKitOutgoingCallView
 
           // Mute Icon
           Positioned(
-            top: 8,
-            right: 8,
+            top: 26,
+            right: 18,
             child: Obx(() {
               return buildMuteIcon(
                 controller.getLocalParticipant()?.identity ?? "",
@@ -741,8 +746,8 @@ class CallKitOutgoingCallView
 
           // Speaking indicator
           Positioned(
-            top: 8,
-            right: 8,
+            top: 26,
+            right: 18,
             child: Obx(() {
               return buildSpeakingIndicatorIcon(
                   participantId);
@@ -851,11 +856,13 @@ class CallKitOutgoingCallView
               Obx(() {
                 return isLocalView.value
                     ? Padding(
-                     padding: const EdgeInsets.only(top: 14, left: 8),
+                     padding: const EdgeInsets.only(top: 14, left: 8, right: 8),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: controller.isGroupCall.value ? const SizedBox.shrink() : const Text(
                           "You",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -1187,10 +1194,12 @@ class CallKitOutgoingCallView
     }
 
     return AudioLevelAnimation(
-      radius: 12,
+      radius: 8,
       audioLevel: controller.getAudioLevelForParticipant(participantId),
-      bgColor: Colors.blue,
-      dotsColor: Colors.white,
+      bgColor: const CallUserTileStyle().speakingIndicatorStyle
+          .activeBgColor, //AppColors.speakingBg,
+      dotsColor: const CallUserTileStyle()
+          .speakingIndicatorStyle.activeIconColor,
       useLiveKitAudio: true,
     );
   }
@@ -1282,21 +1291,21 @@ class CallKitOutgoingCallView
               (element) => element.type == FlyAudioDeviceType.receiver));
     }
   }
-}
 
-/// Get audio device icon
-Icon getAudioDeviceIcon(FlyAudioDeviceType kind) {
-  callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
-  switch (kind) {
-    case FlyAudioDeviceType.bluetooth:
-      return const Icon(Icons.bluetooth_connected, color: Colors.black);
-    case FlyAudioDeviceType.speaker:
-      return const Icon(Icons.volume_up, color: Colors.black);
-    case FlyAudioDeviceType.receiver:
-      return const Icon(Icons.phone_iphone, color: Colors.black);
-    case FlyAudioDeviceType.headset:
-      return const Icon(Icons.headset, color: Colors.black);
+  /// Get audio device icon
+  Icon getAudioDeviceIcon(FlyAudioDeviceType kind) {
+    callkitLogger.info("[getAudioDeviceIcon] Getting icon for audio device kind: $kind");
+    switch (kind) {
+      case FlyAudioDeviceType.bluetooth:
+        return const Icon(Icons.bluetooth_connected, color: Colors.black);
+      case FlyAudioDeviceType.speaker:
+        return const Icon(Icons.volume_up, color: Colors.black);
+      case FlyAudioDeviceType.receiver:
+        return const Icon(Icons.phone_iphone, color: Colors.black);
+      case FlyAudioDeviceType.headset:
+        return const Icon(Icons.headset, color: Colors.black);
     }
+  }
 }
 
 class _AudioRoutingUIConfig {
