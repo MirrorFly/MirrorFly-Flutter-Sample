@@ -82,6 +82,9 @@ class CallKitOutgoingCallController extends GetxController
 
   FlyCallKind callKind = FlyCallKind.standard;
 
+  final RxBool isAudioDialogOpen = false.obs;
+
+
   @override
   Future<void> onInit() async {
     await _handleInitialCallStatus();
@@ -440,13 +443,13 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get call title for the one-to-many call.
   ///
-  Future<void> getCallTitleForOneToManyCall() async {
+  String getCallTitleForOneToManyCall()  {
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall called");
 
     if (!isGroupCall.value) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] Not a group call");
-      return;
+      return "";
     }
 
     // Filter remote participants:
@@ -472,7 +475,7 @@ class CallKitOutgoingCallController extends GetxController
 
     if (count == 0) {
       titleAfterCallModeChange.value = "You";
-      return;
+      return "";
     }
 
     String title;
@@ -485,12 +488,15 @@ class CallKitOutgoingCallController extends GetxController
       final others = count - 1;
       title =
           "You, ${filteredNames[0]} & $others ${others == 1 ? 'other' : 'others'}";
+
     }
-
-    titleAfterCallModeChange.value = title;
-
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #getCallTitleForOneToManyCall -> $title");
+
+   titleAfterCallModeChange.value = title;
+   return title;
+
+
   }
 
 
@@ -1217,6 +1223,10 @@ class CallKitOutgoingCallController extends GetxController
       final bool isLocalHangup = isSelfId(id: userId);
       if (isLocalHangup) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Local user hung up, checking remaining participants.");
+        if(isAudioDialogOpen.value){
+          Get.back();
+          isAudioDialogOpen.value = false;
+        }
         if(NavUtils.previousRoute == Routes.groupParticipants){
           NavUtils.back();
           NavUtils.back();
@@ -1235,6 +1245,10 @@ class CallKitOutgoingCallController extends GetxController
 
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call disconnectCall");
+        if(isAudioDialogOpen.value){
+          Get.back();
+          isAudioDialogOpen.value = false;
+        }
         if(NavUtils.previousRoute == Routes.groupParticipants){
           NavUtils.back();
           NavUtils.back();
@@ -1262,6 +1276,11 @@ class CallKitOutgoingCallController extends GetxController
     _resetValues();
     _stopTimer();
     closeDialog();
+    if(isAudioDialogOpen.value){
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Closing audio dialog.");
+      Get.back();
+      isAudioDialogOpen.value = false;
+    }
     if(NavUtils.previousRoute == Routes.groupParticipants){
       NavUtils.back();
       NavUtils.back();
@@ -1737,7 +1756,7 @@ class CallKitOutgoingCallController extends GetxController
     final String callMode = this.callMode.value;
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
-    final groupJid = CallUtils.getJidFromId(groupId.value);
+    final groupJid = CallUtils.getGroupJidFromGroupId(groupId.value);
     final List<String> pickedContacts = await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
 
     final int currentCallParticipantsCount = callerList.length;

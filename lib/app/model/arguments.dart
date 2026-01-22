@@ -106,6 +106,7 @@ class ContactListArguments {
       this.callType = "",
       this.forMakeCall = false,
       this.groupJid = "",
+      this.makeCallOutsideChat = false,
       this.forGroup = false});
   final List<String> messageIds;
   final String groupJid;
@@ -113,6 +114,7 @@ class ContactListArguments {
   final String callType;
   final bool forMakeCall;
   final bool forGroup;
+  final bool makeCallOutsideChat;
 }
 
 class ChatInfoArguments {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../app_style_config.dart';
 import '../call_modules/audio_level_animation.dart';
@@ -544,7 +545,7 @@ class CallKitOutgoingCallView
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
-                                                "${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                                controller.chatNameForGroupCall.value == "" ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
                                                 textAlign: TextAlign.center,
                                                 style: const TextStyle(
                                                   color: Colors.white,
@@ -552,6 +553,39 @@ class CallKitOutgoingCallView
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
+                                              const SizedBox(height: 8),
+                                              controller.chatNameForGroupCall.value == "" ? Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: List.generate(
+                                                        controller.callerList.length > 3
+                                                            ? 4
+                                                            : controller.callerList.length,
+                                                            (index) => (index == 3)
+                                                            ? ProfileTextImage(
+                                                          text:
+                                                          "+${controller.callerList.length - 3}",
+                                                          radius: 45 / 2,
+                                                          bgColor: Colors.white,
+                                                          fontColor: Colors.grey,
+                                                        )
+                                                            : FutureBuilder(
+                                                            future: getProfileDetails(CallUtils.getJidFromUserId(userId:controller.callerList[index].identity,isGroup: false)),
+                                                            builder: (ctx, snap) {
+                                                              return snap.hasData &&
+                                                                  snap.data != null
+                                                                  ? Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .all(2.0),
+                                                                child:
+                                                                buildProfileImage(
+                                                                    snap.data!,
+                                                                    size: 45),
+                                                              )
+                                                                  : const Offstage();
+                                                            })),
+                                                           ): Offstage()
+
                                             ],
                                           ),
                                         ),
@@ -1008,6 +1042,7 @@ class CallKitOutgoingCallView
     final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
     callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${availableTypes.map((e) => e.toMap()).toList()}");
     if (availableTypes.length > 2) {
+      controller.isAudioDialogOpen.value = true;
       await showDialog(
         context: context.mounted ? context : Get.context!,
         barrierDismissible: true,
@@ -1034,6 +1069,7 @@ class CallKitOutgoingCallView
                             : null,
                         onTap: () {
                           callkitLogger.info("#[_showAudioDeviceSelector] Selected audio device: ${type.toMap()}");
+                          controller.isAudioDialogOpen.value = false;
                           controller.changeAudioDevice(type);
                           Navigator.of(context).pop();
                         },
