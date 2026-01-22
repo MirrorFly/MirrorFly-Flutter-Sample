@@ -281,7 +281,6 @@ class CallKitOutgoingCallView
   }
 
   Widget buildMuteIcon(String? participantId, {bool isLocalParticipant = false, double radius = 8}) {
-
     callkitLogger.info("[buildMuteIcon] Called for participantId: $participantId");
 
     if (participantId == null || participantId.isEmpty) {
@@ -291,20 +290,37 @@ class CallKitOutgoingCallView
 
     final FlyCallParticipant? participant = controller.callerList.firstWhereOrNull((e) => e.identity == participantId);
     callkitLogger.info("[buildMuteIcon] Participant found: ${participant?.identity}, isMuted: ${participant?.isAudioMuted}");
-    if (participant?.isAudioMuted == true) {
-      return  CircleAvatar(
-        radius: radius,
-        backgroundColor: Colors.grey
-        , //AppColors.audioMutedIconBgColor,
-        child: AppUtils.svgIcon(
-          icon: callMutedIcon,
-          colorFilter: const ColorFilter.mode(
-              Colors.white,
-              BlendMode.srcIn),
-        ),
-      );
+
+    if (participant?.isAudioMuted == null) {
+      return const SizedBox.shrink();
     }
-    return const SizedBox.shrink();
+
+    final style = AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+    final bool isMuted = participant!.isAudioMuted!;
+
+    return Visibility(
+      visible: isMuted,
+      child: SizedBox(
+        width: radius * 2,
+        height: radius * 2,
+        child: Material(
+          shape: style.shape,
+          color: isMuted ? style.activeBgColor : style.inactiveBgColor,
+          elevation: 0,
+          child: Center(
+            child: AppUtils.svgIcon(
+              icon: isMuted ? callMutedIcon : muteInactive,
+              colorFilter: ColorFilter.mode(
+                isMuted
+                    ? style.activeIconColor
+                    : style.inactiveIconColor,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   /// Grid view for group call participants
