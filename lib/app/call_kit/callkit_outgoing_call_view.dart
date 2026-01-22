@@ -31,15 +31,15 @@ class CallKitOutgoingCallView
       return PopScope(
         canPop: false,
         child: Scaffold(
-          resizeToAvoidBottomInset:false,
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
-          body: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: controller.toggleControls,
-            child: controller.isGroupCall.value
-                ? buildGroupGridItem(context)
-                : oneToOneCallUI(context),
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: controller.toggleControls,
+              child: controller.isGroupCall.value
+                  ? buildGroupGridItem(context)
+                  : oneToOneCallUI(context),
+            ),
           ),
         ),
       );
@@ -114,14 +114,14 @@ class CallKitOutgoingCallView
               ),
 
               /// Mute Icon
-              buildMuteIcon(remoteParticipantId, radius: 10),
+              buildMuteIcon(remoteParticipantId, radius: 34),
 
               /// Connection Quality Icon
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(remoteParticipantId),
                 child: Positioned(
-                  right: 30,
-                  top: 190,
+                  right: 38,
+                  top: 108,
                   child: getConnectionQualityIcon(
                       controller.callerConnectionQuality[remoteParticipantId] ??
                           FlyConnectionQuality.unknown),
@@ -132,8 +132,8 @@ class CallKitOutgoingCallView
               Visibility(
                 visible: controller.callerConnectionQuality.containsKey(remoteParticipantId),
                 child: Positioned(
-                  right: 30,
-                  top: 150,
+                  right: 38,
+                  top: 80,
                   child:Obx((){ return buildSpeakingIndicatorIcon(remoteParticipantId);}),
                 ),
               ),
@@ -141,16 +141,13 @@ class CallKitOutgoingCallView
           )
               : const Offstage();
         }),
-
-        /// Gradient overlay
-        Obx(() => _buildGradientOverlay(controller.callType.value)),
-
+        
         /// Foreground content
         SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 12),
 
               /// Call Status
               Obx(() {
@@ -162,11 +159,8 @@ class CallKitOutgoingCallView
                       Center(
                         child: Text(
                           controller.callStatus.value,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callStatusTextStyle,
                         ),
                       ),
                       Center(
@@ -189,36 +183,28 @@ class CallKitOutgoingCallView
                       Center(
                         child: Text(
                           controller.getOneToOneCallRemoteUserName(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callerNameTextStyle,
                         ),
                       ),
+                      const SizedBox(height: 8),
                       Obx((){
                         return Center(
                         child: Text(
                           controller.callDuration.value,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callDurationTextStyle,
                         ),
                       );}),
                       Visibility(
                         visible: controller.callerList
                             .any((FlyCallParticipant e) =>
                         e.flyCallStatusEvent == FlyCallStatusEvent.callHold && e.flyCallStatusEvent != FlyCallStatusEvent.reconnecting),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             "On Hold",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: AppStyleConfig
+                                .ongoingCallPageStyle.callerNameTextStyle,
                           ),
                         ),
                       ),
@@ -241,11 +227,11 @@ class CallKitOutgoingCallView
           return Visibility(
             visible: showInviteButton,
             child: Positioned(
-              top: 66,
+              top: 10,
               right: 16,
               child: IconButton(
                 onPressed: () => controller.inviteParticipants(),
-                icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
+                icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white, size: 18),
               ),
             ),
           );
@@ -330,8 +316,6 @@ class CallKitOutgoingCallView
         color: const Color(0xFF1D1D35),
         child: Stack(
           children: [
-            _buildGradientOverlay(controller.callType.value),
-
             SafeArea(
               child: Stack(
                 children: [
@@ -539,8 +523,7 @@ class CallKitOutgoingCallView
                                           scale: 1, callKind: null,
                                         ),
                                       ),
-                                      _buildGradientOverlay(
-                                          controller.callType.value),
+
                                       if (!controller
                                           .isOnGoingCallViewEnable.value) ...[
                                         Container(
@@ -831,27 +814,31 @@ class CallKitOutgoingCallView
 
           RxBool isLocalView = (participantId == controller.getLocalParticipant()?.identity).obs;
           return Column(
-            mainAxisSize: useMaxSize ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
 
-              SizedBox(height: useMaxSize ? 18 : 0),
-
-              (!isLocalView.value && controller.callKind == FlyCallKind.sip) ?
-                ProfileTextImage(
-                  text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
-                      ? controller.remoteUserNameMap[participantId]!.trim().substring(3)
-                      : "User",
-                  radius: (AppStyleConfig.outgoingCallPageStyle.profileImageSize
-                      .width / scale) / 2,
-                ):
-
-                buildProfileImage(
-                  snap.data!,
-                  size: AppStyleConfig.outgoingCallPageStyle.profileImageSize
-                      .width / scale,
-                ),
-
+              SizedBox(height: isLocalView.value ? 28 : 74),
+              (!isLocalView.value && controller.callKind == FlyCallKind.sip)
+                  ? ProfileTextImage(
+                      text: (controller.remoteUserNameMap[participantId]
+                                      ?.trim()
+                                      .length ??
+                                  0) >
+                              3
+                          ? controller.remoteUserNameMap[participantId]!
+                              .trim()
+                              .substring(3)
+                          : "User",
+                      radius: (AppStyleConfig.outgoingCallPageStyle
+                                  .profileImageSize.width /
+                              scale) /
+                          2,
+                    )
+                  : buildProfileImage(
+                    snap.data!,
+                    size: AppStyleConfig
+                            .outgoingCallPageStyle.profileImageSize.width /
+                        scale,
+                  ),
 
               Obx(() {
                 return isLocalView.value
@@ -878,34 +865,6 @@ class CallKitOutgoingCallView
         }
         return const Offstage();
       },
-    );
-  }
-
-  ///  Gradient Overlay
-  Widget _buildGradientOverlay(String callType) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: callType == "video"
-                ? [
-              Colors.transparent,
-              Colors.transparent,
-            ]
-                : [
-              const Color(0xFF1D1D35),
-              Colors.transparent,
-              Colors.transparent,
-              const Color(0xFF1D1D35),
-            ],
-            stops: callType == "video"
-                ? [0, 1] // fully transparent
-                : [0, 0.2, 0.6, 1],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-      ),
     );
   }
 
@@ -1209,15 +1168,15 @@ class CallKitOutgoingCallView
     switch (quality) {
       case FlyConnectionQuality.unknown:
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is unknown");
-        return const Icon(Icons.signal_cellular_connected_no_internet_0_bar, color: Colors.grey);
+        return const Icon(Icons.signal_cellular_connected_no_internet_0_bar, color: Colors.grey, size: 18);
 
       case FlyConnectionQuality.poor:
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is poor");
-        return const Icon(Icons.signal_cellular_alt_2_bar, color: Colors.red);
+        return const Icon(Icons.signal_cellular_alt_2_bar, color: Colors.red, size: 18);
 
       case FlyConnectionQuality.good:
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is good");
-        return const Icon(Icons.signal_cellular_alt, color: Colors.orange);
+        return const Icon(Icons.signal_cellular_alt, color: Colors.orange, size: 18);
 
       case FlyConnectionQuality.excellent:
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is excellent");
@@ -1227,7 +1186,7 @@ class CallKitOutgoingCallView
       case FlyConnectionQuality.lost:
         callkitLogger.info("[getConnectionQualityIcon] Connection quality is lost");
         return const Icon(Icons.signal_cellular_connected_no_internet_0_bar,
-            color: Colors.red);
+            color: Colors.red, size: 18);
     }
   }
 
@@ -1277,12 +1236,12 @@ class CallKitOutgoingCallView
             ),
       );
     } else {
-      final bool isReceiverSelected = controller.selectedAudioDevice?.value?.type == FlyAudioDeviceType.receiver;
+      final bool isReceiverSelected = controller.selectedAudioDevice.value?.type == FlyAudioDeviceType.receiver;
       callkitLogger.info(
           "[_showAudioDeviceSelector] Toggling audio device between speaker and "
-          "selectedAudioDevice: ${controller.selectedAudioDevice?.value?.type}, "
+          "selectedAudioDevice: ${controller.selectedAudioDevice.value?.type}, "
               "isReceiverSelected: $isReceiverSelected, "
-              "receiver currently selected: ${controller.selectedAudioDevice?.value?.toMap()}");
+              "receiver currently selected: ${controller.selectedAudioDevice.value?.toMap()}");
 
       isReceiverSelected
           ? controller.changeAudioDevice(availableTypes.firstWhere(
