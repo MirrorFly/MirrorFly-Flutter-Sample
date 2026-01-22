@@ -27,16 +27,19 @@ class CallKitOutgoingCallView
     return Obx(() {
       debugPrint(
           "#CallKitOutGoingCallView Build Called, isGroupCall");
-      return Scaffold(
-        resizeToAvoidBottomInset:false,
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.transparent,
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: controller.toggleControls,
-          child: controller.isGroupCall.value
-              ? buildGroupGridItem(context)
-              : oneToOneCallUI(context),
+      return PopScope(
+        canPop: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset:false,
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.transparent,
+          body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: controller.toggleControls,
+            child: controller.isGroupCall.value
+                ? buildGroupGridItem(context)
+                : oneToOneCallUI(context),
+          ),
         ),
       );
     });
