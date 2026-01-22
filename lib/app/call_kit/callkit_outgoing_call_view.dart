@@ -603,7 +603,7 @@ class CallKitOutgoingCallView
                                                               )
                                                                   : const Offstage();
                                                             })),
-                                                           ): Offstage()
+                                                           ): const Offstage()
 
                                             ],
                                           ),
@@ -904,64 +904,61 @@ class CallKitOutgoingCallView
 
   ///  Call Control Buttons
   Widget _buildCallControls(BuildContext context) {
+
+    final bool showCameraSwitch =
+        controller.callType.value.toLowerCase() == CallType.video &&
+            controller.isVideoEnabled.value &&
+            controller.callKind != FlyCallKind.sip;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 10, top: 0),
       child: Obx(() =>
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildCallOption(
-                isActive: controller.selectedAudioDevice.value?.type ==
-                    FlyAudioDeviceType.speaker ? true : false,
-                icon: controller.selectedAudioDevice.value?.type ==
-                    FlyAudioDeviceType.speaker ? Icons.volume_up
-                    : controller.selectedAudioDevice.value?.type ==
-                    FlyAudioDeviceType.headset ? Icons.headset
-                    : controller.selectedAudioDevice.value?.type ==
-                    FlyAudioDeviceType.bluetooth ? Icons.bluetooth_connected
-                    : Icons.volume_up,
-                onTap: () async {
-                  callkitLogger.info("[_buildCallControls] Audio device selector tapped");
-                  print("Audio device selector tapped");
-                  _showAudioDeviceSelector(context);
-                },
-              ),
-              _buildCallOption(
-                isActive: !controller.isAudioEnabled.value,
-                icon: !controller.isAudioEnabled.value ? Icons.mic_off : Icons.mic,
+              /// Audio Mute UnMute Button
+              _buildAudioMuteUI(
+                isMuted: !controller.isAudioEnabled.value,
                 onTap: () {
                   final bool enable = !(controller.isAudioEnabled.value);
                   callkitLogger.info("[_buildCallControls] Local participant found enable: $enable");
                   controller.setMicroPhoneEnabled(enabled: enable);
                 },
               ),
-              if (controller.callKind != FlyCallKind.sip)
-                _buildCallOption(
-                  isActive: true,
-                  icon: !controller.isVideoEnabled.value
-                      ? Icons.videocam_off
-                      : Icons.videocam,
-                  onTap: () {
-                    controller.setCameraEnable(
-                        enable: !(controller.isVideoEnabled.value));
-                  },
-                ),
-              if (controller.callType.value.toLowerCase() == CallType.video && controller.isVideoEnabled.value && controller.callKind != FlyCallKind.sip)
-                _buildCallOption(
-                  isActive: false,
-                  icon: controller.cameraPosition.value == CameraType.front
-                      ? Icons.cameraswitch
-                      : Icons.flip_camera_android,
+
+              const SizedBox(width: 24),
+
+              /// Camera Switch Button
+              if (showCameraSwitch) ...[
+                _buildCameraSwitchUI(
+                  isActive:
+                      controller.cameraPosition.value != CameraType.front,
                   onTap: controller.switchCamera,
                 ),
-              // if (controller.callType.value.toLowerCase() == CallType.audio)
-              //   _buildCallOption(
-              //     isActive: true,
-              //     icon: !controller.isVideoEnabled.value
-              //         ? Icons.videocam_off
-              //         : Icons.videocam,
-              //     onTap: controller.requestVideoCallSwitch,
-              //   ),
+                const SizedBox(width: 24),
+              ],
+
+              /// Video Mute UnMute Button
+              if(controller.callKind != FlyCallKind.sip)
+              _buildVideoMuteUI(
+                isVideoEnabled: controller.isVideoEnabled.value,
+                onTap: () {
+                  controller.setCameraEnable(
+                    enable: !(controller.isVideoEnabled.value),
+                  );
+                },
+              ),
+              const SizedBox(width: 24),
+
+              /// Audio Device Selector Button
+              _buildAudioRoutingControl(
+                onTap: () async {
+                  callkitLogger.info(
+                      "[_buildCallControls] Audio device selector tapped");
+                  _showAudioDeviceSelector(context);
+                },
+              ),
+
             ],
           )),
     );
@@ -970,7 +967,7 @@ class CallKitOutgoingCallView
   ///  End Call Button
   Widget _buildEndCallButton() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+      padding: const EdgeInsets.only(bottom: 10.0, top: 10.0),
       child: ElevatedButton(
           style: AppStyleConfig.ongoingCallPageStyle.disconnectButtonStyle,
           onPressed: () {
@@ -982,27 +979,198 @@ class CallKitOutgoingCallView
     );
   }
 
-  ///  Call Option Button
-  Widget _buildCallOption({
-    required IconData icon,
+  /// ---------------------------------
+  /// Audio controller
+  /// ---------------------------------
+  _AudioRoutingUIConfig _getAudioRoutingUI() {
+    final device = controller.selectedAudioDevice.value?.type;
+
+    switch (device) {
+      case FlyAudioDeviceType.speaker:
+        return const _AudioRoutingUIConfig(
+          icon: speakerActive,
+          isActive: true,
+        );
+
+      case FlyAudioDeviceType.bluetooth:
+        return const _AudioRoutingUIConfig(
+          icon: speakerBluetooth,
+          isActive: true,
+        );
+
+      case FlyAudioDeviceType.headset:
+        return const _AudioRoutingUIConfig(
+          icon: speakerHeadset,
+          isActive: true,
+        );
+
+      default:
+        return const _AudioRoutingUIConfig(
+          icon: speakerInactive,
+          isActive: false,
+        );
+    }
+  }
+
+  /// ---------------------------------
+  /// Audio routing controller
+  /// --------------------------------
+  Widget _buildAudioRoutingControl({
     required VoidCallback onTap,
-    bool isActive = false,
+    double size = 52,
   }) {
+
+    final style = AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+    final ui = _getAudioRoutingUI();
+
     return InkWell(
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: onTap,
-      child: Container(
-        height: 56,
-        width: 56,
-        decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.white10,
-          shape: BoxShape.circle,
+      child: SizedBox(
+        height: size,
+        width: size,
+        child: Material(
+          shape: style.shape,
+          elevation: 0,
+          color: ui.isActive
+              ? style.activeBgColor
+              : style.inactiveBgColor,
+          child: Center(
+            child: AppUtils.svgIcon(
+              icon: ui.icon,
+              colorFilter: ColorFilter.mode(
+                ui.isActive
+                    ? style.activeIconColor
+                    : style.inactiveIconColor,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
         ),
-        child: Center(
-          child: Icon(
-            icon,
-            color: isActive ? Colors.black : Colors.white,
+      ),
+    );
+  }
+
+  /// ---------------------------------
+  /// Video mute controller
+  /// --------------------------------
+  Widget _buildVideoMuteUI({
+    required bool isVideoEnabled,
+    required VoidCallback onTap,
+    double size = 52,
+  }) {
+    final style =
+        AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Material(
+        elevation: 0,
+        shape: style.shape,
+        color: isVideoEnabled
+            ? style.inactiveBgColor
+            : style.activeBgColor,
+        child: InkWell(
+          customBorder: style.shape,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onTap,
+          child: Center(
+            child: AppUtils.svgIcon(
+              icon: isVideoEnabled ? videoActive : videoInactive,
+              colorFilter: ColorFilter.mode(
+                isVideoEnabled
+                    ? style.inactiveIconColor
+                    : style.activeIconColor,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ---------------------------------
+  /// Camera switch controller
+  /// --------------------------------
+  Widget _buildCameraSwitchUI({
+    required bool isActive,
+    required VoidCallback onTap,
+    double size = 52,
+  }) {
+    final style =
+        AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Material(
+        elevation: 0,
+        shape: style.shape,
+        color: isActive
+            ? style.activeBgColor
+            : style.inactiveBgColor,
+        child: InkWell(
+          customBorder: style.shape,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onTap,
+          child: Center(
+            child: AppUtils.svgIcon(
+              icon: isActive
+                  ? cameraSwitchActive
+                  : cameraSwitchInactive,
+              colorFilter: ColorFilter.mode(
+                isActive
+                    ? style.activeIconColor
+                    : style.inactiveIconColor,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ---------------------------------
+  /// Audio mute controller
+  /// --------------------------------
+  Widget _buildAudioMuteUI({
+    required bool isMuted,
+    required VoidCallback onTap,
+    double size = 52,
+  }) {
+    final style =
+        AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Material(
+        elevation: 0,
+        shape: style.shape,
+        color: isMuted
+            ? style.activeBgColor
+            : style.inactiveBgColor,
+        child: InkWell(
+          customBorder: style.shape,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: onTap,
+          child: Center(
+            child: AppUtils.svgIcon(
+              icon: isMuted ? muteActive : muteInactive,
+              colorFilter: ColorFilter.mode(
+                isMuted
+                    ? style.activeIconColor
+                    : style.inactiveIconColor,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
         ),
       ),
@@ -1129,4 +1297,14 @@ Icon getAudioDeviceIcon(FlyAudioDeviceType kind) {
     case FlyAudioDeviceType.headset:
       return const Icon(Icons.headset, color: Colors.black);
     }
+}
+
+class _AudioRoutingUIConfig {
+  final String icon;
+  final bool isActive;
+
+  const _AudioRoutingUIConfig({
+    required this.icon,
+    required this.isActive,
+  });
 }
