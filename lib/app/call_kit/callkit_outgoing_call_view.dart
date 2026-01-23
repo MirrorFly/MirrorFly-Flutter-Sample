@@ -82,6 +82,7 @@ class CallKitOutgoingCallView
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
                     profileImage: getUserProfileImageWithName(
+                      isLocalTile: false,
                       participantId: remoteParticipantId,
                       callKind: remoteParticipant?.kind,
                       scale: 1,
@@ -89,7 +90,7 @@ class CallKitOutgoingCallView
                   ),
 
                   // Reconnecting overlay widget
-                  Visibility(
+                        Visibility(
                           visible: controller.callerList
                                   .firstWhereOrNull((e) =>
                                       e.identity ==
@@ -98,22 +99,15 @@ class CallKitOutgoingCallView
                                   ?.isReconnecting ??
                               false,
                           child: Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.4),
-                        child: Center(
-                          child: Text(
-                            'Reconnecting...',
-                            style: AppStyleConfig
-                                .ongoingCallPageStyle.callStatusTextStyle,
+                            child: Container(
+                              color: Colors.black.withOpacity(0.4),
+                            ),
                           ),
-                        ),
-                      ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
 
-              /// Mute Icon
+                    /// Mute Icon
               buildMuteIcon(remoteParticipantId, radius: 34),
 
               /// Connection Quality Icon
@@ -192,18 +186,47 @@ class CallKitOutgoingCallView
                               .ongoingCallPageStyle.callDurationTextStyle,
                         ),
                       );}),
-                      Visibility(
-                        visible: controller.callerList
-                            .any((FlyCallParticipant e) =>
-                        e.flyCallStatusEvent == FlyCallStatusEvent.callHold && e.flyCallStatusEvent != FlyCallStatusEvent.reconnecting),
-                        child: Center(
-                          child: Text(
-                            "On Hold",
-                            style: AppStyleConfig
-                                .ongoingCallPageStyle.callerNameTextStyle,
+
+                      // On Hold overlay widget
+                      if (controller.callerList.any((FlyCallParticipant e) =>
+                              e.flyCallStatusEvent ==
+                              FlyCallStatusEvent.callHold) &&
+                          (controller.callerList.every((e) =>
+                              e.flyCallStatusEvent !=
+                              FlyCallStatusEvent.reconnecting))) ...[
+                        const SizedBox(height: 140),
+                        Visibility(
+                          visible: true,
+                          child: Center(
+                            child: Text(
+                              "On Hold",
+                              style: AppStyleConfig
+                                  .ongoingCallPageStyle.callStatusTextStyle,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
+
+                      // Reconnecting overlay widget
+                      if (controller.callerList
+                              .firstWhereOrNull((e) =>
+                                  e.identity ==
+                                  controller
+                                      .getRemoteParticipantIdForOneToOneCall())
+                              ?.isReconnecting ??
+                          false) ...[
+                        const SizedBox(height: 140),
+                        Visibility(
+                          visible: true,
+                          child: Center(
+                            child: Text(
+                              'Reconnecting...',
+                              style: AppStyleConfig
+                                  .ongoingCallPageStyle.callStatusTextStyle,
+                            ),
+                          ),
+                        )
+                      ]
                     ],
                   ],
                 );
@@ -300,6 +323,7 @@ class CallKitOutgoingCallView
             ),
           ),
         ),
+
       ),
     );
   }
@@ -384,6 +408,7 @@ class CallKitOutgoingCallView
                                     viewBgColor:
                                     AppColors.audioCallerBackground,
                                     profileImage: getUserProfileImageWithName(
+                                      isLocalTile: false,
                                       participantId: controller
                                           .callerList[index].identity,
                                       scale: 1.2, callKind: controller
@@ -509,6 +534,7 @@ class CallKitOutgoingCallView
                                       viewBgColor:
                                           AppColors.audioCallerBackground,
                                       profileImage: getUserProfileImageWithName(
+                                        isLocalTile: false,
                                         isGroup: true,
                                         participantId: controller.groupId.value,
                                         scale: 1, callKind: null,
@@ -620,103 +646,106 @@ class CallKitOutgoingCallView
   Widget _buildLocalPreview({required double width, required double height}) {
     final participantId =
     controller.getLocalParticipant()?.identity ?? "";
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Stack(
-            children: [
-              MirrorFlyCallView(
-                radius: 20.0,
-                viewBgColor: Colors.black.withAlpha(65),
-                // key: ValueKey(controller.getLocalParticipantId()),
-                userJID: controller.secondaryCallViewUserId.value,
-                isLocalUser: true,
-                localTileWidth: 90,
-                localTileHeight: 120,
-                fit: BoxFit.cover,
-                profileImage: getUserProfileImageWithName(
-                  participantId: controller.getLocalParticipant()?.identity ?? "",
-                  scale: 2,
-                  useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
+    return Padding(
+      padding: const EdgeInsets.only(right: 18),
+      child: SizedBox(
+        height: 140,
+        width: 100,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Stack(
+              children: [
+                MirrorFlyCallView(
+                  radius: 15.0,
+                  viewBgColor: Colors.black.withAlpha(150),
+                  userJID: controller.secondaryCallViewUserId.value,
+                  isLocalUser: true,
+                  fit: BoxFit.cover,
+                  profileImage: getUserProfileImageWithName(
+                    isLocalTile: true,
+                    participantId: controller.getLocalParticipant()?.identity ?? "",
+                    scale: 2,
+                    useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
+                  ),
+                  onTap: () {
+                    controller.videoSwap();
+                  },
                 ),
-                onTap: () {
-                  controller.videoSwap();
-                },
-              ),
-
-              // Reconnecting overlay widget
-              Visibility(
-                visible: controller.callerList
-                        .firstWhereOrNull((e) => e.isLocalParticipant == true)
-                        ?.isReconnecting ??
-                    false,
-                child: Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
-                    child: Center(
-                      child: Text(
-                        'Reconnecting...',
-                        style: AppStyleConfig
-                            .ongoingCallPageStyle.callStatusTextStyle,
+        
+                // Reconnecting overlay widget
+                Visibility(
+                  visible: controller.callerList
+                          .firstWhereOrNull((e) => e.isLocalParticipant == true)
+                          ?.isReconnecting ??
+                      false,
+                  child: Positioned.fill(
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
+                      child: Center(
+                        child: Text(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          'Reconnecting',
+                          style: AppStyleConfig.ongoingCallPageStyle.callStatusTextStyle.copyWith(fontSize: 12),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-
-          // Connection Quality Icon
-          Visibility(
-            visible: controller.callerConnectionQuality
-                .containsKey(controller.getLocalParticipant()?.identity ?? ""),
-            child: Positioned(
-              top: 8,
-              left: 8,
-              child: Obx(() {
-                return SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child: IconTheme(
-                      data: const IconThemeData(size: 12, color: Colors.transparent),
-                      child: getConnectionQualityIcon(
-                          controller.callerConnectionQuality[
-                                  controller.getLocalParticipant()?.identity ?? ""] ??
-                              FlyConnectionQuality.unknown),
+                )
+              ],
+            ),
+        
+            // Connection Quality Icon
+            Visibility(
+              visible: controller.callerConnectionQuality
+                  .containsKey(controller.getLocalParticipant()?.identity ?? ""),
+              child: Positioned(
+                top: 12,
+                left: 12,
+                child: Obx(() {
+                  return SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: IconTheme(
+                        data: const IconThemeData(size: 12, color: Colors.transparent),
+                        child: getConnectionQualityIcon(
+                            controller.callerConnectionQuality[
+                                    controller.getLocalParticipant()?.identity ?? ""] ??
+                                FlyConnectionQuality.unknown),
+                      ),
                     ),
-                  ),
+                  );
+                }),
+              ),
+            ),
+        
+            // Mute Icon
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Obx(() {
+                return buildMuteIcon(
+                  controller.getLocalParticipant()?.identity ?? "",
+                  isLocalParticipant: true,
                 );
               }),
             ),
-          ),
-
-          // Mute Icon
-          Positioned(
-            top: 26,
-            right: 18,
-            child: Obx(() {
-              return buildMuteIcon(
-                controller.getLocalParticipant()?.identity ?? "",
-                isLocalParticipant: true,
-              );
-            }),
-          ),
-
-          // Speaking indicator
-          Positioned(
-            top: 26,
-            right: 18,
-            child: Obx(() {
-              return buildSpeakingIndicatorIcon(
-                  participantId);
-            }),
-          ),
-        ],
+        
+            // Speaking indicator
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Obx(() {
+                return buildSpeakingIndicatorIcon(
+                    participantId);
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -749,6 +778,7 @@ class CallKitOutgoingCallView
     bool isGroup = false,
     double scale = 1.0,
     bool useMaxSize = false, required callKind,
+    required bool isLocalTile,
   }) {
 
     callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
@@ -799,9 +829,11 @@ class CallKitOutgoingCallView
                 /// this condition is for when we make video call un-till call connected we consider the local tile as remote,
                 /// whereas for audio call we consider local tile as remote even call not connected state
                   height: isLocalView.value
-                      ? (controller.callType.value == "video" ? 74 : 28)
+                      ? ((controller.callType.value == "video" &&
+                              controller.isVideoEnabled.value)
+                          ? 74
+                          : 42)
                       : 74),
-
               (!isLocalView.value && controller.callKind == FlyCallKind.sip)
                   ? ProfileTextImage(
                       text: (controller.remoteUserNameMap[participantId]
@@ -824,29 +856,27 @@ class CallKitOutgoingCallView
                             .outgoingCallPageStyle.profileImageSize.width /
                         scale,
                   ),
-
-              Obx(() {
-                return isLocalView.value &&
-                        controller.callType.value != 'video' &&
-                        !controller.isOnGoingCallViewEnable.value
-                    ? Padding(
-                     padding: const EdgeInsets.only(top: 14, left: 8, right: 8),
+              isLocalTile
+                  ? Padding(
+                      padding:
+                          const EdgeInsets.only(top: 22, left: 8, right: 8),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: controller.isGroupCall.value ? const SizedBox.shrink() : const Text(
-                          "You",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                        child: controller.isGroupCall.value
+                            ? const SizedBox.shrink()
+                            : const Text(
+                                "You",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
                       ),
                     )
-                    : const SizedBox.shrink();
-              }),
+                  : const SizedBox.shrink()
             ],
           );
         }
