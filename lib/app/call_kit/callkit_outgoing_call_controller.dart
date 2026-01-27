@@ -1589,7 +1589,11 @@ class CallKitOutgoingCallController extends GetxController
               style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 closeDialog();
-                await MirrorFlyCallKit.requestVideoCallSwitch();
+                if(await AppUtils.isNetConnected()) {
+                  await MirrorFlyCallKit.requestVideoCallSwitch();
+                }else{
+                  toToast(getTranslated("noInternetConnection"));
+                }
               },
               child: Text(
                 getTranslated("switchCall"),
