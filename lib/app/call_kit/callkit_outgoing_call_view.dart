@@ -339,9 +339,10 @@ class CallKitOutgoingCallView
               children: [
                 Column(
                   children: [
+
                     /// --- Call Info Header (Top Section) ---
                     Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 12),
+                      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
                       child: Obx(() {
                         final isOngoing = controller.isOnGoingCallViewEnable.value;
                         return Column(
@@ -405,9 +406,9 @@ class CallKitOutgoingCallView
                                     userJID: controller
                                         .callerList[index].identity,
                                     fit: BoxFit.cover,
-                                    viewBgColor:
-                                    AppColors.audioCallerBackground,
+                                    viewBgColor: AppColors.callerTitleBackground,
                                     profileImage: getUserProfileImageWithName(
+                                      isGroupGrid: true,
                                       isLocalTile: false,
                                       participantId: controller
                                           .callerList[index].identity,
@@ -620,7 +621,7 @@ class CallKitOutgoingCallView
                 Positioned(
                   right: 0,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: const EdgeInsets.only(right: 8.0, top: 12),
                     child: Obx(() {
                       final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
                       return Visibility(
@@ -642,15 +643,15 @@ class CallKitOutgoingCallView
     });
   }
 
-  ///  Local Preview Widgetx
+  ///  Local Preview Widget
   Widget _buildLocalPreview({required double width, required double height}) {
     final participantId =
     controller.getLocalParticipant()?.identity ?? "";
-    return Padding(
-      padding: const EdgeInsets.only(right: 18),
-      child: SizedBox(
-        height: 140,
-        width: 100,
+    return SizedBox(
+      height: 140,
+      width: 120,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 18),
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -672,7 +673,7 @@ class CallKitOutgoingCallView
                     controller.videoSwap();
                   },
                 ),
-        
+
                 // Reconnecting overlay widget
                 Visibility(
                   visible: controller.callerList
@@ -681,8 +682,11 @@ class CallKitOutgoingCallView
                       false,
                   child: Positioned.fill(
                     child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
+                    ),
                       padding: const EdgeInsets.all(2),
-                      color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
                       child: Center(
                         child: Text(
                           maxLines: 1,
@@ -696,7 +700,7 @@ class CallKitOutgoingCallView
                 )
               ],
             ),
-        
+
             // Connection Quality Icon
             Visibility(
               visible: controller.callerConnectionQuality
@@ -722,7 +726,7 @@ class CallKitOutgoingCallView
                 }),
               ),
             ),
-        
+
             // Mute Icon
             Positioned(
               top: 12,
@@ -734,7 +738,7 @@ class CallKitOutgoingCallView
                 );
               }),
             ),
-        
+
             // Speaking indicator
             Positioned(
               top: 12,
@@ -779,6 +783,7 @@ class CallKitOutgoingCallView
     double scale = 1.0,
     bool useMaxSize = false, required callKind,
     required bool isLocalTile,
+    bool isGroupGrid = false,
   }) {
 
     callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
@@ -801,7 +806,6 @@ class CallKitOutgoingCallView
     return FutureBuilder<ProfileDetails>(
       future: profileDetails,
       builder: (ctx, snap) {
-        // Log the state of the FutureBuilder
         if (snap.connectionState == ConnectionState.waiting) {
           callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $normalizedParticipantId");
         } else if (snap.connectionState == ConnectionState.done) {
@@ -816,67 +820,77 @@ class CallKitOutgoingCallView
 
         // When we actually have valid profile data
         if (snap.hasData && snap.data != null) {
-
           if(!Get.isRegistered<CallKitOutgoingCallController>()) {
             callkitLogger.info("[getUserProfileImageWithName] CallKitOutgoingCallController is not registered in GetX");
             return const SizedBox.shrink();
           }
 
           RxBool isLocalView = (participantId == controller.getLocalParticipant()?.identity).obs;
-          return Column(
+          return Stack(
             children: [
-              SizedBox(
-                /// this condition is for when we make video call un-till call connected we consider the local tile as remote,
-                /// whereas for audio call we consider local tile as remote even call not connected state
-                  height: isLocalView.value
-                      ? ((controller.callType.value == "video" &&
-                              controller.isVideoEnabled.value)
-                          ? 74
-                          : 42)
-                      : 74),
-              (!isLocalView.value && controller.callKind == FlyCallKind.sip)
-                  ? ProfileTextImage(
-                      text: (controller.remoteUserNameMap[participantId]
-                                      ?.trim()
-                                      .length ??
-                                  0) >
-                              3
-                          ? controller.remoteUserNameMap[participantId]!
-                              .trim()
-                              .substring(3)
-                          : "User",
-                      radius: (AppStyleConfig.outgoingCallPageStyle
-                                  .profileImageSize.width /
-                              scale) /
-                          2,
-                    )
-                  : buildProfileImage(
+
+              /// LOCAL VIEW → CENTER
+              if (isLocalView.value)
+                Center(
+                  child: controller.callKind == FlyCallKind.sip
+                      ? ProfileTextImage(
+                    text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
+                        ? controller.remoteUserNameMap[participantId]!.trim().substring(3)
+                        : "You",
+                    radius:
+                    (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
+                        scale) /
+                        2,
+                  )
+                      : buildProfileImage(
                     snap.data!,
-                    size: AppStyleConfig
-                            .outgoingCallPageStyle.profileImageSize.width /
+                    size: AppStyleConfig.outgoingCallPageStyle
+                        .profileImageSize.width /
                         scale,
                   ),
-              isLocalTile
-                  ? Padding(
-                      padding:
-                          const EdgeInsets.only(top: 22, left: 8, right: 8),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: controller.isGroupCall.value
-                            ? const SizedBox.shrink()
-                            : const Text(
-                                "You",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                      ),
+                ),
+
+              /// REMOTE VIEW → TOP CENTER
+              if (!isLocalView.value)
+                Positioned(
+                  top: isGroupGrid ? 30 : 70,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: controller.callKind == FlyCallKind.sip
+                        ? ProfileTextImage(
+                      text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
+                          ? controller.remoteUserNameMap[participantId]!.trim().substring(3) : "User",
+                      radius:
+                      (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
+                          scale) /
+                          2,
                     )
-                  : const SizedBox.shrink()
+                        : buildProfileImage(
+                      snap.data!,
+                      size: AppStyleConfig.outgoingCallPageStyle
+                          .profileImageSize.width /
+                          scale,
+                    ),
+                  ),
+                ),
+
+              /// "You" label
+              if (isLocalTile && !controller.isGroupCall.value)
+                const Positioned(
+                  bottom: 8,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      "You",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           );
         }
