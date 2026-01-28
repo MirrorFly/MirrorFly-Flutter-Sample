@@ -1254,6 +1254,11 @@ class CallKitOutgoingCallController extends GetxController
           NavUtils.back();
           return;
         }
+        if(NavUtils.currentRoute == Routes.groupParticipants){
+          NavUtils.back();
+          NavUtils.back();
+          return;
+        }
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
@@ -1282,6 +1287,11 @@ class CallKitOutgoingCallController extends GetxController
       isAudioDialogOpen.value = false;
     }
     if(NavUtils.previousRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if(NavUtils.currentRoute == Routes.groupParticipants){
       NavUtils.back();
       NavUtils.back();
       return;
@@ -1589,7 +1599,11 @@ class CallKitOutgoingCallController extends GetxController
               style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 closeDialog();
-                await MirrorFlyCallKit.requestVideoCallSwitch();
+                if(await AppUtils.isNetConnected()) {
+                  await MirrorFlyCallKit.requestVideoCallSwitch();
+                }else{
+                  toToast(getTranslated("noInternetConnection"));
+                }
               },
               child: Text(
                 getTranslated("switchCall"),
