@@ -502,7 +502,7 @@ class CallKitOutgoingCallView
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: Colors.black.withOpacity(0.5),
-                                            borderRadius: BorderRadius.circular(10.0),
+                                            // borderRadius: BorderRadius.circular(10.0),
                                           ),
                                           child: Center(
                                             child: Text(
@@ -853,7 +853,7 @@ class CallKitOutgoingCallView
               /// REMOTE VIEW → TOP CENTER
               if (!isLocalView.value)
                 Positioned(
-                  top: isGroupGrid ? 30 : 70,
+                  top: isGroupGrid ? 45 : 70,
                   left: 0,
                   right: 0,
                   child: Align(
