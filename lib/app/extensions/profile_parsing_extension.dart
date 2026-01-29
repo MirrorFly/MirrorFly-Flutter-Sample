@@ -38,9 +38,9 @@ extension ProfileParsing on ProfileDetails {
 
   String getName() {
     if (!Constants.enableContactSync) {
-      if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return getTranslated("you");
-      }
+      // if (jid.checkNull() == SessionManagement.getUserJID()) {
+      //   return getTranslated("you");
+      // }
       /*return item.name.toString().checkNull().isEmpty
         ? item.nickName.toString()
         : item.name.toString();*/
@@ -50,9 +50,10 @@ extension ProfileParsing on ProfileDetails {
               : nickName.checkNull())
           : name.checkNull();
     } else {
-      if (jid.checkNull() == SessionManagement.getUserJID()) {
-        return getTranslated("you");
-      } else if (isDeletedContact()) {
+      // if (jid.checkNull() == SessionManagement.getUserJID()) {
+      //   return getTranslated("you");
+      // } else
+        if (isDeletedContact()) {
         LogMessage.d('isDeletedContact', isDeletedContact().toString());
         return getTranslated("deletedUser");
       } else if (isUnknownContact() || nickName.checkNull().isEmpty) {
