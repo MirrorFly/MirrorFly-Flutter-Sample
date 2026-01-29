@@ -31,6 +31,7 @@ import 'modules/backup_restore/controllers/backup_controller.dart';
 import 'modules/backup_restore/controllers/restore_controller.dart';
 import 'modules/chat/controllers/chat_controller.dart';
 import 'modules/chat/controllers/contact_controller.dart';
+import 'modules/chat/widgets/preview_bridge.dart';
 import 'modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'modules/group/controllers/group_info_controller.dart';
 import 'modules/media_preview/controllers/media_preview_controller.dart';
@@ -240,6 +241,9 @@ class BaseController {
         callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
         if (callerId != null && callType != null) {
           callkitLogger.info("[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
+
+          await PreviewBridge.dismissPreview();
+
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
