@@ -28,6 +28,9 @@ class NavUtils {
   static String get previousRoute =>
       MirrorFlyNavigationObserver.previous?.settings.name ?? '';
 
+  static List<dynamic> get navigationRouteStack =>
+      MirrorFlyNavigationObserver.navigationRouteStack;
+
   // Parsing the query parameters
   static dynamic get parameters =>
       MirrorFlyNavigationObserver.current?.settings.name != null

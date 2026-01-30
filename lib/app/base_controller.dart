@@ -243,7 +243,16 @@ class BaseController {
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
-        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View "
+            "pin set : ${SessionManagement.getEnablePin()} Bio set: ${SessionManagement.getEnableBio()} currentRoute: ${NavUtils.currentRoute}");
+
+        if ((SessionManagement.getEnablePin() ||
+            SessionManagement.getEnableBio()) &&
+            NavUtils.currentRoute != Routes.pin) {
+          callkitLogger.info("[MirrorFly][BaseController] answerCall - PIN screen not displayed yet, delaying answerCall action");
+          NavUtils.toNamed(Routes.pin, arguments: {"showBack": "false"});
+        }
+
         if (callerId != null && callType != null) {
           callkitLogger.info("[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
 
