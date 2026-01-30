@@ -116,6 +116,7 @@ class NavUtils {
   }) async {
     if (preventDuplicates &&
         page == MirrorFlyNavigationObserver.current?.settings.name) {
+      debugPrint("toNamed: $page return null. ${MirrorFlyNavigationObserver.current?.settings.name}");
       return null;
     }
 
@@ -159,6 +160,8 @@ class NavUtils {
 
   static Future<NavigatorState> _waitForNavigator() async {
     while (_navigator == null) {
+      debugPrint(
+          "NavUtils: Waiting for navigator to be available...");
       await WidgetsBinding.instance.endOfFrame;
     }
     return _navigator!;
