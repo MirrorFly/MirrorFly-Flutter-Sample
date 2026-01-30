@@ -1600,7 +1600,12 @@ class CallKitOutgoingCallController extends GetxController
               onPressed: () async {
                 closeDialog();
                 if(await AppUtils.isNetConnected()) {
-                  await MirrorFlyCallKit.requestVideoCallSwitch();
+                  if(await AppPermission.askVideoCallPermissions()) {
+                    await MirrorFlyCallKit.requestVideoCallSwitch();
+                  }else{
+                    toToast("Permission is not granted");
+                  }
+
                 }else{
                   toToast(getTranslated("noInternetConnection"));
                 }
