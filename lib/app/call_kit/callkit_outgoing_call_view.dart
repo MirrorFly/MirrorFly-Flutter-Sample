@@ -418,6 +418,12 @@ class CallKitOutgoingCallView
                                   ),
 
                                   Obx(() {
+                                    final participant = controller.callerList[index];
+                                    debugPrint(
+                                      '[Group UI][AudioMute] '
+                                          'identity=${participant.identity}, '
+                                          'isAudioMuted=${participant.isAudioMuted}',
+                                    );
                                     return Positioned(
                                       top: 8,
                                       right: 8,
@@ -425,11 +431,10 @@ class CallKitOutgoingCallView
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          if (controller.callerList[index].isAudioMuted == true) ...[
+                                          if (participant.isAudioMuted == true) ...[
                                             CircleAvatar(
                                               radius: 10,
-                                              backgroundColor: Colors.grey
-                                                  , //AppColors.audioMutedIconBgColor,
+                                              backgroundColor: Colors.grey, //AppColors.audioMutedIconBgColor,
                                               child: AppUtils.svgIcon(
                                                 icon: callMutedIcon,
                                                 colorFilter: const ColorFilter.mode(
@@ -438,14 +443,9 @@ class CallKitOutgoingCallView
                                               ),
                                             ),
                                         ],
-                                          if (controller
-                                                        .callerList[index]
-                                                        .isAudioMuted !=
-                                                    true) ...[
+                                          if (participant.isAudioMuted != true) ...[
                                                   buildSpeakingIndicatorIcon(
-                                                      controller
-                                                          .callerList[index]
-                                                          .identity)
+                                                      controller.callerList[index].identity)
                                                 ]
                                               ],
                                             ),
@@ -915,9 +915,9 @@ class CallKitOutgoingCallView
             children: [
               /// Audio Mute UnMute Button
               _buildAudioMuteUI(
-                isMuted: !controller.isAudioEnabled.value,
+                isMuted: controller.isAudioMuted.value,
                 onTap: () {
-                  final bool enable = !(controller.isAudioEnabled.value);
+                  final bool enable = !(controller.isAudioMuted.value);
                   callkitLogger.info("[_buildCallControls] Local participant found enable: $enable");
                   controller.setMicroPhoneEnabled(enabled: enable);
                 },
