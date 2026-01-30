@@ -561,13 +561,13 @@ class CallKitOutgoingCallView
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              controller.chatNameForGroupCall.value == "" ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                              controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
                                               textAlign: TextAlign.center,
                                               style: AppStyleConfig
                                                   .ongoingCallPageStyle.callerNameTextStyle,
                                             ),
                                             const SizedBox(height: 8),
-                                            controller.chatNameForGroupCall.value == "" ? Row(
+                                            controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: List.generate(
                                                       controller.callerList.length > 3
