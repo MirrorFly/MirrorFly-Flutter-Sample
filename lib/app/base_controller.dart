@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_r
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'call_kit/callkit_event_buffer.dart';
 import 'call_kit/callkit_logger.dart';
 import 'call_kit/callkit_outgoing_call_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
@@ -31,6 +32,7 @@ import 'modules/backup_restore/controllers/backup_controller.dart';
 import 'modules/backup_restore/controllers/restore_controller.dart';
 import 'modules/chat/controllers/chat_controller.dart';
 import 'modules/chat/controllers/contact_controller.dart';
+import 'modules/chat/widgets/preview_bridge.dart';
 import 'modules/contact_sync/controllers/contact_sync_controller.dart';
 import 'modules/group/controllers/group_info_controller.dart';
 import 'modules/media_preview/controllers/media_preview_controller.dart';
@@ -87,7 +89,7 @@ class BaseController {
             debugPrint('Permission denied: ${reasonMap['message']}');
           }
         } catch (e) {
-          debugPrint('Failed to decode re ason JSON: $e');
+          debugPrint('Failed to decode reason JSON: $e');
         }
       }
 
@@ -109,12 +111,16 @@ class BaseController {
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
+        CallKitEventBuffer.addStatus(flyCallStatus);
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered for event $flyCallStatusEvent");
         return;
       }
 
+
       final callKitOutgoingCallController =
       Get.find<CallKitOutgoingCallController>();
+
+      CallKitEventBuffer.flushTo(callKitOutgoingCallController); // optional; safe no-op when empty
 
       debugPrint(
           "[MirrorFly][BaseController] callStatusStream - Event: ${event.toJson()}");
@@ -237,9 +243,21 @@ class BaseController {
 
       // Answer Call action should be handled before the controller registration check
       if (flyCallActionEvent == FlyCallActionEvent.answerCall) {
-        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View");
+        callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent answerCall - navigating to Call View "
+            "pin set : ${SessionManagement.getEnablePin()} Bio set: ${SessionManagement.getEnableBio()} currentRoute: ${NavUtils.currentRoute}");
+
+        if ((SessionManagement.getEnablePin() ||
+            SessionManagement.getEnableBio()) &&
+            NavUtils.currentRoute != Routes.pin) {
+          callkitLogger.info("[MirrorFly][BaseController] answerCall - PIN screen not displayed yet, delaying answerCall action");
+          NavUtils.toNamed(Routes.pin, arguments: {"showBack": "false"});
+        }
+
         if (callerId != null && callType != null) {
           callkitLogger.info("[MirrorFly][BaseController] answerCall callerId=$callerId callType=$callType");
+
+          await PreviewBridge.dismissPreview();
+
           final jid = "$callerId@xmpp-uikit-qa.contus.us";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
@@ -260,10 +278,13 @@ class BaseController {
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
+        CallKitEventBuffer.addAction(flyCallAction);
         callkitLogger.info("[MirrorFly][BaseController] flyCallAction CallKitOutgoingCallController not registered for event $flyCallActionEvent");
         return;
       }
       final controller = Get.find<CallKitOutgoingCallController>();
+
+      CallKitEventBuffer.flushTo(controller); // optional; safe no-op when empty
 
       debugPrint(
           "[MirrorFly][BaseController] callActionStream - Event: ${event.toJson()}");

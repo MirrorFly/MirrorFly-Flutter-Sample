@@ -10,6 +10,7 @@ import mirrorfly_plugin
 import mirrorfly_flutter_call_kit
 
 import CallKit
+import QuickLook
 
 
 #if DEBUG
@@ -50,7 +51,22 @@ import CallKit
               window = UIWindow(frame: UIScreen.main.bounds)
               window?.rootViewController = controller
               window?.makeKeyAndVisible()*/
-      let _ : FlutterViewController = window?.rootViewController as! FlutterViewController
+      let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+      
+      let channel = FlutterMethodChannel(name: "app.preview",
+                                             binaryMessenger: controller.binaryMessenger)
+          channel.setMethodCallHandler { call, result in
+            guard call.method == "dismissPreview" else { result(FlutterMethodNotImplemented); return }
+            guard let root = self.window?.rootViewController else { result(false); return }
+            if let ql = root.presentedViewController as? QLPreviewController {
+              ql.dismiss(animated: true) { result(true) }; return
+            }
+            if let nav = root.presentedViewController as? UINavigationController,
+               nav.topViewController is QLPreviewController {
+              nav.dismiss(animated: true) { result(true) }; return
+            }
+            result(false)
+          }
            
       GMSServices.provideAPIKey(googleApiKey)
 

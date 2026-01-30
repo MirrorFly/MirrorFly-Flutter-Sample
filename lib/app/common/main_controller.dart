@@ -372,7 +372,7 @@ class MainController extends FullLifeCycleController
     debugPrint(
         'mainController unReadMessageCount onPaused ${unReadMessageCount.toString()}');
     _setBadgeCount(unReadMessageCount ?? 0);
-    fromLockScreen = await Mirrorfly.isLockScreen();
+    // fromLockScreen = await Mirrorfly.isLockScreen();
     LogMessage.d('isLockScreen', '$fromLockScreen');
     SessionManagement.setAppSessionNow();
   }
@@ -495,8 +495,14 @@ class MainController extends FullLifeCycleController
   void presentPinPage() {
     if ((SessionManagement.getEnablePin() ||
             SessionManagement.getEnableBio()) &&
-        NavUtils.currentRoute != Routes.pin) {
+        NavUtils.currentRoute != Routes.pin && NavUtils.navigationRouteStack.where((route) => route.settings.name == Routes.pin).isEmpty) {
+      debugPrint("#Mirrorfly App Lock -> Presenting Pin Page");
       NavUtils.toNamed(Routes.pin, arguments: {"showBack": "false"});
+    } else {
+      debugPrint("#Mirrorfly App Lock -> Not able to show Pin Page. Reason: "
+          "Pin Enabled: ${SessionManagement.getEnablePin()}, "
+          "Bio Enabled: ${SessionManagement.getEnableBio()}, "
+          "Has Pin already in stack Route: ${NavUtils.navigationRouteStack.where((route) => route.settings.name == Routes.pin).isEmpty}");
     }
   }
 

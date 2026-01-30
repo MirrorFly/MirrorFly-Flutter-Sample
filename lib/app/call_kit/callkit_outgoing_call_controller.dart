@@ -18,6 +18,7 @@ import '../model/arguments.dart';
 import '../routes/route_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'callkit_event_buffer.dart';
 import 'callkit_logger.dart';
 
 class CallKitOutgoingCallController extends GetxController
@@ -87,6 +88,7 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
+    CallKitEventBuffer.flushTo(this);
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
