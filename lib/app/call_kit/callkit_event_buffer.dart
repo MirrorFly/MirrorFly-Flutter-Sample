@@ -61,7 +61,9 @@ class CallKitEventBuffer {
         c.reconnected(participantIds: e.participantsIds);
         break;
       case FlyCallStatusEvent.disconnected:
-        c.disconnectCall(userIds: e.participantsIds, reason: e.reason ?? '');
+        /// During disconnect receive callKitOutgoingCallController dispose is already called so not need to flush disconnect again
+        /// But we have to work for the pip scenario
+        // c.disconnectCall(userIds: e.participantsIds, reason: e.reason ?? '');
         break;
       case FlyCallStatusEvent.callHold:
         c.callHold(participantsId: e.participantsIds);
