@@ -46,7 +46,7 @@ class CallKitEventBuffer {
         c.onConnected(e.participantsIds);
         break;
       case FlyCallStatusEvent.ringing:
-        c.ringing(participantsId: e.participantsIds, ringing: FlyCallStatusEvent.ringing);
+        // c.ringing(participantsId: e.participantsIds, ringing: FlyCallStatusEvent.ringing);
         break;
       case FlyCallStatusEvent.tryingToConnect:
         c.tryingToConnect();
@@ -55,7 +55,7 @@ class CallKitEventBuffer {
         c.outGoingCallCalling(participantsId: e.participantsIds, calling: FlyCallStatusEvent.calling);
         break;
       case FlyCallStatusEvent.reconnecting:
-        c.reconnecting(participantIds: e.participantsIds);
+        // c.reconnecting(participantIds: e.participantsIds);
         break;
       case FlyCallStatusEvent.reconnected:
         c.reconnected(participantIds: e.participantsIds);
@@ -72,15 +72,15 @@ class CallKitEventBuffer {
         c.callResume(participantsId: e.participantsIds);
         break;
       case FlyCallStatusEvent.callTimeout:
-        c.callTimeOut(participantsId: e.participantsIds, isCallFailed: false);
+        // c.callTimeOut(participantsId: e.participantsIds, isCallFailed: false);
         break;
       case FlyCallStatusEvent.rejected:
         if (e.participantsIds.isNotEmpty) {
-          c.rejected(userId: e.participantsIds.first);
+          // c.rejected(userId: e.participantsIds.first);
         }
         break;
       case FlyCallStatusEvent.engaged:
-        c.remoteUserIsEngaged(participants: e.participantsIds);
+        // c.remoteUserIsEngaged(participants: e.participantsIds);
         break;
       case FlyCallStatusEvent.permissionDenied:
         final Map<String, dynamic>? err = e.reason == null ? null : jsonDecode(e.reason!) as Map<String, dynamic>?;
@@ -89,7 +89,7 @@ class CallKitEventBuffer {
         break;
 
       case FlyCallStatusEvent.callFailed:
-        c.onCallFailed(participantsId: e.participantsIds);
+        // c.onCallFailed(participantsId: e.participantsIds);
         break;
     // FlyCallStatusEvent.none, FlyCallStatusEvent.declined, FlyCallStatusEvent.joinSync -> no-op
       default:
