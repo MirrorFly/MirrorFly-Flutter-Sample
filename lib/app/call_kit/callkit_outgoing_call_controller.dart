@@ -1509,22 +1509,39 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void requestVideoCallSwitch() async {
+    final bool toggleVideoEnabledStatus = !isVideoEnabled.value;
+
     if(isGroupCall.value){
       callkitLogger.info("[MirrorFly][OutgoingCallController] requestVideoCallSwitch: Call switch  supported in group calls.");
-      MirrorFlyCallKit.toggleVideoForGroupCall();
+      await MirrorFlyCallKit.toggleVideoForGroupCall();
+      isVideoEnabled.value = toggleVideoEnabledStatus;
       return;
     }
 
     final bool callStatus = await MirrorFlyCallKit.isCallConnected();
     final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+    callkitLogger.info("MirrorFlyCallKit.getVideoMuteStatus(userJid: getRemoteParticipantIdForOneToOneCall()) called ${MirrorFlyCallKit.getVideoMuteStatus(userJid: getRemoteParticipantIdForOneToOneCall())}");
 
     if (flyCallType == FlyCallType.audio && callStatus) {
       callkitLogger.info("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
-      _videoCallSwitchRequestConfirmationPopup();
-    }else{
+      if(await MirrorFlyCallKit.validateSwitchRequest()) {
+        _videoCallSwitchRequestConfirmationPopup();
+      } else {
+        MirrorFlyCallKit.setCameraEnable(
+            enable: toggleVideoEnabledStatus,
+            result: (result) async {
+              if (result) {
+                callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
+                isVideoEnabled.value = toggleVideoEnabledStatus;
+              } else {
+                callkitLogger.info(
+                    "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
+              }
+            });
+      }
+    } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
     }
-
   }
 
   ///
