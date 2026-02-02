@@ -4,6 +4,8 @@ import 'package:mirrorfly_plugin/logmessage.dart';
 class MirrorFlyNavigationObserver extends NavigatorObserver {
   static List<Route<dynamic>> routeStack = [];
 
+  static List<Route<dynamic>> get navigationRouteStack => routeStack;
+
   static Route<dynamic>? get current =>
       routeStack.isNotEmpty ? routeStack.last : null;
 

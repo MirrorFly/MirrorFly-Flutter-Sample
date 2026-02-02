@@ -18,6 +18,7 @@ import '../model/arguments.dart';
 import '../routes/route_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'callkit_event_buffer.dart';
 import 'callkit_logger.dart';
 
 class CallKitOutgoingCallController extends GetxController
@@ -87,6 +88,7 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
+    CallKitEventBuffer.flushTo(this);
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -168,7 +170,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void _handleIncomingCall() {
     callDuration("Connecting..");
-    isOnGoingCallView();
+    // isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
 
@@ -1600,7 +1602,12 @@ class CallKitOutgoingCallController extends GetxController
               onPressed: () async {
                 closeDialog();
                 if(await AppUtils.isNetConnected()) {
-                  await MirrorFlyCallKit.requestVideoCallSwitch();
+                  if(await AppPermission.askVideoCallPermissions()) {
+                    await MirrorFlyCallKit.requestVideoCallSwitch();
+                  }else{
+                    toToast("Permission is not granted");
+                  }
+
                 }else{
                   toToast(getTranslated("noInternetConnection"));
                 }
