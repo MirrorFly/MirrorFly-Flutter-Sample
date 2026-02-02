@@ -1775,18 +1775,28 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final FlyCallDirection flyCallDirection = await MirrorFlyCallKit.getCallDirection();
-    callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Call direction is $flyCallDirection");
-
-    if (flyCallDirection == FlyCallDirection.incoming) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Incoming call, skipping timeout handling");
-      toToast("Call failed");
-      await NavUtils.back();
-      return;
-    } else {
+    // final FlyCallDirection flyCallDirection = await MirrorFlyCallKit.getCallDirection();
+    // callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Call direction is $flyCallDirection");
+    //
+    // if (flyCallDirection == FlyCallDirection.incoming || flyCallDirection == FlyCallDirection.none) {
+    //   callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Incoming call, skipping timeout handling");
+    //   toToast("Call failed");
+    //   await NavUtils.back();
+    //
+    //   _resetValues();
+    //   _stopTimer();
+    //   closeDialog();
+    //
+    //   return;
+    // } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Outgoing call, processing timeout handling");
+
+      _resetValues();
+      _stopTimer();
+      closeDialog();
+
       callTimeOut(participantsId: participantsId, isCallFailed: true);
-    }
+    // }
   }
 
   /// Invite participants to the ongoing call
