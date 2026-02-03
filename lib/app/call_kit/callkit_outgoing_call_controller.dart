@@ -1784,6 +1784,13 @@ class CallKitOutgoingCallController extends GetxController
 
   /// Invite participants to the ongoing call
   void inviteParticipants() async {
+    final bool isConnected = await AppUtils.isNetConnected();
+    if (!isConnected) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: No internet connection");
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
+
     final String callMode = this.callMode.value;
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");

@@ -610,6 +610,13 @@ class ContactController extends FullLifeCycleController
         .info("makeCall called with selected users: $selectedUsersJIDList arguments: ${arguments.makeCallOutsideChat}, ${arguments.callType}");
     // For live-kit calls
     if (Constants.useMirrorFlyCallKit) {
+      final bool isNetConnected = await AppUtils.isNetConnected();
+      if (!isNetConnected) {
+        callkitLogger.info("makeCall: No internet connection");
+        toToast(getTranslated("noInternetConnection"));
+        return;
+      }
+
       if (selectedUsersJIDList.isEmpty) {
         debugPrint("#Mirrorfly selectedUsersJIDList is empty");
         return;
