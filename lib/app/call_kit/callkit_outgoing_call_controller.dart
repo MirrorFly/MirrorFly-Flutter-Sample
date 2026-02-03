@@ -819,6 +819,13 @@ class CallKitOutgoingCallController extends GetxController
     final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
     callerList[index] = updated;
 
+    if (participantId == getLocalParticipant()?.identity) {
+      callkitLogger.info("[Controller] isAudioMute: Updating local audio mute status to $isAudioMuted");
+      this.isAudioMuted(isAudioMuted);
+    } else {
+      callkitLogger.info("[Controller] isAudioMute: Received for Remote participantId: $participantId");
+    }
+
     callkitLogger.info("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
   }
 

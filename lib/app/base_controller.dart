@@ -310,14 +310,6 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent localHangup");
           break;
 
-        case FlyCallActionEvent.muteAudio:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent muteAudio");
-          break;
-
-        case FlyCallActionEvent.muteVideo:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent muteVideo");
-          break;
-
         case FlyCallActionEvent.flipCamera:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent flipCamera");
           break;
@@ -426,7 +418,7 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.audioUnMuted:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted with participantId=${flyCallAction.participantId}");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioUnMuted with participantId=${flyCallAction.participantId}");
           controller.isAudioMute(
               isAudioMuted: false, participantId: flyCallAction.participantId);
           break;
@@ -501,6 +493,7 @@ class BaseController {
           }
 
         default:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent default - no action taken");
           break;
       }
       });
