@@ -875,7 +875,7 @@ class CallKitOutgoingCallView
               /// REMOTE VIEW → TOP CENTER
               if (!isLocalView.value)
                 Positioned(
-                  top: isGroupGrid ? 45 : 70,
+                  top: isGroupGrid ? 50 : 80,
                   left: 0,
                   right: 0,
                   child: Align(
