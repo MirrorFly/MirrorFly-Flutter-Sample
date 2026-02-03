@@ -903,7 +903,6 @@ class CallKitOutgoingCallView
   Widget _buildCallControls(BuildContext context) {
 
     final bool showCameraSwitch =
-        controller.callType.value.toLowerCase() == CallType.video &&
             controller.isVideoEnabled.value &&
             controller.callKind != FlyCallKind.sip;
 
