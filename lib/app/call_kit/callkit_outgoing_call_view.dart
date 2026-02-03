@@ -170,14 +170,52 @@ class CallKitOutgoingCallView
                       ),
                     ],
                     if (isOngoing) ...[
-                      Center(
-                        child: Text(
-                          controller.getOneToOneCallRemoteUserName(),
-                          style: AppStyleConfig
-                              .ongoingCallPageStyle.callerNameTextStyle,
+                      SizedBox(
+                        height: 38,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            // Invisible widget at the right to balance the invite button
+                            const SizedBox(
+                              width: 48,
+                            ),
+
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  controller.getOneToOneCallRemoteUserName(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppStyleConfig
+                                      .ongoingCallPageStyle.callerNameTextStyle,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(
+                              width: 48,
+                              child: Obx(() {
+                                final showInviteButton =
+                                    controller.isOnGoingCallViewEnable.value &&
+                                        controller.callKind != FlyCallKind.sip;
+
+                                return Visibility(
+                                  visible: showInviteButton,
+                                  child: IconButton(
+                                    onPressed: () => controller.inviteParticipants(),
+                                    icon: const Icon(
+                                      Icons.person_add_alt_1_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 8),
                       Obx((){
                         return Center(
                         child: Text(
@@ -239,22 +277,6 @@ class CallKitOutgoingCallView
             ],
           ),
         ),
-
-        /// Invite Participants Button
-        Obx(() {
-          final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
-          return Visibility(
-            visible: showInviteButton,
-            child: Positioned(
-              top: 10,
-              right: 16,
-              child: IconButton(
-                onPressed: () => controller.inviteParticipants(),
-                icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white, size: 18),
-              ),
-            ),
-          );
-        }),
 
         /// Local Preview / Profile Image
         Obx(() {
