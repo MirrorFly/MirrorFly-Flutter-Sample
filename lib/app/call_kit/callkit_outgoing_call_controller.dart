@@ -1905,6 +1905,28 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] onCallModeChanged fetched callerList with length: ${callerList.length}");
 
+    if (preCallUserListCount > 2) {
+      final (bool isIncomingSwitchAvailable, bool isOutgoingSwitchAvailable) result = await MirrorFlyCallKit.getIsSwitchCallRequestOngoing();
+      final isDialogOpen = DialogUtils.isDialogOpen() && NavUtils.canPop;
+
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onCallModeChanged"
+          " isIncomingSwitchAvailable: ${result.$1},"
+          " isOutgoingSwitchAvailable: ${result.$2}"
+          " isDialogOpen: $isDialogOpen");
+
+      if (result.$2 && isDialogOpen) {
+        // Switch is in progress
+        cancelVideoCallSwitchRequest();
+        callkitLogger.info("[MirrorFly][OutgoingCallController] onCallModeChanged closed"
+            " outgoing call switch dialog due to call mode change");
+      } else if (isDialogOpen) {
+        // dialog only opened not yet switch started
+        NavUtils.back();
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Dialog closed");
+      } else {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] No dialog to close");
+      }
+    }
 
     await configureCallMode(
         callMode: callerList.length > 2 ? "ONE-TO-MANY" : "ONE-TO-ONE",
