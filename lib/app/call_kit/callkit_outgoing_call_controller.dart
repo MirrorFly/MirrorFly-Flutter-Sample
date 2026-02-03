@@ -35,7 +35,7 @@ class CallKitOutgoingCallController extends GetxController
 
   RxBool showControls = true.obs;
   RxBool isVideoEnabled = false.obs;
-  RxBool isAudioEnabled = true.obs;
+  RxBool isAudioMuted = false.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
 
@@ -1312,10 +1312,23 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void setMicroPhoneEnabled({required bool enabled}) async {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start with enabled : $enabled");
-    await MirrorFlyCallKit.setMicrophoneMuted(mute: !enabled, result: (_) {});
-    final bool isMicEnabled = await MirrorFlyCallKit.getIsMicrophoneEnabled();
-    isAudioEnabled.value = isMicEnabled;
+    callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio start with mute : $enabled");
+    MirrorFlyCallKit.setMicrophoneMuted(
+      mute: enabled,
+      result: ({
+        required bool success,
+        bool? isMuted,
+        required String message
+      }) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Mute ON result → success=$success, isMuted=$isMuted, message=$message");
+        if (success && isMuted != null) {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio : $isMuted, and setting isAudioEnabled to ${!isMuted}");
+          isAudioMuted.value = isMuted;
+        } else {
+          callkitLogger.info("[MirrorFly][OutgoingCallController]  Error muteAudio status  result → success=$success, message=$message");
+        }
+      },
+    );
   }
 
   void setCameraEnable({required bool enable}) async {
