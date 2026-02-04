@@ -151,7 +151,7 @@ class CallKitEventBuffer {
         );
         break;
       case FlyCallActionEvent.onCallModeChange:
-        c.onParticipantListUpdated();
+        // c.onParticipantListUpdated();
         break;
       case FlyCallActionEvent.onAudioRouteChanged:
         if (e.flyAudioDevice != null) c.onAudioRouteChanged(e.flyAudioDevice!);
