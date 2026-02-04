@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import '../../../call_modules/call_utils.dart';
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
@@ -34,7 +35,9 @@ class ContactController extends FullLifeCycleController
   var _first = true;
   var isSearchingNew = false.obs;
 
-  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit ? Constants.maxCallUsersLimitForMirrorFlyCallKit : 8;
+  var getMaxCallUsersCount = Constants.useMirrorFlyCallKit
+      ? Constants.maxCallUsersLimitForMirrorFlyCallKit
+      : 8;
   ContactListArguments get arguments =>
       NavUtils.arguments as ContactListArguments;
 
@@ -53,7 +56,8 @@ class ContactController extends FullLifeCycleController
         : Constants.maxCallUsersLimitForMirrorFlyCallKit;
     scrollController.addListener(_scrollListener);
 
-    callkitLogger.info("ContactController onInit called with max call users count: $getMaxCallUsersCount");
+    callkitLogger.info(
+        "ContactController onInit called with max call users count: $getMaxCallUsersCount");
     if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
       isPageLoading(true);
       fetchUsers(false);
@@ -461,7 +465,8 @@ class ContactController extends FullLifeCycleController
       LogMessage.d('Contact Sync', "[Contact Sync] refreshContacts()");
       if (await AppUtils.isNetConnected()) {
         if (!await Mirrorfly.contactSyncStateValue()) {
-          var contactPermissionHandle = await AppPermission.checkPermission(Permission.contacts);
+          var contactPermissionHandle =
+              await AppPermission.checkPermission(Permission.contacts);
           if (contactPermissionHandle) {
             progressSpinner(true);
             Mirrorfly.syncContacts(
@@ -584,7 +589,8 @@ class ContactController extends FullLifeCycleController
         //item.isSelected = false;
         groupCallMembersCount(groupCallMembersCount.value - 1);
       } else {
-        callkitLogger.info("validateForCall: current count: ${groupCallMembersCount.value}, max count: $getMaxCallUsersCount");
+        callkitLogger.info(
+            "validateForCall: current count: ${groupCallMembersCount.value}, max count: $getMaxCallUsersCount");
         if (getMaxCallUsersCount > groupCallMembersCount.value) {
           selectedUsersList.add(item);
           selectedUsersJIDList.add(item.jid!);
@@ -600,14 +606,77 @@ class ContactController extends FullLifeCycleController
   }
 
   void makeCall() async {
+    callkitLogger
+        .info("makeCall called with selected users: $selectedUsersJIDList arguments: ${arguments.makeCallOutsideChat}, ${arguments.callType}");
     // For live-kit calls
     if (Constants.useMirrorFlyCallKit) {
+      final bool isNetConnected = await AppUtils.isNetConnected();
+      if (!isNetConnected) {
+        callkitLogger.info("makeCall: No internet connection");
+        toToast(getTranslated("noInternetConnection"));
+        return;
+      }
+
       if (selectedUsersJIDList.isEmpty) {
         debugPrint("#Mirrorfly selectedUsersJIDList is empty");
         return;
       }
-      await NavUtils.back(result: selectedUsersJIDList);
-      return;
+      final List<String> normalizedJid = selectedUsersJIDList
+          .map((e) => CallUtils.getIdFromJidList(e))
+          .toList();
+      if(arguments.makeCallOutsideChat) {
+        if (arguments.callType == CallType.audio) {
+          if (await AppUtils.isNetConnected()) {
+            if (await AppPermission.askAudioCallPermissions()) {
+              await MirrorFlyCallKit.makeAudioCall(
+                  flyResult: (FlyResult response) {
+                    if (response.isSuccess) {
+                      NavUtils.offNamed(Routes.callKitOutGoingCallView,
+                          arguments: {
+                            "callType": CallType.audio,
+                            "callMode": "ONE-TO-ONE",
+                            "chatId": ''
+                          });
+                    } else {
+                      toToast(response.message ?? "");
+                    }
+                  },
+                  callersId: normalizedJid,
+                  chatId: "");
+            }
+          } else {
+            toToast(getTranslated("noInternetConnection"));
+          }
+        } else if (arguments.callType == CallType.video) {
+          if (await AppUtils.isNetConnected()) {
+            if (await AppPermission.askVideoCallPermissions()) {
+              await MirrorFlyCallKit.makeVideoCall(
+                  flyResult: (FlyResult response) {
+                    if (response.isSuccess) {
+                      NavUtils.offNamed(Routes.callKitOutGoingCallView,
+                          arguments: {
+                            "callType": CallType.video,
+                            "callMode": "ONE-TO-ONE",
+                            "chatId": ''
+                          });
+                    } else {
+                      toToast(response.message ?? "");
+                    }
+                  },
+                  callersId: normalizedJid,
+                  chatId: "");
+            }
+          } else {
+            toToast(getTranslated("noInternetConnection"));
+          }
+        } else {
+          callkitLogger.info("makeCall: Invalid call type");
+        }
+      }
+      if(!arguments.makeCallOutsideChat) {
+        await NavUtils.back(result: normalizedJid);
+        return;
+      }
     }
 
     // For janus calls

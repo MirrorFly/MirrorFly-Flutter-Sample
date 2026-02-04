@@ -1683,6 +1683,7 @@ class DashboardController extends FullLifeCycleController
           arguments: ContactListArguments(
               topicId: topicId.value,
               forMakeCall: forCalls,
+              makeCallOutsideChat: true,
               callType: callType));
     } else {
       var contactPermissionHandle =

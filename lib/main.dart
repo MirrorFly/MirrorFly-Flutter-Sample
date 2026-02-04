@@ -141,7 +141,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
     /// However, on iOS, terminating the app disconnects the call, making this condition unnecessary. Therefore, it's set to false by default.
     final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
-    isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+    isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
     ///
     /// This method will give response from Native Android, iOS will return empty by default.
@@ -181,7 +181,7 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
           final ongoing = await MirrorFlyCallKit.isOngoingCall();
 
           debugPrint("#Mirrorfly CallKit Constants.useMirrorFlyCallKit 1${Constants.useMirrorFlyCallKit} MirrorFlyCallKit.isOngoingCall() $ongoing");
-          isOnGoingCall = Constants.useMirrorFlyCallKit ? await MirrorFlyCallKit.isOngoingCall() : Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
+          isOnGoingCall = Platform.isAndroid ? (await Mirrorfly.isOnGoingCall()).checkNull() : false;
 
           ///
           /// This method will give response from Native Android, iOS will return empty by default.

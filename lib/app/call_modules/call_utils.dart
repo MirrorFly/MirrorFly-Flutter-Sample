@@ -16,7 +16,7 @@ class CallUtils {
     return callersId.split('@').first;
   }
 
-  static String getJidFromId(String groupId){
+  static String getGroupJidFromGroupId(String groupId){
     const domain =  "@mix.xmpp-uikit-qa.contus.us";
     if(groupId != "") {
       if (groupId.endsWith(domain)) {
@@ -28,6 +28,15 @@ class CallUtils {
       return groupId;
     }
 
+  }
+
+  static String getJidFromUserId({required String userId, required bool isGroup}) {
+    final domain = isGroup ? "@mix.xmpp-uikit-qa.contus.us" : "@xmpp-uikit-qa.contus.us";
+    if (userId.endsWith(domain)) {
+      return userId;
+    } else {
+      return "$userId$domain";
+    }
   }
 
   static Future<String> getCallersName(List<String?> callUsers,
