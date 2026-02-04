@@ -192,7 +192,7 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] onReady groupId is not empty, calling getChatNameForGroupCall");
         await getChatNameForGroupCall(chatId: groupId.value);
       } else {
-        await getRemoteAndLocalUserNameForGroupCall();
+        await getCallMembersName();
         callkitLogger.info("[MirrorFly][OutgoingCallController] onReady groupId is empty, skipping getChatNameForGroupCall");
       }
 
@@ -274,7 +274,7 @@ class CallKitOutgoingCallController extends GetxController
           "[MirrorFly][OutgoingCallController] #configureCallMode with remote participantId for "
               "one to one call");
     }
-    await getRemoteAndLocalUserNameForOneToOneCall();
+    await getCallMembersName();
 
     // Validate for group call
     final bool yes = callMode == "TO-ONE-TO-MANY" || callMode == "ONE-TO-MANY";
@@ -286,7 +286,7 @@ class CallKitOutgoingCallController extends GetxController
       if (chatId.isEmpty && callMode == "ONE-TO-MANY") {
         callkitLogger.info(
             "[MirrorFly][OutgoingCallController] #configureCallMode with chatId for group call: $chatId");
-        getRemoteAndLocalUserNameForGroupCall();
+        getCallMembersName();
         isCallModeChangedToOneToMany(true);
       }
       getCallTitleForOneToManyCall();
@@ -303,7 +303,7 @@ class CallKitOutgoingCallController extends GetxController
             .value}");
   }
 
-  Future<void> getRemoteAndLocalUserNameForOneToOneCall() async {
+  Future<void> getCallMembersName() async {
     if (isGroupCall.value) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
@@ -345,35 +345,46 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get remote user name for the each id for group call
   ///
-  Future<void> getRemoteAndLocalUserNameForGroupCall() async {
-    if (!isGroupCall.value) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
-      return;
-    }
-    for (var user in callerList) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Getting user name for: ${user
-              .identity}, isLocal: ${user.isLocalParticipant}");
-      ProfileDetails profile = await getProfileDetails(
-          validId(userId: user.identity, isGroup: false), isFromCallKit: true);
-      String username =
-      (profile.name?.trim().isNotEmpty == true)
-          ? profile.name!.trim()
-          : (profile.nickName?.trim().isNotEmpty == true)
-          ? profile.nickName!.trim()
-          : trimAfterAt(profile.jid ?? "");
-      remoteUserNameMap[user.identity] =
-      user.isLocalParticipant ? "You" : username;
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Remote User Name for ${user
-              .identity}: $username");
-    }
-    callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
-            .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-    return;
-  }
+  // Future<void> getCallMembersName() async {
+  //   if (!isGroupCall.value) {
+  //     callkitLogger.info(
+  //         "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
+  //     return;
+  //   }
+  //
+  //   if(callKind == FlyCallKind.sip){
+  //     callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
+  //     for(var user in callerList){
+  //       remoteUserNameMap[user.identity] =
+  //       user.isLocalParticipant ? "You" : user.identity;
+  //       callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
+  //     }
+  //     return;
+  //   }
+  //
+  //   for (var user in callerList) {
+  //     callkitLogger.info(
+  //         "[MirrorFly][OutgoingCallController] Getting user name for: ${user
+  //             .identity}, isLocal: ${user.isLocalParticipant}");
+  //     ProfileDetails profile = await getProfileDetails(
+  //         validId(userId: user.identity, isGroup: false), isFromCallKit: true);
+  //     String username =
+  //     (profile.name?.trim().isNotEmpty == true)
+  //         ? profile.name!.trim()
+  //         : (profile.nickName?.trim().isNotEmpty == true)
+  //         ? profile.nickName!.trim()
+  //         : trimAfterAt(profile.jid ?? "");
+  //     remoteUserNameMap[user.identity] =
+  //     user.isLocalParticipant ? "You" : username;
+  //     callkitLogger.info(
+  //         "[MirrorFly][OutgoingCallController] Remote User Name for ${user
+  //             .identity}: $username");
+  //   }
+  //   callkitLogger.info(
+  //       "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
+  //           .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
+  //   return;
+  // }
 
   ///
   /// Get remote user name for one-to-one call (remote participant)
@@ -1969,7 +1980,7 @@ class CallKitOutgoingCallController extends GetxController
         "[MirrorFly][OutgoingCallController] onCallModeChanged completed, fetching current call"
             " participants..., with isGroupOnGoingCallEnabled: ${isGroupOnGoingCallEnabled.value}, "
             "isCallModeChangedToOneToMany: ${isCallModeChangedToOneToMany.value}");
-    await getRemoteAndLocalUserNameForGroupCall();
+    await getCallMembersName();
     getCallTitleForOneToManyCall();
     await initCallViewIds();
     await moveLocalParticipantToLast();

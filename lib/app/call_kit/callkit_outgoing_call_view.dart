@@ -354,313 +354,308 @@ class CallKitOutgoingCallView
   Widget buildGroupGridItem(BuildContext context) {
     return Obx(() {
       final isGroupCall = controller.isGroupOnGoingCallEnabled.value;
-      return Stack(
-        children: [
-          SafeArea(
-            child: Stack(
+      return SafeArea(
+        child: Stack(
+          children: [
+            Column(
               children: [
-                Column(
-                  children: [
 
-                    /// --- Call Info Header (Top Section) ---
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
-                      child: Obx(() {
-                        final isOngoing = controller.isOnGoingCallViewEnable.value;
-                        return Column(
-                         crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (isOngoing) ...[
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.65,
-                                child: Text(
-                                  controller.isCallModeChangedToOneToMany.value
-                                      ? controller.titleAfterCallModeChange.value
-                                      : controller.chatNameForGroupCall.value,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  softWrap: false,
-                                  textAlign: TextAlign.center,
-                                  style: AppStyleConfig.ongoingCallPageStyle
-                                      .callStatusTextStyle,
-                                ),
-                              ),
-
-                              Text(
-                                controller.callDuration.value,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ],
-                        );
-                      }),
-                    ),
-
-                    /// --- Grid or Single View (Takes remaining space) ---
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          isGroupCall
-                              ? GridView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                              controller.callerList.length > 2 ? 2 : 1,
-                              mainAxisSpacing: 4.0,
-                              crossAxisSpacing: 2.0,
-                              childAspectRatio:
-                              controller.callerList.length == 2 ? 1.23 : 1.0,
+                /// --- Call Info Header (Top Section) ---
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+                  child: Obx(() {
+                    final isOngoing = controller.isOnGoingCallViewEnable.value;
+                    return Column(
+                     crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (isOngoing) ...[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.65,
+                            child: Text(
+                              controller.isCallModeChangedToOneToMany.value
+                                  ? controller.titleAfterCallModeChange.value
+                                  : controller.chatNameForGroupCall.value,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                              textAlign: TextAlign.center,
+                              style: AppStyleConfig.ongoingCallPageStyle
+                                  .callStatusTextStyle,
                             ),
-                            padding: const EdgeInsets.all(8.0),
-                            itemCount: controller.callerList.length,
-                            itemBuilder: (context, index) {
-                              return Stack(
-                                children: [
-                                  MirrorFlyCallView(
-                                    key: ValueKey(controller.callerList[index].identity),
-                                    userJID: controller
-                                        .callerList[index].identity,
-                                    fit: BoxFit.cover,
-                                    viewBgColor: AppColors.callerTitleBackground,
-                                    profileImage: getUserProfileImageWithName(
-                                      isGroupGrid: true,
-                                      isLocalTile: false,
-                                      participantId: controller
-                                          .callerList[index].identity,
-                                      scale: 1.2, callKind: controller
-                                          .callerList[index].kind,
-                                    ),
-                                  ),
-
-                                  Obx(() {
-                                    final participant = controller.callerList[index];
-                                    debugPrint(
-                                      '[Group UI][AudioMute] '
-                                          'identity=${participant.identity}, '
-                                          'isAudioMuted=${participant.isAudioMuted}',
-                                    );
-                                    return Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          if (participant.isAudioMuted == true) ...[
-                                            CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Colors.grey, //AppColors.audioMutedIconBgColor,
-                                              child: AppUtils.svgIcon(
-                                                icon: callMutedIcon,
-                                                colorFilter: const ColorFilter.mode(
-                                                    Colors.white,
-                                                    BlendMode.srcIn),
-                                              ),
-                                            ),
-                                        ],
-                                          if (participant.isAudioMuted != true) ...[
-                                                  buildSpeakingIndicatorIcon(
-                                                      controller.callerList[index].identity)
-                                                ]
-                                              ],
-                                            ),
-                                    );
-                                  }),
-
-                                        /// Connection Quality Icon
-                                  Obx(() {
-                                    final String participantId = controller.callerList[index].identity;
-                                    return Visibility(
-                                      visible: controller.callerConnectionQuality.containsKey(controller.callerList[index].identity),
-                                      child: Positioned(
-                                          top: 8,
-                                          left: 8,
-                                          child: getConnectionQualityIcon(controller.callerConnectionQuality[participantId] ??
-                                          FlyConnectionQuality.unknown,
-                                      )),
-                                    );
-                                  }),
-
-                                        /// Name label
-                                  Positioned(
-                                    left: 8,
-                                    bottom: 8,
-                                    right: 8,
-                                    child: Obx(() {
-                                      final name = controller.remoteUserNameMap[
-                                      controller.callerList[index]
-                                          .identity] ??
-                                          controller
-                                              .callerList[index].identity;
-                                      return Text(
-                                        name,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      );
-                                    }),
-                                  ),
-
-                                  /// Call status overlay
-                                  Obx(() {
-                                    final participant = controller.callerList[index];
-                                    final isSelf = controller.isSelfId(id: participant.identity);
-                                    final connectionState = controller.getParticipantConnectionState(
-                                      participant.flyCallStatusEvent,
-                                    );
-                                    callkitLogger.info("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
-                                    if ((!isSelf && connectionState.isNotEmpty) ||( isSelf && connectionState == "Reconnecting" && connectionState.isNotEmpty)) {
-                                      return Positioned.fill(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(0.5),
-                                            // borderRadius: BorderRadius.circular(10.0),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              connectionState,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const Offstage();
-                                  }),
-
-                                ],
-                              );
-                            },
-                                )
-                              : Stack(
-                                  children: [
-                                    MirrorFlyCallView(
-                                      // key: ValueKey(controller.groupId.value),
-                                      userJID: !controller.isOnGoingCallViewEnable.value &&
-                                          controller.callType.toUpperCase() == "VIDEO"
-                                          ? controller.getLocalParticipant()?.identity ?? "" :controller.groupId.value,
-                                      fit: BoxFit.cover,
-                                      viewBgColor:
-                                          AppColors.audioCallerBackground,
-                                      profileImage: getUserProfileImageWithName(
-                                        isLocalTile: false,
-                                        isGroup: true,
-                                        participantId: controller.groupId.value,
-                                        scale: 1, callKind: null,
-                                      ),
-                                    ),
-
-                                    if (!controller
-                                        .isOnGoingCallViewEnable.value) ...[
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 16.0),
-                                        width: double.infinity,
-                                        child: Column(
-                                          // mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          // crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              controller.callStatus.value,
-                                              style: AppStyleConfig
-                                                  .ongoingCallPageStyle.callStatusTextStyle,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
-                                              textAlign: TextAlign.center,
-                                              style: AppStyleConfig
-                                                  .ongoingCallPageStyle.callerNameTextStyle,
-                                            ),
-                                            const SizedBox(height: 8),
-                                            controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: List.generate(
-                                                      controller.callerList.length > 3
-                                                          ? 4
-                                                          : controller.callerList.length,
-                                                          (index) => (index == 3)
-                                                          ? ProfileTextImage(
-                                                        text:
-                                                        "+${controller.callerList.length - 3}",
-                                                        radius: 45 / 2,
-                                                        bgColor: Colors.white,
-                                                        fontColor: Colors.grey,
-                                                      )
-                                                          : FutureBuilder(
-                                                          future: getProfileDetails(CallUtils.getJidFromUserId(userId:controller.callerList[index].identity,isGroup: false)),
-                                                          builder: (ctx, snap) {
-                                                            return snap.hasData &&
-                                                                snap.data != null
-                                                                ? Padding(
-                                                              padding:
-                                                              const EdgeInsets
-                                                                  .all(2.0),
-                                                              child:
-                                                              buildProfileImage(
-                                                                  snap.data!,
-                                                                  size: 45),
-                                                            )
-                                                                : const Offstage();
-                                                          })),
-                                                         ): const Offstage()
-
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ],
                           ),
 
-                          /// Gradient overlay
-
-                          /// Controls at bottom
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: _buildControls(context),
+                          Text(
+                            controller.callDuration.value,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                  ],
+                      ],
+                    );
+                  }),
                 ),
-                Positioned(
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0, top: 12),
-                    child: Obx(() {
-                      final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
-                      return Visibility(
-                        visible: showInviteButton,
-                        child: IconButton(
-                          onPressed: () => controller.inviteParticipants(),
-                          icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
+
+                /// --- Grid or Single View (Takes remaining space) ---
+                Expanded(
+                  child: Stack(
+                    children: [
+                      isGroupCall
+                          ? GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                          controller.callerList.length > 2 ? 2 : 1,
+                          mainAxisSpacing: 4.0,
+                          crossAxisSpacing: 2.0,
+                          childAspectRatio:
+                          controller.callerList.length == 2 ? 1.23 : 1.0,
                         ),
-                      );
-                    }),
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: controller.callerList.length,
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              MirrorFlyCallView(
+                                key: ValueKey(controller.callerList[index].identity),
+                                userJID: controller
+                                    .callerList[index].identity,
+                                fit: BoxFit.cover,
+                                viewBgColor: AppColors.callerTitleBackground,
+                                profileImage: getUserProfileImageWithName(
+                                  isGroupGrid: true,
+                                  isLocalTile: false,
+                                  participantId: controller
+                                      .callerList[index].identity,
+                                  scale: 1.2, callKind: controller
+                                      .callerList[index].kind,
+                                ),
+                              ),
+
+                              Obx(() {
+                                final participant = controller.callerList[index];
+                                debugPrint(
+                                  '[Group UI][AudioMute] '
+                                      'identity=${participant.identity}, '
+                                      'isAudioMuted=${participant.isAudioMuted}',
+                                );
+                                return Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      if (participant.isAudioMuted == true) ...[
+                                        CircleAvatar(
+                                          radius: 10,
+                                          backgroundColor: Colors.grey, //AppColors.audioMutedIconBgColor,
+                                          child: AppUtils.svgIcon(
+                                            icon: callMutedIcon,
+                                            colorFilter: const ColorFilter.mode(
+                                                Colors.white,
+                                                BlendMode.srcIn),
+                                          ),
+                                        ),
+                                    ],
+                                      if (participant.isAudioMuted != true) ...[
+                                              buildSpeakingIndicatorIcon(
+                                                  controller.callerList[index].identity)
+                                            ]
+                                          ],
+                                        ),
+                                );
+                              }),
+
+                                    /// Connection Quality Icon
+                              Obx(() {
+                                final String participantId = controller.callerList[index].identity;
+                                return Visibility(
+                                  visible: controller.callerConnectionQuality.containsKey(controller.callerList[index].identity),
+                                  child: Positioned(
+                                      top: 8,
+                                      left: 8,
+                                      child: getConnectionQualityIcon(controller.callerConnectionQuality[participantId] ??
+                                      FlyConnectionQuality.unknown,
+                                  )),
+                                );
+                              }),
+
+                                    /// Name label
+                              Positioned(
+                                left: 8,
+                                bottom: 8,
+                                right: 8,
+                                child: Obx(() {
+                                  final name = controller.remoteUserNameMap[
+                                  controller.callerList[index]
+                                      .identity] ??
+                                      controller
+                                          .callerList[index].identity;
+                                  return Text(
+                                    name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                }),
+                              ),
+
+                              /// Call status overlay
+                              Obx(() {
+                                final participant = controller.callerList[index];
+                                final isSelf = controller.isSelfId(id: participant.identity);
+                                final connectionState = controller.getParticipantConnectionState(
+                                  participant.flyCallStatusEvent,
+                                );
+                                callkitLogger.info("[buildGroupGridItem] Participant: ${participant.identity}, isSelf: $isSelf, connectionState: $connectionState");
+                                if ((!isSelf && connectionState.isNotEmpty) ||( isSelf && connectionState == "Reconnecting" && connectionState.isNotEmpty)) {
+                                  return Positioned.fill(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        // borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          connectionState,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const Offstage();
+                              }),
+
+                            ],
+                          );
+                        },
+                            )
+                          : Stack(
+                              children: [
+                                MirrorFlyCallView(
+                                  // key: ValueKey(controller.groupId.value),
+                                  userJID: !controller.isOnGoingCallViewEnable.value &&
+                                      controller.callType.toUpperCase() == "VIDEO"
+                                      ? controller.getLocalParticipant()?.identity ?? "" :controller.groupId.value,
+                                  fit: BoxFit.cover,
+                                  viewBgColor:
+                                      AppColors.audioCallerBackground,
+                                  profileImage: getUserProfileImageWithName(
+                                    isLocalTile: false,
+                                    isGroup: true,
+                                    participantId: controller.groupId.value,
+                                    scale: 1, callKind: null,
+                                  ),
+                                ),
+
+                                if (!controller
+                                    .isOnGoingCallViewEnable.value) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0),
+                                    width: double.infinity,
+                                    child: Column(
+                                      // mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      // crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          controller.callStatus.value,
+                                          style: AppStyleConfig
+                                              .ongoingCallPageStyle.callStatusTextStyle,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                          textAlign: TextAlign.center,
+                                          style: AppStyleConfig
+                                              .ongoingCallPageStyle.callerNameTextStyle,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: List.generate(
+                                                  controller.callerList.length > 3
+                                                      ? 4
+                                                      : controller.callerList.length,
+                                                      (index) => (index == 3)
+                                                      ? ProfileTextImage(
+                                                    text:
+                                                    "+${controller.callerList.length - 3}",
+                                                    radius: 45 / 2,
+                                                    bgColor: Colors.white,
+                                                    fontColor: Colors.grey,
+                                                  )
+                                                      : FutureBuilder(
+                                                      future: getProfileDetails(CallUtils.getJidFromUserId(userId:controller.callerList[index].identity,isGroup: false)),
+                                                      builder: (ctx, snap) {
+                                                        return snap.hasData &&
+                                                            snap.data != null
+                                                            ? Padding(
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(2.0),
+                                                          child:
+                                                          buildProfileImage(
+                                                              snap.data!,
+                                                              size: 45),
+                                                        )
+                                                            : const Offstage();
+                                                      })),
+                                                     ): const Offstage()
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ],
+                      ),
+
+                      /// Gradient overlay
+
+                      /// Controls at bottom
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: _buildControls(context),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-
-        ],
+            Positioned(
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0, top: 12),
+                child: Obx(() {
+                  final showInviteButton = controller.isOnGoingCallViewEnable.value && controller.callKind != FlyCallKind.sip;
+                  return Visibility(
+                    visible: showInviteButton,
+                    child: IconButton(
+                      onPressed: () => controller.inviteParticipants(),
+                      icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        ),
       );
     });
   }
