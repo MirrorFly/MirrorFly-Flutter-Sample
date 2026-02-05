@@ -547,7 +547,7 @@ class CallKitAddParticipantsController extends GetxController
       }
     };
 
-    if (!Constants.enableContactSync) {
+    if (!Constants.enableContactSync && groupId.isEmpty) {
       callkitLogger.info(
           "$tag → Calling getUserList | page=$pageNum search=$_searchText");
 
@@ -557,6 +557,21 @@ class CallKitAddParticipantsController extends GetxController
         metaDataUserList: Constants.metaDataUserList,
         flyCallback: callback,
       );
+    } else if (!Constants.enableContactSync && groupId.isNotEmpty) {
+      callkitLogger.info("$tag → Calling getGroupMembersList");
+      Mirrorfly.getGroupMembersList(
+          jid: groupId.value.toString(),
+          flyCallBack: (FlyResponse response) {
+            LogMessage.d("getGroupMembersList", response.toString());
+            if (response.isSuccess && response.hasData) {
+              var list = profileFromJson(response.data);
+              var callConnectedUserList = List<String>.from(
+                  callList.value.map((element) => element.identity));
+              var filteredList = getFilteredList(callConnectedUserList, list);
+              mainUsersList(filteredList);
+              usersList(filteredList);
+            }
+          });
     } else {
       callkitLogger.info("$tag → Calling getRegisteredUsers");
 
