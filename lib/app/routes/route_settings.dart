@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_result_view.dart';
+import '../call_kit/call_kit_participants/callkit_participants_view.dart';
 import '../call_kit/callkit_call_timeout/callkit_call_timeout_view.dart';
 import '../model/arguments.dart';
 
@@ -258,6 +259,11 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       return MaterialPageRoute(
           builder: (_) =>
               const CallKitTimeoutView(),
+          settings: settings);
+    case Routes.callKitParticipantView:
+      return MaterialPageRoute(
+          builder: (_) =>
+              const CallKitParticipantsView(),
           settings: settings);
 
       case Routes.dialerPad:
