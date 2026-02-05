@@ -354,7 +354,10 @@ toToast(String text) {
 class Constants {
   static bool isUIKIT = false;
   static bool useDeprecatedInit = false;
+
   static bool useMirrorFlyCallKit = true;
+  static String mfCallKitWebChatDomain = "https://api-uikit-qa.contus.us";
+
   static const bool isBackupFeatureEnabled = true;
   static const maxCallUsersLimitForMirrorFlyCallKit = 20;
 
