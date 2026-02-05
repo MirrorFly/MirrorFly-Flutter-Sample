@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -35,15 +36,33 @@ class JoinCallController extends FullLifeCycleController
   var displayStatus = getTranslated("connectingPleaseWait");
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
+
+    if (Constants.useMirrorFlyCallKit) {
+      callkitLogger.info("Initializing join via link with callLinkId: $callLinkId");
+      final InitializeJoinLinkResponse initializeJoinLinkResponse = await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
+
+      if (initializeJoinLinkResponse.isSuccess) {
+       callkitLogger.info("Join via link initialization successful");
+      } else {
+        callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
+      }
+    } else {
+      callkitLogger.info("Setting call link event listener for join via link with callLinkId: $callLinkId");
+      Mirrorfly.setCallLinkEventListener(this);
+    }
   }
 
   @override
   void onReady() {
     super.onReady();
+
+    if (Constants.useMirrorFlyCallKit) {
+      return;
+    }
+
     checkPermission().then((v) {
       // Future.delayed(const Duration(milliseconds: 500), (){
       initializeCall();
