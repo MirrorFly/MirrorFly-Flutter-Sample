@@ -354,15 +354,19 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
               ),
               Expanded(
                   child: Text(
-                    controller.meetLink.value,
+                    controller.getLinkToShow(fullLink: controller.meetLink.value),
                     style: copyMeetLinkStyle.linkTextStyle,
                   )),
               IconButton(
                 onPressed: () {
                   if (controller.meetLink.value.isEmpty) return;
-                  Clipboard.setData(ClipboardData(
-                      text:
-                      Constants.webChatLogin + controller.meetLink.value));
+
+                  if (Constants.useMirrorFlyCallKit) {
+                    Clipboard.setData(ClipboardData(text: controller.meetLink.value));
+                  } else {
+                    Clipboard.setData(ClipboardData(text:
+                        Constants.webChatLogin + controller.meetLink.value));
+                  }
                   toToast(getTranslated("linkCopied"));
                 },
                 icon: AppUtils.svgIcon(

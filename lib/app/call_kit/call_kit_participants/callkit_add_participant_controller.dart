@@ -602,4 +602,26 @@ class CallKitAddParticipantsController extends GetxController
         "GroupParticipants", "onAvailableFeaturesUpdated ${features.toJson()}");
     availableFeatures(features);
   }
+
+  String getLinkToShow({required String fullLink}) {
+    callkitLogger.info("getLinkToShow → "
+        "fullLink=$fullLink "
+        "joinViaLink=$joinViaLink "
+        "meetLink=${meetLink.value}");
+
+    if (!Constants.useMirrorFlyCallKit) {
+      return fullLink;
+    }
+
+    const String subStringIdentifier = "call/";
+    final int index = fullLink.indexOf(subStringIdentifier);
+    if (index == -1) {
+      return fullLink;
+    }
+
+    final String extracted = fullLink.substring(index + subStringIdentifier.length);
+    callkitLogger.info("getLinkToShow → extracted=$extracted");
+
+    return extracted;
+  }
 }
