@@ -10,6 +10,7 @@ import '../common/widgets.dart';
 import '../data/helper.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
 import 'callkit_logger.dart';
 import 'callkit_outgoing_call_controller.dart';
@@ -203,7 +204,10 @@ class CallKitOutgoingCallView
                                 return Visibility(
                                   visible: showInviteButton,
                                   child: IconButton(
-                                    onPressed: () => controller.inviteParticipants(),
+                                    onPressed: () {
+                                      NavUtils.toNamed(Routes.callKitParticipantView,
+                                          arguments: {"joinViaLink": false});
+                                    },                                        // controller.inviteParticipants(),
                                     icon: const Icon(
                                       Icons.person_add_alt_1_rounded,
                                       color: Colors.white,
@@ -647,7 +651,11 @@ class CallKitOutgoingCallView
                   return Visibility(
                     visible: showInviteButton,
                     child: IconButton(
-                      onPressed: () => controller.inviteParticipants(),
+                      onPressed: () {
+                        NavUtils.toNamed(Routes.callKitParticipantView,
+                            arguments: {"joinViaLink": false});
+                      },
+                          // controller.inviteParticipants(),
                       icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
                     ),
                   );
