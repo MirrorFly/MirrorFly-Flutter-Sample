@@ -376,6 +376,9 @@ class CallKitAddParticipantsController extends GetxController
     if (selectedUsersJIDList.isEmpty) {
       return;
     }
+    final List<String> normalizedJid = selectedUsersJIDList
+        .map((e) => CallUtils.getIdFromJidList(e))
+        .toList();
     if (!availableFeatures.value.isGroupCallAvailable.checkNull()) {
       DialogUtils.showFeatureUnavailable();
       return;
@@ -385,16 +388,13 @@ class CallKitAddParticipantsController extends GetxController
       return;
     }
     if (callList.value.length != getMaxCallUsersCount) {
-      Mirrorfly.inviteUsersToOngoingCall(
-          jidList: selectedUsersJIDList,
-          flyCallback: (FlyResponse response) {
-            LogMessage.d("inviteUsersToOngoingCall", response.toString());
-            if (response.isSuccess) {
-              NavUtils.back();
-            } else {
-              toToast(getErrorDetails(response));
-            }
-          });
+      MirrorFlyCallKit.inviteParticipants(inviteUserList: normalizedJid, flyResult: (res) async {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
+        if (res.isSuccess) {
+          NavUtils.back();
+          // callerList.value = await getCurrentCallParticipants();
+        }
+      });
     } else {
       toToast(getTranslated("callMembersLimit")
           .replaceFirst("%d", getMaxCallUsersCount.toString()));

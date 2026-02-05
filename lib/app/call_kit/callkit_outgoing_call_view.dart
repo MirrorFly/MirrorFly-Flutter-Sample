@@ -205,7 +205,7 @@ class CallKitOutgoingCallView
                                   visible: showInviteButton,
                                   child: IconButton(
                                     onPressed: () {
-                                      NavUtils.toNamed(Routes.callKitParticipantView,
+                                      NavUtils.offNamed(Routes.callKitParticipantView,
                                           arguments: {"joinViaLink": false});
                                     },                                        // controller.inviteParticipants(),
                                     icon: const Icon(
@@ -652,7 +652,7 @@ class CallKitOutgoingCallView
                     visible: showInviteButton,
                     child: IconButton(
                       onPressed: () {
-                        NavUtils.toNamed(Routes.callKitParticipantView,
+                        NavUtils.offNamed(Routes.callKitParticipantView,
                             arguments: {"joinViaLink": false});
                       },
                           // controller.inviteParticipants(),
