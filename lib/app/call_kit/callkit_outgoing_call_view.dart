@@ -29,9 +29,10 @@ class CallKitOutgoingCallView
     return Obx(() {
       debugPrint(
           "#CallKitOutGoingCallView Build Called, isGroupCall");
-      return PopScope(
-        canPop: false,
-        child: Scaffold(
+      // return PopScope(
+      //   canPop: false,
+      //   child: Scaffold(
+      return Scaffold(
           resizeToAvoidBottomInset: false,
           body: SafeArea(
             child: ColoredBox(
@@ -45,8 +46,9 @@ class CallKitOutgoingCallView
               ),
             ),
           ),
-        ),
-      );
+        // ),
+        );
+      // );
     });
   }
 
