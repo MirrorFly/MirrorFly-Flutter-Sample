@@ -57,7 +57,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
       if (initializeJoinLinkResponse.isSuccess) {
         isInitializeSuccess(true);
-        callkitLogger.info("Join via link initialization successful");
+        callkitLogger.info("Join via link initialization successful, data: ${initializeJoinLinkResponse.toMap()},"
+            " participants ${initializeJoinLinkResponse.callParticipants}");
       } else {
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
