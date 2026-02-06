@@ -59,8 +59,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
       if (initializeJoinLinkResponse.isSuccess) {
         isInitializeSuccess(true);
-        _users = initializeJoinLinkResponse.callParticipants!.map((p) => CallUtils.getJidFromUserId(userId:p.userId ?? '',isGroup: false)).toList().obs;
-        callkitLogger.info("Join via link initialization successful ${_users} participants found");
+        callkitLogger.info("Join via link initialization successful");
+        await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
       } else {
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
@@ -74,8 +74,22 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   }
 
   /// Get call members details
-  Future<void> getCallDetails() async {
+  Future<void> getCallDetails({required List<JoinLinkParticipant>? participants}) async {
+    callkitLogger.info("Fetching call details for participants: ${participants?.map((p) => p.userId).toList()}");
 
+    if (participants == null || participants.isEmpty) {
+      callkitLogger.info("No participants found in call details");
+    }
+
+    for (var participant in participants ?? []) {
+
+      var callKitId = participant.userId.checkNull();
+      callkitLogger.info("Fetching profile for participant callKitId: $callKitId");
+
+      final String jid = CallUtils.getJidFromUserId(userId: callKitId, isGroup: false);
+      callkitLogger.info("Constructed JID for participant: $jid");
+      _users.add(jid);
+    }
   }
 
   /// Join call
@@ -173,6 +187,19 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     );
 
     return completer.future;
+  }
+
+  /// Override the back button press to prevent navigating back during the call join process
+  void onBackPressed() async {
+    callkitLogger.info("Back button pressed during call join process, ignoring to prevent navigation");
+    final bool isCancelled = await MirrorFlyCallKit.cancelInitializeJoinViaLink();
+    if (isCancelled) {
+      callkitLogger.info("Join via link initialization cancelled successfully");
+      NavUtils.back();
+    } else {
+      callkitLogger.info("Failed to cancel join via link initialization");
+      toToast("An error occurred while cancelling the call join process. Please try again.");
+    }
   }
 
   /// check permission and set Mute Status

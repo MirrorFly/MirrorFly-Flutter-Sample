@@ -33,184 +33,198 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
       child: Theme(
         data: ThemeData(
             appBarTheme: AppStyleConfig.joinCallPreviewPageStyle.appBarTheme),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            automaticallyImplyLeading: true,
-          ),
-          body: SafeArea(
-            child: Obx(() {
-              return controller.callEnded.isEmpty ? Column(
-                children: [
-                  Stack(
-                    children: [
+        child: PopScope(
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              controller.onBackPressed();
+            }
+          },
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+             leading:  IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  controller.onBackPressed();
+                },
+              ),
+            ),
+            body: SafeArea(
+              child: Obx(() {
+                return controller.callEnded.isEmpty ? Column(
+                  children: [
+                    Stack(
+                      children: [
 
-                      /// Call Members Name | Placeholder
-                      Center(
-                        child: Obx(() {
-                          return FutureBuilder(future: CallUtils.getCallersName(controller.users, false),
-                              builder: (ctx, snap) {
-                                return Text(
-                                  snap.hasData && snap.data != null &&
-                                      snap.data!.isNotEmpty
-                                      ? snap.data!
-                                      : getTranslated("noOneHere"),
-                                  style: AppStyleConfig.joinCallPreviewPageStyle
-                                      .callerNameTextStyle,
-                                  overflow: TextOverflow.ellipsis,);
-                              });
-                        }),
-                      ),
-                    ],
-                  ),
-
-                  /// Call Members Profile Image
-                  Obx(() {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                          controller.users.length > 3 ? 4 : controller.users
-                              .length, (index) =>
-                      (index == 3) ? Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: ProfileTextImage(
-                          text: "+${(controller.users.length) - 3}",
-                          radius: 45 / 2,
-                          bgColor: Colors.white,
-                          fontColor: const Color(0xff12233E),
+                        /// Call Members Name | Placeholder
+                        Center(
+                          child: Obx(() {
+                            return FutureBuilder(future: CallUtils.getCallersName(controller.users, false),
+                                builder: (ctx, snap) {
+                                  return Text(
+                                    snap.hasData && snap.data != null &&
+                                        snap.data!.isNotEmpty
+                                        ? snap.data!
+                                        : getTranslated("noOneHere"),
+                                    style: AppStyleConfig.joinCallPreviewPageStyle
+                                        .callerNameTextStyle,
+                                    overflow: TextOverflow.ellipsis,);
+                                });
+                          }),
                         ),
-                      ) : FutureBuilder(future: getProfileDetails(
-                          controller.users[index]!), builder: (ctx, snap) {
-                        return snap.hasData && snap.data != null ? Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: buildProfileImage(snap.data!, size: 45),
-                        ) : const Offstage();
-                      })),
-                    );
-                  }),
-
-                  const SizedBox(height: 24),
-
-                  /// Call Status
-                  Obx(() {
-                          return Text(
-                            controller.isInitializeSuccess.value
-                                ? "Ready to join"
-                                : controller.displayStatus,
-                            style: AppStyleConfig
-                                .joinCallPreviewPageStyle.callerNameTextStyle,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        }),
-
-                        const Spacer(),
-
-                  /// Call Preview MirrorFly View
-                  Container(
-                    height: 170,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      color: AppColors.audioCallBackground,
-                      borderRadius: BorderRadius.circular(15)
+                      ],
                     ),
-                    margin: const EdgeInsets.all(40),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: MirrorFlyCallView(
-                        userJID: SessionManagement.getUserJID().checkNull(),
-                        viewBgColor: AppColors.audioCallBackground,
-                        profileImage: controller.getProfileImage),
-                    ),
-                  ),
 
-                  /// Preview controlls
-                  Obx(() {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
+                    /// Call Members Profile Image
+                    Obx(() {
+                      return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          controller.muted.value
-                              ? FloatingActionButton(
-                            shape: AppStyleConfig.joinCallPreviewPageStyle
-                                .actionButtonsStyle.shape,
-                            heroTag: "mute",
-                            elevation: 0,
-                            backgroundColor: AppStyleConfig
-                                .joinCallPreviewPageStyle
-                                .actionButtonsStyle.activeBgColor,
-                            //Colors.white,
-                            onPressed: () => controller.muteAudio(),
-                            child: AppUtils.svgIcon(icon:
-                            muteActive,
-                              colorFilter: ColorFilter.mode(
-                                  AppStyleConfig.joinCallPreviewPageStyle
-                                      .actionButtonsStyle.activeIconColor,
-                                  BlendMode.srcIn),
+                        children: List.generate(
+                            controller.users.length > 3 ? 4 : controller.users
+                                .length, (index) =>
+                        (index == 3) ? Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: ProfileTextImage(
+                            text: "+${(controller.users.length) - 3}",
+                            radius: 45 / 2,
+                            bgColor: Colors.white,
+                            fontColor: const Color(0xff12233E),
+                          ),
+                        ) : FutureBuilder(future: getProfileDetails(
+                            controller.users[index]!), builder: (ctx, snap) {
+                          return snap.hasData && snap.data != null ? Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: buildProfileImage(snap.data!, size: 45),
+                          ) : const Offstage();
+                        })),
+                      );
+                    }),
+
+                    const SizedBox(height: 24),
+
+                    /// Call Status
+                    Obx(() {
+                            return Text(
+                              controller.isInitializeSuccess.value
+                                  ? "Ready to join"
+                                  : controller.displayStatus,
+                              style: AppStyleConfig
+                                  .joinCallPreviewPageStyle.callerNameTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          }),
+
+                          const Spacer(),
+
+                    /// Call Preview MirrorFly View
+                   controller.isInitializeSuccess.value ? Container(
+                      height: 170,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: AppColors.audioCallBackground,
+                        borderRadius: BorderRadius.circular(15)
+                      ),
+                      margin: const EdgeInsets.all(40),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MirrorFlyCallView(
+                          userJID: SessionManagement.getUserJID().checkNull(),
+                          viewBgColor: AppColors.audioCallBackground,
+                          profileImage: controller.getProfileImage),
+                      ),
+                    ) : const SizedBox.shrink(),
+
+                    /// Preview controls
+                    controller.isInitializeSuccess.value ? Obx(() {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 50),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            controller.muted.value
+                                ? FloatingActionButton(
+                              shape: AppStyleConfig.joinCallPreviewPageStyle
+                                  .actionButtonsStyle.shape,
+                              heroTag: "mute",
+                              elevation: 0,
+                              backgroundColor: AppStyleConfig
+                                  .joinCallPreviewPageStyle
+                                  .actionButtonsStyle.activeBgColor,
+                              //Colors.white,
+                              onPressed: () => controller.muteAudio(),
+                              child: AppUtils.svgIcon(icon:
+                              muteActive,
+                                colorFilter: ColorFilter.mode(
+                                    AppStyleConfig.joinCallPreviewPageStyle
+                                        .actionButtonsStyle.activeIconColor,
+                                    BlendMode.srcIn),
+                              ),
+                            )
+                                : FloatingActionButton(
+                              shape: AppStyleConfig.joinCallPreviewPageStyle
+                                  .actionButtonsStyle.shape,
+                              heroTag: "mute",
+                              elevation: 0,
+                              backgroundColor: AppStyleConfig
+                                  .joinCallPreviewPageStyle
+                                  .actionButtonsStyle.inactiveBgColor,
+                              //Colors.white.withOpacity(0.3),
+                              onPressed: () => controller.muteAudio(),
+                              child: AppUtils.svgIcon(icon:
+                              muteInactive,
+                                colorFilter: ColorFilter.mode(
+                                    AppStyleConfig.joinCallPreviewPageStyle
+                                        .actionButtonsStyle.inactiveIconColor,
+                                    BlendMode.srcIn),
+                              ),
                             ),
-                          )
-                              : FloatingActionButton(
-                            shape: AppStyleConfig.joinCallPreviewPageStyle
-                                .actionButtonsStyle.shape,
-                            heroTag: "mute",
-                            elevation: 0,
-                            backgroundColor: AppStyleConfig
-                                .joinCallPreviewPageStyle
-                                .actionButtonsStyle.inactiveBgColor,
-                            //Colors.white.withOpacity(0.3),
-                            onPressed: () => controller.muteAudio(),
-                            child: AppUtils.svgIcon(icon:
-                            muteInactive,
-                              colorFilter: ColorFilter.mode(
+                            const SizedBox(width: 15,),
+                            FloatingActionButton(
+                              shape: AppStyleConfig.joinCallPreviewPageStyle
+                                  .actionButtonsStyle.shape,
+                              heroTag: "video",
+                              elevation: 0,
+                              backgroundColor: controller.videoMuted.value
+                                  ? AppStyleConfig.joinCallPreviewPageStyle
+                                  .actionButtonsStyle.activeBgColor
+                                  : AppStyleConfig.joinCallPreviewPageStyle
+                                  .actionButtonsStyle.inactiveBgColor,
+                              onPressed: () => controller.videoMute(),
+                              child: controller.videoMuted.value ?
+                              AppUtils.svgIcon(icon: videoInactive,
+                                colorFilter: ColorFilter.mode(
+                                    AppStyleConfig.joinCallPreviewPageStyle
+                                        .actionButtonsStyle.activeIconColor,
+                                    BlendMode.srcIn),)
+                                  : AppUtils.svgIcon(icon:
+                              videoActive, colorFilter: ColorFilter.mode(
                                   AppStyleConfig.joinCallPreviewPageStyle
                                       .actionButtonsStyle.inactiveIconColor,
-                                  BlendMode.srcIn),
+                                  BlendMode.srcIn),),
                             ),
-                          ),
-                          const SizedBox(width: 15,),
-                          FloatingActionButton(
-                            shape: AppStyleConfig.joinCallPreviewPageStyle
-                                .actionButtonsStyle.shape,
-                            heroTag: "video",
-                            elevation: 0,
-                            backgroundColor: controller.videoMuted.value
-                                ? AppStyleConfig.joinCallPreviewPageStyle
-                                .actionButtonsStyle.activeBgColor
-                                : AppStyleConfig.joinCallPreviewPageStyle
-                                .actionButtonsStyle.inactiveBgColor,
-                            onPressed: () => controller.videoMute(),
-                            child: controller.videoMuted.value ?
-                            AppUtils.svgIcon(icon: videoInactive,
-                              colorFilter: ColorFilter.mode(
-                                  AppStyleConfig.joinCallPreviewPageStyle
-                                      .actionButtonsStyle.activeIconColor,
-                                  BlendMode.srcIn),)
-                                : AppUtils.svgIcon(icon:
-                            videoActive, colorFilter: ColorFilter.mode(
-                                AppStyleConfig.joinCallPreviewPageStyle
-                                    .actionButtonsStyle.inactiveIconColor,
-                                BlendMode.srcIn),),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                  Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
-                      child: Obx(() {
-                        return ElevatedButton(
-                          style: AppStyleConfig.joinCallPreviewPageStyle
-                              .joinCallButtonStyle,
-                          onPressed: controller.isInitializeSuccess.value ? () {
-                            controller.joinCall();
-                          } : null,
-                          child: Text(getTranslated("join_now")),
-                        );
-                      })),
-                ],
-              ) :  linkErrorView(callLinkErrorViewStyle: AppStyleConfig.joinCallPreviewPageStyle.callLinkErrorViewStyle,errorText:controller.callEndedMessage,callEndedVisible: !controller.invalidLink);
-            }),
+                          ],
+                        ),
+                      );
+                    }) : const SizedBox.shrink(),
+
+
+                    controller.isInitializeSuccess.value ?  Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0, top: 20.0),
+                        child: Obx(() {
+                          return ElevatedButton(
+                            style: AppStyleConfig.joinCallPreviewPageStyle
+                                .joinCallButtonStyle,
+                            onPressed: controller.isInitializeSuccess.value ? () {
+                              controller.joinCall();
+                            } : null,
+                            child: Text(getTranslated("join_now")),
+                          );
+                        })) : const SizedBox.shrink(),
+                  ],
+                ) :  linkErrorView(callLinkErrorViewStyle: AppStyleConfig.joinCallPreviewPageStyle.callLinkErrorViewStyle,errorText:controller.callEndedMessage,callEndedVisible: !controller.invalidLink);
+              }),
+            ),
           ),
         ),
       ),
