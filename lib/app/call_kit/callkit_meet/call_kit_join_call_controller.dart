@@ -28,7 +28,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   var displayStatus = getTranslated("connectingPleaseWait");
   var paused = false;
 
-  var _users = <String>[].obs;
+  var users = <String>[].obs;
   final videoMuted = true.obs;
   final muted = true.obs;
 
@@ -36,7 +36,6 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   bool invalidLink = false;
   String callEndedMessage = "";
 
-  get users => _users;
 
   @override
   void onInit() async {
@@ -61,6 +60,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
+        videoMuted.value = false;
+        muted.value = false;
       } else {
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
@@ -83,12 +84,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
     for (var participant in participants ?? []) {
 
-      var callKitId = participant.userId.checkNull();
+      var callKitId = participant.userId;
       callkitLogger.info("Fetching profile for participant callKitId: $callKitId");
 
       final String jid = CallUtils.getJidFromUserId(userId: callKitId, isGroup: false);
       callkitLogger.info("Constructed JID for participant: $jid");
-      _users.add(jid);
+      users.add(jid);
     }
   }
 
@@ -120,7 +121,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   /// Mute Video
   Future<void> videoMute() async {
     callkitLogger.info("Toggling videoMute. Current state: ${videoMuted.value}");
-    MirrorFlyCallKit.setCameraEnable(enable: (!videoMuted.value), result: (isSuccess) {
+    MirrorFlyCallKit.setCameraEnable(enable: (videoMuted.value), result: (isSuccess) {
       callkitLogger.info("Camera enable response from CallKit: isSuccess: $isSuccess. Current videoMute state: ${videoMuted.value}");
       if (!isSuccess) {
         callkitLogger.info("Failed to toggle videoMute in CallKit.");
@@ -190,10 +191,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   }
 
   /// Override the back button press to prevent navigating back during the call join process
-  void onBackPressed() async {
+  void onBackPressed({bool fromPopScope = false}) async {
     callkitLogger.info("Back button pressed during call join process, ignoring to prevent navigation");
     final bool isCancelled = await MirrorFlyCallKit.cancelInitializeJoinViaLink();
-    if (isCancelled) {
+    if (isCancelled && !fromPopScope) {
       callkitLogger.info("Join via link initialization cancelled successfully");
       NavUtils.back();
     } else {

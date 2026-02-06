@@ -15,6 +15,7 @@ import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../stylesheet/stylesheet.dart';
+import '../callkit_logger.dart';
 import 'call_kit_join_call_controller.dart';
 
 class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallController> {
@@ -36,7 +37,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
         child: PopScope(
           onPopInvokedWithResult: (didPop, result) {
             if (didPop) {
-              controller.onBackPressed();
+              controller.onBackPressed(fromPopScope: true);
             }
           },
           child: Scaffold(
@@ -61,6 +62,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                           child: Obx(() {
                             return FutureBuilder(future: CallUtils.getCallersName(controller.users, false),
                                 builder: (ctx, snap) {
+                              callkitLogger.info("Callers Name FutureBuilder snap data ${snap.data}");
                                   return Text(
                                     snap.hasData && snap.data != null &&
                                         snap.data!.isNotEmpty
@@ -126,9 +128,13 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                       ),
                       margin: const EdgeInsets.all(40),
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(0.0),
                         child: MirrorFlyCallView(
-                          userJID: SessionManagement.getUserJID().checkNull(),
+                            fit: BoxFit.cover,
+                            radius: 15,
+                            isLocalUser: true,
+                          userJID: CallUtils.getIdFromJidList( SessionManagement.getUserJID().checkNull()
+                          ),
                           viewBgColor: AppColors.audioCallBackground,
                           profileImage: controller.getProfileImage),
                       ),
