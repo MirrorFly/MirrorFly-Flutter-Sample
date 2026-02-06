@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -26,7 +28,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   var displayStatus = getTranslated("connectingPleaseWait");
   var paused = false;
 
-  final _users = <String>[].obs;
+  var _users = <String>[].obs;
   final videoMuted = true.obs;
   final muted = true.obs;
 
@@ -57,7 +59,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
       if (initializeJoinLinkResponse.isSuccess) {
         isInitializeSuccess(true);
-        callkitLogger.info("Join via link initialization successful");
+        _users = initializeJoinLinkResponse.callParticipants!.map((p) => CallUtils.getJidFromUserId(userId:p.userId ?? '',isGroup: false)).toList().obs;
+        callkitLogger.info("Join via link initialization successful ${_users} participants found");
       } else {
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
