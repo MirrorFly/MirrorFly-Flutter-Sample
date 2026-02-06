@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_utils.dart';
 import '../../call_modules/call_widgets.dart';
 import '../../common/app_localizations.dart';
@@ -43,10 +44,11 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                 children: [
                   Stack(
                     children: [
+
+                      /// Call Members Name | Placeholder
                       Center(
                         child: Obx(() {
-                          return FutureBuilder(future: CallUtils.getCallersName(
-                              controller.users, false),
+                          return FutureBuilder(future: CallUtils.getCallersName(controller.users, false),
                               builder: (ctx, snap) {
                                 return Text(
                                   snap.hasData && snap.data != null &&
@@ -61,6 +63,8 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                       ),
                     ],
                   ),
+
+                  /// Call Members Profile Image
                   Obx(() {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -84,27 +88,42 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                       })),
                     );
                   }),
-                  const Spacer(),
+
+                  const SizedBox(height: 24),
+
+                  /// Call Status
                   Obx(() {
-                    return controller.subscribeSuccess.value
-                        ? const Offstage()
-                        :
-                    Text(controller.displayStatus, style: AppStyleConfig
-                        .joinCallPreviewPageStyle
-                        .callerNameTextStyle,
-                      overflow: TextOverflow.ellipsis,);
-                  }),
-                  const Spacer(),
+                          return Text(
+                            controller.isInitializeSuccess.value
+                                ? "Ready to join"
+                                : controller.displayStatus,
+                            style: AppStyleConfig
+                                .joinCallPreviewPageStyle.callerNameTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          );
+                        }),
+
+                        const Spacer(),
+
+                  /// Call Preview MirrorFly View
                   Container(
                     height: 170,
                     width: 150,
+                    decoration: BoxDecoration(
+                      color: AppColors.audioCallBackground,
+                      borderRadius: BorderRadius.circular(15)
+                    ),
                     margin: const EdgeInsets.all(40),
-                    child: MirrorFlyView(
-                      userJid: SessionManagement.getUserJID().checkNull(),
-                      viewBgColor: AppColors.callerBackground,
-                    ).setBorderRadius(const BorderRadius.all(Radius.circular(
-                        15))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: MirrorFlyCallView(
+                        userJID: SessionManagement.getUserJID().checkNull(),
+                        viewBgColor: AppColors.audioCallBackground,
+                        profileImage: controller.getProfileImage),
+                    ),
                   ),
+
+                  /// Preview controlls
                   Obx(() {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -149,19 +168,6 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                   BlendMode.srcIn),
                             ),
                           ),
-                          /*if(controller.callType.value == CallType.video && !controller.videoMuted.value)...[
-                          FloatingActionButton(
-                            shape: AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.shape,
-                            heroTag: "switchCamera",
-                            elevation: 0,
-                            backgroundColor: controller.cameraSwitch.value ? AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeBgColor : AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.inactiveBgColor,
-                            // backgroundColor: controller.cameraSwitch.value ? Colors.white : Colors.white.withOpacity(0.3),
-                            onPressed: () => controller.switchCamera(),
-                            child: controller.cameraSwitch.value
-                                ? AppUtils.svgIcon(icon:cameraSwitchActive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeIconColor, BlendMode.srcIn),)
-                                : AppUtils.svgIcon(icon:cameraSwitchInactive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.inactiveIconColor, BlendMode.srcIn),),
-                          ),
-                        ],*/
                           const SizedBox(width: 15,),
                           FloatingActionButton(
                             shape: AppStyleConfig.joinCallPreviewPageStyle
@@ -186,25 +192,6 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                     .actionButtonsStyle.inactiveIconColor,
                                 BlendMode.srcIn),),
                           ),
-                          /*FloatingActionButton(
-                          shape: AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.shape,
-                          heroTag: "speaker",
-                          elevation: 0,
-                          backgroundColor:
-                          controller.audioOutputType.value == AudioDeviceType.receiver
-                              ? AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.inactiveBgColor//Colors.white.withOpacity(0.3)
-                              : AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeBgColor,//Colors.white,
-                          onPressed: () => controller.changeSpeaker(),
-                          child: controller.audioOutputType.value == AudioDeviceType.receiver
-                              ? AppUtils.svgIcon(icon:speakerInactive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.inactiveIconColor, BlendMode.srcIn),)
-                              : controller.audioOutputType.value == AudioDeviceType.speaker
-                              ? AppUtils.svgIcon(icon:speakerActive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeIconColor, BlendMode.srcIn))
-                              : controller.audioOutputType.value == AudioDeviceType.bluetooth
-                              ? AppUtils.svgIcon(icon:speakerBluetooth,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeIconColor, BlendMode.srcIn))
-                              : controller.audioOutputType.value == AudioDeviceType.headset
-                              ? AppUtils.svgIcon(icon:speakerHeadset,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeIconColor, BlendMode.srcIn))
-                              : AppUtils.svgIcon(icon:speakerActive,colorFilter: ColorFilter.mode(AppStyleConfig.joinCallPreviewPageStyle.actionButtonsStyle.activeIconColor, BlendMode.srcIn)),
-                        ),*/
                         ],
                       ),
                     );
@@ -215,7 +202,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                         return ElevatedButton(
                           style: AppStyleConfig.joinCallPreviewPageStyle
                               .joinCallButtonStyle,
-                          onPressed: controller.subscribeSuccess.value ? () {
+                          onPressed: controller.isInitializeSuccess.value ? () {
                             controller.joinCall();
                           } : null,
                           child: Text(getTranslated("join_now")),
