@@ -8,6 +8,7 @@ import '../../common/constants.dart';
 import '../../data/permissions.dart';
 import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_event_buffer.dart';
 
 class SipCallController extends GetxController {
 
@@ -77,7 +78,7 @@ class SipCallController extends GetxController {
 
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
-
+        CallKitEventBuffer.flushAllEvents();
         MirrorFlyCallKit.makeSIPCall(sipNumber: "${selectedCountry.value.dialCode}${sipNumber.value}", flyResult: (FlyResult response) {
           if (response.isSuccess) {
             debugPrint('SIP Call initiated successfully');

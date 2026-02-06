@@ -23,6 +23,7 @@ import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallCfResponse, FlyResult, MirrorFlyCallKit;
+import '../../../call_kit/callkit_event_buffer.dart';
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -4084,6 +4085,7 @@ class ChatController extends FullLifeCycleController
             return;
           }
 
+          CallKitEventBuffer.flushAllEvents();
           await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
@@ -4139,7 +4141,7 @@ class ChatController extends FullLifeCycleController
               toToast(getTranslated("noInternetConnection"));
               return;
             }
-
+            CallKitEventBuffer.flushAllEvents();
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [normalizedJidList],
                 chatId: normalizedChatId,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import '../../../call_kit/callkit_event_buffer.dart';
 import '../../../call_modules/call_utils.dart';
 import '../../../common/constants.dart';
 import '../../../common/main_controller.dart';
@@ -628,6 +629,7 @@ class ContactController extends FullLifeCycleController
         if (arguments.callType == CallType.audio) {
           if (await AppUtils.isNetConnected()) {
             if (await AppPermission.askAudioCallPermissions()) {
+              CallKitEventBuffer.flushAllEvents();
               await MirrorFlyCallKit.makeAudioCall(
                   flyResult: (FlyResult response) {
                     if (response.isSuccess) {
@@ -650,6 +652,7 @@ class ContactController extends FullLifeCycleController
         } else if (arguments.callType == CallType.video) {
           if (await AppUtils.isNetConnected()) {
             if (await AppPermission.askVideoCallPermissions()) {
+              CallKitEventBuffer.flushAllEvents();
               await MirrorFlyCallKit.makeVideoCall(
                   flyResult: (FlyResult response) {
                     if (response.isSuccess) {

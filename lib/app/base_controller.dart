@@ -111,6 +111,11 @@ class BaseController {
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
+        if (flyCallStatusEvent == FlyCallStatusEvent.disconnected && SessionManagement.getUserJID()?.split("@").first == flyCallStatus.participantsIds.first) {
+          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected for self - flushing all buffered events");
+          CallKitEventBuffer.flushAllEvents();
+          return;
+        }
         CallKitEventBuffer.addStatus(flyCallStatus);
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatus CallKitOutgoingCallController not registered for event $flyCallStatusEvent");
         return;
