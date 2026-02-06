@@ -52,7 +52,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
             ),
             body: SafeArea(
               child: Obx(() {
-                return controller.callEnded.isEmpty ? Column(
+                return !controller.callEnded.value ? Column(
                   children: [
                     Stack(
                       children: [

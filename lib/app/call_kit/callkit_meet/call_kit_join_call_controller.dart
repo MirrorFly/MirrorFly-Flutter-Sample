@@ -32,7 +32,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   final videoMuted = true.obs;
   final muted = true.obs;
 
-  RxString callEnded = "".obs;
+  RxBool callEnded = false.obs;
   bool invalidLink = false;
   String callEndedMessage = "";
 
@@ -97,7 +97,22 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   Future<void> joinCall() async {
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
-        if (await AppPermission.askNotificationPermission()) {}
+        if (await AppPermission.askNotificationPermission()) {
+          final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
+          if (response.isSuccess) {
+            callkitLogger.info("Successfully joined call via link");
+          } else {
+            final int errorCode = response.errorMap.keys.first;
+            if (errorCode == 602) {
+              callEnded.value = true;
+              toToast("Call ended");
+              return;
+            } else {
+              callkitLogger.info("Failed to join call via link with error: ${response.errorMap}");
+              toToast(response.errorMap.values.first);
+            }
+          }
+        }
       }
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -199,7 +214,6 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       NavUtils.back();
     } else {
       callkitLogger.info("Failed to cancel join via link initialization");
-      toToast("An error occurred while cancelling the call join process. Please try again.");
     }
   }
 
