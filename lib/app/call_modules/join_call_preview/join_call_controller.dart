@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -36,33 +35,15 @@ class JoinCallController extends FullLifeCycleController
   var displayStatus = getTranslated("connectingPleaseWait");
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
+    Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
-
-    if (Constants.useMirrorFlyCallKit) {
-      callkitLogger.info("Initializing join via link with callLinkId: $callLinkId");
-      final InitializeJoinLinkResponse initializeJoinLinkResponse = await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
-
-      if (initializeJoinLinkResponse.isSuccess) {
-       callkitLogger.info("Join via link initialization successful");
-      } else {
-        callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
-      }
-    } else {
-      callkitLogger.info("Setting call link event listener for join via link with callLinkId: $callLinkId");
-      Mirrorfly.setCallLinkEventListener(this);
-    }
   }
 
   @override
   void onReady() {
     super.onReady();
-
-    if (Constants.useMirrorFlyCallKit) {
-      return;
-    }
-
     checkPermission().then((v) {
       // Future.delayed(const Duration(milliseconds: 500), (){
       initializeCall();
@@ -77,10 +58,10 @@ class JoinCallController extends FullLifeCycleController
         permissions: [Permission.camera],
         permissionIcon: cameraPermission,
         permissionContent:
-            getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
         permissionPermanentlyDeniedContent:
-            getTranslated("callPermissionDeniedContent")
-                .replaceAll("%d", "Camera"));
+        getTranslated("callPermissionDeniedContent")
+            .replaceAll("%d", "Camera"));
     muted(!audioPermission);
     videoMuted(!videoPermission);
     audioPermissionGranted(audioPermission);
@@ -122,41 +103,41 @@ class JoinCallController extends FullLifeCycleController
     invalidLink = false;
     switch (error?.code) {
       case "100601":
-        //Call link is not valid
+      //Call link is not valid
         callEnded(getTranslated("invalidLink"));
         invalidLink = true;
         callEndedMessage = getTranslated("invalidLink");
         // toToast(getTranslated("invalidLink"));
         break;
       case "100602":
-        //Api returned ended status for call
+      //Api returned ended status for call
         callEnded(getTranslated("callEnded"));
         callEndedMessage = getTranslated("noOneHere");
         // toToast(getTranslated("noOneHere"));
         //callEnded
         break;
       case "100603":
-        //Maximum participants already in call
-        //   callEnded(getTranslated("callEnded"));
-        //   callEndedMessage = (getTranslated("callMembersLimit").replaceFirst("%d", "8"));
+      //Maximum participants already in call
+      //   callEnded(getTranslated("callEnded"));
+      //   callEndedMessage = (getTranslated("callMembersLimit").replaceFirst("%d", "8"));
         toToast(getTranslated("callMembersLimit").replaceFirst("%d", "8"));
         NavUtils.back();
         break;
       case "100605":
-        //Server didn't give success response code
+      //Server didn't give success response code
         callEnded(getTranslated("callEnded"));
         callEndedMessage = (getTranslated("wentWrong"));
         // toToast(getTranslated("wentWrong"));
         //callEnded
         break;
       case "100620":
-        //Couldn't process the link. Please try again.
+      //Couldn't process the link. Please try again.
         callEnded(getTranslated("callEnded"));
         callEndedMessage = (getTranslated("couldNotProcess"));
         // toToast(getTranslated("couldNotProcess"));
         break;
       case "100610":
-        //Couldn't process the link.Please try again.
+      //Couldn't process the link.Please try again.
         callEnded(getTranslated("callEnded"));
         callEndedMessage = (getTranslated("couldNotProcess"));
         // toToast(getTranslated("couldNotProcess"));
@@ -223,10 +204,10 @@ class JoinCallController extends FullLifeCycleController
         permissions: [Permission.camera],
         permissionIcon: cameraPermission,
         permissionContent:
-            getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
+        getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
         permissionPermanentlyDeniedContent:
-            getTranslated("callPermissionDeniedContent")
-                .replaceAll("%d", "Camera"));
+        getTranslated("callPermissionDeniedContent")
+            .replaceAll("%d", "Camera"));
     if (!videoMuted.value || videoPermission) {
       debugPrint(
           "Start Video Capture initialization $videoCaptureStarted ${videoMuted.value}");

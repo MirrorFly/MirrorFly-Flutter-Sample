@@ -158,9 +158,16 @@ class ViewAllMediaController extends GetxController {
       if (await AppUtils.isNetConnected()) {
         var link = MessageUtils.getCallLinkFromMessage(url);
         if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
-          NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-            "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-          });
+          if (Constants.useMirrorFlyCallKit) {
+            NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+              "callLinkId": link,
+              "navigatedFrom": "ViewAllMedia-NavigateLink"
+            });
+          } else {
+            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+              "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
+            });
+          }
         }
       } else {
         toToast(getTranslated("noInternetConnection"));

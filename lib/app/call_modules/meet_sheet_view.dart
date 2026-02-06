@@ -294,9 +294,17 @@ class MeetLinkController extends GetxController {
   Future<void> joinCall() async {
     if (await AppUtils.isNetConnected()) {
       if (meetLink.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
-        NavUtils.offNamed(Routes.joinCallPreview, arguments: {
-          "callLinkId": meetLink.replaceAll(Constants.webChatLogin, "")
-        });
+        if (Constants.useMirrorFlyCallKit) {
+          NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+            "callLinkId": meetLink,
+            "navigatedFrom": "MeetLinkController-JoinCall"
+
+          });
+        } else {
+          NavUtils.offNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": meetLink.replaceAll(Constants.webChatLogin, ""),
+          });
+        }
       }
     } else {
       toToast(getTranslated("noInternetConnection"));

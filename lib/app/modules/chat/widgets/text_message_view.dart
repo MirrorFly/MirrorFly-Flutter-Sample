@@ -47,15 +47,22 @@ class TextMessageView extends StatelessWidget {
                           var link = MessageUtils.getCallLinkFromMessage(
                               chatMessage.messageTextContent.checkNull());
                           if (link.isNotEmpty) {
-                            if (!(await Mirrorfly.isOnGoingCall())
-                                .checkNull()) {
-                              NavUtils.toNamed(Routes.joinCallPreview,
-                                  arguments: {
-                                    "callLinkId": link.replaceAll(
-                                        Constants.webChatLogin, "")
+                            if (Constants.useMirrorFlyCallKit) {
+                              NavUtils.toNamed(Routes.callKitJoinCallPreview,
+                                  arguments: {"callLinkId": link,
+                                    "navigatedFrom": "TextMessageView-Build"
                                   });
                             } else {
-                              toToast('Can not join meet when in a call');
+                              if (!(await Mirrorfly.isOnGoingCall())
+                                  .checkNull()) {
+                                NavUtils.toNamed(Routes.joinCallPreview,
+                                    arguments: {
+                                      "callLinkId": link.replaceAll(
+                                          Constants.webChatLogin, ""),
+                                    });
+                              } else {
+                                toToast('Can not join meet when in a call');
+                              }
                             }
                           }
                         } else {
@@ -157,12 +164,19 @@ class CallLinkView extends StatelessWidget {
         if (await AppUtils.isNetConnected()) {
           var link = MessageUtils.getCallLinkFromMessage(message);
           if (link.isNotEmpty) {
-            if (!(await Mirrorfly.isOnGoingCall()).checkNull()) {
-              NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-                "callLinkId": link.replaceAll(Constants.webChatLogin, "")
+            if (Constants.useMirrorFlyCallKit) {
+              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+                "callLinkId": link,
+                "navigatedFrom": "TextMessageView-CallLinkView-Build"
               });
             } else {
-              toToast('Can not join meet when in a call');
+              if (!(await Mirrorfly.isOnGoingCall()).checkNull()) {
+                NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                  "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
+                });
+              } else {
+                toToast('Can not join meet when in a call');
+              }
             }
           }
         } else {
