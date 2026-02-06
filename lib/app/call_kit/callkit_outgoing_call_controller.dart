@@ -32,6 +32,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString callType = "".obs; // "audio" or "video"
   RxString groupId = "".obs;
   RxString callMode = "".obs;
+  RxString currentCallMode = "".obs;
 
   RxBool showControls = true.obs;
   RxBool isVideoEnabled = false.obs;
@@ -145,6 +146,10 @@ class CallKitOutgoingCallController extends GetxController
       groupId(NavUtils.arguments?["chatId"] as String? ?? "");
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
+      currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
+      if(currentCallMode.value == "MEET"){
+        isOnGoingCallView();
+      }
 
       callkitLogger.info(
         "[MirrorFly][OutgoingCallController] "

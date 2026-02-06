@@ -15,6 +15,7 @@ import '../../data/permissions.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
+import '../../routes/route_settings.dart';
 
 
 class CallKitJoinCallController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -101,6 +102,11 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {
             callkitLogger.info("Successfully joined call via link");
+            NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+              "callType": CallType.audio,
+              "callMode": "ONE-TO-ONE",
+              "chatId": ''
+            });
           } else {
             final int errorCode = response.errorMap.keys.first;
             if (errorCode == 602) {
