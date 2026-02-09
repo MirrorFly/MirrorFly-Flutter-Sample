@@ -127,20 +127,25 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                         borderRadius: BorderRadius.circular(15)
                       ),
                       margin: const EdgeInsets.all(40),
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: MirrorFlyCallView(
-                            fit: BoxFit.cover,
-                            radius: 15,
-                            isLocalUser: true,
-                          userJID: CallUtils.getIdFromJidList( SessionManagement.getUserJID().checkNull()
-                          ),
-                          viewBgColor: AppColors.audioCallBackground,
-                          profileImage: controller.getProfileImage),
-                      ),
-                    ) : const SizedBox.shrink(),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: MirrorFlyCallView(
+                                        fit: BoxFit.cover,
+                                        radius: 15,
+                                        isLocalUser: true,
+                                        isLocalPreviewView: true,
+                                        userJID: CallUtils.getIdFromJidList(
+                                            SessionManagement.getUserJID()
+                                                .checkNull()),
+                                        viewBgColor:
+                                            AppColors.audioCallBackground,
+                                        profileImage:
+                                            controller.getProfileImage),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
 
-                    /// Preview controls
+                          /// Preview controls
                     controller.isInitializeSuccess.value ? Obx(() {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50),

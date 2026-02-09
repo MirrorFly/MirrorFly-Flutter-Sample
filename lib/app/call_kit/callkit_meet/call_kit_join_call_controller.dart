@@ -36,7 +36,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   RxBool callEnded = false.obs;
   bool invalidLink = false;
   String callEndedMessage = "";
-
+  RxBool showPreview = false.obs;
 
   @override
   void onInit() async {
@@ -54,15 +54,13 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       }
 
       callkitLogger.info("Initializing from $navigatedFrom via link with callLinkId: $callLinkId");
-      final InitializeJoinLinkResponse initializeJoinLinkResponse =
-          await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
+      final InitializeJoinLinkResponse initializeJoinLinkResponse = await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
 
       if (initializeJoinLinkResponse.isSuccess) {
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
-        videoMuted.value = false;
-        muted.value = false;
+        // await getVideoLocalCapturePreview();
       } else {
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }

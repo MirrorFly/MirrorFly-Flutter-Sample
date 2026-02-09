@@ -84,6 +84,7 @@ class CallKitOutgoingCallView
                           userJID: remoteTileParticipantId,
                           fit: BoxFit.cover,
                     viewBgColor: AppColors.audioCallerBackground,
+                    isLocalPreviewView: false,
                     profileImage: getUserProfileImageWithName(
                       isLocalTile: false,
                       participantId: remoteParticipantId,
@@ -428,6 +429,7 @@ class CallKitOutgoingCallView
                           return Stack(
                             children: [
                               MirrorFlyCallView(
+                                isLocalPreviewView: false,
                                 key: ValueKey(controller.callerList[index].identity),
                                 userJID: controller
                                     .callerList[index].identity,
@@ -553,6 +555,7 @@ class CallKitOutgoingCallView
                           : Stack(
                               children: [
                                 MirrorFlyCallView(
+                                  isLocalPreviewView: false,
                                   // key: ValueKey(controller.groupId.value),
                                   userJID: !controller.isOnGoingCallViewEnable.value &&
                                       controller.callType.toUpperCase() == "VIDEO"
@@ -685,6 +688,7 @@ class CallKitOutgoingCallView
             Stack(
               children: [
                 MirrorFlyCallView(
+                  isLocalPreviewView: false,
                   radius: 15.0,
                   viewBgColor: Colors.black.withAlpha(150),
                   userJID: controller.secondaryCallViewUserId.value,
