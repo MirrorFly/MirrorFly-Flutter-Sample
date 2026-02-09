@@ -360,7 +360,7 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                toToast(response.message ?? "");
+                toToast(response.message ?? response.data);
               }
             },
             callersId: normalizedJid,
@@ -390,7 +390,7 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                toToast(response.message ?? "");
+                toToast(response.message ?? response.data);
               }
             },
             callersId: normalizedJid,

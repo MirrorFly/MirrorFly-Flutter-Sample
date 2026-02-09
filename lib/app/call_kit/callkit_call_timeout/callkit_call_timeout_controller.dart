@@ -103,7 +103,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:
@@ -142,7 +142,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:

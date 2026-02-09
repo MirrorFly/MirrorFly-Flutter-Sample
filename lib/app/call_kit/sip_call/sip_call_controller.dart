@@ -89,7 +89,7 @@ class SipCallController extends GetxController {
             });
           } else {
             debugPrint('SIP Call initiation failed: ${response.message}');
-            toToast(response.message ?? getTranslated("callFailed"));
+            toToast(response.message ?? response.data);
           }
         });
       } else {

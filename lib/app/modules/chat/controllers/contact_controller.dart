@@ -640,7 +640,7 @@ class ContactController extends FullLifeCycleController
                             "chatId": ''
                           });
                     } else {
-                      toToast(response.message ?? "");
+                      toToast(response.message ?? response.data);
                     }
                   },
                   callersId: normalizedJid,
@@ -663,7 +663,7 @@ class ContactController extends FullLifeCycleController
                             "chatId": ''
                           });
                     } else {
-                      toToast(response.message ?? "");
+                      toToast(response.message ?? response.data);
                     }
                   },
                   callersId: normalizedJid,

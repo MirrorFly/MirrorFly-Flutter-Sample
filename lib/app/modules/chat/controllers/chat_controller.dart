@@ -4095,7 +4095,7 @@ class ChatController extends FullLifeCycleController
                     "chatId": ''
                   });
                 } else {
-                  toToast(response.message ?? "");
+                  toToast(response.message ?? response.data);
                 }
               },
               callersId: [
@@ -4153,7 +4153,7 @@ class ChatController extends FullLifeCycleController
                       "chatId": ''
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
               });
         }catch(e){
