@@ -208,7 +208,7 @@ class CallKitOutgoingCallView
                                   visible: showInviteButton,
                                   child: IconButton(
                                     onPressed: () {
-                                      NavUtils.offNamed(Routes.callKitParticipantView,
+                                      NavUtils.toNamed(Routes.callKitParticipantView,
                                           arguments: {"joinViaLink": false});
                                     },                                        // controller.inviteParticipants(),
                                     icon: const Icon(
@@ -1251,7 +1251,6 @@ class CallKitOutgoingCallView
     }
   }
 
-  ///
   ///
   ///
   void _showAudioDeviceSelector(BuildContext context) async {

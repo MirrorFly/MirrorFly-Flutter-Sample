@@ -104,7 +104,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {
             callkitLogger.info("Successfully joined call via link");
-            NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+            NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
               "callType": CallType.audio,
               "callMode": "ONE-TO-ONE",
               "chatId": ''
