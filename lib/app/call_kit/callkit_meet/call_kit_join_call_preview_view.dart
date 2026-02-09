@@ -119,20 +119,21 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                           const Spacer(),
 
                     /// Call Preview MirrorFly View
-                   controller.isInitializeSuccess.value ? Container(
-                      height: 170,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: AppColors.audioCallBackground,
-                        borderRadius: BorderRadius.circular(15)
-                      ),
-                      margin: const EdgeInsets.all(40),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(0.0),
-                                    child: MirrorFlyCallView(
+                    controller.isInitializeSuccess.value
+                              ? Container(
+                                  height: 170,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.audioCallBackground,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  margin: const EdgeInsets.all(40),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: MirrorFlyCallView(
                                         fit: BoxFit.cover,
-                                        radius: 15,
-                                        isLocalUser: true,
                                         isLocalPreviewView: true,
                                         userJID: CallUtils.getIdFromJidList(
                                             SessionManagement.getUserJID()
@@ -140,7 +141,9 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                         viewBgColor:
                                             AppColors.audioCallBackground,
                                         profileImage:
-                                            controller.getProfileImage),
+                                            controller.getProfileImage,
+                                      ),
+                                    ),
                                   ),
                                 )
                               : const SizedBox.shrink(),
@@ -153,7 +156,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            controller.muted.value
+                            controller.audioMuted.value
                                 ? FloatingActionButton(
                               shape: AppStyleConfig.joinCallPreviewPageStyle
                                   .actionButtonsStyle.shape,

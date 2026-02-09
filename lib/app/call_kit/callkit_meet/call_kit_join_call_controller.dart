@@ -31,7 +31,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
   var users = <String>[].obs;
   final videoMuted = true.obs;
-  final muted = true.obs;
+  final audioMuted = true.obs;
 
   RxBool callEnded = false.obs;
   bool invalidLink = false;
@@ -59,6 +59,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       if (initializeJoinLinkResponse.isSuccess) {
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
+
+        audioMuted.value = false;
+        videoMuted.value = false;
+
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
         // await getVideoLocalCapturePreview();
       } else {
@@ -125,12 +129,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
   /// Mute Audio
   Future<void> muteAudio() async {
-    callkitLogger.info("Setting microphone mute state in CallKit to: ${muted.value}");
-    MirrorFlyCallKit.setMicrophoneMuted(mute: !muted.value, result: ({bool? isMuted, required String message, required bool success}) {
+    callkitLogger.info("Setting microphone mute state in CallKit to: ${audioMuted.value}");
+    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success}) {
       if (success) {
-        callkitLogger.info("Microphone mute state successfully set in CallKit response isMuted $isMuted. Current state: ${muted.value}");
-          muted(isMuted);
-          callkitLogger.info("Audio mute state changed. New state: ${muted.value}");
+        callkitLogger.info("Microphone mute state successfully set in CallKit response isMuted $isMuted. Current state: ${audioMuted.value}");
+          audioMuted(isMuted);
+          callkitLogger.info("Audio mute state changed. New state: ${audioMuted.value}");
       } else {
         callkitLogger.info("Failed to set microphone mute state in CallKit. Error: $message");
       }
