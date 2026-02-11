@@ -954,7 +954,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void callTimeOut({required List<String> participantsId, required bool isCallFailed}) async {
+  void callTimeOut({required List<String> participantsId, required bool isCallFailed, String reason = ''}) async {
 
     for (final id in participantsId) {
       if (!callAgainUserList.contains(id)) {
@@ -981,7 +981,8 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
-      _navigateToTimeout(isCallFailed: isCallFailed);
+      _navigateToTimeout(isCallFailed: isCallFailed, reason: reason);
+       return;
     }
 
 
@@ -1034,8 +1035,8 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _navigateToTimeout({required bool isCallFailed}) {
-    final String message = isCallFailed ? "Call Failed" : "Call timed out";
+  void _navigateToTimeout({required bool isCallFailed, required String reason}) {
+    final String message = isCallFailed ? "Call Failed. Reason: $reason" : "Call timed out";
     callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating to timeout view with message: $message");
 
     toToast(message);
@@ -1814,7 +1815,7 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  void onCallFailed({required List<String>? participantsId}) async {
+  void onCallFailed({required List<String>? participantsId, String reason = ''}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
 
     if (participantsId == null || participantsId.isEmpty) {
@@ -1842,7 +1843,7 @@ class CallKitOutgoingCallController extends GetxController
       _stopTimer();
       closeDialog();
 
-      callTimeOut(participantsId: participantsId, isCallFailed: true);
+      callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);
     // }
   }
 
