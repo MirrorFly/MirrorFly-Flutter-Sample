@@ -149,6 +149,19 @@ class CallKitOutgoingCallController extends GetxController
       currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
       if(currentCallMode.value == "MEET"){
         isOnGoingCallView();
+        bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
+        bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
+        callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");
+        if(!isVideoMuted){
+          isVideoEnabled.value = true;
+        } else {
+          isVideoEnabled.value = false;
+        }
+        if (isAudioMute){
+          isAudioMuted.value = true;
+        } else {
+          isAudioMuted.value = false;
+        }
       }
 
       callkitLogger.info(
@@ -208,7 +221,10 @@ class CallKitOutgoingCallController extends GetxController
 
     // getLogsOfLocalValues();
 
-    callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
+      if(currentCallMode.value != "MEET"){
+        callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
+      }
+
     super.onReady();
   }
 
@@ -1296,7 +1312,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call.");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call. ${callerList.length} participants in the call.");
 
     _resetValues();
     _stopTimer();
@@ -2168,6 +2184,7 @@ class CallKitOutgoingCallController extends GetxController
     _isPlaying = false;
     mainCallViewUserId.value = "";
     secondaryCallViewUserId.value = "";
+    currentCallMode.value = "";
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
