@@ -90,6 +90,7 @@ class CallKitOutgoingCallController extends GetxController
   @override
   Future<void> onInit() async {
     CallKitEventBuffer.flushTo(this);
+    callKind = await MirrorFlyCallKit.getCallKind();
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -113,7 +114,6 @@ class CallKitOutgoingCallController extends GetxController
 
     // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
-     callKind = await MirrorFlyCallKit.getCallKind();
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
@@ -1052,7 +1052,7 @@ class CallKitOutgoingCallController extends GetxController
 
     callkitLogger.info(
       "[MirrorFly][OutgoingCallController] Timeout → navigating to CallKitTimeOutView "
-          "type:$type, calleeName:$calleeName, userList:$callUserList",
+          "type:$type, calleeName:$calleeName, userList:$callUserList, callMode:$callsMode, chatId:$chatId, callKind:$callKind",
     );
 
     NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
@@ -1061,6 +1061,7 @@ class CallKitOutgoingCallController extends GetxController
       "calleeName": calleeName,
       "callMode": callsMode,
       "groupId": chatId,
+      "callKind": callKind,
     });
   }
 
@@ -1843,7 +1844,21 @@ class CallKitOutgoingCallController extends GetxController
       _stopTimer();
       closeDialog();
 
-      callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);
+    toToast("Call Disconnected");
+    if(NavUtils.previousRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if(NavUtils.currentRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      NavUtils.back();
+    }
+      // callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);
     // }
   }
 
