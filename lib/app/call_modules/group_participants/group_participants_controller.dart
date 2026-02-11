@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
+import '../../call_kit/callkit_event_buffer.dart';
 import '../../common/constants.dart';
 import '../../common/de_bouncer.dart';
 import '../../common/main_controller.dart';
@@ -348,7 +349,7 @@ class GroupParticipantsController extends GetxController {
           toToast(getTranslated("noInternetConnection"));
           return;
         }
-
+        CallKitEventBuffer.flushAllEvents();
         await MirrorFlyCallKit.makeAudioCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
@@ -359,7 +360,7 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                toToast(response.message ?? "");
+                toToast(response.message ?? response.data);
               }
             },
             callersId: normalizedJid,
@@ -378,7 +379,7 @@ class GroupParticipantsController extends GetxController {
           toToast(getTranslated("noInternetConnection"));
           return;
         }
-
+        CallKitEventBuffer.flushAllEvents();
         await MirrorFlyCallKit.makeVideoCall(
             flyResult: (FlyResult response) {
               if (response.isSuccess) {
@@ -389,7 +390,7 @@ class GroupParticipantsController extends GetxController {
                   "chatId": groupId.value,
                 });
               } else {
-                toToast(response.message ?? "");
+                toToast(response.message ?? response.data);
               }
             },
             callersId: normalizedJid,

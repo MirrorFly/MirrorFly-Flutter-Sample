@@ -10,6 +10,7 @@ import '../../common/constants.dart';
 import '../../data/permissions.dart';
 import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_event_buffer.dart';
 
 class CallKitCallTimeoutController extends GetxController {
   var callType = ''.obs;
@@ -91,6 +92,7 @@ class CallKitCallTimeoutController extends GetxController {
               return;
             }
 
+            CallKitEventBuffer.flushAllEvents();
             await MirrorFlyCallKit.makeAudioCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
@@ -101,7 +103,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:
@@ -129,6 +131,7 @@ class CallKitCallTimeoutController extends GetxController {
           }
 
           final List<String> userList = users.toList();
+          CallKitEventBuffer.flushAllEvents();
           await MirrorFlyCallKit.makeVideoCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
@@ -139,7 +142,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:
