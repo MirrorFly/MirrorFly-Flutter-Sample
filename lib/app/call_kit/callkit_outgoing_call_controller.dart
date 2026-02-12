@@ -86,6 +86,8 @@ class CallKitOutgoingCallController extends GetxController
 
   final RxBool isAudioDialogOpen = false.obs;
 
+  RxString getOneToOneCallRemoteUserName = "".obs;
+
 
   @override
   Future<void> onInit() async {
@@ -122,6 +124,7 @@ class CallKitOutgoingCallController extends GetxController
       await setInitialAudioRouteDevice();
     }
 
+    // await _getOneToOneCallRemoteUserName();
     super.onInit();
   }
 
@@ -237,7 +240,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Current call participants: ${participants
             ?.length},"
-            " participants: ${participants?.map((p) => p.identity).toList()}");
+            " participants: ${participants?.map((p) => p.identity).toList()} isAudioMuted: ${participants?.map((p) => p.isAudioMuted).toList()}",);
 
     if (participants != null && participants.isNotEmpty) {
       callkitLogger.info(
@@ -410,42 +413,25 @@ class CallKitOutgoingCallController extends GetxController
   ///
   /// Get remote user name for one-to-one call (remote participant)
   ///
-  String getOneToOneCallRemoteUserName() {
-    if (isGroupCall.value) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] #getOneToOneCallRemoteUserName Not a one-to-one call");
-      return "";
-    }
-
-    // Find first non-local participant
+  Future<void> _getCallRemoteUserName() async {
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId
+            .value}");
     try {
+      final List<FlyCallParticipant> remoteParticipants = List.from(callerList);
+      remoteParticipants.removeWhere((e) => e.isLocalParticipant);
 
-      if (remoteUserNameMap.isEmpty) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] Remote User name map is empty");
-        return "";
-      }
-
-      final remoteEntry = remoteUserNameMap.entries.firstWhere(
-            (entry) => entry.key != getLocalParticipant()?.identity,
-      );
-      remoteUserNameMap.forEach((key, value) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] Remote User full list -> ID: $key, Name: $value");
+      final List<String> participantId = remoteParticipants.map((e) => e.identity).toList();
+      await MirrorFlyCallKit.getCallMembersDisplayNames(chatId: groupId.value, participantId: participantId).then((value) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName fetched display names: $value");
+        getOneToOneCallRemoteUserName.value = value;
       });
-
-
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Remote User -> ID: ${remoteEntry
-              .key}, Name: ${remoteEntry.value}");
-
-      return remoteEntry.value;
     } catch (e) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Remote User name error: $e");
-      return "";
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Remote User name error: $e");
+        getOneToOneCallRemoteUserName.value = "MF Call";
+      }
     }
-  }
 
   String validId({required String userId,required bool isGroup}) {
     if(isGroup){
@@ -849,7 +835,8 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
-    callerList[index] = updated;
+    callerList.value = List.from(callerList)..[index] = updated;
+    // callerList.refresh();
 
     if (participantId == getLocalParticipant()?.identity) {
       callkitLogger.info("[Controller] isAudioMute: Updating local audio mute status to $isAudioMuted");
@@ -1170,6 +1157,9 @@ class CallKitOutgoingCallController extends GetxController
             callerList[index] = old.copyWith(
               flyCallStatus: FlyCallStatusEvent.connected,
             );
+          } else {
+            callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: ParticipantId: $p not found in callerList, adding new entry");
+            updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
           }
 
           callerList.refresh();
@@ -1219,6 +1209,8 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is already ongoing");
       }
     }
+    onParticipantListUpdated();
+    await _getCallRemoteUserName();
   }
 
   ///
@@ -1253,6 +1245,7 @@ class CallKitOutgoingCallController extends GetxController
       remoteUserNameMap.remove(userId);
       toToast("$name disconnected");
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
+       _getCallRemoteUserName();
 
       final bool isLocalHangup = isSelfId(id: userId);
       if (isLocalHangup) {
@@ -2005,6 +1998,7 @@ class CallKitOutgoingCallController extends GetxController
     getCallTitleForOneToManyCall();
     await initCallViewIds();
     await moveLocalParticipantToLast();
+    await _getCallRemoteUserName();
   }
     // ///
   void videoSwap() {

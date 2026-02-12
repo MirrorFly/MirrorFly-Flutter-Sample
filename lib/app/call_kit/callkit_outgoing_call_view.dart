@@ -188,7 +188,7 @@ class CallKitOutgoingCallView
                             Expanded(
                               child: Center(
                                 child: Text(
-                                  controller.getOneToOneCallRemoteUserName(),
+                                  controller.getOneToOneCallRemoteUserName.value,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppStyleConfig
@@ -380,8 +380,8 @@ class CallKitOutgoingCallView
                             width: MediaQuery.of(context).size.width * 0.65,
                             child: Text(
                               controller.isCallModeChangedToOneToMany.value
-                                  ? controller.titleAfterCallModeChange.value
-                                  : controller.chatNameForGroupCall.value,
+                                  ? controller.getOneToOneCallRemoteUserName.value
+                                  : controller.getOneToOneCallRemoteUserName.value,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               softWrap: false,
