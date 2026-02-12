@@ -214,7 +214,7 @@ class BaseController {
           }
         case FlyCallStatusEvent.callFailed:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
-          callKitOutgoingCallController.onCallFailed(participantsId: flyCallStatus.participantsIds);
+          callKitOutgoingCallController.onCallFailed(participantsId: flyCallStatus.participantsIds, reason: flyCallStatus.reason ?? '');
           break;
         case FlyCallStatusEvent.joinSync:
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent joinSync");

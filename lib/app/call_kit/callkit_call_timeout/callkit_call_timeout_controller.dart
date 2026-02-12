@@ -26,7 +26,7 @@ class CallKitCallTimeoutController extends GetxController {
   var groupId = ''.obs;
   var groupJid = ''.obs;
 
-
+  Rx<FlyCallKind> callKind = FlyCallKind.standard.obs;
 
   @override
   Future<void> onInit() async {
@@ -36,9 +36,12 @@ class CallKitCallTimeoutController extends GetxController {
       calleeName.value = (NavUtils.arguments["calleeName"]);
       callMode.value = (NavUtils.arguments["callMode"]);
       groupId.value = (NavUtils.arguments["groupId"] ?? '');
-      debugPrint("Call Timeout OnInit arguments => $callType $users $calleeName");
-      addDomainToJid();
-      addDomainToGroupJid();
+      callKind.value = (NavUtils.arguments["callKind"] ?? FlyCallKind.standard);
+      print("Call Timeout OnInit arguments => $callType, $users, $calleeName, $callKind");
+      if (callKind.value != FlyCallKind.sip) {
+        addDomainToJid();
+        addDomainToGroupJid();
+      }
     }
     super.onInit();
 
@@ -76,6 +79,35 @@ class CallKitCallTimeoutController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if (callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
+
+          if (callKind.value == FlyCallKind.sip) {
+            final String sipNumber = users.first;
+            callkitLogger.info("Making SIP Call to $sipNumber");
+
+            if (!await AppUtils.isNetConnected()) {
+              callkitLogger.info('#callAgain No internet connection available');
+              toToast(getTranslated("noInternetConnection"));
+              return;
+            }
+
+            CallKitEventBuffer.flushAllEvents();
+            await MirrorFlyCallKit.makeSIPCall(
+              sipNumber: sipNumber,
+              flyResult: (FlyResult response) {
+                if (response.isSuccess) {
+                  NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                    "userJid": [sipNumber],
+                    "callType": CallType.audio,
+                    "callMode": callMode.value,
+                    "chatId": ''
+                  });
+                } else {
+                  toToast(response.message ?? response.data);
+                }
+              });
+
+            return;
+          }
 
             final List<String> userList = users.toList();
             callkitLogger.info("Making Audio Call to ${userList.toString()}");
