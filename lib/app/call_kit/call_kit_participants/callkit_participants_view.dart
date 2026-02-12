@@ -421,21 +421,23 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                                   child: CircularProgressIndicator());
                             } else if (controller.usersList.isNotEmpty) {
                               var item = controller.usersList[index];
+                              final bool shouldAllowUserClick = controller.usersInCurrentCall.contains(item.jid ?? "");
                               return ContactItem(
+                                shouldAllowClick: shouldAllowUserClick,
                                 item: item,
                                 onAvatarClick: () {
                                   // controller.showProfilePopup(item.obs);
                                 },
                                 spanTxt: controller.searchQuery.text,
-                                isCheckBoxVisible:
-                                controller.isCheckBoxVisible,
+                                isCheckBoxVisible: shouldAllowUserClick ?
+                                controller.isCheckBoxVisible : false,
                                 checkValue: controller
                                     .selectedUsersJIDList
                                     .contains(item.jid),
                                 onCheckBoxChange: (value) {
                                   controller.onListItemPressed(item);
                                 },
-                                onListItemPressed: (profile) {
+                                onListItemPressed: !shouldAllowUserClick ? null : (profile) {
                                   controller.onListItemPressed(item);
                                 },
                                 contactItemStyle: style,
