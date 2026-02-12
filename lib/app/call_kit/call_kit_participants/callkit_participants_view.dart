@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import '../../call_modules/call_utils.dart';
 import '../../call_modules/call_widgets.dart';
 import '../../call_modules/participants/add_participants_controller.dart';
@@ -57,9 +58,12 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                                   color: AppStyleConfig.addParticipantsPageStyle
                                       .appBarTheme.iconTheme?.color),
                               onPressed: () {
+                                callkitLogger.info("Back button pressed. isSearching: ${controller.isSearching.value}");
                                 if (controller.isSearching.value) {
+                                  callkitLogger.info("Exiting search mode and going back to participants list.");
                                   controller.getBackFromSearch();
                                 } else {
+                                  callkitLogger.info("Not in search mode. Navigating back.");
                                   NavUtils.back();
                                 }
                               },
@@ -421,24 +425,41 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                                   child: CircularProgressIndicator());
                             } else if (controller.usersList.isNotEmpty) {
                               var item = controller.usersList[index];
-                              final bool shouldAllowUserClick = controller.usersInCurrentCall.contains(item.jid ?? "");
+                              final String idFromJid = CallUtils.getIdFromJidList(item.jid ?? "");
+                              final bool blockUserClick = controller.usersInCurrentCall.contains(idFromJid ?? "");
                               return ContactItem(
-                                shouldAllowClick: shouldAllowUserClick,
                                 item: item,
                                 onAvatarClick: () {
                                   // controller.showProfilePopup(item.obs);
                                 },
                                 spanTxt: controller.searchQuery.text,
-                                isCheckBoxVisible: shouldAllowUserClick ?
+                                isCheckBoxVisible: !blockUserClick ?
                                 controller.isCheckBoxVisible : false,
                                 checkValue: controller
                                     .selectedUsersJIDList
                                     .contains(item.jid),
                                 onCheckBoxChange: (value) {
-                                  controller.onListItemPressed(item);
+                                  callkitLogger.info(
+                                      "Checkbox value changed for ${item.jid}. "
+                                          "with blockUserClick: $blockUserClick"
+                                  );
+
+                                  controller.onListItemPressed(
+                                    item,
+                                    ignorePress: blockUserClick,
+                                  );
                                 },
-                                onListItemPressed: !shouldAllowUserClick ? null : (profile) {
-                                  controller.onListItemPressed(item);
+
+                                onListItemPressed: (profile) {
+                                  callkitLogger.info(
+                                      "List item pressed for ${item.jid}. "
+                                          "with blockUserClick: $blockUserClick"
+                                  );
+
+                                  controller.onListItemPressed(
+                                    item,
+                                    ignorePress: blockUserClick,
+                                  );
                                 },
                                 contactItemStyle: style,
                               );

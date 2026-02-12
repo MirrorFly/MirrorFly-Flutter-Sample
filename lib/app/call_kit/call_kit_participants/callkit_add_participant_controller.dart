@@ -76,7 +76,7 @@ class CallKitAddParticipantsController extends GetxController
       LogMessage.d("addParticipants",
           "joinViaLink $joinViaLink so no need to load users");
     }
-    _isUserAlreadyInCall();
+    await _isUserAlreadyInCall();
   }
 
   void intiTab() {
@@ -233,7 +233,14 @@ class CallKitAddParticipantsController extends GetxController
     }
   }
 
-  onListItemPressed(ProfileDetails item) {
+  onListItemPressed(ProfileDetails item, {bool ignorePress = false}) {
+    callkitLogger.info("onListItemPressed → item: ${item.jid}, ignorePress: $ignorePress");
+
+    if (ignorePress == true) {
+      callkitLogger.info("onListItemPressed → Press ignored for ${item.jid}");
+      return;
+    }
+    
     if (item.isBlocked.checkNull()) {
       unBlock(item);
     } else {
