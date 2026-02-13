@@ -92,6 +92,7 @@ class CallKitOutgoingCallController extends GetxController
   @override
   Future<void> onInit() async {
     CallKitEventBuffer.flushTo(this);
+    callKind = await MirrorFlyCallKit.getCallKind();
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -115,7 +116,6 @@ class CallKitOutgoingCallController extends GetxController
 
     // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
-     callKind = await MirrorFlyCallKit.getCallKind();
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
@@ -941,7 +941,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void callTimeOut({required List<String> participantsId, required bool isCallFailed}) async {
+  void callTimeOut({required List<String> participantsId, required bool isCallFailed, String reason = ''}) async {
 
     for (final id in participantsId) {
       if (!callAgainUserList.contains(id)) {
@@ -968,7 +968,8 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
-      _navigateToTimeout(isCallFailed: isCallFailed);
+      _navigateToTimeout(isCallFailed: isCallFailed, reason: reason);
+       return;
     }
 
 
@@ -1021,8 +1022,8 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _navigateToTimeout({required bool isCallFailed}) {
-    final String message = isCallFailed ? "Call Failed" : "Call timed out";
+  void _navigateToTimeout({required bool isCallFailed, required String reason}) {
+    final String message = isCallFailed ? "Call Failed. Reason: $reason" : "Call timed out";
     callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating to timeout view with message: $message");
 
     toToast(message);
@@ -1038,7 +1039,7 @@ class CallKitOutgoingCallController extends GetxController
 
     callkitLogger.info(
       "[MirrorFly][OutgoingCallController] Timeout → navigating to CallKitTimeOutView "
-          "type:$type, calleeName:$calleeName, userList:$callUserList",
+          "type:$type, calleeName:$calleeName, userList:$callUserList, callMode:$callsMode, chatId:$chatId, callKind:$callKind",
     );
 
     NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
@@ -1047,6 +1048,7 @@ class CallKitOutgoingCallController extends GetxController
       "calleeName": calleeName,
       "callMode": callsMode,
       "groupId": chatId,
+      "callKind": callKind,
     });
   }
 
@@ -1807,7 +1809,7 @@ class CallKitOutgoingCallController extends GetxController
 
 
   ///
-  void onCallFailed({required List<String>? participantsId}) async {
+  void onCallFailed({required List<String>? participantsId, String reason = ''}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed called");
 
     if (participantsId == null || participantsId.isEmpty) {
@@ -1835,7 +1837,21 @@ class CallKitOutgoingCallController extends GetxController
       _stopTimer();
       closeDialog();
 
-      callTimeOut(participantsId: participantsId, isCallFailed: true);
+    toToast("Call Disconnected");
+    if(NavUtils.previousRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if(NavUtils.currentRoute == Routes.groupParticipants){
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      NavUtils.back();
+    }
+      // callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);
     // }
   }
 

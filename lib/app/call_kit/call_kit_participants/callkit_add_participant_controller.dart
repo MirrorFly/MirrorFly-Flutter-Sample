@@ -23,6 +23,8 @@ class CallKitAddParticipantsController extends GetxController
   var callList =
   Get.find<CallKitOutgoingCallController>()
   .callerList.obs; //List<CallUserList>.empty(growable: true).obs;
+
+  List<String> usersInCurrentCall = [];
   var groupId =
       CallUtils.getGroupJidFromGroupId(Get.find<CallKitOutgoingCallController>().groupId.toString()).obs;
 
@@ -74,6 +76,7 @@ class CallKitAddParticipantsController extends GetxController
       LogMessage.d("addParticipants",
           "joinViaLink $joinViaLink so no need to load users");
     }
+    await _isUserAlreadyInCall();
   }
 
   void intiTab() {
@@ -230,7 +233,14 @@ class CallKitAddParticipantsController extends GetxController
     }
   }
 
-  onListItemPressed(ProfileDetails item) {
+  onListItemPressed(ProfileDetails item, {bool ignorePress = false}) {
+    callkitLogger.info("onListItemPressed → item: ${item.jid}, ignorePress: $ignorePress");
+
+    if (ignorePress == true) {
+      callkitLogger.info("onListItemPressed → Press ignored for ${item.jid}");
+      return;
+    }
+    
     if (item.isBlocked.checkNull()) {
       unBlock(item);
     } else {
@@ -638,5 +648,36 @@ class CallKitAddParticipantsController extends GetxController
     callkitLogger.info("getLinkToShow → extracted=$extracted");
 
     return extracted;
+  }
+
+  /// To know the user is already in current call or not
+  Future<void> _isUserAlreadyInCall() async {
+    callkitLogger.info("isUserAlreadyInCall → Checking if user is already in call");
+
+    for (FlyCallParticipant user in callList.value) {
+      callkitLogger.info("isUserAlreadyInCall → Checking user: ${user.identity}");
+
+      final String userId = user.identity ?? '';
+      if (userId.isEmpty) {
+        callkitLogger.info("isUserAlreadyInCall → Invalid userId provided");
+        usersInCurrentCall = [];
+      }
+
+      final List<FlyCallParticipant>? flyCallParticipants = await MirrorFlyCallKit.getCurrentCallParticipants();
+      if (flyCallParticipants == null || flyCallParticipants.isEmpty) {
+        callkitLogger.info(
+            "isUserAlreadyInCall → No participants found, user is not in call");
+        usersInCurrentCall = [];
+      }
+
+      if (flyCallParticipants!.any((p) => p.identity == userId)) {
+        callkitLogger.info(
+            "isUserAlreadyInCall → User $userId is already in call");
+        usersInCurrentCall.add(userId);
+      } else {
+        callkitLogger.info("isUserAlreadyInCall → User $userId is not in call");
+        usersInCurrentCall = [];
+      }
+    }
   }
 }

@@ -1032,11 +1032,11 @@ class ChatController extends FullLifeCycleController
         replyMessageID = replyChatMessage.messageId;
       }
       isReplying(false);
-      Platform.isIOS
-          ? DialogUtils.showLoading(
+      // Platform.isIOS ?
+      DialogUtils.showLoading(
               message: getTranslated("compressingVideo"),
-              dialogStyle: AppStyleConfig.dialogStyle)
-          : null;
+              dialogStyle: AppStyleConfig.dialogStyle);
+          // : null;
       //old method is deprecated Instead of use below new method
       /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
@@ -1057,6 +1057,7 @@ class ChatController extends FullLifeCycleController
               metaData: messageMetaData,
               //#metaData
               mentionedUsersIds: mentionedUsersIds,
+              mediaCompressionType: MediaCompressionType.uncompressed,
               fileMessageParams:
                   FileMessageParams(file: File(videoPath), caption: caption)),
           flyCallback: (response) {
@@ -1064,7 +1065,9 @@ class ChatController extends FullLifeCycleController
               LogMessage.d("video message", response.data.toString());
               // clearMessage();
               messageController.text = Constants.emptyString;
-              Platform.isIOS ? DialogUtils.hideLoading() : null;
+              // Platform.isIOS ? DialogUtils.hideLoading() : null;
+              DialogUtils.hideLoading();
+
               ChatMessageModel chatMessageModel =
                   sendMessageModelFromJson(response.data);
               // chatList.insert(0, chatMessageModel);

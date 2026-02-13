@@ -101,7 +101,7 @@ class CallKitEventBuffer {
         break;
 
       case FlyCallStatusEvent.callFailed:
-        c.onCallFailed(participantsId: e.participantsIds);
+        c.onCallFailed(participantsId: e.participantsIds, reason: e.reason ?? '');
         break;
     // FlyCallStatusEvent.none, FlyCallStatusEvent.declined, FlyCallStatusEvent.joinSync -> no-op
       default:

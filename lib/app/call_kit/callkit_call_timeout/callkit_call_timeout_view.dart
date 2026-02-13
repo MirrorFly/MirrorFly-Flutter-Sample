@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/model/call_constants.dart';
 
 import '../../app_style_config.dart';
@@ -74,7 +75,9 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                         return Padding(
                             padding:
                             const EdgeInsets.symmetric(horizontal: 30.0),
-                            child: FutureBuilder(
+                            child: controller.callKind.value == FlyCallKind.sip ? Text(controller.calleeName.value, style: AppStyleConfig
+                                .callAgainPageStyle
+                                .callerNameTextStyle, overflow: TextOverflow.ellipsis,) : FutureBuilder(
                                 future: CallUtils.getCallersName(
                                     controller.usersJid,
                                     ),
@@ -110,7 +113,13 @@ class CallKitTimeoutView extends NavViewStateful<CallKitCallTimeoutController> {
                                   : const SizedBox.shrink();
                             })
                             : controller.users.length == 1
-                            ? FutureBuilder(
+                            ? controller.callKind.value == FlyCallKind.sip ? ProfileTextImage(
+                          text: controller.calleeName.value,
+                          radius:  AppStyleConfig
+                              .callAgainPageStyle
+                              .profileImageSize
+                              .width / 2,
+                        ):  FutureBuilder(
                             future:
                             getProfileDetails(controller.getJidFromUserId(userId: controller.users[0], isGroup: false)),
                             builder: (ctx, snap) {
