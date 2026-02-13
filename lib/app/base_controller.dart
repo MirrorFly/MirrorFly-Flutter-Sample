@@ -216,8 +216,8 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent callFailed");
           callKitOutgoingCallController.onCallFailed(participantsId: flyCallStatus.participantsIds, reason: flyCallStatus.reason ?? '');
           break;
-        case FlyCallStatusEvent.joinSync:
-          callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent joinSync");
+        // case FlyCallStatusEvent.joinSync:
+        //   callkitLogger.info("[MirrorFly][BaseController]flyCallStatusEvent joinSync");
           // if (joinSyncStatus != null && joinSyncStatus.isNotEmpty) {
           //   callKitOutgoingCallController.onGroupCallJoinSync(joinSyncStatus: joinSyncStatus);
           // }
@@ -384,13 +384,13 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent unknown");
           break;
 
-        case FlyCallActionEvent.joined:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent joined");
-          break;
-
-        case FlyCallActionEvent.left:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent left");
-          break;
+        // case FlyCallActionEvent.joined:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent joined");
+        //   break;
+        //
+        // case FlyCallActionEvent.left:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent left");
+        //   break;
 
         case FlyCallActionEvent.audioTrackPublished:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioTrackPublished");
