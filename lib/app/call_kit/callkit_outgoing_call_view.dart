@@ -1261,39 +1261,38 @@ class CallKitOutgoingCallView
       await showDialog(
         context: context.mounted ? context : Get.context!,
         barrierDismissible: true,
-        builder: (_) =>
-            Center(
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  width: 250,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: availableTypes.map((type) {
-                      return ListTile(
-                        leading: getAudioDeviceIcon(type.type),
-                        title: Text(type.deviceName),
-                        trailing: controller.selectedAudioDeviceId.value ==
-                            type.id
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          callkitLogger.info("#[_showAudioDeviceSelector] Selected audio device: ${type.toMap()}");
-                          controller.isAudioDialogOpen.value = false;
-                          controller.changeAudioDevice(type);
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    }).toList(),
-                  ),
+        builder: (_) => Obx(() {
+          return Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: 250,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: availableTypes.map((type) {
+                    return ListTile(
+                      leading: getAudioDeviceIcon(type.type),
+                      title: Text(type.deviceName),
+                      trailing: controller.selectedAudioDeviceId.value == type.id
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () {
+                        controller.isAudioDialogOpen.value = false;
+                        controller.changeAudioDevice(type);
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
             ),
+          );
+        }),
       );
     } else {
       final bool isReceiverSelected = controller.selectedAudioDevice.value?.type == FlyAudioDeviceType.receiver;
