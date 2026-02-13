@@ -125,19 +125,6 @@ class CallKitOutgoingCallController extends GetxController
     super.onInit();
   }
 
-  Future<void> setInitialAudioRouteDevice() async {
-    final FlyAudioDevice? initialDevice = await MirrorFlyCallKit.getCurrentAudioRoute();
-    callkitLogger.info("$audioRoutingTag Initial audio device found: ${initialDevice?.toMap()}");
-
-    if (initialDevice != null) {
-      selectedAudioDeviceId.value = initialDevice.id;
-      selectedAudioDevice.value = initialDevice;
-        callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice.value?.toMap()}");
-    } else {
-      callkitLogger.info("$audioRoutingTag No initial audio device found");
-    }
-  }
-
   Future<void> _initCallArguments() async {
     try {
       callkitLogger.info(
@@ -2208,6 +2195,20 @@ class CallKitOutgoingCallController extends GetxController
   /// -------------------------------------------------------------------
   /// AUDIO ROUTING
   /// -------------------------------------------------------------------
+
+  /// Set the initial audio route device when the call screen is opened
+  Future<void> setInitialAudioRouteDevice() async {
+    final FlyAudioDevice? initialDevice = await MirrorFlyCallKit.getCurrentAudioRoute();
+    callkitLogger.info("$audioRoutingTag Initial audio device found: ${initialDevice?.toMap()}");
+
+    if (initialDevice != null) {
+      selectedAudioDeviceId.value = initialDevice.id;
+      selectedAudioDevice.value = initialDevice;
+      callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice.value?.toMap()}");
+    } else {
+      callkitLogger.info("$audioRoutingTag No initial audio device found");
+    }
+  }
 
   /// Get the available audio output devices
   Future<List<FlyAudioDevice>> getAvailableAudioOutputDevices() async {
