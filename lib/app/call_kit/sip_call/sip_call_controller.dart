@@ -67,7 +67,7 @@ class SipCallController extends GetxController {
 
   void makeSIPCall() async{
     if (sipNumber.value.isEmpty) {
-      toToast("Please enter a SIP number");
+      toToast("Enter valid number");
       return;
     }
 
