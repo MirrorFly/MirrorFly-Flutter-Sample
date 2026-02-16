@@ -892,7 +892,7 @@ class CallKitOutgoingCallView
                     child: controller.callKind == FlyCallKind.sip
                         ? ProfileTextImage(
                       text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
-                          ? controller.remoteUserNameMap[participantId]!.trim().substring(3) : "User",
+                          ? controller.remoteUserNameMap[participantId]!.trim().replaceFirst(RegExp(r'^sip_'), '').substring(3) : "User",
                       radius:
                       (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
                           scale) /
