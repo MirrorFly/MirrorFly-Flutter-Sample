@@ -1010,9 +1010,9 @@ class CallKitOutgoingCallView
   /// Audio controller
   /// ---------------------------------
   _AudioRoutingUIConfig _getAudioRoutingUI() {
-    final device = controller.selectedAudioDevice.value?.type;
-
-    switch (device) {
+    final device = controller.selectedDeviceType.value;
+    var type = FlyAudioDeviceType.fromString(device);
+    switch (type) {
       case FlyAudioDeviceType.speaker:
         return const _AudioRoutingUIConfig(
           icon: speakerActive,
@@ -1254,8 +1254,8 @@ class CallKitOutgoingCallView
   ///
   ///
   void _showAudioDeviceSelector(BuildContext context) async {
-    final List<FlyAudioDevice> availableTypes = await controller.getAvailableAudioOutputDevices();
-    callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${availableTypes.map((e) => e.toMap()).toList()}");
+    await controller.getAvailableAudioOutputDevices();
+    callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${controller.availableTypes.map((e) => e.toMap()).toList()}");
     // if (availableTypes.length > 2) {
       controller.isAudioDialogOpen.value = true;
       await showDialog(
@@ -1274,13 +1274,13 @@ class CallKitOutgoingCallView
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: availableTypes.map((type) {
+                  children: controller.availableTypes.map((type) {
                     callkitLogger.info("[_showAudioDeviceSelector] Rendering"
-                        " audio device option: ${type.toMap()}, currently selected: ${controller.selectedAudioDeviceId.value}");
+                        " audio device option: ${type.toMap()}, currently selected: ${controller.selectedDeviceType.value}");
                     return ListTile(
                       leading: getAudioDeviceIcon(type.type),
                       title: Text(type.deviceName),
-                      trailing: controller.selectedAudioDeviceId.value == type.id
+                      trailing: controller.selectedDeviceType.value == type.type.value
                           ? const Icon(Icons.check, color: Colors.green)
                           : null,
                       onTap: () {

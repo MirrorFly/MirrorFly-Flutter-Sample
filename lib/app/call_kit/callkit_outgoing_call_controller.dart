@@ -77,15 +77,17 @@ class CallKitOutgoingCallController extends GetxController
   RxString secondaryCallViewUserId = "".obs;
 
   final String audioRoutingTag = "[AUDIO_ROUTING]";
-  RxString selectedAudioDeviceId = "".obs;
-  final selectedAudioDevice = Rxn<FlyAudioDevice>();
+  // RxString selectedAudioDeviceId = "".obs;
+  // final selectedAudioDevice = Rxn<FlyAudioDevice>();
+
+  RxString selectedDeviceType = "".obs;
 
   final int _maxCallInvitedParticipant = Constants.maxCallUsersLimitForMirrorFlyCallKit;
 
   FlyCallKind callKind = FlyCallKind.standard;
 
   final RxBool isAudioDialogOpen = false.obs;
-
+  var availableTypes = <FlyAudioDevice>[].obs;
   RxString getOneToOneCallRemoteUserName = "".obs;
 
 
@@ -2198,18 +2200,18 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("$audioRoutingTag Initial audio device found: ${initialDevice?.toMap()}");
 
     if (initialDevice != null) {
-      selectedAudioDeviceId.value = initialDevice.id;
-      selectedAudioDevice.value = initialDevice;
-      callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedAudioDevice.value?.toMap()}");
+      selectedDeviceType.value = initialDevice.type.value;
+      // selectedAudioDevice.value = initialDevice;
+      callkitLogger.info("$audioRoutingTag updated selectedAudioDevice: ${selectedDeviceType.value}");
     } else {
       callkitLogger.info("$audioRoutingTag No initial audio device found");
     }
   }
 
   /// Get the available audio output devices
-  Future<List<FlyAudioDevice>> getAvailableAudioOutputDevices() async {
+  Future<void> getAvailableAudioOutputDevices() async {
     callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
-    return await MirrorFlyCallKit.getAvailableAudioRoutes();
+    availableTypes.value = await MirrorFlyCallKit.getAvailableAudioRoutes();
   }
 
   /// Change the audio output device
@@ -2219,8 +2221,12 @@ class CallKitOutgoingCallController extends GetxController
     MirrorFlyCallKit.changeAudioRoute(flyAudioDevice: flyAudioDevice);
   }
 
-  void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) {
-    selectedAudioDevice.value = flyAudioDevice;
-    selectedAudioDeviceId.value = flyAudioDevice.id;
+  void onAudioRouteChanged(FlyAudioDevice flyAudioDevice) async {
+    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] onAudioRouteChanged called with flyAudioDevice: $flyAudioDevice");
+    await getAvailableAudioOutputDevices();
+
+    selectedDeviceType.value = flyAudioDevice.type.value;
+    // selectedAudioDevice.value = flyAudioDevice;
+    // selectedAudioDeviceId.value = flyAudioDevice.id;
   }
 }
