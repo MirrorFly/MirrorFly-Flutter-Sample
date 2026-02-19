@@ -968,6 +968,10 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
+      if(isAudioDialogOpen.value){
+        Get.back();
+        isAudioDialogOpen.value = false;
+      }
       _navigateToTimeout(isCallFailed: isCallFailed, reason: reason);
        return;
     }
