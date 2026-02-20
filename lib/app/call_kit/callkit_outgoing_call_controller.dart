@@ -2212,6 +2212,8 @@ class CallKitOutgoingCallController extends GetxController
   Future<void> getAvailableAudioOutputDevices() async {
     callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices called");
     availableTypes.value = await MirrorFlyCallKit.getAvailableAudioRoutes();
+    callkitLogger.info("$audioRoutingTag [MirrorFly][OutgoingCallController] getAvailableAudioOutputDevices"
+        " result ${availableTypes.map((e) => "name: ${e.deviceName} type: ${e.type} id: ${e.id}")}");
   }
 
   /// Change the audio output device
