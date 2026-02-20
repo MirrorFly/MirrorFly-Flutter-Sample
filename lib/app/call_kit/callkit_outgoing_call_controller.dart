@@ -151,7 +151,14 @@ class CallKitOutgoingCallController extends GetxController
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
       if(currentCallMode.value == "MEET"){
-        isOnGoingCallView();
+        if (callerList.length >= 2) {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local and remote participant present");
+          isOnGoingCallView();
+        } else {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local participant only present ");
+          callStatus("");
+          _startTimer();
+        }
         bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");

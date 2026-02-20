@@ -105,8 +105,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           if (response.isSuccess) {
             callkitLogger.info("Successfully joined call via link");
             NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
-              "callType": CallType.audio,
-              "callMode": "ONE-TO-ONE",
+              "callType": CallType.video,
+              "callMode": "MEET",
               "chatId": ''
             });
           } else {
