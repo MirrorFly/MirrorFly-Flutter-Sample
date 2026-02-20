@@ -335,7 +335,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> getCallMembersName() async {
-    if (isGroupCall.value) {
+    if (!isGroupCall.value) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
       return;
@@ -346,14 +346,14 @@ class CallKitOutgoingCallController extends GetxController
       for(var user in callerList){
           remoteUserNameMap[user.identity] =
           user.isLocalParticipant ? "You" : user.identity;
-          callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
       }
       return;
     }
 
     for (var user in callerList) {
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
+          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
           validId(userId: user.identity, isGroup: false),
           isFromCallKit: true);
@@ -365,10 +365,10 @@ class CallKitOutgoingCallController extends GetxController
       remoteUserNameMap[user.identity] =
           user.isLocalParticipant ? "You" : username;
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
+          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for ${user.identity}: $username");
     }
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, "
+        "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Completed fetching user names for group call, "
             "remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
   }
