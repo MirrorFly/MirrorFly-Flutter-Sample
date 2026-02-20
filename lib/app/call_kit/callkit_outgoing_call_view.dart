@@ -1256,7 +1256,7 @@ class CallKitOutgoingCallView
   void _showAudioDeviceSelector(BuildContext context) async {
     await controller.getAvailableAudioOutputDevices();
     callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${controller.availableTypes.map((e) => e.toMap()).toList()}");
-    // if (availableTypes.length > 2) {
+    if (controller.availableTypes.length > 2) {
       controller.isAudioDialogOpen.value = true;
       await showDialog(
         context: context.mounted ? context : Get.context!,
@@ -1275,8 +1275,6 @@ class CallKitOutgoingCallView
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: controller.availableTypes.map((type) {
-                    callkitLogger.info("[_showAudioDeviceSelector] Rendering"
-                        " audio device option: ${type.toMap()}, currently selected: ${controller.selectedDeviceType.value}");
                     return ListTile(
                       leading: getAudioDeviceIcon(type.type),
                       title: Text(type.deviceName),
@@ -1296,20 +1294,20 @@ class CallKitOutgoingCallView
           );
         }),
       );
-    // } else {
-    //   final bool isReceiverSelected = controller.selectedAudioDevice.value?.type == FlyAudioDeviceType.receiver;
-    //   callkitLogger.info(
-    //       "[_showAudioDeviceSelector] Toggling audio device between speaker and "
-    //       "selectedAudioDevice: ${controller.selectedAudioDevice.value?.type}, "
-    //           "isReceiverSelected: $isReceiverSelected, "
-    //           "receiver currently selected: ${controller.selectedAudioDevice.value?.toMap()}");
-    //
-    //   isReceiverSelected
-    //       ? controller.changeAudioDevice(availableTypes.firstWhere(
-    //           (element) => element.type == FlyAudioDeviceType.speaker))
-    //       : controller.changeAudioDevice(availableTypes.firstWhere(
-    //           (element) => element.type == FlyAudioDeviceType.receiver));
-    // }
+    } else if (controller.availableTypes.length == 2) {
+      //Toggle between the two available devices dynamically
+      final currentType = controller.selectedDeviceType.value;
+      final nextDevice = controller.availableTypes.firstWhere(
+            (device) => device.type.value != currentType,
+      );
+      callkitLogger.info("[_showAudioDeviceSelector] Toggling between two devices. Current: $currentType → Next: ${nextDevice.type.value}");
+      controller.changeAudioDevice(nextDevice);
+    } else {
+      // Only one device available → nothing to toggle
+      callkitLogger.info(
+        "[_showAudioDeviceSelector] Only one audio device available. No action taken.",
+      );
+    }
   }
 
   /// Get audio device icon
