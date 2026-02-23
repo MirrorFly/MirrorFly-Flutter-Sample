@@ -140,7 +140,14 @@ class CallKitOutgoingCallController extends GetxController
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
       if(currentCallMode.value == "MEET"){
-        isOnGoingCallView();
+        if (callerList.length >= 2) {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local and remote participant present");
+          isOnGoingCallView();
+        } else {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local participant only present ");
+          callStatus("");
+          _startTimer();
+        }
         bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");
@@ -317,7 +324,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> getCallMembersName() async {
-    if (isGroupCall.value) {
+    if (!isGroupCall.value) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
       return;
@@ -328,14 +335,14 @@ class CallKitOutgoingCallController extends GetxController
       for(var user in callerList){
           remoteUserNameMap[user.identity] =
           user.isLocalParticipant ? "You" : user.identity;
-          callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
       }
       return;
     }
 
     for (var user in callerList) {
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
+          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
       ProfileDetails profile = await getProfileDetails(
           validId(userId: user.identity, isGroup: false),
           isFromCallKit: true);
@@ -347,10 +354,10 @@ class CallKitOutgoingCallController extends GetxController
       remoteUserNameMap[user.identity] =
           user.isLocalParticipant ? "You" : username;
       callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] Remote User Name for ${user.identity}: $username");
+          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for ${user.identity}: $username");
     }
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, "
+        "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Completed fetching user names for group call, "
             "remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
     return;
   }
@@ -957,6 +964,10 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, shouldNavigate: $shouldNavigate callerList length: ${callerList.length}");
 
     if (shouldNavigate) {
+      if(isAudioDialogOpen.value){
+        Get.back();
+        isAudioDialogOpen.value = false;
+      }
       _navigateToTimeout(isCallFailed: isCallFailed, reason: reason);
        return;
     }

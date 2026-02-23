@@ -64,7 +64,7 @@ class CallKitOutgoingCallView
     final FlyCallParticipant? remoteParticipant =
         controller.callerList.firstWhereOrNull(
             (e) => e.identity == remoteTileParticipantId);
-    final String remoteParticipantId = remoteParticipant?.identity ?? "";
+    final String remoteParticipantId = remoteParticipant?.identity ?? controller.getLocalParticipant()?.identity ?? "";
 
     callkitLogger.info("[oneToOneCallUI] remoteTileParticipantId: $remoteTileParticipantId");
 
@@ -153,10 +153,28 @@ class CallKitOutgoingCallView
 
                 return Column(
                   children: [
-                    if (!isOngoing) ...[
+                    if (!isOngoing && controller.currentCallMode.value == "MEET") ...[
                       Center(
                         child: Text(
-                          controller.callStatus.value,
+                          controller.getOneToOneCallRemoteUserName.value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callerNameTextStyle,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          controller.callDuration.value,
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callDurationTextStyle,
+                        ),
+                      )
+                    ],
+                    if (!isOngoing && controller.currentCallMode.value != "MEET") ...[
+                      Center(
+                        child: Text(
+                          controller.currentCallMode.value == "MEET" ? controller.callDuration.value : controller.callStatus.value,
                           style: AppStyleConfig
                               .ongoingCallPageStyle.callStatusTextStyle,
                         ),
