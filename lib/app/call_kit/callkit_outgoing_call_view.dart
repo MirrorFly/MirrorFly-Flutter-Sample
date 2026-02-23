@@ -226,9 +226,8 @@ class CallKitOutgoingCallView
                                   visible: showInviteButton,
                                   child: IconButton(
                                     onPressed: () {
-                                      NavUtils.toNamed(Routes.callKitParticipantView,
-                                          arguments: {"joinViaLink": false});
-                                    },                                        // controller.inviteParticipants(),
+                                      controller.inviteParticipants();
+                                    },
                                     icon: const Icon(
                                       Icons.person_add_alt_1_rounded,
                                       color: Colors.white,
@@ -675,10 +674,8 @@ class CallKitOutgoingCallView
                     visible: showInviteButton,
                     child: IconButton(
                       onPressed: () {
-                        NavUtils.toNamed(Routes.callKitParticipantView,
-                            arguments: {"joinViaLink": false});
+                        controller.inviteParticipants();
                       },
-                          // controller.inviteParticipants(),
                       icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
                     ),
                   );
