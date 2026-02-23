@@ -1904,36 +1904,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final String callMode = this.callMode.value;
-    callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] inviteParticipants called with callMode: $callMode");
-    final groupJid = CallUtils.getGroupJidFromGroupId(groupId.value);
-    final List<String> pickedContacts = await gotoContacts(isGroupInvite: groupJid != "", groupChatId: groupJid);
-
-    final int currentCallParticipantsCount = callerList.length;
-    final int pickedCount = pickedContacts.length;
-
-    final int totalAfterInvite = currentCallParticipantsCount + pickedCount;
-    if (totalAfterInvite > _maxCallInvitedParticipant) {
-      final int exceededCount = totalAfterInvite - _maxCallInvitedParticipant;
-
-      callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: Exceeded max participants limit. Current:"
-          " $currentCallParticipantsCount,"
-          " Picked: $pickedCount,"
-          " Max: $_maxCallInvitedParticipant,"
-          " Exceeded by: $exceededCount");
-
-      toToast("You can invite only $_maxCallInvitedParticipant participants. You have exceeded by $exceededCount participants.");
-      return;
-    } else {
-      MirrorFlyCallKit.inviteParticipants(inviteUserList: pickedContacts, flyResult: (res) async {
-        callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
-        if (res.isSuccess) {
-          // callerList.value = await getCurrentCallParticipants();
-          callkitLogger.info("[MirrorFly][OutgoingCallController] after inviteParticipants callerList: ${callerList.map((e) => e.identity).toList()}");
-        }
-      });
-    }
+    NavUtils.toNamed(Routes.callKitParticipantView, arguments: {"joinViaLink": false});
   }
 
   /// Navigate to contacts screen
