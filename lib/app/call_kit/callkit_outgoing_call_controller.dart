@@ -411,23 +411,61 @@ class CallKitOutgoingCallController extends GetxController
   ///
   Future<void> _getCallRemoteUserName() async {
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId
-            .value}");
+        "[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId.value}");
+
+    List<String> participantId = [];
+    var showLocalUserName = false;
+    final bool showRemoteUserNameOnlyOnOutGoingCall =
+    !isOnGoingCallViewEnable.value; //show only remote user name
+    final bool onGoingCallEnabledAddLocalUser =
+        isOnGoingCallViewEnable.value; // add local user name to name list
+    final bool localUserAloneConnectedInMeetCall =
+        callMode.value == "MEET" && callerList.length == 1;
+
+    callkitLogger.info(
+        "[MirrorFly][OutgoingCallController] #_getCallRemoteUserName, "
+            "showRemoteUserNameOnlyOnOutGoingCall: $showRemoteUserNameOnlyOnOutGoingCall"
+            "onGoingCallEnabledAddLocalUser: $onGoingCallEnabledAddLocalUser"
+            "localUserAloneConnectedInMeetCall: $localUserAloneConnectedInMeetCall"
+            "participantId: ${participantId.map((e) => e)}");
+
     try {
       final List<FlyCallParticipant> remoteParticipants = List.from(callerList);
-      remoteParticipants.removeWhere((e) => e.isLocalParticipant);
+      if (localUserAloneConnectedInMeetCall) {
+        callkitLogger.info("localUserAloneConnectedInMeetCall block");
+        participantId = remoteParticipants.map((e) => e.identity).toList();
+        showLocalUserName = true;
+      } else if (showRemoteUserNameOnlyOnOutGoingCall) {
+        callkitLogger.info("showRemoteUserNameOnlyOnOutGoingCall block");
+        remoteParticipants.removeWhere((e) => e.isLocalParticipant);
+        participantId = remoteParticipants.map((e) => e.identity).toList();
+      } else if (onGoingCallEnabledAddLocalUser) {
+        callkitLogger.info("onGoingCallEnabledAddLocalUser block");
+        if(callerList.length != 2) {
+          callkitLogger.info("onGoingCallEnabledAddLocalUser block not to remove local participant");
+          participantId = remoteParticipants.map((e) => e.identity).toList();
+        } else {
+          callkitLogger.info("onGoingCallEnabledAddLocalUser block to remove local participant");
+          remoteParticipants.removeWhere((e) => e.isLocalParticipant);
+          participantId = remoteParticipants.map((e) => e.identity).toList();
+        }
+      } else {
+        callkitLogger.info("ERROR ====>> #_getOneToOneCallRemoteUserName else block");
+      }
 
-      final List<String> participantId = remoteParticipants.map((e) => e.identity).toList();
-      await MirrorFlyCallKit.getCallMembersDisplayNames(chatId: groupId.value, participantId: participantId).then((value) {
+      await MirrorFlyCallKit.getCallMembersDisplayNames(
+          chatId: groupId.value,
+          participantId: participantId,
+          showLocalUserName: showLocalUserName).then((value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName fetched display names: $value");
         getOneToOneCallRemoteUserName.value = value;
       });
     } catch (e) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] Remote User name error: $e");
-        getOneToOneCallRemoteUserName.value = "MF Call";
-      }
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] Remote User name error: $e");
+      getOneToOneCallRemoteUserName.value = "MF Call";
     }
+  }
 
   String validId({required String userId,required bool isGroup}) {
     if(isGroup){

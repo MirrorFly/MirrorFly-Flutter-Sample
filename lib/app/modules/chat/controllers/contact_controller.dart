@@ -636,7 +636,7 @@ class ContactController extends FullLifeCycleController
                       NavUtils.offNamed(Routes.callKitOutGoingCallView,
                           arguments: {
                             "callType": CallType.audio,
-                            "callMode": "ONE-TO-ONE",
+                            "callMode": "ONE-TO-MANY",
                             "chatId": ''
                           });
                     } else {
@@ -659,7 +659,7 @@ class ContactController extends FullLifeCycleController
                       NavUtils.offNamed(Routes.callKitOutGoingCallView,
                           arguments: {
                             "callType": CallType.video,
-                            "callMode": "ONE-TO-ONE",
+                            "callMode": "ONE-TO-MANY",
                             "chatId": ''
                           });
                     } else {

@@ -608,7 +608,7 @@ class CallKitOutgoingCallView
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getCallTitleForOneToManyCall():"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                          controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getOneToOneCallRemoteUserName.value:"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
                                           textAlign: TextAlign.center,
                                           style: AppStyleConfig
                                               .ongoingCallPageStyle.callerNameTextStyle,
