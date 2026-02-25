@@ -324,11 +324,11 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   Future<void> getCallMembersName() async {
-    if (!isGroupCall.value) {
-      callkitLogger.info(
-          "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
-      return;
-    }
+    // if (!isGroupCall.value) {
+    //   callkitLogger.info(
+    //       "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
+    //   return;
+    // }
 
     if(callKind == FlyCallKind.sip){
       callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
