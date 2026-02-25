@@ -1296,7 +1296,7 @@ class CallKitOutgoingCallController extends GetxController
           Get.back();
           isAudioDialogOpen.value = false;
         }
-        if(NavUtils.previousRoute == Routes.groupParticipants){
+        if(NavUtils.previousRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
           return;
@@ -1318,12 +1318,12 @@ class CallKitOutgoingCallController extends GetxController
           Get.back();
           isAudioDialogOpen.value = false;
         }
-        if(NavUtils.previousRoute == Routes.groupParticipants){
+        if(NavUtils.previousRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
           return;
         }
-        if(NavUtils.currentRoute == Routes.groupParticipants){
+        if(NavUtils.currentRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
           return;
@@ -1357,12 +1357,12 @@ class CallKitOutgoingCallController extends GetxController
       Get.back();
       isAudioDialogOpen.value = false;
     }
-    if(NavUtils.previousRoute == Routes.groupParticipants){
+    if(NavUtils.previousRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
       return;
     }
-    if(NavUtils.currentRoute == Routes.groupParticipants){
+    if(NavUtils.currentRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
       return;
@@ -1878,12 +1878,12 @@ class CallKitOutgoingCallController extends GetxController
       closeDialog();
 
     toToast("Call Disconnected");
-    if(NavUtils.previousRoute == Routes.groupParticipants){
+    if(NavUtils.previousRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
       return;
     }
-    if(NavUtils.currentRoute == Routes.groupParticipants){
+    if(NavUtils.currentRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
       return;
