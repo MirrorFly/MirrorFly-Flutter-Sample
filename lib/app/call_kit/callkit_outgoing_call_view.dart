@@ -154,22 +154,59 @@ class CallKitOutgoingCallView
                 return Column(
                   children: [
                     if (!isOngoing && controller.currentCallMode.value == "MEET") ...[
-                      Center(
-                        child: Text(
-                          controller.getOneToOneCallRemoteUserName.value,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppStyleConfig
-                              .ongoingCallPageStyle.callerNameTextStyle,
+                      SizedBox(
+                        height: 38,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            const SizedBox(width: 48), // balance space
+
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  controller.getOneToOneCallRemoteUserName.value,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppStyleConfig
+                                      .ongoingCallPageStyle.callerNameTextStyle,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(
+                              width: 48,
+                              child: Obx(() {
+                                final showInviteButton =
+                                    controller.currentCallMode.value == "MEET" &&
+                                        controller.callKind != FlyCallKind.sip;
+
+                                return Visibility(
+                                  visible: showInviteButton,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      controller.inviteParticipants();
+                                    },
+                                    icon: const Icon(
+                                      Icons.person_add_alt_1_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
                         ),
                       ),
+
                       Center(
                         child: Text(
                           controller.callDuration.value,
                           style: AppStyleConfig
                               .ongoingCallPageStyle.callDurationTextStyle,
                         ),
-                      )
+                      ),
                     ],
                     if (!isOngoing && controller.currentCallMode.value != "MEET") ...[
                       Center(

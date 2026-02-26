@@ -90,6 +90,8 @@ class CallKitOutgoingCallController extends GetxController
   var availableTypes = <FlyAudioDevice>[].obs;
   RxString getOneToOneCallRemoteUserName = "".obs;
 
+  RxBool isMeet = false.obs;
+
 
   @override
   Future<void> onInit() async {
@@ -140,6 +142,7 @@ class CallKitOutgoingCallController extends GetxController
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
       if(currentCallMode.value == "MEET"){
+        isMeet.value = true;
         if (callerList.length >= 2) {
           callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local and remote participant present");
           isOnGoingCallView();
@@ -165,7 +168,7 @@ class CallKitOutgoingCallController extends GetxController
 
       callkitLogger.info(
         "[MirrorFly][OutgoingCallController] "
-            "isIncoming: groupId $groupId incoming $isIncoming callType $callType  callMode $callMode ",
+            "isIncoming: groupId $groupId incoming $isIncoming callType $callType  callMode $callMode isMeet $isMeet",
       );
     } catch (e) {
       callkitLogger.info(
@@ -437,7 +440,9 @@ class CallKitOutgoingCallController extends GetxController
         showLocalUserName = true;
       } else if (showRemoteUserNameOnlyOnOutGoingCall) {
         callkitLogger.info("showRemoteUserNameOnlyOnOutGoingCall block");
-        remoteParticipants.removeWhere((e) => e.isLocalParticipant);
+        if (!isMeet.value) {
+          remoteParticipants.removeWhere((e) => e.isLocalParticipant);
+        }
         participantId = remoteParticipants.map((e) => e.identity).toList();
       } else if (onGoingCallEnabledAddLocalUser) {
         callkitLogger.info("onGoingCallEnabledAddLocalUser block");
@@ -1312,7 +1317,7 @@ class CallKitOutgoingCallController extends GetxController
         return;
       }
 
-      if(callerList.length <=1){
+      if(callerList.length <=1 && !isMeet.value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call disconnectCall");
         if(isAudioDialogOpen.value){
           Get.back();
@@ -1331,7 +1336,7 @@ class CallKitOutgoingCallController extends GetxController
         if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
-      }else if (callerList.any((e) =>
+      } else if (callerList.any((e) =>
       e.isLocalParticipant == false &&
           e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
         /// No user is connect so set the value isGroupOnGoingCallEnabled is false
@@ -1342,8 +1347,23 @@ class CallKitOutgoingCallController extends GetxController
           callDuration.value = getParticipantConnectionState(remoteParticipant.flyCallStatusEvent);
         }
       } else {
+        if(callerList.length <=1 && isMeet.value) {
+          isOnGoingCallViewEnable.value = false;
+        }
         callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Call is still ongoing with other participants.");
       }
+      return;
+    }
+    final bool isLocalHangup = isSelfId(id: userId);
+
+    if(isMeet.value && !isLocalHangup) {
+      callerList.removeWhere((e) => e.identity == userId);
+      final String name = remoteUserNameMap[userId] ?? "";
+      remoteUserNameMap.remove(userId);
+      toToast("$name disconnected");
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Removed userId: $userId from callerList.callerList.length=${callerList.length}");
+      _getCallRemoteUserName();
+      isOnGoingCallViewEnable.value = false;
       return;
     }
 
@@ -1904,7 +1924,7 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    NavUtils.toNamed(Routes.callKitParticipantView, arguments: {"joinViaLink": false});
+    NavUtils.toNamed(Routes.callKitParticipantView, arguments: {"joinViaLink": false,"meet":isMeet.value});
   }
 
   /// Navigate to contacts screen
@@ -2206,6 +2226,7 @@ class CallKitOutgoingCallController extends GetxController
     mainCallViewUserId.value = "";
     secondaryCallViewUserId.value = "";
     currentCallMode.value = "";
+    isMeet.value = false;
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }

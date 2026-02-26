@@ -4092,6 +4092,7 @@ class ChatController extends FullLifeCycleController
           await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
+                  CallKitEventBuffer.flushAllEvents();
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "callType": CallType.audio,
                     "callMode": "ONE-TO-ONE",

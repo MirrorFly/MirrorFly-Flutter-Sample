@@ -16,6 +16,7 @@ import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_event_buffer.dart';
 
 
 class CallKitJoinCallController extends FullLifeCycleController with FullLifeCycleMixin {
@@ -37,6 +38,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   bool invalidLink = false;
   String callEndedMessage = "";
   RxBool showPreview = false.obs;
+  var callMode = "".obs;
 
   @override
   void onInit() async {
@@ -62,6 +64,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
         audioMuted.value = false;
         videoMuted.value = false;
+        callMode.value = initializeJoinLinkResponse.callMode;
 
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
         // await getVideoLocalCapturePreview();
@@ -101,12 +104,13 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
+          CallKitEventBuffer.flushAllEvents();
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {
             callkitLogger.info("Successfully joined call via link");
             NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
               "callType": CallType.video,
-              "callMode": "MEET",
+              "callMode": callMode.value,
               "chatId": ''
             });
           } else {
