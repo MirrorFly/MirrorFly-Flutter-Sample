@@ -94,7 +94,7 @@ class CallKitOutgoingCallView
                   ),
 
                   // Reconnecting overlay widget
-                        Visibility(
+                        !controller.isMeet.value ? Visibility(
                           visible: controller.callerList
                                   .firstWhereOrNull((e) =>
                                       e.identity ==
@@ -107,7 +107,33 @@ class CallKitOutgoingCallView
                               color: Colors.black.withOpacity(0.4),
                             ),
                           ),
-                        )
+                        ):
+                        Visibility(
+                          visible:!controller.isOnGoingCallViewEnable.value  && (controller.callerList
+                              .firstWhereOrNull((e) =>
+                          e.identity ==
+                              controller
+                                  .getLocalParticipant()?.identity)
+                              !.isReconnecting ?? false),
+                          child: Positioned.fill(
+                            child: Container(
+                              color: Colors.black.withOpacity(0.4),
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 140),
+                                  Center(
+                                    child: Text(
+                                      'Reconnecting...',
+                                      style: AppStyleConfig
+                                          .ongoingCallPageStyle.callStatusTextStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
                       ],
                     ),
 

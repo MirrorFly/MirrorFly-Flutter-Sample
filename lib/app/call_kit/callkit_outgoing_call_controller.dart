@@ -254,16 +254,19 @@ class CallKitOutgoingCallController extends GetxController
             .length}): ${existingIds.toList()}",
       );
 
-      for (var p in participants) {
-        if (!existingIds.contains(p.identity)) {
-          callerList.add(p);
+      for (var flyCallParticipant in participants) {
+        if (!existingIds.contains(flyCallParticipant.identity)) {
+          callerList.add(flyCallParticipant);
           callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] ➕ Added new participant: ${p
+            "[MirrorFly][OutgoingCallController] ➕ Added new participant: ${flyCallParticipant
                 .identity}",
           );
         } else {
+          final index = callerList.indexWhere((p) => p.identity == flyCallParticipant.identity);
+          final updated = callerList[index].copyWith(isAudioMuted: flyCallParticipant.isAudioMuted);
+          callerList.value = List.from(callerList)..[index] = updated;
           callkitLogger.info(
-            "[MirrorFly][OutgoingCallController]️ Skipped duplicate participant: ${p
+            "[MirrorFly][OutgoingCallController]️ Skipped duplicate participant: ${flyCallParticipant
                 .identity}",
           );
         }
