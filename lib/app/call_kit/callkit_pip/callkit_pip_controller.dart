@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_in_app_pip/picture_in_picture.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_widgets.dart';
 import '../../data/helper.dart';
@@ -173,4 +175,57 @@ class CallKitPipController extends GetxController {
     return input.split('@').firstOrNull?.trim() ?? "";
   }
 
+  void stopPIP() {
+    PictureInPicture.stopPiP();
+  }
+
+  /// On disconnected
+  void onDisconnected({required List<String> participantId}) async {
+    callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected called with participantId: $participantId");
+
+    final bool isLocalDisconnected = participantId.any((id) => id == CallUtils.getIdFromJidList(id));
+    if (isLocalDisconnected) {
+      callkitLogger.info("[MirrorFly][CallKitPIPController] Local user disconnected");
+      stopPIP();
+      return;
+    }
+
+    final flyCallParticipant = await MirrorFlyCallKit.getCurrentCallParticipants() ?? [];
+    final bool isLastParticipantLeft = flyCallParticipant.length <= 1;
+
+    if (isLastParticipantLeft) {
+      callkitLogger.info("[MirrorFly][CallKitPIPController] Last participant left → stopping PIP");
+      stopPIP();
+      return;
+    }
+
+    callkitLogger.info("[MirrorFly][CallKitPIPController] No PIP action required");
+  }
+
+  /// On Rejected
+  void onRejected({required String participantId}) async {
+    callkitLogger.info("[MirrorFly][CallKitPIPController] onRejected called with participantId: $participantId");
+    final ProfileDetails profileDetails = await getProfileDetails((CallUtils.getJidFromUserId(userId: participantId, isGroup: false)));
+
+    if (callMode.value == "ONE-TO-ONE") {
+      toToast("${profileDetails.name} is busy");
+      stopPIP();
+      return;
+    } else if (callMode.value == "ONE-TO-MANY") {
+      // Remove ringing participant
+    } else {}
+  }
+
+  void onEngaged({required String participantId}) async {
+    callkitLogger.info("[MirrorFly][CallKitPIPController] onEngaged called with participantId: $participantId");
+    final ProfileDetails profileDetails = await getProfileDetails((CallUtils.getJidFromUserId(userId: participantId, isGroup: false)));
+
+    if (callMode.value == "ONE-TO-ONE") {
+      toToast("${profileDetails.name} is busy");
+      stopPIP();
+      return;
+    } else if (callMode.value == "ONE-TO-MANY") {
+      // Remove ringing participant
+    } else {}
+  }
 }

@@ -14,6 +14,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'call_kit/callkit_event_buffer.dart';
 import 'call_kit/callkit_logger.dart';
 import 'call_kit/callkit_outgoing_call_controller.dart';
+import 'call_kit/callkit_pip/callkit_pip_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
 import 'call_modules/group_participants/group_participants_controller.dart';
 import 'call_modules/join_call_preview/join_call_controller.dart';
@@ -67,6 +68,31 @@ class BaseController {
     String? callMode;
     String? groupId;
 
+    // Pip view
+    void onFlyCallStatusPipAvailable({required FlyCallStatusEvent flyCallStatusEvent, required List<String> participantsIds}) {
+      final controller = Get.find<CallKitPipController>();
+
+      // on disconnected event
+      if (flyCallStatusEvent == FlyCallStatusEvent.disconnected) {
+        callkitLogger.info("[MirrorFly][BaseController] #onFlyCallStatusPipAvailability #disconnect");
+        controller.onDisconnected(participantId: participantsIds);
+      }
+
+      // on rejected event
+      if (flyCallStatusEvent == FlyCallStatusEvent.rejected) {
+        callkitLogger.info("[MirrorFly][BaseController] #onFlyCallStatusPipAvailability #rejected");
+        final String participantId = participantsIds.first;
+        controller.onRejected(participantId: participantId);
+      }
+
+      // on busy event
+      if (flyCallStatusEvent == FlyCallStatusEvent.engaged) {
+        callkitLogger.info("[MirrorFly][BaseController] #onFlyCallStatusPipAvailability #engaged");
+        final String participantId = participantsIds.first;
+        controller.onEngaged(participantId: participantId);
+      }
+    }
+
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
 
@@ -111,6 +137,13 @@ class BaseController {
       }
 
       if (!Get.isRegistered<CallKitOutgoingCallController>()) {
+
+        // Pip view
+        if (Get.isRegistered<CallKitPipController>()) {
+          onFlyCallStatusPipAvailable(flyCallStatusEvent: flyCallStatusEvent, participantsIds: flyCallStatus.participantsIds);
+          return;
+        }
+
         if (flyCallStatusEvent == FlyCallStatusEvent.disconnected && SessionManagement.getUserJID()?.split("@").first == flyCallStatus.participantsIds.first) {
           callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected for self - flushing all buffered events");
           CallKitEventBuffer.flushAllEvents();
