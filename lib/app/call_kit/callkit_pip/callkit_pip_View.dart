@@ -47,10 +47,12 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
               final participants = snapshot.data!;
               final total = participants.length;
 
-              return Padding(
-                padding: const EdgeInsets.all(6),
-                child: _buildDynamicLayout(participants, total),
-              );
+              // return Obx(() {
+                return Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: _buildDynamicLayout(participants, total),
+                );
+              // });
             },
           ),
 

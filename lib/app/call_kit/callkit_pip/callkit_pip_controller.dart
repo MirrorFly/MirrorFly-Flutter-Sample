@@ -127,28 +127,6 @@ class CallKitPipController extends GetxController {
     }
   }
 
-  /// Get Local participant
-  FlyCallParticipant? getLocalParticipant() {
-    final FlyCallParticipant? localParticipant = callerList
-        .firstWhereOrNull((p) => p.isLocalParticipant);
-    callkitLogger.info("[MirrorFly][CallKitPIPController] getLocalParticipant: $localParticipant");
-    return localParticipant;
-  }
-
-  bool isSelfId({required String? id}) {
-    final String? currentUserId = SessionManagement.getUserJID();
-    if (currentUserId == null) {
-      callkitLogger.info("[MirrorFly][CallKitPIPController] isSelfId: is null id=$id");
-      return true;
-    } else {
-      //
-      final String participantId = "$id@xmpp-uikit-qa.contus.us";
-      callkitLogger.info("[MirrorFly][CallKit PIP Controller] isSelfId $currentUserId $participantId");
-      callkitLogger.info("[MirrorFly][CallKit PIP Controller] isSelfId: ${currentUserId == participantId}");
-      return currentUserId == participantId;
-    }
-  }
-
   String getParticipantConnectionState(FlyCallStatusEvent? status) {
     callkitLogger.info("[MirrorFly][CallKitPIPController] getParticipantConnectionState called with status: $status");
     switch (status) {
@@ -189,7 +167,12 @@ class CallKitPipController extends GetxController {
   void onDisconnected({required List<String> participantId}) async {
     callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected called with participantId: $participantId");
 
-    final bool isLocalDisconnected = participantId.any((id) => id == CallUtils.getIdFromJidList(id));
+    if (participantId.isEmpty) {
+      callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected empty list");
+      return;
+    }
+
+    final bool isLocalDisconnected = participantId.first == CallUtils.getIdFromJidList(SessionManagement.getCurrentChatJID());
     if (isLocalDisconnected) {
       callkitLogger.info("[MirrorFly][CallKitPIPController] Local user disconnected");
       stopPIP();
@@ -205,6 +188,7 @@ class CallKitPipController extends GetxController {
       return;
     }
 
+    callerList.removeWhere((e) => e.identity == participantId.first);
     callkitLogger.info("[MirrorFly][CallKitPIPController] No PIP action required");
   }
 
