@@ -2,68 +2,90 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_in_app_pip/picture_in_picture.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_widgets.dart';
 import '../../data/helper.dart';
-import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../routes/app_pages.dart';
+import '../callkit_call_state_service.dart';
 import '../callkit_logger.dart';
 
 class CallKitPipController extends GetxController {
 
-  var callerList = <FlyCallParticipant>[].obs;
+  // ── Null-safe service accessor ─────────────────────────────────────────────
+  // The PIP controller may be created before CallStateService is registered
+  // (e.g., when the user taps the PIP widget during early call setup).
+  // Never call Get.find() unconditionally — always guard with isRegistered.
 
-  RxMap<String, String> remoteUserNameMap = <String, String>{}.obs;
+  CallStateService? get _svc =>
+      CallStateService.isRegistered ? CallStateService.instance : null;
 
-  RxBool isGroupCall = false.obs;
-  RxString callType = "".obs;
-  RxString callMode = "".obs;
-  RxString currentCallMode = "".obs;
-  FlyCallKind callKind = FlyCallKind.standard;
-  RxString groupId = "".obs;
+  // ── Local fallback state (used when service is not yet available) ──────────
+  final _callerList = <FlyCallParticipant>[].obs;
+  final _remoteUserNameMap = <String, String>{}.obs;
+  final _isGroupCall = false.obs;
+  final _callType = ''.obs;
+  final _callMode = ''.obs;
+  final _callStatus = ''.obs;
+  final _isAudioMuted = false.obs;
+  final _isOnGoingCallViewEnable = false.obs;
+  final _callDuration = ''.obs;
+
+  // ── Proxy getters — prefer service, fall back to local field ───────────────
+  RxList<FlyCallParticipant> get callerList =>
+      _svc?.callerList ?? _callerList;
+  RxMap<String, String> get remoteUserNameMap =>
+      _svc?.remoteUserNameMap ?? _remoteUserNameMap;
+  RxBool get isGroupCall => _svc?.isGroupCall ?? _isGroupCall;
+  RxString get callType => _svc?.callType ?? _callType;
+  RxString get callMode => _svc?.callMode ?? _callMode;
+  RxString get callStatus => _svc?.callStatus ?? _callStatus;
+  RxBool get isAudioMuted => _svc?.isAudioMuted ?? _isAudioMuted;
+  RxBool get isOnGoingCallViewEnable =>
+      _svc?.isOnGoingCallViewEnable ?? _isOnGoingCallViewEnable;
+  RxString get callDuration => _svc?.callDuration ?? _callDuration;
+
+  // PIP-specific UI state
   var isPIPActive = false.obs;
   var showExpand = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    callerList(await MirrorFlyCallKit.getCurrentCallParticipants());
-    callType((MirrorFlyCallKit.getCurrentCallType()).toString());
-    groupId(MirrorFlyCallKit.getCurrentCallGroupId());
-    callMode(MirrorFlyCallKit.getCurrentCallMode());
-    currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
-    callKind = await MirrorFlyCallKit.getCallKind();
+    callkitLogger.info('[MirrorFly][CallKitPIPController] onInit');
+
+    // Only subscribe to callEndSignal if the service is already running.
+    // If not, the signal will stop PIP naturally when the service emits it —
+    // the service itself calls stop() which triggers PIP closure via the
+    // outgoing controller's _handleCallEndSignal.
+    if (CallStateService.isRegistered) {
+      ever(_svc!.callEndSignal, _onCallEnded);
+    }
+  }
+
+  /// Stop PIP when the service signals the call has ended.
+  void _onCallEnded(CallEndSignal? signal) {
+    if (signal == null) return;
+    callkitLogger.info(
+        '[MirrorFly][CallKitPIPController] _onCallEnded signal=$signal — stopping PIP');
+    stopPIP();
   }
 
   void expandPIP() {
+    // No syncStateFromSDK() needed — service state is always live.
     PictureInPicture.stopPiP();
     NavUtils.toNamed(AppPages.callKitCallView);
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-
-  }
-
-  @override
-  onReady() async {
-    super.onReady();
   }
 
   Widget getUserProfileImageWithName({
     required String participantId,
     bool isGroup = false,
   }) {
-
     if (participantId.isEmpty) {
       return const SizedBox();
     }
 
-    final String normalizedId = validId(userId: participantId, isGroup: isGroup);
+    final String normalizedId = _validId(userId: participantId, isGroup: isGroup);
     final Future<ProfileDetails> profileFuture = isGroup
         ? getGroupProfileDetails(normalizedId)
         : getProfileDetails(normalizedId);
@@ -71,35 +93,23 @@ class CallKitPipController extends GetxController {
     return FutureBuilder<ProfileDetails>(
       future: profileFuture,
       builder: (context, snapshot) {
-
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
-
         if (!snapshot.hasData || snapshot.data == null) {
           return const SizedBox();
         }
-
         final profile = snapshot.data!;
         final String displayName = (profile.name?.trim().isNotEmpty == true)
             ? profile.name!.trim()
             : (profile.nickName?.trim().isNotEmpty == true)
-            ? profile.nickName!.trim()
-            : trimAfterAt(profile.jid ?? "");
+                ? profile.nickName!.trim()
+                : _trimAfterAt(profile.jid ?? '');
 
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
-            /// Profile Image
-            buildProfileImage(
-              profile,
-              size: 45,
-            ),
-
-            /// Name
+            buildProfileImage(profile, size: 45),
             Padding(
               padding: const EdgeInsets.all(8),
               child: Text(
@@ -118,114 +128,31 @@ class CallKitPipController extends GetxController {
     );
   }
 
-  String validId({required String userId,required bool isGroup}) {
-    if(isGroup){
-      callkitLogger.info("[MirrorFly][CallKitPIPController] validId for group called with userId: $userId isGroup: $isGroup, containing @: ${userId.contains("@")}");
-      return userId.contains("@") ? userId : "$userId@mix.xmpp-uikit-qa.contus.us";
-    }else{
-      return userId.contains("@") ? userId : "$userId@xmpp-uikit-qa.contus.us";
+  String _validId({required String userId, required bool isGroup}) {
+    if (isGroup) {
+      return userId.contains('@') ? userId : '$userId@mix.xmpp-uikit-qa.contus.us';
+    } else {
+      return userId.contains('@') ? userId : '$userId@xmpp-uikit-qa.contus.us';
     }
   }
 
-  /// Get Local participant
   FlyCallParticipant? getLocalParticipant() {
-    final FlyCallParticipant? localParticipant = callerList
-        .firstWhereOrNull((p) => p.isLocalParticipant);
-    callkitLogger.info("[MirrorFly][CallKitPIPController] getLocalParticipant: $localParticipant");
-    return localParticipant;
+    return callerList.firstWhereOrNull((p) => p.isLocalParticipant);
   }
 
   bool isSelfId({required String? id}) {
-    final String? currentUserId = SessionManagement.getUserJID();
-    if (currentUserId == null) {
-      callkitLogger.info("[MirrorFly][CallKitPIPController] isSelfId: is null id=$id");
-      return true;
-    } else {
-      //
-      final String participantId = "$id@xmpp-uikit-qa.contus.us";
-      callkitLogger.info("[MirrorFly][CallKit PIP Controller] isSelfId $currentUserId $participantId");
-      callkitLogger.info("[MirrorFly][CallKit PIP Controller] isSelfId: ${currentUserId == participantId}");
-      return currentUserId == participantId;
-    }
+    return _svc?.isSelfId(id: id) ?? false;
   }
 
   String getParticipantConnectionState(FlyCallStatusEvent? status) {
-    callkitLogger.info("[MirrorFly][CallKitPIPController] getParticipantConnectionState called with status: $status");
-    switch (status) {
-      case FlyCallStatusEvent.connecting:
-        return "Connecting";
-      case FlyCallStatusEvent.disconnected:
-        return "Disconnected";
-      case FlyCallStatusEvent.calling:
-        return "Calling";
-      case FlyCallStatusEvent.ringing:
-        return "Ringing";
-      case FlyCallStatusEvent.tryingToConnect:
-        return "Trying to connect";
-      case FlyCallStatusEvent.callHold:
-        return "On Hold";
-      case FlyCallStatusEvent.reconnecting:
-        return "Reconnecting";
-      default:
-        return "";
-    }
+    return _svc?.getParticipantConnectionState(status) ?? '';
   }
 
-  String trimAfterAt(String input) {
-    return input.split('@').firstOrNull?.trim() ?? "";
+  String _trimAfterAt(String input) {
+    return input.split('@').firstOrNull?.trim() ?? '';
   }
 
   void stopPIP() {
     PictureInPicture.stopPiP();
-  }
-
-  /// On disconnected
-  void onDisconnected({required List<String> participantId}) async {
-    callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected called with participantId: $participantId");
-
-    final bool isLocalDisconnected = participantId.any((id) => id == CallUtils.getIdFromJidList(id));
-    if (isLocalDisconnected) {
-      callkitLogger.info("[MirrorFly][CallKitPIPController] Local user disconnected");
-      stopPIP();
-      return;
-    }
-
-    final flyCallParticipant = await MirrorFlyCallKit.getCurrentCallParticipants() ?? [];
-    final bool isLastParticipantLeft = flyCallParticipant.length <= 1;
-
-    if (isLastParticipantLeft) {
-      callkitLogger.info("[MirrorFly][CallKitPIPController] Last participant left → stopping PIP");
-      stopPIP();
-      return;
-    }
-
-    callkitLogger.info("[MirrorFly][CallKitPIPController] No PIP action required");
-  }
-
-  /// On Rejected
-  void onRejected({required String participantId}) async {
-    callkitLogger.info("[MirrorFly][CallKitPIPController] onRejected called with participantId: $participantId");
-    final ProfileDetails profileDetails = await getProfileDetails((CallUtils.getJidFromUserId(userId: participantId, isGroup: false)));
-
-    if (callMode.value == "ONE-TO-ONE") {
-      toToast("${profileDetails.name} is busy");
-      stopPIP();
-      return;
-    } else if (callMode.value == "ONE-TO-MANY") {
-      // Remove ringing participant
-    } else {}
-  }
-
-  void onEngaged({required String participantId}) async {
-    callkitLogger.info("[MirrorFly][CallKitPIPController] onEngaged called with participantId: $participantId");
-    final ProfileDetails profileDetails = await getProfileDetails((CallUtils.getJidFromUserId(userId: participantId, isGroup: false)));
-
-    if (callMode.value == "ONE-TO-ONE") {
-      toToast("${profileDetails.name} is busy");
-      stopPIP();
-      return;
-    } else if (callMode.value == "ONE-TO-MANY") {
-      // Remove ringing participant
-    } else {}
   }
 }

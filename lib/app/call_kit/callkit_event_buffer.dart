@@ -5,6 +5,7 @@ import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../common/constants.dart';
+import 'callkit_call_state_service.dart';
 import 'callkit_outgoing_call_controller.dart';
 
 class CallKitEventBuffer {
@@ -20,6 +21,37 @@ class CallKitEventBuffer {
     _actions.add(e);
   }
 
+  // ---------------------------------------------------------------------------
+  // Primary flush target: CallStateService
+  // ---------------------------------------------------------------------------
+
+  /// Flush all buffered events into the [CallStateService].
+  /// This is the preferred flush path — called by BaseController once the
+  /// service is registered.
+  static void flushToService(CallStateService service) {
+    if (_status.isEmpty && _actions.isEmpty) {
+      callkitLogger.info('No statuses or actions to flush to CallStateService');
+      return;
+    }
+
+    callkitLogger.info('Flushing ${_status.length} statuses and ${_actions.length} actions to CallStateService');
+
+    for (final s in _status) {
+      _dispatchStatusToService(service, s);
+    }
+    for (final a in _actions) {
+      _dispatchActionToService(service, a);
+    }
+    _status.clear();
+    _actions.clear();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Legacy flush target: CallKitOutgoingCallController (kept for safety)
+  // ---------------------------------------------------------------------------
+
+  /// Flush all buffered events into the legacy [CallKitOutgoingCallController].
+  /// Kept for backward-compatibility; prefer [flushToService] for new code.
   static void flushTo(CallKitOutgoingCallController c) {
 
     if (_status.isEmpty && _actions.isEmpty) {
@@ -44,6 +76,121 @@ class CallKitEventBuffer {
     _actions.clear();
     callkitLogger.info('Cleared all buffered statuses and actions in CallKitEventBuffer');
   }
+
+  // ---------------------------------------------------------------------------
+  // Dispatch to CallStateService
+  // ---------------------------------------------------------------------------
+
+  static Future<void> _dispatchStatusToService(
+      CallStateService service,
+      FlyCallStatus e,
+      ) async {
+    callkitLogger.info('Dispatching status event to service: ${e.flyCallStatusEvent} for participants: ${e.participantsIds}');
+    switch (e.flyCallStatusEvent) {
+      case FlyCallStatusEvent.connecting:
+        service.connecting();
+        break;
+      case FlyCallStatusEvent.connected:
+        service.onConnected(e.participantsIds);
+        break;
+      case FlyCallStatusEvent.ringing:
+        service.ringing(participantsId: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.tryingToConnect:
+        service.tryingToConnect();
+        break;
+      case FlyCallStatusEvent.calling:
+        service.outGoingCallCalling(participantsId: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.reconnecting:
+        service.reconnecting(participantIds: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.reconnected:
+        service.reconnected(participantIds: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.disconnected:
+        service.disconnectCall(userIds: e.participantsIds, reason: e.reason ?? '');
+        break;
+      case FlyCallStatusEvent.callHold:
+        service.callHold(participantsId: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.callResume:
+        service.callResume(participantsId: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.callTimeout:
+        service.callTimeOut(participantsId: e.participantsIds, isCallFailed: false);
+        break;
+      case FlyCallStatusEvent.rejected:
+        if (e.participantsIds.isNotEmpty) {
+          service.rejected(userId: e.participantsIds.first);
+        }
+        break;
+      case FlyCallStatusEvent.engaged:
+        service.remoteUserIsEngaged(participants: e.participantsIds);
+        break;
+      case FlyCallStatusEvent.permissionDenied:
+        final Map<String, dynamic>? err = e.reason == null ? null : jsonDecode(e.reason!) as Map<String, dynamic>?;
+        final message = err?['message'] as String?;
+        if (message != null) toToast(message);
+        break;
+      case FlyCallStatusEvent.callFailed:
+        service.onCallFailed(participantsId: e.participantsIds, reason: e.reason ?? '');
+        break;
+      default:
+        break;
+    }
+  }
+
+  static void _dispatchActionToService(
+      CallStateService service,
+      FlyCallAction e,
+      ) {
+    callkitLogger.info('Dispatching action event to service: ${e.flyCallEvent} for participant: ${e.participantId}');
+    switch (e.flyCallEvent) {
+      case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+        service.audioCallAfterCallSwitch();
+        break;
+      case FlyCallActionEvent.audioMuted:
+        service.isAudioMute(isAudioMuted: true, participantId: e.participantId);
+        break;
+      case FlyCallActionEvent.audioUnMuted:
+        service.isAudioMute(isAudioMuted: false, participantId: e.participantId);
+        break;
+      case FlyCallActionEvent.videoMuted:
+        service.isVideoMute(isVideoMuted: false, participantId: e.participantId);
+        break;
+      case FlyCallActionEvent.videoUnMuted:
+        service.isVideoMute(isVideoMuted: true, participantId: e.participantId);
+        break;
+      case FlyCallActionEvent.connectionQualityUpdated:
+        service.onConnectionQualityUpdated(
+          quality: e.connectionQuality,
+          participantId: e.participantId,
+        );
+        break;
+      case FlyCallActionEvent.activeSpeaker:
+        service.onActiveSpeakerChange(
+          isSpeaking: e.isSpeaking ?? false,
+          audioLevel: e.audioLevel ?? 0,
+          participantId: e.participantId ?? '',
+        );
+        break;
+      case FlyCallActionEvent.onAudioRouteChanged:
+        if (e.flyAudioDevice != null) service.onAudioRouteChanged(e.flyAudioDevice!);
+        break;
+      // outgoingRequest, incomingRequest, accept, cancel, decline, timeout
+      // are dialog actions — they still need the UI controller, so they are
+      // NOT dispatched through the service from the buffer. The UI controller
+      // handles these via its own ever() subscription on service.callEndSignal
+      // or by being registered when the event fires live.
+      default:
+        break;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Legacy dispatch to CallKitOutgoingCallController
+  // ---------------------------------------------------------------------------
 
   static Future<void> _dispatchStatus(
       CallKitOutgoingCallController c,

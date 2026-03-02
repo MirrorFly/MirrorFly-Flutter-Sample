@@ -21,6 +21,7 @@ import '../model/arguments.dart';
 import '../routes/route_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'callkit_call_state_service.dart';
 import 'callkit_event_buffer.dart';
 import 'callkit_logger.dart';
 import 'callkit_pip/callkit_pip_View.dart';
@@ -96,11 +97,149 @@ class CallKitOutgoingCallController extends GetxController
 
   RxBool isMeet = false.obs;
 
+  /// Convenience accessor for the running CallStateService.
+  /// The service is always started before this controller is created.
+  CallStateService get _svc => CallStateService.instance;
+
 
   @override
   Future<void> onInit() async {
-    CallKitEventBuffer.flushTo(this);
-    callKind = await MirrorFlyCallKit.getCallKind();
+    // Ensure the service is running — for incoming calls BaseController starts
+    // it before navigation, but for outgoing calls (and edge cases) we start
+    // it here as well. CallStateService.start() is idempotent.
+    await CallStateService.start();
+
+    // Flush any events that arrived before the service was registered.
+    CallKitEventBuffer.flushToService(_svc);
+
+    // ── Subscribe to service events and call controller methods ──────────────
+    // When BaseController dispatches an SDK event to CallStateService, it sets
+    // lastStatusEvent / lastActionEvent. We ever() those here and call the
+    // exact same methods this controller has always had — no behaviour change.
+
+    ever(_svc.lastStatusEvent, (FlyCallStatus? status) {
+      if (status == null) return;
+      final event = status.flyCallStatusEvent;
+      final ids = status.participantsIds;
+      callkitLogger.info('[MirrorFly][OutgoingCallController] lastStatusEvent $event');
+      switch (event) {
+        case FlyCallStatusEvent.connecting:
+          connecting();
+          break;
+        case FlyCallStatusEvent.connected:
+          onConnected(ids);
+          break;
+        case FlyCallStatusEvent.ringing:
+          ringing(participantsId: ids);
+          break;
+        case FlyCallStatusEvent.tryingToConnect:
+          tryingToConnect();
+          break;
+        case FlyCallStatusEvent.calling:
+          outGoingCallCalling(participantsId: ids);
+          break;
+        case FlyCallStatusEvent.reconnecting:
+          reconnecting(participantIds: ids);
+          break;
+        case FlyCallStatusEvent.reconnected:
+          reconnected(participantIds: ids);
+          break;
+        case FlyCallStatusEvent.disconnected:
+          disconnectCall(userIds: ids, reason: status.reason ?? '');
+          break;
+        case FlyCallStatusEvent.callHold:
+          callHold(participantsId: ids);
+          break;
+        case FlyCallStatusEvent.callResume:
+          callResume(participantsId: ids);
+          break;
+        case FlyCallStatusEvent.callTimeout:
+          // handled via CallStateService.callTimeOut() → callEndSignal → _handleCallEndSignal
+          break;
+        case FlyCallStatusEvent.rejected:
+          if (ids.isNotEmpty) rejected(userId: ids.first);
+          break;
+        case FlyCallStatusEvent.engaged:
+          remoteUserIsEngaged(participants: ids);
+          break;
+        case FlyCallStatusEvent.callFailed:
+          onCallFailed(participantsId: ids, reason: status.reason ?? '');
+          break;
+        default:
+          break;
+      }
+    });
+
+    ever(_svc.lastActionEvent, (FlyCallAction? action) {
+      if (action == null) return;
+      final event = action.flyCallEvent;
+      callkitLogger.info('[MirrorFly][OutgoingCallController] lastActionEvent $event');
+      switch (event) {
+        case FlyCallActionEvent.audioMuted:
+          isAudioMute(isAudioMuted: true, participantId: action.participantId);
+          break;
+        case FlyCallActionEvent.audioUnMuted:
+          isAudioMute(isAudioMuted: false, participantId: action.participantId);
+          break;
+        case FlyCallActionEvent.videoMuted:
+          isVideoMute(isVideoMuted: false, participantId: action.participantId);
+          break;
+        case FlyCallActionEvent.videoUnMuted:
+          isVideoMute(isVideoMuted: true, participantId: action.participantId);
+          break;
+        case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+          audioCallAfterCallSwitch();
+          break;
+        case FlyCallActionEvent.onCallModeChange:
+          onParticipantListUpdated();
+          break;
+        case FlyCallActionEvent.onAudioRouteChanged:
+          if (action.flyAudioDevice != null) {
+            onAudioRouteChanged(action.flyAudioDevice!);
+          }
+          break;
+        case FlyCallActionEvent.connectionQualityUpdated:
+          onConnectionQualityUpdated(
+              quality: action.connectionQuality,
+              participantId: action.participantId);
+          break;
+        case FlyCallActionEvent.activeSpeaker:
+          onActiveSpeakerChange(
+              isSpeaking: action.isSpeaking ?? false,
+              audioLevel: action.audioLevel ?? 0,
+              participantId: action.participantId ?? '');
+          break;
+        // Dialog events — already handled by BaseController calling uiController directly
+        case FlyCallActionEvent.outgoingRequest:
+          showOutGoingCallSwitchRequestDialog();
+          break;
+        case FlyCallActionEvent.incomingRequest:
+          showIncomingCallSwitchRequestDialog();
+          break;
+        case FlyCallActionEvent.accept:
+          onVideoCallSwitchAccept();
+          break;
+        case FlyCallActionEvent.cancel:
+          onRemoteUserCancelledTheSwitchRequest();
+          break;
+        case FlyCallActionEvent.decline:
+          onCallSwitchRemoteUserDeclined();
+          break;
+        case FlyCallActionEvent.timeout:
+          onVideoCallSwitchTimeOut();
+          break;
+        default:
+          break;
+      }
+    });
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Seed current service state into controller fields immediately.
+    // ever() only fires on future changes — if PIP was expanded and the call
+    // is already connected/running, the view would show defaults without this.
+    _seedStateFromService();
+
+    callKind = MirrorFlyCallKit.getCallKind();
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -122,7 +261,6 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
     }
 
-    // callMode()
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
@@ -132,7 +270,9 @@ class CallKitOutgoingCallController extends GetxController
       await setInitialAudioRouteDevice();
     }
 
-    // await _getOneToOneCallRemoteUserName();
+    // Subscribe to call-end signal for navigation.
+    ever(_svc.callEndSignal, _handleCallEndSignal);
+
     _listenToSDKCallTimer();
     super.onInit();
   }
@@ -140,7 +280,64 @@ class CallKitOutgoingCallController extends GetxController
   void _listenToSDKCallTimer() {
     MirrorFlyCallKit.flyCallTimer.listen((timer) {
       callDuration(timer);
+      // Mirror into the service so PIP can show the live timer too
+      if (CallStateService.isRegistered) {
+        _svc.callDuration.value = timer;
+      }
     });
+  }
+
+  /// Copies the current [CallStateService] state into this controller's Rx
+  /// fields in one shot.  Called at the end of [onInit] so that when the
+  /// call screen is reconstructed after PIP expand (a fresh controller
+  /// instance), the view immediately shows the live call state rather than
+  /// the defaults that the controller fields start with.
+  ///
+  /// [ever()] subscriptions only fire on *future* changes; this seeds the
+  /// initial snapshot so no event needs to be re-fired.
+  void _seedStateFromService() {
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _seedStateFromService — restoring state from service');
+
+    callStatus.value           = _svc.callStatus.value;
+    isAudioMuted.value         = _svc.isAudioMuted.value;
+    isVideoEnabled.value       = _svc.isVideoEnabled.value;
+    isRemoteVideoMuted.value   = _svc.isRemoteVideoMuted.value;
+    isOnGoingCallViewEnable.value = _svc.isOnGoingCallViewEnable.value;
+    isGroupCall.value          = _svc.isGroupCall.value;
+    isGroupOnGoingCallEnabled.value = _svc.isGroupOnGoingCallEnabled.value;
+    isCallModeChangedToOneToMany.value = _svc.isCallModeChangedToOneToMany.value;
+    titleAfterCallModeChange.value = _svc.titleAfterCallModeChange.value;
+    chatNameForGroupCall.value = _svc.chatNameForGroupCall.value;
+    selectedDeviceType.value   = _svc.selectedDeviceType.value;
+    mainCallViewUserId.value   = _svc.mainCallViewUserId.value;
+    secondaryCallViewUserId.value = _svc.secondaryCallViewUserId.value;
+    getOneToOneCallRemoteUserName.value = _svc.getOneToOneCallRemoteUserName.value;
+    callDuration.value         = _svc.callDuration.value;
+
+    if (_svc.callerList.isNotEmpty) {
+      callerList.value = List.from(_svc.callerList);
+      callerList.refresh();
+    }
+    if (_svc.remoteUserNameMap.isNotEmpty) {
+      remoteUserNameMap.value = Map.from(_svc.remoteUserNameMap);
+    }
+    if (_svc.callerAudioLevel.isNotEmpty) {
+      callerAudioLevel.value = Map.from(_svc.callerAudioLevel);
+    }
+    if (_svc.callerConnectionQuality.isNotEmpty) {
+      callerConnectionQuality.value = Map.from(_svc.callerConnectionQuality);
+    }
+    if (_svc.availableTypes.isNotEmpty) {
+      availableTypes.value = List.from(_svc.availableTypes);
+    }
+    if (_svc.callAgainUserList.isNotEmpty) {
+      callAgainUserList.value = List.from(_svc.callAgainUserList);
+    }
+
+    callkitLogger.info(
+        '[MirrorFly][OutgoingCallController] _seedStateFromService done '
+        'callStatus=${callStatus.value} isOnGoing=${isOnGoingCallViewEnable.value} '
+        'duration=${callDuration.value} callers=${callerList.length}');
   }
 
   Future<void> _initCallArguments() async {
@@ -152,28 +349,42 @@ class CallKitOutgoingCallController extends GetxController
       callMode(NavUtils.arguments?["callMode"] as String? ?? "");
       isIncoming.value = NavUtils.arguments?["isIncoming"] as bool? ?? false;
       currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
+
+      // Write canonical values into the service so PIP and BaseController
+      // have them from the moment the call screen opens.
+      _svc.callType.value = callType.value;
+      _svc.groupId.value = groupId.value;
+      _svc.callMode.value = callMode.value;
+      _svc.isIncoming.value = isIncoming.value;
+      _svc.currentCallMode.value = currentCallMode.value;
+      _svc.callKind = callKind;
+
       if(currentCallMode.value == "MEET"){
         isMeet.value = true;
+        _svc.isMeet.value = true;
         if (callerList.length >= 2) {
           callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local and remote participant present");
           isOnGoingCallView();
         } else {
           callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local participant only present ");
           callStatus("");
-          // _startTimer();
         }
         bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");
         if(!isVideoMuted){
           isVideoEnabled.value = true;
+          _svc.isVideoEnabled.value = true;
         } else {
           isVideoEnabled.value = false;
+          _svc.isVideoEnabled.value = false;
         }
         if (isAudioMute){
           isAudioMuted.value = true;
+          _svc.isAudioMuted.value = true;
         } else {
           isAudioMuted.value = false;
+          _svc.isAudioMuted.value = false;
         }
       }
 
@@ -227,13 +438,6 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] onReady groupId is empty, skipping getChatNameForGroupCall");
       }
 
-    // } else {
-    //   callkitLogger.info("[MirrorFly][OutgoingCallController] onReady getRemoteAndLocalUserNameForOneToOneCall");
-    //   await getRemoteAndLocalUserNameForOneToOneCall();
-    // }
-
-    // getLogsOfLocalValues();
-
       if(currentCallMode.value != "MEET"){
         callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
       }
@@ -245,14 +449,14 @@ class CallKitOutgoingCallController extends GetxController
   /// Get current participants in the call
   ///
   Future<List<FlyCallParticipant>> getCurrentCallParticipants() async {
-    final participants = await MirrorFlyCallKit.getCurrentCallParticipants();
+    final participants = MirrorFlyCallKit.getCurrentCallParticipants();
 
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] Current call participants: ${participants
-            ?.length},"
-            " participants: ${participants?.map((p) => p.identity).toList()} isAudioMuted: ${participants?.map((p) => p.isAudioMuted).toList()}",);
+            .length},"
+            " participants: ${participants.map((p) => p.identity).toList()} isAudioMuted: ${participants.map((p) => p.isAudioMuted).toList()}",);
 
-    if (participants != null && participants.isNotEmpty) {
+    if (participants.isNotEmpty) {
       callkitLogger.info(
         "[MirrorFly][OutgoingCallController] getCurrentCallParticipants: fetched ${participants
             .length} "
@@ -294,7 +498,7 @@ class CallKitOutgoingCallController extends GetxController
       );
     }
 
-    return participants ?? []; // Handle null safely
+    return participants;
   }
 
   ///
@@ -1231,7 +1435,6 @@ class CallKitOutgoingCallController extends GetxController
   /// Disconnect call
   ///
   void disconnectCall({required List<String> userIds, required String reason}) {
-
     if (userIds.isEmpty) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: No userIds provided, assuming the overall call ended.");
       _resetValues();
@@ -1366,6 +1569,62 @@ class CallKitOutgoingCallController extends GetxController
       NavUtils.back();
       return;
     }
+  }
+
+  /// Navigation handler for [CallStateService.callEndSignal].
+  /// Called via `ever(_svc.callEndSignal, _handleCallEndSignal)` in onInit.
+  /// The service never touches routes; this controller does.
+  void _handleCallEndSignal(CallEndSignal? signal) {
+    if (signal == null) return;
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _handleCallEndSignal reason=${signal.reason} userIds=${signal.userIds}');
+
+    final reason = signal.detail;
+
+    // Close any switch-call dialog that may be open
+    closeDialog();
+    if (isAudioDialogOpen.value) {
+      Get.back();
+      isAudioDialogOpen.value = false;
+    }
+
+    switch (signal.reason) {
+      case CallEndReason.disconnected:
+        if (reason == 'reconnectAttemptsExceeded') {
+          toToast('Reconnection attempt exceeded');
+        } else if (reason != 'rejected' && reason != 'engaged' && reason != 'allEngaged') {
+          toToast('Call Disconnected');
+        }
+        break;
+      case CallEndReason.timedOut:
+        // timeout/rejected toasts will have already been shown if needed
+        break;
+      case CallEndReason.callFailed:
+        toToast('Call Disconnected');
+        break;
+    }
+
+    if (NavUtils.previousRoute == Routes.callKitParticipantView) {
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if (NavUtils.currentRoute == Routes.callKitParticipantView) {
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if (NavUtils.currentRoute == Routes.contacts) {
+      NavUtils.back();
+      NavUtils.back();
+      return;
+    }
+    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+      callStatus(signal.reason == CallEndReason.disconnected ? 'Disconnected' : 'Call Ended');
+      NavUtils.back();
+    }
+
+    // Stop the service after navigation
+    CallStateService.stop();
   }
 
   void isOnGoingCallView() async {
