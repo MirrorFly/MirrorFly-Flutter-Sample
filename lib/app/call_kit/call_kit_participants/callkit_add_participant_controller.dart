@@ -44,14 +44,16 @@ class CallKitAddParticipantsController extends GetxController
   var getMaxCallUsersCount = Constants.useMirrorFlyCallKit
       ? Constants.maxCallUsersLimitForMirrorFlyCallKit : 8;
   var joinViaLink = false;
+  var meet = false;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     if (NavUtils.arguments != null) {
       joinViaLink = NavUtils.arguments?["joinViaLink"] ?? false;
+      meet = NavUtils.arguments?["meet"] ?? false;
     }
-    callkitLogger.info("CallKitAddParticipantsController groupId: ${groupId.value}, joinViaLink: $joinViaLink");
+    callkitLogger.info("CallKitAddParticipantsController groupId: ${groupId.value}, joinViaLink: $joinViaLink, meet: $meet");
     getCallLink();
     // groupId(await Mirrorfly.getCallGroupJid());
 
@@ -61,7 +63,7 @@ class CallKitAddParticipantsController extends GetxController
     // callList = Get.find<CallController>().callList;
     scrollController.addListener(_scrollListener);
 
-    if (!joinViaLink) {
+    if (!joinViaLink && !meet) {
       if (groupId.value.isEmpty) {
         if (await AppUtils.isNetConnected() || Constants.enableContactSync) {
           isPageLoading(true);

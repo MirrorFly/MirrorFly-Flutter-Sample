@@ -110,7 +110,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                             actions: [
                               Visibility(
                                 visible: controller.currentTab.value == 1 &&
-                                    !controller.joinViaLink,
+                                    !controller.joinViaLink && !controller.meet,
                                 child: IconButton(
                                   onPressed: () {
                                     if (controller.isSearching.value) {
@@ -321,7 +321,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: Text(
-            getTranslated("noContactsFound"),
+            controller.meet ? "" : getTranslated("noContactsFound"),
           ),
         ),
       );
@@ -393,7 +393,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0),
                         child: Text(
-                          getTranslated("noContactsFound"),
+                          controller.meet ? "" : getTranslated("noContactsFound"),
                           style: noData,
                         ),
                       ),
