@@ -127,7 +127,14 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     // await _getOneToOneCallRemoteUserName();
+    _listenToSDKCallTimer();
     super.onInit();
+  }
+
+  void _listenToSDKCallTimer() {
+    MirrorFlyCallKit.flyCallTimer.listen((timer) {
+      callDuration(timer);
+    });
   }
 
   Future<void> _initCallArguments() async {
@@ -146,7 +153,7 @@ class CallKitOutgoingCallController extends GetxController
         } else {
           callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local participant only present ");
           callStatus("");
-          _startTimer();
+          // _startTimer();
         }
         bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
         bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
@@ -186,7 +193,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void _handleIncomingCall() {
-    callDuration("Connecting..");
+    // callDuration("Connecting..");
     // isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
@@ -613,7 +620,6 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info('''
        [Call Logs]
        callStatus: ${callStatus.value}
-       callDuration: ${callDuration.value}
        callTryStatus: ${callTryStatus.value}
        callType: ${callType.value}
        groupId: ${groupId.value}
@@ -672,39 +678,39 @@ class CallKitOutgoingCallController extends GetxController
   }
 
 
-  void _startTimer({int? time}) {
-    if (timer != null) {
-      timer?.cancel();
-    }
-    timer = null;
-    const oneSec = Duration(seconds: 1);
-    var startTime = time != null
-        ? DateTime.fromMillisecondsSinceEpoch(time)
-        : DateTime.now();
-    timer = Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        final hrDur = DateTime.now().difference(startTime).inHours;
-        final minDur = DateTime.now().difference(startTime).inMinutes;
-        final secDur = DateTime.now().difference(startTime).inSeconds % 60;
-        final hours = hrDur.remainder(24).toStringAsFixed(0).padLeft(2, '0');
-        final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
-        final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
-        var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
-        // print("[MirrorFly][OutgoingCallController] Timer: $time");
-        _updateCallDuration(duration: time);
-      },
-    );
-  }
+  // void _startTimer({int? time}) {
+  //   if (timer != null) {
+  //     timer?.cancel();
+  //   }
+  //   timer = null;
+  //   const oneSec = Duration(seconds: 1);
+  //   var startTime = time != null
+  //       ? DateTime.fromMillisecondsSinceEpoch(time)
+  //       : DateTime.now();
+  //   timer = Timer.periodic(
+  //     oneSec,
+  //     (Timer timer) {
+  //       final hrDur = DateTime.now().difference(startTime).inHours;
+  //       final minDur = DateTime.now().difference(startTime).inMinutes;
+  //       final secDur = DateTime.now().difference(startTime).inSeconds % 60;
+  //       final hours = hrDur.remainder(24).toStringAsFixed(0).padLeft(2, '0');
+  //       final minutes = minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+  //       final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
+  //       var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
+  //       // print("[MirrorFly][OutgoingCallController] Timer: $time");
+  //       _updateCallDuration(duration: time);
+  //     },
+  //   );
+  // }
 
-  void _stopTimer() {
-    if (timer == null) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Timer is null");
-      return;
-    }
-    timer?.cancel();
-    timer = null;
-  }
+  // void _stopTimer() {
+  //   if (timer == null) {
+  //     callkitLogger.info("[MirrorFly][OutgoingCallController] Timer is null");
+  //     return;
+  //   }
+  //   timer?.cancel();
+  //   timer = null;
+  // }
 
   void ringing({ FlyCallStatusEvent? ringing, List<String>? participantsId}) {
     callStatus("Ringing...");
@@ -967,7 +973,7 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void _updateCallDuration({required String duration}) {
-    callDuration(duration);
+    // callDuration(duration);
   }
 
   String trimAfterAt(String input) {
@@ -1206,7 +1212,7 @@ class CallKitOutgoingCallController extends GetxController
 
           callerList.refresh();
           if (timer == null || !(timer?.isActive ?? false)) {
-            _startTimer();
+            // _startTimer();
             callkitLogger.info(
                 "[MirrorFly][OutgoingCallController] Timer is already running");
           }
@@ -1238,7 +1244,7 @@ class CallKitOutgoingCallController extends GetxController
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
 
       if (timer == null || !(timer?.isActive ?? false)) {
-        _startTimer();
+        // _startTimer();
       } else {
         callkitLogger.info(
             "[MirrorFly][OutgoingCallController] Timer is already running");
@@ -1263,7 +1269,7 @@ class CallKitOutgoingCallController extends GetxController
     if (userIds.isEmpty) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: No userIds provided, assuming the overall call ended.");
       _resetValues();
-      _stopTimer();
+      // _stopTimer();
       closeDialog();
       if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         callStatus("Disconnected");
@@ -1336,10 +1342,10 @@ class CallKitOutgoingCallController extends GetxController
           e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
         /// No user is connect so set the value isGroupOnGoingCallEnabled is false
         if(callerList.length <= 2){
-          _stopTimer();
+          // _stopTimer();
           final remoteParticipant = callerList.firstWhere((e) => e.isLocalParticipant != true);
           callkitLogger.info("[MirrorFly][OutgoingCallController] callerList value  ${remoteParticipant.identity} ${remoteParticipant.flyCallStatusEvent}");
-          callDuration.value = getParticipantConnectionState(remoteParticipant.flyCallStatusEvent);
+          // callDuration.value = getParticipantConnectionState(remoteParticipant.flyCallStatusEvent);
         }
       } else {
         callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Call is still ongoing with other participants.");
@@ -1350,7 +1356,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: for one-one Ending call. ${callerList.length} participants in the call.");
 
     _resetValues();
-    _stopTimer();
+    // _stopTimer();
     closeDialog();
     if(isAudioDialogOpen.value){
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Closing audio dialog.");
@@ -1542,7 +1548,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void localHangup() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  disconnectCall invoked...");
-    _stopTimer();
+    // _stopTimer();
     try {
       var result = await MirrorFlyCallKit.localHangup();
       callkitLogger.info("[MirrorFly][OutgoingCallController] localHangup() result: $result");
@@ -1874,7 +1880,7 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info("[MirrorFly][OutgoingCallController] onCallFailed: Outgoing call, processing timeout handling");
 
       _resetValues();
-      _stopTimer();
+      // _stopTimer();
       closeDialog();
 
     toToast("Call Disconnected");
