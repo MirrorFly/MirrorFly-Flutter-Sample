@@ -13,6 +13,7 @@ import '../../common/widgets.dart';
 import '../../data/helper.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
+import '../../routes/app_pages.dart';
 import '../callkit_logger.dart';
 import 'callkit_pip_View.dart';
 
@@ -28,18 +29,23 @@ class CallKitPipController extends GetxController {
   RxString currentCallMode = "".obs;
   FlyCallKind callKind = FlyCallKind.standard;
   RxString groupId = "".obs;
+  var isPIPActive = false.obs;
+  var showExpand = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-
-    callerList(MirrorFlyCallKit.getCurrentCallParticipants());
+    callerList(await MirrorFlyCallKit.getCurrentCallParticipants());
     callType((MirrorFlyCallKit.getCurrentCallType()).toString());
     groupId(MirrorFlyCallKit.getCurrentCallGroupId());
     callMode(MirrorFlyCallKit.getCurrentCallMode());
     currentCallMode(MirrorFlyCallKit.getCurrentCallMode());
-    callKind = MirrorFlyCallKit.getCallKind();
+    callKind = await MirrorFlyCallKit.getCallKind();
+  }
 
+  void expandPIP() {
+    PictureInPicture.stopPiP();
+    NavUtils.toNamed(AppPages.callKitCallView);
   }
 
   @override
@@ -50,6 +56,7 @@ class CallKitPipController extends GetxController {
 
   @override
   onReady() async {
+
     await getCallMembersName();
     super.onReady();
   }
@@ -60,7 +67,7 @@ class CallKitPipController extends GetxController {
     bool isGroup = false,
     double scale = 1.0,
     bool useMaxSize = false, required callKind,
-    required bool isLocalTile,
+    // required bool isLocalTile,
     bool isGroupGrid = false,
   }) {
 
@@ -151,14 +158,14 @@ class CallKitPipController extends GetxController {
                 ),
 
               /// "You" label
-              if (isLocalTile && !isGroupCall.value)
-                const Positioned(
+              // if (isLocalTile && !isGroupCall.value)
+                 Positioned(
                   bottom: 8,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
-                      "You",
-                      style: TextStyle(
+                      remoteUserNameMap[participantId] ?? "test",
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                       ),

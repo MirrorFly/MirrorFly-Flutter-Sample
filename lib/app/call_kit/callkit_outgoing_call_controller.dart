@@ -100,7 +100,7 @@ class CallKitOutgoingCallController extends GetxController
   @override
   Future<void> onInit() async {
     CallKitEventBuffer.flushTo(this);
-    callKind = MirrorFlyCallKit.getCallKind();
+    callKind = await MirrorFlyCallKit.getCallKind();
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -2256,7 +2256,7 @@ class CallKitOutgoingCallController extends GetxController
     PictureInPicture.updatePiPParams(
       pipParams: PiPParams(
         pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,
-        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.8,
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.55,
         bottomSpace: 20,
         leftSpace: 20,
         rightSpace: 20,
