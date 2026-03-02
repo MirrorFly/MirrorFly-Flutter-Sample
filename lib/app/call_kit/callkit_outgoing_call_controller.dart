@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_in_app_pip/picture_in_picture.dart';
+import 'package:flutter_in_app_pip/pip_params.dart';
+import 'package:flutter_in_app_pip/pip_view_corner.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -20,6 +23,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'callkit_event_buffer.dart';
 import 'callkit_logger.dart';
+import 'callkit_pip/callkit_pip_View.dart';
 
 class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
@@ -376,70 +380,24 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  /// Get remote user name for the each id for group call
-  ///
-  // Future<void> getCallMembersName() async {
-  //   if (!isGroupCall.value) {
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
-  //     return;
-  //   }
-  //
-  //   if(callKind == FlyCallKind.sip){
-  //     callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
-  //     for(var user in callerList){
-  //       remoteUserNameMap[user.identity] =
-  //       user.isLocalParticipant ? "You" : user.identity;
-  //       callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
-  //     }
-  //     return;
-  //   }
-  //
-  //   for (var user in callerList) {
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] Getting user name for: ${user
-  //             .identity}, isLocal: ${user.isLocalParticipant}");
-  //     ProfileDetails profile = await getProfileDetails(
-  //         validId(userId: user.identity, isGroup: false), isFromCallKit: true);
-  //     String username =
-  //     (profile.name?.trim().isNotEmpty == true)
-  //         ? profile.name!.trim()
-  //         : (profile.nickName?.trim().isNotEmpty == true)
-  //         ? profile.nickName!.trim()
-  //         : trimAfterAt(profile.jid ?? "");
-  //     remoteUserNameMap[user.identity] =
-  //     user.isLocalParticipant ? "You" : username;
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] Remote User Name for ${user
-  //             .identity}: $username");
-  //   }
-  //   callkitLogger.info(
-  //       "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
-  //           .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-  //   return;
-  // }
-
-  ///
   /// Get remote user name for one-to-one call (remote participant)
   ///
   Future<void> _getCallRemoteUserName() async {
-    callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId.value}");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId.value}");
 
     List<String> participantId = [];
     var showLocalUserName = false;
-    final bool showRemoteUserNameOnlyOnOutGoingCall =
-    !isOnGoingCallViewEnable.value; //show only remote user name
-    final bool onGoingCallEnabledAddLocalUser =
-        isOnGoingCallViewEnable.value; // add local user name to name list
-    final bool localUserAloneConnectedInMeetCall =
-        callMode.value == "MEET" && callerList.length == 1;
+    final bool showRemoteUserNameOnlyOnOutGoingCall = !isOnGoingCallViewEnable.value; //show only remote user name
+    final bool onGoingCallEnabledAddLocalUser = isOnGoingCallViewEnable.value; // add local user name to name list
+    final bool localUserAloneConnectedInMeetCall = callMode.value == "MEET" && callerList.length == 1;
+    final bool isGroupComesOneToOneCall = groupId.value != "" && callerList.length == 2;
 
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #_getCallRemoteUserName, "
             "showRemoteUserNameOnlyOnOutGoingCall: $showRemoteUserNameOnlyOnOutGoingCall"
             "onGoingCallEnabledAddLocalUser: $onGoingCallEnabledAddLocalUser"
             "localUserAloneConnectedInMeetCall: $localUserAloneConnectedInMeetCall"
+            "isGroupComesOneToOneCall: $isGroupComesOneToOneCall "
             "participantId: ${participantId.map((e) => e)}");
 
     try {
@@ -469,7 +427,7 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       await MirrorFlyCallKit.getCallMembersDisplayNames(
-          chatId: groupId.value,
+          chatId: isGroupComesOneToOneCall ? "" : groupId.value,
           participantId: participantId,
           showLocalUserName: showLocalUserName).then((value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName fetched display names: $value");
@@ -2280,5 +2238,31 @@ class CallKitOutgoingCallController extends GetxController
     selectedDeviceType.value = flyAudioDevice.type.value;
     // selectedAudioDevice.value = flyAudioDevice;
     // selectedAudioDeviceId.value = flyAudioDevice.id;
+  }
+
+  void goToPIP() {
+    if(NavUtils.canPop) {
+      NavUtils.back();
+    } else {
+      NavUtils.offNamed(NavUtils.defaultRouteName);
+    }
+    startPIP();
+  }
+
+  void startPIP(){
+    PictureInPicture.startPiP(pipWidget: const CallkitPipView());
+    PictureInPicture.updatePiPParams(
+      pipParams: PiPParams(
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.9,
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.6,
+        bottomSpace: 20,
+        leftSpace: 20,
+        rightSpace: 20,
+        topSpace: 20,
+        movable: true,
+        resizable: true,
+        initialCorner: PIPViewCorner.bottomRight,
+      ),
+    );
   }
 }

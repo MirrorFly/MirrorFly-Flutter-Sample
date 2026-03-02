@@ -24,7 +24,7 @@ class CallKitOutgoingCallView
   CallKitOutgoingCallController createController({String? tag}) =>
       Get.put(CallKitOutgoingCallController());
 
-  @override
+  /*@override
   Widget build(BuildContext context) {
     return Obx(() {
       debugPrint(
@@ -49,6 +49,59 @@ class CallKitOutgoingCallView
         // ),
         );
       // );
+    });
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      debugPrint("#CallKitOutGoingCallView Build Called, isGroupCall");
+      return PopScope(
+        canPop: false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: ColoredBox(
+              color: AppColors.audioCallerBackground,
+              child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: controller.toggleControls,
+                  child: Stack(
+                    children: [
+
+                      /// Call UI (background)
+                      controller.isGroupCall.value
+                          ? buildGroupGridItem(context)
+                          : oneToOneCallUI(context),
+
+                      /// Top-left positioned minimize button
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: IconButton(
+                          onPressed: () {
+                            // CallFloatingIconController.instance.showCallFloatingIcon();
+                            // NavUtils.back();
+                            controller.goToPIP();
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down_sharp,
+                            size: 36,
+                            color: Colors.white,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          splashRadius: 20,
+                        ),
+                      ),
+
+                    ],
+                  )
+              ),
+            ),
+          ),
+        ),
+      );
     });
   }
 
