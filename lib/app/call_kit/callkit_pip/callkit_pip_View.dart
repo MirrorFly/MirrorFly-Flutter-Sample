@@ -64,101 +64,28 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
                   crossAxisCount: participants.length > 2 ? 2 : 1,
                   mainAxisSpacing: 4.0,
                   crossAxisSpacing: 2.0,
-                  childAspectRatio: participants.length == 2 ? 1.23 : 1.0,
+                    childAspectRatio: participants.length == 2 ? 1.23 : 1.0,
                 ),
                 itemBuilder: (context, index) {
-
                   final participant = participants[index];
 
                   return Stack(
                     children: [
-
-                      /// Video View
                       SizedBox(
-                        // height: 60,
                         child: Stack(
                           children: [
-
                             MirrorFlyCallView(
                               isLocalPreviewView: false,
                               key: ValueKey(participant.identity),
                               userJID: participant.identity,
-                              // fit: BoxFit.cover,
                               viewBgColor: AppColors.callerTitleBackground,
                               profileImage: controller.getUserProfileImageWithName(
-                                isGroupGrid: false,
-                                // isLocalTile: true,
+                                isGroup: controller.isGroupCall.value,
                                 participantId: participant.identity,
-                                scale: 1.2,
-                                callKind: participant.kind,
                               ),
                             ),
-                            // controller.getUserProfileImageWithName(
-                            //   isGroupGrid: true,
-                            //   isLocalTile: true,
-                            //   participantId: participant.identity,
-                            //   scale: 1.2,
-                            //   callKind: participant.kind,
-                            // ),
                           ],
                         ),
-                      ),
-
-                      /// Audio Mute
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Row(
-                          children: [
-                            if (participant.isAudioMuted == true)
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey,
-                                child: AppUtils.svgIcon(
-                                  icon: callMutedIcon,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-                      /// Call status overlay
-                      Builder(
-                        builder: (_) {
-                          final isSelf =
-                          controller.isSelfId(id: participant.identity);
-
-                          final connectionState =
-                          controller.getParticipantConnectionState(
-                              participant.flyCallStatusEvent);
-
-                          if ((!isSelf && connectionState.isNotEmpty) ||
-                              (isSelf &&
-                                  connectionState == "Reconnecting")) {
-
-                            return Positioned.fill(
-                              child: Container(
-                                color: Colors.black.withOpacity(0.5),
-                                child: Center(
-                                  child: Text(
-                                    connectionState,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
-                          return const SizedBox();
-                        },
                       ),
                     ],
                   );

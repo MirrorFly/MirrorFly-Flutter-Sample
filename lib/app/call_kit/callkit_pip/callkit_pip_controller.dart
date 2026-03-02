@@ -1,21 +1,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_in_app_pip/picture_in_picture.dart';
-import 'package:flutter_in_app_pip/pip_params.dart';
-import 'package:flutter_in_app_pip/pip_view_corner.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-
-import '../../app_style_config.dart';
 import '../../call_modules/call_widgets.dart';
-import '../../call_modules/pip_view/pip_view.dart';
-import '../../common/widgets.dart';
 import '../../data/helper.dart';
 import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../routes/app_pages.dart';
 import '../callkit_logger.dart';
-import 'callkit_pip_View.dart';
 
 class CallKitPipController extends GetxController {
 
@@ -56,126 +49,69 @@ class CallKitPipController extends GetxController {
 
   @override
   onReady() async {
-
-    await getCallMembersName();
     super.onReady();
   }
-
 
   Widget getUserProfileImageWithName({
     required String participantId,
     bool isGroup = false,
-    double scale = 1.0,
-    bool useMaxSize = false, required callKind,
-    // required bool isLocalTile,
-    bool isGroupGrid = false,
   }) {
 
-    callkitLogger.info("[getUserProfileImageWithName] Called with participantId: $participantId");
-
-    if (participantId == "") {
-      callkitLogger
-          .info("[getUserProfileImageWithName] participantId is empty");
-      return const Offstage();
+    if (participantId.isEmpty) {
+      return const SizedBox();
     }
 
-    callkitLogger.info("[getUserProfileImageWithName] isGroupCall: $isGroup");
-
-    final String normalizedParticipantId = validId(userId: participantId, isGroup: isGroup);
-    callkitLogger.info("[getUserProfileImageWithName] normalizedParticipantId: $normalizedParticipantId");
-
-    final Future<ProfileDetails> profileDetails = isGroup == true
-        ? getGroupProfileDetails(normalizedParticipantId)
-        : getProfileDetails(normalizedParticipantId);
+    final String normalizedId = validId(userId: participantId, isGroup: isGroup);
+    final Future<ProfileDetails> profileFuture = isGroup
+        ? getGroupProfileDetails(normalizedId)
+        : getProfileDetails(normalizedId);
 
     return FutureBuilder<ProfileDetails>(
-      future: profileDetails,
-      builder: (ctx, snap) {
-        if (snap.connectionState == ConnectionState.waiting) {
-          callkitLogger.info("[getUserProfileImageWithName] Loading profile for: $normalizedParticipantId");
-        } else if (snap.connectionState == ConnectionState.done) {
-          if (snap.hasError) {
-            callkitLogger.info("[getUserProfileImageWithName] Error loading profile for $normalizedParticipantId → ${snap.error}");
-          } else if (!snap.hasData || snap.data == null) {
-            callkitLogger.info("[getUserProfileImageWithName]  No data found for participantId: $normalizedParticipantId");
-          } else {
-            callkitLogger.info("[getUserProfileImageWithName] Profile loaded: ${snap.data!.name} (${snap.data})");
-          }
-        }
+      future: profileFuture,
+      builder: (context, snapshot) {
 
-        // When we actually have valid profile data
-        if (snap.hasData && snap.data != null) {
-
-          RxBool isLocalView = (participantId == getLocalParticipant()?.identity).obs;
-          return Stack(
-            children: [
-
-              /// LOCAL VIEW → CENTER
-              if (isLocalView.value)
-                Center(
-                  child: callKind == FlyCallKind.sip
-                      ? ProfileTextImage(
-                    text: (remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
-                        ? remoteUserNameMap[participantId]!.trim().substring(3)
-                        : "You",
-                    radius:
-                    (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
-                        scale) /
-                        2,
-                  )
-                      : buildProfileImage(
-                    snap.data!,
-                    size: AppStyleConfig.outgoingCallPageStyle
-                        .profileImageSize.width /
-                        scale,
-                  ),
-                ),
-
-              /// REMOTE VIEW → TOP CENTER
-              if (!isLocalView.value)
-                Positioned(
-                  top: isGroupGrid ? 50 : 80,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: callKind == FlyCallKind.sip
-                        ? ProfileTextImage(
-                      text: (remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
-                          ? remoteUserNameMap[participantId]!.trim().replaceFirst(RegExp(r'^sip_'), '').substring(3) : "User",
-                      radius:
-                      (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
-                          scale) /
-                          2,
-                    )
-                        : buildProfileImage(
-                      snap.data!,
-                      size: AppStyleConfig.outgoingCallPageStyle
-                          .profileImageSize.width /
-                          scale,
-                    ),
-                  ),
-                ),
-
-              /// "You" label
-              // if (isLocalTile && !isGroupCall.value)
-                 Positioned(
-                  bottom: 8,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      remoteUserNameMap[participantId] ?? "test",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
           );
         }
-        return const Offstage();
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox();
+        }
+
+        final profile = snapshot.data!;
+        final String displayName = (profile.name?.trim().isNotEmpty == true)
+            ? profile.name!.trim()
+            : (profile.nickName?.trim().isNotEmpty == true)
+            ? profile.nickName!.trim()
+            : trimAfterAt(profile.jid ?? "");
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            /// Profile Image
+            buildProfileImage(
+              profile,
+              size: 45,
+            ),
+
+            /// Name
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                displayName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
       },
     );
   }
@@ -231,40 +167,6 @@ class CallKitPipController extends GetxController {
       default:
         return "";
     }
-  }
-
-  Future<void> getCallMembersName() async {
-
-    if(callKind == FlyCallKind.sip){
-      callkitLogger.info("[MirrorFly][CallKitPIPController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
-      for(var user in callerList){
-        remoteUserNameMap[user.identity] =
-        user.isLocalParticipant ? "You" : user.identity;
-        callkitLogger.info("[MirrorFly][CallKitPIPController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
-      }
-      return;
-    }
-
-    for (var user in callerList) {
-      callkitLogger.info(
-          "[MirrorFly][CallKitPIPController] #getRemoteAndLocalUserNameForGroupCall Getting user name for: ${user.identity}, isLocal: ${user.isLocalParticipant}");
-      ProfileDetails profile = await getProfileDetails(
-          validId(userId: user.identity, isGroup: false),
-          isFromCallKit: true);
-      String username = (profile.name?.trim().isNotEmpty == true)
-          ? profile.name!.trim()
-          : (profile.nickName?.trim().isNotEmpty == true)
-          ? profile.nickName!.trim()
-          : trimAfterAt(profile.jid ?? "");
-      remoteUserNameMap[user.identity] =
-      user.isLocalParticipant ? "You" : username;
-      callkitLogger.info(
-          "[MirrorFly][CallKitPIPController] #getRemoteAndLocalUserNameForGroupCall Remote User Name for ${user.identity}: $username");
-    }
-    callkitLogger.info(
-        "[MirrorFly][CallKitPIPController] #getRemoteAndLocalUserNameForGroupCall Completed fetching user names for group call, "
-            "remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-    return;
   }
 
   String trimAfterAt(String input) {
