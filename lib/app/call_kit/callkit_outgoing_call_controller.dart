@@ -376,70 +376,24 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  /// Get remote user name for the each id for group call
-  ///
-  // Future<void> getCallMembersName() async {
-  //   if (!isGroupCall.value) {
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForGroupCall Not a group call");
-  //     return;
-  //   }
-  //
-  //   if(callKind == FlyCallKind.sip){
-  //     callkitLogger.info("[MirrorFly][OutgoingCallController] #getRemoteAndLocalUserNameForOneToOneCall SIP call - using identity as name");
-  //     for(var user in callerList){
-  //       remoteUserNameMap[user.identity] =
-  //       user.isLocalParticipant ? "You" : user.identity;
-  //       callkitLogger.info("[MirrorFly][OutgoingCallController] Remote User Name for sip call ${user.identity}: ${remoteUserNameMap[user.identity]}");
-  //     }
-  //     return;
-  //   }
-  //
-  //   for (var user in callerList) {
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] Getting user name for: ${user
-  //             .identity}, isLocal: ${user.isLocalParticipant}");
-  //     ProfileDetails profile = await getProfileDetails(
-  //         validId(userId: user.identity, isGroup: false), isFromCallKit: true);
-  //     String username =
-  //     (profile.name?.trim().isNotEmpty == true)
-  //         ? profile.name!.trim()
-  //         : (profile.nickName?.trim().isNotEmpty == true)
-  //         ? profile.nickName!.trim()
-  //         : trimAfterAt(profile.jid ?? "");
-  //     remoteUserNameMap[user.identity] =
-  //     user.isLocalParticipant ? "You" : username;
-  //     callkitLogger.info(
-  //         "[MirrorFly][OutgoingCallController] Remote User Name for ${user
-  //             .identity}: $username");
-  //   }
-  //   callkitLogger.info(
-  //       "[MirrorFly][OutgoingCallController] Completed fetching user names for group call, remoteUserNameMap: ${remoteUserNameMap
-  //           .entries.map((e) => '${e.key}: ${e.value}').join(', ')}");
-  //   return;
-  // }
-
-  ///
   /// Get remote user name for one-to-one call (remote participant)
   ///
   Future<void> _getCallRemoteUserName() async {
-    callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId.value}");
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName called for groupId: ${groupId.value}");
 
     List<String> participantId = [];
     var showLocalUserName = false;
-    final bool showRemoteUserNameOnlyOnOutGoingCall =
-    !isOnGoingCallViewEnable.value; //show only remote user name
-    final bool onGoingCallEnabledAddLocalUser =
-        isOnGoingCallViewEnable.value; // add local user name to name list
-    final bool localUserAloneConnectedInMeetCall =
-        callMode.value == "MEET" && callerList.length == 1;
+    final bool showRemoteUserNameOnlyOnOutGoingCall = !isOnGoingCallViewEnable.value; //show only remote user name
+    final bool onGoingCallEnabledAddLocalUser = isOnGoingCallViewEnable.value; // add local user name to name list
+    final bool localUserAloneConnectedInMeetCall = callMode.value == "MEET" && callerList.length == 1;
+    final bool isGroupComesOneToOneCall = groupId.value != "" && callerList.length == 2;
 
     callkitLogger.info(
         "[MirrorFly][OutgoingCallController] #_getCallRemoteUserName, "
             "showRemoteUserNameOnlyOnOutGoingCall: $showRemoteUserNameOnlyOnOutGoingCall"
             "onGoingCallEnabledAddLocalUser: $onGoingCallEnabledAddLocalUser"
             "localUserAloneConnectedInMeetCall: $localUserAloneConnectedInMeetCall"
+            "isGroupComesOneToOneCall: $isGroupComesOneToOneCall "
             "participantId: ${participantId.map((e) => e)}");
 
     try {
@@ -469,7 +423,7 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       await MirrorFlyCallKit.getCallMembersDisplayNames(
-          chatId: groupId.value,
+          chatId: isGroupComesOneToOneCall ? "" : groupId.value,
           participantId: participantId,
           showLocalUserName: showLocalUserName).then((value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName fetched display names: $value");
