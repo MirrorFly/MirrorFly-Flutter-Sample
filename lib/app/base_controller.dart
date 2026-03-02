@@ -142,7 +142,7 @@ class BaseController {
       switch (flyCallStatusEvent) {
         case FlyCallStatusEvent.connecting:
           callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connecting");
-          callStateService.connecting();
+          callStateService.connecting(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.connected:
           callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected");

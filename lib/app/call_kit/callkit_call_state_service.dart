@@ -152,6 +152,7 @@ class CallStateService extends GetxService {
   @override
   Future<void> onInit() async {
     callkitLogger.info('[CallStateService] onInit');
+    getCurrentCallParticipants();
     super.onInit();
   }
 
@@ -608,12 +609,16 @@ class CallStateService extends GetxService {
     List<String>? participantsId,
     FlyCallStatusEvent? status,
   }) async {
+    callkitLogger.info(
+        '[CallStateService] updateCallerStatusList participantsId=$participantsId status=$status');
     if (participantsId?.isNotEmpty ?? false) {
       for (final id in participantsId ?? []) {
         if (!isSelfId(id: id)) {
           final index = callerList.indexWhere((p) => p.identity == id);
           if (index != -1) {
             final existing = callerList[index];
+            callkitLogger.info(
+                '[CallStateService] updateCallerStatusList updating existing participant id=$id existingStatus=${existing.flyCallStatusEvent} newStatus=$status');
             callerList[index] = FlyCallParticipant(
               identity: existing.identity,
               isLocalParticipant: existing.isLocalParticipant,
@@ -621,6 +626,8 @@ class CallStateService extends GetxService {
               flyCallActionEvent: existing.flyCallActionEvent,
             );
           } else {
+            callkitLogger.info(
+                '[CallStateService] updateCallerStatusList adding new participant id=$id status=$status');
             callerList.add(FlyCallParticipant(
               identity: id,
               isLocalParticipant: false,

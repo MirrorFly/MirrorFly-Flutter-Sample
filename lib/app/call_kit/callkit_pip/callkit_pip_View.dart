@@ -14,47 +14,17 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       body: Stack(
         children: [
-          FutureBuilder<List<FlyCallParticipant>>(
-            future: MirrorFlyCallKit.getCurrentCallParticipants()
-                .then((value) => value ?? []),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    "Error: ${snapshot.error}",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                );
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text(
-                    "No participants",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              }
-
-              final participants = snapshot.data!;
-              final total = participants.length;
-
-              // return Obx(() {
-                return Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: _buildDynamicLayout(participants, total),
-                );
-              // });
-            },
-          ),
+          Obx(() {
+            return Padding(
+              padding: const EdgeInsets.all(6),
+              child: _buildDynamicLayout(controller.callerList, controller.callerList.length),
+            );
+          }),
 
           /// Tap overlay
           GestureDetector(
@@ -68,7 +38,7 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
           Obx(() {
             return Visibility(
               visible:
-                  !controller.isPIPActive.value && controller.showExpand.value,
+              !controller.isPIPActive.value && controller.showExpand.value,
               child: Container(
                 color: controller.showExpand.value ? Colors.black38 : null,
                 child: Center(

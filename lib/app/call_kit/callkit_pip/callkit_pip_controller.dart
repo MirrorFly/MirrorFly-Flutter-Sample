@@ -4,6 +4,7 @@ import 'package:flutter_in_app_pip/picture_in_picture.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_widgets.dart';
+import '../../common/constants.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
 import '../../routes/app_pages.dart';
@@ -21,7 +22,7 @@ class CallKitPipController extends GetxController {
       CallStateService.isRegistered ? CallStateService.instance : null;
 
   // ── Local fallback state (used when service is not yet available) ──────────
-  final _callerList = <FlyCallParticipant>[].obs;
+
   final _remoteUserNameMap = <String, String>{}.obs;
   final _isGroupCall = false.obs;
   final _callType = ''.obs;
@@ -33,7 +34,7 @@ class CallKitPipController extends GetxController {
 
   // ── Proxy getters — prefer service, fall back to local field ───────────────
   RxList<FlyCallParticipant> get callerList =>
-      _svc?.callerList ?? _callerList;
+      _svc?.callerList ?? <FlyCallParticipant>[].obs;
   RxMap<String, String> get remoteUserNameMap =>
       _svc?.remoteUserNameMap ?? _remoteUserNameMap;
   RxBool get isGroupCall => _svc?.isGroupCall ?? _isGroupCall;
@@ -161,7 +162,7 @@ class CallKitPipController extends GetxController {
     toToast("Call Disconnected");
     stopPIP();
   }
-
+/*
   /// On disconnected
   void onDisconnected({required List<String> participantId}) async {
     callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected called with participantId: $participantId");
@@ -216,5 +217,5 @@ class CallKitPipController extends GetxController {
     } else if (callMode.value == "ONE-TO-MANY") {
       // Remove ringing participant
     } else {}
-  }
+  }*/
 }
