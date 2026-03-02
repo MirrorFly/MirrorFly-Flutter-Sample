@@ -179,6 +179,12 @@ class CallKitPipController extends GetxController {
     PictureInPicture.stopPiP();
   }
 
+  void closePip() async {
+    await MirrorFlyCallKit.localHangup();
+    toToast("Call Disconnected");
+    stopPIP();
+  }
+
   /// On disconnected
   void onDisconnected({required List<String> participantId}) async {
     callkitLogger.info("[MirrorFly][CallKitPIPController] onDisconnected called with participantId: $participantId");
