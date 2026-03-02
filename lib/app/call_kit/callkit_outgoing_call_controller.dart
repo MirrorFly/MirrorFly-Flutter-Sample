@@ -2509,13 +2509,11 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void startPIP(){
-    PictureInPicture.startPiP(pipWidget: const ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(13)),
-        child: CallkitPipView()));
+    PictureInPicture.startPiP(pipWidget: const CallkitPipView());
     PictureInPicture.updatePiPParams(
       pipParams: PiPParams(
-        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,
-        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.57,
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.9,
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.6,
         bottomSpace: 20,
         leftSpace: 20,
         rightSpace: 20,

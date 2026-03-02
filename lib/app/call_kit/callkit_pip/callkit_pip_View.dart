@@ -1,17 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_pip/callkit_pip_controller.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-
 import '../../common/constants.dart';
-import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 
 class CallkitPipView extends NavViewStateful<CallKitPipController> {
-  const CallkitPipView({Key? key})
-      : super(key: key);
-
+  const CallkitPipView({Key? key}) : super(key: key);
 
   @override
   CallKitPipController createController({String? tag}) =>
@@ -20,145 +15,66 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
       body: Stack(
         children: [
-            controller.callerList.isEmpty ? const Center(
-                child: Text(
-                  "No participants",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ) : GridView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(8.0),
-                itemCount: controller.callerList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: controller.callerList.length > 2 ? 2 : 1,
-                  mainAxisSpacing: 4.0,
-                  crossAxisSpacing: 2.0,
-                  childAspectRatio: controller.callerList.length == 2 ? 1.23 : 1.0,
-                ),
-                itemBuilder: (context, index) {
+          FutureBuilder<List<FlyCallParticipant>>(
+            future: MirrorFlyCallKit.getCurrentCallParticipants()
+                .then((value) => value ?? []),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                  final participant = controller.callerList[index];
-
-                  return Stack(
-                    children: [
-
-                      /// Video View
-                      SizedBox(
-                        // height: 60,
-                        child: Stack(
-                          children: [
-
-                            MirrorFlyCallView(
-                              isLocalPreviewView: false,
-                              key: ValueKey(participant.identity),
-                              userJID: participant.identity,
-                              // fit: BoxFit.cover,
-                              viewBgColor: AppColors.callerTitleBackground,
-                              profileImage: controller.getUserProfileImageWithName(
-                                // isGroupGrid: false,
-                                // isLocalTile: true,
-                                participantId: participant.identity,
-                                isGroup: controller.isGroupCall.value,
-                                // scale: 1.2,
-                                // callKind: participant.kind,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      /// Audio Mute
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Row(
-                          children: [
-                            if (participant.isAudioMuted == true)
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.grey,
-                                child: AppUtils.svgIcon(
-                                  icon: callMutedIcon,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-
-                    /// Call Status Overlay
-                    Builder(
-                      builder: (_) {
-                        final isSelf = controller
-                            .isSelfId(id: participant.identity);
-
-                        final connectionState =
-                        controller.getParticipantConnectionState(
-                            participant.flyCallStatusEvent);
-
-                        if ((!isSelf &&
-                            connectionState.isNotEmpty) ||
-                            (isSelf &&
-                                connectionState ==
-                                    "Reconnecting")) {
-
-                          return Positioned.fill(
-                            child: Container(
-                              color: Colors.black
-                                  .withOpacity(0.5),
-                              child: Center(
-                                child: Text(
-                                  connectionState,
-                                  style:
-                                  const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight:
-                                    FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
-                        return const SizedBox();
-                      },
-                    ),
-                  ],
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    "Error: ${snapshot.error}",
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 );
-              },
-            ),
-          // }),
+              }
 
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No participants",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }
+
+              final participants = snapshot.data!;
+              final total = participants.length;
+
+              // return Obx(() {
+                return Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: _buildDynamicLayout(participants, total),
+                );
+              // });
+            },
+          ),
+
+          /// Tap overlay
           GestureDetector(
             onTap: () {
-              controller
-                  .showExpand(!controller.showExpand.value);
+              controller.showExpand(!controller.showExpand.value);
             },
             child: Container(color: Colors.transparent),
           ),
 
+          /// Expand Button
           Obx(() {
             return Visibility(
-              visible: !controller.isPIPActive.value &&
-                  controller.showExpand.value,
+              visible:
+                  !controller.isPIPActive.value && controller.showExpand.value,
               child: Container(
-                color: controller.showExpand.value
-                    ? Colors.black38
-                    : null,
+                color: controller.showExpand.value ? Colors.black38 : null,
                 child: Center(
                   child: IconButton(
                     iconSize: 32,
-                    onPressed: () {
-                      controller.expandPIP();
-                    },
+                    onPressed: controller.expandPIP,
                     icon: const Icon(
                       Icons.crop_free,
                       color: Colors.white,
@@ -168,7 +84,155 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
               ),
             );
           }),
+
+
+          /// Close Button (Top Right)
+          Positioned(
+            top: 0,
+            right: 2,
+            child: GestureDetector(
+              onTap: () {
+                controller.closePip();
+              },
+              child: Container(
+                height: 26,
+                width: 26,
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.close,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
         ],
+      ),
+    );
+  }
+
+  Widget _buildDynamicLayout(List<FlyCallParticipant> participants, int total) {
+    /// 1 USER
+    if (total == 1) {
+      return _buildTile(participants[0]);
+    }
+
+    /// 2 USERS (vertical)
+    if (total == 2) {
+      return Column(
+        children: [
+          Expanded(child: _buildTile(participants[0])),
+          const SizedBox(height: 4),
+          Expanded(child: _buildTile(participants[1])),
+        ],
+      );
+    }
+
+    /// 3 USERS (2 top + 1 full bottom)
+    if (total == 3) {
+      return Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(child: _buildTile(participants[0])),
+                const SizedBox(width: 4),
+                Expanded(child: _buildTile(participants[1])),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Expanded(
+            child: _buildTile(participants[2]),
+          ),
+        ],
+      );
+    }
+
+    /// 4 USERS (2x2 grid)
+    if (total == 4) {
+      return Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(child: _buildTile(participants[0])),
+                const SizedBox(width: 4),
+                Expanded(child: _buildTile(participants[1])),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(child: _buildTile(participants[2])),
+                const SizedBox(width: 4),
+                Expanded(child: _buildTile(participants[3])),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    /// MORE THAN 4 USERS (2x2 with +X more)
+    final remaining = total - 3;
+
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(child: _buildTile(participants[0])),
+              const SizedBox(width: 4),
+              Expanded(child: _buildTile(participants[1])),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(child: _buildTile(participants[2])),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "+$remaining more",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTile(FlyCallParticipant participant) {
+    return MirrorFlyCallView(
+      isLocalPreviewView: false,
+      key: ValueKey(participant.identity),
+      userJID: participant.identity,
+      viewBgColor: AppColors.callerTitleBackground,
+      profileImage: controller.getUserProfileImageWithName(
+        isGroup: controller.isGroupCall.value,
+        participantId: participant.identity,
       ),
     );
   }
