@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_in_app_pip/picture_in_picture.dart';
+import 'package:flutter_in_app_pip/pip_params.dart';
+import 'package:flutter_in_app_pip/pip_view_corner.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/common/constants.dart';
@@ -20,6 +23,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'callkit_event_buffer.dart';
 import 'callkit_logger.dart';
+import 'callkit_pip/callkit_pip_View.dart';
 
 class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
@@ -96,7 +100,7 @@ class CallKitOutgoingCallController extends GetxController
   @override
   Future<void> onInit() async {
     CallKitEventBuffer.flushTo(this);
-    callKind = await MirrorFlyCallKit.getCallKind();
+    callKind = MirrorFlyCallKit.getCallKind();
     await _handleInitialCallStatus();
     await getCurrentCallParticipants();
     await initCallViewIds();
@@ -2234,5 +2238,33 @@ class CallKitOutgoingCallController extends GetxController
     selectedDeviceType.value = flyAudioDevice.type.value;
     // selectedAudioDevice.value = flyAudioDevice;
     // selectedAudioDeviceId.value = flyAudioDevice.id;
+  }
+
+  void goToPIP() {
+    if(NavUtils.canPop) {
+      NavUtils.back();
+    } else {
+      NavUtils.offNamed(NavUtils.defaultRouteName);
+    }
+    startPIP();
+  }
+
+  void startPIP(){
+    PictureInPicture.startPiP(pipWidget: const ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(13)),
+        child: CallkitPipView()));
+    PictureInPicture.updatePiPParams(
+      pipParams: PiPParams(
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,
+        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.8,
+        bottomSpace: 20,
+        leftSpace: 20,
+        rightSpace: 20,
+        topSpace: 20,
+        movable: true,
+        resizable: true,
+        initialCorner: PIPViewCorner.bottomRight,
+      ),
+    );
   }
 }

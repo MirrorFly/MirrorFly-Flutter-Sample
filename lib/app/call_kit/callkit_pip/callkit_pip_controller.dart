@@ -264,33 +264,4 @@ class CallKitPipController extends GetxController {
     return input.split('@').firstOrNull?.trim() ?? "";
   }
 
-
-  void goToPIP() {
-    if(NavUtils.canPop) {
-      NavUtils.back();
-    } else {
-      NavUtils.offNamed(NavUtils.defaultRouteName);
-    }
-    startPIP();
-  }
-
-  void startPIP(){
-    PictureInPicture.startPiP(pipWidget: const ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(13)),
-        child: CallkitPipView()));
-    PictureInPicture.updatePiPParams(
-      pipParams: PiPParams(
-        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.8,
-        pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.8,
-        bottomSpace: 20,
-        leftSpace: 20,
-        rightSpace: 20,
-        topSpace: 20,
-        movable: true,
-        resizable: true,
-        initialCorner: PIPViewCorner.bottomRight,
-      ),
-    );
-  }
-
 }
