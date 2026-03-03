@@ -992,7 +992,7 @@ class CallKitOutgoingCallView
             children: [
 
               /// LOCAL VIEW → CENTER
-              if (isLocalView.value)
+              if (isLocalView.value && controller.isOnGoingCallViewEnable.value)
                 Center(
                   child: controller.callKind == FlyCallKind.sip
                       ? ProfileTextImage(
@@ -1010,6 +1010,33 @@ class CallKitOutgoingCallView
                         .profileImageSize.width /
                         scale,
                   ),
+                ),
+
+
+              if (isLocalView.value && !controller.isOnGoingCallViewEnable.value)
+                Positioned(
+                  top: 80,
+                  left: 0,
+                  right: 0,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                    child: controller.callKind == FlyCallKind.sip
+                        ? ProfileTextImage(
+                      text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
+                          ? controller.remoteUserNameMap[participantId]!.trim().substring(3)
+                          : "You",
+                      radius:
+                      (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
+                          scale) /
+                          2,
+                    )
+                        : buildProfileImage(
+                      snap.data!,
+                      size: AppStyleConfig.outgoingCallPageStyle
+                          .profileImageSize.width /
+                          scale,
+                    ),
+                ),
                 ),
 
               /// REMOTE VIEW → TOP CENTER
