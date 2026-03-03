@@ -207,7 +207,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
   Widget callParticipantsView(
       BuildContext context, ParticipantItemStyle style) {
     return Obx(() {
-      return controller.callList.value.length > 1 ? ListView.builder(
+      return controller.callList.value.isNotEmpty ? ListView.builder(
           shrinkWrap: true,
           itemCount: controller.callList.value.length,
           physics: const AlwaysScrollableScrollPhysics(),
