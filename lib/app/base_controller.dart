@@ -322,7 +322,6 @@ class BaseController {
         case FlyCallActionEvent.engagedCall:
         case FlyCallActionEvent.actionCallSwitch:
         case FlyCallActionEvent.none:
-        case FlyCallActionEvent.unknown:
         case FlyCallActionEvent.audioTrackPublished:
         case FlyCallActionEvent.audioTrackUnPublished:
         case FlyCallActionEvent.videoTrackPublished:
@@ -392,32 +391,32 @@ class BaseController {
           break;
 
         // ── Dialog events → UI controller (require Get context for dialogs) ──
-        case FlyCallActionEvent.outgoingRequest:
+        case FlyCallActionEvent.outgoingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest");
           uiController?.showOutGoingCallSwitchRequestDialog();
           break;
 
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest");
           uiController?.showIncomingCallSwitchRequestDialog();
           break;
 
-        case FlyCallActionEvent.accept:
+        case FlyCallActionEvent.outgoingCallSwitchAccepted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept");
           uiController?.onVideoCallSwitchAccept();
           break;
 
-        case FlyCallActionEvent.cancel:
+        case FlyCallActionEvent.outgoingCallSwitchCancelled:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel");
           uiController?.onRemoteUserCancelledTheSwitchRequest();
           break;
 
-        case FlyCallActionEvent.decline:
+        case FlyCallActionEvent.outgoingCallSwitchDeclined:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline");
           uiController?.onCallSwitchRemoteUserDeclined();
           break;
 
-        case FlyCallActionEvent.timeout:
+        case FlyCallActionEvent.outgoingCallSwitchTimeout:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout");
           uiController?.onVideoCallSwitchTimeOut();
           break;
