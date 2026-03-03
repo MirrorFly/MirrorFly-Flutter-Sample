@@ -216,22 +216,22 @@ class CallKitOutgoingCallController extends GetxController
               participantId: action.participantId ?? '');
           break;
         // Dialog events — already handled by BaseController calling uiController directly
-        case FlyCallActionEvent.outgoingRequest:
+              case FlyCallActionEvent.outgoingCallSwitchRequest:
           showOutGoingCallSwitchRequestDialog();
           break;
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           showIncomingCallSwitchRequestDialog();
           break;
-        case FlyCallActionEvent.accept:
+        case FlyCallActionEvent.outgoingCallSwitchAccepted:
           onVideoCallSwitchAccept();
           break;
-        case FlyCallActionEvent.cancel:
+        case FlyCallActionEvent.outgoingCallSwitchCancelled:
           onRemoteUserCancelledTheSwitchRequest();
           break;
-        case FlyCallActionEvent.decline:
+        case FlyCallActionEvent.outgoingCallSwitchDeclined:
           onCallSwitchRemoteUserDeclined();
           break;
-        case FlyCallActionEvent.timeout:
+        case FlyCallActionEvent.outgoingCallSwitchTimeout:
           onVideoCallSwitchTimeOut();
           break;
         default:
@@ -351,10 +351,10 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info(
           '[MirrorFly][OutgoingCallController] _seedStateFromService — replaying call-switch ${switchEvent.flyCallEvent}');
       switch (switchEvent.flyCallEvent) {
-        case FlyCallActionEvent.outgoingRequest:
+        case FlyCallActionEvent.outgoingCallSwitchRequest:
           showOutGoingCallSwitchRequestDialog();
           break;
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           showIncomingCallSwitchRequestDialog();
           break;
         case FlyCallActionEvent.accept:

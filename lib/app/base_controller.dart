@@ -322,7 +322,6 @@ class BaseController {
         case FlyCallActionEvent.engagedCall:
         case FlyCallActionEvent.actionCallSwitch:
         case FlyCallActionEvent.none:
-        case FlyCallActionEvent.unknown:
         case FlyCallActionEvent.audioTrackPublished:
         case FlyCallActionEvent.audioTrackUnPublished:
         case FlyCallActionEvent.videoTrackPublished:
@@ -399,32 +398,32 @@ class BaseController {
         // Store in service so it survives PIP (controller gone). The controller
         // replays and clears it in _seedStateFromService() when it reopens.
         // lastActionEvent (set above) delivers it immediately if alive.
-        case FlyCallActionEvent.outgoingRequest:
+        case FlyCallActionEvent.outgoingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
-        case FlyCallActionEvent.accept:
+        case FlyCallActionEvent.outgoingCallSwitchAccepted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
-        case FlyCallActionEvent.cancel:
+        case FlyCallActionEvent.outgoingCallSwitchCancelled:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
-        case FlyCallActionEvent.decline:
+        case FlyCallActionEvent.outgoingCallSwitchDeclined:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
-        case FlyCallActionEvent.timeout:
+        case FlyCallActionEvent.outgoingCallSwitchTimeout:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
