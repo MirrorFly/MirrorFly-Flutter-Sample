@@ -106,7 +106,6 @@ class CallKitOutgoingCallController extends GetxController
   // dispose them in onClose() for guaranteed cleanup.
   Worker? _statusWorker;
   Worker? _actionWorker;
-  Worker? _endSignalWorker;
 
 
   @override
@@ -163,7 +162,7 @@ class CallKitOutgoingCallController extends GetxController
           callResume(participantsId: ids);
           break;
         case FlyCallStatusEvent.callTimeout:
-          // handled via CallStateService.callTimeOut() → callEndSignal → _handleCallEndSignal
+          callTimeOut(participantsId: ids, isCallFailed: false, reason: 'callTimeout');
           break;
         case FlyCallStatusEvent.rejected:
           if (ids.isNotEmpty) rejected(userId: ids.first);
@@ -279,9 +278,6 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for incoming call");
       await setInitialAudioRouteDevice();
     }
-
-    // Subscribe to call-end signal for navigation.
-    _endSignalWorker = ever(_svc.callEndSignal, _handleCallEndSignal);
 
     _listenToSDKCallTimer();
     super.onInit();
@@ -892,7 +888,6 @@ class CallKitOutgoingCallController extends GetxController
     // internal disposeWorkers() is skipped in edge cases.
     _statusWorker?.dispose();
     _actionWorker?.dispose();
-    _endSignalWorker?.dispose();
     _disposeCallTimer();
     callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
     super.onClose();
@@ -1653,62 +1648,6 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  /// Navigation handler for [CallStateService.callEndSignal].
-  /// Called via `ever(_svc.callEndSignal, _handleCallEndSignal)` in onInit.
-  /// The service never touches routes; this controller does.
-  void _handleCallEndSignal(CallEndSignal? signal) {
-    if (signal == null) return;
-    callkitLogger.info('[MirrorFly][OutgoingCallController] _handleCallEndSignal reason=${signal.reason.endReasonStringValue} userIds=${signal.userIds}');
-
-    final reason = signal.detail;
-
-    // Close any switch-call dialog that may be open
-    closeDialog();
-    if (isAudioDialogOpen.value) {
-      Get.back();
-      isAudioDialogOpen.value = false;
-    }
-
-    switch (signal.reason) {
-      case CallEndReason.disconnected:
-        if (reason == 'reconnectAttemptsExceeded') {
-          toToast('Reconnection attempt exceeded');
-        } else if (reason != 'rejected' && reason != 'engaged' && reason != 'allEngaged') {
-          toToast('Call Disconnected');
-        }
-        break;
-      case CallEndReason.timedOut:
-        callTimeOut(participantsId: signal.userIds, isCallFailed: signal.isCallFailed,reason: signal.reason.endReasonStringValue);
-        // timeout/rejected toasts will have already been shown if needed
-        break;
-      case CallEndReason.callFailed:
-        toToast('Call Disconnected');
-        break;
-    }
-
-    if (NavUtils.previousRoute == Routes.callKitParticipantView) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating back from participant view due to call end");
-      NavUtils.back();
-      NavUtils.back();
-      return;
-    }
-    if (NavUtils.currentRoute == Routes.callKitParticipantView) {
-      NavUtils.back();
-      NavUtils.back();
-      return;
-    }
-    if (NavUtils.currentRoute == Routes.contacts) {
-      NavUtils.back();
-      NavUtils.back();
-      return;
-    }
-    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
-      callStatus(signal.reason == CallEndReason.disconnected ? 'Disconnected' : 'Call Ended');
-      if (signal.reason != CallEndReason.timedOut) {
-        NavUtils.back();
-      }
-    }
-  }
 
   void isOnGoingCallView() async {
     isOnGoingCallViewEnable.value = true;

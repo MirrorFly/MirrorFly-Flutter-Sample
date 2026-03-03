@@ -12,41 +12,6 @@ import '../data/utils.dart';
 import '../routes/route_settings.dart';
 
 // ---------------------------------------------------------------------------
-// Signal emitted by the service when the call ends, so the UI controller
-// can perform navigation without the service knowing about routes.
-// ---------------------------------------------------------------------------
-enum CallEndReason { disconnected, timedOut, callFailed }
-
-extension CallEndExtString on CallEndReason {
-  String get endReasonStringValue {
-    switch(this) {
-      case CallEndReason.disconnected:
-        return "disconnected";
-      case CallEndReason.timedOut:
-        return "timedOut";
-      case CallEndReason.callFailed:
-        return "callFailed";
-
-    }
-  }
-
-}
-
-class CallEndSignal {
-  final CallEndReason reason;
-  final List<String> userIds;
-  final String detail; // raw reason string from SDK
-  final bool isCallFailed;
-
-  const CallEndSignal({
-    required this.reason,
-    required this.userIds,
-    this.detail = '',
-    this.isCallFailed = false,
-  });
-}
-
-// ---------------------------------------------------------------------------
 // CallStateService — single source of truth for call state.
 //
 // Lifecycle:
@@ -147,11 +112,6 @@ class CallStateService extends GetxService {
   StreamSubscription<String>? _timerSubscription;
 
   // ── Navigation signal ─────────────────────────────────────────────────
-  /// The UI controller `ever()`-listens to this to handle navigation when
-  /// the call ends (disconnect, timeout, failed).  The service never touches
-  /// routes directly.
-  final Rxn<CallEndSignal> callEndSignal = Rxn<CallEndSignal>();
-
   /// Raw SDK status event — subscribers can `ever()` this to call their own
   /// methods when a new status arrives (e.g. CallKitOutgoingCallController).
   final Rxn<FlyCallStatus> lastStatusEvent = Rxn<FlyCallStatus>();
@@ -433,11 +393,6 @@ class CallStateService extends GetxService {
 
     if (userIds.isEmpty) {
       _resetValues();
-      callEndSignal.value = CallEndSignal(
-        reason: CallEndReason.disconnected,
-        userIds: [],
-        detail: reason,
-      );
       return;
     }
 
@@ -452,20 +407,10 @@ class CallStateService extends GetxService {
       // Check if local user hung up
       final bool isLocalHangup = isSelfId(id: userId);
       if (isLocalHangup) {
-        callEndSignal.value = CallEndSignal(
-          reason: CallEndReason.disconnected,
-          userIds: userIds,
-          detail: reason,
-        );
         return;
       }
 
       if (callerList.length <= 1 && !isMeet.value) {
-        callEndSignal.value = CallEndSignal(
-          reason: CallEndReason.disconnected,
-          userIds: userIds,
-          detail: reason,
-        );
         return;
       }
 
@@ -488,11 +433,6 @@ class CallStateService extends GetxService {
     }
 
     _resetValues();
-    callEndSignal.value = CallEndSignal(
-      reason: CallEndReason.disconnected,
-      userIds: userIds,
-      detail: reason,
-    );
   }
 
   void callTimeOut(
@@ -512,24 +452,8 @@ class CallStateService extends GetxService {
       if (target != null) callerList.remove(target);
     }
 
-    // bool shouldSignal = false;
-    // if (!isGroupOnGoingCallEnabled.value && isGroupCall.value) {
-    //   shouldSignal = callerList.length <= 1;
-    // } else if (!isGroupCall.value) {
-    //   shouldSignal = true;
-    // } else if (callerList.length <= 1) {
-    //   shouldSignal = true;
-    // }
-    //
-    // if (shouldSignal) {
-      callEndSignal.value = CallEndSignal(
-        reason:
-            isCallFailed ? CallEndReason.callFailed : CallEndReason.timedOut,
-        userIds: participantsId,
-        detail: reason,
-        isCallFailed: isCallFailed,
-      );
-    // }
+    // Navigation is handled by the controller's ever(lastStatusEvent)
+    // which receives FlyCallStatusEvent.callTimeout directly from BaseController.
   }
 
   void onCallFailed(
@@ -538,12 +462,8 @@ class CallStateService extends GetxService {
         '[CallStateService] onCallFailed participantsId=$participantsId reason=$reason');
     if (participantsId == null || participantsId.isEmpty) return;
     _resetValues();
-    callEndSignal.value = CallEndSignal(
-      reason: CallEndReason.callFailed,
-      userIds: participantsId,
-      detail: reason,
-      isCallFailed: true,
-    );
+    // Navigation is handled by the controller's ever(lastStatusEvent)
+    // which receives FlyCallStatusEvent.callFailed directly from BaseController.
   }
 
   void rejected({required String userId}) {
@@ -551,20 +471,12 @@ class CallStateService extends GetxService {
     if (isGroupCall.value) {
       callerList.removeWhere((e) => e.identity == userId);
       callerList.refresh();
-      if (callerList.length <= 1) {
-        callEndSignal.value = CallEndSignal(
-          reason: CallEndReason.disconnected,
-          userIds: [userId],
-          detail: 'rejected',
-        );
-      }
+      // Navigation for group: the controller's ever(lastStatusEvent) via
+      // FlyCallStatusEvent.rejected handles navigation when needed.
       return;
     }
-    callEndSignal.value = CallEndSignal(
-      reason: CallEndReason.disconnected,
-      userIds: [userId],
-      detail: 'rejected',
-    );
+    // Navigation is handled by the controller's ever(lastStatusEvent)
+    // which receives FlyCallStatusEvent.rejected directly from BaseController.
   }
 
   void remoteUserIsEngaged({required List<String> participants}) {
@@ -579,24 +491,13 @@ class CallStateService extends GetxService {
               ?.flyCallStatusEvent !=
           FlyCallStatusEvent.engaged) {
         callerList.removeWhere((e) => e.identity == first);
-        final bool allEngaged = callerList
-            .where((p) => !p.isLocalParticipant)
-            .every((p) => p.flyCallStatusEvent == FlyCallStatusEvent.engaged);
-        if (allEngaged && callerList.length > 1) {
-          callEndSignal.value = CallEndSignal(
-            reason: CallEndReason.disconnected,
-            userIds: participants,
-            detail: 'allEngaged',
-          );
-        }
+        // allEngaged scenario: controller's ever(lastStatusEvent) via
+        // FlyCallStatusEvent.engaged handles navigation.
       }
       return;
     }
-    callEndSignal.value = CallEndSignal(
-      reason: CallEndReason.disconnected,
-      userIds: participants,
-      detail: 'engaged',
-    );
+    // Navigation is handled by the controller's ever(lastStatusEvent)
+    // which receives FlyCallStatusEvent.engaged directly from BaseController.
   }
 
   // =========================================================================

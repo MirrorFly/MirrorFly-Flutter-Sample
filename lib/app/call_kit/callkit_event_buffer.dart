@@ -181,7 +181,7 @@ class CallKitEventBuffer {
       // outgoingRequest, incomingRequest, accept, cancel, decline, timeout
       // are dialog actions — they still need the UI controller, so they are
       // NOT dispatched through the service from the buffer. The UI controller
-      // handles these via its own ever() subscription on service.callEndSignal
+      // handles these via its own ever(lastActionEvent) subscription,
       // or by being registered when the event fires live.
       default:
         break;

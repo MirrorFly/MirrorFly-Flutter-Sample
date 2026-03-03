@@ -50,36 +50,54 @@ class CallKitPipController extends GetxController {
   var isPIPActive = false.obs;
   var showExpand = false.obs;
 
-  // Worker for callEndSignal subscription — stored for manual disposal.
-  Worker? _callEndWorker;
+  // Worker watching lastStatusEvent to stop PIP when the call ends.
+  Worker? _statusWorker;
 
   @override
   Future<void> onInit() async {
     super.onInit();
     callkitLogger.info('[MirrorFly][CallKitPIPController] onInit');
 
-    // Only subscribe to callEndSignal if the service is already running.
-    // If not, the signal will stop PIP naturally when the service emits it —
-    // the service itself calls stop() which triggers PIP closure via the
-    // outgoing controller's _handleCallEndSignal.
     if (CallStateService.isRegistered) {
-      _callEndWorker = ever(_svc!.callEndSignal, _onCallEnded);
+      _statusWorker = ever(_svc!.lastStatusEvent, _onStatusEvent);
     }
   }
 
   @override
   void onClose() {
-    _callEndWorker?.dispose();
-    _callEndWorker = null;
-    callkitLogger.info('[MirrorFly][CallKitPIPController] onClose — callEndWorker disposed');
+    _statusWorker?.dispose();
+    _statusWorker = null;
+    callkitLogger.info('[MirrorFly][CallKitPIPController] onClose — statusWorker disposed');
     super.onClose();
   }
 
-  /// Stop PIP when the service signals the call has ended.
-  void _onCallEnded(CallEndSignal? signal) {
-    if (signal == null) return;
-    callkitLogger.info(
-        '[MirrorFly][CallKitPIPController] _onCallEnded signal=$signal — stopping PIP');
+  /// Mirror the service's disconnect logic to decide when to close PIP.
+  void _onStatusEvent(FlyCallStatus? status) {
+    if (status == null || _svc == null) return;
+    final event = status.flyCallStatusEvent;
+
+    // Only act on terminal events
+    final isTerminal = event == FlyCallStatusEvent.disconnected ||
+        event == FlyCallStatusEvent.callFailed ||
+        event == FlyCallStatusEvent.callTimeout;
+    if (!isTerminal) return;
+
+    final svc = _svc!;
+    final ids = status.participantsIds;
+    final userId = ids.firstOrNull ?? '';
+
+    if (svc.isGroupCall.value && svc.isGroupOnGoingCallEnabled.value) {
+      // Group ongoing: close if local user hung up or only 1 participant left
+      final isLocalHangup = svc.isSelfId(id: userId);
+      if (isLocalHangup || svc.callerList.length <= 1) {
+        callkitLogger.info('[MirrorFly][CallKitPIPController] Stopping PIP — group call end (localHangup=$isLocalHangup, remaining=${svc.callerList.length})');
+        stopPIP();
+      }
+      return;
+    }
+
+    // One-to-one or meet with local hangup: always close
+    callkitLogger.info('[MirrorFly][CallKitPIPController] Stopping PIP — call ended (event=$event)');
     stopPIP();
   }
 
