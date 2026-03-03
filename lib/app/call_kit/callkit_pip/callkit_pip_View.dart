@@ -16,9 +16,15 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
-      body: ClipRect(
+      body: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -58,8 +64,8 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
 
           /// Close Button (Top Right)
           Positioned(
-            top: 0,
-            right: 2,
+            top: 5,
+            right: 5,
             child: GestureDetector(
               onTap: () {
                 controller.closePip();

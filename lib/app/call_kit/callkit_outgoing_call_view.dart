@@ -85,9 +85,8 @@ class CallKitOutgoingCallView
                             controller.goToPIP();
                           },
                           icon: const Icon(
-                            Icons.arrow_drop_down_sharp,
-                            size: 36,
-                            color: Colors.white,
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white
                           ),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
