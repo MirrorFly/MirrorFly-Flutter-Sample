@@ -2597,7 +2597,7 @@ class CallKitOutgoingCallController extends GetxController
     PictureInPicture.startPiP(pipWidget: const CallkitPipView());
     PictureInPicture.updatePiPParams(
       pipParams: PiPParams(
-        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.9,
+        pipWindowWidth: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).width * 0.7,
         pipWindowHeight: AppUtils.getSizeFromAspectRatio(NavUtils.width, NavUtils.height).height * 0.6,
         bottomSpace: 20,
         leftSpace: 20,
