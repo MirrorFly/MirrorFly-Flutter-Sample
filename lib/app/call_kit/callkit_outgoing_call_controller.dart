@@ -476,7 +476,14 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       if(currentCallMode.value != "MEET"){
-        callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
+        // Only derive isVideoEnabled from callType when this is a fresh screen
+        // open (NavUtils.arguments present). On PIP expand (no nav args), the
+        // value was already seeded correctly from the service — don't overwrite.
+        if (NavUtils.arguments != null) {
+          callType.value == "audio"
+              ? isVideoEnabled.value = false
+              : isVideoEnabled.value = true;
+        }
       }
 
     super.onReady();
