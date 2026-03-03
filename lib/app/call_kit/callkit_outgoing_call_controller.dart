@@ -101,6 +101,12 @@ class CallKitOutgoingCallController extends GetxController
   /// The service is always started before this controller is created.
   CallStateService get _svc => CallStateService.instance;
 
+  // Workers for service event subscriptions — stored so we can manually
+  // dispose them in onClose() for guaranteed cleanup.
+  Worker? _statusWorker;
+  Worker? _actionWorker;
+  Worker? _endSignalWorker;
+
 
   @override
   Future<void> onInit() async {
@@ -117,7 +123,7 @@ class CallKitOutgoingCallController extends GetxController
     // lastStatusEvent / lastActionEvent. We ever() those here and call the
     // exact same methods this controller has always had — no behaviour change.
 
-    ever(_svc.lastStatusEvent, (FlyCallStatus? status) {
+    _statusWorker = ever(_svc.lastStatusEvent, (FlyCallStatus? status) {
       if (status == null) return;
       final event = status.flyCallStatusEvent;
       final ids = status.participantsIds;
@@ -170,7 +176,7 @@ class CallKitOutgoingCallController extends GetxController
       }
     });
 
-    ever(_svc.lastActionEvent, (FlyCallAction? action) {
+    _actionWorker = ever(_svc.lastActionEvent, (FlyCallAction? action) {
       if (action == null) return;
       final event = action.flyCallEvent;
       callkitLogger.info('[MirrorFly][OutgoingCallController] lastActionEvent $event');
@@ -262,6 +268,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     await configureCallMode(callMode: callMode.value, chatId: groupId.value);
+    _svc.configureCallMode(callMode: callMode.value, chatId: groupId.value);
     onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
@@ -271,7 +278,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     // Subscribe to call-end signal for navigation.
-    ever(_svc.callEndSignal, _handleCallEndSignal);
+    _endSignalWorker = ever(_svc.callEndSignal, _handleCallEndSignal);
 
     _listenToSDKCallTimer();
     super.onInit();
@@ -280,10 +287,6 @@ class CallKitOutgoingCallController extends GetxController
   void _listenToSDKCallTimer() {
     MirrorFlyCallKit.flyCallTimer.listen((timer) {
       callDuration(timer);
-      // Mirror into the service so PIP can show the live timer too
-      if (CallStateService.isRegistered) {
-        _svc.callDuration.value = timer;
-      }
     });
   }
 
@@ -338,6 +341,26 @@ class CallKitOutgoingCallController extends GetxController
         '[MirrorFly][OutgoingCallController] _seedStateFromService done '
         'callStatus=${callStatus.value} isOnGoing=${isOnGoingCallViewEnable.value} '
         'duration=${callDuration.value} callers=${callerList.length}');
+
+    // ── Replay pending call-switch dialog ─────────────────────────────────
+    // If a call-switch request (outgoingRequest / incomingRequest) arrived
+    // while the controller was absent (user in PIP), it was stored in the
+    // service. Show the dialog now that the controller is alive.
+    final pending = _svc.pendingCallSwitchRequest.value;
+    if (pending != null) {
+      callkitLogger.info(
+          '[MirrorFly][OutgoingCallController] _seedStateFromService — replaying pending call-switch ${pending.flyCallEvent}');
+      switch (pending.flyCallEvent) {
+        case FlyCallActionEvent.outgoingRequest:
+          showOutGoingCallSwitchRequestDialog();
+          break;
+        case FlyCallActionEvent.incomingRequest:
+          showIncomingCallSwitchRequestDialog();
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   Future<void> _initCallArguments() async {
@@ -814,7 +837,12 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   void onClose() {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController onClose called");
+    // Manually dispose service workers — guarantees cleanup even if GetX's
+    // internal disposeWorkers() is skipped in edge cases.
+    _statusWorker?.dispose();
+    _actionWorker?.dispose();
+    _endSignalWorker?.dispose();
+    callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
     super.onClose();
   }
 
