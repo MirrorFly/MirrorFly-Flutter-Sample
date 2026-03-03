@@ -1657,7 +1657,7 @@ class CallKitOutgoingCallController extends GetxController
   /// The service never touches routes; this controller does.
   void _handleCallEndSignal(CallEndSignal? signal) {
     if (signal == null) return;
-    callkitLogger.info('[MirrorFly][OutgoingCallController] _handleCallEndSignal reason=${signal.reason} userIds=${signal.userIds}');
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _handleCallEndSignal reason=${signal.reason.endReasonStringValue} userIds=${signal.userIds}');
 
     final reason = signal.detail;
 
@@ -1677,6 +1677,7 @@ class CallKitOutgoingCallController extends GetxController
         }
         break;
       case CallEndReason.timedOut:
+        callTimeOut(participantsId: signal.userIds, isCallFailed: signal.isCallFailed,reason: signal.reason.endReasonStringValue);
         // timeout/rejected toasts will have already been shown if needed
         break;
       case CallEndReason.callFailed:

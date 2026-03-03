@@ -17,6 +17,21 @@ import '../routes/route_settings.dart';
 // ---------------------------------------------------------------------------
 enum CallEndReason { disconnected, timedOut, callFailed }
 
+extension CallEndExtString on CallEndReason {
+  String get endReasonStringValue {
+    switch(this) {
+      case CallEndReason.disconnected:
+        return "disconnected";
+      case CallEndReason.timedOut:
+        return "timedOut";
+      case CallEndReason.callFailed:
+        return "callFailed";
+
+    }
+  }
+
+}
+
 class CallEndSignal {
   final CallEndReason reason;
   final List<String> userIds;
