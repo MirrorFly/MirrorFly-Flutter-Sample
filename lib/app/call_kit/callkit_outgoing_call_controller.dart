@@ -1734,8 +1734,7 @@ class CallKitOutgoingCallController extends GetxController
 
   void setCameraEnable({required bool enable}) async {
     callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable start");
-    final FlyCallType? flyCallType =
-        await MirrorFlyCallKit.getCurrentCallType();
+    final FlyCallType? flyCallType = MirrorFlyCallKit.getCurrentCallType();
 
     if (flyCallType == null) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Unable to get current call type.");
@@ -1743,8 +1742,9 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     final bool callStatus = await MirrorFlyCallKit.isCallConnected();
+    final isMeetCall = MirrorFlyCallKit.getCurrentCallMode() == "MEET";
 
-    if (flyCallType == FlyCallType.audio && callStatus) {
+    if (flyCallType == FlyCallType.audio && callStatus && !isMeetCall) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: Current call is not a video call, so requesting to switch video call. callStatus- $callStatus");
       requestVideoCallSwitch();
       return;
@@ -1930,12 +1930,14 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     final bool callStatus = await MirrorFlyCallKit.isCallConnected();
-    final FlyCallType? flyCallType = await MirrorFlyCallKit.getCurrentCallType();
+    final FlyCallType? flyCallType = MirrorFlyCallKit.getCurrentCallType();
+    final isMeetCall = MirrorFlyCallKit.getCurrentCallMode() == "MEET";
+
     callkitLogger.info("MirrorFlyCallKit.getVideoMuteStatus(userJid: getRemoteParticipantIdForOneToOneCall()) called ${MirrorFlyCallKit.getVideoMuteStatus(userJid: getRemoteParticipantIdForOneToOneCall())}");
 
     if (flyCallType == FlyCallType.audio && callStatus) {
       callkitLogger.info("[MirrorFly][OutgoingCallController]  makeCallSwitch invoked...");
-      if(await MirrorFlyCallKit.validateSwitchRequest()) {
+      if(await MirrorFlyCallKit.validateSwitchRequest() && !isMeetCall) {
         _videoCallSwitchRequestConfirmationPopup();
       } else {
         MirrorFlyCallKit.setCameraEnable(
