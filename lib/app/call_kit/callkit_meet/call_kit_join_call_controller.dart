@@ -271,4 +271,34 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       checkPermission();
     }
   }
+
+  void participantConnected({required List<String> participantsId}) async {
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("#CallKitJoinCallController #participantConnected #Empty");
+      return;
+    }
+
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #${participantsId.first}");
+
+    final participant = JoinLinkParticipant(userId: participantsId.first, status: "CONNECTED");
+    await getCallDetails(participants: [participant]);
+  }
+
+  void participantDisconnected({required String participant}) {
+    callkitLogger.info("#CallKitJoinCallController #participantDisconnected #$participant, users: ${users.map((e) => e.toString())}");
+
+    final jid = CallUtils.getJidFromUserId(
+      userId: participant,
+      isGroup: false,
+    );
+    callkitLogger.info("#CallKitJoinCallController #participantDisconnected #jid: $jid");
+
+    if (users.contains(jid)) {
+      callkitLogger.info("#CallKitJoinCallController #participantDisconnected #participantFound");
+      users.remove(jid);
+    } else {
+      callkitLogger.info("#CallKitJoinCallController #participantDisconnected #noParticipant");
+    }
+  }
 }

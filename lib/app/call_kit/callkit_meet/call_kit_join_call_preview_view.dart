@@ -60,7 +60,10 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                         /// Call Members Name | Placeholder
                         Center(
                           child: Obx(() {
-                            return FutureBuilder(future: CallUtils.getCallersName(controller.users, false),
+                            return FutureBuilder(future: CallUtils.getCallersName(
+                              List<String>.from(controller.users),
+                              false,
+                            ),
                                 builder: (ctx, snap) {
                               callkitLogger.info("Callers Name FutureBuilder snap data ${snap.data}");
                                   return Text(
