@@ -96,6 +96,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString getOneToOneCallRemoteUserName = "".obs;
 
   RxBool isMeet = false.obs;
+  StreamSubscription<String>? callTimerStream;
 
   /// Convenience accessor for the running CallStateService.
   /// The service is always started before this controller is created.
@@ -110,6 +111,8 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onInit called");
+
     // Ensure the service is running — for incoming calls BaseController starts
     // it before navigation, but for outgoing calls (and edge cases) we start
     // it here as well. CallStateService.start() is idempotent.
@@ -284,8 +287,22 @@ class CallKitOutgoingCallController extends GetxController
     super.onInit();
   }
 
+  void _disposeCallTimer() {
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _disposeCallTimer called');
+    callTimerStream?.cancel();
+    callTimerStream = null;
+  }
+
   void _listenToSDKCallTimer() {
-    MirrorFlyCallKit.flyCallTimer.listen((timer) {
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer called');
+
+    if (callTimerStream != null) {
+      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer callTimerStream is already active');
+      return;
+    }
+
+    callTimerStream = MirrorFlyCallKit.flyCallTimer.listen((timer) {
+      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
       callDuration(timer);
     });
   }
@@ -300,6 +317,16 @@ class CallKitOutgoingCallController extends GetxController
   /// initial snapshot so no event needs to be re-fired.
   void _seedStateFromService() {
     callkitLogger.info('[MirrorFly][OutgoingCallController] _seedStateFromService — restoring state from service');
+
+    // ── Call metadata (required for Meet mode and onReady() to work correctly
+    //    when PIP is expanded and NavUtils.arguments is null) ─────────────────
+    callType.value         = _svc.callType.value;
+    groupId.value          = _svc.groupId.value;
+    callMode.value         = _svc.callMode.value;
+    currentCallMode.value  = _svc.currentCallMode.value;
+    isIncoming.value       = _svc.isIncoming.value;
+    callKind               = _svc.callKind;
+    isMeet.value           = _svc.isMeet.value;
 
     callStatus.value           = _svc.callStatus.value;
     isAudioMuted.value         = _svc.isAudioMuted.value;
@@ -316,6 +343,9 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = _svc.secondaryCallViewUserId.value;
     getOneToOneCallRemoteUserName.value = _svc.getOneToOneCallRemoteUserName.value;
     callDuration.value         = _svc.callDuration.value;
+
+    cameraPosition.value      = _svc.cameraPosition.value;
+    cameraSwitch.value         = _svc.cameraSwitch.value;
 
     if (_svc.callerList.isNotEmpty) {
       callerList.value = List.from(_svc.callerList);
@@ -476,7 +506,14 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       if(currentCallMode.value != "MEET"){
-        callType.value == "audio" ? isVideoEnabled.value = false : isVideoEnabled.value = true;
+        // Only derive isVideoEnabled from callType when this is a fresh screen
+        // open (NavUtils.arguments present). On PIP expand (no nav args), the
+        // value was already seeded correctly from the service — don't overwrite.
+        if (NavUtils.arguments != null) {
+          callType.value == "audio"
+              ? isVideoEnabled.value = false
+              : isVideoEnabled.value = true;
+        }
       }
 
     super.onReady();
@@ -856,6 +893,7 @@ class CallKitOutgoingCallController extends GetxController
     _statusWorker?.dispose();
     _actionWorker?.dispose();
     _endSignalWorker?.dispose();
+    _disposeCallTimer();
     callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
     super.onClose();
   }
@@ -865,6 +903,7 @@ class CallKitOutgoingCallController extends GetxController
   void dispose(){
     callkitLogger.info("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
     _player?.dispose();
+    _disposeCallTimer();
     WakelockPlus.disable();
     super.dispose();
   }
@@ -1822,6 +1861,8 @@ class CallKitOutgoingCallController extends GetxController
       } else if (pos == CameraType.back) {
         cameraPosition.value = pos;
       }
+      // Write back to service so position survives PIP cycles.
+      _svc.cameraPosition.value = cameraPosition.value;
       callkitLogger.info("[MirrorFly][OutgoingCallController] updated pos : $pos");
 
       // Update state
