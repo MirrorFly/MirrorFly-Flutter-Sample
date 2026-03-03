@@ -266,22 +266,22 @@ class CallKitEventBuffer {
       case FlyCallActionEvent.toAudioCallAfterCallSwitch:
         c.audioCallAfterCallSwitch();
         break;
-      case FlyCallActionEvent.outgoingRequest:
+      case FlyCallActionEvent.outgoingCallSwitchRequest:
         c.showOutGoingCallSwitchRequestDialog();
         break;
-      case FlyCallActionEvent.incomingRequest:
+      case FlyCallActionEvent.incomingCallSwitchRequest:
         c.showIncomingCallSwitchRequestDialog();
         break;
-      case FlyCallActionEvent.accept:
+      case FlyCallActionEvent.outgoingCallSwitchAccepted:
         c.onVideoCallSwitchAccept();
         break;
-      case FlyCallActionEvent.cancel:
+      case FlyCallActionEvent.outgoingCallSwitchCancelled:
         c.onRemoteUserCancelledTheSwitchRequest();
         break;
-      case FlyCallActionEvent.decline:
+      case FlyCallActionEvent.outgoingCallSwitchDeclined:
         c.onCallSwitchRemoteUserDeclined();
         break;
-      case FlyCallActionEvent.timeout:
+      case FlyCallActionEvent.outgoingCallSwitchTimeout:
         c.onVideoCallSwitchTimeOut();
         break;
       case FlyCallActionEvent.audioMuted:
