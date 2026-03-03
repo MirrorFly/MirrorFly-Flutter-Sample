@@ -357,16 +357,16 @@ class CallKitOutgoingCallController extends GetxController
         case FlyCallActionEvent.incomingCallSwitchRequest:
           showIncomingCallSwitchRequestDialog();
           break;
-        case FlyCallActionEvent.accept:
+        case FlyCallActionEvent.outgoingCallSwitchAccepted:
           onVideoCallSwitchAccept();
           break;
-        case FlyCallActionEvent.decline:
+        case FlyCallActionEvent.outgoingCallSwitchDeclined:
           onCallSwitchRemoteUserDeclined();
           break;
-        case FlyCallActionEvent.cancel:
+        case FlyCallActionEvent.outgoingCallSwitchCancelled:
           onRemoteUserCancelledTheSwitchRequest();
           break;
-        case FlyCallActionEvent.timeout:
+        case FlyCallActionEvent.outgoingCallSwitchTimeout:
           onVideoCallSwitchTimeOut();
           break;
         default:
