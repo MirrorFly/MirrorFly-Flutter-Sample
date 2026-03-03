@@ -235,7 +235,7 @@ class BaseController {
       /// calling status arrives so we check and set the values of the call here
       ///
       callerId = flyCallAction.participantId;
-      callType = await MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
+      callType = MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
       callMode =  MirrorFlyCallKit.getCurrentCallMode();
       groupId =  MirrorFlyCallKit.getCurrentCallGroupId();
 
@@ -299,7 +299,7 @@ class BaseController {
           : null;
 
       debugPrint(
-          "[MirrorFly][BaseController] callActionStream - Event: ${event.toJson()}");
+          "[MirrorFly][BaseController] callActionStream - Event: ${event.toJson()} flyCallActionEvent: $flyCallActionEvent, uiController: ${uiController == null}");
 
       // Publish raw action event for controller ever() subscribers.
       callStateService.lastActionEvent.value = flyCallAction;
@@ -378,9 +378,13 @@ class BaseController {
 
         case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
-          // onCallModeChange triggers participant list refresh in the UI controller
-          // (which also refreshes service state via getCurrentCallParticipants)
-          uiController?.onParticipantListUpdated();
+          // Refresh service state: re-fetch participants and reconfigure call mode.
+          // The controller's ever(lastActionEvent) then calls onParticipantListUpdated().
+          callStateService.getCurrentCallParticipants();
+          callStateService.configureCallMode(
+            callMode: MirrorFlyCallKit.getCurrentCallMode() ?? '',
+            chatId: MirrorFlyCallKit.getCurrentCallGroupId() ?? '',
+          );
           break;
 
         case FlyCallActionEvent.onAudioRouteChanged:
@@ -390,35 +394,38 @@ class BaseController {
           }
           break;
 
-        // ── Dialog events → UI controller (require Get context for dialogs) ──
+        // ── Dialog / call-switch events ────────────────────────────────────────
+        // Store pending request in service so it survives PIP (controller gone).
+        // Cleared when the request is resolved. lastActionEvent (set above)
+        // delivers it immediately if the controller is alive.
         case FlyCallActionEvent.outgoingCallSwitchRequest:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest");
-          uiController?.showOutGoingCallSwitchRequestDialog();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest — storing as pending");
+          callStateService.pendingCallSwitchRequest.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.incomingCallSwitchRequest:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest");
-          uiController?.showIncomingCallSwitchRequestDialog();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest — storing as pending");
+          callStateService.pendingCallSwitchRequest.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchAccepted:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept");
-          uiController?.onVideoCallSwitchAccept();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept — clearing pending");
+          callStateService.pendingCallSwitchRequest.value = null;
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchCancelled:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel");
-          uiController?.onRemoteUserCancelledTheSwitchRequest();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel — clearing pending");
+          callStateService.pendingCallSwitchRequest.value = null;
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchDeclined:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline");
-          uiController?.onCallSwitchRemoteUserDeclined();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline — clearing pending");
+          callStateService.pendingCallSwitchRequest.value = null;
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout");
-          uiController?.onVideoCallSwitchTimeOut();
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — clearing pending");
+          callStateService.pendingCallSwitchRequest.value = null;
           break;
 
         default:

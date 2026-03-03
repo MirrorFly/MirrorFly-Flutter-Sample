@@ -129,7 +129,7 @@ class CallStateService extends GetxService {
 
   // ── Call duration / timer ──────────────────────────────────────────────
   var callDuration = ''.obs;
-  Timer? _callTimer;
+  StreamSubscription<String>? _timerSubscription;
 
   // ── Navigation signal ─────────────────────────────────────────────────
   /// The UI controller `ever()`-listens to this to handle navigation when
@@ -145,6 +145,11 @@ class CallStateService extends GetxService {
   /// methods when a new action arrives.
   final Rxn<FlyCallAction> lastActionEvent = Rxn<FlyCallAction>();
 
+  /// Persists an active call-switch request (outgoingRequest / incomingRequest)
+  /// so the controller can replay the dialog when PIP is expanded.
+  /// Cleared to null when the request is resolved (accept/cancel/decline/timeout).
+  final Rxn<FlyCallAction> pendingCallSwitchRequest = Rxn<FlyCallAction>();
+
   // =========================================================================
   // Lifecycle
   // =========================================================================
@@ -153,53 +158,21 @@ class CallStateService extends GetxService {
   Future<void> onInit() async {
     callkitLogger.info('[CallStateService] onInit');
     getCurrentCallParticipants();
+    // Listen to the SDK call timer — same source as CallKitOutgoingCallController.
+    // No separate Timer needed; the SDK manages the clock.
+    _timerSubscription = MirrorFlyCallKit.flyCallTimer.listen((timer) {
+      callDuration.value = timer;
+      callkitLogger.info('[CallStateService] flyCallTimer tick: $timer');
+    });
     super.onInit();
   }
 
   @override
   void onClose() {
-    callkitLogger.info('[CallStateService] onClose — stopping timer');
-    _stopTimer();
+    callkitLogger.info('[CallStateService] onClose — cancelling timer subscription');
+    _timerSubscription?.cancel();
+    _timerSubscription = null;
     super.onClose();
-  }
-
-  // =========================================================================
-  // Timer
-  // =========================================================================
-
-  void startTimer({int? time}) {
-    if (_callTimer != null) {
-      _callTimer?.cancel();
-    }
-    _callTimer = null;
-    const oneSec = Duration(seconds: 1);
-    final startTime = time != null
-        ? DateTime.fromMillisecondsSinceEpoch(time)
-        : DateTime.now();
-    _callTimer = Timer.periodic(oneSec, (Timer t) {
-      final hrDur = DateTime.now().difference(startTime).inHours;
-      final minDur = DateTime.now().difference(startTime).inMinutes;
-      final secDur = DateTime.now().difference(startTime).inSeconds % 60;
-      final hours =
-          hrDur.remainder(24).toStringAsFixed(0).padLeft(2, '0');
-      final minutes =
-          minDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
-      final seconds =
-          secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
-      callDuration.value =
-          '${hours != '00' ? '$hours:' : ''}$minutes:$seconds';
-    });
-    callkitLogger.info('[CallStateService] startTimer started');
-  }
-
-  void _stopTimer() {
-    if (_callTimer == null) {
-      callkitLogger.info('[CallStateService] stopTimer: timer is null');
-      return;
-    }
-    _callTimer?.cancel();
-    _callTimer = null;
-    callkitLogger.info('[CallStateService] stopTimer: timer stopped');
   }
 
   // =========================================================================
@@ -246,6 +219,9 @@ class CallStateService extends GetxService {
       if (!isUserOnHold) {
         callStatus('Connected');
         isOnGoingCallViewEnable.value = true;
+      } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
       }
 
       for (var p in participantIds) {
@@ -264,7 +240,7 @@ class CallStateService extends GetxService {
         }
       }
       if (!isUserOnHold) {
-        startTimer();
+        // timer runs automatically via flyCallTimer stream
       }
     } else {
       final bool isUserOnHold = callerList.any((p) =>
@@ -279,8 +255,11 @@ class CallStateService extends GetxService {
         if (!isGroupOnGoingCallEnabled.value) {
           isGroupOnGoingCallEnabled.value = true;
         }
-        startTimer();
+        // timer runs automatically via flyCallTimer stream
       } else {
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
+
         updateCallerStatusList(
             participantsId: participantIds,
             status: FlyCallStatusEvent.connected);
@@ -314,6 +293,11 @@ class CallStateService extends GetxService {
           callerList[index] = target.copyWith(
               isReconnecting: false,
               flyCallStatus: FlyCallStatusEvent.reconnected);
+          callkitLogger.info(
+              '[CallStateService] reconnected updated participant id=$id status set to reconnected');
+        } else {
+          callkitLogger.info(
+              "[MirrorFly] → Participant $id was not in reconnecting state");
         }
         if (target.isLocalParticipant) {
           callerList[index] = target.copyWith(
@@ -321,7 +305,12 @@ class CallStateService extends GetxService {
               flyCallStatus: FlyCallStatusEvent.reconnected);
           callStatus('Connected');
           callTryStatus('Connected');
+          callkitLogger.info(
+              '[CallStateService] reconnected local participant id=$id status set to reconnected, call status set to Connected');
         }
+      } else {
+        callkitLogger.info(
+            "[MirrorFly] → No participant found in callerList for id: $id");
       }
     }
     callerList.refresh();
@@ -335,14 +324,22 @@ class CallStateService extends GetxService {
     callkitLogger.info(
         '[CallStateService] isAudioMute participantId=$participantId isAudioMuted=$isAudioMuted index=$index');
 
-    if (index.isNegative) return;
+    if (index.isNegative) {
+      callkitLogger.info("[Controller] isAudioMute: No participant found for id: $participantId");
+      return;
+    }
 
     final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
     callerList.value = List.from(callerList)..[index] = updated;
 
     if (participantId == getLocalParticipant()?.identity) {
+      callkitLogger.info("[Controller] isAudioMute: Updating local audio mute status to $isAudioMuted");
       this.isAudioMuted(isAudioMuted);
+    } else {
+      callkitLogger.info("[Controller] isAudioMute: Received for Remote participantId: $participantId");
     }
+
+    callkitLogger.info("[Controller] isAudioMute: Updated ${updated.identity} mute status to $isAudioMuted");
   }
 
   void isVideoMute(
@@ -350,8 +347,10 @@ class CallStateService extends GetxService {
     callkitLogger.info(
         '[CallStateService] isVideoMute participantId=$participantId isVideoMuted=$isVideoMuted');
     if (isSelfId(id: participantId)) {
+      callkitLogger.info("[Controller] Updating local video mute status to $isVideoMuted");
       isVideoEnabled.value = isVideoMuted;
     } else {
+      callkitLogger.info("[Controller] Updating remote video mute status to $isVideoMuted");
       isRemoteVideoMuted.value = isVideoMuted;
     }
   }
@@ -414,11 +413,10 @@ class CallStateService extends GetxService {
   /// controller can navigate without the service touching routes.
   void disconnectCall({required List<String> userIds, required String reason}) {
     callkitLogger.info(
-        '[CallStateService] disconnectCall userIds=$userIds reason=$reason');
+        '[CallStateService] disconnectCall userIds=$userIds reason=$reason isGroupCall=${isGroupCall.value} isGroupOnGoingCallEnabled=${isGroupOnGoingCallEnabled.value} isMeet=${isMeet.value}');
 
     if (userIds.isEmpty) {
       _resetValues();
-      _stopTimer();
       callEndSignal.value = CallEndSignal(
         reason: CallEndReason.disconnected,
         userIds: [],
@@ -430,8 +428,21 @@ class CallStateService extends GetxService {
     final String userId = userIds.firstOrNull ?? '';
 
     if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
+
       callerList.removeWhere((e) => e.identity == userId);
       remoteUserNameMap.remove(userId);
+
+      // Check if local user hung up
+      final bool isLocalHangup = isSelfId(id: userId);
+      if (isLocalHangup) {
+        callEndSignal.value = CallEndSignal(
+          reason: CallEndReason.disconnected,
+          userIds: userIds,
+          detail: reason,
+        );
+        return;
+      }
 
       if (callerList.length <= 1 && !isMeet.value) {
         callEndSignal.value = CallEndSignal(
@@ -441,31 +452,26 @@ class CallStateService extends GetxService {
         );
         return;
       }
-      // Check if local user hung up
-      if (isSelfId(id: userId)) {
-        callEndSignal.value = CallEndSignal(
-          reason: CallEndReason.disconnected,
-          userIds: userIds,
-          detail: reason,
-        );
-        return;
-      }
+
       if (callerList.length <= 1 && isMeet.value) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Only one participant left in a Meet call, so not ending call.");
         isOnGoingCallViewEnable.value = false;
       }
       return;
     }
 
     // One-to-one call
-    if (isMeet.value && !isSelfId(id: userId)) {
+    // Check if local user hung up
+    final bool isLocalHangup = isSelfId(id: userId);
+    if (isMeet.value && !isLocalHangup) {
       callerList.removeWhere((e) => e.identity == userId);
       remoteUserNameMap.remove(userId);
+      //** _getCallRemoteUserName(); Missing
       isOnGoingCallViewEnable.value = false;
       return;
     }
 
     _resetValues();
-    _stopTimer();
     callEndSignal.value = CallEndSignal(
       reason: CallEndReason.disconnected,
       userIds: userIds,
@@ -500,7 +506,6 @@ class CallStateService extends GetxService {
     }
 
     if (shouldSignal) {
-      _stopTimer();
       callEndSignal.value = CallEndSignal(
         reason:
             isCallFailed ? CallEndReason.callFailed : CallEndReason.timedOut,
@@ -517,7 +522,6 @@ class CallStateService extends GetxService {
         '[CallStateService] onCallFailed participantsId=$participantsId reason=$reason');
     if (participantsId == null || participantsId.isEmpty) return;
     _resetValues();
-    _stopTimer();
     callEndSignal.value = CallEndSignal(
       reason: CallEndReason.callFailed,
       userIds: participantsId,
