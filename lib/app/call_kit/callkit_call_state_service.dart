@@ -145,10 +145,11 @@ class CallStateService extends GetxService {
   /// methods when a new action arrives.
   final Rxn<FlyCallAction> lastActionEvent = Rxn<FlyCallAction>();
 
-  /// Persists an active call-switch request (outgoingRequest / incomingRequest)
-  /// so the controller can replay the dialog when PIP is expanded.
-  /// Cleared to null when the request is resolved (accept/cancel/decline/timeout).
-  final Rxn<FlyCallAction> pendingCallSwitchRequest = Rxn<FlyCallAction>();
+  /// Persists the most recent call-switch event (outgoingRequest, incomingRequest,
+  /// accept, decline, cancel, timeout) so the controller can replay it when
+  /// PIP is expanded and the controller is recreated. Cleared after the
+  /// controller handles it.
+  final Rxn<FlyCallAction> lastCallSwitchEvent = Rxn<FlyCallAction>();
 
   // =========================================================================
   // Lifecycle

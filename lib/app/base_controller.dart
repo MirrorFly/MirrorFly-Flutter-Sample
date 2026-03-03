@@ -396,37 +396,37 @@ class BaseController {
           break;
 
         // ── Dialog / call-switch events ────────────────────────────────────────
-        // Store pending request in service so it survives PIP (controller gone).
-        // Cleared when the request is resolved. lastActionEvent (set above)
-        // delivers it immediately if the controller is alive.
+        // Store in service so it survives PIP (controller gone). The controller
+        // replays and clears it in _seedStateFromService() when it reopens.
+        // lastActionEvent (set above) delivers it immediately if alive.
         case FlyCallActionEvent.outgoingRequest:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest — storing as pending");
-          callStateService.pendingCallSwitchRequest.value = flyCallAction;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.incomingRequest:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest — storing as pending");
-          callStateService.pendingCallSwitchRequest.value = flyCallAction;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.accept:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept — clearing pending");
-          callStateService.pendingCallSwitchRequest.value = null;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.cancel:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel — clearing pending");
-          callStateService.pendingCallSwitchRequest.value = null;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.decline:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline — clearing pending");
-          callStateService.pendingCallSwitchRequest.value = null;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         case FlyCallActionEvent.timeout:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — clearing pending");
-          callStateService.pendingCallSwitchRequest.value = null;
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — storing as lastCallSwitchEvent");
+          callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
 
         default:

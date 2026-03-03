@@ -342,24 +342,38 @@ class CallKitOutgoingCallController extends GetxController
         'callStatus=${callStatus.value} isOnGoing=${isOnGoingCallViewEnable.value} '
         'duration=${callDuration.value} callers=${callerList.length}');
 
-    // ── Replay pending call-switch dialog ─────────────────────────────────
-    // If a call-switch request (outgoingRequest / incomingRequest) arrived
-    // while the controller was absent (user in PIP), it was stored in the
-    // service. Show the dialog now that the controller is alive.
-    final pending = _svc.pendingCallSwitchRequest.value;
-    if (pending != null) {
+    // ── Replay pending call-switch event ──────────────────────────────────
+    // Any call-switch event (request or resolution) that arrived while the
+    // controller was absent (PIP mode) is stored in the service. We replay
+    // it now and clear so it doesn't fire again on future re-creations.
+    final switchEvent = _svc.lastCallSwitchEvent.value;
+    if (switchEvent != null) {
       callkitLogger.info(
-          '[MirrorFly][OutgoingCallController] _seedStateFromService — replaying pending call-switch ${pending.flyCallEvent}');
-      switch (pending.flyCallEvent) {
+          '[MirrorFly][OutgoingCallController] _seedStateFromService — replaying call-switch ${switchEvent.flyCallEvent}');
+      switch (switchEvent.flyCallEvent) {
         case FlyCallActionEvent.outgoingRequest:
           showOutGoingCallSwitchRequestDialog();
           break;
         case FlyCallActionEvent.incomingRequest:
           showIncomingCallSwitchRequestDialog();
           break;
+        case FlyCallActionEvent.accept:
+          onVideoCallSwitchAccept();
+          break;
+        case FlyCallActionEvent.decline:
+          onCallSwitchRemoteUserDeclined();
+          break;
+        case FlyCallActionEvent.cancel:
+          onRemoteUserCancelledTheSwitchRequest();
+          break;
+        case FlyCallActionEvent.timeout:
+          onVideoCallSwitchTimeOut();
+          break;
         default:
           break;
       }
+      // Clear so it doesn't replay again if the screen is recreated.
+      _svc.lastCallSwitchEvent.value = null;
     }
   }
 
