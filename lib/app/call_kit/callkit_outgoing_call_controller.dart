@@ -301,6 +301,16 @@ class CallKitOutgoingCallController extends GetxController
   void _seedStateFromService() {
     callkitLogger.info('[MirrorFly][OutgoingCallController] _seedStateFromService — restoring state from service');
 
+    // ── Call metadata (required for Meet mode and onReady() to work correctly
+    //    when PIP is expanded and NavUtils.arguments is null) ─────────────────
+    callType.value         = _svc.callType.value;
+    groupId.value          = _svc.groupId.value;
+    callMode.value         = _svc.callMode.value;
+    currentCallMode.value  = _svc.currentCallMode.value;
+    isIncoming.value       = _svc.isIncoming.value;
+    callKind               = _svc.callKind;
+    isMeet.value           = _svc.isMeet.value;
+
     callStatus.value           = _svc.callStatus.value;
     isAudioMuted.value         = _svc.isAudioMuted.value;
     isVideoEnabled.value       = _svc.isVideoEnabled.value;
@@ -316,6 +326,9 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = _svc.secondaryCallViewUserId.value;
     getOneToOneCallRemoteUserName.value = _svc.getOneToOneCallRemoteUserName.value;
     callDuration.value         = _svc.callDuration.value;
+
+    cameraPosition.value      = _svc.cameraPosition.value;
+    cameraSwitch.value         = _svc.cameraSwitch.value;
 
     if (_svc.callerList.isNotEmpty) {
       callerList.value = List.from(_svc.callerList);
@@ -1829,6 +1842,8 @@ class CallKitOutgoingCallController extends GetxController
       } else if (pos == CameraType.back) {
         cameraPosition.value = pos;
       }
+      // Write back to service so position survives PIP cycles.
+      _svc.cameraPosition.value = cameraPosition.value;
       callkitLogger.info("[MirrorFly][OutgoingCallController] updated pos : $pos");
 
       // Update state
