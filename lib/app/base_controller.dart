@@ -383,38 +383,34 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent none");
           break;
 
-        case FlyCallActionEvent.outgoingRequest:
+        case FlyCallActionEvent.outgoingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent outgoingRequest");
           controller.showOutGoingCallSwitchRequestDialog();
           break;
 
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent incomingRequest");
           controller.showIncomingCallSwitchRequestDialog();
           break;
 
-        case FlyCallActionEvent.accept:
+        case FlyCallActionEvent.outgoingCallSwitchAccepted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent accept");
           controller.onVideoCallSwitchAccept();
           break;
 
-        case FlyCallActionEvent.cancel:
+        case FlyCallActionEvent.outgoingCallSwitchCancelled:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent cancel");
           controller.onRemoteUserCancelledTheSwitchRequest();
           break;
 
-        case FlyCallActionEvent.decline:
+        case FlyCallActionEvent.outgoingCallSwitchDeclined:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent decline");
           controller.onCallSwitchRemoteUserDeclined();
           break;
 
-        case FlyCallActionEvent.timeout:
+        case FlyCallActionEvent.outgoingCallSwitchTimeout:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout");
           controller.onVideoCallSwitchTimeOut();
-          break;
-
-        case FlyCallActionEvent.unknown:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent unknown");
           break;
 
         // case FlyCallActionEvent.joined:
