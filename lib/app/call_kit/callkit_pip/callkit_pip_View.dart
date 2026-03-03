@@ -16,15 +16,15 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Colors.blueGrey,
-      body: Stack(
-        children: [
-          Obx(() {
-            return Padding(
-              padding: const EdgeInsets.all(6),
-              child: _buildDynamicLayout(controller.callerList, controller.callerList.length),
-            );
-          }),
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
+      body: ClipRect(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Obx(() {
+              return _buildDynamicLayout(controller.callerList, controller.callerList.length);
+            }),
 
           /// Tap overlay
           GestureDetector(
@@ -81,7 +81,8 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
           ),
 
         ],
-      ),
+        ),   // Stack
+      ),     // ClipRect
     );
   }
 
@@ -199,6 +200,7 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
       isLocalPreviewView: false,
       key: ValueKey(participant.identity),
       userJID: participant.identity,
+      fit: BoxFit.cover,
       viewBgColor: AppColors.callerTitleBackground,
       profileImage: controller.getUserProfileImageWithName(
         isGroup: controller.isGroupCall.value,
