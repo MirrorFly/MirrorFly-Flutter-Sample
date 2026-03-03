@@ -1402,6 +1402,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, ending call");
     await Future.delayed(const Duration(milliseconds: 500));
     toToast("User Busy");
+    _resetValues();
     NavUtils.back();
   }
 
@@ -1686,6 +1687,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     if (NavUtils.previousRoute == Routes.callKitParticipantView) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] Navigating back from participant view due to call end");
       NavUtils.back();
       NavUtils.back();
       return;
@@ -1702,11 +1704,10 @@ class CallKitOutgoingCallController extends GetxController
     }
     if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus(signal.reason == CallEndReason.disconnected ? 'Disconnected' : 'Call Ended');
-      NavUtils.back();
+      if (signal.reason != CallEndReason.timedOut) {
+        NavUtils.back();
+      }
     }
-
-    // Stop the service after navigation
-    CallStateService.stop();
   }
 
   void isOnGoingCallView() async {
@@ -1823,6 +1824,7 @@ class CallKitOutgoingCallController extends GetxController
           if (NavUtils.canPop) {
             NavUtils.back();
           }
+          _resetValues();
           return;
         } else {
           /// Do not navigate back just to show toast and remove the local maintaining user list
@@ -1845,6 +1847,7 @@ class CallKitOutgoingCallController extends GetxController
       if (NavUtils.canPop && NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         NavUtils.back();
       }
+      _resetValues();
       return;
     }
   }
@@ -2539,7 +2542,7 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = "";
     currentCallMode.value = "";
     isMeet.value = false;
-
+    CallStateService.stop();
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
 

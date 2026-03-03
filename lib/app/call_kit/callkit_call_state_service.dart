@@ -512,16 +512,16 @@ class CallStateService extends GetxService {
       if (target != null) callerList.remove(target);
     }
 
-    bool shouldSignal = false;
-    if (!isGroupOnGoingCallEnabled.value && isGroupCall.value) {
-      shouldSignal = callerList.length <= 1;
-    } else if (!isGroupCall.value) {
-      shouldSignal = true;
-    } else if (callerList.length <= 1) {
-      shouldSignal = true;
-    }
-
-    if (shouldSignal) {
+    // bool shouldSignal = false;
+    // if (!isGroupOnGoingCallEnabled.value && isGroupCall.value) {
+    //   shouldSignal = callerList.length <= 1;
+    // } else if (!isGroupCall.value) {
+    //   shouldSignal = true;
+    // } else if (callerList.length <= 1) {
+    //   shouldSignal = true;
+    // }
+    //
+    // if (shouldSignal) {
       callEndSignal.value = CallEndSignal(
         reason:
             isCallFailed ? CallEndReason.callFailed : CallEndReason.timedOut,
@@ -529,7 +529,7 @@ class CallStateService extends GetxService {
         detail: reason,
         isCallFailed: isCallFailed,
       );
-    }
+    // }
   }
 
   void onCallFailed(
