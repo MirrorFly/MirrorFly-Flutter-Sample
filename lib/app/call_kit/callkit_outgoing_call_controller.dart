@@ -351,10 +351,10 @@ class CallKitOutgoingCallController extends GetxController
       callkitLogger.info(
           '[MirrorFly][OutgoingCallController] _seedStateFromService — replaying pending call-switch ${pending.flyCallEvent}');
       switch (pending.flyCallEvent) {
-        case FlyCallActionEvent.outgoingRequest:
+        case FlyCallActionEvent.outgoingCallSwitchRequest:
           showOutGoingCallSwitchRequestDialog();
           break;
-        case FlyCallActionEvent.incomingRequest:
+        case FlyCallActionEvent.incomingCallSwitchRequest:
           showIncomingCallSwitchRequestDialog();
           break;
         default:
