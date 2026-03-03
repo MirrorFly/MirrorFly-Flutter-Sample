@@ -50,6 +50,9 @@ class CallKitPipController extends GetxController {
   var isPIPActive = false.obs;
   var showExpand = false.obs;
 
+  // Worker for callEndSignal subscription — stored for manual disposal.
+  Worker? _callEndWorker;
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -60,8 +63,16 @@ class CallKitPipController extends GetxController {
     // the service itself calls stop() which triggers PIP closure via the
     // outgoing controller's _handleCallEndSignal.
     if (CallStateService.isRegistered) {
-      ever(_svc!.callEndSignal, _onCallEnded);
+      _callEndWorker = ever(_svc!.callEndSignal, _onCallEnded);
     }
+  }
+
+  @override
+  void onClose() {
+    _callEndWorker?.dispose();
+    _callEndWorker = null;
+    callkitLogger.info('[MirrorFly][CallKitPIPController] onClose — callEndWorker disposed');
+    super.onClose();
   }
 
   /// Stop PIP when the service signals the call has ended.
