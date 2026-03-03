@@ -14,6 +14,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'call_kit/callkit_call_state_service.dart';
 import 'call_kit/callkit_event_buffer.dart';
 import 'call_kit/callkit_logger.dart';
+import 'call_kit/callkit_meet/call_kit_join_call_controller.dart';
 import 'call_kit/callkit_outgoing_call_controller.dart';
 import 'call_kit/callkit_pip/callkit_pip_controller.dart';
 import 'call_modules/call_timeout/controllers/call_timeout_controller.dart';
@@ -61,6 +62,7 @@ import 'model/chat_message_model.dart' as model;
 class BaseController {
   static void initializeCallKitListeners() {
 
+
     callkitLogger.info("[MirrorFly] [BaseController] initializeCallKitListeners");
 
     //
@@ -79,6 +81,7 @@ class BaseController {
       final FlyCallStatus flyCallStatus = event;
       final flyCallStatusEvent = flyCallStatus.flyCallStatusEvent;
       callkitLogger.info("[MirrorFly][BaseController] flyCallStatus event received: ${event.toJson()}");
+
       if (flyCallStatusEvent == FlyCallStatusEvent.permissionDenied && event.reason != null) {
         try {
           final Map<String, dynamic> reasonMap = jsonDecode(event.reason!);
@@ -114,8 +117,29 @@ class BaseController {
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType callMode=$callMode groupId=$groupId");
       }
 
+      void onPreviewScreenEnabled({required FlyCallStatus event}) {
+        final controller = Get.find<CallKitJoinCallController>();
+
+        if (event.flyCallStatusEvent == FlyCallStatusEvent.connected) {
+          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected received on #onPreviewScreenEnabled");
+          controller.participantConnected(participantsId: event.participantsIds);
+        }
+
+        if (event.flyCallStatusEvent == FlyCallStatusEvent.disconnected) {
+          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected received on #onPreviewScreenEnabled");
+          controller.participantDisconnected(participant: event.participantsIds.first);
+        }
+      }
+
       // ── Primary: route status events to CallStateService ────────────────
       if (!CallStateService.isRegistered) {
+
+        if (Get.isRegistered<CallKitJoinCallController>()) {
+          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled");
+          onPreviewScreenEnabled(event: flyCallStatus);
+          return;
+        }
+
         if (flyCallStatusEvent == FlyCallStatusEvent.disconnected &&
             SessionManagement.getUserJID()?.split("@").first ==
                 flyCallStatus.participantsIds.first) {
