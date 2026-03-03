@@ -96,6 +96,7 @@ class CallKitOutgoingCallController extends GetxController
   RxString getOneToOneCallRemoteUserName = "".obs;
 
   RxBool isMeet = false.obs;
+  StreamSubscription<String>? callTimerStream;
 
   /// Convenience accessor for the running CallStateService.
   /// The service is always started before this controller is created.
@@ -110,6 +111,8 @@ class CallKitOutgoingCallController extends GetxController
 
   @override
   Future<void> onInit() async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onInit called");
+
     // Ensure the service is running — for incoming calls BaseController starts
     // it before navigation, but for outgoing calls (and edge cases) we start
     // it here as well. CallStateService.start() is idempotent.
@@ -284,8 +287,22 @@ class CallKitOutgoingCallController extends GetxController
     super.onInit();
   }
 
+  void _disposeCallTimer() {
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _disposeCallTimer called');
+    callTimerStream?.cancel();
+    callTimerStream = null;
+  }
+
   void _listenToSDKCallTimer() {
-    MirrorFlyCallKit.flyCallTimer.listen((timer) {
+    callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer called');
+
+    if (callTimerStream != null) {
+      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer callTimerStream is already active');
+      return;
+    }
+
+    callTimerStream = MirrorFlyCallKit.flyCallTimer.listen((timer) {
+      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
       callDuration(timer);
     });
   }
@@ -863,6 +880,7 @@ class CallKitOutgoingCallController extends GetxController
     _statusWorker?.dispose();
     _actionWorker?.dispose();
     _endSignalWorker?.dispose();
+    _disposeCallTimer();
     callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
     super.onClose();
   }
@@ -872,6 +890,7 @@ class CallKitOutgoingCallController extends GetxController
   void dispose(){
     callkitLogger.info("[MirrorFly][OutgoingCallController] CallKitOutgoingCallController dispose called");
     _player?.dispose();
+    _disposeCallTimer();
     WakelockPlus.disable();
     super.dispose();
   }
