@@ -1650,6 +1650,7 @@ class CallKitOutgoingCallController extends GetxController
 
 
   void isOnGoingCallView() async {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] isOnGoingCallViewEnable.value = true");
     isOnGoingCallViewEnable.value = true;
   }
 

@@ -221,7 +221,7 @@ class CallKitAddParticipantsController extends GetxController
   }
 
   _scrollListener() {
-    if (scrollController.hasClients && !joinViaLink) {
+    if (scrollController.hasClients && !joinViaLink && !meet) {
       if (scrollController.position.extentAfter <= 0 &&
           isPageLoading.value == false) {
         if (scrollable.value) {
