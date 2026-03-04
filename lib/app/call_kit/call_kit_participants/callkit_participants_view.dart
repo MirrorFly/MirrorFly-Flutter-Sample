@@ -180,10 +180,13 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: style.textStyle,
-            // style: const TextStyle(fontWeight: FontWeight.w700),
+          Expanded(
+            child: Text(
+              title,
+              style: style.textStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           count != "0"
               ? Padding(
