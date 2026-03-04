@@ -704,7 +704,7 @@ class CallKitOutgoingCallView
                                 ),
 
                                 if (!controller
-                                    .isOnGoingCallViewEnable.value) ...[
+                                    .isOnGoingCallViewEnable.value && !controller.isIncoming.value) ...[
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16.0),

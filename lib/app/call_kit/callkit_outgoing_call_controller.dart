@@ -264,7 +264,7 @@ class CallKitOutgoingCallController extends GetxController
 
     if (NavUtils.arguments != null) {
       await _initCallArguments();
-      _handleCallTypeLogic();
+      // _handleCallTypeLogic();
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
     }
@@ -461,7 +461,7 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _handleCallTypeLogic() {
+ /* void _handleCallTypeLogic() {
     if (isIncoming.value) {
       _handleIncomingCall();
     } else if (!isIncoming.value && callType.value == "audio") {
@@ -478,7 +478,7 @@ class CallKitOutgoingCallController extends GetxController
     // isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
-
+*/
   Future<void> initCallViewIds() async{
     final localId = getLocalParticipant()?.identity ?? "";
     final remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
