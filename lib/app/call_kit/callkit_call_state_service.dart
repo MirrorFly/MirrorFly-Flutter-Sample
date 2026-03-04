@@ -739,5 +739,6 @@ class CallStateService extends GetxService {
     isMeet.value = false;
     callDuration.value = '';
     isAudioMuted.value = false;
+    lastCallSwitchEvent.value = null;
   }
 }
