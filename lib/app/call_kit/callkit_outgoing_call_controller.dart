@@ -264,7 +264,7 @@ class CallKitOutgoingCallController extends GetxController
 
     if (NavUtils.arguments != null) {
       await _initCallArguments();
-      _handleCallTypeLogic();
+      // _handleCallTypeLogic();
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
     }
@@ -400,6 +400,9 @@ class CallKitOutgoingCallController extends GetxController
       }
       // Clear so it doesn't replay again if the screen is recreated.
       _svc.lastCallSwitchEvent.value = null;
+    } else {
+      callkitLogger.info(
+          '[MirrorFly][OutgoingCallController] _seedStateFromService — no pending call-switch event to replay');
     }
   }
 
@@ -461,7 +464,7 @@ class CallKitOutgoingCallController extends GetxController
     }
   }
 
-  void _handleCallTypeLogic() {
+ /* void _handleCallTypeLogic() {
     if (isIncoming.value) {
       _handleIncomingCall();
     } else if (!isIncoming.value && callType.value == "audio") {
@@ -478,7 +481,7 @@ class CallKitOutgoingCallController extends GetxController
     // isOnGoingCallView();
     callkitLogger.info("[MirrorFly][IncomingCall] Incoming call view setup completed");
   }
-
+*/
   Future<void> initCallViewIds() async{
     final localId = getLocalParticipant()?.identity ?? "";
     final remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
@@ -1920,6 +1923,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void declineIncomingCallSwitchRequest() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  declineIncomingCallSwitchRequest invoked...");
+    _svc.lastCallSwitchEvent.value = null;
     await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
     closeDialog();
   }

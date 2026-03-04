@@ -2,14 +2,8 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
-import 'package:mirror_fly_demo/app/data/helper.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
-
-import '../call_modules/call_utils.dart';
-import '../common/constants.dart';
-import '../data/utils.dart';
-import '../routes/route_settings.dart';
 
 // ---------------------------------------------------------------------------
 // CallStateService — single source of truth for call state.
