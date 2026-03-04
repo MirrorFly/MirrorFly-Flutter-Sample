@@ -400,6 +400,9 @@ class CallKitOutgoingCallController extends GetxController
       }
       // Clear so it doesn't replay again if the screen is recreated.
       _svc.lastCallSwitchEvent.value = null;
+    } else {
+      callkitLogger.info(
+          '[MirrorFly][OutgoingCallController] _seedStateFromService — no pending call-switch event to replay');
     }
   }
 
@@ -1919,6 +1922,7 @@ class CallKitOutgoingCallController extends GetxController
   ///
   void declineIncomingCallSwitchRequest() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  declineIncomingCallSwitchRequest invoked...");
+    _svc.lastCallSwitchEvent.value = null;
     await MirrorFlyCallKit.declineIncomingVideoCallSwitchRequest();
     closeDialog();
   }
