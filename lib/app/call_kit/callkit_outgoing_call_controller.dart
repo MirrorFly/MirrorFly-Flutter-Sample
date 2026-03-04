@@ -891,7 +891,6 @@ class CallKitOutgoingCallController extends GetxController
     _actionWorker?.dispose();
     _disposeCallTimer();
     callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
-    _resetValues();
     super.onClose();
   }
 
@@ -1532,6 +1531,7 @@ class CallKitOutgoingCallController extends GetxController
             : toToast("Call Disconnected");
         NavUtils.back();
       }
+      CallStateService.stop();
       return;
     }
 
@@ -1559,16 +1559,13 @@ class CallKitOutgoingCallController extends GetxController
         if(NavUtils.previousRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
-          return;
-        }
-        if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+        } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
-        }
-        if(NavUtils.currentRoute == Routes.contacts){
+        } else if(NavUtils.currentRoute == Routes.contacts){
           NavUtils.back();
           NavUtils.back();
-          return;
         }
+        CallStateService.stop();
         return;
       }
 
@@ -1581,16 +1578,14 @@ class CallKitOutgoingCallController extends GetxController
         if(NavUtils.previousRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
-          return;
-        }
-        if(NavUtils.currentRoute == Routes.callKitParticipantView){
+        } else if(NavUtils.currentRoute == Routes.callKitParticipantView){
           NavUtils.back();
           NavUtils.back();
-          return;
-        }
-        if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+        } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
           NavUtils.back();
         }
+        CallStateService.stop();
+        return;
       } else if (callerList.any((e) =>
       e.isLocalParticipant == false &&
           e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
@@ -1635,25 +1630,21 @@ class CallKitOutgoingCallController extends GetxController
     if(NavUtils.previousRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
-      return;
-    }
-    if(NavUtils.currentRoute == Routes.callKitParticipantView){
+    }else if(NavUtils.currentRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
-      return;
-    }
-    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+    } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
       reason == "reconnectAttemptsExceeded"
           ? toToast("Reconnection attempt exceeded")
           : toToast("Call Disconnected");
       NavUtils.back();
-    }
-    if(NavUtils.currentRoute == Routes.contacts){
+    } else if(NavUtils.currentRoute == Routes.contacts){
       NavUtils.back();
       NavUtils.back();
-      return;
     }
+    CallStateService.stop();
+    return;
   }
 
 
@@ -1794,6 +1785,7 @@ class CallKitOutgoingCallController extends GetxController
       await Future.delayed(const Duration(milliseconds: 500));
       if (NavUtils.canPop && NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
         NavUtils.back();
+        CallStateService.stop();
       }
       _resetValues();
       return;
@@ -2165,16 +2157,14 @@ class CallKitOutgoingCallController extends GetxController
     if(NavUtils.previousRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
-      return;
-    }
-    if(NavUtils.currentRoute == Routes.callKitParticipantView){
+    } else if(NavUtils.currentRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
-      return;
-    }
-    if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
+    } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       NavUtils.back();
     }
+    CallStateService.stop();
+    return;
       // callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);
     // }
   }
@@ -2490,7 +2480,6 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = "";
     currentCallMode.value = "";
     isMeet.value = false;
-    CallStateService.stop();
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
   }
 
