@@ -892,6 +892,7 @@ class CallKitOutgoingCallController extends GetxController
     _actionWorker?.dispose();
     _disposeCallTimer();
     callkitLogger.info('[MirrorFly][OutgoingCallController] onClose — service workers disposed');
+    _resetValues();
     super.onClose();
   }
 
@@ -1318,6 +1319,7 @@ class CallKitOutgoingCallController extends GetxController
         // callerList.refresh();
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call Timeout, participantId: $p not found in callerList");
       }
+      await initCallViewIds();
     }
   }
 
