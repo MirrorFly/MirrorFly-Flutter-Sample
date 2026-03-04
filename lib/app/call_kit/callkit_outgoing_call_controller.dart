@@ -50,7 +50,7 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isManualDeviceSelected = false.obs;
 
   RxString cameraPosition = CameraType.front.obs;
-  RxBool isRemoteVideoMuted = true.obs;
+  // RxBool isRemoteVideoMuted = true.obs;
 
   /// For group call handling
   RxBool isGroupCall = false.obs;
@@ -875,7 +875,6 @@ class CallKitOutgoingCallController extends GetxController
        isIncoming: ${isIncoming.value}
        isManualDeviceSelected: ${isManualDeviceSelected.value}
        cameraPosition: ${cameraPosition.value}
-       isRemoteVideoMuted: ${isRemoteVideoMuted.value}
        isGroupCall: ${isGroupCall.value}
        chatNameForGroupCall: ${chatNameForGroupCall.value}
        remoteUserNameMap: ${remoteUserNameMap.entries.map((e) => '${e.key}: ${e.value}').join(', ')}
@@ -1138,15 +1137,20 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void isVideoMute({required bool isVideoMuted,required String? participantId}) {
-    callkitLogger.info("[Controller] isVideoMute called for participantId: $participantId, isVideoMuted: $isVideoMuted");
+
+    final index = callerList.indexWhere((p) => p.identity == participantId);
+
+    callkitLogger.info("[Controller] isVideoMute called for participantId: $participantId, isVideoMuted: $isVideoMuted, index: $index");
+
     if(isSelfId(id: participantId)){
       callkitLogger.info("[Controller] Updating local video mute status to $isVideoMuted");
       isVideoEnabled.value = isVideoMuted;
-    }else{
-      callkitLogger.info("[Controller] Updating remote video mute status to $isVideoMuted");
-      isRemoteVideoMuted.value = isVideoMuted;
     }
-    callkitLogger.info("[Controller] Updated =>  videoMuted=${isRemoteVideoMuted.value}");
+
+    final muteStatusUpdate = callerList[index].copyWith(isVideoMuted: isVideoMuted);
+    callerList.value = List.from(callerList)..[index] = muteStatusUpdate;
+
+    callkitLogger.info("[Controller] isVideoMute: Updated ${muteStatusUpdate.identity} video mute status to $isVideoMuted");
   }
 
   void audioCallAfterCallSwitch(){
@@ -2466,7 +2470,7 @@ class CallKitOutgoingCallController extends GetxController
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
-    isRemoteVideoMuted(false);
+    // isRemoteVideoMuted(false);
     isLocalTracksPublished(false);
     isRemoteTracksPublished(false);
     isManualDeviceSelected(false);

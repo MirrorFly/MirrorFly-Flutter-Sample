@@ -298,19 +298,20 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                           child: controller
                               .callList.value[index].isVideoMuted ?? false
                               ? AppUtils.svgIcon(
-                            icon: participantVideoDisabled,
-                            colorFilter: ColorFilter.mode(
-                                style.actionStyle
-                                    .inactiveIconColor,
-                                BlendMode.srcIn),
-                          )
-                              : AppUtils.svgIcon(
                             icon: participantVideoEnabled,
                             colorFilter: ColorFilter.mode(
                                 style.actionStyle
                                     .activeIconColor,
                                 BlendMode.srcIn),
-                          ));
+                          )
+                              : AppUtils.svgIcon(
+                        icon: participantVideoDisabled,
+                        colorFilter: ColorFilter.mode(
+                            style.actionStyle
+                                .inactiveIconColor,
+                            BlendMode.srcIn),
+                      )
+                      );
                     }),
                   ),
                 ],
