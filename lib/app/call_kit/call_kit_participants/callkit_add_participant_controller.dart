@@ -4,11 +4,9 @@ import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_outgoing_call_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_utils.dart';
-import '../../call_modules/outgoing_call/call_controller.dart';
 import '../../common/main_controller.dart';
 import '../../data/helper.dart';
 import '../../extensions/extensions.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../app_style_config.dart';

@@ -50,7 +50,6 @@ class CallKitOutgoingCallController extends GetxController
   final RxBool isManualDeviceSelected = false.obs;
 
   RxString cameraPosition = CameraType.front.obs;
-  // RxBool isRemoteVideoMuted = true.obs;
 
   /// For group call handling
   RxBool isGroupCall = false.obs;
@@ -2472,7 +2471,6 @@ class CallKitOutgoingCallController extends GetxController
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
-    // isRemoteVideoMuted(false);
     isLocalTracksPublished(false);
     isRemoteTracksPublished(false);
     isManualDeviceSelected(false);

@@ -70,7 +70,6 @@ class CallStateService extends GetxService {
   RxBool isVideoEnabled = false.obs;
   RxBool isAudioMuted = false.obs;
   RxBool speakerOn = false.obs;
-  RxBool isRemoteVideoMuted = true.obs;
   RxString cameraPosition = CameraType.front.obs;
   final RxBool cameraSwitch = false.obs;
   final RxBool isManualDeviceSelected = false.obs;
@@ -319,9 +318,6 @@ class CallStateService extends GetxService {
     if (isSelfId(id: participantId)) {
       callkitLogger.info("[Controller] Updating local video mute status to $isVideoMuted");
       isVideoEnabled.value = isVideoMuted;
-    } else {
-      callkitLogger.info("[Controller] Updating remote video mute status to $isVideoMuted");
-      isRemoteVideoMuted.value = isVideoMuted;
     }
   }
 
@@ -712,7 +708,6 @@ class CallStateService extends GetxService {
     cameraSwitch(false);
     isIncoming(false);
     cameraPosition(CameraType.front);
-    isRemoteVideoMuted(false);
     isLocalTracksPublished(false);
     isRemoteTracksPublished(false);
     isManualDeviceSelected(false);
