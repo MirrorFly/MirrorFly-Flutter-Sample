@@ -194,9 +194,9 @@ class CallKitOutgoingCallController extends GetxController
         case FlyCallActionEvent.videoUnMuted:
           isVideoMute(isVideoMuted: true, participantId: action.participantId);
           break;
-        case FlyCallActionEvent.toAudioCallAfterCallSwitch:
-          audioCallAfterCallSwitch();
-          break;
+        // case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+        //   audioCallAfterCallSwitch();
+        //   break;
         case FlyCallActionEvent.onCallModeChange:
           onParticipantListUpdated();
           break;
@@ -212,7 +212,7 @@ class CallKitOutgoingCallController extends GetxController
           break;
         case FlyCallActionEvent.activeSpeaker:
           onActiveSpeakerChange(
-              isSpeaking: action.isSpeaking ?? false,
+              isSpeaking: false,
               audioLevel: action.audioLevel ?? 0,
               participantId: action.participantId ?? '');
           break;
@@ -1152,11 +1152,11 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[Controller] isVideoMute: Updated ${muteStatusUpdate.identity} video mute status to $isVideoMuted");
   }
 
-  void audioCallAfterCallSwitch(){
-    callkitLogger.info("audioCallAfterCallSwitch change the call type into audio call");
-    // switchCamera();
-    callType.value = "audio";
-  }
+  // void audioCallAfterCallSwitch(){
+  //   callkitLogger.info("audioCallAfterCallSwitch change the call type into audio call");
+  //   // switchCamera();
+  //   callType.value = "audio";
+  // }
 
    bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
@@ -2392,7 +2392,8 @@ class CallKitOutgoingCallController extends GetxController
 
     final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
     if (participant != null) {
-      participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
+      /// NOTE ::==
+     // participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
 
       callerAudioLevel[participantId] = isSpeaking ? audioLevel : 0;
       callerAudioLevel.refresh();
@@ -2435,7 +2436,8 @@ class CallKitOutgoingCallController extends GetxController
     try {
       final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
       if (participant != null) {
-        participant.copyWith(connectionQuality: quality);
+        /// NOTE ::==
+        // participant.copyWith(connectionQuality: quality);
         // callerList.refresh();
         callerConnectionQuality[participantId!] = quality!;
         callkitLogger.info(

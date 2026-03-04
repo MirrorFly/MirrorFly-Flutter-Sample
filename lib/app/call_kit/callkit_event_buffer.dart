@@ -147,9 +147,9 @@ class CallKitEventBuffer {
       ) {
     callkitLogger.info('Dispatching action event to service: ${e.flyCallEvent} for participant: ${e.participantId}');
     switch (e.flyCallEvent) {
-      case FlyCallActionEvent.toAudioCallAfterCallSwitch:
-        service.audioCallAfterCallSwitch();
-        break;
+      // case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+      //   service.audioCallAfterCallSwitch();
+      //   break;
       case FlyCallActionEvent.audioMuted:
         service.isAudioMute(isAudioMuted: true, participantId: e.participantId);
         break;
@@ -170,7 +170,7 @@ class CallKitEventBuffer {
         break;
       case FlyCallActionEvent.activeSpeaker:
         service.onActiveSpeakerChange(
-          isSpeaking: e.isSpeaking ?? false,
+          isSpeaking: false,
           audioLevel: e.audioLevel ?? 0,
           participantId: e.participantId ?? '',
         );
@@ -263,9 +263,9 @@ class CallKitEventBuffer {
     callkitLogger.info('Dispatching action event: ${e.flyCallEvent} for participant: ${e.participantId}');
     switch (e.flyCallEvent) {
     // answerCall is handled earlier (navigation), so ignore here
-      case FlyCallActionEvent.toAudioCallAfterCallSwitch:
-        c.audioCallAfterCallSwitch();
-        break;
+    //   case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+    //     c.audioCallAfterCallSwitch();
+    //     break;
       case FlyCallActionEvent.outgoingCallSwitchRequest:
         c.showOutGoingCallSwitchRequestDialog();
         break;
@@ -304,7 +304,7 @@ class CallKitEventBuffer {
         break;
       case FlyCallActionEvent.activeSpeaker:
         c.onActiveSpeakerChange(
-          isSpeaking: e.isSpeaking ?? false,
+          isSpeaking: false,
           audioLevel: e.audioLevel ?? 0,
           participantId: e.participantId ?? '',
         );

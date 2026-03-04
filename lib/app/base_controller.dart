@@ -339,10 +339,10 @@ class BaseController {
 
         case FlyCallActionEvent.denyCall:
         case FlyCallActionEvent.localHangup:
-        case FlyCallActionEvent.flipCamera:
-        case FlyCallActionEvent.initAudioOutput:
-        case FlyCallActionEvent.audioOutput:
-        case FlyCallActionEvent.screenShare:
+        // case FlyCallActionEvent.flipCamera:
+        // case FlyCallActionEvent.initAudioOutput:
+        // case FlyCallActionEvent.audioOutput:
+        // case FlyCallActionEvent.screenShare:
         case FlyCallActionEvent.engagedCall:
         case FlyCallActionEvent.actionCallSwitch:
         case FlyCallActionEvent.none:
@@ -350,20 +350,20 @@ class BaseController {
         case FlyCallActionEvent.audioTrackUnPublished:
         case FlyCallActionEvent.videoTrackPublished:
         case FlyCallActionEvent.videoTrackUnpublished:
-        case FlyCallActionEvent.speakingChanged:
-        case FlyCallActionEvent.attributesChanged:
-        case FlyCallActionEvent.metadataUpdated:
-        case FlyCallActionEvent.permissionsUpdated:
-        case FlyCallActionEvent.streamStateUpdated:
-        case FlyCallActionEvent.subscriptionException:
+        // case FlyCallActionEvent.speakingChanged:
+        // case FlyCallActionEvent.attributesChanged:
+        // case FlyCallActionEvent.metadataUpdated:
+        // case FlyCallActionEvent.permissionsUpdated:
+        // case FlyCallActionEvent.streamStateUpdated:
+        // case FlyCallActionEvent.subscriptionException:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent $flyCallActionEvent — no-op");
           break;
 
         // ── State mutation events → service ──────────────────────────────
-        case FlyCallActionEvent.toAudioCallAfterCallSwitch:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent toAudioCallAfterCallSwitch");
-          callStateService.audioCallAfterCallSwitch();
-          break;
+        // case FlyCallActionEvent.toAudioCallAfterCallSwitch:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent toAudioCallAfterCallSwitch");
+        //   callStateService.audioCallAfterCallSwitch();
+        //   break;
 
         case FlyCallActionEvent.audioMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted participantId=${flyCallAction.participantId}");
@@ -385,20 +385,20 @@ class BaseController {
           callStateService.isVideoMute(isVideoMuted: true, participantId: flyCallAction.participantId);
           break;
 
-        case FlyCallActionEvent.connectionQualityUpdated:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
-          callStateService.onConnectionQualityUpdated(
-              quality: flyCallAction.connectionQuality,
-              participantId: flyCallAction.participantId);
-          break;
+        // case FlyCallActionEvent.connectionQualityUpdated:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
+        //   callStateService.onConnectionQualityUpdated(
+        //       quality: flyCallAction.connectionQuality,
+        //       participantId: flyCallAction.participantId);
+        //   break;
 
-        case FlyCallActionEvent.activeSpeaker:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
-          callStateService.onActiveSpeakerChange(
-              isSpeaking: flyCallAction.isSpeaking ?? false,
-              audioLevel: flyCallAction.audioLevel ?? 0,
-              participantId: flyCallAction.participantId ?? '');
-          break;
+        // case FlyCallActionEvent.activeSpeaker:
+        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
+        //   callStateService.onActiveSpeakerChange(
+        //       isSpeaking: flyCallAction.isSpeaking ?? false,
+        //       audioLevel: flyCallAction.audioLevel ?? 0,
+        //       participantId: flyCallAction.participantId ?? '');
+        //   break;
 
         case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");

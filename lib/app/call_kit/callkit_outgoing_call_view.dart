@@ -140,7 +140,7 @@ class CallKitOutgoingCallView
                     profileImage: getUserProfileImageWithName(
                       isLocalTile: false,
                       participantId: remoteParticipantId,
-                      callKind: remoteParticipant?.kind,
+                      callKind: MirrorFlyCallKit.getCallKind(),
                       scale: 1,
                     ),
                   ),
@@ -572,8 +572,8 @@ class CallKitOutgoingCallView
                                   isLocalTile: false,
                                   participantId: controller
                                       .callerList[index].identity,
-                                  scale: 1.2, callKind: controller
-                                      .callerList[index].kind,
+                                  scale: 1.2,
+                                  callKind: MirrorFlyCallKit.getCallKind(),
                                 ),
                               ),
 
@@ -828,7 +828,8 @@ class CallKitOutgoingCallView
                     isLocalTile: true,
                     participantId: controller.getLocalParticipant()?.identity ?? "",
                     scale: 2,
-                    useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
+                    useMaxSize: true,
+                    callKind: MirrorFlyCallKit.getCallKind(),
                   ),
                   onTap: () {
                     controller.videoSwap();
