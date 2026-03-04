@@ -326,7 +326,7 @@ class CallKitOutgoingCallController extends GetxController
     callStatus.value           = _svc.callStatus.value;
     isAudioMuted.value         = _svc.isAudioMuted.value;
     isVideoEnabled.value       = _svc.isVideoEnabled.value;
-    isRemoteVideoMuted.value   = _svc.isRemoteVideoMuted.value;
+    // isRemoteVideoMuted.value   = _svc.isRemoteVideoMuted.value;
     isOnGoingCallViewEnable.value = _svc.isOnGoingCallViewEnable.value;
     isGroupCall.value          = _svc.isGroupCall.value;
     isGroupOnGoingCallEnabled.value = _svc.isGroupOnGoingCallEnabled.value;
