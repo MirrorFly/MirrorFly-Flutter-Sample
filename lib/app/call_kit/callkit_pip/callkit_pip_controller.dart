@@ -79,8 +79,11 @@ class CallKitPipController extends GetxController {
     // Only act on terminal events
     final isTerminal = event == FlyCallStatusEvent.disconnected ||
         event == FlyCallStatusEvent.callFailed ||
-        event == FlyCallStatusEvent.callTimeout;
-    if (!isTerminal) return;
+        event == FlyCallStatusEvent.callTimeout || event == FlyCallStatusEvent.rejected;
+    if (!isTerminal) {
+      callkitLogger.info('[MirrorFly][CallKitPIPController] Ignoring non-terminal status event: $event');
+      return;
+    }
 
     final svc = _svc!;
     final ids = status.participantsIds;
@@ -97,7 +100,7 @@ class CallKitPipController extends GetxController {
     }
 
     // One-to-one or meet with local hangup: always close
-    callkitLogger.info('[MirrorFly][CallKitPIPController] Stopping PIP — call ended (event=$event)');
+    callkitLogger.info('[MirrorFly][CallKitPIPController] Stopping PIP — call ended (event=$event), id=$userId, localHangup=${svc.isSelfId(id: userId)}), participantIds=$ids');
     stopPIP();
   }
 
