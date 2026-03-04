@@ -96,6 +96,12 @@ abstract class NavViewStateful<T extends GetxController>
 
 class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
 
+  /// The exact controller instance this state created and owns.
+  /// On dispose we only delete from GetX if the currently registered
+  /// instance is still THIS one — preventing the old call screen's dispose
+  /// from deleting a fresh controller that a new screen just registered.
+  T? _ownedController;
+
   @override
   void initState() {
     debugPrint("NavViewState key ${widget.tag}");
@@ -108,6 +114,11 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
       Get.delete<T>(tag: widget.tag, force: true);
     }
     widget.createController(tag: widget.tag);
+    // Store the specific instance we just created so we can verify
+    // ownership in dispose() before deleting.
+    _ownedController = Get.isRegistered<T>(tag: widget.tag)
+        ? Get.find<T>(tag: widget.tag)
+        : null;
     super.initState();
     widget.onInit();
     LogMessage.d("NavViewState : initState", T.toString());
@@ -116,8 +127,6 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
   @override
   void dispose() {
     widget.onDispose();
-    // LogMessage.d("NavViewState : dispose isRegistered", {Get.isRegistered<T>()});
-    // LogMessage.d("NavViewState : dispose isRegistered tag", {Get.isRegistered<T>(tag: widget.tag)});
 
     ///
     /// If the tag is different, it means we are navigating to a different chat
@@ -139,11 +148,18 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
       LogMessage.d("NavViewState: ",
           "isControllerAvailable: ${T.toString()} with key: ${widget.tag} : $isControllerAvailable");
       if (!isSameTag && isControllerAvailable) {
+        // Ownership check: only delete if the registered instance is still
+        // the one WE created. A newer screen may have already registered a
+        // fresh instance — deleting that would break the new screen.
+        final T? current = Get.find<T>(tag: widget.tag);
+        if (!identical(current, _ownedController)) {
+          LogMessage.d("NavViewState: ",
+              "Skipping delete: ${T.toString()} — owned by a newer screen");
+          super.dispose();
+          return;
+        }
         LogMessage.d("NavViewState: ",
             "dispose controller: ${T.toString()} with key: ${widget.tag}");
-        // Cache instance before deletion so we can call dispose() explicitly.
-        // Get.delete() only triggers onClose() — not Flutter's dispose().
-        // Explicitly calling dispose() restores the lifecycle that GetMaterialApp provided.
         final T? instance = Get.isRegistered<T>(tag: widget.tag) ? Get.find<T>(tag: widget.tag) : null;
         Get.delete<T>(tag: widget.tag);
         try {
@@ -159,6 +175,18 @@ class NavViewState<T extends GetxController> extends State<NavViewStateful<T>> {
       }
     } else {
       LogMessage.d("NavViewState: ", "dispose controller ${T.toString()}");
+      // Ownership check: only delete if the registered instance is still
+      // the one WE created. A newer screen may have already registered a
+      // fresh instance — deleting that would break the new screen.
+      if (Get.isRegistered<T>()) {
+        final T? current = Get.find<T>();
+        if (!identical(current, _ownedController)) {
+          LogMessage.d("NavViewState: ",
+              "Skipping delete: ${T.toString()} — owned by a newer screen");
+          super.dispose();
+          return;
+        }
+      }
       // Cache instance before deletion so we can call dispose() explicitly.
       // Get.delete() only triggers onClose() — not Flutter's dispose().
       // Explicitly calling dispose() restores the lifecycle that GetMaterialApp provided.
