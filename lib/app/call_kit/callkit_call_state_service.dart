@@ -355,7 +355,8 @@ class CallStateService extends GetxService {
       {required bool isSpeaking,
       required double audioLevel,
       required String participantId}) {
-    callerAudioLevel[participantId] = audioLevel > 0 ? audioLevel : 0;
+    callkitLogger.info("#onActiveSpeakerChange $audioLevel");
+    callerAudioLevel[participantId] = audioLevel;
     callerAudioLevel.refresh();
   }
 

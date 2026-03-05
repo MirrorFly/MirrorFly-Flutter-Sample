@@ -2403,7 +2403,7 @@ class CallKitOutgoingCallController extends GetxController
       /// NOTE ::==
      // participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
 
-      callerAudioLevel[participantId] = isSpeaking ? audioLevel : 0;
+      callerAudioLevel[participantId] = audioLevel;
       callerAudioLevel.refresh();
 
       callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange:"
