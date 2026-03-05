@@ -385,20 +385,20 @@ class BaseController {
           callStateService.isVideoMute(isVideoMuted: true, participantId: flyCallAction.participantId);
           break;
 
-        // case FlyCallActionEvent.connectionQualityUpdated:
-        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
-        //   callStateService.onConnectionQualityUpdated(
-        //       quality: flyCallAction.connectionQuality,
-        //       participantId: flyCallAction.participantId);
-        //   break;
+        case FlyCallActionEvent.connectionQualityUpdated:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent connectionQualityUpdated");
+          callStateService.onConnectionQualityUpdated(
+              quality: flyCallAction.connectionQuality,
+              participantId: flyCallAction.participantId);
+          break;
 
-        // case FlyCallActionEvent.activeSpeaker:
-        //   callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
-        //   callStateService.onActiveSpeakerChange(
-        //       isSpeaking: flyCallAction.isSpeaking ?? false,
-        //       audioLevel: flyCallAction.audioLevel ?? 0,
-        //       participantId: flyCallAction.participantId ?? '');
-        //   break;
+        case FlyCallActionEvent.activeSpeaker:
+          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent activeSpeaker");
+          callStateService.onActiveSpeakerChange(
+              isSpeaking: false,
+              audioLevel: flyCallAction.audioLevel ?? 0,
+              participantId: flyCallAction.participantId ?? '');
+          break;
 
         case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
