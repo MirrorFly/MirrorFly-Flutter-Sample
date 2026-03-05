@@ -355,7 +355,7 @@ class CallStateService extends GetxService {
       {required bool isSpeaking,
       required double audioLevel,
       required String participantId}) {
-    callerAudioLevel[participantId] = isSpeaking ? audioLevel : 0;
+    callerAudioLevel[participantId] = audioLevel > 0 ? audioLevel : 0;
     callerAudioLevel.refresh();
   }
 

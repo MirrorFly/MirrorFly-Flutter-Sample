@@ -465,7 +465,7 @@ class CallKitOutgoingCallController extends GetxController
 
     callKind = MirrorFlyCallKit.getCallKind();
         await _handleInitialCallStatus();
-        await getCurrentCallParticipants(from: "onInit");
+        await getCurrentCallParticipants();
         await initCallViewIds();
         initPlayer();
 
