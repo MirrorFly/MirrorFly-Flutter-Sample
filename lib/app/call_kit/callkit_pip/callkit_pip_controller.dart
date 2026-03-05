@@ -190,6 +190,7 @@ class CallKitPipController extends GetxController {
   }
 
   void closePip() async {
+    CallStateService.stop();
     await MirrorFlyCallKit.localHangup();
     toToast("Call Disconnected");
     stopPIP();
