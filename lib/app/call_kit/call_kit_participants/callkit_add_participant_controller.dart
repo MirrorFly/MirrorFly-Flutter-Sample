@@ -55,6 +55,8 @@ class CallKitAddParticipantsController extends GetxController
     getCallLink();
     // groupId(await Mirrorfly.getCallGroupJid());
 
+    debugPrint("CallKitAddParticipantsController → callList json ${callList.value.map((e) => e.toJson()).toList()}");
+
     getMaxCallUsersCount = Constants.useMirrorFlyCallKit
         ? Constants.maxCallUsersLimitForMirrorFlyCallKit : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
 
