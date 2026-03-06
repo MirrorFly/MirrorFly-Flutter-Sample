@@ -294,7 +294,6 @@ class CallKitOutgoingCallController extends GetxController
     callStatus.value           = _svc.callStatus.value;
     isAudioMuted.value         = _svc.isAudioMuted.value;
     isVideoEnabled.value       = _svc.isVideoEnabled.value;
-    // isRemoteVideoMuted.value   = _svc.isRemoteVideoMuted.value;
     isOnGoingCallViewEnable.value = _svc.isOnGoingCallViewEnable.value;
     isGroupCall.value          = _svc.isGroupCall.value;
     isGroupOnGoingCallEnabled.value = _svc.isGroupOnGoingCallEnabled.value;
@@ -464,38 +463,38 @@ class CallKitOutgoingCallController extends GetxController
     //Moved from onInit
 
     callKind = MirrorFlyCallKit.getCallKind();
-        await _handleInitialCallStatus();
-        await getCurrentCallParticipants();
-        await initCallViewIds();
-        initPlayer();
+    await _handleInitialCallStatus();
+    await getCurrentCallParticipants();
+    await initCallViewIds();
+    initPlayer();
 
-        callkitLogger.info("[MirrorFly][OutgoingCallController] callviewinit");
-        if (callType.value.isNotEmpty) {
-          _handleWakelock(callType.value);
-        }
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callviewinit");
+    if (callType.value.isNotEmpty) {
+      _handleWakelock(callType.value);
+    }
 
-        ever(callType, (String type) {
-          _handleWakelock(type);
-        });
+    ever(callType, (String type) {
+      _handleWakelock(type);
+    });
 
-        if (NavUtils.arguments != null) {
-          await _initCallArguments();
-          // _handleCallTypeLogic();
-        } else {
-          callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
-        }
+    if (NavUtils.arguments != null) {
+      await _initCallArguments();
+      // _handleCallTypeLogic();
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
+    }
 
-        await configureCallMode(callMode: callMode.value, chatId: groupId.value);
-        _svc.configureCallMode(callMode: callMode.value, chatId: groupId.value);
-        onParticipantListUpdated();
-        callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
+    await configureCallMode(callMode: callMode.value, chatId: groupId.value);
+    _svc.configureCallMode(callMode: callMode.value, chatId: groupId.value);
+    onParticipantListUpdated();
+    callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
-        if (isIncoming.value) {
-          callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for incoming call");
-          await setInitialAudioRouteDevice();
-        }
+    if (isIncoming.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for incoming call");
+      await setInitialAudioRouteDevice();
+    }
 
-        _listenToSDKCallTimer();
+    _listenToSDKCallTimer();
 
     //
 
