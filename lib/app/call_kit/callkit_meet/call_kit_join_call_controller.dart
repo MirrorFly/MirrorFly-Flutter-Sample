@@ -16,6 +16,7 @@ import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_call_state_service.dart';
 import '../callkit_event_buffer.dart';
 
 
@@ -45,6 +46,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     super.onInit();
     callLinkId = NavUtils.arguments["callLinkId"].toString();
     navigatedFrom = NavUtils.arguments["navigatedFrom"].toString();
+
+    await CallStateService.start();
 
     checkPermission().then((success) async {
       if (!success) {
@@ -228,6 +231,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   void onBackPressed({bool fromPopScope = false}) async {
     callkitLogger.info("Back button pressed during call join process, ignoring to prevent navigation");
     final bool isCancelled = await MirrorFlyCallKit.cancelInitializeJoinViaLink();
+    CallStateService.stop();
     if (isCancelled && !fromPopScope) {
       callkitLogger.info("Join via link initialization cancelled successfully");
       NavUtils.back();
