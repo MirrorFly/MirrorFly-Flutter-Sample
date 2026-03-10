@@ -142,8 +142,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
               return;
             } else if (errorCode == 410) {
                 toToast(response.errorMap[410] ?? "");
+                await AppPermission.askAudioCallPermissions();
             } else if (errorCode == 411) {
               toToast(response.errorMap[411] ?? "");
+              await AppPermission.askVideoCallPermissions();
             } else {
               callkitLogger.info("Failed to join call via link with error: ${response.errorMap}");
               toToast(response.errorMap.values.first);
@@ -163,14 +165,15 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   /// Mute Audio
   Future<void> muteAudio() async {
     callkitLogger.info("Setting microphone mute state in CallKit to: ${audioMuted.value}");
-    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success, required String code}) {
+    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success, required String code}) async {
       if (success) {
         callkitLogger.info("Microphone mute state successfully set in CallKit response isMuted $isMuted. Current state: ${audioMuted.value}");
           audioMuted(isMuted);
           callkitLogger.info("Audio mute state changed. New state: ${audioMuted.value}");
       } else {
-        if (code == "410" || code == "411") {
+        if (code == "410") {
           toToast(message);
+          await AppPermission.askAudioCallPermissions();
         }
         callkitLogger.info("Failed to set microphone mute state in CallKit. Error: $message");
       }
@@ -185,13 +188,14 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
     MirrorFlyCallKit.setCameraEnable(
       enable: currentState,
-      result: ({required success, required message, required code}) {
+      result: ({required success, required message, required code}) async {
         callkitLogger.info("Camera response → success=$success message=$message code=$code");
 
         if (!success) {
           callkitLogger.error("Failed to toggle videoMute");
           if (code == "411") {
             toToast(message);
+            await AppPermission.askVideoCallPermissions();
           }
           return;
         }
