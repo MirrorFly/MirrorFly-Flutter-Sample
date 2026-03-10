@@ -16,6 +16,7 @@ import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_call_state_service.dart';
 import '../callkit_event_buffer.dart';
 
 
@@ -111,6 +112,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
+          await CallStateService.start();
           CallKitEventBuffer.flushAllEvents();
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {

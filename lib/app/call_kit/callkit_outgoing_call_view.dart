@@ -1139,7 +1139,7 @@ class CallKitOutgoingCallView
               _buildAudioRoutingControl(
                 onTap: () async {
                   callkitLogger.info(
-                      "[_buildCallControls] Audio device selector tapped");
+                      "[_buildCallControls] Audio device selector tapped, current output: ${controller.selectedDeviceType.value}");
                   _showAudioDeviceSelector(context);
                 },
               ),

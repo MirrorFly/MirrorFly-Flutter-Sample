@@ -412,7 +412,7 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.onAudioRouteChanged:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onAudioRouteChanged audioDevice=${flyCallAction.flyAudioDevice}");
+          callkitLogger.info("[MirrorFly][BaseController] [MF_AUDIO_ROUTE] flyCallActionEvent onAudioRouteChanged audioDevice=${flyCallAction.flyAudioDevice}");
           if (flyCallAction.flyAudioDevice != null) {
             callStateService.onAudioRouteChanged(flyCallAction.flyAudioDevice!);
           }
