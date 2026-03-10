@@ -133,13 +133,6 @@ class BaseController {
 
       // ── Primary: route status events to CallStateService ────────────────
       if (!CallStateService.isRegistered) {
-
-        if (Get.isRegistered<CallKitJoinCallController>()) {
-          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled");
-          onPreviewScreenEnabled(event: flyCallStatus);
-          return;
-        }
-
         if (flyCallStatusEvent == FlyCallStatusEvent.disconnected &&
             SessionManagement.getUserJID()?.split("@").first ==
                 flyCallStatus.participantsIds.first) {
@@ -162,6 +155,14 @@ class BaseController {
       // Publish the raw event so subscribers (e.g. CallKitOutgoingCallController)
       // can ever() this and call their own methods.
       callStateService.lastStatusEvent.value = flyCallStatus;
+
+      // Handle participant connected and disconnected event in
+      // join via link preview screen once the callStateService is available
+      if (Get.isRegistered<CallKitJoinCallController>()) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled");
+        onPreviewScreenEnabled(event: flyCallStatus);
+        return;
+      }
 
       switch (flyCallStatusEvent) {
         case FlyCallStatusEvent.connecting:

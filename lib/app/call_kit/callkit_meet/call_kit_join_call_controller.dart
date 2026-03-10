@@ -100,6 +100,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
     for (var participant in participants ?? []) {
 
+      final bool isLocalParticipant = isLocalParticipantId(participantId: participant.userId);
+      if (isLocalParticipant) {
+        callkitLogger.info("#CallKitJoinCallController #LocalParticipantFound #Ignoring user addition");
+        continue;
+      }
+
       var callKitId = participant.userId;
       callkitLogger.info("Fetching profile for participant callKitId: $callKitId");
 
@@ -276,10 +282,26 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     }
   }
 
+  bool isLocalParticipantId({required String participantId}) {
+    final String currentUserJid = SessionManagement.getUserJID() ?? "";
+    final String currentUserId = CallUtils.getIdFromJidList(currentUserJid);
+    return currentUserId == participantId;
+  }
+
   void participantConnected({required List<String> participantsId}) async {
 
     if (participantsId.isEmpty) {
       callkitLogger.info("#CallKitJoinCallController #participantConnected #Empty");
+      return;
+    }
+
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #forParticipant: ${participantsId.first}");
+
+    final bool isLocalParticipant = isLocalParticipantId(participantId: participantsId.first);
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #isLocalParticipant: $isLocalParticipant");
+
+    if (isLocalParticipant) {
+      callkitLogger.info("#CallKitJoinCallController #participantConnected #forLocalParticipant #ignoring");
       return;
     }
 
