@@ -120,6 +120,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
+          await CallStateService.start();
           CallKitEventBuffer.flushAllEvents();
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {
