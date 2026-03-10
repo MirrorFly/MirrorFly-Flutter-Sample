@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../app_style_config.dart';
+import '../../../call_kit/callkit_export_logger.dart';
 import '../../../common/app_localizations.dart';
 import '../../../modules/settings/controllers/settings_controller.dart';
 import '../../../modules/settings/views/settings_widgets.dart';
@@ -115,6 +116,14 @@ class SettingsView extends NavViewStateful<SettingsController> {
                               ))
                         ]);
                   }),
+              SettingListItem(
+                title: getTranslated("exportLogs"),
+                listItemStyle: AppStyleConfig.settingsPageStyle.listItemStyle,
+                trailing: rightArrowIcon,
+                leading: downloadIcon,
+                onTap: (){
+                 exportLiveKitLogFile();
+              },),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Obx(() {
