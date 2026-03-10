@@ -1667,13 +1667,17 @@ class CallKitOutgoingCallController extends GetxController
       result: ({
         required bool success,
         bool? isMuted,
-        required String message
+        required String message,
+        required String code
       }) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] Mute ON result → success=$success, isMuted=$isMuted, message=$message");
         if (success && isMuted != null) {
           callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio : $isMuted, and setting isAudioEnabled to ${!isMuted}");
           isAudioMuted.value = isMuted;
         } else {
+          if (code == "410" || code == "411") {
+            toToast(message);
+          }
           callkitLogger.info("[MirrorFly][OutgoingCallController]  Error muteAudio status  result → success=$success, message=$message");
         }
       },
@@ -1703,16 +1707,23 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable: value : $enable");
 
     MirrorFlyCallKit.setCameraEnable(
-        enable: enable,
-        result: (result) async {
-          if (result) {
-            callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
-            isVideoEnabled.value = enable;
-          } else {
-            callkitLogger.info(
-                "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
+      enable: enable,
+      result: ({
+        required bool success,
+        required String message,
+        required String code,
+      }) async {
+        if (success) {
+          callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $success");
+          isVideoEnabled.value = enable;
+        } else {
+          if (code == "411") {
+            toToast(message);
           }
-        });
+          callkitLogger.info("[MirrorFly][OutgoingCallController] Error setCameraEnable status → success: $success message: $message code: $code");
+        }
+      },
+    );
   }
 
   void onCallSwitchRemoteUserDeclined() {
@@ -1892,16 +1903,23 @@ class CallKitOutgoingCallController extends GetxController
         _videoCallSwitchRequestConfirmationPopup();
       } else {
         MirrorFlyCallKit.setCameraEnable(
-            enable: toggleVideoEnabledStatus,
-            result: (result) async {
-              if (result) {
-                callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $result");
-                isVideoEnabled.value = toggleVideoEnabledStatus;
-              } else {
-                callkitLogger.info(
-                    "[MirrorFly][OutgoingCallController]  Error setCameraEnable status  result : $result");
+          enable: toggleVideoEnabledStatus,
+          result: ({
+            required bool success,
+            required String message,
+            required String code,
+          }) {
+            if (success) {
+              callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $success");
+              isVideoEnabled.value = toggleVideoEnabledStatus;
+            } else {
+              if (code == "411") {
+                toToast(message);
               }
-            });
+              callkitLogger.info("[MirrorFly][OutgoingCallController] Error setCameraEnable status → success: $success message: $message code: $code");
+            }
+          },
+        );
       }
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] Current call is not an audio call or call is not connected, cannot switch to video. callStatus- $callStatus, flyCallType- $flyCallType");
