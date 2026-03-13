@@ -405,11 +405,11 @@ class BaseController {
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
           // Refresh service state: re-fetch participants and reconfigure call mode.
           // The controller's ever(lastActionEvent) then calls onParticipantListUpdated().
-          callStateService.getCurrentCallParticipants();
-          callStateService.configureCallMode(
-            callMode: MirrorFlyCallKit.getCurrentCallMode() ?? '',
-            chatId: MirrorFlyCallKit.getCurrentCallGroupId() ?? '',
-          );
+          // callStateService.getCurrentCallParticipants();
+          // callStateService.configureCallMode(
+          //   callMode: MirrorFlyCallKit.getCurrentCallMode() ?? '',
+          //   chatId: MirrorFlyCallKit.getCurrentCallGroupId() ?? '',
+          // );
           break;
 
         case FlyCallActionEvent.onAudioRouteChanged:

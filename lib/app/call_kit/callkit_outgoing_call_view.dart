@@ -70,7 +70,7 @@ class CallKitOutgoingCallView
                     children: [
 
                       /// Call UI (background)
-                      controller.isGroupCall.value
+                      controller.callerList.length >= 3
                           ? buildGroupGridItem(context)
                           : oneToOneCallUI(context),
 
@@ -492,7 +492,7 @@ class CallKitOutgoingCallView
   /// Grid view for group call participants
   Widget buildGroupGridItem(BuildContext context) {
     return Obx(() {
-      final isGroupCall = controller.isGroupOnGoingCallEnabled.value;
+      final isGroupCall = controller.isOnGoingCallViewEnable.value;
       return SafeArea(
         child: Stack(
           children: [
@@ -511,9 +511,7 @@ class CallKitOutgoingCallView
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.65,
                             child: Text(
-                              controller.isCallModeChangedToOneToMany.value
-                                  ? controller.getOneToOneCallRemoteUserName.value
-                                  : controller.getOneToOneCallRemoteUserName.value,
+                              controller.getOneToOneCallRemoteUserName.value,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               softWrap: false,
@@ -721,14 +719,13 @@ class CallKitOutgoingCallView
                                               .ongoingCallPageStyle.callStatusTextStyle,
                                         ),
                                         const SizedBox(height: 8),
-                                        Text(
-                                          controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getOneToOneCallRemoteUserName.value:"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                        Text(controller.getOneToOneCallRemoteUserName.value,
                                           textAlign: TextAlign.center,
                                           style: AppStyleConfig
                                               .ongoingCallPageStyle.callerNameTextStyle,
                                         ),
                                         const SizedBox(height: 8),
-                                        controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? Row(
+                                        controller.groupId.value.isEmpty ? Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: List.generate(
                                                   controller.callerList.length > 3
@@ -758,7 +755,7 @@ class CallKitOutgoingCallView
                                                         )
                                                             : const Offstage();
                                                       })),
-                                                     ): const Offstage()
+                                                     ) : const Offstage(),
 
                                       ],
                                     ),
@@ -1066,7 +1063,7 @@ class CallKitOutgoingCallView
                 ),
 
               /// "You" label
-              if (isLocalTile && !controller.isGroupCall.value)
+              if (isLocalTile)
                 const Positioned(
                   bottom: 8,
                   child: Padding(

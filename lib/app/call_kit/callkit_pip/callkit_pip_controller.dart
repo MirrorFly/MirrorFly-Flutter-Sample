@@ -37,7 +37,7 @@ class CallKitPipController extends GetxController {
       _svc?.callerList ?? <FlyCallParticipant>[].obs;
   RxMap<String, String> get remoteUserNameMap =>
       _svc?.remoteUserNameMap ?? _remoteUserNameMap;
-  RxBool get isGroupCall => _svc?.isGroupCall ?? _isGroupCall;
+  // RxBool get isGroupCall => _svc?.isGroupCall ?? _isGroupCall;
   RxString get callType => _svc?.callType ?? _callType;
   RxString get callMode => _svc?.callMode ?? _callMode;
   RxString get callStatus => _svc?.callStatus ?? _callStatus;
@@ -89,7 +89,7 @@ class CallKitPipController extends GetxController {
     final ids = status.participantsIds;
     final userId = ids.firstOrNull ?? '';
 
-    if (svc.isGroupCall.value && svc.isGroupOnGoingCallEnabled.value) {
+    if (svc.callerList.length >= 3 && svc.isOnGoingCallViewEnable.value) {
       // Group ongoing: close if local user hung up or only 1 participant left
       final isLocalHangup = svc.isSelfId(id: userId);
       if (isLocalHangup || svc.callerList.length <= 1) {
