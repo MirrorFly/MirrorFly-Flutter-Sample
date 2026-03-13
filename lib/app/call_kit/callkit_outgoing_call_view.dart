@@ -1415,13 +1415,20 @@ class CallKitOutgoingCallView
     await controller.getAvailableAudioOutputDevices();
     callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${controller.availableTypes.map((e) => e.toMap()).toList()}");
 
+    final bool isSpeakerOnlyAvailable = controller.availableTypes.length == 1 && controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.speaker);
+    final bool isEarpieceOnlyAvailable = controller.availableTypes.length == 1 && controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.receiver);
     final bool onlyEarpieceAndSpeakerAvailable = controller.availableTypes.length == 2 &&
         controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.receiver) &&
         controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.speaker);
     final bool isVideoCallAndNoExternalDeviceConnected = controller.callType.value == "video" && controller.availableTypes.length == 1;
 
     callkitLogger.info("[_showAudioDeviceSelector] Available onlyEarpieceAndSpeakerAvailable: $onlyEarpieceAndSpeakerAvailable"
-        "isVideoCallAndNoExternalDeviceConnected: $isVideoCallAndNoExternalDeviceConnected");
+        "isVideoCallAndNoExternalDeviceConnected: $isVideoCallAndNoExternalDeviceConnected, isSpeakerOnlyAvailable: $isSpeakerOnlyAvailable, isEarpieceOnlyAvailable: $isEarpieceOnlyAvailable");
+
+    if (isSpeakerOnlyAvailable || isEarpieceOnlyAvailable) {
+      callkitLogger.info("[_showAudioDeviceSelector] only one device available not showing");
+      return;
+    }
 
     if (onlyEarpieceAndSpeakerAvailable || isVideoCallAndNoExternalDeviceConnected) {
       //Toggle between the two available devices dynamically
