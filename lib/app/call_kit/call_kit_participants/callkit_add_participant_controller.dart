@@ -403,7 +403,7 @@ class CallKitAddParticipantsController extends GetxController
       MirrorFlyCallKit.inviteParticipants(inviteUserList: normalizedJid, flyResult: (res) async {
         callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
-          NavUtils.back();
+          NavUtils.back(result:normalizedJid);
           // callerList.value = await getCurrentCallParticipants();
         }
       });

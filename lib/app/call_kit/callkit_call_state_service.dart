@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirror_fly_demo/app/common/constants.dart';
 import 'package:mirror_fly_demo/app/data/session_management.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -84,8 +85,8 @@ class CallStateService extends GetxService {
   // ── View state ───────────────────────────────────────────────────────────
   RxBool showControls = true.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
-  RxBool isGroupCall = false.obs;
-  RxBool isGroupOnGoingCallEnabled = false.obs;
+  // RxBool isGroupCall = false.obs;
+  // RxBool isGroupOnGoingCallEnabled = false.obs;
   RxBool isCallModeChangedToOneToMany = false.obs;
   RxString titleAfterCallModeChange = ''.obs;
   RxString chatNameForGroupCall = ''.obs;
@@ -181,7 +182,7 @@ class CallStateService extends GetxService {
     callkitLogger.info(
         '[CallStateService] onConnected participantIds=$participantIds');
 
-    if (!isGroupCall.value) {
+    if (callerList.length <= 2) {
       final bool isUserOnHold = callerList.any((p) =>
           participantIds.contains(p.identity) &&
           p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
@@ -221,9 +222,9 @@ class CallStateService extends GetxService {
         updateCallerStatusList(
             participantsId: participantIds,
             status: FlyCallStatusEvent.connected);
-        if (!isGroupOnGoingCallEnabled.value) {
-          isGroupOnGoingCallEnabled.value = true;
-        }
+        // if (!isGroupOnGoingCallEnabled.value) {
+        //   isGroupOnGoingCallEnabled.value = true;
+        // }
         // timer runs automatically via flyCallTimer stream
       } else {
         callkitLogger.info(
@@ -380,7 +381,7 @@ class CallStateService extends GetxService {
   /// controller can navigate without the service touching routes.
   void disconnectCall({required List<String> userIds, required String reason}) {
     callkitLogger.info(
-        '[CallStateService] disconnectCall userIds=$userIds reason=$reason isGroupCall=${isGroupCall.value} isGroupOnGoingCallEnabled=${isGroupOnGoingCallEnabled.value} isMeet=${isMeet.value}');
+        '[CallStateService] disconnectCall userIds=$userIds reason=$reason isMeet=${isMeet.value}');
 
     if (userIds.isEmpty) {
       _resetValues();
@@ -389,7 +390,7 @@ class CallStateService extends GetxService {
 
     final String userId = userIds.firstOrNull ?? '';
 
-    if (isGroupCall.value && isGroupOnGoingCallEnabled.value) {
+    if (callerList.length >= 2) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] disconnectCall: Group call is ongoing, applying disconnect logic.");
 
       callerList.removeWhere((e) => e.identity == userId);
@@ -459,7 +460,7 @@ class CallStateService extends GetxService {
 
   void rejected({required String userId}) {
     callkitLogger.info('[CallStateService] rejected userId=$userId');
-    if (isGroupCall.value) {
+    if (callerList.length >= 3) {
       callerList.removeWhere((e) => e.identity == userId);
       callerList.refresh();
       // Navigation for group: the controller's ever(lastStatusEvent) via
@@ -475,13 +476,14 @@ class CallStateService extends GetxService {
         '[CallStateService] remoteUserIsEngaged participants=$participants');
     if (callerList.isEmpty) return;
 
-    if (isGroupCall.value || isGroupOnGoingCallEnabled.value) {
+    if (callerList.length >= 2) {
       final first = participants.firstOrNull;
       if (callerList
               .firstWhereOrNull((e) => e.identity == first)
               ?.flyCallStatusEvent !=
           FlyCallStatusEvent.engaged) {
         callerList.removeWhere((e) => e.identity == first);
+        callerList.refresh();
         // allEngaged scenario: controller's ever(lastStatusEvent) via
         // FlyCallStatusEvent.engaged handles navigation.
       }
@@ -549,7 +551,7 @@ class CallStateService extends GetxService {
           }
         }
       }
-      await moveLocalParticipantToLast();
+      // await moveLocalParticipantToLast();
       callerList.refresh();
     }
   }
@@ -642,59 +644,59 @@ class CallStateService extends GetxService {
 
   Future<void> configureCallMode(
       {required String callMode, required String chatId}) async {
-    callkitLogger.info(
-        '[CallStateService] configureCallMode callMode=$callMode chatId=$chatId');
-    final bool yes =
-        callMode == 'TO-ONE-TO-MANY' || callMode == 'ONE-TO-MANY';
-    isGroupCall.value = yes;
-
-    if (yes) {
-      if (chatId.isEmpty && callMode == 'ONE-TO-MANY') {
-        isCallModeChangedToOneToMany(true);
-      }
-      getCallTitleForOneToManyCall();
-    } else if (callerList.length > 2 && isIncoming.value) {
-      isGroupCall.value = true;
-      isCallModeChangedToOneToMany(true);
-      getCallTitleForOneToManyCall();
-    }
+    // callkitLogger.info(
+    //     '[CallStateService] configureCallMode callMode=$callMode chatId=$chatId');
+    // final bool yes =
+    //     callMode == 'TO-ONE-TO-MANY' || callMode == 'ONE-TO-MANY';
+    // isGroupCall.value = yes;
+    //
+    // if (yes) {
+    //   if (chatId.isEmpty && callMode == 'ONE-TO-MANY') {
+    //     isCallModeChangedToOneToMany(true);
+    //   }
+    //   getCallTitleForOneToManyCall();
+    // } else if (callerList.length > 2 && isIncoming.value) {
+    //   isGroupCall.value = true;
+    //   isCallModeChangedToOneToMany(true);
+    //   getCallTitleForOneToManyCall();
+    // }
   }
 
-  String getCallTitleForOneToManyCall() {
-    if (!isGroupCall.value) {
-      titleAfterCallModeChange.value = '';
-      return '';
-    }
-
-    final filteredNames = remoteUserNameMap.entries
-        .where((entry) {
-          if (isSelfId(id: entry.key)) return false;
-          if (entry.value.trim().toLowerCase() == 'you') return false;
-          return true;
-        })
-        .map((e) => e.value.trim())
-        .toList();
-
-    final count = filteredNames.length;
-    if (count == 0) {
-      titleAfterCallModeChange.value = 'You';
-      return '';
-    }
-
-    String title;
-    if (count == 1) {
-      title = 'You and ${filteredNames[0]}';
-    } else if (count == 2) {
-      title = 'You, ${filteredNames[0]} & ${filteredNames[1]}';
-    } else {
-      final others = count - 1;
-      title =
-          'You, ${filteredNames[0]} & $others ${others == 1 ? 'other' : 'others'}';
-    }
-
-    titleAfterCallModeChange.value = title;
-    return title;
-  }
+  // String getCallTitleForOneToManyCall() {
+  //   if (!isGroupCall.value) {
+  //     titleAfterCallModeChange.value = '';
+  //     return '';
+  //   }
+  //
+  //   final filteredNames = remoteUserNameMap.entries
+  //       .where((entry) {
+  //         if (isSelfId(id: entry.key)) return false;
+  //         if (entry.value.trim().toLowerCase() == 'you') return false;
+  //         return true;
+  //       })
+  //       .map((e) => e.value.trim())
+  //       .toList();
+  //
+  //   final count = filteredNames.length;
+  //   if (count == 0) {
+  //     titleAfterCallModeChange.value = 'You';
+  //     return '';
+  //   }
+  //
+  //   String title;
+  //   if (count == 1) {
+  //     title = 'You and ${filteredNames[0]}';
+  //   } else if (count == 2) {
+  //     title = 'You, ${filteredNames[0]} & ${filteredNames[1]}';
+  //   } else {
+  //     final others = count - 1;
+  //     title =
+  //         'You, ${filteredNames[0]} & $others ${others == 1 ? 'other' : 'others'}';
+  //   }
+  //
+  //   titleAfterCallModeChange.value = title;
+  //   return title;
+  // }
 
   // =========================================================================
   // Reset
@@ -717,9 +719,9 @@ class CallStateService extends GetxService {
     callerList.clear();
     callAgainUserList.clear();
     remoteUserNameMap({});
-    isGroupCall(false);
+    // isGroupCall(false);
     chatNameForGroupCall('');
-    isGroupOnGoingCallEnabled(false);
+    // isGroupOnGoingCallEnabled(false);
     groupCallTitle('');
     isCallModeChangedToOneToMany(false);
     titleAfterCallModeChange('');
