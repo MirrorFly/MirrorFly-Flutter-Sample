@@ -70,7 +70,7 @@ class CallKitOutgoingCallView
                     children: [
 
                       /// Call UI (background)
-                      controller.isGroupCall.value
+                      controller.callerList.length >= 3
                           ? buildGroupGridItem(context)
                           : oneToOneCallUI(context),
 
@@ -85,9 +85,8 @@ class CallKitOutgoingCallView
                             controller.goToPIP();
                           },
                           icon: const Icon(
-                            Icons.arrow_drop_down_sharp,
-                            size: 36,
-                            color: Colors.white,
+                              Icons.keyboard_arrow_down,
+                              color: Colors.white
                           ),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -141,7 +140,7 @@ class CallKitOutgoingCallView
                     profileImage: getUserProfileImageWithName(
                       isLocalTile: false,
                       participantId: remoteParticipantId,
-                      callKind: remoteParticipant?.kind,
+                      callKind: MirrorFlyCallKit.getCallKind(),
                       scale: 1,
                     ),
                   ),
@@ -493,7 +492,7 @@ class CallKitOutgoingCallView
   /// Grid view for group call participants
   Widget buildGroupGridItem(BuildContext context) {
     return Obx(() {
-      final isGroupCall = controller.isGroupOnGoingCallEnabled.value;
+      final isGroupCall = controller.isOnGoingCallViewEnable.value;
       return SafeArea(
         child: Stack(
           children: [
@@ -512,9 +511,7 @@ class CallKitOutgoingCallView
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.65,
                             child: Text(
-                              controller.isCallModeChangedToOneToMany.value
-                                  ? controller.getOneToOneCallRemoteUserName.value
-                                  : controller.getOneToOneCallRemoteUserName.value,
+                              controller.getOneToOneCallRemoteUserName.value,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               softWrap: false,
@@ -573,8 +570,8 @@ class CallKitOutgoingCallView
                                   isLocalTile: false,
                                   participantId: controller
                                       .callerList[index].identity,
-                                  scale: 1.2, callKind: controller
-                                      .callerList[index].kind,
+                                  scale: 1.2,
+                                  callKind: MirrorFlyCallKit.getCallKind(),
                                 ),
                               ),
 
@@ -705,7 +702,7 @@ class CallKitOutgoingCallView
                                 ),
 
                                 if (!controller
-                                    .isOnGoingCallViewEnable.value) ...[
+                                    .isOnGoingCallViewEnable.value && !controller.isIncoming.value) ...[
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16.0),
@@ -722,14 +719,13 @@ class CallKitOutgoingCallView
                                               .ongoingCallPageStyle.callStatusTextStyle,
                                         ),
                                         const SizedBox(height: 8),
-                                        Text(
-                                          controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? controller.getOneToOneCallRemoteUserName.value:"${controller.chatNameForGroupCall.value}\n${controller.groupCallTitle.value}",
+                                        Text(controller.getOneToOneCallRemoteUserName.value,
                                           textAlign: TextAlign.center,
                                           style: AppStyleConfig
                                               .ongoingCallPageStyle.callerNameTextStyle,
                                         ),
                                         const SizedBox(height: 8),
-                                        controller.chatNameForGroupCall.value.isEmpty &&  controller.groupId.value.isEmpty ? Row(
+                                        controller.groupId.value.isEmpty ? Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: List.generate(
                                                   controller.callerList.length > 3
@@ -759,7 +755,7 @@ class CallKitOutgoingCallView
                                                         )
                                                             : const Offstage();
                                                       })),
-                                                     ): const Offstage()
+                                                     ) : const Offstage(),
 
                                       ],
                                     ),
@@ -829,7 +825,8 @@ class CallKitOutgoingCallView
                     isLocalTile: true,
                     participantId: controller.getLocalParticipant()?.identity ?? "",
                     scale: 2,
-                    useMaxSize: true, callKind: controller.getLocalParticipant()?.kind,
+                    useMaxSize: true,
+                    callKind: MirrorFlyCallKit.getCallKind(),
                   ),
                   onTap: () {
                     controller.videoSwap();
@@ -992,7 +989,7 @@ class CallKitOutgoingCallView
             children: [
 
               /// LOCAL VIEW → CENTER
-              if (isLocalView.value)
+              if (isLocalView.value && controller.isOnGoingCallViewEnable.value)
                 Center(
                   child: controller.callKind == FlyCallKind.sip
                       ? ProfileTextImage(
@@ -1010,6 +1007,33 @@ class CallKitOutgoingCallView
                         .profileImageSize.width /
                         scale,
                   ),
+                ),
+
+
+              if (isLocalView.value && !controller.isOnGoingCallViewEnable.value)
+                Positioned(
+                  top: 80,
+                  left: 0,
+                  right: 0,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                    child: controller.callKind == FlyCallKind.sip
+                        ? ProfileTextImage(
+                      text: (controller.remoteUserNameMap[participantId]?.trim().length ?? 0) > 3
+                          ? controller.remoteUserNameMap[participantId]!.trim().substring(3)
+                          : "You",
+                      radius:
+                      (AppStyleConfig.outgoingCallPageStyle.profileImageSize.width /
+                          scale) /
+                          2,
+                    )
+                        : buildProfileImage(
+                      snap.data!,
+                      size: AppStyleConfig.outgoingCallPageStyle
+                          .profileImageSize.width /
+                          scale,
+                    ),
+                ),
                 ),
 
               /// REMOTE VIEW → TOP CENTER
@@ -1039,7 +1063,7 @@ class CallKitOutgoingCallView
                 ),
 
               /// "You" label
-              if (isLocalTile && !controller.isGroupCall.value)
+              if (isLocalTile)
                 const Positioned(
                   bottom: 8,
                   child: Padding(
@@ -1112,7 +1136,7 @@ class CallKitOutgoingCallView
               _buildAudioRoutingControl(
                 onTap: () async {
                   callkitLogger.info(
-                      "[_buildCallControls] Audio device selector tapped");
+                      "[_buildCallControls] Audio device selector tapped, current output: ${controller.selectedDeviceType.value}");
                   _showAudioDeviceSelector(context);
                 },
               ),
@@ -1387,7 +1411,31 @@ class CallKitOutgoingCallView
   void _showAudioDeviceSelector(BuildContext context) async {
     await controller.getAvailableAudioOutputDevices();
     callkitLogger.info("[_showAudioDeviceSelector] Available audio devices: ${controller.availableTypes.map((e) => e.toMap()).toList()}");
-    if (controller.availableTypes.length > 2) {
+
+    final bool isSpeakerOnlyAvailable = controller.availableTypes.length == 1 && controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.speaker);
+    final bool isEarpieceOnlyAvailable = controller.availableTypes.length == 1 && controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.receiver);
+    final bool onlyEarpieceAndSpeakerAvailable = controller.availableTypes.length == 2 &&
+        controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.receiver) &&
+        controller.availableTypes.any((e) => e.type == FlyAudioDeviceType.speaker);
+    final bool isVideoCallAndNoExternalDeviceConnected = controller.callType.value == "video" && controller.availableTypes.length == 1;
+
+    callkitLogger.info("[_showAudioDeviceSelector] Available onlyEarpieceAndSpeakerAvailable: $onlyEarpieceAndSpeakerAvailable"
+        "isVideoCallAndNoExternalDeviceConnected: $isVideoCallAndNoExternalDeviceConnected, isSpeakerOnlyAvailable: $isSpeakerOnlyAvailable, isEarpieceOnlyAvailable: $isEarpieceOnlyAvailable");
+
+    if (isSpeakerOnlyAvailable || isEarpieceOnlyAvailable) {
+      callkitLogger.info("[_showAudioDeviceSelector] only one device available not showing");
+      return;
+    }
+
+    if (onlyEarpieceAndSpeakerAvailable || isVideoCallAndNoExternalDeviceConnected) {
+      //Toggle between the two available devices dynamically
+      final currentType = controller.selectedDeviceType.value;
+      final nextDevice = controller.availableTypes.firstWhere(
+            (device) => device.type.value != currentType,
+      );
+      callkitLogger.info("[_showAudioDeviceSelector] Toggling between two devices. Current: $currentType → Next: ${nextDevice.type.value}");
+      controller.changeAudioDevice(nextDevice);
+    } else {
       controller.isAudioDialogOpen.value = true;
       await showDialog(
         context: context.mounted ? context : Get.context!,
@@ -1424,19 +1472,6 @@ class CallKitOutgoingCallView
             ),
           );
         }),
-      );
-    } else if (controller.availableTypes.length == 2) {
-      //Toggle between the two available devices dynamically
-      final currentType = controller.selectedDeviceType.value;
-      final nextDevice = controller.availableTypes.firstWhere(
-            (device) => device.type.value != currentType,
-      );
-      callkitLogger.info("[_showAudioDeviceSelector] Toggling between two devices. Current: $currentType → Next: ${nextDevice.type.value}");
-      controller.changeAudioDevice(nextDevice);
-    } else {
-      // Only one device available → nothing to toggle
-      callkitLogger.info(
-        "[_showAudioDeviceSelector] Only one audio device available. No action taken.",
       );
     }
   }

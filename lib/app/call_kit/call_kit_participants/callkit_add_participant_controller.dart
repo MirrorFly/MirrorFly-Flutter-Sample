@@ -4,11 +4,9 @@ import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_outgoing_call_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../call_modules/call_utils.dart';
-import '../../call_modules/outgoing_call/call_controller.dart';
 import '../../common/main_controller.dart';
 import '../../data/helper.dart';
 import '../../extensions/extensions.dart';
-import 'package:mirrorfly_plugin/mirrorflychat.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../app_style_config.dart';
@@ -56,6 +54,8 @@ class CallKitAddParticipantsController extends GetxController
     callkitLogger.info("CallKitAddParticipantsController groupId: ${groupId.value}, joinViaLink: $joinViaLink, meet: $meet");
     getCallLink();
     // groupId(await Mirrorfly.getCallGroupJid());
+
+    debugPrint("CallKitAddParticipantsController → callList json ${callList.value.map((e) => e.toJson()).toList()}");
 
     getMaxCallUsersCount = Constants.useMirrorFlyCallKit
         ? Constants.maxCallUsersLimitForMirrorFlyCallKit : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
@@ -221,7 +221,7 @@ class CallKitAddParticipantsController extends GetxController
   }
 
   _scrollListener() {
-    if (scrollController.hasClients && !joinViaLink) {
+    if (scrollController.hasClients && !joinViaLink && !meet) {
       if (scrollController.position.extentAfter <= 0 &&
           isPageLoading.value == false) {
         if (scrollable.value) {
@@ -403,7 +403,7 @@ class CallKitAddParticipantsController extends GetxController
       MirrorFlyCallKit.inviteParticipants(inviteUserList: normalizedJid, flyResult: (res) async {
         callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants result: $res");
         if (res.isSuccess) {
-          NavUtils.back();
+          NavUtils.back(result:normalizedJid);
           // callerList.value = await getCurrentCallParticipants();
         }
       });

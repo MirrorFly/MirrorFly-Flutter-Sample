@@ -5,6 +5,7 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
+import 'package:mirror_fly_demo/mention_text_field/src/string_extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,11 +17,13 @@ import '../../data/session_management.dart';
 import '../../data/utils.dart';
 import '../../extensions/extensions.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_call_state_service.dart';
 import '../callkit_event_buffer.dart';
 
 
 class CallKitJoinCallController extends FullLifeCycleController with FullLifeCycleMixin {
 
+  var uiLoading = false.obs;
   var callLinkId = "";
   var isInitializeSuccess = false.obs;
   var audioPermissionGranted = false.obs;
@@ -43,29 +46,32 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   @override
   void onInit() async {
     super.onInit();
+
+    uiLoading(true);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
     navigatedFrom = NavUtils.arguments["navigatedFrom"].toString();
 
+    await CallStateService.start();
+
     checkPermission().then((success) async {
       if (!success) {
+        audioMuted.value = true;
+        videoMuted.value = true;
         callkitLogger.info("Required permissions not granted, cannot initialize join via link");
-        isInitializeSuccess(false);
-        displayStatus = getTranslated('permissionsNotGranted');
         toToast(getTranslated("permissionsNotGranted"));
-        return;
       }
 
       callkitLogger.info("Initializing from $navigatedFrom via link with callLinkId: $callLinkId");
       final InitializeJoinLinkResponse initializeJoinLinkResponse = await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
 
       if (initializeJoinLinkResponse.isSuccess) {
+        if (success) {
+          audioMuted.value = false;
+          videoMuted.value = false;
+        }
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
-
-        audioMuted.value = false;
-        videoMuted.value = false;
         callMode.value = initializeJoinLinkResponse.callMode;
-
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
         // await getVideoLocalCapturePreview();
       } else {
@@ -78,6 +84,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
+      uiLoading(false);
     });
   }
 
@@ -97,6 +104,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
     for (var participant in participants ?? []) {
 
+      final bool isLocalParticipant = isLocalParticipantId(participantId: participant.userId);
+      if (isLocalParticipant) {
+        callkitLogger.info("#CallKitJoinCallController #LocalParticipantFound #Ignoring user addition");
+        continue;
+      }
+
       var callKitId = participant.userId;
       callkitLogger.info("Fetching profile for participant callKitId: $callKitId");
 
@@ -111,6 +124,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
+          await CallStateService.start();
           CallKitEventBuffer.flushAllEvents();
           final JoinViaLinkResponseModel response = await MirrorFlyCallKit.joinCallViaLink(callLink: callLinkId);
           if (response.isSuccess) {
@@ -126,12 +140,22 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
               callEnded.value = true;
               toToast("Call ended");
               return;
+            } else if (errorCode == 410) {
+                toToast(response.errorMap[410] ?? "");
+                await AppPermission.askAudioCallPermissions();
+            } else if (errorCode == 411) {
+              toToast(response.errorMap[411] ?? "");
+              await AppPermission.askVideoCallPermissions();
             } else {
               callkitLogger.info("Failed to join call via link with error: ${response.errorMap}");
               toToast(response.errorMap.values.first);
             }
           }
+        } else {
+          toToast("Notification permission denied");
         }
+      } else {
+        toToast("Audio call permission denied");
       }
     } else {
       toToast(getTranslated("noInternetConnection"));
@@ -141,12 +165,16 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   /// Mute Audio
   Future<void> muteAudio() async {
     callkitLogger.info("Setting microphone mute state in CallKit to: ${audioMuted.value}");
-    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success}) {
+    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success, required String code}) async {
       if (success) {
         callkitLogger.info("Microphone mute state successfully set in CallKit response isMuted $isMuted. Current state: ${audioMuted.value}");
           audioMuted(isMuted);
           callkitLogger.info("Audio mute state changed. New state: ${audioMuted.value}");
       } else {
+        if (code == "410") {
+          toToast(message);
+          await AppPermission.askAudioCallPermissions();
+        }
         callkitLogger.info("Failed to set microphone mute state in CallKit. Error: $message");
       }
     });
@@ -154,16 +182,28 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
   /// Mute Video
   Future<void> videoMute() async {
-    callkitLogger.info("Toggling videoMute. Current state: ${videoMuted.value}");
-    MirrorFlyCallKit.setCameraEnable(enable: (videoMuted.value), result: (isSuccess) {
-      callkitLogger.info("Camera enable response from CallKit: isSuccess: $isSuccess. Current videoMute state: ${videoMuted.value}");
-      if (!isSuccess) {
-        callkitLogger.info("Failed to toggle videoMute in CallKit.");
-      } else {
-        callkitLogger.info("Video mute state successfully toggled in CallKit. Current state: ${videoMuted.value}");
-        videoMuted(!videoMuted.value);
-      }
-    });
+    final currentState = videoMuted.value;
+
+    callkitLogger.info("Toggling videoMute. Current state: $currentState");
+
+    MirrorFlyCallKit.setCameraEnable(
+      enable: currentState,
+      result: ({required success, required message, required code}) async {
+        callkitLogger.info("Camera response → success=$success message=$message code=$code");
+
+        if (!success) {
+          callkitLogger.error("Failed to toggle videoMute");
+          if (code == "411") {
+            toToast(message);
+            await AppPermission.askVideoCallPermissions();
+          }
+          return;
+        }
+
+        videoMuted(!currentState);
+        callkitLogger.info("Video mute toggled → new state: ${videoMuted.value}");
+      },
+    );
   }
 
   /// Getter of profile image in future builder
@@ -228,6 +268,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   void onBackPressed({bool fromPopScope = false}) async {
     callkitLogger.info("Back button pressed during call join process, ignoring to prevent navigation");
     final bool isCancelled = await MirrorFlyCallKit.cancelInitializeJoinViaLink();
+    CallStateService.stop();
     if (isCancelled && !fromPopScope) {
       callkitLogger.info("Join via link initialization cancelled successfully");
       NavUtils.back();
@@ -269,6 +310,52 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (paused) {
       paused = false;
       checkPermission();
+    }
+  }
+
+  bool isLocalParticipantId({required String participantId}) {
+    final String currentUserJid = SessionManagement.getUserJID() ?? "";
+    final String currentUserId = CallUtils.getIdFromJidList(currentUserJid);
+    return currentUserId == participantId;
+  }
+
+  void participantConnected({required List<String> participantsId}) async {
+
+    if (participantsId.isEmpty) {
+      callkitLogger.info("#CallKitJoinCallController #participantConnected #Empty");
+      return;
+    }
+
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #forParticipant: ${participantsId.first}");
+
+    final bool isLocalParticipant = isLocalParticipantId(participantId: participantsId.first);
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #isLocalParticipant: $isLocalParticipant");
+
+    if (isLocalParticipant) {
+      callkitLogger.info("#CallKitJoinCallController #participantConnected #forLocalParticipant #ignoring");
+      return;
+    }
+
+    callkitLogger.info("#CallKitJoinCallController #participantConnected #${participantsId.first}");
+
+    final participant = JoinLinkParticipant(userId: participantsId.first, status: "CONNECTED");
+    await getCallDetails(participants: [participant]);
+  }
+
+  void participantDisconnected({required String participant}) {
+    callkitLogger.info("#CallKitJoinCallController #participantDisconnected #$participant, users: ${users.map((e) => e.toString())}");
+
+    final jid = CallUtils.getJidFromUserId(
+      userId: participant,
+      isGroup: false,
+    );
+    callkitLogger.info("#CallKitJoinCallController #participantDisconnected #jid: $jid");
+
+    if (users.contains(jid)) {
+      callkitLogger.info("#CallKitJoinCallController #participantDisconnected #participantFound");
+      users.remove(jid);
+    } else {
+      callkitLogger.info("#CallKitJoinCallController #participantDisconnected #noParticipant");
     }
   }
 }

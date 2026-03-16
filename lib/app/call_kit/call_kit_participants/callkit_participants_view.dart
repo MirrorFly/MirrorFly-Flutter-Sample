@@ -180,10 +180,13 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: style.textStyle,
-            // style: const TextStyle(fontWeight: FontWeight.w700),
+          Expanded(
+            child: Text(
+              title,
+              style: style.textStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           count != "0"
               ? Padding(
@@ -207,7 +210,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
   Widget callParticipantsView(
       BuildContext context, ParticipantItemStyle style) {
     return Obx(() {
-      return controller.callList.value.length > 1 ? ListView.builder(
+      return controller.callList.value.isNotEmpty ? ListView.builder(
           shrinkWrap: true,
           itemCount: controller.callList.value.length,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -298,19 +301,20 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                           child: controller
                               .callList.value[index].isVideoMuted ?? false
                               ? AppUtils.svgIcon(
-                            icon: participantVideoDisabled,
-                            colorFilter: ColorFilter.mode(
-                                style.actionStyle
-                                    .inactiveIconColor,
-                                BlendMode.srcIn),
-                          )
-                              : AppUtils.svgIcon(
                             icon: participantVideoEnabled,
                             colorFilter: ColorFilter.mode(
                                 style.actionStyle
                                     .activeIconColor,
                                 BlendMode.srcIn),
-                          ));
+                          )
+                              : AppUtils.svgIcon(
+                        icon: participantVideoDisabled,
+                        colorFilter: ColorFilter.mode(
+                            style.actionStyle
+                                .inactiveIconColor,
+                            BlendMode.srcIn),
+                      )
+                      );
                     }),
                   ),
                 ],
