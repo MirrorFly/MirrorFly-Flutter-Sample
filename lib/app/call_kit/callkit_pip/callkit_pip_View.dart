@@ -209,7 +209,7 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
       fit: BoxFit.cover,
       viewBgColor: AppColors.callerTitleBackground,
       profileImage: controller.getUserProfileImageWithName(
-        isGroup: controller.callMode.string == 'ONE-TO-ONE' ? false : true,
+        isGroup: controller.callMode.string == 'ONE-TO-ONE' || controller.isOnGoingCallViewEnable.value ? false : true,
         participantId: participant.identity,
       ),
     );
