@@ -291,10 +291,11 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var item = controller.groupMembers[index];
+                        bool isMyName = item.jid == SessionManagement.getUserJID();
                         return MemberItem(
                           itemStyle: AppStyleConfig
                               .groupChatInfoPageStyle.groupMemberStyle,
-                          name: item.getName().checkNull(),
+                          name: isMyName ? "You" : item.getName().checkNull(),
                           image: item.image.checkNull(),
                           isAdmin: item.isGroupAdmin,
                           status: item.status.checkNull(),
