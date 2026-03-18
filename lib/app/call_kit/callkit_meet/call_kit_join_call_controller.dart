@@ -78,7 +78,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         if (initializeJoinLinkResponse.code == 400) {
           callkitLogger.info("Join via link initialization failed with error: call is already ended");
           callEnded.value = true;
-          toToast(initializeJoinLinkResponse.errorMessage ?? "Call is Already ended");
+          // toToast(initializeJoinLinkResponse.errorMessage ?? "Call is Already ended");
           return;
         }
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
