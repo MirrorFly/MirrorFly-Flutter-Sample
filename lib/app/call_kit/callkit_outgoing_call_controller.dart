@@ -401,23 +401,23 @@ class CallKitOutgoingCallController extends GetxController
           callkitLogger.info("[MirrorFly][OutgoingCallController] join via meet link local participant only present ");
           callStatus("");
         }
-        bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
-        bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
-        callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");
-        if(!isVideoMuted){
-          isVideoEnabled.value = true;
-          _svc.isVideoEnabled.value = true;
-        } else {
-          isVideoEnabled.value = false;
-          _svc.isVideoEnabled.value = false;
-        }
-        if (isAudioMute){
-          isAudioMuted.value = true;
-          _svc.isAudioMuted.value = true;
-        } else {
-          isAudioMuted.value = false;
-          _svc.isAudioMuted.value = false;
-        }
+        // bool isAudioMute = MirrorFlyCallKit.getAudioMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
+        // bool isVideoMuted = MirrorFlyCallKit.getVideoMuteStatus(userJid: CallUtils.getIdFromJidList(SessionManagement.getUserJID() ?? ""));
+        // callkitLogger.info("[MirrorFly][OutgoingCallController] Current call mode is MEET, enabling ongoing call view and fetching video mute status $isVideoMuted and audio mute status $isAudioMute");
+        // if(!isVideoMuted){
+        //   isVideoEnabled.value = true;
+        //   _svc.isVideoEnabled.value = true;
+        // } else {
+        //   isVideoEnabled.value = false;
+        //   _svc.isVideoEnabled.value = false;
+        // }
+        // if (isAudioMute){
+        //   isAudioMuted.value = true;
+        //   _svc.isAudioMuted.value = true;
+        // } else {
+        //   isAudioMuted.value = false;
+        //   _svc.isAudioMuted.value = false;
+        // }
       }
 
       callkitLogger.info(
@@ -551,6 +551,14 @@ class CallKitOutgoingCallController extends GetxController
       );
 
       for (var flyCallParticipant in participants) {
+
+        /// Check and update local user mute status
+        /// Scenario: for MEET and LINK join we get the event from sdk before the
+        /// controllers and service are getting ready so that we check once here
+        if (flyCallParticipant.isLocalParticipant) {
+          checkLocalUserMuteStatus(flyCallParticipant);
+        }
+
         if (!existingIds.contains(flyCallParticipant.identity)) {
           callerList.add(flyCallParticipant);
           callkitLogger.info(
@@ -580,6 +588,25 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     return participants;
+  }
+
+  void checkLocalUserMuteStatus(FlyCallParticipant participant) {
+    final bool isParticipantAudioMuted = participant.isAudioMuted ?? false;
+    final bool isParticipantVideoMuted = participant.isVideoMuted ?? false;
+    if(!isParticipantVideoMuted){
+      isVideoEnabled.value = true;
+      _svc.isVideoEnabled.value = true;
+    } else {
+      isVideoEnabled.value = false;
+      _svc.isVideoEnabled.value = false;
+    }
+    if (isParticipantAudioMuted){
+      isAudioMuted.value = true;
+      _svc.isAudioMuted.value = true;
+    } else {
+      isAudioMuted.value = false;
+      _svc.isAudioMuted.value = false;
+    }
   }
 
   ///
