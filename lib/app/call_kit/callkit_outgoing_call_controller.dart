@@ -512,16 +512,16 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] onReady groupId is empty, skipping getChatNameForGroupCall");
       // }
 
-      if(currentCallMode.value != "MEET"){
-        // Only derive isVideoEnabled from callType when this is a fresh screen
-        // open (NavUtils.arguments present). On PIP expand (no nav args), the
-        // value was already seeded correctly from the service — don't overwrite.
-        if (NavUtils.arguments != null) {
-          callType.value == "audio"
-              ? isVideoEnabled.value = false
-              : isVideoEnabled.value = true;
-        }
-      }
+      // if(currentCallMode.value != "MEET"){
+      //   // Only derive isVideoEnabled from callType when this is a fresh screen
+      //   // open (NavUtils.arguments present). On PIP expand (no nav args), the
+      //   // value was already seeded correctly from the service — don't overwrite.
+      //   if (NavUtils.arguments != null) {
+      //     callType.value == "audio"
+      //         ? isVideoEnabled.value = false
+      //         : isVideoEnabled.value = true;
+      //   }
+      // }
 
     super.onReady();
   }
@@ -593,6 +593,9 @@ class CallKitOutgoingCallController extends GetxController
   void checkLocalUserMuteStatus(FlyCallParticipant participant) {
     final bool isParticipantAudioMuted = participant.isAudioMuted ?? false;
     final bool isParticipantVideoMuted = participant.isVideoMuted ?? false;
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #checkLocalUserMuteStatus "
+        "called with isParticipantAudioMuted: $isParticipantAudioMuted, isParticipantVideoMuted: $isParticipantVideoMuted");
+
     if(!isParticipantVideoMuted){
       isVideoEnabled.value = true;
       _svc.isVideoEnabled.value = true;
@@ -600,6 +603,7 @@ class CallKitOutgoingCallController extends GetxController
       isVideoEnabled.value = false;
       _svc.isVideoEnabled.value = false;
     }
+
     if (isParticipantAudioMuted){
       isAudioMuted.value = true;
       _svc.isAudioMuted.value = true;
