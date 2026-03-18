@@ -146,7 +146,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
             } else if (errorCode == 411) {
               toToast(response.errorMap[411] ?? "");
               await AppPermission.askVideoCallPermissions();
-            } else {
+            } else if(errorCode == 400) {
+              callkitLogger.info("Join call link initialization failed with error: call is already ended");
+              callEnded.value = true;
+            }else {
               callkitLogger.info("Failed to join call via link with error: ${response.errorMap}");
               toToast(response.errorMap.values.first);
             }
