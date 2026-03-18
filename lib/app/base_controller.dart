@@ -108,6 +108,11 @@ class BaseController {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
         }
+
+        if (NavUtils.currentRoute == Routes.callKitJoinCallPreview) {
+          NavUtils.back();
+        }
+
         callerId = flyCallStatus.participantsIds.first;
         callType = MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video ? "video" : "audio";
         callMode =  MirrorFlyCallKit.getCurrentCallMode();
