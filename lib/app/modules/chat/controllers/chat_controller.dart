@@ -23,6 +23,7 @@ import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
 import 'package:mirror_fly_demo/app/modules/chat/views/mention_list_view.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' show FlyCallCfResponse, FlyResult, MirrorFlyCallKit;
+import '../../../call_kit/callkit_event_buffer.dart';
 import '../../../common/constants.dart';
 import '../../../common/de_bouncer.dart';
 import '../../../common/main_controller.dart';
@@ -1031,11 +1032,11 @@ class ChatController extends FullLifeCycleController
         replyMessageID = replyChatMessage.messageId;
       }
       isReplying(false);
-      Platform.isIOS
-          ? DialogUtils.showLoading(
+      // Platform.isIOS ?
+      DialogUtils.showLoading(
               message: getTranslated("compressingVideo"),
-              dialogStyle: AppStyleConfig.dialogStyle)
-          : null;
+              dialogStyle: AppStyleConfig.dialogStyle);
+          // : null;
       //old method is deprecated Instead of use below new method
       /*return Mirrorfly.sendVideoMessage(
           profile.jid!, videoPath, caption, replyMessageID,topicId: topicId)
@@ -1056,6 +1057,7 @@ class ChatController extends FullLifeCycleController
               metaData: messageMetaData,
               //#metaData
               mentionedUsersIds: mentionedUsersIds,
+              mediaCompressionType: MediaCompressionType.uncompressed,
               fileMessageParams:
                   FileMessageParams(file: File(videoPath), caption: caption)),
           flyCallback: (response) {
@@ -1063,7 +1065,9 @@ class ChatController extends FullLifeCycleController
               LogMessage.d("video message", response.data.toString());
               // clearMessage();
               messageController.text = Constants.emptyString;
-              Platform.isIOS ? DialogUtils.hideLoading() : null;
+              // Platform.isIOS ? DialogUtils.hideLoading() : null;
+              DialogUtils.hideLoading();
+
               ChatMessageModel chatMessageModel =
                   sendMessageModelFromJson(response.data);
               // chatList.insert(0, chatMessageModel);
@@ -4084,16 +4088,18 @@ class ChatController extends FullLifeCycleController
             return;
           }
 
+          CallKitEventBuffer.flushAllEvents();
           await MirrorFlyCallKit.makeAudioCall(
               flyResult: (FlyResult response) {
                 if (response.isSuccess) {
+                  CallKitEventBuffer.flushAllEvents();
                   NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                     "callType": CallType.audio,
                     "callMode": "ONE-TO-ONE",
                     "chatId": ''
                   });
                 } else {
-                  toToast(response.message ?? "");
+                  toToast(response.message ?? response.data);
                 }
               },
               callersId: [
@@ -4139,7 +4145,7 @@ class ChatController extends FullLifeCycleController
               toToast(getTranslated("noInternetConnection"));
               return;
             }
-
+            CallKitEventBuffer.flushAllEvents();
             await MirrorFlyCallKit.makeVideoCall(
                 callersId: [normalizedJidList],
                 chatId: normalizedChatId,
@@ -4151,7 +4157,7 @@ class ChatController extends FullLifeCycleController
                       "chatId": ''
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
               });
         }catch(e){

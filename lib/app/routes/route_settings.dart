@@ -5,7 +5,9 @@ import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/scanner_view.dart';
 import 'package:mirror_fly_demo/app/modules/scanner/web_login_result_view.dart';
+import '../call_kit/call_kit_participants/callkit_participants_view.dart';
 import '../call_kit/callkit_call_timeout/callkit_call_timeout_view.dart';
+import '../call_kit/callkit_meet/call_kit_join_call_preview_view.dart';
 import '../model/arguments.dart';
 
 import '../call_modules/call_info/views/call_info_view.dart';
@@ -259,10 +261,19 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
           builder: (_) =>
               const CallKitTimeoutView(),
           settings: settings);
+    case Routes.callKitParticipantView:
+      return MaterialPageRoute(
+          builder: (_) =>
+              const CallKitParticipantsView(),
+          settings: settings);
 
       case Routes.dialerPad:
       return MaterialPageRoute(
           builder: (_) => const DialerView(), settings: settings);
+
+      case Routes.callKitJoinCallPreview:
+      return MaterialPageRoute(
+          builder: (_) => const CallKitJoinCallPreviewView(), settings: settings);
 
     default:
       if (settings.name!.startsWith(Routes.dashboard)) {

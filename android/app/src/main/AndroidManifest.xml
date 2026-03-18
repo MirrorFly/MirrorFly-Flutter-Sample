@@ -43,6 +43,7 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity"
             android:supportsPictureInPicture="true"
+            android:resizeableActivity="true"
             tools:overrideLibrary="io.github.ponnamkarthik.toast.fluttertoast">
 
             <!--

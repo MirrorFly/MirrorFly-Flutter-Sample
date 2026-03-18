@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/chat_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
@@ -274,29 +275,75 @@ class MeetLinkController extends GetxController {
     super.onInit();
   }
 
-  void createMeetLink() {
-    Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
-      if (response.isSuccess) {
-        meetId(response.data);
-        if (meetId.value.isNotEmpty) {
-          meetLink(Constants.webChatLogin + meetId.value);
-          // showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
+  void createMeetLink() async{
+    if (Constants.useMirrorFlyCallKit) {
+    try {
+      final CreateMeetLinkResponse meetLinkResponse =
+      await MirrorFlyCallKit.createMeetLink();
+
+      callkitLogger.info(
+          "[MeetLink] Response received → isSuccess: ${meetLinkResponse.isSuccess}, "
+              "callLink: ${meetLinkResponse.callLink}, "
+              "error: ${meetLinkResponse.errorMessage}");
+
+      if (meetLinkResponse.isSuccess) {
+
+        if (meetLinkResponse.callLink.isNotEmpty) {
+
+          callkitLogger.info(
+              "[MeetLink] Meet link created successfully → ${meetLinkResponse.callLink}");
+
+          meetId(meetLinkResponse.callLink);
+          meetLink(meetLinkResponse.callLink);
+
+        } else {
+          callkitLogger.info(
+              "[MeetLink] Success true but callLink is null or empty");
         }
+
       } else {
-        if (NavUtils.isOverlayOpen) {
-          toToast(response.message.checkNull());
-          NavUtils.back();
-        }
+        callkitLogger.error(
+            "[MeetLink] Failed to create meet link → "
+                "error: ${meetLinkResponse.errorMessage}");
       }
-    });
+
+    } catch (e, stackTrace) {
+      callkitLogger.error(
+          "[MeetLink] Exception while creating meet link → $e\n$stackTrace");
+    }
+
+    } else {
+      Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
+        if (response.isSuccess) {
+          meetId(response.data);
+          if (meetId.value.isNotEmpty) {
+            meetLink(Constants.webChatLogin + meetId.value);
+            // showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
+          }
+        } else {
+          if (NavUtils.isOverlayOpen) {
+            toToast(response.message.checkNull());
+            NavUtils.back();
+          }
+        }
+      });
+    }
   }
 
   Future<void> joinCall() async {
     if (await AppUtils.isNetConnected()) {
       if (meetLink.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
-        NavUtils.offNamed(Routes.joinCallPreview, arguments: {
-          "callLinkId": meetLink.replaceAll(Constants.webChatLogin, "")
-        });
+        if (Constants.useMirrorFlyCallKit) {
+          NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+            "callLinkId": meetLink,
+            "navigatedFrom": "MeetLinkController-JoinCall"
+
+          });
+        } else {
+          NavUtils.offNamed(Routes.joinCallPreview, arguments: {
+            "callLinkId": meetLink.replaceAll(Constants.webChatLogin, ""),
+          });
+        }
       }
     } else {
       toToast(getTranslated("noInternetConnection"));

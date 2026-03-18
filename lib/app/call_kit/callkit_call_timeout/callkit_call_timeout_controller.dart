@@ -10,6 +10,7 @@ import '../../common/constants.dart';
 import '../../data/permissions.dart';
 import '../../data/utils.dart';
 import '../../routes/route_settings.dart';
+import '../callkit_event_buffer.dart';
 
 class CallKitCallTimeoutController extends GetxController {
   var callType = ''.obs;
@@ -25,7 +26,7 @@ class CallKitCallTimeoutController extends GetxController {
   var groupId = ''.obs;
   var groupJid = ''.obs;
 
-
+  Rx<FlyCallKind> callKind = FlyCallKind.standard.obs;
 
   @override
   Future<void> onInit() async {
@@ -35,9 +36,12 @@ class CallKitCallTimeoutController extends GetxController {
       calleeName.value = (NavUtils.arguments["calleeName"]);
       callMode.value = (NavUtils.arguments["callMode"]);
       groupId.value = (NavUtils.arguments["groupId"] ?? '');
-      debugPrint("Call Timeout OnInit arguments => $callType $users $calleeName");
-      addDomainToJid();
-      addDomainToGroupJid();
+      callKind.value = (NavUtils.arguments["callKind"] ?? FlyCallKind.standard);
+      print("Call Timeout OnInit arguments => $callType, $users, $calleeName, $callKind");
+      if (callKind.value != FlyCallKind.sip) {
+        addDomainToJid();
+        addDomainToGroupJid();
+      }
     }
     super.onInit();
 
@@ -76,6 +80,35 @@ class CallKitCallTimeoutController extends GetxController {
       if (callType.value == CallType.audio) {
         if (await AppPermission.askAudioCallPermissions()) {
 
+          if (callKind.value == FlyCallKind.sip) {
+            final String sipNumber = users.first;
+            callkitLogger.info("Making SIP Call to $sipNumber");
+
+            if (!await AppUtils.isNetConnected()) {
+              callkitLogger.info('#callAgain No internet connection available');
+              toToast(getTranslated("noInternetConnection"));
+              return;
+            }
+
+            CallKitEventBuffer.flushAllEvents();
+            await MirrorFlyCallKit.makeSIPCall(
+              sipNumber: sipNumber,
+              flyResult: (FlyResult response) {
+                if (response.isSuccess) {
+                  NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+                    "userJid": [sipNumber],
+                    "callType": CallType.audio,
+                    "callMode": callMode.value,
+                    "chatId": ''
+                  });
+                } else {
+                  toToast(response.message ?? response.data);
+                }
+              });
+
+            return;
+          }
+
             final List<String> userList = users.toList();
             callkitLogger.info("Making Audio Call to ${userList.toString()}");
 
@@ -91,6 +124,7 @@ class CallKitCallTimeoutController extends GetxController {
               return;
             }
 
+            CallKitEventBuffer.flushAllEvents();
             await MirrorFlyCallKit.makeAudioCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
@@ -101,7 +135,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:
@@ -129,6 +163,7 @@ class CallKitCallTimeoutController extends GetxController {
           }
 
           final List<String> userList = users.toList();
+          CallKitEventBuffer.flushAllEvents();
           await MirrorFlyCallKit.makeVideoCall(
                 flyResult: (FlyResult response) {
                   if (response.isSuccess) {
@@ -139,7 +174,7 @@ class CallKitCallTimeoutController extends GetxController {
                       "chatId": normalizedGroupId,
                     });
                   } else {
-                    toToast(response.message ?? "");
+                    toToast(response.message ?? response.data);
                   }
                 },
                 callersId:

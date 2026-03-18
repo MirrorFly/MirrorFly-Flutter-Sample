@@ -29,9 +29,16 @@ class MeetMessageView extends StatelessWidget {
         if (await AppUtils.isNetConnected()) {
           var link = chatMessage.meetChatMessage!.link.checkNull();
           if (link.isNotEmpty) {
-            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-              "callLinkId": link.replaceAll(Constants.webChatLogin, "")
-            });
+            if (Constants.useMirrorFlyCallKit) {
+              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+                "callLinkId": link,
+                "navigatedFrom": "MeetMessageView-Build"
+              });
+            } else {
+              NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
+              });
+            }
           }
         } else {
           toToast(getTranslated("noInternetConnection"));
@@ -166,9 +173,16 @@ class MeetLinkView extends StatelessWidget {
       onTap: () async {
         if (await AppUtils.isNetConnected()) {
           if (message.isNotEmpty) {
-            NavUtils.toNamed(Routes.joinCallPreview, arguments: {
-              "callLinkId": message.replaceAll(Constants.webChatLogin, "")
-            });
+            if (Constants.useMirrorFlyCallKit) {
+              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+                "callLinkId": message,
+                "navigatedFrom": "MeetLinkView-Build"
+              });
+            } else {
+              NavUtils.toNamed(Routes.joinCallPreview, arguments: {
+                "callLinkId": message.replaceAll(Constants.webChatLogin, ""),
+              });
+            }
           }
         } else {
           toToast(getTranslated("noInternetConnection"));
