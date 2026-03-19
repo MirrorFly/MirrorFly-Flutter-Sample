@@ -122,6 +122,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                             ? null
                             : () {
                                 controller.joinCall();
+                                NavUtils.back();
                               },
                         style: meetBottomSheetStyle.joinMeetingButtonStyle,
                         child: Text(getTranslated("joinMeeting")));
