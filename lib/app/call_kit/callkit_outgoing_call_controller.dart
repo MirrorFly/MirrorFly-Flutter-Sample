@@ -488,7 +488,7 @@ class CallKitOutgoingCallController extends GetxController
 
     // await configureCallMode(callMode: callMode.value, chatId: groupId.value);
     // _svc.configureCallMode(callMode: callMode.value, chatId: groupId.value);
-    onParticipantListUpdated();
+    // onParticipantListUpdated();
     callkitLogger.info("[MirrorFly][OutgoingCallController] callview");
 
     if (isIncoming.value) {
@@ -2306,7 +2306,7 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   ///
-  void onParticipantListUpdated() async {
+  // void onParticipantListUpdated() async {
 
     // callkitLogger.info(
     //     "[MirrorFly][OutgoingCallController] onCallModeChanged called with callMode");
@@ -2367,7 +2367,7 @@ class CallKitOutgoingCallController extends GetxController
     // await initCallViewIds();
     // await moveLocalParticipantToLast();
     // await _getCallRemoteUserName();
-  }
+  // }
     // ///
   void videoSwap() {
     callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called");
