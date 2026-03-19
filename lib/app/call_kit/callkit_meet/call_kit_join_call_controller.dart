@@ -38,7 +38,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   final audioMuted = true.obs;
 
   RxBool callEnded = false.obs;
-  bool invalidLink = false;
+  RxBool invalidLink = false.obs;
   String callEndedMessage = "";
   RxBool showPreview = false.obs;
   var callMode = "".obs;
@@ -79,6 +79,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           callkitLogger.info("Join via link initialization failed with error: call is already ended");
           callEnded.value = true;
           // toToast(initializeJoinLinkResponse.errorMessage ?? "Call is Already ended");
+          return;
+        } else if (initializeJoinLinkResponse.code == 404) {
+          callkitLogger.info("Join via link initialization failed with error: Invalid Call link");
+          invalidLink.value = true;
+          callEnded.value = true;
+          callEndedMessage = getTranslated("invalidLink");
           return;
         }
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
