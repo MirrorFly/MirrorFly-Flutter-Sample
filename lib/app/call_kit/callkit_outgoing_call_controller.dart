@@ -1477,98 +1477,63 @@ class CallKitOutgoingCallController extends GetxController
   }
 
   void onConnected(List<String> participantIds) async {
+    callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #called participantIds: $participantIds");
 
-    if (!isIncoming.value) {
-      await setInitialAudioRouteDevice();
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Initial audio route set for outgoing call");
+    final bool isOneToOneCall = callerList.length <= 2;
+    final bool isUserOnHold = callerList.any((p) => participantIds.contains(p.identity) && p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
+    final bool isForLocalParticipantConnected = participantIds.length == 1 && participantIds.first == CallUtils.getJidFromUserId(userId: participantIds.first, isGroup: false);
+
+    callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #callType "
+        "isOneToOne: $isOneToOneCall, callerListLength: ${callerList.length}, "
+        "isUserOnHold: $isUserOnHold, isForLocalParticipantConnected: $isForLocalParticipantConnected");
+
+    if (isForLocalParticipantConnected) {
+      callStatus("Connected");
+    } else {
+      final String userJid = CallUtils.getJidFromUserId(userId: participantIds.first, isGroup: false);
+      final ProfileDetails profileDetails = await getProfileDetails(userJid);
+      final String name = profileDetails.name ?? "";
+      callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #name: $name joined ");
+      toToast("$name joined");
     }
 
-    if (callerList.length <= 2) {
+    if (isUserOnHold) {
+      callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #userOnHold found -> updating to connected");
+      updateCallerStatusList(participantsId: participantIds, status: FlyCallStatusEvent.connected);
+      return;
+    } else {
+      callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #noUserOnHold");
+    }
 
-      final bool isUserOnHold = callerList.any((p) =>
-      participantIds.contains(p.identity) &&
-          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
-      if (isUserOnHold) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
-        updateCallerStatusList(
-            participantsId: participantIds,
-            status: FlyCallStatusEvent.connected);
-        return;
-      } else {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
-      }
+    isOnGoingCallView();
 
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for one to one call");
-      callStatus("Connected");
-      isOnGoingCallView();
+    if (isOneToOneCall) {
+      callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #oneToOneCall");
 
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
-
           final index = callerList.indexWhere((e) => e.identity == p);
-          callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: Updating participantId: $p at index: $index");
+          callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #updateParticipant id: $p index: $index");
 
           if (index != -1) {
             final old = callerList[index];
-            callerList[index] = old.copyWith(
-              flyCallStatus: FlyCallStatusEvent.connected,
-            );
+            callerList[index] = old.copyWith(flyCallStatus: FlyCallStatusEvent.connected);
           } else {
-            callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected: ParticipantId: $p not found in callerList, adding new entry");
-            updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
+            callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #participantNotFound -> add");
+            updateCallerStatusList(participantsId: participantIds, status: FlyCallStatusEvent.connected);
           }
 
           callerList.refresh();
-          if (timer == null || !(timer?.isActive ?? false)) {
-            // _startTimer();
-            callkitLogger.info(
-                "[MirrorFly][OutgoingCallController] Timer is already running");
-          }
         } else {
-          callkitLogger.info(
-              "[MirrorFly][OutgoingCallController] onConnected: Skipping self id: $p");
+          callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #skipSelfId $p");
         }
       }
     } else {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] onConnected for group call");
-
-      final bool isUserOnHold = callerList.any((p) =>
-      participantIds.contains(p.identity) &&
-          p.flyCallStatusEvent == FlyCallStatusEvent.callHold);
-      if (isUserOnHold) {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] onConnected: Users on hold found, updating their status to connected");
-        updateCallerStatusList(
-            participantsId: participantIds,
-            status: FlyCallStatusEvent.connected);
-        return;
-      } else {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] onConnected: No users on hold, skipping update");
-      }
-
-      callStatus("Connected");
-      isOnGoingCallView();
-      updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
-
-      if (timer == null || !(timer?.isActive ?? false)) {
-        // _startTimer();
-      } else {
-        callkitLogger.info(
-            "[MirrorFly][OutgoingCallController] Timer is already running");
-      }
-
-      // if (!isGroupOnGoingCallEnabled.value) {
-      //   callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is now ongoing");
-      //   isGroupOnGoingCallEnabled.value = true;
-      // }else{
-      //   callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is already ongoing");
-      // }
+      callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #groupCall");
+      updateCallerStatusList(participantsId: participantIds, status: FlyCallStatusEvent.connected);
     }
-    // onParticipantListUpdated();
-    // await _getCallRemoteUserName();
+
+    callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #updateNamesAndView");
     await _getCallRemoteUserName();
     getCallMembersName(id: participantIds);
     await initCallViewIds();
