@@ -593,5 +593,6 @@
     "anErrorOccurred": "An error occurred",
     "mediaPickerError": "while selecting the %s",
     "notificationPermissionNotGranted": "Notification permission is not granted",
-    "exportLogs": "Export Log"
+    "exportLogs": "Export Log",
+    "alreadyInOnGoingCall": "Already you are in a ongoing call"
 }

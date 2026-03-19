@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 import 'package:mirrorfly_plugin/flychat.dart';
 
+import '../../../call_kit/callkit_logger.dart';
+import '../../../call_modules/call_utils.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../routes/app_pages.dart';
 import '../../../routes/route_settings.dart';
 import '../../../stylesheet/stylesheet.dart';
 
@@ -48,10 +51,7 @@ class TextMessageView extends StatelessWidget {
                               chatMessage.messageTextContent.checkNull());
                           if (link.isNotEmpty) {
                             if (Constants.useMirrorFlyCallKit) {
-                              NavUtils.toNamed(Routes.callKitJoinCallPreview,
-                                  arguments: {"callLinkId": link,
-                                    "navigatedFrom": "TextMessageView-Build"
-                                  });
+                              CallUtils.onJoinLinkTapped(link: link);
                             } else {
                               if (!(await Mirrorfly.isOnGoingCall())
                                   .checkNull()) {
@@ -165,10 +165,7 @@ class CallLinkView extends StatelessWidget {
           var link = MessageUtils.getCallLinkFromMessage(message);
           if (link.isNotEmpty) {
             if (Constants.useMirrorFlyCallKit) {
-              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-                "callLinkId": link,
-                "navigatedFrom": "TextMessageView-CallLinkView-Build"
-              });
+              CallUtils.onJoinLinkTapped(link: link);
             } else {
               if (!(await Mirrorfly.isOnGoingCall()).checkNull()) {
                 NavUtils.toNamed(Routes.joinCallPreview, arguments: {

@@ -13,8 +13,10 @@ import '../data/permissions.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import '../routes/app_pages.dart';
 import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
+import 'call_utils.dart';
 
 class MeetSheetView extends NavViewStateful<MeetLinkController> {
   const MeetSheetView(
@@ -334,11 +336,7 @@ class MeetLinkController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if (meetLink.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
         if (Constants.useMirrorFlyCallKit) {
-          NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-            "callLinkId": meetLink,
-            "navigatedFrom": "MeetLinkController-JoinCall"
-
-          });
+          CallUtils.onJoinLinkTapped(link: meetLink.value);
         } else {
           NavUtils.offNamed(Routes.joinCallPreview, arguments: {
             "callLinkId": meetLink.replaceAll(Constants.webChatLogin, ""),

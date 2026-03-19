@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../../call_kit/callkit_logger.dart';
+import '../../../call_modules/call_utils.dart';
 import '../../../common/app_localizations.dart';
 import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
@@ -16,6 +18,7 @@ import '../../../common/constants.dart';
 import '../../../model/arguments.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../model/group_media_model.dart';
+import '../../../routes/app_pages.dart';
 import '../../../routes/route_settings.dart';
 import '../../chat/controllers/chat_controller.dart';
 
@@ -159,10 +162,7 @@ class ViewAllMediaController extends GetxController {
         var link = MessageUtils.getCallLinkFromMessage(url);
         if (link.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
           if (Constants.useMirrorFlyCallKit) {
-            NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-              "callLinkId": link,
-              "navigatedFrom": "ViewAllMedia-NavigateLink"
-            });
+            CallUtils.onJoinLinkTapped(link: link);
           } else {
             NavUtils.toNamed(Routes.joinCallPreview, arguments: {
               "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
