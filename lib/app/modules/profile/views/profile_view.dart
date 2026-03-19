@@ -415,7 +415,8 @@ class ProfileView extends NavViewStateful<ProfileController> {
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
                                 onTap: () {
-                                  NavUtils.back();
+                                  Get.back();
+                                  // NavUtils.back();
                                   DialogUtils.showAlert(
                                       dialogStyle: AppStyleConfig.dialogStyle,
                                       message: getTranslated(
