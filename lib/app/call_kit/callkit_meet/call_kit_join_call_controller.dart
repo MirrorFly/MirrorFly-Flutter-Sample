@@ -180,10 +180,17 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           audioMuted(isMuted);
           callkitLogger.info("Audio mute state changed. New state: ${audioMuted.value}");
       } else {
+        callkitLogger.info("Audio mute state change failed: message: $message, code: $code");
+
         if (code == "410") {
           toToast(message);
           await AppPermission.askAudioCallPermissions();
         }
+        if (code == "311") {
+          toToast(message);
+          await openAppSettings();
+        }
+
         callkitLogger.info("Failed to set microphone mute state in CallKit. Error: $message");
       }
     });
@@ -206,6 +213,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
             toToast(message);
             await AppPermission.askVideoCallPermissions();
           }
+
+          if (code == "302") {
+            toToast(message);
+            await openAppSettings();
+          }
+
           return;
         }
 
