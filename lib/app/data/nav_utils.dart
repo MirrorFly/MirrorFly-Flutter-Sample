@@ -45,7 +45,12 @@ class NavUtils {
 
   static Future<void> back({dynamic result}) async {
     final nav = await _waitForNavigator();
-    if (nav.canPop()) nav.pop(result);
+    if (nav.canPop()) {
+      debugPrint("#NavUtils #back #canPop #Available");
+      nav.pop(result);
+    } else {
+      debugPrint("#NavUtils #back #canPop #NotAvailable");
+    }
   }
 
   static bool get canPop => _navigator?.canPop() ?? false;

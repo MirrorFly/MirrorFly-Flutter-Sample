@@ -23,19 +23,33 @@ class AudioLevelAnimation extends StatefulWidget {
 }
 
 class AudioLevelAnimationState extends State<AudioLevelAnimation> {
-  bool _isVisible = true;
+  bool _isVisible = false;
   int _lastAudioLevel = -1;
   Timer? _hideTimer;
 
   @override
   void initState() {
     super.initState();
+    if (widget.audioLevel > 0) {
+      _hideTimer?.cancel();
+      _isVisible = true;
+      setState(() {});
+      return;
+    }
     _startHideTimer();
   }
 
   @override
   void didUpdateWidget(covariant AudioLevelAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (widget.audioLevel <= 0) {
+      _hideTimer?.cancel();
+      _isVisible = false;
+      setState(() {});
+      return;
+    }
+
     if (widget.audioLevel != _lastAudioLevel) {
       _lastAudioLevel = widget.audioLevel;
       _isVisible = true;

@@ -519,7 +519,7 @@
     "joinMeeting" : "Join Meeting",
     "scheduleMeeting" : "Schedule Meeting",
     "generateMeet" : "Generate Meeting Link",
-    "meetDescription" : "Anyone with Mirror Fly can use this link to join this call. only share it with people you trust",
+    "meetDescription" : "Anyone with Mirrorfly can use this link to join this call. only share it with people you trust",
     "meetLink" : "Meet Link",
     "invalidLink" : "Invalid link",
     "callEnded" : "Call Ended!",
@@ -593,5 +593,6 @@
     "anErrorOccurred": "An error occurred",
     "mediaPickerError": "while selecting the %s",
     "notificationPermissionNotGranted": "Notification permission is not granted",
-    "exportLogs": "Export Log"
+    "exportLogs": "Export Log",
+    "alreadyInOnGoingCall": "Already you are in a ongoing call"
 }

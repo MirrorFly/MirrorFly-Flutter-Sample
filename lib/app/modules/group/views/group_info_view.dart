@@ -423,9 +423,7 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         Obx(() {
           return Visibility(
-              visible: controller.isAdmin &&
-                  controller.availableFeatures.value.isGroupChatAvailable
-                      .checkNull(),
+              visible: controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull(),
               child: ListTile(
                   title: Text(
                     getTranslated("removeFromGroup"),
@@ -433,7 +431,8 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                         fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    NavUtils.back();
+                    Get.back();
+                    // NavUtils.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable
                         .checkNull()) {
                       DialogUtils.showFeatureUnavailable();
@@ -479,9 +478,9 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                         fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    NavUtils.back();
-                    if (!controller.availableFeatures.value.isGroupChatAvailable
-                        .checkNull()) {
+                    // NavUtils.back();
+                    Get.back();
+                    if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
                       DialogUtils.showFeatureUnavailable();
                       return;
                     }

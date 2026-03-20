@@ -307,7 +307,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                         callLinkErrorViewStyle: AppStyleConfig
                             .joinCallPreviewPageStyle.callLinkErrorViewStyle,
                         errorText: controller.callEndedMessage,
-                        callEndedVisible: !controller.invalidLink);
+                        callEndedVisible: !controller.invalidLink.value);
               }),
             ),
           ),

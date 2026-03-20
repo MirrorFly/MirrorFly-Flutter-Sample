@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
 
+import '../../../call_kit/callkit_logger.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
 import '../../../model/chat_message_model.dart';
+import '../../../routes/app_pages.dart';
 import '../../../routes/route_settings.dart';
 import '../../../stylesheet/stylesheet.dart';
 
@@ -30,10 +33,7 @@ class MeetMessageView extends StatelessWidget {
           var link = chatMessage.meetChatMessage!.link.checkNull();
           if (link.isNotEmpty) {
             if (Constants.useMirrorFlyCallKit) {
-              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-                "callLinkId": link,
-                "navigatedFrom": "MeetMessageView-Build"
-              });
+              CallUtils.onJoinLinkTapped(link: link);
             } else {
               NavUtils.toNamed(Routes.joinCallPreview, arguments: {
                 "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
@@ -174,10 +174,7 @@ class MeetLinkView extends StatelessWidget {
         if (await AppUtils.isNetConnected()) {
           if (message.isNotEmpty) {
             if (Constants.useMirrorFlyCallKit) {
-              NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-                "callLinkId": message,
-                "navigatedFrom": "MeetLinkView-Build"
-              });
+              CallUtils.onJoinLinkTapped(link: message);
             } else {
               NavUtils.toNamed(Routes.joinCallPreview, arguments: {
                 "callLinkId": message.replaceAll(Constants.webChatLogin, ""),
