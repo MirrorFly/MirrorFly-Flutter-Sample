@@ -156,7 +156,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                           padding: const EdgeInsets.all(0.0),
                                           child: MirrorFlyCallView(
                                             fit: BoxFit.cover,
-                                            isLocalPreviewView: true,
+                                            isMeetPreview: true,
                                             userJID: CallUtils.getIdFromJidList(
                                                 SessionManagement.getUserJID()
                                                     .checkNull()),

@@ -1044,8 +1044,18 @@ class CallKitOutgoingCallController extends GetxController
               isLocalParticipant: existing.isLocalParticipant,
               flyCallStatusEvent: status ?? existing.flyCallStatusEvent,
               flyCallActionEvent: existing.flyCallActionEvent,
+              isAudioMuted: existing.isAudioMuted,
+              isReconnecting: existing.isReconnecting,
+              isVideoMuted: existing.isVideoMuted,
             );
           } else {
+            final bool isAudioMuted = MirrorFlyCallKit.getCurrentCallParticipants().firstWhereOrNull((e) => e.identity == id)?.isAudioMuted ?? false;
+            final bool isVideoMuted = MirrorFlyCallKit.getCurrentCallParticipants().firstWhereOrNull((e) => e.identity == id)?.isVideoMuted ?? false;
+            final bool isLocalUserReconnecting = MirrorFlyCallKit.getCurrentCallParticipants().firstWhereOrNull((e) => e.identity == id)?.isReconnecting ?? false;
+
+             callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList new participant with id: $id, "
+                 "isAudioMuted: $isAudioMuted, isVideoMuted: $isVideoMuted, reconnecting: $isLocalUserReconnecting");
+
             // Participant not found — add new
             callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList adding new participant");
             callerList.add(
@@ -1054,6 +1064,9 @@ class CallKitOutgoingCallController extends GetxController
                 isLocalParticipant: false,
                 flyCallStatusEvent: status,
                 flyCallActionEvent: null,
+                isAudioMuted: isAudioMuted,
+                isVideoMuted: isVideoMuted,
+                isReconnecting: isLocalUserReconnecting,
               ),
             );
           }
@@ -1179,9 +1192,14 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
+
+    callkitLogger.info("[Controller] isAudioMute before: ${callerList.map((p) => '${p.toJson()}')}");
+
     final updated = callerList[index].copyWith(isAudioMuted: isAudioMuted);
     callerList.value = List.from(callerList)..[index] = updated;
     // callerList.refresh();
+
+    callkitLogger.info("[Controller] isAudioMute after: ${callerList.map((p) => '${p.toJson()}')}");
 
     if (participantId == getLocalParticipant()?.identity) {
       callkitLogger.info("[Controller] isAudioMute: Updating local audio mute status to $isAudioMuted");
