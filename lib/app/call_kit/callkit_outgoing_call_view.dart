@@ -341,26 +341,27 @@ class CallKitOutgoingCallView
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //PIP view button
               Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: IconButton(
-                  onPressed: () {
+                padding: const EdgeInsets.only(left: 24.0),
+                child: InkWell(
+                  onTap: () {
                     controller.goToPIP();
                   },
-                  icon: const Icon(
+                  child:const Icon(
                       Icons.keyboard_arrow_down,
                       color: Colors.white
                   ),
                 ),
               ),
 
-              const Spacer(),
-
               Column(
+                spacing: 16,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Call Status (Ringing / Connecting etc.)
                   if (!controller.isOnGoingCallViewEnable.value && controller.currentCallMode.value != "MEET") ...[
@@ -371,11 +372,7 @@ class CallKitOutgoingCallView
                       ),
                     ),
                   ],
-                  SizedBox(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.65,
+                  Center(
                     child: Text(
                       controller.getOneToOneCallRemoteUserName.value,
                       maxLines: 1,
@@ -388,34 +385,37 @@ class CallKitOutgoingCallView
                   ),
                 ],
               ),
-              const Spacer(),
+
+              // const Spacer(),
 
               //Invite Button
-              SizedBox(
-                width: 48,
-                child: Obx(() {
-                  final showInviteButton = controller.isOnGoingCallViewEnable
-                      .value && controller.callKind != FlyCallKind.sip;
-                  return Visibility(
-                    visible: showInviteButton,
-                    child: IconButton(
-                      onPressed: () {
+              Obx(() {
+                final showInviteButton = controller.isOnGoingCallViewEnable
+                    .value && controller.callKind != FlyCallKind.sip;
+                return Visibility(
+                  visible: showInviteButton,
+                  child: SizedBox(
+                    width: 48,
+                    child: InkWell(
+                      onTap: () {
                         controller.inviteParticipants();
                       },
-                      icon: const Icon(
+                      child:const Icon(
                         Icons.person_add_alt_1_rounded,
                         color: Colors.white,
                         size: 18,
                       ),
                     ),
-                  );
-                }),
-              ),
+                  ),
+                );
+              }),
+
             ],
           ),
 
           // Call Duration
           if (controller.isOnGoingCallViewEnable.value || controller.currentCallMode.value == "MEET") ...[
+            const SizedBox(height: 16,),
             Center(
               child: Text(controller.callDuration.value,
                 style: AppStyleConfig
@@ -442,7 +442,7 @@ class CallKitOutgoingCallView
           }),
 
           Positioned(
-            top: 5,
+            top: 24,
               right: 0,
               left: 0,
               child: callHeader(context: context)),
