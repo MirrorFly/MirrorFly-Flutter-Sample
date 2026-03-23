@@ -62,18 +62,21 @@ class CallKitOutgoingCallView
       child: Stack(
         alignment: Alignment.center,
         children: [
-          MirrorFlyCallView(
-            // key: UniqueKey(),
-            viewBgColor: Colors.black.withAlpha(150),
-            userJID: participantId,
-            fit: BoxFit.cover,
-            profileImage: _buildProfileImageForUser(
-              participantId: participantId,
-              size: profileImageSize,
+          SizedBox(
+            height: 105,
+            child: MirrorFlyCallView(
+              // key: UniqueKey(),
+              viewBgColor:const Color(0xFF0D2852),
+              userJID: participantId,
+              fit: BoxFit.cover,
+              profileImage: _buildProfileImageForUser(
+                participantId: participantId,
+                size: profileImageSize,
+              ),
+              onTap: () {
+                controller.videoSwap();
+              },
             ),
-            onTap: () {
-              controller.videoSwap();
-            },
           ),
 
           // On Hold overlay widget
