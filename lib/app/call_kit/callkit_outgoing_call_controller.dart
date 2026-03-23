@@ -1408,7 +1408,8 @@ class CallKitOutgoingCallController extends GetxController
       "[MirrorFly][OutgoingCallController] Timeout → navigating to CallKitTimeOutView "
           "type:$type, calleeName:$calleeName, userList:$callUserList, callMode:$callsMode, chatId:$chatId, callKind:$callKind",
     );
-
+    _resetValues();
+    CallStateService.stop();
     NavUtils.offNamed(Routes.callKitTimeOutView, arguments: {
       "callType": type,
       "userJid": callUserList,
