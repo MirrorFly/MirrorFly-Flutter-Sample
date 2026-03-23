@@ -363,7 +363,15 @@ class CallStateService extends GetxService {
 
   void onConnectionQualityUpdated(
       {FlyConnectionQuality? quality, String? participantId}) {
-    if (participantId == null || quality == null) return;
+    callkitLogger.info(
+        '[CallStateService] onConnectionQualityUpdated participantId=$participantId quality=$quality');
+
+    if (participantId == null || quality == null) {
+      callkitLogger.info(
+          '[CallStateService] onConnectionQualityUpdated missing participantId or quality, skipping update');
+      return;
+    }
+
     callerConnectionQuality[participantId] = quality;
   }
 
