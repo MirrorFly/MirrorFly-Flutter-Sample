@@ -1676,7 +1676,7 @@ class CallKitOutgoingCallController extends GetxController
       NavUtils.back();
       NavUtils.back();
     }
-
+    toToast("Call Disconnected");
     CallStateService.stop();
   }
 
@@ -2204,7 +2204,6 @@ class CallKitOutgoingCallController extends GetxController
       // _stopTimer();
       closeDialog();
 
-    toToast("Call Disconnected");
     if(NavUtils.previousRoute == Routes.callKitParticipantView){
       NavUtils.back();
       NavUtils.back();
@@ -2214,6 +2213,7 @@ class CallKitOutgoingCallController extends GetxController
     } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       NavUtils.back();
     }
+    toToast("Call Disconnected");
     CallStateService.stop();
     return;
       // callTimeOut(participantsId: participantsId, isCallFailed: true, reason: reason);

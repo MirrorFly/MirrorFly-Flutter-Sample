@@ -366,7 +366,7 @@ class CallKitOutgoingCallView
             children: [
               //PIP view button
               Padding(
-                padding: const EdgeInsets.only(left: 24.0),
+                padding: const EdgeInsets.only(left: 15.0, right: 10),
                 child: InkWell(
                   onTap: () {
                     controller.goToPIP();
@@ -485,6 +485,7 @@ class CallKitOutgoingCallView
         children: [
           Column(
             children: [
+              const SizedBox(height: 24,),
               callHeader(context: context),
               Obx(() {
                 return !controller.isOnGoingCallViewEnable.value
