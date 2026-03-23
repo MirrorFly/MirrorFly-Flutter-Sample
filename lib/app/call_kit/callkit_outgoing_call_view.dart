@@ -247,8 +247,8 @@ class CallKitOutgoingCallView
 
           // Speaking indicator
           Positioned(
-            top: 12,
-            right: 12,
+            top: isMainView ? 45 : 10,
+            right: isMainView ? 15 : 10,
             child: Obx(() {
               return AudioLevelAnimation(
                 radius: 8,
@@ -849,28 +849,6 @@ class CallKitOutgoingCallView
     );
   }
 
-  /// Speaking indicator icon
-  Widget buildSpeakingIndicatorIcon(String? participantId) {
-    callkitLogger.info(
-        "[buildSpeakingIndicatorIcon] Called for participantId: $participantId");
-
-    if (participantId == null || participantId.isEmpty) {
-      callkitLogger.info(
-          "[buildSpeakingIndicatorIcon] participantId is null or empty");
-      return const SizedBox.shrink();
-    }
-
-    return AudioLevelAnimation(
-      radius: 8,
-      audioLevel: controller.getAudioLevelForParticipant(participantId),
-      bgColor: const CallUserTileStyle().speakingIndicatorStyle
-          .activeBgColor,
-      //AppColors.speakingBg,
-      dotsColor: const CallUserTileStyle()
-          .speakingIndicatorStyle.activeIconColor,
-      useLiveKitAudio: true,
-    );
-  }
 
   /// Get connection quality icon
   Icon getConnectionQualityIcon(FlyConnectionQuality quality) {
