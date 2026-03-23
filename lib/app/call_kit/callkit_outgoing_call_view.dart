@@ -56,7 +56,7 @@ class CallKitOutgoingCallView
     });
   }
 
-  Widget mfCallViewRendering({required String participantId, double profileImageSize = 105, bool isMainView = false, double borderRadius = 15}) {
+  Widget mfCallViewRendering({required String participantId, double profileImageSize = 105, bool isMainView = false, double borderRadius = 15, Alignment profileImageAlignment = Alignment.center}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: Stack(
@@ -67,10 +67,14 @@ class CallKitOutgoingCallView
             viewBgColor:isMainView ? const Color(0xFF0D2852) : const Color(0xFF1C2535),
             userJID: participantId,
             fit: BoxFit.cover,
-            profileImage: _buildProfileImageForUser(
-              participantId: participantId,
-              size: profileImageSize,
+            profileImage: Padding(
+              padding: EdgeInsets.only(top: profileImageAlignment == Alignment.topCenter ? 100.0 : 0),
+              child: _buildProfileImageForUser(
+                participantId: participantId,
+                size: profileImageSize,
+              ),
             ),
+            profileImageAlignment: profileImageAlignment,
             onTap: () {
               // controller.videoSwap();
             },
@@ -304,7 +308,9 @@ class CallKitOutgoingCallView
                 transform: GradientRotation(180),
             ),
         ),
-      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty) ? mfCallViewRendering(participantId: controller.callType.value.toUpperCase() == "VIDEO" ? localUserID : remoteUserID, isMainView: true) : const Offstage(),
+      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty) ?
+      mfCallViewRendering(participantId: controller.callType.value.toUpperCase() == "VIDEO" ? localUserID : remoteUserID,
+          isMainView: true, profileImageAlignment: Alignment.topCenter) : const Offstage(),
     );
   }
 
@@ -315,7 +321,7 @@ class CallKitOutgoingCallView
         color: AppColors.audioCallerBackground,
         child: Stack(
           children: [
-            mfCallViewRendering(participantId: controller.getRemoteParticipantIdForOneToOneCall(), isMainView: true, borderRadius: 0),
+            mfCallViewRendering(participantId: controller.getRemoteParticipantIdForOneToOneCall(), isMainView: true, borderRadius: 0, profileImageAlignment: Alignment.topCenter),
 
             Obx(() {
 
