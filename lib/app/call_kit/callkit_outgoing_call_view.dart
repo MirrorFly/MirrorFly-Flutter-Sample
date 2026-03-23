@@ -206,7 +206,7 @@ class CallKitOutgoingCallView
                     elevation: 0,
                     child: Center(
                       child: AppUtils.svgIcon(
-                        icon: callMutedIcon,
+                        icon: callMutedIconTransparent,
                         colorFilter: ColorFilter.mode(
                           AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.activeBgColor,
                           BlendMode.srcIn,
@@ -235,7 +235,7 @@ class CallKitOutgoingCallView
                     elevation: 0,
                     child: Center(
                       child: AppUtils.svgIcon(
-                        icon: callMutedIcon,
+                        icon: callMutedIconTransparent,
                         colorFilter: ColorFilter.mode(
                           AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.activeBgColor,
                           BlendMode.srcIn,
@@ -485,6 +485,7 @@ class CallKitOutgoingCallView
         children: [
           Column(
             children: [
+              const SizedBox(height: 24,),
               callHeader(context: context),
               Obx(() {
                 return !controller.isOnGoingCallViewEnable.value
@@ -553,7 +554,7 @@ class CallKitOutgoingCallView
           elevation: 0,
           child: Center(
             child: AppUtils.svgIcon(
-              icon: callMutedIcon,
+              icon: callMutedIconTransparent,
               colorFilter: ColorFilter.mode(
                 style.activeBgColor,
                 BlendMode.srcIn,
