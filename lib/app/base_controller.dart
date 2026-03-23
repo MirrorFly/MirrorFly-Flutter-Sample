@@ -174,7 +174,7 @@ class BaseController {
           callStateService.connecting(participantsId: flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.connected:
-          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected");
+          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected for participant: ${flyCallStatus.participantsIds}");
           callStateService.onConnected(flyCallStatus.participantsIds);
           break;
         case FlyCallStatusEvent.ringing:

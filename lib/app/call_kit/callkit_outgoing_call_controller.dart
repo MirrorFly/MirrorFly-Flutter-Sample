@@ -128,7 +128,7 @@ class CallKitOutgoingCallController extends GetxController
       if (status == null) return;
       final event = status.flyCallStatusEvent;
       final ids = status.participantsIds;
-      callkitLogger.info('[MirrorFly][OutgoingCallController] lastStatusEvent $event');
+      callkitLogger.info('[MirrorFly][OutgoingCallController] lastStatusEvent $event, ids: $ids');
       switch (event) {
         case FlyCallStatusEvent.connecting:
           connecting();
@@ -1514,12 +1514,13 @@ class CallKitOutgoingCallController extends GetxController
             "[MirrorFly][OutgoingCallController] #onConnected: No users on hold, skipping update");
       }
 
-      callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected for one to one call");
-      callStatus("Connected");
-      isOnGoingCallView();
-
       for (var p in participantIds) {
         if (!isSelfId(id: p)) {
+          if (!isOnGoingCallViewEnable.value) {
+            callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected for one to one call");
+            callStatus("Connected");
+            isOnGoingCallView();
+          }
 
           final index = callerList.indexWhere((e) => e.identity == p);
           callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Updating participantId: $p at index: $index");
@@ -1543,6 +1544,11 @@ class CallKitOutgoingCallController extends GetxController
           callerList.refresh();
         } else {
           callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Skipping self id: $p");
+          final index = callerList.indexWhere((e) => e.identity == p);
+          final old = callerList[index];
+          callerList[index] = old.copyWith(
+            flyCallStatus: FlyCallStatusEvent.connected,
+          );
         }
       }
     } else {
