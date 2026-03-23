@@ -77,6 +77,7 @@ const String audioCallAgain = 'assets/calls/call_icon.svg';
 const String videoCallAgain = 'assets/calls/video_call.svg';
 const String callCancel = 'assets/calls/cancel_icon.svg';
 const String gridIcon = 'assets/calls/grid_icon.svg';
+const String callMutedIconTransparent = 'assets/calls/mute_icon_transparent.svg';
 
 const String audioCallIcon = 'assets/calls/audiocall.svg';
 const String videoCallIcon = 'assets/calls/videocall.svg';
