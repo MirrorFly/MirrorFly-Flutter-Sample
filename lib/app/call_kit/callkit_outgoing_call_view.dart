@@ -117,6 +117,44 @@ class CallKitOutgoingCallView
           ),
         ),
 
+        Positioned.fill(
+          child: Obx(() {
+            final participant = controller.callerList
+                .firstWhereOrNull((e) => e.identity == participantId);
+            final statusEvent = participant?.flyCallStatusEvent;
+
+            if (![
+              FlyCallStatusEvent.calling,
+              FlyCallStatusEvent.tryingToConnect,
+              FlyCallStatusEvent.ringing,
+              FlyCallStatusEvent.connecting
+            ].contains(statusEvent) || isMainView) {
+              return const Offstage();
+            }
+
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
+              ),
+              padding: const EdgeInsets.all(2),
+              child: Center(
+                child: Text(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  statusEvent == FlyCallStatusEvent.tryingToConnect ? 'Trying to connect...' :
+                  statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
+                  statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
+                  statusEvent == FlyCallStatusEvent.connecting ? 'Connecting...' : '',
+                  style: AppStyleConfig.ongoingCallPageStyle
+                      .callStatusTextStyle.copyWith(fontSize: 12),
+                ),
+              ),
+            );
+          }),
+        ),
+
+
         // Connection Quality Icon
         Visibility(
           visible: controller.callerConnectionQuality.containsKey(participantId),
