@@ -292,8 +292,19 @@ class CallKitOutgoingCallView
     callkitLogger.info(
         "#CallKitOutGoingCallView CallingScreen Build Called, remoteUserID: $remoteUserID");
     return Container(
-      color: AppColors.audioCallerBackground,
-      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty) ? mfCallViewRendering(participantId: controller.callType.value.toUpperCase() == "VIDEO" ? localUserID : remoteUserID, isMainView: true, borderRadius: 0) : const Offstage(),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Color(0xFF152134),
+                  Color(0xFF0D2852),
+                  Color(0xFF152134),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                transform: GradientRotation(180),
+            ),
+        ),
+      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty) ? mfCallViewRendering(participantId: controller.callType.value.toUpperCase() == "VIDEO" ? localUserID : remoteUserID, isMainView: true) : const Offstage(),
     );
   }
 
@@ -345,7 +356,6 @@ class CallKitOutgoingCallView
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //PIP view button
@@ -362,57 +372,59 @@ class CallKitOutgoingCallView
                 ),
               ),
 
-              Column(
-                spacing: 16,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Call Status (Ringing / Connecting etc.)
-                  if (!controller.isOnGoingCallViewEnable.value && controller.currentCallMode.value != "MEET") ...[
+              Expanded(
+                child: Column(
+                  spacing: 16,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Call Status (Ringing / Connecting etc.)
+                    if (!controller.isOnGoingCallViewEnable.value && controller.currentCallMode.value != "MEET") ...[
+                      Center(
+                        child: Text(controller.callStatus.value,
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callStatusTextStyle,
+                        ),
+                      ),
+                    ],
                     Center(
-                      child: Text(controller.callStatus.value,
-                        style: AppStyleConfig
-                            .ongoingCallPageStyle.callStatusTextStyle,
+                      child: Text(
+                        controller.getOneToOneCallRemoteUserName.value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        textAlign: TextAlign.center,
+                        style: AppStyleConfig.ongoingCallPageStyle
+                            .callStatusTextStyle,
                       ),
                     ),
                   ],
-                  Center(
-                    child: Text(
-                      controller.getOneToOneCallRemoteUserName.value,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                      textAlign: TextAlign.center,
-                      style: AppStyleConfig.ongoingCallPageStyle
-                          .callStatusTextStyle,
-                    ),
-                  ),
-                ],
+                ),
               ),
 
               // const Spacer(),
 
               //Invite Button
-              Obx(() {
-                final showInviteButton = controller.isOnGoingCallViewEnable
-                    .value && controller.callKind != FlyCallKind.sip;
-                return Visibility(
-                  visible: showInviteButton,
-                  child: SizedBox(
-                    width: 48,
+              SizedBox(
+                width: 48,
+                child: Obx(() {
+                  final showInviteButton = controller.isOnGoingCallViewEnable
+                      .value && controller.callKind != FlyCallKind.sip;
+                  return Visibility(
+                    visible: showInviteButton,
                     child: InkWell(
                       onTap: () {
                         controller.inviteParticipants();
                       },
                       child:const Icon(
-                        Icons.person_add_alt_1_rounded,
+                        Icons.person_outline_sharp,
                         color: Colors.white,
                         size: 18,
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
 
             ],
           ),
