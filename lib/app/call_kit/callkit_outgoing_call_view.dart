@@ -1114,40 +1114,43 @@ class CallKitOutgoingCallView
     }
 
     // ---------- ONE-TO-MANY ----------
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        controller.callerList.length > 3 ? 4 : controller.callerList.length,
-            (index) {
-          if (index == 3) {
-            return ProfileTextImage(
-              text: "+${controller.callerList.length - 3}",
-              radius: 45 / 2,
-              bgColor: Colors.white,
-              fontColor: Colors.grey,
-            );
-          }
+    return Padding(
+      padding: padding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          controller.callerList.length > 3 ? 4 : controller.callerList.length,
+              (index) {
+            if (index == 3) {
+              return ProfileTextImage(
+                text: "+${controller.callerList.length - 3}",
+                radius: 45 / 2,
+                bgColor: Colors.white,
+                fontColor: Colors.grey,
+              );
+            }
 
-          final userId = controller.callerList[index].identity;
+            final userId = controller.callerList[index].identity;
 
-          return FutureBuilder(
-            future: getProfileDetails(
-              CallUtils.getJidFromUserId(
-                userId: userId,
-                isGroup: false,
+            return FutureBuilder(
+              future: getProfileDetails(
+                CallUtils.getJidFromUserId(
+                  userId: userId,
+                  isGroup: false,
+                ),
               ),
-            ),
-            builder: (ctx, snap) {
-              if (snap.hasData && snap.data != null) {
-                return Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: buildProfileImage(snap.data!, size: 45),
-                );
-              }
-              return const Offstage();
-            },
-          );
-        },
+              builder: (ctx, snap) {
+                if (snap.hasData && snap.data != null) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: buildProfileImage(snap.data!, size: 45),
+                  );
+                }
+                return const Offstage();
+              },
+            );
+          },
+        ),
       ),
     );
   }
