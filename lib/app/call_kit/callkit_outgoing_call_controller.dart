@@ -1057,10 +1057,19 @@ class CallKitOutgoingCallController extends GetxController
 
             // Participant not found — add new
             callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList adding new participant");
-            callerList.add(
+            final bool isLocalParticipant = id == getLocalParticipant()?.identity;
+            !isLocalParticipant ? callerList.insert(callerList.length - 1, FlyCallParticipant(
+              identity: id,
+              isLocalParticipant: isLocalParticipant,
+              flyCallStatusEvent: status,
+              flyCallActionEvent: null,
+              isAudioMuted: isAudioMuted,
+              isVideoMuted: isVideoMuted,
+              isReconnecting: isLocalUserReconnecting,
+            )) : callerList.add(
               FlyCallParticipant(
                 identity: id,
-                isLocalParticipant: id == getLocalParticipant()?.identity,
+                isLocalParticipant: isLocalParticipant,
                 flyCallStatusEvent: status,
                 flyCallActionEvent: null,
                 isAudioMuted: isAudioMuted,
@@ -1070,7 +1079,6 @@ class CallKitOutgoingCallController extends GetxController
             );
           }
       }
-      // await moveLocalParticipantToLast();
       callerList.refresh();
     }else{
       callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList: participantsId is empty");
@@ -1664,10 +1672,7 @@ class CallKitOutgoingCallController extends GetxController
       isAudioDialogOpen.value = false;
     }
 
-    if (NavUtils.previousRoute == Routes.callKitParticipantView) {
-      NavUtils.back();
-      NavUtils.back();
-    } else if (NavUtils.currentRoute == Routes.callKitParticipantView) {
+    if (NavUtils.currentRoute == Routes.callKitParticipantView) {
       NavUtils.back();
       NavUtils.back();
     } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
@@ -2239,13 +2244,13 @@ class CallKitOutgoingCallController extends GetxController
     List<String> invitedUsers = await inviteUser;
     for(var i in invitedUsers) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: add invite partcipant $i");
-      final addInviteUser = FlyCallParticipant(identity: i, isLocalParticipant: false,flyCallStatusEvent: FlyCallStatusEvent.calling,flyCallActionEvent: null);
-      callerList.add(addInviteUser);
+      // final addInviteUser = FlyCallParticipant(identity: i, isLocalParticipant: false,flyCallStatusEvent: FlyCallStatusEvent.calling,flyCallActionEvent: null);
+      // callerList.add(addInviteUser);
     }
-    callerList.refresh();
+    updateCallerStatusList(participantsId: invitedUsers ,status: FlyCallStatusEvent.calling);
+    // callerList.refresh();
     getCallMembersName(id: invitedUsers);
     _getCallRemoteUserName();
-    moveLocalParticipantToLast();
     }
 
   /// Navigate to contacts screen
