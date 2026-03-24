@@ -1032,7 +1032,6 @@ class CallKitOutgoingCallController extends GetxController
   }) async{
     if(participantsId?.isNotEmpty ?? false){
       for (final id in participantsId ?? []) {
-        if (!isSelfId(id: id)) {
           final index = callerList.indexWhere((p) => p.identity == id);
 
           if (index != -1) {
@@ -1061,7 +1060,7 @@ class CallKitOutgoingCallController extends GetxController
             callerList.add(
               FlyCallParticipant(
                 identity: id,
-                isLocalParticipant: false,
+                isLocalParticipant: id == getLocalParticipant()?.identity,
                 flyCallStatusEvent: status,
                 flyCallActionEvent: null,
                 isAudioMuted: isAudioMuted,
@@ -1070,9 +1069,6 @@ class CallKitOutgoingCallController extends GetxController
               ),
             );
           }
-        }else{
-          callkitLogger.info("[MirrorFly][OutgoingCallController] updateCallerStatusList: Skipping self id: $id");
-        }
       }
       // await moveLocalParticipantToLast();
       callerList.refresh();
@@ -1461,15 +1457,20 @@ class CallKitOutgoingCallController extends GetxController
       final String name = remoteUserNameMap[userId] ?? "";
       callerList.removeWhere((e) => e.identity == userId);
       callerList.refresh();
+
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
-       NavUtils.back();
+        NavUtils.back();
+        toToast("$name is busy");
+        _resetValues();
+        CallStateService.stop();
+        return;
       }
+
       await Future.delayed(const Duration(milliseconds: 500));
       toToast("$name is busy");
       _getCallRemoteUserName();
       await initCallViewIds();
-      return;
     // }
 
     // callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, ending call");
@@ -1495,7 +1496,7 @@ class CallKitOutgoingCallController extends GetxController
     getCallMembersName(id: participantsId);
   }
 
-  /// TODO:- When ever the participant connected in the ongoing call this method will gets triggered
+  /// When ever the participant connected in the ongoing call this method will gets triggered
 
   void onConnected(List<String> participantIds) async {
     if (callerList.length <= 2) {
@@ -1544,8 +1545,9 @@ class CallKitOutgoingCallController extends GetxController
 
           callerList.refresh();
         } else {
-          callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Skipping self id: $p");
+          callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Skipping self id: $p, callerList length: ${callerList.length}");
           final index = callerList.indexWhere((e) => e.identity == p);
+          callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Updating local participant at index: $index");
           final old = callerList[index];
           callerList[index] = old.copyWith(
             flyCallStatus: FlyCallStatusEvent.connected,
@@ -1564,8 +1566,12 @@ class CallKitOutgoingCallController extends GetxController
         callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: No users on hold, skipping update");
       }
 
-      callStatus("Connected");
-      isOnGoingCallView();
+      if (!isOnGoingCallViewEnable.value) {
+        callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected for group call, enabling ongoing call view");
+        callStatus("Connected");
+        isOnGoingCallView();
+      }
+
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
     }
 
