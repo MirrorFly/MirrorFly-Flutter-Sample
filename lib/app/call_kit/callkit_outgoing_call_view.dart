@@ -495,23 +495,16 @@ class CallKitOutgoingCallView
     return Stack(
         fit: StackFit.expand,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              callHeader(context: context, isGroupCall: false),
-              Expanded(
-                child: Obx(() {
-                  return !controller.isOnGoingCallViewEnable.value
-                      ? callingScreen()
-                      : callConnectedScreen(buildContext: context);
-                }),
+          Obx(() {
+            return !controller.isOnGoingCallViewEnable.value
+                ? callingScreen()
+                : callConnectedScreen(buildContext: context);
+          }),
 
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: callHeader(context: context, isGroupCall: false),
           ),
-
           /// Controls at bottom
           Align(
             alignment: Alignment.bottomCenter,
@@ -526,43 +519,38 @@ class CallKitOutgoingCallView
     return Stack(
         fit: StackFit.expand,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              callHeader(context: context,
-                  isGroupCall: controller.groupId.value.isNotEmpty),
 
-              Expanded(
-                child: Obx(() {
-                  return !controller.isOnGoingCallViewEnable.value
-                      ? callingScreen()
-                      : Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:
-                          controller.callerList.length > 2 ? 2 : 1,
-                          mainAxisSpacing: 4.0,
-                          crossAxisSpacing: 2.0,
-                          childAspectRatio:
-                          controller.callerList.length == 2 ? 1.24 : 1.0,
-                        ),
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: controller.callerList.length,
-                        itemBuilder: (context, index) {
-                          return mfCallViewRendering(participantId: controller
-                              .callerList[index].identity,
-                              profileImageSize: 80,
-                              borderRadius: 15);
-                        }),
-                  );
-                }),
-              ),
-            ],
+          Obx(() {
+            return !controller.isOnGoingCallViewEnable.value
+                ? callingScreen()
+                : Padding(
+              padding: const EdgeInsets.fromLTRB(5.0, 80.0, 5.0, 5.0),
+              child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                    controller.callerList.length > 2 ? 2 : 1,
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 2.0,
+                    childAspectRatio:
+                    controller.callerList.length == 2 ? 1.24 : 1.0,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: controller.callerList.length,
+                  itemBuilder: (context, index) {
+                    return mfCallViewRendering(participantId: controller
+                        .callerList[index].identity,
+                        profileImageSize: 80,
+                        borderRadius: 15);
+                  }),
+            );
+          }),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: callHeader(context: context,
+                isGroupCall: controller.groupId.value.isNotEmpty),
           ),
 
           /// Controls at bottom
@@ -1077,7 +1065,7 @@ class CallKitOutgoingCallView
     final bool isOneToOne = controller.callerList.length <= 2;
 
     final EdgeInsets padding = EdgeInsets.only(
-      top: profileImageAlignment == Alignment.topCenter ? 10.0 : 0,
+      top: profileImageAlignment == Alignment.topCenter ? 100.0 : 0,
     );
 
     // ---------- ONGOING CALL ----------
