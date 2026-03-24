@@ -1461,15 +1461,20 @@ class CallKitOutgoingCallController extends GetxController
       final String name = remoteUserNameMap[userId] ?? "";
       callerList.removeWhere((e) => e.identity == userId);
       callerList.refresh();
+
       if(callerList.length <=1){
         callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, switching to one-to-one call mode");
-       NavUtils.back();
+        NavUtils.back();
+        toToast("$name is busy");
+        _resetValues();
+        CallStateService.stop();
+        return;
       }
+
       await Future.delayed(const Duration(milliseconds: 500));
       toToast("$name is busy");
       _getCallRemoteUserName();
       await initCallViewIds();
-      return;
     // }
 
     // callkitLogger.info("[MirrorFly][OutgoingCallController] Call rejected, ending call");
