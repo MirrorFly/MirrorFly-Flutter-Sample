@@ -115,14 +115,23 @@ class CallKitOutgoingCallView
                         0.4), // semi-transparent dark shade
                   ),
                   padding: const EdgeInsets.all(2),
-                  child: Center(
-                    child: Text(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      'Reconnecting...',
-                      style: AppStyleConfig.ongoingCallPageStyle
-                          .callStatusTextStyle.copyWith(fontSize: 12),
-                    ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 230,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Text(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            'Reconnecting...',
+                            style: AppStyleConfig.ongoingCallPageStyle
+                                .callStatusTextStyle.copyWith(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
