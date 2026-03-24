@@ -1795,7 +1795,7 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] remoteUserIsEngaged ,"
         " participantsList: ${callerList.map((p) => '${p.identity}: ${p.flyCallStatusEvent}').toList()}");
 
-    if (callerList.length >= 2) {
+    if (callerList.length > 2) {
       /// One - Many call user engaged logic
       callkitLogger.info("[MirrorFly][OutgoingCallController] Group call is ongoing, skipping single user engaged logic");
 
