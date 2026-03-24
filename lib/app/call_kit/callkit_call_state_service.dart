@@ -195,7 +195,7 @@ class CallStateService extends GetxService {
       }
 
       for (var p in participantIds) {
-        if (!isSelfId(id: p)) {
+        // if (!isSelfId(id: p)) {
           final index = callerList.indexWhere((e) => e.identity == p);
           if (index != -1) {
             final old = callerList[index];
@@ -207,7 +207,7 @@ class CallStateService extends GetxService {
                 status: FlyCallStatusEvent.connected);
           }
           callerList.refresh();
-        }
+        // }
       }
       if (!isUserOnHold) {
         // timer runs automatically via flyCallTimer stream
