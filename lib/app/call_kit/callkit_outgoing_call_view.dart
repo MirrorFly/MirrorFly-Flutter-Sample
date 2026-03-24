@@ -56,261 +56,297 @@ class CallKitOutgoingCallView
     });
   }
 
-  Widget mfCallViewRendering({required String participantId, double profileImageSize = 105, bool isMainView = false, double borderRadius = 15, Alignment profileImageAlignment = Alignment.center}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          MirrorFlyCallView(
-            // key: UniqueKey(),
-            viewBgColor:isMainView ? const Color(0xFF0D2852) : const Color(0xFF1C2535),
-            userJID: participantId,
-            fit: BoxFit.cover,
-            profileImage: Padding(
-              padding: EdgeInsets.only(top: profileImageAlignment == Alignment.topCenter ? 100.0 : 0),
-              child: _buildProfileImageForUser(
-                participantId: participantId,
-                size: profileImageSize,
-              ),
+  Widget mfCallViewRendering({required String participantId,
+    double profileImageSize = 105,
+    bool isMainView = false,
+    double borderRadius = 15,
+    Alignment profileImageAlignment = Alignment.center}) {
+    bool isGroupCall = controller.groupId.value.isNotEmpty;
+    return Obx(() {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            MirrorFlyCallView(
+              // key: UniqueKey(),
+              viewBgColor: isMainView ? const Color(0xFF0D2852) : const Color(
+                  0xFF1C2535),
+              userJID: participantId,
+              fit: BoxFit.cover,
+              profileImage: _buildTileImage(
+                  isGroupCall: isGroupCall,
+                  participantId: participantId,
+                  profileImageSize: profileImageSize,
+                  profileImageAlignment: profileImageAlignment),
+              profileImageAlignment: profileImageAlignment,
+              onTap: () {
+                // controller.videoSwap();
+              },
             ),
-            profileImageAlignment: profileImageAlignment,
-            onTap: () {
-              // controller.videoSwap();
-            },
-          ),
 
-          // On Hold overlay widget
-          Visibility(
-            visible: (controller.callerList
-                .firstWhereOrNull((e) => e.identity == participantId)
-                ?.flyCallStatusEvent == FlyCallStatusEvent.callHold &&
-                !(controller.callerList
-                    .firstWhereOrNull((e) => e.identity == participantId)
-                    ?.isReconnecting ?? false)),
-            child: Center(
-              child: Text(
-                "On Hold",
-                style: AppStyleConfig
-                    .ongoingCallPageStyle.callStatusTextStyle,
-              ),
-            ),
-          ),
-
-          // Reconnecting overlay widget
-          Visibility(
-            visible: controller.callerList
-                .firstWhereOrNull((e) => e.identity == participantId)
-                ?.isReconnecting ?? false,
-            child: Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.black.withOpacity(
-                      0.4), // semi-transparent dark shade
+            // On Hold overlay widget
+            Visibility(
+              visible: (controller.callerList
+                  .firstWhereOrNull((e) => e.identity == participantId)
+                  ?.flyCallStatusEvent == FlyCallStatusEvent.callHold &&
+                  !(controller.callerList
+                      .firstWhereOrNull((e) => e.identity == participantId)
+                      ?.isReconnecting ?? false)),
+              child: Center(
+                child: Text(
+                  "On Hold",
+                  style: AppStyleConfig
+                      .ongoingCallPageStyle.callStatusTextStyle,
                 ),
-                padding: const EdgeInsets.all(2),
-                child: Center(
-                  child: Text(
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    'Reconnecting...',
-                    style: AppStyleConfig.ongoingCallPageStyle
-                        .callStatusTextStyle.copyWith(fontSize: 12),
+              ),
+            ),
+
+            // Reconnecting overlay widget
+            Visibility(
+              visible: controller.callerList
+                  .firstWhereOrNull((e) => e.identity == participantId)
+                  ?.isReconnecting ?? false,
+              child: Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.black.withOpacity(
+                        0.4), // semi-transparent dark shade
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 230,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Text(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            'Reconnecting...',
+                            style: AppStyleConfig.ongoingCallPageStyle
+                                .callStatusTextStyle.copyWith(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
 
-          // Status overlay widget for non-main views during ringing/connecting states
-          Positioned.fill(
-            child: Obx(() {
-              final participant = controller.callerList
-                  .firstWhereOrNull((e) => e.identity == participantId);
-              final statusEvent = participant?.flyCallStatusEvent;
-
-              if (![
-                FlyCallStatusEvent.calling,
-                FlyCallStatusEvent.tryingToConnect,
-                FlyCallStatusEvent.ringing,
-                FlyCallStatusEvent.connecting
-              ].contains(statusEvent) || isMainView) {
-                return const Offstage();
-              }
-
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.black.withOpacity(0.4), // semi-transparent dark shade
-                ),
-                padding: const EdgeInsets.all(2),
-                child: Center(
-                  child: Text(
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    statusEvent == FlyCallStatusEvent.tryingToConnect ? 'Trying to connect...' :
-                    statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
-                    statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
-                    statusEvent == FlyCallStatusEvent.connecting ? 'Connecting...' : '',
-                    style: AppStyleConfig.ongoingCallPageStyle
-                        .callStatusTextStyle.copyWith(fontSize: 12),
-                  ),
-                ),
-              );
-            }),
-          ),
-
-
-          // Connection Quality Icon
-          Visibility(
-            visible: controller.callerConnectionQuality.containsKey(participantId),
-            child: Positioned(
-              top: 12,
-              left: 12,
+            // Status overlay widget for non-main views during ringing/connecting states
+            Positioned.fill(
               child: Obx(() {
-                return SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    child: IconTheme(
-                      data: const IconThemeData(
-                          size: 12, color: Colors.transparent),
-                      child: getConnectionQualityIcon(
-                          controller.callerConnectionQuality[
-                          controller
-                              .getLocalParticipant()
-                              ?.identity ?? ""] ??
-                              FlyConnectionQuality.unknown),
+                final participant = controller.callerList
+                    .firstWhereOrNull((e) => e.identity == participantId);
+                final statusEvent = participant?.flyCallStatusEvent;
+
+                if (![
+                  FlyCallStatusEvent.calling,
+                  FlyCallStatusEvent.tryingToConnect,
+                  FlyCallStatusEvent.ringing,
+                  FlyCallStatusEvent.connecting
+                ].contains(statusEvent) || isMainView) {
+                  return const Offstage();
+                }
+
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.black.withOpacity(
+                        0.4), // semi-transparent dark shade
+                  ),
+                  padding: const EdgeInsets.all(2),
+                  child: Center(
+                    child: Text(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      statusEvent == FlyCallStatusEvent.tryingToConnect
+                          ? 'Trying to connect...'
+                          :
+                      statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
+                      statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
+                      statusEvent == FlyCallStatusEvent.connecting
+                          ? 'Connecting...'
+                          : '',
+                      style: AppStyleConfig.ongoingCallPageStyle
+                          .callStatusTextStyle.copyWith(fontSize: 12),
                     ),
                   ),
                 );
               }),
             ),
-          ),
 
-          // Mute Status Icon
-          isMainView ?
-          Center(
-            child: Obx(() {
-              return Visibility(
-                visible: controller.callerList
-                    .firstWhereOrNull((e) => e.identity == participantId)?.isAudioMuted ?? false,
-                child: SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: Material(
-                    shape: AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.shape,
-                    color: Colors.transparent,
-                    elevation: 0,
-                    child: Center(
-                      child: AppUtils.svgIcon(
-                        icon: callMutedIconTransparent,
-                        colorFilter: ColorFilter.mode(
-                          AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.activeBgColor,
-                          BlendMode.srcIn,
+
+            // Connection Quality Icon
+            Visibility(
+              visible: controller.callerConnectionQuality.containsKey(
+                  participantId),
+              child: Positioned(
+                top: 12,
+                left: 12,
+                child: Obx(() {
+                  return SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: IconTheme(
+                        data: const IconThemeData(
+                            size: 12, color: Colors.transparent),
+                        child: getConnectionQualityIcon(
+                            controller.callerConnectionQuality[
+                            controller
+                                .getLocalParticipant()
+                                ?.identity ?? ""] ??
+                                FlyConnectionQuality.unknown),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+
+            // Mute Status Icon
+            isMainView ?
+            Center(
+              child: Obx(() {
+                return Visibility(
+                  visible: controller.callerList
+                      .firstWhereOrNull((e) => e.identity == participantId)
+                      ?.isAudioMuted ?? false,
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: Material(
+                      shape: AppStyleConfig.outgoingCallPageStyle
+                          .actionButtonsStyle.shape,
+                      color: Colors.transparent,
+                      elevation: 0,
+                      child: Center(
+                        child: AppUtils.svgIcon(
+                          icon: callMutedIconTransparent,
+                          colorFilter: ColorFilter.mode(
+                            AppStyleConfig.outgoingCallPageStyle
+                                .actionButtonsStyle.activeBgColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                ),
-              );
-            }),
-          ) :
-          Positioned(
-            top: 12,
-            right: 12,
-            child: Obx(() {
-              return Visibility(
-                visible: controller.callerList
-                    .firstWhereOrNull((e) => e.identity == participantId)?.isAudioMuted ?? false,
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: Material(
-                    shape: AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.shape,
-                    color: Colors.transparent,
-                    elevation: 0,
-                    child: Center(
-                      child: AppUtils.svgIcon(
-                        icon: callMutedIconTransparent,
-                        colorFilter: ColorFilter.mode(
-                          AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle.activeBgColor,
-                          BlendMode.srcIn,
+                  ),
+                );
+              }),
+            ) :
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Obx(() {
+                return Visibility(
+                  visible: controller.callerList
+                      .firstWhereOrNull((e) => e.identity == participantId)
+                      ?.isAudioMuted ?? false,
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: Material(
+                      shape: AppStyleConfig.outgoingCallPageStyle
+                          .actionButtonsStyle.shape,
+                      color: Colors.transparent,
+                      elevation: 0,
+                      child: Center(
+                        child: AppUtils.svgIcon(
+                          icon: callMutedIconTransparent,
+                          colorFilter: ColorFilter.mode(
+                            AppStyleConfig.outgoingCallPageStyle
+                                .actionButtonsStyle.activeBgColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),
+
                   ),
+                );
+              }),
+            ),
 
-                ),
-              );
-            }),
-          ),
+            // Speaking indicator
+            Positioned(
+              top: isMainView ? 45 : 10,
+              right: isMainView ? 15 : 10,
+              child: Obx(() {
+                return AudioLevelAnimation(
+                  radius: 8,
+                  audioLevel: controller.getAudioLevelForParticipant(
+                      participantId),
+                  bgColor: const CallUserTileStyle().speakingIndicatorStyle
+                      .activeBgColor,
+                  //AppColors.speakingBg,
+                  dotsColor: const CallUserTileStyle()
+                      .speakingIndicatorStyle.activeIconColor,
+                  useLiveKitAudio: true,
+                );
+              }),
+            ),
 
-          // Speaking indicator
-          Positioned(
-            top: isMainView ? 45 : 10,
-            right: isMainView ? 15 : 10,
-            child: Obx(() {
-              return AudioLevelAnimation(
-                radius: 8,
-                audioLevel: controller.getAudioLevelForParticipant(participantId),
-                bgColor: const CallUserTileStyle().speakingIndicatorStyle
-                    .activeBgColor,
-                //AppColors.speakingBg,
-                dotsColor: const CallUserTileStyle()
-                    .speakingIndicatorStyle.activeIconColor,
-                useLiveKitAudio: true,
-              );
-            }),
-          ),
+            isMainView ? const Offstage() : Positioned(
+              left: 8,
+              bottom: 8,
+              right: 8,
+              child: Obx(() {
+                final name = controller.remoteUserNameMap[participantId] ??
+                    participantId;
+                return Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                );
+              }),
+            ),
 
-          isMainView ? const Offstage() : Positioned(
-            left: 8,
-            bottom: 8,
-            right: 8,
-            child: Obx(() {
-              final name = controller.remoteUserNameMap[participantId] ?? participantId;
-              return Text(
-                name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.ellipsis,
-              );
-            }),
-          ),
-
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget callingScreen() {
     final remoteUserID = controller.getRemoteParticipantIdForOneToOneCall();
-    final localUserID = controller.getLocalParticipant()?.identity ?? "";
+    final localUserID = controller
+        .getLocalParticipant()
+        ?.identity ?? "";
     callkitLogger.info(
         "#CallKitOutGoingCallView CallingScreen Build Called, remoteUserID: $remoteUserID");
     return Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Color(0xFF152134),
-                  Color(0xFF0D2852),
-                  Color(0xFF152134),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                transform: GradientRotation(180),
-            ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF152134),
+            Color(0xFF0D2852),
+            Color(0xFF152134),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          transform: GradientRotation(180),
         ),
-      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty) ?
-      mfCallViewRendering(participantId: controller.callType.value.toUpperCase() == "VIDEO" ? localUserID : remoteUserID,
-          isMainView: true, profileImageAlignment: Alignment.topCenter) : const Offstage(),
+      ),
+      child: (remoteUserID.isNotEmpty || localUserID.isNotEmpty)
+          ? mfCallViewRendering(
+          participantId: controller.callType.value.toUpperCase() == "VIDEO"
+              ? localUserID
+              : remoteUserID,
+          isMainView: true,
+          profileImageAlignment: Alignment.topCenter)
+          : const Offstage(),
     );
   }
 
@@ -321,15 +357,20 @@ class CallKitOutgoingCallView
         color: AppColors.audioCallerBackground,
         child: Stack(
           children: [
-            mfCallViewRendering(participantId: controller.getRemoteParticipantIdForOneToOneCall(), isMainView: true, borderRadius: 0, profileImageAlignment: Alignment.topCenter),
+            mfCallViewRendering(participantId: controller
+                .getRemoteParticipantIdForOneToOneCall(),
+                isMainView: true,
+                borderRadius: 0,
+                profileImageAlignment: Alignment.topCenter),
 
             Obx(() {
-
               if (!controller.isOnGoingCallViewEnable.value) {
                 return const SizedBox.shrink();
               }
 
-              final screenSize = MediaQuery.of(buildContext).size;
+              final screenSize = MediaQuery
+                  .of(buildContext)
+                  .size;
               // final previewWidth = (screenSize.width * 0.32).clamp(100.0, 180.0);
               // final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
               final bottomOffset = controller.showControls.value
@@ -346,7 +387,11 @@ class CallKitOutgoingCallView
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 18),
-                    child: mfCallViewRendering(participantId: controller.getLocalParticipant()?.identity ?? "", profileImageSize: 55, borderRadius: 15),
+                    child: mfCallViewRendering(participantId: controller
+                        .getLocalParticipant()
+                        ?.identity ?? "",
+                        profileImageSize: 55,
+                        borderRadius: 15),
                   ),
                 ),
               );
@@ -356,7 +401,7 @@ class CallKitOutgoingCallView
     );
   }
 
-  Widget callHeader({required BuildContext context}) {
+  Widget callHeader({required BuildContext context, required isGroupCall}) {
     return Obx(() {
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -371,7 +416,7 @@ class CallKitOutgoingCallView
                   onTap: () {
                     controller.goToPIP();
                   },
-                  child:const Icon(
+                  child: const Icon(
                       Icons.keyboard_arrow_down,
                       color: Colors.white
                   ),
@@ -385,7 +430,8 @@ class CallKitOutgoingCallView
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Call Status (Ringing / Connecting etc.)
-                    if (!controller.isOnGoingCallViewEnable.value && controller.currentCallMode.value != "MEET") ...[
+                    if (!controller.isOnGoingCallViewEnable.value &&
+                        controller.currentCallMode.value != "MEET") ...[
                       Center(
                         child: Text(controller.callStatus.value,
                           style: AppStyleConfig
@@ -395,7 +441,7 @@ class CallKitOutgoingCallView
                     ],
                     Center(
                       child: Text(
-                        controller.getOneToOneCallRemoteUserName.value,
+                        controller.callerNames.value,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         softWrap: false,
@@ -422,7 +468,7 @@ class CallKitOutgoingCallView
                       onTap: () {
                         controller.inviteParticipants();
                       },
-                      child:const Icon(
+                      child: const Icon(
                         Icons.person_outline_sharp,
                         color: Colors.white,
                         size: 18,
@@ -436,7 +482,8 @@ class CallKitOutgoingCallView
           ),
 
           // Call Duration
-          if (controller.isOnGoingCallViewEnable.value || controller.currentCallMode.value == "MEET") ...[
+          if (controller.isOnGoingCallViewEnable.value ||
+              controller.currentCallMode.value == "MEET") ...[
             const SizedBox(height: 16,),
             Center(
               child: Text(controller.callDuration.value,
@@ -463,12 +510,10 @@ class CallKitOutgoingCallView
                 : callConnectedScreen(buildContext: context);
           }),
 
-          Positioned(
-            top: 24,
-              right: 0,
-              left: 0,
-              child: callHeader(context: context)),
-
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: callHeader(context: context, isGroupCall: false),
+          ),
           /// Controls at bottom
           Align(
             alignment: Alignment.bottomCenter,
@@ -483,34 +528,38 @@ class CallKitOutgoingCallView
     return Stack(
         fit: StackFit.expand,
         children: [
-          Column(
-            children: [
-              const SizedBox(height: 24,),
-              callHeader(context: context),
-              Obx(() {
-                return !controller.isOnGoingCallViewEnable.value
-                    ? callingScreen()
-                    : Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: GridView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                            controller.callerList.length > 2 ? 2 : 1,
-                            mainAxisSpacing: 4.0,
-                            crossAxisSpacing: 2.0,
-                            childAspectRatio:
-                            controller.callerList.length == 2 ? 1.24 : 1.0,
-                          ),
-                        padding: const EdgeInsets.all(8.0),
-                       itemCount: controller.callerList.length,
-                        itemBuilder: (context, index) {
-                      return mfCallViewRendering(participantId: controller.callerList[index].identity, profileImageSize: 80, borderRadius: 15);
-                                        }),
-                    );
-              }),
-            ],
+
+          Obx(() {
+            return !controller.isOnGoingCallViewEnable.value
+                ? callingScreen()
+                : Padding(
+              padding: const EdgeInsets.fromLTRB(5.0, 80.0, 5.0, 5.0),
+              child: GridView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                    controller.callerList.length > 2 ? 2 : 1,
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 2.0,
+                    childAspectRatio:
+                    controller.callerList.length == 2 ? 1.24 : 1.0,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: controller.callerList.length,
+                  itemBuilder: (context, index) {
+                    return mfCallViewRendering(participantId: controller
+                        .callerList[index].identity,
+                        profileImageSize: 80,
+                        borderRadius: 15);
+                  }),
+            );
+          }),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0),
+            child: callHeader(context: context,
+                isGroupCall: controller.groupId.value.isNotEmpty),
           ),
 
           /// Controls at bottom
@@ -590,9 +639,13 @@ class CallKitOutgoingCallView
     });
   }
 
-  Widget _buildProfileImageForUser({required String participantId, double size = 48}) {
+  Widget _buildProfileImageForUser(
+      {required String participantId, double size = 48, required bool isGroupProfile}) {
     return FutureBuilder(
-      future: getProfileDetails(
+      future: isGroupProfile
+          ? getGroupProfileDetails(
+          CallUtils.getJidFromUserId(userId: participantId, isGroup: true))
+          : getProfileDetails(
           CallUtils.getJidFromUserId(userId: participantId, isGroup: false)),
       builder: (ctx, snap) {
         if (snap.hasData && snap.data != null) {
@@ -914,10 +967,12 @@ class CallKitOutgoingCallView
             .availableTypes.map((e) => e.toMap()).toList()}");
 
     final bool isSpeakerOnlyAvailable = controller.availableTypes.length == 1 &&
-        controller.availableTypes.any((e) => e.type ==
+        controller.availableTypes.any((e) =>
+        e.type ==
             FlyAudioDeviceType.speaker);
     final bool isEarpieceOnlyAvailable = controller.availableTypes.length ==
-        1 && controller.availableTypes.any((e) => e.type ==
+        1 && controller.availableTypes.any((e) =>
+    e.type ==
         FlyAudioDeviceType.receiver);
     final bool onlyEarpieceAndSpeakerAvailable = controller.availableTypes
         .length == 2 &&
@@ -1006,6 +1061,95 @@ class CallKitOutgoingCallView
       case FlyAudioDeviceType.headset:
         return const Icon(Icons.headset, color: Colors.black);
     }
+  }
+
+  Widget _buildTileImage({
+    required bool isGroupCall,
+    required String participantId,
+    required double profileImageSize,
+    required Alignment profileImageAlignment,
+  }) {
+    final bool isOngoing = controller.isOnGoingCallViewEnable.value;
+    final bool hasGroupId = controller.groupId.value.isNotEmpty;
+    final bool isOneToOne = controller.callerList.length <= 2;
+
+    final EdgeInsets padding = EdgeInsets.only(
+      top: profileImageAlignment == Alignment.topCenter ? 100.0 : 0,
+    );
+
+    // ---------- ONGOING CALL ----------
+    if (isOngoing) {
+      return Padding(
+        padding: padding,
+        child: _buildProfileImageForUser(
+          participantId: participantId,
+          size: profileImageSize,
+          isGroupProfile: false,
+        ),
+      );
+    }
+
+    // ---------- GROUP CALL (OUTGOING VIEW) ----------
+    if (hasGroupId) {
+      return Padding(
+        padding: padding,
+        child: _buildProfileImageForUser(
+          participantId: controller.groupId.value,
+          size: profileImageSize,
+          isGroupProfile: isGroupCall,
+        ),
+      );
+    }
+
+    // ---------- ONE-TO-ONE CALL ----------
+    if (isOneToOne) {
+      return Padding(
+        padding: padding,
+        child: _buildProfileImageForUser(
+          participantId: participantId,
+          size: profileImageSize,
+          isGroupProfile: isGroupCall,
+        ),
+      );
+    }
+
+    // ---------- ONE-TO-MANY ----------
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        controller.callerList.length > 3 ? 4 : controller.callerList.length,
+            (index) {
+          if (index == 3) {
+            return ProfileTextImage(
+              text: "+${controller.callerList.length - 3}",
+              radius: 45 / 2,
+              bgColor: Colors.white,
+              fontColor: Colors.grey,
+            );
+          }
+
+          final userId = controller.callerList[index].identity;
+
+          return FutureBuilder(
+            future: getProfileDetails(
+              CallUtils.getJidFromUserId(
+                userId: userId,
+                isGroup: false,
+              ),
+            ),
+            builder: (ctx, snap) {
+              if (snap.hasData && snap.data != null) {
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: buildProfileImage(snap.data!, size: 45),
+                );
+              }
+              return const Offstage();
+            },
+          );
+        },
+      ),
+    );
   }
 }
 

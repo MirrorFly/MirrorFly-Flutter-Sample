@@ -40,14 +40,6 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
           },
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(
-             leading:  IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  controller.onBackPressed();
-                },
-              ),
-            ),
             body: SafeArea(
               child: Obx(() {
                 return !controller.callEnded.value
@@ -57,7 +49,19 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                               Stack(
                                 children: [
                                   /// Call Members Name | Placeholder
-                                  Center(
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.arrow_back,color: Colors.white,),
+                                      onPressed: () {
+                                        controller.onBackPressed();
+                                      },
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 18,
+                                    left: 0,
+                                    right: 0,
                                     child: Obx(() {
                                       return FutureBuilder(
                                           future: CallUtils.getCallersName(
@@ -66,16 +70,18 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                           ),
                                           builder: (ctx, snap) {
                                             callkitLogger.info("Callers Name FutureBuilder snap data ${snap.data}");
-                                            return Text(
-                                              snap.hasData &&
-                                                      snap.data != null &&
-                                                      snap.data!.isNotEmpty
-                                                  ? snap.data!
-                                                  : getTranslated("noOneHere"),
-                                              style: AppStyleConfig
-                                                  .joinCallPreviewPageStyle
-                                                  .callerNameTextStyle,
-                                              overflow: TextOverflow.ellipsis,
+                                            return Center(
+                                              child: Text(
+                                                snap.hasData &&
+                                                        snap.data != null &&
+                                                        snap.data!.isNotEmpty
+                                                    ? snap.data!
+                                                    : getTranslated("noOneHere"),
+                                                style: AppStyleConfig
+                                                    .joinCallPreviewPageStyle
+                                                    .callerNameTextStyle,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             );
                                           });
                                     }),
