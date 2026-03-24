@@ -91,7 +91,7 @@ class CallStateService extends GetxService {
   RxString titleAfterCallModeChange = ''.obs;
   RxString chatNameForGroupCall = ''.obs;
   RxString groupCallTitle = ''.obs;
-  RxString getOneToOneCallRemoteUserName = ''.obs;
+  RxString callerNames = ''.obs;
   RxString mainCallViewUserId = ''.obs;
   RxString secondaryCallViewUserId = ''.obs;
 
@@ -535,7 +535,7 @@ class CallStateService extends GetxService {
         '[CallStateService] updateCallerStatusList participantsId=$participantsId status=$status');
     if (participantsId?.isNotEmpty ?? false) {
       for (final id in participantsId ?? []) {
-        if (!isSelfId(id: id)) {
+        // if (!isSelfId(id: id)) {
           final index = callerList.indexWhere((p) => p.identity == id);
           if (index != -1) {
             final existing = callerList[index];
@@ -557,7 +557,7 @@ class CallStateService extends GetxService {
               flyCallActionEvent: null,
             ));
           }
-        }
+        // }
       }
       // await moveLocalParticipantToLast();
       callerList.refresh();

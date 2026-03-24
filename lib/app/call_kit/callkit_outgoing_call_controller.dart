@@ -92,7 +92,7 @@ class CallKitOutgoingCallController extends GetxController
 
   final RxBool isAudioDialogOpen = false.obs;
   var availableTypes = <FlyAudioDevice>[].obs;
-  RxString getOneToOneCallRemoteUserName = "".obs;
+  RxString callerNames = "".obs;
 
   RxBool isMeet = false.obs;
   StreamSubscription<String>? callTimerStream;
@@ -303,7 +303,7 @@ class CallKitOutgoingCallController extends GetxController
     selectedDeviceType.value   = _svc.selectedDeviceType.value;
     mainCallViewUserId.value   = _svc.mainCallViewUserId.value;
     secondaryCallViewUserId.value = _svc.secondaryCallViewUserId.value;
-    getOneToOneCallRemoteUserName.value = _svc.getOneToOneCallRemoteUserName.value;
+    callerNames.value = _svc.callerNames.value;
     callDuration.value         = _svc.callDuration.value;
 
     cameraPosition.value      = _svc.cameraPosition.value;
@@ -767,12 +767,12 @@ class CallKitOutgoingCallController extends GetxController
           participantId: participantId,
           showLocalUserName: showLocalUserName).then((value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #_getOneToOneCallRemoteUserName fetched display names: $value");
-        getOneToOneCallRemoteUserName.value = value;
+        callerNames.value = value;
       });
     } catch (e) {
       callkitLogger.info(
           "[MirrorFly][OutgoingCallController] Remote User name error: $e");
-      getOneToOneCallRemoteUserName.value = "MF Call";
+      callerNames.value = "MF Call";
     }
   }
 
@@ -1394,7 +1394,7 @@ class CallKitOutgoingCallController extends GetxController
     toToast(message);
 
     final String type       = callType.value;
-    final String calleeName = getOneToOneCallRemoteUserName.value;
+    final String calleeName = callerNames.value;
 
     final List<dynamic> callUserList = callAgainUserList.toList();
     final String callsMode = callMode.value;
@@ -1569,7 +1569,14 @@ class CallKitOutgoingCallController extends GetxController
       if (!isOnGoingCallViewEnable.value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected for group call, enabling ongoing call view");
         callStatus("Connected");
-        isOnGoingCallView();
+        for (var p in participantIds) {
+          if (!isSelfId(id: p) && !isOnGoingCallViewEnable.value) {
+            callkitLogger.info(
+                "[MirrorFly][OutgoingCallController] #onConnected for one to one call");
+            callStatus("Connected");
+            isOnGoingCallView();
+          }
+        }
       }
 
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
