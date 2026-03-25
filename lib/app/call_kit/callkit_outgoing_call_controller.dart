@@ -1576,7 +1576,7 @@ class CallKitOutgoingCallController extends GetxController
 
       if (!isOnGoingCallViewEnable.value) {
         callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected for group call, enabling ongoing call view");
-        callStatus("Connected");
+        // callStatus("Connected");
         for (var p in participantIds) {
           if (!isSelfId(id: p) && !isOnGoingCallViewEnable.value) {
             callkitLogger.info(
