@@ -86,6 +86,11 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           callEnded.value = true;
           callEndedMessage = getTranslated("invalidLink");
           return;
+        } else if (initializeJoinLinkResponse.code == 411) {
+          callkitLogger.info("Join via link initialization failed with error: carbon user in the call");
+          toToast("You are already in this call on another device");
+          NavUtils.back();
+          return;
         }
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
