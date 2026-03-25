@@ -69,11 +69,20 @@ class CallUtils {
     if (Constants.useMirrorFlyCallKit) {
 
       final bool isAlreadyInCall = await _isMirrorFlyCallKitCallOngoing();
+      if (!isAlreadyInCall) {
+        callkitLogger.info("#CallUtils #onJoinLinkTapped no ongoing call, navigating to join call preview");
+        NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
+          "callLinkId": link,
+          "navigatedFrom": "MeetLinkView-Build"
+        });
+        return;
+      }
+
       final bool isSameJoinLink = await _isSameJoinLink(linkTapped: link);
       final bool isCallControllerActive = await _isCallControllerRegistered();
 
-      callkitLogger.info("#CallUtils #onJoinLinkTapped #isAlreadyInCall: $isAlreadyInCall,"
-          " #isSameJoinLink: $isSameJoinLink, #isCallControllerActive: $isCallControllerActive");
+      callkitLogger.info("#CallUtils #onJoinLinkTapped #isSameJoinLink: $isSameJoinLink,"
+              " #isCallControllerActive: $isCallControllerActive");
 
       if (isAlreadyInCall && isSameJoinLink && isCallControllerActive) {
         final bool isPipControllerRegistered = Get.isRegistered<CallKitPipController>();
