@@ -979,7 +979,7 @@ class CallKitOutgoingCallController extends GetxController
 
 
   void toggleControls() {
-    showControls.value = !showControls.value;
+    // showControls.value = !showControls.value;
   }
 
 

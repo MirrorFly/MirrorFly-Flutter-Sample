@@ -61,6 +61,8 @@ class CallKitOutgoingCallView
     bool isMainView = false,
     double borderRadius = 15,
     Alignment profileImageAlignment = Alignment.center}) {
+    debugPrint(
+        "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView");
     bool isGroupCall = controller.groupId.value.isNotEmpty;
     return Obx(() {
       return ClipRRect(
@@ -117,17 +119,15 @@ class CallKitOutgoingCallView
                   padding: const EdgeInsets.all(2),
                   child: Stack(
                     children: [
-                      Positioned(
-                        top: 230,
-                        left: 0,
-                        right: 0,
+                      Padding(
+                        padding: isMainView ? const EdgeInsets.only(bottom: 70.0) : EdgeInsets.zero,
                         child: Center(
                           child: Text(
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             'Reconnecting...',
                             style: AppStyleConfig.ongoingCallPageStyle
-                                .callStatusTextStyle.copyWith(fontSize: 12),
+                                .callStatusTextStyle.copyWith(fontSize: isMainView ? 14: 12),
                           ),
                         ),
                       ),
@@ -142,14 +142,27 @@ class CallKitOutgoingCallView
               child: Obx(() {
                 final participant = controller.callerList
                     .firstWhereOrNull((e) => e.identity == participantId);
+
                 final statusEvent = participant?.flyCallStatusEvent;
 
-                if (![
+                final isLocalUser = participantId.isNotEmpty && 
+                                    participantId == controller.getLocalParticipant()?.identity;
+
+                final localUserStatusList = <FlyCallStatusEvent>[
+                  FlyCallStatusEvent.callHold,
+                ];
+
+                final remoteUserStatusList = <FlyCallStatusEvent>[
                   FlyCallStatusEvent.calling,
                   FlyCallStatusEvent.tryingToConnect,
                   FlyCallStatusEvent.ringing,
-                  FlyCallStatusEvent.connecting
-                ].contains(statusEvent) || isMainView) {
+                  FlyCallStatusEvent.connecting,
+                  FlyCallStatusEvent.callHold,
+                ];
+
+                final allowedStatuses = isLocalUser ? localUserStatusList : remoteUserStatusList;
+
+                if (!allowedStatuses.contains(statusEvent) || isMainView) {
                   return const Offstage();
                 }
 
@@ -169,8 +182,8 @@ class CallKitOutgoingCallView
                           :
                       statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
                       statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
-                      statusEvent == FlyCallStatusEvent.connecting
-                          ? 'Connecting...'
+                      statusEvent == FlyCallStatusEvent.connecting ? 'Connecting...' :
+                      statusEvent == FlyCallStatusEvent.callHold ? 'Call Hold...'
                           : '',
                       style: AppStyleConfig.ongoingCallPageStyle
                           .callStatusTextStyle.copyWith(fontSize: 12),
@@ -180,14 +193,39 @@ class CallKitOutgoingCallView
               }),
             ),
 
-
             // Connection Quality Icon
-            Visibility(
+            !isMainView ? Visibility(
               visible: controller.callerConnectionQuality.containsKey(
                   participantId),
               child: Positioned(
                 top: 12,
                 left: 12,
+                child: Obx(() {
+                  return SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: IconTheme(
+                        data: const IconThemeData(
+                            size: 12, color: Colors.transparent),
+                        child: getConnectionQualityIcon(
+                            controller.callerConnectionQuality[
+                            controller
+                                .getLocalParticipant()
+                                ?.identity ?? ""] ??
+                                FlyConnectionQuality.unknown),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ) : Visibility(
+              visible: controller.callerConnectionQuality.containsKey(
+                  participantId),
+              child: Positioned(
+                top: 65,
+                left: 15,
                 child: Obx(() {
                   return SizedBox(
                     width: 18,
@@ -325,7 +363,7 @@ class CallKitOutgoingCallView
         .getLocalParticipant()
         ?.identity ?? "";
     callkitLogger.info(
-        "#CallKitOutGoingCallView CallingScreen Build Called, remoteUserID: $remoteUserID");
+        "#CallKitOutGoingCallView CallingScreen Build Called, remoteUserID: $remoteUserID, localUserID: $localUserID, callType: ${controller.callType.value}");
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -460,8 +498,8 @@ class CallKitOutgoingCallView
               SizedBox(
                 width: 48,
                 child: Obx(() {
-                  final showInviteButton = controller.isOnGoingCallViewEnable
-                      .value && controller.callKind != FlyCallKind.sip;
+                  final showInviteButton = (controller.isOnGoingCallViewEnable
+                      .value && controller.callKind != FlyCallKind.sip) || controller.currentCallMode.value == "MEET";
                   return Visibility(
                     visible: showInviteButton,
                     child: InkWell(
