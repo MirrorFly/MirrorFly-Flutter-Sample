@@ -1638,6 +1638,14 @@ class CallKitOutgoingCallController extends GetxController
 
   void _handleGroupCallDisconnect(String userId, String reason) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Group call disconnect");
+
+    final bool isLocalHangup = isSelfId(id: userId);
+    if (isLocalHangup) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Local hangup");
+      _endCallAndExit(reason);
+      return;
+    }
+
     callerList.removeWhere((e) => e.identity == userId);
 
     final String name = remoteUserNameMap[userId] ?? "";
@@ -1649,30 +1657,16 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall removed userId=$userId len=${callerList.length}");
     _getCallRemoteUserName();
 
-    final bool isLocalHangup = isSelfId(id: userId);
-    if (isLocalHangup) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Local hangup");
-      _endCallAndExit(reason);
-      return;
-    }
-
     if (callerList.length <= 1 && !isMeet.value) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Last user left");
       _endCallAndExit(reason);
       return;
     }
 
-    if (callerList.any((e) => e.isLocalParticipant == false && e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
-      if (callerList.length <= 2) {
-        final remote = callerList.firstWhere((e) => e.isLocalParticipant != true);
-        callkitLogger.info("[MirrorFly] #disconnectCall remote=${remote.identity} state=${remote.flyCallStatusEvent}");
-      }
-    } else {
-      if (callerList.length <= 1 && isMeet.value) {
-        isOnGoingCallViewEnable.value = false;
-      }
-      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall call still ongoing");
+    if (callerList.length <= 1 && isMeet.value) {
+      isOnGoingCallViewEnable.value = false;
     }
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall call still ongoing");
   }
 
   void _endCallAndExit(String reason) {
