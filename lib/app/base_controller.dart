@@ -453,6 +453,7 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;

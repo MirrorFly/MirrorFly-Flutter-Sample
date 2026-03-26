@@ -233,7 +233,11 @@ class CallKitOutgoingCallController extends GetxController
           onCallSwitchRemoteUserDeclined();
           break;
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
-          onVideoCallSwitchTimeOut();
+          onVideoCallSwitchTimeOut(isIncomingTimeout: false);
+
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
+          onVideoCallSwitchTimeOut(isIncomingTimeout: true);
+
           break;
         default:
           break;
@@ -359,7 +363,9 @@ class CallKitOutgoingCallController extends GetxController
           onRemoteUserCancelledTheSwitchRequest();
           break;
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
-          onVideoCallSwitchTimeOut();
+          onVideoCallSwitchTimeOut(isIncomingTimeout: false);
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
+          onVideoCallSwitchTimeOut(isIncomingTimeout: true);
           break;
         default:
           break;
@@ -2002,11 +2008,16 @@ class CallKitOutgoingCallController extends GetxController
     processCallSwitchUI();
   }
 
-  void onVideoCallSwitchTimeOut() {
+  void onVideoCallSwitchTimeOut({required bool isIncomingTimeout}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onVideoCallSwitchTimeOut called, isIncomingTimeout: $isIncomingTimeout");
     closeDialog();
-    final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
-    final remoteUserName = remoteUserNameMap[remoteId] ?? "";
-    toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
+    if (isIncomingTimeout) {
+      return;
+    } else {
+      final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
+      final remoteUserName = remoteUserNameMap[remoteId] ?? "";
+      toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
+    }
   }
 
   ///
