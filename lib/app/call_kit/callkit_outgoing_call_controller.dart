@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -2069,33 +2070,47 @@ class CallKitOutgoingCallController extends GetxController
 
     closeDialog();
     try {
-      await _player?.setAudioContext(
-        AudioContext(
-          android: const AudioContextAndroid(
-            isSpeakerphoneOn: true,
-            stayAwake: false,
-            contentType: AndroidContentType.sonification,
-            usageType: AndroidUsageType.voiceCommunicationSignalling,
-            audioFocus: AndroidAudioFocus.none,
+      /// Apply AudioContext ONLY for Android
+      /// iOS → DO NOT override audio session (let LiveKit handle it)
+      if (Platform.isAndroid) {
+        await _player?.setAudioContext(
+          AudioContext(
+            android: const AudioContextAndroid(
+              isSpeakerphoneOn: true,
+              stayAwake: false,
+              contentType: AndroidContentType.sonification,
+              usageType: AndroidUsageType.voiceCommunicationSignalling,
+              audioFocus: AndroidAudioFocus.none,
+            ),
           ),
-        ),
-      );
+        );
+      }
+
+
       await _player?.setVolume(1.0);
       await _player?.setReleaseMode(ReleaseMode.loop);
       await _player?.play(AssetSource('sounds/reconnecting.mp3'));
+
       await Future.delayed(const Duration(milliseconds: 300));
+
       final state = _player?.state;
-      callkitLogger.info("[MirrorFly][OutgoingCallController] Player state after play(): $state");
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController] Player state after play(): $state");
 
       if (state == PlayerState.playing) {
         _isPlaying = true;
-        callkitLogger.info("[MirrorFly][OutgoingCallController]  Ringtone is playing!");
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Ringtone is playing!");
       } else {
-        callkitLogger.info("[MirrorFly][OutgoingCallController]  Not playing, state=$state");
+        callkitLogger.info(
+            "[MirrorFly][OutgoingCallController] Not playing, state=$state");
       }
-      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
+
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController][DEBUG] AudioPlayer started playing");
     } catch (e) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
+      callkitLogger.info(
+          "[MirrorFly][OutgoingCallController][DEBUG] Failed to play ringtone: $e");
     }
 
     DialogUtils.showAlert(
