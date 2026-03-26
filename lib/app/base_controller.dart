@@ -70,7 +70,32 @@ class BaseController {
     String? callMode;
     String? groupId;
 
+    void onPreviewScreenEnabled({required FlyCallStatus event}) {
+      final controller = Get.find<CallKitJoinCallController>();
 
+      if (event.participantsIds.isEmpty) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled "
+            "but participantsIds is empty, ignoring");
+        return;
+      }
+
+      if (event.flyCallStatusEvent == FlyCallStatusEvent.disconnected && event.participantsIds.first == SessionManagement.getUserJID()?.split("@").first) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected for self "
+            "received on #onPreviewScreenEnabled - navigating back from preview");
+        controller.closePreviewScreen();
+        return;
+      }
+
+      if (event.flyCallStatusEvent == FlyCallStatusEvent.connected) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected received on #onPreviewScreenEnabled");
+        controller.participantConnected(participantsId: event.participantsIds);
+      }
+
+      if (event.flyCallStatusEvent == FlyCallStatusEvent.disconnected) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected received on #onPreviewScreenEnabled");
+        controller.participantDisconnected(participant: event.participantsIds.first);
+      }
+    }
 
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
@@ -103,14 +128,18 @@ class BaseController {
       debugPrint(
           "[MirrorFly][BaseController] flyCallStatus event ${event.toJson()} flyCallStatusEvent $flyCallStatusEvent");
 
+      // Handle participant connected and disconnected event in
+      // join via link preview screen once the callStateService is available
+      if (Get.isRegistered<CallKitJoinCallController>()) {
+        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled");
+        onPreviewScreenEnabled(event: flyCallStatus);
+        return;
+      }
+
       // Incoming call - set the callerId and callType to be used when answering the call
       if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
-        }
-
-        if (NavUtils.currentRoute == Routes.callKitJoinCallPreview) {
-          NavUtils.back();
         }
 
         callerId = flyCallStatus.participantsIds.first;
@@ -119,20 +148,6 @@ class BaseController {
         groupId =  MirrorFlyCallKit.getCurrentCallGroupId();
 
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent incomingCall callerId=$callerId callType=$callType callMode=$callMode groupId=$groupId");
-      }
-
-      void onPreviewScreenEnabled({required FlyCallStatus event}) {
-        final controller = Get.find<CallKitJoinCallController>();
-
-        if (event.flyCallStatusEvent == FlyCallStatusEvent.connected) {
-          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent connected received on #onPreviewScreenEnabled");
-          controller.participantConnected(participantsId: event.participantsIds);
-        }
-
-        if (event.flyCallStatusEvent == FlyCallStatusEvent.disconnected) {
-          callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent disconnected received on #onPreviewScreenEnabled");
-          controller.participantDisconnected(participant: event.participantsIds.first);
-        }
       }
 
       // ── Primary: route status events to CallStateService ────────────────
@@ -159,14 +174,6 @@ class BaseController {
       // Publish the raw event so subscribers (e.g. CallKitOutgoingCallController)
       // can ever() this and call their own methods.
       callStateService.lastStatusEvent.value = flyCallStatus;
-
-      // Handle participant connected and disconnected event in
-      // join via link preview screen once the callStateService is available
-      if (Get.isRegistered<CallKitJoinCallController>()) {
-        callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled");
-        onPreviewScreenEnabled(event: flyCallStatus);
-        return;
-      }
 
       switch (flyCallStatusEvent) {
         case FlyCallStatusEvent.connecting:

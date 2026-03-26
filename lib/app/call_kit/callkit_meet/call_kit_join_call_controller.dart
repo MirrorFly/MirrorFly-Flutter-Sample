@@ -385,4 +385,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       callkitLogger.info("#CallKitJoinCallController #participantDisconnected #noParticipant");
     }
   }
+
+  void closePreviewScreen() {
+    callkitLogger.info("#CallKitJoinCallController Closing preview screen and navigating back");
+    NavUtils.back();
+  }
+
 }
