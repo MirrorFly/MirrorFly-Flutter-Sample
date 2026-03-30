@@ -269,7 +269,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     callTimerStream = MirrorFlyCallKit.flyCallTimer.listen((timer) {
-      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
+    //  callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
       callDuration(timer);
     });
   }

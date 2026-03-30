@@ -104,7 +104,7 @@ class BaseController {
           "[MirrorFly][BaseController] flyCallStatus event ${event.toJson()} flyCallStatusEvent $flyCallStatusEvent");
 
       // Incoming call - set the callerId and callType to be used when answering the call
-      if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
+      if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
         }
