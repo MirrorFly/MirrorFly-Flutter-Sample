@@ -397,20 +397,24 @@ class CallStateService extends GetxService {
     }
 
     final String userId = userIds.firstOrNull ?? '';
+    final bool isLocalHangup = isSelfId(id: userId);
+    callkitLogger.info("[MirrorFly][CallStateService] #disconnectCall userId=$userId reason=$reason");
 
-    if (callerList.length >= 2) {
+    if (callerList.length > 2) {
       callkitLogger.info("[MirrorFly][CallStateService] disconnectCall: Group call is ongoing, applying disconnect logic.");
-
-      callerList.removeWhere((e) => e.identity == userId);
-      remoteUserNameMap.remove(userId);
 
       // Check if local user hung up
       final bool isLocalHangup = isSelfId(id: userId);
       if (isLocalHangup) {
+        _resetValues();
         return;
       }
 
+      callerList.removeWhere((e) => e.identity == userId);
+      remoteUserNameMap.remove(userId);
+
       if (callerList.length <= 1 && !isMeet.value) {
+        _resetValues();
         return;
       }
 
@@ -423,7 +427,6 @@ class CallStateService extends GetxService {
 
     // One-to-one call
     // Check if local user hung up
-    final bool isLocalHangup = isSelfId(id: userId);
     if (isMeet.value && !isLocalHangup) {
       callerList.removeWhere((e) => e.identity == userId);
       remoteUserNameMap.remove(userId);
