@@ -31,7 +31,7 @@ class CallKitOutgoingCallController extends GetxController
     with GetTickerProviderStateMixin {
 
   /// Observables
-  var callStatus = "Trying to connect".obs;
+  var callStatus = "".obs;
   var callDuration = "".obs;
   var callTryStatus = "".obs;
 
