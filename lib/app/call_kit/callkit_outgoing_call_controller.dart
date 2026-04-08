@@ -885,6 +885,10 @@ class CallKitOutgoingCallController extends GetxController
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
     callkitLogger.info("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
+      if (!isOnGoingCallViewEnable.value) {
+        isOnGoingCallView();
+      }
+      callStatus("Connected");
       // onConnected();
     } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
       connecting();
