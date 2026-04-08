@@ -124,6 +124,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
       final String jid = CallUtils.getJidFromUserId(userId: callKitId, isGroup: false);
       callkitLogger.info("Constructed JID for participant: $jid");
+
+      if(users.contains(jid)) {
+        callkitLogger.info("Participant with JID $jid already exists in users list, skipping addition");
+        continue;
+      }
+
       users.add(jid);
     }
   }
