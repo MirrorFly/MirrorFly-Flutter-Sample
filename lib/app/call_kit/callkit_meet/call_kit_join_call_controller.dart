@@ -68,14 +68,17 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     if (!audioGranted && !videoGranted) {
       audioMuted.value = true;
       videoMuted.value = true;
-      toToast(getTranslated("videoCallPermissionContent"));
+      toToast("Microphone and Camera permissions are required to join the call");
       uiLoading(false);
     } else if (!audioGranted) {
       audioMuted.value = true;
-      toToast(getTranslated("audioPermissionContent"));
+      toToast("Microphone permission is required to join the call");
     } else if (!videoGranted) {
       videoMuted.value = true;
-      toToast(getTranslated("cameraPermissionContent"));
+      toToast("Camera permission is required to join the call");
+    } else {
+      audioMuted.value = false;
+      videoMuted.value = false;
     }
 
       callkitLogger.info("Initializing from $navigatedFrom via link with callLinkId: $callLinkId");
