@@ -1980,7 +1980,7 @@ class CallKitOutgoingCallController extends GetxController
   void cancelVideoCallSwitchRequest() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
-    toToast("Video call switch canceled");
+    // toToast("Video call switch canceled");
     // closeDialog();
     // _cancelCallSwitchReqWaiting();
   }
@@ -2210,7 +2210,8 @@ class CallKitOutgoingCallController extends GetxController
 
     // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
-      NavUtils.back();
+      // NavUtils.back();
+      Get.back();
       callkitLogger.info("[MirrorFly][OutgoingCallController] Dialog closed");
     }
   }
