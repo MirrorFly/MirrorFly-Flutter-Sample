@@ -314,22 +314,25 @@ class CallKitOutgoingCallView
             ),
 
             // Speaking indicator
-            Positioned(
-              top: isMainView ? 45 : 10,
-              right: isMainView ? 15 : 10,
-              child: Obx(() {
-                return AudioLevelAnimation(
-                  radius: 8,
-                  audioLevel: controller.getAudioLevelForParticipant(
-                      participantId),
-                  bgColor: const CallUserTileStyle().speakingIndicatorStyle
-                      .activeBgColor,
-                  //AppColors.speakingBg,
-                  dotsColor: const CallUserTileStyle()
-                      .speakingIndicatorStyle.activeIconColor,
-                  useLiveKitAudio: true,
-                );
-              }),
+            Visibility(
+              visible: controller.callerList.firstWhereOrNull((e) => e.identity == participantId)?.isAudioMuted == false,
+              child: Positioned(
+                top: isMainView ? 45 : 10,
+                right: isMainView ? 15 : 10,
+                child: Obx(() {
+                  return AudioLevelAnimation(
+                    radius: 8,
+                    audioLevel: controller.getAudioLevelForParticipant(
+                        participantId),
+                    bgColor: const CallUserTileStyle().speakingIndicatorStyle
+                        .activeBgColor,
+                    //AppColors.speakingBg,
+                    dotsColor: const CallUserTileStyle()
+                        .speakingIndicatorStyle.activeIconColor,
+                    useLiveKitAudio: true,
+                  );
+                }),
+              ),
             ),
 
             isMainView ? const Offstage() : Positioned(

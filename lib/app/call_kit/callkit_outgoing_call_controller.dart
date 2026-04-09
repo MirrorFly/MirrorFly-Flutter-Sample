@@ -2494,6 +2494,15 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange called for participantId: $participantId, isSpeaking: $isSpeaking, audioLevel: $audioLevel");
 
     final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+
+    if (participant?.isAudioMuted == true) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange: "
+          "Participant $participantId is audio muted, ignoring speaker change");
+      callerAudioLevel[participantId] = 0;
+      callerAudioLevel.refresh();
+      return;
+    }
+
     if (participant != null) {
       /// NOTE ::==
      // participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);

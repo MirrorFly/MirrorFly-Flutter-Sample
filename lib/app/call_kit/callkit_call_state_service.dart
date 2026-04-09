@@ -357,6 +357,16 @@ class CallStateService extends GetxService {
       required double audioLevel,
       required String participantId}) {
     callkitLogger.info("#onActiveSpeakerChange $audioLevel");
+
+    final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+
+    if (participant?.isAudioMuted == true) {
+      callkitLogger.info("[CallStateService] onActiveSpeakerChange: Participant $participantId is muted, skipping audio level update");
+      callerAudioLevel[participantId] = 0;
+      callerAudioLevel.refresh();
+      return;
+    }
+    
     callerAudioLevel[participantId] = audioLevel;
     callerAudioLevel.refresh();
   }
