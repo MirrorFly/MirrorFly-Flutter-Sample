@@ -6,9 +6,11 @@ import '../../../app_style_config.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
-import '../../../modules/dashboard/views/callhistory_view.dart';
 import '../../../modules/dashboard/views/recentchat_view.dart';
+import '../../../modules/callkit/call_log_view.dart';
+import '../../../modules/callkit/call_log_controller.dart';
 import '../../../stylesheet/stylesheet.dart';
+
 import '../../../widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -22,8 +24,11 @@ class DashboardView extends NavViewStateful<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-  DashboardController createController({String? tag}) =>
-      Get.put(DashboardController(), tag: key?.hashCode.toString());
+  DashboardController createController({String? tag}) {
+    Get.put(CallLogController());
+    return Get.put(DashboardController(), tag: key?.hashCode.toString());
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -639,22 +644,9 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                     contactItemStyle: AppStyleConfig
                                         .dashBoardPageStyle.contactItemStyle,
                                   ),
-                                  CallHistoryView(
-                                    controller: controller,
-                                    callHistoryItemStyle: AppStyleConfig
-                                        .dashBoardPageStyle
-                                        .callHistoryItemStyle,
-                                    noDataTextStyle: AppStyleConfig
-                                        .dashBoardPageStyle.noDataTextStyle,
-                                    createMeetLinkStyle: AppStyleConfig
-                                        .dashBoardPageStyle.createMeetLinkStyle,
-                                    recentCallsTitleStyle: AppStyleConfig
-                                        .dashBoardPageStyle.titlesTextStyle,
-                                    meetBottomSheetStyle: AppStyleConfig
-                                        .dashBoardPageStyle
-                                        .meetBottomSheetStyle,
-                                  )
+                                  const CallLogView(showAppBar: false),
                                 ])));
+
                   }),
                 ),
               ),

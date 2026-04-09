@@ -63,6 +63,7 @@ abstract class Routes {
   static const groupParticipants = _Paths.groupParticipants;
   static const callInfo = _Paths.callInfo;
   static const pipView = _Paths.pipView;
+  static const callLog = _Paths.callLog;
 
   //callkit
   static const callKitOutGoingCallView = _Paths.callKitOutGoingCallView;
@@ -141,6 +142,7 @@ abstract class _Paths {
   static const groupParticipants = '/groupParticipants';
   static const callInfo = '/call-info';
   static const pipView = '/pipView';
+  static const callLog = '/callLog';
 
   //callkit
   static const callKitOutGoingCallView = '/callKitOutGoingCallView';

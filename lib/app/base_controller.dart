@@ -97,6 +97,12 @@ class BaseController {
       }
     }
 
+    MirrorFlyCallKit.flyCallLogUpdate.listen((List<CallLog>? callLogs) {
+      if (callLogs != null && callLogs.isNotEmpty) {
+        callkitLogger.info("Updated call logs received: ${callLogs.length}");
+        // Update your UI or state here
+      }
+    });
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
 
@@ -618,7 +624,6 @@ class BaseController {
       userWentOffline(jid);
     });
     Mirrorfly.usersIBlockedListFetched.listen(usersIBlockedListFetched);
-    Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     Mirrorfly.onConnectionFailed.listen(onConnectionFailed);

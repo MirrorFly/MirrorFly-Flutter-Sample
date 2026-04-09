@@ -61,6 +61,9 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
 import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart';
+import '../modules/callkit/call_log_view.dart';
+import '../modules/callkit/call_log_binding.dart';
+
 
 part 'app_routes.dart';
 
@@ -251,6 +254,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
           builder: (_) =>
               PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),
           settings: settings);
+    case Routes.callLog:
+      CallLogBinding().dependencies();
+      return MaterialPageRoute(
+          builder: (_) => const CallLogView(), settings: settings);
     case Routes.callKitOutGoingCallView:
       return MaterialPageRoute(
           builder: (_) =>
