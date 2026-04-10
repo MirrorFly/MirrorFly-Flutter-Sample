@@ -3,9 +3,18 @@ import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 
+import '../../call_modules/call_utils.dart';
+import '../../call_modules/meet_sheet_view.dart';
+import '../../common/app_localizations.dart';
+import '../../common/constants.dart';
 import '../../common/main_controller.dart';
+import '../../data/helper.dart';
+import '../../app_style_config.dart';
+import '../../data/utils.dart';
+import '../../stylesheet/stylesheet.dart';
+import '../dashboard/controllers/dashboard_controller.dart';
 
-class CallLogController extends GetxController {
+class CallLogController extends GetxController with GetTickerProviderStateMixin {
   var callLogList = <CallLog>[].obs;
   var unreadMissedCallCount = 0.obs;
   var isLoading = true.obs;
@@ -13,6 +22,8 @@ class CallLogController extends GetxController {
   var pageNumber = 0;
   var totalPages = 1;
   var pageSize = 20;
+
+  var profiles = <String, ProfileDetails>{}.obs;
 
   ScrollController scrollController = ScrollController();
   final String _tag = "#CallLogController";
@@ -88,6 +99,7 @@ class CallLogController extends GetxController {
         }
 
         callkitLogger.info("$_tag callLogList size now: ${callLogList.length}");
+        fetchProfiles();
         
         // Update total pages if total count is available
         if (response.data!.total != null) {
@@ -189,5 +201,34 @@ class CallLogController extends GetxController {
       }
     }
   }
+
+  Future<void> fetchProfiles() async {
+    for (var log in callLogList) {
+      if (!profiles.containsKey(log.userId)) {
+        getProfileDetails(CallUtils.getJidFromUserId(userId: log.userId ?? "", isGroup: false)).then((profile) {
+          profiles[log.userId!] = profile;
+        });
+      }
+    }
+  }
+
+  Future<void> showMeetBottomSheet(
+      MeetBottomSheetStyle meetBottomSheetStyle) async {
+    if (await AppUtils.isNetConnected()) {
+      DialogUtils.bottomSheet(
+        MeetSheetView(
+          title: getTranslated("generateMeet"),
+          description: getTranslated("meetDescription"),
+          meetBottomSheetStyle: meetBottomSheetStyle,
+        ),
+        ignoreSafeArea: true,
+        backgroundColor: Colors.white,
+        barrierColor: Colors.black.withOpacity(0.5),
+      );
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
 }
 

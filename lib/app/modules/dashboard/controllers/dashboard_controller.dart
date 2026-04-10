@@ -25,6 +25,7 @@ import '../../../data/permissions.dart';
 import '../../../data/utils.dart';
 import '../../../model/chat_message_model.dart';
 import '../../../routes/route_settings.dart';
+import '../../callkit/call_log_controller.dart';
 
 class DashboardController extends FullLifeCycleController
     with FullLifeCycleMixin, GetTickerProviderStateMixin {
@@ -1634,8 +1635,10 @@ class DashboardController extends FullLifeCycleController
       hasPaused = false;
       LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
       getRecentChatList();
-      // fetchCallLogList();
       onCallLogUpdate(false);
+      if (Get.isRegistered<CallLogController>()) {
+        Get.find<CallLogController>().refreshCallLogs();
+      }
     }
     getArchivedChatsList();
     if (!KeyboardVisibilityController().isVisible) {

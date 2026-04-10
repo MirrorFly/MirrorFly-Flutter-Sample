@@ -644,7 +644,19 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                     contactItemStyle: AppStyleConfig
                                         .dashBoardPageStyle.contactItemStyle,
                                   ),
-                                  const CallLogView(showAppBar: false),
+                                   CallLogView(
+                                    callHistoryItemStyle: AppStyleConfig
+                                      .dashBoardPageStyle
+                                      .callHistoryItemStyle,
+                                    noDataTextStyle: AppStyleConfig
+                                        .dashBoardPageStyle.noDataTextStyle,
+                                    createMeetLinkStyle: AppStyleConfig
+                                        .dashBoardPageStyle.createMeetLinkStyle,
+                                    recentCallsTitleStyle: AppStyleConfig
+                                        .dashBoardPageStyle.titlesTextStyle,
+                                    meetBottomSheetStyle: AppStyleConfig
+                                        .dashBoardPageStyle
+                                        .meetBottomSheetStyle,),
                                 ])));
 
                   }),
