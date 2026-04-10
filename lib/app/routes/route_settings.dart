@@ -254,10 +254,6 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
           builder: (_) =>
               PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),
           settings: settings);
-    case Routes.callLog:
-      CallLogBinding().dependencies();
-      return MaterialPageRoute(
-          builder: (_) => const CallLogView(), settings: settings);
     case Routes.callKitOutGoingCallView:
       return MaterialPageRoute(
           builder: (_) =>
