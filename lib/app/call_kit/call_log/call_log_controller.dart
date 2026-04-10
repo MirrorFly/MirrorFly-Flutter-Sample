@@ -12,7 +12,6 @@ import '../../data/helper.dart';
 import '../../app_style_config.dart';
 import '../../data/utils.dart';
 import '../../stylesheet/stylesheet.dart';
-import '../dashboard/controllers/dashboard_controller.dart';
 
 class CallLogController extends GetxController with GetTickerProviderStateMixin {
   var callLogList = <CallLog>[].obs;

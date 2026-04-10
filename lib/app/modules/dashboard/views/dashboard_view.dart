@@ -3,12 +3,12 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
+import '../../../call_kit/call_log/call_log_controller.dart';
+import '../../../call_kit/call_log/call_log_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
 import '../../../modules/dashboard/views/recentchat_view.dart';
-import '../../../modules/callkit/call_log_view.dart';
-import '../../../modules/callkit/call_log_controller.dart';
 import '../../../stylesheet/stylesheet.dart';
 
 import '../../../widgets/animated_floating_action.dart';

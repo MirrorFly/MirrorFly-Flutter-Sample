@@ -61,8 +61,6 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
 import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart';
-import '../modules/callkit/call_log_view.dart';
-import '../modules/callkit/call_log_binding.dart';
 
 
 part 'app_routes.dart';
