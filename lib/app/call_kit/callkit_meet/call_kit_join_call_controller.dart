@@ -41,6 +41,9 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   RxBool showPreview = false.obs;
   var callMode = "".obs;
 
+  var isAudioPermissionGranted = false;
+  var isVideoPermissionGranted = false;
+
   @override
   void onInit() async {
     super.onInit();
@@ -51,22 +54,37 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
     await CallStateService.start();
 
-    checkPermission().then((success) async {
-      if (!success) {
-        audioMuted.value = true;
-        videoMuted.value = true;
-        callkitLogger.info("Required permissions not granted, cannot initialize join via link");
-        toToast(getTranslated("permissionsNotGranted"));
-      }
+    /// Check permissions separately
+    final bool audioGranted = await checkAudioPermission();
+    final bool videoGranted = await checkVideoPermission();
+
+    isAudioPermissionGranted = audioGranted;
+    isVideoPermissionGranted = videoGranted;
+
+    callkitLogger.info("Audio permission: $audioGranted");
+    callkitLogger.info("Video permission: $videoGranted");
+
+    /// Handle permission failure cases with specific toast
+    if (!audioGranted && !videoGranted) {
+      audioMuted.value = true;
+      videoMuted.value = true;
+      toToast("Microphone and Camera permissions are required to join the call");
+      uiLoading(false);
+    } else if (!audioGranted) {
+      audioMuted.value = true;
+      toToast("Microphone permission is required to join the call");
+    } else if (!videoGranted) {
+      videoMuted.value = true;
+      toToast("Camera permission is required to join the call");
+    } else {
+      audioMuted.value = false;
+      videoMuted.value = false;
+    }
 
       callkitLogger.info("Initializing from $navigatedFrom via link with callLinkId: $callLinkId");
       final InitializeJoinLinkResponse initializeJoinLinkResponse = await MirrorFlyCallKit.initializeJoinViaLink(callLink: callLinkId);
 
       if (initializeJoinLinkResponse.isSuccess) {
-        if (success) {
-          audioMuted.value = false;
-          videoMuted.value = false;
-        }
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
         callMode.value = initializeJoinLinkResponse.callMode;
@@ -94,7 +112,6 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");
       }
       uiLoading(false);
-    });
   }
 
   @override
@@ -124,6 +141,12 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
       final String jid = CallUtils.getJidFromUserId(userId: callKitId, isGroup: false);
       callkitLogger.info("Constructed JID for participant: $jid");
+
+      if(users.contains(jid)) {
+        callkitLogger.info("Participant with JID $jid already exists in users list, skipping addition");
+        continue;
+      }
+
       users.add(jid);
     }
   }
@@ -303,17 +326,23 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   }
 
   /// check permission and set Mute Status
-  Future<bool> checkPermission() async {
+  Future<bool> checkAudioPermission() async {
     var audioPermission = await AppPermission.askAudioCallPermissions();
+    callkitLogger.info("Audio permission: $audioPermission");
+    audioPermissionGranted(audioPermission);
+    return audioPermission;
+  }
+
+  /// check permission and set Mute Status
+  Future<bool> checkVideoPermission() async {
     var videoPermission = await AppPermission.checkAndRequestPermissions(
         permissions: [Permission.camera],
         permissionIcon: cameraPermission,
         permissionContent: getTranslated("callPermissionContent").replaceAll("%d", "Camera"),
         permissionPermanentlyDeniedContent: getTranslated("callPermissionDeniedContent").replaceAll("%d", "Camera"));
-    callkitLogger.info("Audio permission: $audioPermission, Video permission: $videoPermission");
-    audioPermissionGranted(audioPermission);
+    callkitLogger.info("Video permission: $videoPermission");
     videoPermissionGranted(videoPermission);
-    return audioPermission && videoPermission;
+    return  videoPermission;
   }
 
   @override
@@ -334,7 +363,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   Future<void> onResumed() async {
     if (paused) {
       paused = false;
-      checkPermission();
+      checkAudioPermission();
+      checkVideoPermission();
     }
   }
 

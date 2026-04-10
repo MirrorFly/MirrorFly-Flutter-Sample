@@ -885,6 +885,10 @@ class CallKitOutgoingCallController extends GetxController
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
     callkitLogger.info("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
+      if (!isOnGoingCallViewEnable.value) {
+        isOnGoingCallView();
+      }
+      callStatus("Connected");
       // onConnected();
     } else if (currentStatusEvent == FlyCallStatusEvent.connecting) {
       connecting();
@@ -1976,7 +1980,7 @@ class CallKitOutgoingCallController extends GetxController
   void cancelVideoCallSwitchRequest() async {
     callkitLogger.info("[MirrorFly][OutgoingCallController]  cancelVideoCallSwitch invoked...");
     await MirrorFlyCallKit.cancelVideoCallSwitchRequest();
-    toToast("Video call switch canceled");
+    // toToast("Video call switch canceled");
     // closeDialog();
     // _cancelCallSwitchReqWaiting();
   }
@@ -2206,7 +2210,8 @@ class CallKitOutgoingCallController extends GetxController
 
     // Close the dialog if open
     if (DialogUtils.isDialogOpen() && NavUtils.canPop) {
-      NavUtils.back();
+      // NavUtils.back();
+      Get.back();
       callkitLogger.info("[MirrorFly][OutgoingCallController] Dialog closed");
     }
   }
@@ -2490,6 +2495,15 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange called for participantId: $participantId, isSpeaking: $isSpeaking, audioLevel: $audioLevel");
 
     final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
+
+    if (participant?.isAudioMuted == true) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] onActiveSpeakerChange: "
+          "Participant $participantId is audio muted, ignoring speaker change");
+      callerAudioLevel[participantId] = 0;
+      callerAudioLevel.refresh();
+      return;
+    }
+
     if (participant != null) {
       /// NOTE ::==
      // participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
