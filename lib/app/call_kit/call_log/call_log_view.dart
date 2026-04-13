@@ -208,9 +208,10 @@ class CallLogView extends StatelessWidget {
                       : const Offstage();
                 }),
             subtitle: SizedBox(
-              child: callLogTime(
+              child: callLogTimeForCallKit(
                   "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-                  item.isCaller,
+                  item.isCaller == 0,
+                  item.missedStatus == 1 || item.missedStatus == 2,
                   callHistoryItemStyle.subtitleTextStyle),
             ),
             trailing: SizedBox(
@@ -347,9 +348,10 @@ class CallLogView extends StatelessWidget {
                   }
                 }),
             subtitle: SizedBox(
-              child: callLogTime(
+              child: callLogTimeForCallKit(
                   "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-                  item.isCaller,
+                  item.isCaller == 0,
+                  item.missedStatus == 1 || item.missedStatus == 2,
                   callHistoryItemStyle.subtitleTextStyle),
             ),
             trailing: SizedBox(
@@ -451,6 +453,43 @@ class CallLogView extends StatelessWidget {
     final String jid = isGroup ? CallUtils.getGroupJidFromGroupId(id) : CallUtils.getJidFromUserId(userId: id, isGroup: false);
     callkitLogger.info("${controller.callKitLogTag} - getProfileDetailsFromCallKit | jid: $jid, isGroup: $isGroup");
     return getProfileDetails(jid);
+  }
+
+  Widget callLogTimeForCallKit(
+      String time,
+      bool isCaller,
+      bool isMissedCall,
+      TextStyle? textStyle,
+      ) {
+    Widget iconWidget;
+
+    if (isMissedCall) {
+      iconWidget = AppUtils.svgIcon(
+        icon: arrowDropDown,
+        colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+      );
+    } else if (isCaller) {
+      iconWidget = AppUtils.svgIcon(
+        icon: arrowDownIcon,
+        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
+      );
+    } else {
+      iconWidget = AppUtils.svgIcon(
+        icon: arrowUpIcon,
+        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
+      );
+    }
+
+    return Row(
+      children: [
+        iconWidget,
+        const SizedBox(width: 5),
+        Text(
+          time,
+          style: textStyle,
+        ),
+      ],
+    );
   }
 }
 

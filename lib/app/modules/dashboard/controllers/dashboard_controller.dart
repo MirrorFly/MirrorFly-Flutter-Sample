@@ -141,9 +141,14 @@ class DashboardController extends FullLifeCycleController
     });
     pageNumber = 1;
     getWebLoginDetails();
-    Mirrorfly.syncCallLogs().then((isSuccess) {
-      debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
-    });
+
+    if (Constants.useMirrorFlyCallKit) {
+      /// sync here for
+    } else {
+      Mirrorfly.syncCallLogs().then((isSuccess) {
+        debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+      });
+    }
     super.onInit();
   }
 
@@ -1918,6 +1923,9 @@ class DashboardController extends FullLifeCycleController
     callkitLogger.info("$callKitLogTag fetchCallLogList function called");
     loading.value = true;
     if (Constants.useMirrorFlyCallKit) {
+
+      // await Future.delayed(const Duration(seconds: 5));
+
       callkitLogger.info("$callKitLogTag fetchCallLogList called");
       final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: 0, size: 20);
       callkitLogger.info("$callKitLogTag fetchCallLogList response: ${response.toJson()}");
