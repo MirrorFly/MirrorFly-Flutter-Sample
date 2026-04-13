@@ -3,7 +3,6 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
-import '../../../call_kit/call_log/call_log_controller.dart';
 import '../../../call_kit/call_log/call_log_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
@@ -25,7 +24,6 @@ class DashboardView extends NavViewStateful<DashboardController> {
 
   @override
   DashboardController createController({String? tag}) {
-    Get.put(CallLogController());
     return Get.put(DashboardController(), tag: key?.hashCode.toString());
   }
 
@@ -656,7 +654,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                         .dashBoardPageStyle.titlesTextStyle,
                                     meetBottomSheetStyle: AppStyleConfig
                                         .dashBoardPageStyle
-                                        .meetBottomSheetStyle,),
+                                        .meetBottomSheetStyle, controller: controller),
                                 ])));
 
                   }),

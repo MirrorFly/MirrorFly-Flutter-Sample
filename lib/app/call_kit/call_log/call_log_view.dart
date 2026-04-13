@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show CallLog, ProfileDetails, CallState, CallType, CallMode;
+import 'package:mirrorfly_plugin/model/call_log_model.dart';
+
+import '../../call_modules/call_highlighted_text.dart';
+import '../../call_modules/call_utils.dart';
 import '../../common/app_localizations.dart';
-import '../../common/constants.dart';
 import '../../common/constants.dart';
 import '../../common/widgets.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
-import 'package:focus_detector/focus_detector.dart';
+import '../../modules/dashboard/controllers/dashboard_controller.dart';
+import '../../modules/dashboard/widgets.dart';
 import '../../stylesheet/stylesheet.dart';
-import 'call_log_controller.dart';
+import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
-class CallLogView extends GetView<CallLogController> {
+
+class CallLogView extends StatelessWidget {
   const CallLogView(
       {super.key,
+        required this.controller,
         this.callHistoryItemStyle = const CallHistoryItemStyle(),
         required this.noDataTextStyle,
         this.recentCallsTitleStyle = const TextStyle(
@@ -23,6 +28,7 @@ class CallLogView extends GetView<CallLogController> {
         this.createMeetLinkStyle = const CreateMeetLinkStyle(),
         this.meetBottomSheetStyle = const MeetBottomSheetStyle()});
 
+  final DashboardController controller;
   final CreateMeetLinkStyle createMeetLinkStyle;
   final TextStyle recentCallsTitleStyle;
   final CallHistoryItemStyle callHistoryItemStyle;
@@ -31,238 +37,432 @@ class CallLogView extends GetView<CallLogController> {
 
   @override
   Widget build(BuildContext context) {
-    callkitLogger.info("#CallLogView build called with controller hash: ${controller.hashCode}");
-    return FocusDetector(
-      onFocusGained: () {
-        callkitLogger.info("#CallLogView focus gained, refreshing logs");
-        controller.fetchCallLogs();
-      },
-      child: _buildScaffold(context,)
-    );
-  }
-
-  Widget _buildScaffold(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: InkWell(
-              onTap: () {
-                controller.showMeetBottomSheet(meetBottomSheetStyle);
-              },
-              child: Row(
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    margin: const EdgeInsets.all(10.0),
-                    decoration: createMeetLinkStyle.iconDecoration,
-                    child: Center(
-                      child: Icon(
-                        Icons.link,
-                        color: createMeetLinkStyle.iconColor,
-                        size: 18,
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: InkWell(
+            onTap: () {
+              controller.showMeetBottomSheet(meetBottomSheetStyle);
+            },
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  margin: const EdgeInsets.all(10.0),
+                  decoration: createMeetLinkStyle.iconDecoration,
+                  child: Center(
+                    child: Icon(
+                      Icons.link,
+                      color: createMeetLinkStyle.iconColor,
+                      size: 18,
                     ),
                   ),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          getTranslated("createNewMeeting"),
-                          style: createMeetLinkStyle.textStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          getTranslated("createNewMeetingSubtitle"),
+                ),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getTranslated("createNewMeeting"),
+                        style: createMeetLinkStyle.textStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(getTranslated("createNewMeetingSubtitle"),
                           style: createMeetLinkStyle.subTitleTextStyle,
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                          overflow: TextOverflow.ellipsis)
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
-          Obx(() {
-            return controller.callLogList.isEmpty
-                ? const Offstage()
-                : Container(
+        ),
+        Obx(() {
+          return controller.callKitCallLogList.isEmpty
+              ? const Offstage()
+              : Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               width: double.infinity,
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 getTranslated("recentCalls"),
                 style: recentCallsTitleStyle,
-              ),
-            );
-          }),
-          Expanded(
-            child: Obx(
-                  () => controller.callLogList.isEmpty
-                  ? emptyCalls(context)
-                  : _buildBody(context),
-            ),
+              ));
+        }),
+        Expanded(
+          child: Stack(
+            children: [
+              Obx(
+                    () => controller.callKitCallLogList.isEmpty
+                    ? emptyCalls(context)
+                    : callLogListView(context, controller.callKitCallLogList),
+              )
+              // emptyCalls(context)
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    return Obx(() {
-      if (controller.isLoading.value && controller.callLogList.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+  Widget callLogListView(BuildContext context, List<CallLog> callKitCallLogList) {
+    if (callKitCallLogList.isEmpty) {
+      if (controller.loading.value) {
+        return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: CircularProgressIndicator(),
+            ));
+      } else if (controller.error.value) {
+        return const Center(child: Text("Error"));
       }
-      if (controller.callLogList.isEmpty) {
-        return emptyCalls(context);
-      }
-      return RefreshIndicator(
-        onRefresh: controller.refreshCallLogs,
-        child: ListView.builder(
-          controller: controller.scrollController,
-          itemCount: controller.callLogList.length + (controller.isPaginating.value ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index < controller.callLogList.length) {
-              final item = controller.callLogList[index];
-              return callLogItem(context, item);
+    }
+    return ListView.builder(
+        controller: controller.callLogScrollController,
+        itemCount: callKitCallLogList.length,
+        itemBuilder: (context, index) {
+          var item = callKitCallLogList[index];
+          if (index == callKitCallLogList.length) {
+            if (controller.error.value) {
+              return const Center(child: Text("Error"));
             } else {
               return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                ),
-              );
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: CircularProgressIndicator(),
+                  ));
             }
-          },
-        ),
-      );
-    });
-  }
-
-
-  Widget callLogItem(BuildContext context, CallLog item) {
-    final isOutgoing = item.isCaller == 1;
-    final isMissed = item.missedStatus == 1;
-
-    return Obx(() {
-      final profile = controller.profiles[item.userId];
-      return ListTile(
-        leading: profile != null
-            ? ImageNetwork(
-                url: profile.image ?? "",
-                width: 48,
-                height: 48,
-                clipOval: true,
-                errorWidget: ProfileTextImage(
-                  text: getName(profile),
-                  radius: 24,
-                ),
-                isGroup: profile.isGroupProfile ?? false,
-                blocked: false,
-                unknown: false,
-              )
-            : const CircleAvatar(
-                radius: 24,
-                child: Icon(Icons.person),
-              ),
-        title: Text(
-          profile != null ? getName(profile) : (item.userId ?? ""),
-          style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Row(
-          children: [
-            callStatusIcon(isOutgoing, isMissed),
-            const SizedBox(width: 4),
-            Text(
-              "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Icon(
-              item.callType?.toLowerCase() == 'video' ? Icons.videocam : Icons.call,
-              size: 18,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.duration ?? "",
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-        onTap: () {
-          // Mark as seen if missed
-          if (isMissed) {
-            controller.markAsSeen([item.callId!]);
           }
-        },
-        onLongPress: () {
-          Get.dialog(
-            AlertDialog(
-              title: Text(getTranslated("deleteCallLog")),
-              content: Text(getTranslated("deleteCallLogContent")),
-              actions: [
-                TextButton(
-                  onPressed: () => Get.back(),
-                  child: Text(getTranslated("cancel")),
-                ),
-                TextButton(
-                  onPressed: () {
-                    controller.clearLogs(callIds: [item.callId.toString()]);
-                    Get.back();
-                  },
-                  child: Text(getTranslated("delete")),
-                ),
-              ],
+
+          return (item.callMode?.isOneToOneCall == true) && (item.callParticipants == null || item.callParticipants!.length < 2)
+              ? Obx(() => ListTile(
+                    titleTextStyle: callHistoryItemStyle.titleTextStyle,
+                    subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
+            shape: Border(
+                bottom: BorderSide(
+                    color: callHistoryItemStyle.dividerColor,
+                    width: 0.5)),
+            leading: FutureBuilder(
+                        future: getProfileDetailsFromCallKit(
+                            id: item.isCaller == 1
+                                ? item.userId!
+                                : item.callParticipants?.first ?? "",
+                            isGroup: (item.chatId != null &&
+                                item.chatId?.isNotEmpty == true)),
+                        builder: (context, snap) {
+                  return snap.hasData && snap.data != null
+                      ? ImageNetwork(
+                    url: snap.data!.image!,
+                    width: callHistoryItemStyle
+                        .profileImageSize.width,
+                    height: callHistoryItemStyle
+                        .profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: snap.data!.getName() //item.nickName
+                        .checkNull()
+                        .isNotEmpty
+                        ? ProfileTextImage(
+                      text: getName(snap.data!),
+                      radius: callHistoryItemStyle
+                          .profileImageSize.height /
+                          2,
+                    )
+                        : const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
+                    isGroup: false,
+                    blocked: false,
+                    unknown: false,
+                  )
+                      : const Offstage();
+                }),
+            title: FutureBuilder(
+                future: getProfileDetailsFromCallKit(
+                    id: item.isCaller == 1
+                        ? item.userId!
+                        : item.callParticipants?.first ?? "",
+                    isGroup: (item.chatId != null &&
+                        item.chatId?.isNotEmpty == true)),
+                builder: (context, snap) {
+                  return snap.hasData &&
+                      snap.data != null &&
+                      controller.search.text.isNotEmpty
+                      ? CallHighlightedText(
+                      content: snap.data!.name!,
+                      searchString: controller.search.text.trim())
+                      : snap.hasData &&
+                      snap.data != null &&
+                      controller.search.text.isEmpty
+                      ? Text(
+                    snap.data!.name!,
+                    style:
+                    callHistoryItemStyle.titleTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  )
+                      : const Offstage();
+                }),
+            subtitle: SizedBox(
+              child: callLogTime(
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
+                  item.isCaller,
+                  callHistoryItemStyle.subtitleTextStyle),
             ),
-          );
-        },
-      );
-    });
-  }
-
-
-  Widget callStatusIcon(bool isOutgoing, bool isMissed) {
-    if (isMissed) {
-      return const Icon(Icons.call_missed, color: Colors.red, size: 16);
-    }
-    return Icon(
-      isOutgoing ? Icons.call_made : Icons.call_received,
-      color: Colors.green,
-      size: 16,
-    );
+            trailing: SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    getCallLogDuration(item.startTime ?? 0, item.endTime ?? 0),
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  callIcon(item.callType, item, item.callMode,
+                      callHistoryItemStyle.iconColor),
+                ],
+              ),
+            ),
+            selectedTileColor: controller.isLogSelected(index)
+                ? callHistoryItemStyle.selectedBgColor
+                : callHistoryItemStyle.unselectedBgColor,
+            selected: controller.isLogSelected(index),
+            onLongPress: () {
+              controller.selectedLog(true);
+              controller.selectOrRemoveCallLogFromList(index);
+            },
+            onTap: () {
+              if (controller.selectedLog.value) {
+                controller.selectOrRemoveCallLogFromList(index);
+              } else {
+                final bool isGroupCall = (item.chatId != null && item.chatId?.isNotEmpty == true);
+                final String toChatId = isGroupCall
+                    ? CallUtils.getGroupJidFromGroupId(item.chatId!)
+                    : (item.callParticipants != null && item.callParticipants!.isNotEmpty)
+                        ? CallUtils.getJidFromUserId(userId: item.callParticipants!.first, isGroup: isGroupCall)
+                        : "";
+                controller.toChatPage(toChatId);
+              }
+            },
+          ))
+              : Obx(() => ListTile(
+            titleTextStyle: callHistoryItemStyle.titleTextStyle,
+            subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
+            shape: Border(
+                bottom: BorderSide(
+                    color: callHistoryItemStyle.dividerColor,
+                    width: 0.5)),
+            leading: item.chatId.checkNull().isEmpty
+                ? ClipOval(
+              child: AppUtils.assetIcon(
+                assetName: groupImg,
+                width:
+                callHistoryItemStyle.profileImageSize.width,
+                height:
+                callHistoryItemStyle.profileImageSize.height,
+                fit: BoxFit.cover,
+              ),
+            )
+                : FutureBuilder(
+                future: getProfileDetailsFromCallKit(id: item.chatId!, isGroup: true) ,
+                builder: (context, snap) {
+                  return snap.hasData && snap.data != null
+                      ? ImageNetwork(
+                    url: snap.data!.image!,
+                    width: callHistoryItemStyle
+                        .profileImageSize.width,
+                    height: callHistoryItemStyle
+                        .profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: ClipOval(
+                      child: AppUtils.assetIcon(
+                        assetName: groupImg,
+                        width: callHistoryItemStyle
+                            .profileImageSize.width,
+                        height: callHistoryItemStyle
+                            .profileImageSize.height,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    isGroup: false,
+                    blocked: false,
+                    unknown: false,
+                  )
+                      : ClipOval(
+                    child: AppUtils.assetIcon(
+                      assetName: groupImg,
+                      width: callHistoryItemStyle
+                          .profileImageSize.width,
+                      height: callHistoryItemStyle
+                          .profileImageSize.height,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }),
+            title: item.chatId.checkNull().isEmpty
+                ? FutureBuilder(
+                future: CallUtils.getCallKitLogUserNames(item.callParticipants ?? [], item),
+                builder: (context, snap) {
+                  if (snap.hasData) {
+                    return controller.search.text.isNotEmpty
+                        ? CallHighlightedText(
+                        content: snap.data!,
+                        searchString:
+                        controller.search.text.trim())
+                        : Text(
+                      snap.data!,
+                      style:
+                      callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                })
+                : FutureBuilder(
+                future: getProfileDetails(item.chatId!),
+                builder: (context, snap) {
+                  if (snap.hasData) {
+                    return controller.search.text.isNotEmpty
+                        ? CallHighlightedText(
+                        content: snap.data!.name!,
+                        searchString:
+                        controller.search.text.trim())
+                        : Text(
+                      snap.data!.name!,
+                      style:
+                      callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
+            subtitle: SizedBox(
+              child: callLogTime(
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
+                  item.isCaller,
+                  callHistoryItemStyle.subtitleTextStyle),
+            ),
+            trailing: SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    getCallLogDuration(item.startTime ?? 0, item.endTime ?? 0),
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  callIcon(item.callType, item, item.callMode, callHistoryItemStyle.iconColor),
+                ],
+              ),
+            ),
+            selectedTileColor: controller.isLogSelected(index)
+                ? Colors.grey[400]
+                : null,
+            selected: controller.isLogSelected(index),
+            onLongPress: () {
+              controller.selectedLog(true);
+              controller.selectOrRemoveCallLogFromList(index);
+            },
+            onTap: () {
+              if (controller.selectedLog.value) {
+                controller.selectOrRemoveCallLogFromList(index);
+              } else {
+                controller.toCallKitCallInfo(item);
+              }
+            },
+          ));
+        });
   }
 
   Widget emptyCalls(BuildContext context) {
-    return Center(
+    return !controller.callLogSearchLoading.value
+        ? Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AppUtils.assetIcon(assetName: noCallImage, width: 150),
-          const SizedBox(height: 16),
-          Text(getTranslated("noCallLogsFound"), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(getTranslated("noCallLogsContent"), textAlign: TextAlign.center),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () => controller.fetchCallLogs(),
-            icon: const Icon(Icons.refresh),
-            label: Text(getTranslated("refresh")),
+          AppUtils.assetIcon(
+            assetName: noCallImage,
+            width: 150,
+          ),
+          Text(
+            getTranslated("noCallLogsFound"),
+            textAlign: TextAlign.center,
+            style: noDataTextStyle,
+            // style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            getTranslated("noCallLogsContent"),
+            textAlign: TextAlign.center,
+            style: noDataTextStyle.copyWith(fontWeight: FontWeight.w300),
+            // style: const TextStyle(color: callsSubText),
           ),
         ],
       ),
-    );
+    )
+        : const Center(child: CircularProgressIndicator());
+  }
 
+  Widget callIcon(String? callType, CallLog item, String? callMode, Color iconColor) {
+    return callType!.toLowerCase() == CallType.video
+        ? IconButton(
+            onPressed: () {
+              controller.makeCallKitVideoCall(
+                  callersId: item.callParticipants ?? [],
+                  chatId: item.chatId ?? "",
+                  isOneToOne: item.callMode?.isOneToOneCall == true);
+            },
+            icon: AppUtils.svgIcon(
+              icon: videoCallIcon,
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+            ),
+          )
+        : IconButton(
+            onPressed: () {
+              controller.makeCallKitAudioCall(
+                  callersId: item.callParticipants ?? [],
+                  chatId: item.chatId ?? "",
+                  isOneToOne: item.callMode?.isOneToOneCall == true);
+        },
+        icon: AppUtils.svgIcon(
+          icon: audioCallIcon,
+          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+        ));
+  }
+
+  Future<ProfileDetails> getProfileDetailsFromCallKit({required String id, required bool isGroup}) async {
+    final String jid = isGroup ? CallUtils.getGroupJidFromGroupId(id) : CallUtils.getJidFromUserId(userId: id, isGroup: false);
+    callkitLogger.info("${controller.callKitCallLogList} - getProfileDetailsFromCallKit | jid: $jid, isGroup: $isGroup");
+    return getProfileDetails(jid);
+  }
+}
+
+
+
+extension StringExtension on String {
+  bool get isOneToOneCall {
+    switch (this) {
+      case "ONE-TO-ONE":
+        return true;
+      default:
+        return false;
+    }
   }
 }
