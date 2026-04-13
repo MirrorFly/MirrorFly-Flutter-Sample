@@ -2308,19 +2308,21 @@ class DashboardController extends FullLifeCycleController
   }
 
   selectOrRemoveCallKitLogFromList(int index) {
-    callkitLogger.info("$callKitLogTag selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallLogs");
+    callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallLogs");
     
     if (selectedLog.isTrue) {
-      callkitLogger.info("$callKitLogTag selectedLog is true");
+      callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList selectedLog is true");
 
-      if (selectedCallLogs.contains(callKitCallLogList[index].callId)) {
-        selectedCallLogs.remove(callKitCallLogList[index].callId ?? "");
+      final callId = callKitCallLogList[index].callId?.toString() ?? "";
+
+      if (selectedCallLogs.contains(callId)) {
+        selectedCallLogs.remove(callId);
         selectedCallLogsPosition.remove(index);
-        callkitLogger.info("$callKitLogTag Call log with callId ${callKitCallLogList[index].callId} is already selected, removing from selection");
+        callkitLogger.info("Removing $callId");
       } else {
-        selectedCallLogs.add(callKitCallLogList[index].callId.toString());
+        selectedCallLogs.add(callId);
         selectedCallLogsPosition.add(index);
-        callkitLogger.info("$callKitLogTag Call log with callId ${callKitCallLogList[index].callId} is not selected, adding to selection");
+        callkitLogger.info("Adding $callId");
       }
     }
     
@@ -2342,10 +2344,14 @@ class DashboardController extends FullLifeCycleController
         clearVisible(false);
       }
     }
+
+    callkitLogger.info(
+        "$callKitLogTag #selectOrRemoveCallKitLogFromList completed for index: $index, selectedLog: ${selectedLog.value},"
+            " selectedCallLogs: $selectedCallLogs");
   }
 
   isLogSelected(int index) =>
-      selectedCallLogs.contains(Constants.useMirrorFlyCallKit ? callKitCallLogList[index].callId : callLogList[index].roomId);
+      selectedCallLogs.contains(Constants.useMirrorFlyCallKit ? (callKitCallLogList[index].callId.toString()) : callLogList[index].roomId);
 
   deleteCallLog() {
     if (selectedCallLogs.length == 1) {
