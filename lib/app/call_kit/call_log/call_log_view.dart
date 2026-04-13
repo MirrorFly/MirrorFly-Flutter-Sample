@@ -127,6 +127,8 @@ class CallLogView extends StatelessWidget {
         itemCount: callKitCallLogList.length,
         itemBuilder: (context, index) {
           var item = callKitCallLogList[index];
+          callkitLogger.info("${controller.callKitLogTag} - Building call log item at index $index json: ${item.toJson()}");
+          
           if (index == callKitCallLogList.length) {
             if (controller.error.value) {
               return const Center(child: Text("Error"));
@@ -139,7 +141,7 @@ class CallLogView extends StatelessWidget {
             }
           }
 
-          return (item.callMode?.isOneToOneCall == true) && (item.callParticipants == null || item.callParticipants!.length < 2)
+          return (item.callMode == "ONE-TO-ONE") && (item.callParticipants != null && item.callParticipants!.length < 2)
               ? Obx(() => ListTile(
                     titleTextStyle: callHistoryItemStyle.titleTextStyle,
                     subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
@@ -152,8 +154,7 @@ class CallLogView extends StatelessWidget {
                             id: item.isCaller == 1
                                 ? item.userId!
                                 : item.callParticipants?.first ?? "",
-                            isGroup: (item.chatId != null &&
-                                item.chatId?.isNotEmpty == true)),
+                            isGroup: false),
                         builder: (context, snap) {
                   return snap.hasData && snap.data != null
                       ? ImageNetwork(
@@ -187,8 +188,7 @@ class CallLogView extends StatelessWidget {
                     id: item.isCaller == 1
                         ? item.userId!
                         : item.callParticipants?.first ?? "",
-                    isGroup: (item.chatId != null &&
-                        item.chatId?.isNotEmpty == true)),
+                    isGroup: false),
                 builder: (context, snap) {
                   return snap.hasData &&
                       snap.data != null &&
@@ -449,7 +449,7 @@ class CallLogView extends StatelessWidget {
 
   Future<ProfileDetails> getProfileDetailsFromCallKit({required String id, required bool isGroup}) async {
     final String jid = isGroup ? CallUtils.getGroupJidFromGroupId(id) : CallUtils.getJidFromUserId(userId: id, isGroup: false);
-    callkitLogger.info("${controller.callKitCallLogList} - getProfileDetailsFromCallKit | jid: $jid, isGroup: $isGroup");
+    callkitLogger.info("${controller.callKitLogTag} - getProfileDetailsFromCallKit | jid: $jid, isGroup: $isGroup");
     return getProfileDetails(jid);
   }
 }
