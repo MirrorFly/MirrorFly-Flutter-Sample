@@ -158,7 +158,7 @@ class CallLogView extends StatelessWidget {
                         builder: (context, snap) {
                   return snap.hasData && snap.data != null
                       ? ImageNetwork(
-                    url: snap.data!.image!,
+                    url: snap.data!.image?.checkNull() ?? "",
                     width: callHistoryItemStyle
                         .profileImageSize.width,
                     height: callHistoryItemStyle
@@ -329,16 +329,16 @@ class CallLogView extends StatelessWidget {
                   }
                 })
                 : FutureBuilder(
-                future: getProfileDetails(item.chatId ?? ""),
+                future: getProfileDetailsFromCallKit(id: item.chatId!, isGroup: true) ,
                 builder: (context, snap) {
                   if (snap.hasData) {
                     return controller.search.text.isNotEmpty
                         ? CallHighlightedText(
-                        content: snap.data?.name ??"",
+                        content: snap.data!.name ?? "",
                         searchString:
                         controller.search.text.trim())
                         : Text(
-                      snap.data?.name ?? "",
+                      snap.data!.name ?? "",
                       style:
                       callHistoryItemStyle.titleTextStyle,
                       // style: const TextStyle(color: Colors.black),
