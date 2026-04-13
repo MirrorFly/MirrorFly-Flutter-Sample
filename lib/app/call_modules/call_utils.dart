@@ -253,41 +253,39 @@ class CallUtils {
     //   membersName.write("${pair.item1}, ");
     // }
 
-    for (var i = 0; i < callUsers.length; i++) {
-      if (callUsers[i] != null) {
-        var pair = await AppUtils.getNameAndProfileDetails(callUsers[i]!);
-        if (i == 0) {
-          membersName.write(pair.item1);
-          var actualMemberName = AppUtils.getActualMemberName(membersName);
-          membersName = actualMemberName.item1;
-          isMaxMemberNameNotReached = actualMemberName.item2;
-          spaceAvailable = membersName.toString().characters.length <
-              Constants.maxNameLength;
-          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
-          membersName.write(", ${pair.item1}");
-          var actualMemberName = AppUtils.getActualMemberName(membersName);
-          membersName = actualMemberName.item1;
-          isMaxMemberNameNotReached = actualMemberName.item2;
-          spaceAvailable = membersName.toString().characters.length <
-              Constants.maxNameLength;
-          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-        } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
-          membersName.write(", ${pair.item1}");
-          var actualMemberName = AppUtils.getActualMemberName(membersName);
-          membersName = actualMemberName.item1;
-          spaceAvailable = membersName.toString().characters.length <
-              Constants.maxNameLength;
-          // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-        } else {
-          membersName.write(" (+${(callUsers.length - i)})");
-          // LogMessage.d("getCallLogUserNames $i else", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
-          break;
-        }
+    final List<String> callUsersJid = callUsers.map((e) => getJidFromUserId(userId: e ?? "", isGroup: false)).toList();
+
+    for (var i = 0; i < callUsersJid.length; i++) {
+      var pair = await AppUtils.getNameAndProfileDetails(callUsersJid[i]);
+      if (i == 0) {
+        membersName.write(pair.item1);
+        var actualMemberName = AppUtils.getActualMemberName(membersName);
+        membersName = actualMemberName.item1;
+        isMaxMemberNameNotReached = actualMemberName.item2;
+        spaceAvailable = membersName.toString().characters.length <
+            Constants.maxNameLength;
+        // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+      } else if (spaceAvailable && isMaxMemberNameNotReached && i == 1) {
+        membersName.write(", ${pair.item1}");
+        var actualMemberName = AppUtils.getActualMemberName(membersName);
+        membersName = actualMemberName.item1;
+        isMaxMemberNameNotReached = actualMemberName.item2;
+        spaceAvailable = membersName.toString().characters.length <
+            Constants.maxNameLength;
+        // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
+      } else if (spaceAvailable && isMaxMemberNameNotReached && i == 2) {
+        membersName.write(", ${pair.item1}");
+        var actualMemberName = AppUtils.getActualMemberName(membersName);
+        membersName = actualMemberName.item1;
+        spaceAvailable = membersName.toString().characters.length <
+            Constants.maxNameLength;
+        // LogMessage.d("getCallLogUserNames $i", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
       } else {
+        membersName.write(" (+${(callUsersJid.length - i)})");
+        // LogMessage.d("getCallLogUserNames $i else", "pair.item1 : ${pair.item1} actualMemberName : $membersName isMaxMemberNameNotReached : $isMaxMemberNameNotReached spaceAvailable : $spaceAvailable");
         break;
       }
-    }
+        }
     return membersName.toString();
   }
 
