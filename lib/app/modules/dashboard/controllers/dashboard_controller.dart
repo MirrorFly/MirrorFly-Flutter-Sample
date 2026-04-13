@@ -154,9 +154,20 @@ class DashboardController extends FullLifeCycleController
 
   markAllUnreadMissedCallsAsRead() async {
     if (unreadCallCount.value > 0) {
-      var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
-      debugPrint("(markAllUnreadMissedCallsAsRead result $result");
-      unreadCallCount(0);
+      if (Constants.useMirrorFlyCallKit) {
+        var result = await MirrorFlyCallKit.markMissedCallAsSeen(callIds: []);
+        debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead result $result");
+        if (result) {
+          unreadCallCount(0);
+        } else {
+          debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead failed");
+        }
+      } else {
+        var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
+        debugPrint("(markAllUnreadMissedCallsAsRead result $result");
+        unreadCallCount(0);
+      }
+
     }
   }
 
@@ -1944,6 +1955,8 @@ class DashboardController extends FullLifeCycleController
           callkitLogger.info("$callKitLogTag fetchCallLogList failed response: ${response.errorData}");
           loading.value = false;
         }
+
+      await getUnReadMissedCallCountForCallKitCall();
     } else {
       Mirrorfly.getCallLogsList(
           currentPage: pageNumber,
@@ -2163,6 +2176,8 @@ class DashboardController extends FullLifeCycleController
   void onCallKitCallLogsUpdated(List<CallLog> log) async {
     callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called with log: ${log.map((e) => e.toJson())}");
 
+    await getUnReadMissedCallCountForCallKitCall();
+
     if (log.isEmpty) {
       callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but log is empty, ignoring the update.");
       return;
@@ -2185,6 +2200,19 @@ class DashboardController extends FullLifeCycleController
         callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but MirrorFly CallKit is not enabled, ignoring the update.");
       }
     }
+
+    if (currentTab.value == 1) {
+      await markAllUnreadMissedCallsAsRead();
+    }
+  }
+
+  Future<void> getUnReadMissedCallCountForCallKitCall() async {
+    callkitLogger.info("$callKitLogTag getUnReadMissedCallCountForCallKitCall called");
+    final int unreadMissedCallCount = await MirrorFlyCallKit.getUnreadMissedCallCount();
+
+    callkitLogger.info("$callKitLogTag Unread missed call count from CallKit: $unreadMissedCallCount");
+    unreadCallCount.value = unreadMissedCallCount;
+    callkitLogger.info("$callKitLogTag Unread missed call count updated: $unreadMissedCallCount");
   }
 
   void onCallLogUpdate(value) async {
@@ -2223,9 +2251,11 @@ class DashboardController extends FullLifeCycleController
             });
       }
 
-      var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-      // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
-      unreadCallCount.value = unreadMissedCallCount ?? 0;
+      if (!Constants.useMirrorFlyCallKit) {
+        var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+        // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
+        unreadCallCount.value = unreadMissedCallCount ?? 0;
+      }
     } else {
       debugPrint("onCallLogUpdate : Failed");
     }
