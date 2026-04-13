@@ -77,7 +77,7 @@ class DashboardController extends FullLifeCycleController
           .obs;
 
   var isLastPage = false.obs;
-  late int pageNumber;
+  late int pageNumber = 0;
   var error = false.obs;
   var loading = true.obs;
   var totalPages = 0;
@@ -1938,7 +1938,7 @@ class DashboardController extends FullLifeCycleController
       // await Future.delayed(const Duration(seconds: 5));
 
       callkitLogger.info("$callKitLogTag fetchCallLogList called");
-      final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: 0, size: 20);
+      final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: pageNumber, size: 20);
       callkitLogger.info("$callKitLogTag fetchCallLogList response: ${response.toJson()}");
 
         loading.value = false;
