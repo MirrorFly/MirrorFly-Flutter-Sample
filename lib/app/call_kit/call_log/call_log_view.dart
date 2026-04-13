@@ -219,7 +219,7 @@ class CallLogView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    getCallLogDuration(item.startTime ?? 0, item.endTime ?? 0),
+                    item.duration ?? "",
                     style: callHistoryItemStyle.durationTextStyle,
                     // style: const TextStyle(color: Colors.black),
                   ),
@@ -358,7 +358,7 @@ class CallLogView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    getCallLogDuration(item.startTime ?? 0, item.endTime ?? 0),
+                    item.duration ?? "",
                     style: callHistoryItemStyle.durationTextStyle,
                     // style: const TextStyle(color: Colors.black),
                   ),
