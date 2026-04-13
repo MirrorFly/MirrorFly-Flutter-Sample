@@ -2160,6 +2160,33 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
+  void onCallKitCallLogsUpdated(List<CallLog> log) async {
+    callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called with log: ${log.map((e) => e.toJson())}");
+
+    if (log.isEmpty) {
+      callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but log is empty, ignoring the update.");
+      return;
+    }
+
+    final newCallIds = log.map((e) => e.callId).toSet();
+    final alreadyExists = _callKitCallLogList.any((e) => newCallIds.contains(e.callId));
+
+    if (alreadyExists) {
+      callkitLogger.info("$callKitLogTag Duplicate callId found, ignoring update.");
+      return;
+    }
+
+    for (var callLog in log) {
+      callkitLogger.info("$callKitLogTag Processing call log with callId: ${callLog.callId}");
+
+      if (Constants.useMirrorFlyCallKit) {
+        _callKitCallLogList.insert(0, callLog);
+      } else {
+        callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but MirrorFly CallKit is not enabled, ignoring the update.");
+      }
+    }
+  }
+
   void onCallLogUpdate(value) async {
 
     if (Constants.useMirrorFlyCallKit) {
