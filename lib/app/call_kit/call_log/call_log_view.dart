@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart' show CallLog, ProfileDetails, CallState, CallType, CallMode;
-import 'package:mirrorfly_plugin/model/call_log_model.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show CallLog, ProfileDetails, CallType;
 
 import '../../call_modules/call_highlighted_text.dart';
 import '../../call_modules/call_utils.dart';
@@ -12,7 +11,6 @@ import '../../common/widgets.dart';
 import '../../data/helper.dart';
 import '../../data/utils.dart';
 import '../../modules/dashboard/controllers/dashboard_controller.dart';
-import '../../modules/dashboard/widgets.dart';
 import '../../stylesheet/stylesheet.dart';
 import 'package:mirror_fly_demo/app/extensions/extensions.dart';
 
@@ -151,9 +149,7 @@ class CallLogView extends StatelessWidget {
                     width: 0.5)),
             leading: FutureBuilder(
                         future: getProfileDetailsFromCallKit(
-                            id: item.isCaller == 1
-                                ? item.userId!
-                                : item.callParticipants?.first ?? "",
+                            id: item.callParticipants?.first ?? "",
                             isGroup: false),
                         builder: (context, snap) {
                   return snap.hasData && snap.data != null
@@ -185,9 +181,7 @@ class CallLogView extends StatelessWidget {
                 }),
             title: FutureBuilder(
                 future: getProfileDetailsFromCallKit(
-                    id: item.isCaller == 1
-                        ? item.userId!
-                        : item.callParticipants?.first ?? "",
+                    id: item.callParticipants?.first ?? "",
                     isGroup: false),
                 builder: (context, snap) {
                   return snap.hasData &&
@@ -238,11 +232,11 @@ class CallLogView extends StatelessWidget {
             selected: controller.isLogSelected(index),
             onLongPress: () {
               controller.selectedLog(true);
-              controller.selectOrRemoveCallLogFromList(index);
+              controller.selectOrRemoveCallKitLogFromList((index));
             },
             onTap: () {
               if (controller.selectedLog.value) {
-                controller.selectOrRemoveCallLogFromList(index);
+                controller.selectOrRemoveCallKitLogFromList((index));
               } else {
                 final bool isGroupCall = (item.chatId != null && item.chatId?.isNotEmpty == true);
                 final String toChatId = isGroupCall
@@ -377,11 +371,11 @@ class CallLogView extends StatelessWidget {
             selected: controller.isLogSelected(index),
             onLongPress: () {
               controller.selectedLog(true);
-              controller.selectOrRemoveCallLogFromList(index);
+              controller.selectOrRemoveCallKitLogFromList((index));
             },
             onTap: () {
               if (controller.selectedLog.value) {
-                controller.selectOrRemoveCallLogFromList(index);
+                controller.selectOrRemoveCallKitLogFromList((index));
               } else {
                 controller.toCallKitCallInfo(item);
               }
