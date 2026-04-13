@@ -2307,10 +2307,45 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
+  selectOrRemoveCallKitLogFromList(int index) {
+    callkitLogger.info("$callKitLogTag selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallLogs");
+    
+    if (selectedLog.isTrue) {
+      callkitLogger.info("$callKitLogTag selectedLog is true");
+
+      if (selectedCallLogs.contains(callKitCallLogList[index].callId)) {
+        selectedCallLogs.remove(callKitCallLogList[index].callId ?? "");
+        selectedCallLogsPosition.remove(index);
+        callkitLogger.info("$callKitLogTag Call log with callId ${callKitCallLogList[index].callId} is already selected, removing from selection");
+      } else {
+        selectedCallLogs.add(callKitCallLogList[index].callId.toString());
+        selectedCallLogsPosition.add(index);
+        callkitLogger.info("$callKitLogTag Call log with callId ${callKitCallLogList[index].callId} is not selected, adding to selection");
+      }
+    }
+    
+    if (selectedCallLogs.isEmpty) {
+      // clearAllChatSelection();
+      delete(false);
+      selected(false);
+      selectedLog(false);
+    } else {
+      delete(true);
+      selected(true);
+    }
+    if (delete.value) {
+      clearVisible(false);
+    } else {
+      if (isSearching.value) {
+        clearVisible(true);
+      } else {
+        clearVisible(false);
+      }
+    }
+  }
+
   isLogSelected(int index) =>
-      selectedCallLogs.contains(Constants.useMirrorFlyCallKit
-          ? callKitCallLogList[index].callId
-          : callLogList[index].roomId);
+      selectedCallLogs.contains(Constants.useMirrorFlyCallKit ? callKitCallLogList[index].callId : callLogList[index].roomId);
 
   deleteCallLog() {
     if (selectedCallLogs.length == 1) {
