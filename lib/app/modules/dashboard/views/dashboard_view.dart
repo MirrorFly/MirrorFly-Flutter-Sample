@@ -567,18 +567,26 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                                       .textStyle),
                                               showAsAction:
                                                   controller.selected.value ||
-                                                          controller.isSearching
-                                                              .value ||
-                                                          controller.currentTab
-                                                                  .value ==
-                                                              0 ||
-                                                          controller.callLogList
+                                                          controller.isSearching.value ||
+                                                          controller.currentTab.value == 0 ||
+                                                      (!Constants
+                                                              .useMirrorFlyCallKit
+                                                          ? controller
+                                                              .callLogList
                                                               .isEmpty
-                                                      ? ShowAsAction.gone
+                                                          : controller
+                                                              .callKitCallLogList
+                                                              .isEmpty)
+                                                  ? ShowAsAction.gone
                                                       : ShowAsAction.never,
                                               keyValue: 'Clear call log',
-                                              onItemClick: () => controller
-                                                      .callLogList.isNotEmpty
+                                              onItemClick: () => (Constants
+                                                          .useMirrorFlyCallKit
+                                                      ? controller
+                                                          .callKitCallLogList
+                                                          .isNotEmpty
+                                                      : controller.callLogList
+                                                          .isNotEmpty)
                                                   ? controller.clearCallLog()
                                                   : toToast(getTranslated(
                                                       "noCallLog")),
