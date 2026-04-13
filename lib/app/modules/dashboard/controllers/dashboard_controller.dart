@@ -155,7 +155,7 @@ class DashboardController extends FullLifeCycleController
   markAllUnreadMissedCallsAsRead() async {
     if (unreadCallCount.value > 0) {
       if (Constants.useMirrorFlyCallKit) {
-        var result = await MirrorFlyCallKit.markMissedCallAsSeen(callIds: []);
+        var result = await MirrorFlyCallKit.markMissedCallAsSeen();
         debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead result $result");
         if (result) {
           unreadCallCount(0);
