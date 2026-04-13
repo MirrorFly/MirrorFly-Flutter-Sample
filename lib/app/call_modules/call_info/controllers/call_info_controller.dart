@@ -24,6 +24,7 @@ class CallInfoController extends GetxController{
   CallLog get callLog => callKitLogData.value;
 
   var isFromCallKit = false.obs;
+  final String tag = "CallInfoController";
 
   @override
   void onInit() {
@@ -38,6 +39,14 @@ class CallInfoController extends GetxController{
     callkitLogger.info("CallInfoController initialized with isFromCallKit: ${isFromCallKit.value}");
     
     super.onInit();
+  }
+
+  makeCallKitCall() {
+    callkitLogger.info("$tag makeCallKitCall called");
+  }
+
+  itemDeleteCallKitCall() {
+    callkitLogger.info("$tag itemDeleteCallKitCall called");
   }
 
   makeCall(List<String>? userList, String callType, CallLogData item) async {
