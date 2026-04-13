@@ -2013,7 +2013,7 @@ class DashboardController extends FullLifeCycleController
           flyResult: (FlyResult response) {
             if (response.isSuccess) {
               callkitLogger.info("Call started successfully");
-              NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                 "userJid": callersId,
                 "callType": CallType.video,
                 "callMode": isOneToOne ? "ONE-TO-ONE" : "ONE-TO-MANY",
@@ -2058,7 +2058,7 @@ class DashboardController extends FullLifeCycleController
           flyResult: (FlyResult response) {
             if (response.isSuccess) {
               callkitLogger.info("Audio call started successfully");
-              NavUtils.offNamed(Routes.callKitOutGoingCallView, arguments: {
+              NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
                 "userJid": callersId,
                 "callType": CallType.audio,
                 "callMode": isOneToOne ? "ONE-TO-ONE" : "ONE-TO-MANY",
