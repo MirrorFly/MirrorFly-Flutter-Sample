@@ -468,6 +468,12 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                             CustomAction(
                                               visibleWidget: IconButton(
                                                 onPressed: () {
+                                                  /// Search is not implemented for callKit log
+                                                  if (controller.currentTab.value == 1 && Constants.useMirrorFlyCallKit) {
+                                                    toToast("Not implemented for call log search yet");
+                                                    return;
+                                                  }
+
                                                   controller.gotoSearch();
                                                 },
                                                 icon: AppStyleConfig
