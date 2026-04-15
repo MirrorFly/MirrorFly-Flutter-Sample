@@ -123,224 +123,271 @@ class CallLogView extends StatelessWidget {
     }
 
     return ListView.builder(
-      controller: controller.callLogScrollController,
-      itemCount: callKitCallLogList.length + 1,
-      itemBuilder: (context, index) {
+        controller: controller.callLogScrollController,
+        itemCount: callKitCallLogList.length + 1,
+        itemBuilder: (context, index) {
 
-        if (index == callKitCallLogList.length) {
-          return Obx(() {
-            return controller.loading.value
-                ? const Padding(
-              padding: EdgeInsets.all(12),
-              child: Center(child: CircularProgressIndicator()),
-            )
-                : const SizedBox.shrink();
-          });
-        }
 
-        final item = callKitCallLogList[index];
-        callkitLogger.info(
-            "${controller.callKitLogTag} pagination index: $index, logListLength: ${callKitCallLogList.length}, isLoading: ${controller.loading.value}");
+          final item = callKitCallLogList[index];
+          callkitLogger.info("${controller.callKitLogTag} pagination index: $index, "
+                  "logListLength: ${callKitCallLogList.length}, isLoading: ${controller.loading.value}");
 
-        /// ONE TO ONE CALL UI
-        if ((item.callMode == "ONE-TO-ONE") &&
-            (item.callParticipants != null &&
-                item.callParticipants!.length < 2)) {
-          return Obx(() => ListTile(
+          if (index == callKitCallLogList.length) {
+            return Obx(() {
+              return controller.loading.value
+                  ? const Padding(
+                padding: EdgeInsets.all(12),
+                child: Center(child: CircularProgressIndicator()),
+              )
+                  : const SizedBox.shrink();
+            });
+          }
+
+          return (item.callMode == "ONE-TO-ONE") && (item.callParticipants != null && item.callParticipants!.length < 2)
+              ? Obx(() => ListTile(
             titleTextStyle: callHistoryItemStyle.titleTextStyle,
             subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
             shape: Border(
-              bottom: BorderSide(
-                color: callHistoryItemStyle.dividerColor,
-                width: 0.5,
-              ),
-            ),
-
-            /// PROFILE IMAGE
+                bottom: BorderSide(
+                    color: callHistoryItemStyle.dividerColor,
+                    width: 0.5)),
             leading: FutureBuilder(
-              future: getProfileDetailsFromCallKit(
-                id: item.callParticipants?.first ?? "",
-                isGroup: false,
-              ),
-              builder: (context, snap) {
-                if (snap.hasData && snap.data != null) {
-                  return ImageNetwork(
+                future: getProfileDetailsFromCallKit(
+                    id: item.callParticipants?.first ?? "",
+                    isGroup: false),
+                builder: (context, snap) {
+                  return snap.hasData && snap.data != null
+                      ? ImageNetwork(
                     url: snap.data!.image?.checkNull() ?? "",
-                    width: callHistoryItemStyle.profileImageSize.width,
-                    height: callHistoryItemStyle.profileImageSize.height,
+                    width: callHistoryItemStyle
+                        .profileImageSize.width,
+                    height: callHistoryItemStyle
+                        .profileImageSize.height,
                     clipOval: true,
-                    errorWidget: snap.data!.getName().checkNull().isNotEmpty
+                    errorWidget: snap.data!.getName() //item.nickName
+                        .checkNull()
+                        .isNotEmpty
                         ? ProfileTextImage(
                       text: getName(snap.data!),
-                      radius: callHistoryItemStyle.profileImageSize.height / 2,
+                      radius: callHistoryItemStyle
+                          .profileImageSize.height /
+                          2,
                     )
-                        : const Icon(Icons.person, color: Colors.white),
+                        : const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
                     isGroup: false,
                     blocked: false,
                     unknown: false,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-
-            /// TITLE
-            title: FutureBuilder(
-              future: getProfileDetailsFromCallKit(
-                id: item.callParticipants?.first ?? "",
-                isGroup: false,
-              ),
-              builder: (context, snap) {
-                if (snap.hasData && snap.data != null) {
-                  return controller.search.text.isNotEmpty
-                      ? CallHighlightedText(
-                    content: snap.data!.name!,
-                    searchString: controller.search.text.trim(),
                   )
-                      : Text(
+                      : const Offstage();
+                }),
+            title: FutureBuilder(
+                future: getProfileDetailsFromCallKit(
+                    id: item.callParticipants?.first ?? "",
+                    isGroup: false),
+                builder: (context, snap) {
+                  return snap.hasData &&
+                      snap.data != null &&
+                      controller.search.text.isNotEmpty
+                      ? CallHighlightedText(
+                      content: snap.data!.name!,
+                      searchString: controller.search.text.trim())
+                      : snap.hasData &&
+                      snap.data != null &&
+                      controller.search.text.isEmpty
+                      ? Text(
                     snap.data!.name!,
-                    style: callHistoryItemStyle.titleTextStyle,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+                    style:
+                    callHistoryItemStyle.titleTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  )
+                      : const Offstage();
+                }),
+            subtitle: SizedBox(
+              child: callLogTimeForCallKit(
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
+                  item.isCaller == 0,
+                  item.missedStatus == 1 || item.missedStatus == 2,
+                  callHistoryItemStyle.subtitleTextStyle),
             ),
-
-            /// SUBTITLE
-            subtitle: callLogTimeForCallKit(
-              "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-              item.isCaller == 0,
-              item.missedStatus == 1 || item.missedStatus == 2,
-              callHistoryItemStyle.subtitleTextStyle,
+            trailing: SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    item.duration ?? "",
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  callIcon(item.callType, item, item.callMode,
+                      callHistoryItemStyle.iconColor),
+                ],
+              ),
             ),
-
-            /// TRAILING
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(item.duration ?? "",
-                    style: callHistoryItemStyle.durationTextStyle),
-                const SizedBox(width: 8),
-                callIcon(
-                    item.callType, item, item.callMode, callHistoryItemStyle.iconColor),
-              ],
-            ),
-
             selectedTileColor: controller.isLogSelected(index)
                 ? callHistoryItemStyle.selectedBgColor
                 : callHistoryItemStyle.unselectedBgColor,
             selected: controller.isLogSelected(index),
-
             onLongPress: () {
               controller.selectedLog(true);
-              controller.selectOrRemoveCallKitLogFromList(index);
+              controller.selectOrRemoveCallKitLogFromList((index));
             },
-
             onTap: () {
               if (controller.selectedLog.value) {
-                controller.selectOrRemoveCallKitLogFromList(index);
+                controller.selectOrRemoveCallKitLogFromList((index));
               } else {
-                final bool isGroupCall =
-                    item.chatId != null && item.chatId!.isNotEmpty;
-
+                final bool isGroupCall = (item.chatId != null && item.chatId?.isNotEmpty == true);
                 final String toChatId = isGroupCall
                     ? CallUtils.getGroupJidFromGroupId(item.chatId!)
-                    : (item.callParticipants != null &&
-                    item.callParticipants!.isNotEmpty)
-                    ? CallUtils.getJidFromUserId(
-                    userId: item.callParticipants!.first,
-                    isGroup: isGroupCall)
+                    : (item.callParticipants != null && item.callParticipants!.isNotEmpty)
+                    ? CallUtils.getJidFromUserId(userId: item.callParticipants!.first, isGroup: isGroupCall)
                     : "";
-
                 controller.toChatPage(toChatId);
               }
             },
-          ));
-        }
-
-        /// =========================
-        /// GROUP CALL UI
-        /// =========================
-        return Obx(() => ListTile(
-          titleTextStyle: callHistoryItemStyle.titleTextStyle,
-          subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
-          shape: Border(
-            bottom: BorderSide(
-              color: callHistoryItemStyle.dividerColor,
-              width: 0.5,
+          ))
+              : Obx(() => ListTile(
+            titleTextStyle: callHistoryItemStyle.titleTextStyle,
+            subtitleTextStyle: callHistoryItemStyle.subtitleTextStyle,
+            shape: Border(
+                bottom: BorderSide(
+                    color: callHistoryItemStyle.dividerColor,
+                    width: 0.5)),
+            leading: item.chatId.checkNull().isEmpty
+                ? ClipOval(
+              child: AppUtils.assetIcon(
+                assetName: groupImg,
+                width:
+                callHistoryItemStyle.profileImageSize.width,
+                height:
+                callHistoryItemStyle.profileImageSize.height,
+                fit: BoxFit.cover,
+              ),
+            )
+                : FutureBuilder(
+                future: getProfileDetailsFromCallKit(id: item.chatId!, isGroup: true) ,
+                builder: (context, snap) {
+                  return snap.hasData && snap.data != null
+                      ? ImageNetwork(
+                    url: snap.data!.image!,
+                    width: callHistoryItemStyle
+                        .profileImageSize.width,
+                    height: callHistoryItemStyle
+                        .profileImageSize.height,
+                    clipOval: true,
+                    errorWidget: ClipOval(
+                      child: AppUtils.assetIcon(
+                        assetName: groupImg,
+                        width: callHistoryItemStyle
+                            .profileImageSize.width,
+                        height: callHistoryItemStyle
+                            .profileImageSize.height,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    isGroup: false,
+                    blocked: false,
+                    unknown: false,
+                  )
+                      : ClipOval(
+                    child: AppUtils.assetIcon(
+                      assetName: groupImg,
+                      width: callHistoryItemStyle
+                          .profileImageSize.width,
+                      height: callHistoryItemStyle
+                          .profileImageSize.height,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }),
+            title: item.chatId.checkNull().isEmpty
+                ? FutureBuilder(
+                future: CallUtils.getCallKitLogUserNames(item.callParticipants ?? [], item),
+                builder: (context, snap) {
+                  if (snap.hasData) {
+                    return controller.search.text.isNotEmpty
+                        ? CallHighlightedText(
+                        content: snap.data!,
+                        searchString:
+                        controller.search.text.trim())
+                        : Text(
+                      snap.data!,
+                      style:
+                      callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                })
+                : FutureBuilder(
+                future: getProfileDetailsFromCallKit(id: item.chatId!, isGroup: true) ,
+                builder: (context, snap) {
+                  if (snap.hasData) {
+                    return controller.search.text.isNotEmpty
+                        ? CallHighlightedText(
+                        content: snap.data!.name ?? "",
+                        searchString:
+                        controller.search.text.trim())
+                        : Text(
+                      snap.data!.name ?? "",
+                      style:
+                      callHistoryItemStyle.titleTextStyle,
+                      // style: const TextStyle(color: Colors.black),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
+            subtitle: SizedBox(
+              child: callLogTimeForCallKit(
+                  "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
+                  item.isCaller == 0,
+                  item.missedStatus == 1 || item.missedStatus == 2,
+                  callHistoryItemStyle.subtitleTextStyle),
             ),
-          ),
-
-          /// LEADING
-          leading: ClipOval(
-            child: AppUtils.assetIcon(
-              assetName: groupImg,
-              width: callHistoryItemStyle.profileImageSize.width,
-              height: callHistoryItemStyle.profileImageSize.height,
-              fit: BoxFit.cover,
+            trailing: SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    item.duration ?? "",
+                    style: callHistoryItemStyle.durationTextStyle,
+                    // style: const TextStyle(color: Colors.black),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  callIcon(item.callType, item, item.callMode, callHistoryItemStyle.iconColor),
+                ],
+              ),
             ),
-          ),
-
-          /// TITLE
-          title: FutureBuilder(
-            future: CallUtils.getCallKitLogUserNames(
-                item.callParticipants ?? [], item),
-            builder: (context, snap) {
-              if (snap.hasData) {
-                return controller.search.text.isNotEmpty
-                    ? CallHighlightedText(
-                  content: snap.data!,
-                  searchString: controller.search.text.trim(),
-                )
-                    : Text(
-                  snap.data!,
-                  style: callHistoryItemStyle.titleTextStyle,
-                );
-              }
-              return const SizedBox.shrink();
+            selectedTileColor: controller.isLogSelected(index)
+                ? Colors.grey[400]
+                : null,
+            selected: controller.isLogSelected(index),
+            onLongPress: () {
+              controller.selectedLog(true);
+              controller.selectOrRemoveCallKitLogFromList((index));
             },
-          ),
-
-          /// SUBTITLE
-          subtitle: callLogTimeForCallKit(
-            "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-            item.isCaller == 0,
-            item.missedStatus == 1 || item.missedStatus == 2,
-            callHistoryItemStyle.subtitleTextStyle,
-          ),
-
-          /// TRAILING
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(item.duration ?? "",
-                  style: callHistoryItemStyle.durationTextStyle),
-              const SizedBox(width: 8),
-              callIcon(item.callType, item, item.callMode,
-                  callHistoryItemStyle.iconColor),
-            ],
-          ),
-
-          selectedTileColor:
-          controller.isLogSelected(index) ? Colors.grey[400] : null,
-          selected: controller.isLogSelected(index),
-
-          onLongPress: () {
-            controller.selectedLog(true);
-            controller.selectOrRemoveCallKitLogFromList(index);
-          },
-
-          onTap: () {
-            if (controller.selectedLog.value) {
-              controller.selectOrRemoveCallKitLogFromList(index);
-            } else {
-              controller.toCallKitCallInfo(item);
-            }
-          },
-        ));
-      },
-    );
+            onTap: () {
+              if (controller.selectedLog.value) {
+                controller.selectOrRemoveCallKitLogFromList((index));
+              } else {
+                controller.toCallKitCallInfo(item);
+              }
+            },
+          ));
+        });
   }
+
 
   Widget emptyCalls(BuildContext context) {
     return !controller.callLogSearchLoading.value
