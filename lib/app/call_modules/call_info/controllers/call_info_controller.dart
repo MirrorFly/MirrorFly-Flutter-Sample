@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
-import 'package:mirrorfly_plugin/mirrorfly.dart';
 
 import '../../../data/permissions.dart';
 import '../../../extensions/extensions.dart';
@@ -20,33 +18,10 @@ class CallInfoController extends GetxController{
   var callLogData_ = CallLogData().obs;
   CallLogData get callLogData => callLogData_.value;
 
-  var callKitLogData = CallLog().obs;
-  CallLog get callLog => callKitLogData.value;
-
-  var isFromCallKit = false.obs;
-  final String tag = "CallInfoController";
-
   @override
   void onInit() {
-    isFromCallKit(NavUtils.arguments is CallLog);
-    
-    if (isFromCallKit.value) {
-      callKitLogData(NavUtils.arguments as CallLog);
-    } else {
-      callLogData_((NavUtils.arguments as CallLogData));
-    }
-    
-    callkitLogger.info("CallInfoController initialized with isFromCallKit: ${isFromCallKit.value}");
-    
+    callLogData_((NavUtils.arguments as CallLogData));
     super.onInit();
-  }
-
-  makeCallKitCall() {
-    callkitLogger.info("$tag makeCallKitCall called");
-  }
-
-  itemDeleteCallKitCall() {
-    callkitLogger.info("$tag itemDeleteCallKitCall called");
   }
 
   makeCall(List<String>? userList, String callType, CallLogData item) async {
