@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/call_log/call_log_view.dart';
 import 'package:mirror_fly_demo/app/call_kit/call_log_info/call_log_info_controller.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart' show CallLog;
 import 'package:mirrorfly_plugin/model/user_list_model.dart';
@@ -72,12 +73,15 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                 children: [
                   Obx(() {
                     final callKitData = controller.callKitLogData.value;
-                    final callKitDataGroupId = callKitData.chatId.checkNull();
 
-                    final bool isGroupIdEmpty = callKitDataGroupId.isEmpty;
+                    final bool isGroupCall = callKitData.callMode == "ONE-TO-MANY" && callKitData.chatId != "";
+                    final isMeetOrLink = (!isGroupCall && ((callKitData.callParticipants?.length ?? 0) >= 2) && (callKitData.chatId?.isEmpty == true));
+
+                    callkitLogger.info("${controller.tag} - Building call log info for chatId:"
+                        " ${callKitData.chatId}, isJoinViaLinkOrMeetLinkCall: $isMeetOrLink");
 
                     return ListTile(
-                      leading: isGroupIdEmpty
+                      leading:  isMeetOrLink
                           ? ClipOval(
                         child: AppUtils.assetIcon(assetName:
                         groupImg,
@@ -87,8 +91,8 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                         ),
                       )
                           : FutureBuilder(
-                          future:  _getProfileDetailsFromCallKit(id: controller.callKitLogData.value.chatId ?? "", isGroup: true),
-                          builder: (context, snap) {
+                              future:  _getProfileDetailsFromCallKit(id: controller.callKitLogData.value.chatId ?? "", isGroup: true),
+                              builder: (context, snap) {
                             return snap.hasData && snap.data != null
                                 ? ImageNetwork(
                               url: snap.data!.image.checkNull(),
@@ -116,7 +120,7 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                               ),
                             );
                           }),
-                      title: isGroupIdEmpty
+                      title: isMeetOrLink
                           ? FutureBuilder(
                           future:
                                CallUtils.getCallKitLogUserNames(controller.callKitLogData.value.callParticipants ?? [], controller.callKitLog),
@@ -132,11 +136,7 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                             }
                           })
                           : FutureBuilder(
-                          future:  _getProfileDetailsFromCallKit(
-                              id: controller.callKitLogData.value.callId
-                                  .toString(),
-                              isGroup: true)
-                              ,
+                          future:  _getProfileDetailsFromCallKit(id: controller.callKitLogData.value.chatId ?? "", isGroup: true),
                           builder: (context, snap) {
                             if (snap.hasData) {
                               return Text(
