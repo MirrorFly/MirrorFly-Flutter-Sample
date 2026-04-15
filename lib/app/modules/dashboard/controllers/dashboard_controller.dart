@@ -2591,7 +2591,7 @@ class DashboardController extends FullLifeCycleController
 
   toCallKitCallInfo(CallLog item) async {
     if (Constants.useMirrorFlyCallKit) {
-      var result = await NavUtils.toNamed(Routes.callInfo, arguments: item);
+      var result = await NavUtils.toNamed(Routes.callKitCallInfo, arguments: item);
       if (result != null) {
         var chatIndex = callKitCallLogList.indexWhere((element) =>
         item.callId == element.callId);
