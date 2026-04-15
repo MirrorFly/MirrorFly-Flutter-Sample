@@ -1957,6 +1957,13 @@ class DashboardController extends FullLifeCycleController
   Future<void> fetchCallLitCallLogList() async {
     callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
 
+    if (await AppUtils.isNetConnected() == false) {
+      callkitLogger.info("$callKitLogTag fetchCallLogList no internet connection");
+      toToast(getTranslated("noInternetConnection"));
+      loading.value = false;
+      return;
+    }
+
     if (Constants.useMirrorFlyCallKit) {
       loading.value = true;
       callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
