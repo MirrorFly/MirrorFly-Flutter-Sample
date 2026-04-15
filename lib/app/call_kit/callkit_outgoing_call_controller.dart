@@ -234,7 +234,11 @@ class CallKitOutgoingCallController extends GetxController
           onCallSwitchRemoteUserDeclined();
           break;
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
-          onVideoCallSwitchTimeOut();
+          onVideoCallSwitchTimeOut(isIncomingTimeout: false);
+
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
+          onVideoCallSwitchTimeOut(isIncomingTimeout: true);
+
           break;
         default:
           break;
@@ -266,7 +270,7 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     callTimerStream = MirrorFlyCallKit.flyCallTimer.listen((timer) {
-      callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
+    //  callkitLogger.info('[MirrorFly][OutgoingCallController] _listenToSDKCallTimer timer: $timer');
       callDuration(timer);
     });
   }
@@ -360,7 +364,9 @@ class CallKitOutgoingCallController extends GetxController
           onRemoteUserCancelledTheSwitchRequest();
           break;
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
-          onVideoCallSwitchTimeOut();
+          onVideoCallSwitchTimeOut(isIncomingTimeout: false);
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
+          onVideoCallSwitchTimeOut(isIncomingTimeout: true);
           break;
         default:
           break;
@@ -1633,6 +1639,14 @@ class CallKitOutgoingCallController extends GetxController
 
   void _handleGroupCallDisconnect(String userId, String reason) {
     callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Group call disconnect");
+
+    final bool isLocalHangup = isSelfId(id: userId);
+    if (isLocalHangup) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Local hangup");
+      _endCallAndExit(reason);
+      return;
+    }
+
     callerList.removeWhere((e) => e.identity == userId);
 
     final String name = remoteUserNameMap[userId] ?? "";
@@ -1644,30 +1658,16 @@ class CallKitOutgoingCallController extends GetxController
     callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall removed userId=$userId len=${callerList.length}");
     _getCallRemoteUserName();
 
-    final bool isLocalHangup = isSelfId(id: userId);
-    if (isLocalHangup) {
-      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Local hangup");
-      _endCallAndExit(reason);
-      return;
-    }
-
     if (callerList.length <= 1 && !isMeet.value) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Last user left");
       _endCallAndExit(reason);
       return;
     }
 
-    if (callerList.any((e) => e.isLocalParticipant == false && e.flyCallStatusEvent != FlyCallStatusEvent.connected)) {
-      if (callerList.length <= 2) {
-        final remote = callerList.firstWhere((e) => e.isLocalParticipant != true);
-        callkitLogger.info("[MirrorFly] #disconnectCall remote=${remote.identity} state=${remote.flyCallStatusEvent}");
-      }
-    } else {
-      if (callerList.length <= 1 && isMeet.value) {
-        isOnGoingCallViewEnable.value = false;
-      }
-      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall call still ongoing");
+    if (callerList.length <= 1 && isMeet.value) {
+      isOnGoingCallViewEnable.value = false;
     }
+    callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall call still ongoing");
   }
 
   void _endCallAndExit(String reason) {
@@ -2003,11 +2003,16 @@ class CallKitOutgoingCallController extends GetxController
     processCallSwitchUI();
   }
 
-  void onVideoCallSwitchTimeOut() {
+  void onVideoCallSwitchTimeOut({required bool isIncomingTimeout}) {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] onVideoCallSwitchTimeOut called, isIncomingTimeout: $isIncomingTimeout");
     closeDialog();
-    final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
-    final remoteUserName = remoteUserNameMap[remoteId] ?? "";
-    toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
+    if (isIncomingTimeout) {
+      return;
+    } else {
+      final String remoteId = getRemoteParticipants().firstOrNull?.identity ?? "";
+      final remoteUserName = remoteUserNameMap[remoteId] ?? "";
+      toToast(getTranslated("noResponseFrom").replaceFirst("%d", remoteUserName));
+    }
   }
 
   ///

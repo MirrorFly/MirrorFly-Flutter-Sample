@@ -282,7 +282,11 @@ class CallKitEventBuffer {
         c.onCallSwitchRemoteUserDeclined();
         break;
       case FlyCallActionEvent.outgoingCallSwitchTimeout:
-        c.onVideoCallSwitchTimeOut();
+        c.onVideoCallSwitchTimeOut(isIncomingTimeout: false);
+
+      case FlyCallActionEvent.incomingCallSwitchTimeout:
+        c.onVideoCallSwitchTimeOut(isIncomingTimeout: true);
+
         break;
       case FlyCallActionEvent.audioMuted:
         c.isAudioMute(isAudioMuted: true, participantId: e.participantId);

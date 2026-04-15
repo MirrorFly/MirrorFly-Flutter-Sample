@@ -137,7 +137,7 @@ class BaseController {
       }
 
       // Incoming call - set the callerId and callType to be used when answering the call
-      if (flyCallStatusEvent == FlyCallStatusEvent.calling) {
+      if (flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
         if (Get.isRegistered<ChatController>(tag: controllerTag)) {
           Get.find<ChatController>(tag: controllerTag).stopRecording();
         }
@@ -460,6 +460,7 @@ class BaseController {
           break;
 
         case FlyCallActionEvent.outgoingCallSwitchTimeout:
+        case FlyCallActionEvent.incomingCallSwitchTimeout:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent timeout — storing as lastCallSwitchEvent");
           callStateService.lastCallSwitchEvent.value = flyCallAction;
           break;
