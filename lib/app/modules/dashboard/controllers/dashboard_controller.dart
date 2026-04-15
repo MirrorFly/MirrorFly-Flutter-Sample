@@ -194,7 +194,13 @@ class DashboardController extends FullLifeCycleController
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
-    fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      fetchCallLitCallLogList();
+    } else {
+      fetchCallLogList();
+    }
+
     callLogScrollController.addListener(_callLogScrollListener);
   }
 
@@ -1306,7 +1312,12 @@ class DashboardController extends FullLifeCycleController
 
       if (!isLastPage.value && !loading.value) {
         pageNumber = pageNumber + 1;
-        fetchCallLogList();
+
+        if (Constants.useMirrorFlyCallKit) {
+          fetchCallLitCallLogList();
+        } else {
+          fetchCallLogList();
+        }
       }
     }
   }
@@ -1356,7 +1367,11 @@ class DashboardController extends FullLifeCycleController
           callLogList.clear();
         }
 
-        fetchCallLogList();
+        if (Constants.useMirrorFlyCallKit) {
+          fetchCallLitCallLogList();
+        } else {
+          fetchCallLogList();
+        }
       }
     }
   }
@@ -1380,7 +1395,12 @@ class DashboardController extends FullLifeCycleController
     }
 
     pageNumber = 1;
-    fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      fetchCallLitCallLogList();
+    } else {
+      fetchCallLogList();
+    }
   }
 
   var pageNum = 1;
@@ -1685,6 +1705,10 @@ class DashboardController extends FullLifeCycleController
     checkContactSyncPermission();
     typingAndGoneStatus.clear();
     // fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      _refreshCallKitCallLogList();
+    }
   }
 
   void getProfileDetail(context, RecentChatData chatItem, int index) {
@@ -1930,49 +1954,68 @@ class DashboardController extends FullLifeCycleController
   @override
   void onHidden() {}
 
-  Future<void> fetchCallLogList() async {
-    callkitLogger.info("$callKitLogTag fetchCallLogList function called");
-    loading.value = true;
+  Future<void> fetchCallLitCallLogList() async {
+    callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
     if (Constants.useMirrorFlyCallKit) {
-
-      // await Future.delayed(const Duration(seconds: 5));
-
-      callkitLogger.info("$callKitLogTag fetchCallLogList called");
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
       final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: pageNumber, size: 20);
-      callkitLogger.info("$callKitLogTag fetchCallLogList response: ${response.toJson()}");
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList response: ${response.toJson()}");
 
-        loading.value = false;
-        if (response.code == 200) {
-          callkitLogger.info("$callKitLogTag fetchCallLogList success response: ${response.data}");
-          if (response.data?.callLogs != null && response.data!.callLogs!.isNotEmpty) {
-            List<CallLog> callLogs = response.data?.callLogs ?? [];
-            _callKitCallLogList.addAll(callLogs);
-            callkitLogger.info("$callKitLogTag fetchCallLogList added ${callLogs.length} call logs to the list");
-          } else {
-            callkitLogger.info("$callKitLogTag fetchCallLogList no call logs found");
-          }
+      loading.value = false;
+      if (response.code == 200) {
+        callkitLogger.info("$callKitLogTag fetchCallLitCallLogList success response: ${response.data}");
+        if (response.data?.callLogs != null && response.data!.callLogs!.isNotEmpty) {
+          List<CallLog> callLogs = response.data?.callLogs ?? [];
+          _callKitCallLogList.addAll(callLogs);
+          callkitLogger.info("$callKitLogTag fetchCallLitCallLogList added ${callLogs.length} call logs to the list");
         } else {
-          callkitLogger.info("$callKitLogTag fetchCallLogList failed response: ${response.errorData}");
-          loading.value = false;
+          callkitLogger.info("$callKitLogTag fetchCallLitCallLogList no call logs found");
         }
+      } else {
+        callkitLogger.info("$callKitLogTag fetchCallLitCallLogList failed response: ${response.errorData}");
+        loading.value = false;
+      }
 
       await getUnReadMissedCallCountForCallKitCall();
     } else {
-      Mirrorfly.getCallLogsList(
-          currentPage: pageNumber,
-          flyCallBack: (FlyResponse response) {
-            loading.value = false;
-            if (response.isSuccess && response.hasData) {
-              var list = callLogListFromJson(response.data);
-              totalPages = list.totalPages!;
-              // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
-              if (list.data != null) {
-                _callLogList.addAll(list.data!);
-                isLastPage.value = list.data!.isEmpty;
-              }
-            }
-          });
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
     }
+  }
+
+  Future<void> _refreshCallKitCallLogList() async {
+    callkitLogger.info("$callKitLogTag refreshCallKitCallLogList function called");
+    final FlyCallLogRpcResponseModel responseModel = await MirrorFlyCallKit.getLatestCallLogs();
+    if (responseModel.code == 200) {
+      callkitLogger.info("$callKitLogTag refreshCallKitCallLogList success response: ${responseModel.data?.toJson()}");
+      if (responseModel.data?.callLogs != null && responseModel.data!.callLogs!.isNotEmpty) {
+        List<CallLog> callLogs = responseModel.data?.callLogs ?? [];
+        _callKitCallLogList.insertAll(0, callLogs);
+        callkitLogger.info("$callKitLogTag refreshCallKitCallLogList added ${callLogs.length} new call logs to the top of the list");
+      } else {
+        callkitLogger.info("$callKitLogTag refreshCallKitCallLogList no new call logs found");
+      }
+    } else {
+      callkitLogger.info("$callKitLogTag refreshCallKitCallLogList failed response: ${responseModel.errorData}");
+    }
+  }
+
+  Future<void> fetchCallLogList() async {
+    callkitLogger.info("$callKitLogTag fetchCallLogList function called");
+    loading.value = true;
+    Mirrorfly.getCallLogsList(
+        currentPage: pageNumber,
+        flyCallBack: (FlyResponse response) {
+          loading.value = false;
+          if (response.isSuccess && response.hasData) {
+            var list = callLogListFromJson(response.data);
+            totalPages = list.totalPages!;
+            // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+            if (list.data != null) {
+              _callLogList.addAll(list.data!);
+              isLastPage.value = list.data!.isEmpty;
+            }
+          }
+        });
   }
 
   void makeVideoCall(String? fromUser) async {
