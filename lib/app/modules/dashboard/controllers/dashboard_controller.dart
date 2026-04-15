@@ -1956,8 +1956,11 @@ class DashboardController extends FullLifeCycleController
 
   Future<void> fetchCallLitCallLogList() async {
     callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
+
     if (Constants.useMirrorFlyCallKit) {
+      loading.value = true;
       callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
+
       final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: pageNumber, size: 20);
       callkitLogger.info("$callKitLogTag fetchCallLitCallLogList response: ${response.toJson()}");
 
@@ -1966,6 +1969,7 @@ class DashboardController extends FullLifeCycleController
         callkitLogger.info("$callKitLogTag fetchCallLitCallLogList success response: ${response.data}");
         if (response.data?.callLogs != null && response.data!.callLogs!.isNotEmpty) {
           List<CallLog> callLogs = response.data?.callLogs ?? [];
+          isLastPage.value = callLogs.isEmpty;
           _callKitCallLogList.addAll(callLogs);
           callkitLogger.info("$callKitLogTag fetchCallLitCallLogList added ${callLogs.length} call logs to the list");
         } else {
@@ -2262,6 +2266,7 @@ class DashboardController extends FullLifeCycleController
 
     if (Constants.useMirrorFlyCallKit) {
       callkitLogger.info("$callKitLogTag onCallLogUpdate called and returning..");
+      loading.value = true;
       return;
     }
 
