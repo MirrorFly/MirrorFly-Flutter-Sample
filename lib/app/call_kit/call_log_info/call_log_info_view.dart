@@ -241,36 +241,6 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
     );
   }
 
-  Widget groupCallIcon(String? callType, CallLogData item, String? callMode, List<String>? userList,Color iconColor) {
-    List<String>? localUserList = [];
-    if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
-      localUserList.addAll(item.userList!);
-      if (!item.userList!.contains(item.fromUser)) {
-        localUserList.add(item.fromUser!);
-      }
-    } else {
-      localUserList.addAll(item.userList!);
-    }
-    return callType!.toLowerCase() == CallType.video
-        ? IconButton(
-      onPressed: () {
-          controller.makeCallKitCall();
-      },
-      icon: AppUtils.svgIcon(icon:
-      videoCallIcon,
-        colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-      ),
-    )
-        : IconButton(
-        onPressed: () {
-            controller.makeCallKitCall();
-        },
-        icon: AppUtils.svgIcon(icon:
-        audioCallIcon,
-          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-        ));
-  }
-
   Future<ProfileDetails> _getProfileDetailsFromCallKit({required String id, required bool isGroup}) async {
     final String jid = isGroup ? CallUtils.getGroupJidFromGroupId(id) : CallUtils.getJidFromUserId(userId: id, isGroup: false);
     callkitLogger.info("${controller.tag} - getProfileDetailsFromCallKit | jid: $jid, isGroup: $isGroup");
@@ -281,10 +251,7 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
       onPressed: () {
-        // controller.makeCallKitVideoCall(
-        // callersId: item.callParticipants ?? [],
-        // chatId: item.chatId ?? "",
-        // isOneToOne: item.callMode?.isOneToOneCall == true);
+       controller.makeCallKitCall();
       },
       icon: AppUtils.svgIcon(
         icon: videoCallIcon,
@@ -293,10 +260,7 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
     )
         : IconButton(
         onPressed: () {
-          // controller.makeCallKitAudioCall(
-          //     callersId: item.callParticipants ?? [],
-          //     chatId: item.chatId ?? "",
-          //     isOneToOne: item.callMode?.isOneToOneCall == true);
+          controller.makeCallKitCall();
         },
         icon: AppUtils.svgIcon(
           icon: audioCallIcon,
