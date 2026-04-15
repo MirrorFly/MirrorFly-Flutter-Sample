@@ -13,7 +13,7 @@ class ViewAllMediaPageStyle {
         iconTheme: IconThemeData(color: Color(0xff181818)),
         actionsIconTheme: IconThemeData(color: Color(0xff181818)),
       ),
-      this.tabBarTheme = const TabBarTheme(
+      this.tabBarThemeData = const TabBarThemeData(
           indicatorColor: AppColor.primaryColor,
           labelColor: AppColor.primaryColor,
           unselectedLabelColor: Color(0xff181818),
@@ -24,7 +24,7 @@ class ViewAllMediaPageStyle {
       this.groupedMediaItem = const GroupedMediaItemStyle()});
 
   final AppBarTheme appBarTheme;
-  final TabBarTheme tabBarTheme;
+  final TabBarThemeData tabBarThemeData;
   final TabItemStyle tabItemStyle;
   final TextStyle noDataTextStyle;
   final GroupedMediaItemStyle groupedMediaItem;

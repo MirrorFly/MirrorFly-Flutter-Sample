@@ -106,8 +106,8 @@ class AppPermission {
           PermissionStatus? photo = newp[Permission.photos];
           PermissionStatus? storage = newp[Permission.storage];
           // var audio = await newPermission[2].isGranted;
-          if ((photo!.isGranted || photo!.isLimited) &&
-              (storage!.isGranted || storage!.isLimited)) {
+          if ((photo!.isGranted || photo.isLimited) &&
+              (storage!.isGranted || storage.isLimited)) {
             isShowing = false;
             return true;
           } else if (photo.isPermanentlyDenied ||
@@ -189,9 +189,9 @@ class AppPermission {
         PermissionStatus? video = newp[Permission.videos];
         PermissionStatus? mediaLibrary = newp[Permission.mediaLibrary];
         // var audio = await newPermission[2].isGranted;
-        if ((photo!.isGranted || photo!.isLimited) &&
-            (video!.isGranted || video!.isLimited) &&
-            (mediaLibrary!.isGranted || mediaLibrary!.isLimited)) {
+        if ((photo!.isGranted || photo.isLimited) &&
+            (video!.isGranted || video.isLimited) &&
+            (mediaLibrary!.isGranted || mediaLibrary.isLimited)) {
           isShowing = false;
           return true;
         } else if (photo.isPermanentlyDenied ||
