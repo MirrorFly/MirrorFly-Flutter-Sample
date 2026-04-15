@@ -127,11 +127,12 @@ class CallLogView extends StatelessWidget {
         itemCount: callKitCallLogList.length + 1,
         itemBuilder: (context, index) {
 
+          callkitLogger.info(
+              "${controller.callKitLogTag} pagination index: $index, "
+                  "logListLength: ${callKitCallLogList.length}, "
+                  "isLoading: ${index == callKitCallLogList.length}");
 
-          final item = callKitCallLogList[index];
-          callkitLogger.info("${controller.callKitLogTag} pagination index: $index, "
-                  "logListLength: ${callKitCallLogList.length}, isLoading: ${controller.loading.value}");
-
+          /// ✅ STEP 1: HANDLE LOADER FIRST
           if (index == callKitCallLogList.length) {
             return Obx(() {
               return controller.loading.value
@@ -143,6 +144,8 @@ class CallLogView extends StatelessWidget {
             });
           }
 
+          /// ✅ STEP 2: SAFE ACCESS
+          final item = callKitCallLogList[index];
           return (item.callMode == "ONE-TO-ONE") && (item.callParticipants != null && item.callParticipants!.length < 2)
               ? Obx(() => ListTile(
             titleTextStyle: callHistoryItemStyle.titleTextStyle,
