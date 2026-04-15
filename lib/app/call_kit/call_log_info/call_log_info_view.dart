@@ -150,12 +150,9 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                           }),
                       subtitle: SizedBox(
                         child: _callLogTimeForCallKit(
-                            "${DateTimeUtils.getCallLogDate(microSeconds: controller.callKitLogData.value.callTime ?? 0)} "
-                            " ${controller.callKitLogData.value.duration ?? "0"}",
+                            "${DateTimeUtils.getCallLogDate(microSeconds: controller.callKitLog.callTime!)}  ${getChatTime(context, controller.callKitLog.callTime)}",
                             controller.callKitLog.isCaller == 0,
-                            controller.callKitLog.missedStatus == 1,
-                            AppStyleConfig.callInfoPageStyle
-                                .callHistoryItemStyle.durationTextStyle),
+                            controller.callKitLog.missedStatus == 1, AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.durationTextStyle),
                       ),
                       trailing: SizedBox(
                         child: Row(
@@ -163,7 +160,8 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              getCallLogDuration(controller.callKitLogData.value.startTime ?? 0 ,  controller.callKitLogData.value.endTime ?? 0 ),
+                              "${controller.callKitLogData.value.duration ?? 0}",
+                             // getCallLogDuration(controller.callKitLogData.value.startTime ?? 0 ,  controller.callKitLogData.value.endTime ?? 0 ),
                               style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.subtitleTextStyle,
                               // style: const TextStyle(color: Colors.black),
                             ),
