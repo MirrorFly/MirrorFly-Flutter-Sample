@@ -1708,6 +1708,7 @@ class DashboardController extends FullLifeCycleController
 
     if (Constants.useMirrorFlyCallKit) {
       _refreshCallKitCallLogList();
+      markAllUnreadMissedCallsAsRead();
     }
   }
 
@@ -2253,10 +2254,6 @@ class DashboardController extends FullLifeCycleController
       } else {
         callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but MirrorFly CallKit is not enabled, ignoring the update.");
       }
-    }
-
-    if (currentTab.value == 1) {
-      await markAllUnreadMissedCallsAsRead();
     }
   }
 

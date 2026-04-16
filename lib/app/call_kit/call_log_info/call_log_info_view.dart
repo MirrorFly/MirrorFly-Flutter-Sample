@@ -192,12 +192,15 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                       shrinkWrap: true,
                       itemCount:  controller.callKitLogData.value.callParticipants?.length ,
                       itemBuilder: (context, index) {
+
                         var item =  CallUtils.getJidFromUserId(userId: controller.callKitLogData.value.callParticipants![index], isGroup: false);
                         var style = AppStyleConfig.callInfoPageStyle.contactItemStyle;
                         callkitLogger.info("${controller.tag} - Building participant item for ${item}");
+
                         return ListTile(
+                          minVerticalPadding: 20,
                           leading: FutureBuilder(
-                              future:   _getProfileDetailsFromCallKit(id: controller.callKitLogData.value.callParticipants![index], isGroup: true) ,
+                              future:   _getProfileDetailsFromCallKit(id: controller.callKitLogData.value.callParticipants![index], isGroup: false),
                               builder: (context, snap) {
                                 return snap.hasData && snap.data != null
                                     ? ImageNetwork(
