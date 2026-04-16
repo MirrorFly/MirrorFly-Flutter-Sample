@@ -2281,7 +2281,7 @@ class DashboardController extends FullLifeCycleController
 
     if (Constants.useMirrorFlyCallKit) {
       callkitLogger.info("$callKitLogTag onCallLogUpdate called and returning..");
-      loading.value = true;
+      // loading.value = true;
       return;
     }
 
