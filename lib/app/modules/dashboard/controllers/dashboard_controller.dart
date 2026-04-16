@@ -2497,7 +2497,7 @@ class DashboardController extends FullLifeCycleController
   _itemDeleteCallLog(int index) {
     final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
     var logIndex = isCallKitDelete ?
-          callKitCallLogList.indexWhere((e) => selectedCallKitLogs[index] == e.callId.toString())
+          callKitCallLogList.indexWhere((e) => selectedCallKitLogs[index] == e.callId)
         : callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId);
     callkitLogger.info("$callKitLogTag _itemDeleteCallLog called for logIndex: $logIndex, isCallKitDelete: $isCallKitDelete");
 
@@ -2573,7 +2573,7 @@ class DashboardController extends FullLifeCycleController
                   final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallKitLogs);
                   if (isCallLogCleared) {
                     callkitLogger.info("$callKitLogTag Multiple call logs deleted successfully for callIds: $selectedCallKitLogs");
-                    callKitCallLogList.removeWhere((log) => selectedCallKitLogs.contains(log.callId.toString()));
+                    callKitCallLogList.removeWhere((log) => selectedCallKitLogs.contains(log.callId));
                     delete(false);
                     selected(false);
                     selectedCallKitLogs.clear();
