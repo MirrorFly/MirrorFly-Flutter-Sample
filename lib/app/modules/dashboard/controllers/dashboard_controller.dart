@@ -83,8 +83,14 @@ class DashboardController extends FullLifeCycleController
   var totalPages = 0;
 
   var selectedLog = false.obs;
+
+  /// For old call logs
   var selectedCallLogs = <String>[].obs;
   var selectedCallLogsPosition = <int>[].obs;
+
+  // For callKit logs
+  var selectedCallKitLogs = <int>[].obs;
+  var selectedCallKitLogsPosition = <int>[].obs;
 
   //final _unreadCallCount = 0.obs;
 
@@ -621,8 +627,13 @@ class DashboardController extends FullLifeCycleController
     debugPrint("clear selection $currentTab");
     //Need to check the Codes below if condition for Calls tab, whether it is required or not
     if (currentTab.value == 1) {
-      selectedCallLogs.clear();
-      selectedCallLogsPosition.clear();
+      if (Constants.useMirrorFlyCallKit) {
+        selectedCallKitLogs.clear();
+        selectedCallKitLogsPosition.clear();
+      } else {
+        selectedCallLogs.clear();
+        selectedCallLogsPosition.clear();
+      }
       selectedLog(false);
     }
     selected(false);
@@ -2417,25 +2428,25 @@ class DashboardController extends FullLifeCycleController
   }
 
   selectOrRemoveCallKitLogFromList(int index) {
-    callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallLogs");
+    callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallKitLogs");
     
     if (selectedLog.isTrue) {
       callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList selectedLog is true");
 
-      final callId = callKitCallLogList[index].callId?.toString() ?? "";
+      final callId = callKitCallLogList[index].callId ?? 0;
 
-      if (selectedCallLogs.contains(callId)) {
-        selectedCallLogs.remove(callId);
-        selectedCallLogsPosition.remove(index);
+      if (selectedCallKitLogs.contains(callId)) {
+        selectedCallKitLogs.remove(callId);
+        selectedCallKitLogsPosition.remove(index);
         callkitLogger.info("Removing $callId");
       } else {
-        selectedCallLogs.add(callId);
-        selectedCallLogsPosition.add(index);
+        selectedCallKitLogs.add(callId);
+        selectedCallKitLogsPosition.add(index);
         callkitLogger.info("Adding $callId");
       }
     }
     
-    if (selectedCallLogs.isEmpty) {
+    if (selectedCallKitLogs.isEmpty) {
       // clearAllChatSelection();
       delete(false);
       selected(false);
@@ -2456,24 +2467,37 @@ class DashboardController extends FullLifeCycleController
 
     callkitLogger.info(
         "$callKitLogTag #selectOrRemoveCallKitLogFromList completed for index: $index, selectedLog: ${selectedLog.value},"
-            " selectedCallLogs: $selectedCallLogs");
+            " selectedCallLogs: $selectedCallKitLogs");
   }
 
-  isLogSelected(int index) =>
-      selectedCallLogs.contains(Constants.useMirrorFlyCallKit ? (callKitCallLogList[index].callId.toString()) : callLogList[index].roomId);
+  bool isLogSelected(int index) {
+    if (Constants.useMirrorFlyCallKit) {
+      return selectedCallKitLogs.contains(callKitCallLogList[index].callId);
+    } else {
+     return selectedCallLogs.contains(callLogList[index].roomId);
+    }
+  }
 
   deleteCallLog() {
-    if (selectedCallLogs.length == 1) {
-      _itemDeleteCallLog(0);
+    if (Constants.useMirrorFlyCallKit) {
+      if (selectedCallKitLogs.length == 1) {
+        _itemDeleteCallLog(0);
+      } else {
+        itemsDeleteCallLog();
+      }
     } else {
-      itemsDeleteCallLog();
+      if (selectedCallLogs.length == 1) {
+        _itemDeleteCallLog(0);
+      } else {
+        itemsDeleteCallLog();
+      }
     }
   }
 
   _itemDeleteCallLog(int index) {
     final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
     var logIndex = isCallKitDelete ?
-          callKitCallLogList.indexWhere((e) => selectedCallLogs[index] == e.callId.toString())
+          callKitCallLogList.indexWhere((e) => selectedCallKitLogs[index] == e.callId.toString())
         : callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId);
     callkitLogger.info("$callKitLogTag _itemDeleteCallLog called for logIndex: $logIndex, isCallKitDelete: $isCallKitDelete");
 
@@ -2494,13 +2518,13 @@ class DashboardController extends FullLifeCycleController
               onPressed: () async {
                 NavUtils.back();
                 if (isCallKitDelete) {
-                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallLogs, clearAll: false);
+                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallKitLogs);
                   if (isCallLogCleared) {
-                    callkitLogger.info("$callKitLogTag Call log deleted successfully for callId: ${selectedCallLogs[index]}");
+                    callkitLogger.info("$callKitLogTag Call log deleted successfully for callId: ${selectedCallKitLogs[index]}");
                     callKitCallLogList.removeAt(logIndex);
                     delete(false);
                     selected(false);
-                    selectedCallLogs.clear();
+                    selectedCallKitLogs.clear();
                   } else {
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
@@ -2546,13 +2570,13 @@ class DashboardController extends FullLifeCycleController
                 NavUtils.back();
                 final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
                 if (isCallKitDelete) {
-                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallLogs, clearAll: false);
+                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallKitLogs);
                   if (isCallLogCleared) {
-                    callkitLogger.info("$callKitLogTag Multiple call logs deleted successfully for callIds: $selectedCallLogs");
-                    callKitCallLogList.removeWhere((log) => selectedCallLogs.contains(log.callId.toString()));
+                    callkitLogger.info("$callKitLogTag Multiple call logs deleted successfully for callIds: $selectedCallKitLogs");
+                    callKitCallLogList.removeWhere((log) => selectedCallKitLogs.contains(log.callId.toString()));
                     delete(false);
                     selected(false);
-                    selectedCallLogs.clear();
+                    selectedCallKitLogs.clear();
                   } else {
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
@@ -2603,7 +2627,7 @@ class DashboardController extends FullLifeCycleController
                 NavUtils.back();
                 final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
                 if (isCallKitDelete) {
-                  MirrorFlyCallKit.clearCallLogs(callIds: [], clearAll: true).then((isCleared) {
+                  MirrorFlyCallKit.clearAllCallLogs().then((isCleared) {
                     if (isCleared) {
                       callkitLogger.info("$callKitLogTag All call logs cleared successfully");
                       callKitCallLogList.clear();

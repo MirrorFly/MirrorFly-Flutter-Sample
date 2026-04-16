@@ -282,7 +282,7 @@ class MeetLinkController extends GetxController {
     if (Constants.useMirrorFlyCallKit) {
     try {
 
-      final bool isCfConnected = MirrorFlyCallKit.isSocketConnected();
+      final bool isCfConnected = MirrorFlyCallKit.isServerConnected();
       callkitLogger.info("[MeetLink] isCfConnected: $isCfConnected");
 
       if (!isCfConnected) {

@@ -130,9 +130,7 @@ class CallLogInfoController extends GetxController{
           TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 NavUtils.back();
-                final bool isDeleted = await MirrorFlyCallKit.clearCallLogs(
-                    callIds: callKitLogData.value.callParticipants ?? [],
-                    clearAll: false);
+                final bool isDeleted = await MirrorFlyCallKit.clearCallLogs(callIds: [callKitLogData.value.callId ?? 0]);
                 if (isDeleted) {
                   NavUtils.back(result: true);
                 } else {

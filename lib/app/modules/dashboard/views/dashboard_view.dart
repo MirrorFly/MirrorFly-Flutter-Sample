@@ -112,8 +112,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                                     .titleTextStyle,
                                               )
                                             : Text(
-                                                (controller.selectedCallLogs
-                                                        .length)
+                                            (Constants.useMirrorFlyCallKit ? controller.selectedCallKitLogs.length : controller.selectedCallLogs.length)
                                                     .toString(),
                                                 style: AppStyleConfig
                                                     .dashBoardPageStyle
