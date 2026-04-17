@@ -52,7 +52,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
             },
             child: Theme(
               data: Theme.of(context).copyWith(
-                  tabBarTheme: AppStyleConfig.dashBoardPageStyle.tabBarTheme,
+                  tabBarTheme: AppStyleConfig.dashBoardPageStyle.tabBarThemeData,
                   appBarTheme: AppStyleConfig.dashBoardPageStyle.appBarTheme,
                   floatingActionButtonTheme: AppStyleConfig
                       .dashBoardPageStyle.floatingActionButtonThemeData),

@@ -203,7 +203,6 @@ class CallkitPipView extends NavViewStateful<CallKitPipController> {
 
   Widget _buildTile(FlyCallParticipant participant) {
     return MirrorFlyCallView(
-      isLocalPreviewView: false,
       key: ValueKey(participant.identity),
       userJID: participant.identity,
       fit: BoxFit.cover,

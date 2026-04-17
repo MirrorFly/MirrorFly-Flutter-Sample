@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart'
 as lib_phone_number;
 import 'package:get/get.dart';
+import '../../../base_controller.dart';
 import '../../../common/main_controller.dart';
 import '../../../data/helper.dart';
 import '../../../data/permissions.dart';
@@ -63,7 +64,7 @@ class LoginController extends GetxController {
   }
 
   void startTimer() {
-    countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
+    // countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) => setCountDown());
   }
 
   void setCountDown() {
@@ -86,12 +87,12 @@ class LoginController extends GetxController {
 
   @override
   void dispose() {
-    stopTimer();
+    // stopTimer();
     super.dispose();
   }
 
   void stopTimer() {
-    countdownTimer!.cancel();
+    // countdownTimer!.cancel();
   }
 
   Future<void> registerUser() async {
@@ -435,6 +436,10 @@ class LoginController extends GetxController {
                 debugPrint("centrifuge CallKit issue===> ${response.errorMessage.toString()} exception: ${response.exception}");
               }
             });
+
+            if (Constants.useMirrorFlyCallKit) {
+              BaseController.initializeCallKitListeners();
+            }
 
             LogMessage.d("CallKit", "CallKit initialized successfully");
             await Mirrorfly.updateVoipTokenForLiveKitCalls();

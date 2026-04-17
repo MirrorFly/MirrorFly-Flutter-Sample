@@ -439,7 +439,7 @@ class CallKitAddParticipantsController extends GetxController
 
     var callConnectedUserList = <String>[];
     for (var value1 in callList.value) {
-      callConnectedUserList.add(value1.identity ?? '');
+      callConnectedUserList.add(value1.identity);
     }
 
     callkitLogger.info(
@@ -659,20 +659,20 @@ class CallKitAddParticipantsController extends GetxController
     for (FlyCallParticipant user in callList.value) {
       callkitLogger.info("isUserAlreadyInCall → Checking user: ${user.identity}");
 
-      final String userId = user.identity ?? '';
+      final String userId = user.identity;
       if (userId.isEmpty) {
         callkitLogger.info("isUserAlreadyInCall → Invalid userId provided");
         usersInCurrentCall = [];
       }
 
-      final List<FlyCallParticipant>? flyCallParticipants = await MirrorFlyCallKit.getCurrentCallParticipants();
-      if (flyCallParticipants == null || flyCallParticipants.isEmpty) {
+      final List<FlyCallParticipant> flyCallParticipants = MirrorFlyCallKit.getCurrentCallParticipants();
+      if (flyCallParticipants.isEmpty) {
         callkitLogger.info(
             "isUserAlreadyInCall → No participants found, user is not in call");
         usersInCurrentCall = [];
       }
 
-      if (flyCallParticipants!.any((p) => p.identity == userId)) {
+      if (flyCallParticipants.any((p) => p.identity == userId)) {
         callkitLogger.info(
             "isUserAlreadyInCall → User $userId is already in call");
         usersInCurrentCall.add(userId);

@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_logger.dart';
 import 'package:mirror_fly_demo/app/call_modules/call_utils.dart';
-import 'package:mirror_fly_demo/mention_text_field/src/string_extensions.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -38,7 +36,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   final audioMuted = true.obs;
 
   RxBool callEnded = false.obs;
-  bool invalidLink = false;
+  RxBool invalidLink = false.obs;
   String callEndedMessage = "";
   RxBool showPreview = false.obs;
   var callMode = "".obs;
@@ -75,10 +73,21 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
         // await getVideoLocalCapturePreview();
       } else {
-        if (initializeJoinLinkResponse.code == 400) {
+        if (initializeJoinLinkResponse.code == FlyCallErrorCode.alreadyCallEnded) {
           callkitLogger.info("Join via link initialization failed with error: call is already ended");
           callEnded.value = true;
-          toToast(initializeJoinLinkResponse.errorMessage ?? "Call is Already ended");
+          // toToast(initializeJoinLinkResponse.errorMessage ?? "Call is Already ended");
+          return;
+        } else if (initializeJoinLinkResponse.code == FlyCallErrorCode.invalidCallLink) {
+          callkitLogger.info("Join via link initialization failed with error: Invalid Call link");
+          invalidLink.value = true;
+          callEnded.value = true;
+          callEndedMessage = getTranslated("invalidLink");
+          return;
+        } else if (initializeJoinLinkResponse.code == FlyCallErrorCode.carbonUserInCall) {
+          callkitLogger.info("Join via link initialization failed with error: carbon user in the call");
+          toToast("You are already in this call on another device");
+          NavUtils.back();
           return;
         }
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
@@ -136,17 +145,20 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
             });
           } else {
             final int errorCode = response.errorMap.keys.first;
-            if (errorCode == 602) {
+            if (errorCode == FlyCallErrorCode.noParticipantOrCallEnded) {
               callEnded.value = true;
               toToast("Call ended");
               return;
-            } else if (errorCode == 410) {
-                toToast(response.errorMap[410] ?? "");
+            } else if (errorCode == FlyCallErrorCode.microPhonePermissionDenied || errorCode == FlyCallErrorCode.microPhonePermissionPermanentlyDenied) {
+                toToast(response.errorMap[FlyCallErrorCode.microPhonePermissionDenied] ?? "");
                 await AppPermission.askAudioCallPermissions();
-            } else if (errorCode == 411) {
-              toToast(response.errorMap[411] ?? "");
+            } else if (errorCode == FlyCallErrorCode.cameraPermissionDenied || errorCode == FlyCallErrorCode.cameraPermissionPermanentlyDenied) {
+              toToast(response.errorMap[FlyCallErrorCode.cameraPermissionDenied] ?? "");
               await AppPermission.askVideoCallPermissions();
-            } else {
+            } else if(errorCode == FlyCallErrorCode.alreadyCallEnded) {
+              callkitLogger.info("Join call link initialization failed with error: call is already ended");
+              callEnded.value = true;
+            }else {
               callkitLogger.info("Failed to join call via link with error: ${response.errorMap}");
               toToast(response.errorMap.values.first);
             }
@@ -165,16 +177,23 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
   /// Mute Audio
   Future<void> muteAudio() async {
     callkitLogger.info("Setting microphone mute state in CallKit to: ${audioMuted.value}");
-    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success, required String code}) async {
+    MirrorFlyCallKit.setMicrophoneMuted(mute: !audioMuted.value, result: ({bool? isMuted, required String message, required bool success, required int code}) async {
       if (success) {
         callkitLogger.info("Microphone mute state successfully set in CallKit response isMuted $isMuted. Current state: ${audioMuted.value}");
           audioMuted(isMuted);
           callkitLogger.info("Audio mute state changed. New state: ${audioMuted.value}");
       } else {
-        if (code == "410") {
+        callkitLogger.info("Audio mute state change failed: message: $message, code: $code");
+
+        if (code == FlyCallErrorCode.microPhonePermissionDenied) {
           toToast(message);
           await AppPermission.askAudioCallPermissions();
         }
+        if (code == FlyCallErrorCode.microPhonePermissionPermanentlyDenied) {
+          toToast(message);
+          await openAppSettings();
+        }
+
         callkitLogger.info("Failed to set microphone mute state in CallKit. Error: $message");
       }
     });
@@ -193,10 +212,16 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
         if (!success) {
           callkitLogger.error("Failed to toggle videoMute");
-          if (code == "411") {
+          if (code == FlyCallErrorCode.cameraPermissionDenied) {
             toToast(message);
             await AppPermission.askVideoCallPermissions();
           }
+
+          if (code == FlyCallErrorCode.cameraPermissionPermanentlyDenied) {
+            toToast(message);
+            await openAppSettings();
+          }
+
           return;
         }
 
@@ -358,4 +383,10 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       callkitLogger.info("#CallKitJoinCallController #participantDisconnected #noParticipant");
     }
   }
+
+  void closePreviewScreen() {
+    callkitLogger.info("#CallKitJoinCallController Closing preview screen and navigating back");
+    NavUtils.back();
+  }
+
 }

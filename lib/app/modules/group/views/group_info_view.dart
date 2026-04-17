@@ -291,10 +291,11 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var item = controller.groupMembers[index];
+                        bool isMyName = item.jid == SessionManagement.getUserJID();
                         return MemberItem(
                           itemStyle: AppStyleConfig
                               .groupChatInfoPageStyle.groupMemberStyle,
-                          name: item.getName().checkNull(),
+                          name: isMyName ? "You" : item.getName().checkNull(),
                           image: item.image.checkNull(),
                           isAdmin: item.isGroupAdmin,
                           status: item.status.checkNull(),
@@ -422,9 +423,7 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
             visualDensity: const VisualDensity(horizontal: 0, vertical: -3)),
         Obx(() {
           return Visibility(
-              visible: controller.isAdmin &&
-                  controller.availableFeatures.value.isGroupChatAvailable
-                      .checkNull(),
+              visible: controller.isAdmin && controller.availableFeatures.value.isGroupChatAvailable.checkNull(),
               child: ListTile(
                   title: Text(
                     getTranslated("removeFromGroup"),
@@ -432,7 +431,8 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                         fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    NavUtils.back();
+                    Get.back();
+                    // NavUtils.back();
                     if (!controller.availableFeatures.value.isGroupChatAvailable
                         .checkNull()) {
                       DialogUtils.showFeatureUnavailable();
@@ -478,9 +478,9 @@ class GroupInfoView extends NavViewStateful<GroupInfoController> {
                         fontWeight: FontWeight.normal, fontSize: 16),
                   ),
                   onTap: () {
-                    NavUtils.back();
-                    if (!controller.availableFeatures.value.isGroupChatAvailable
-                        .checkNull()) {
+                    // NavUtils.back();
+                    Get.back();
+                    if (!controller.availableFeatures.value.isGroupChatAvailable.checkNull()) {
                       DialogUtils.showFeatureUnavailable();
                       return;
                     }

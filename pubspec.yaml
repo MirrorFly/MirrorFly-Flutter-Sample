@@ -1,5 +1,5 @@
 name: mirror_fly_demo
-version: 4.2.5+26
+version: 4.2.9+3
 build_release_date: Apr 2025
 publish_to: none
 description: A MirrorFly Flutter Sample Application.
@@ -18,11 +18,11 @@ dependencies:
   cached_network_image: ^3.4.1
   file_picker: ^8.1.2
   fluttertoast: ^8.2.8
-  intl: ^0.19.0
+  intl: ^0.20.2
   package_info_plus: ^8.0.2
   image_picker: ^1.1.2
   permission_handler: ^12.0.1
-  emoji_picker_flutter: 3.0.0
+  emoji_picker_flutter: ^4.4.0
   path_provider: ^2.1.4
   lottie: ^3.1.2
   url_launcher: ^6.3.0
@@ -65,7 +65,7 @@ dependencies:
 #  mirrorfly_plugin: ^1.0.4
 
   #BackUp and Restore
-  icloud_storage_sync: ^0.0.1
+  icloud_storage_sync: ^0.0.4
   google_sign_in: ^6.2.2
   googleapis_auth: ^1.6.0
   googleapis: ^13.2.0
@@ -96,7 +96,7 @@ dependency_overrides:
 
 
 dev_dependencies:
-  flutter_lints: 2.0.1
+  flutter_lints: 6.0.0
 #  flutter_webrtc: 1.0.0
   flutter_test: 
     sdk: flutter
@@ -111,6 +111,7 @@ flutter:
     - assets/calls/
     - assets/animation/
     - assets/locales/
+    - assets/locales/en.json
     - assets/i18n/
     - assets/backup_restore/
     - assets/sounds/reconnecting.mp3

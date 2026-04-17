@@ -70,6 +70,10 @@ class CallKitCallTimeoutController extends GetxController {
 
 
   void cancelCallTimeout() {
+    if (NavUtils.previousRoute == Routes.callKitParticipantView) {
+      NavUtils.back();
+      NavUtils.back();
+    }
     NavUtils.back();
   }
 

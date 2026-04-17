@@ -13,8 +13,10 @@ import '../data/permissions.dart';
 import '../data/session_management.dart';
 import '../data/utils.dart';
 import '../extensions/extensions.dart';
+import '../routes/app_pages.dart';
 import '../routes/route_settings.dart';
 import '../stylesheet/stylesheet.dart';
+import 'call_utils.dart';
 
 class MeetSheetView extends NavViewStateful<MeetLinkController> {
   const MeetSheetView(
@@ -120,6 +122,7 @@ class MeetSheetView extends NavViewStateful<MeetLinkController> {
                             ? null
                             : () {
                                 controller.joinCall();
+                                NavUtils.back();
                               },
                         style: meetBottomSheetStyle.joinMeetingButtonStyle,
                         child: Text(getTranslated("joinMeeting")));
@@ -278,8 +281,16 @@ class MeetLinkController extends GetxController {
   void createMeetLink() async{
     if (Constants.useMirrorFlyCallKit) {
     try {
-      final CreateMeetLinkResponse meetLinkResponse =
-      await MirrorFlyCallKit.createMeetLink();
+
+      final bool isCfConnected = MirrorFlyCallKit.isSocketConnected();
+      callkitLogger.info("[MeetLink] isCfConnected: $isCfConnected");
+
+      if (!isCfConnected) {
+        toToast("Socket not connected");
+        return;
+      }
+
+      final CreateMeetLinkResponse meetLinkResponse = await MirrorFlyCallKit.createMeetLink();
 
       callkitLogger.info(
           "[MeetLink] Response received → isSuccess: ${meetLinkResponse.isSuccess}, "
@@ -334,11 +345,7 @@ class MeetLinkController extends GetxController {
     if (await AppUtils.isNetConnected()) {
       if (meetLink.isNotEmpty && await AppPermission.askVideoCallPermissions()) {
         if (Constants.useMirrorFlyCallKit) {
-          NavUtils.toNamed(Routes.callKitJoinCallPreview, arguments: {
-            "callLinkId": meetLink,
-            "navigatedFrom": "MeetLinkController-JoinCall"
-
-          });
+          CallUtils.onJoinLinkTapped(link: meetLink.value);
         } else {
           NavUtils.offNamed(Routes.joinCallPreview, arguments: {
             "callLinkId": meetLink.replaceAll(Constants.webChatLogin, ""),
