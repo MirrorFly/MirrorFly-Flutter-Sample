@@ -34,7 +34,7 @@ class ParticipantsView extends NavViewStateful<AddParticipantsController> {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarTheme,
+        tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarThemeData,
         appBarTheme: AppStyleConfig.addParticipantsPageStyle.appBarTheme,
       ),
       child: CustomSafeArea(

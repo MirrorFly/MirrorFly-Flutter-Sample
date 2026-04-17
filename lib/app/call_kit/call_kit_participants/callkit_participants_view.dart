@@ -37,7 +37,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarTheme,
+        tabBarTheme: AppStyleConfig.addParticipantsPageStyle.tabBarThemeData,
         appBarTheme: AppStyleConfig.addParticipantsPageStyle.appBarTheme,
       ),
       child: CustomSafeArea(
@@ -430,7 +430,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                             } else if (controller.usersList.isNotEmpty) {
                               var item = controller.usersList[index];
                               final String idFromJid = CallUtils.getIdFromJidList(item.jid ?? "");
-                              final bool blockUserClick = controller.usersInCurrentCall.contains(idFromJid ?? "");
+                              final bool blockUserClick = controller.usersInCurrentCall.contains(idFromJid);
                               return ContactItem(
                                 item: item,
                                 onAvatarClick: () {
