@@ -38,7 +38,7 @@ apply plugin: 'com.google.gms.google-services'*/
 android {
     namespace = "com.mirrorfly.flutter"
     compileSdk = 36
-    ndkVersion = " 26.1.10909125"
+    ndkVersion = "27.0.12077973"
 
     signingConfigs {
         config {

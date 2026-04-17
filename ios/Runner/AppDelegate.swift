@@ -3,7 +3,7 @@ import PushKit
 import Flutter
 import GoogleMaps
 import UserNotifications
-import FirebaseAuth
+//import FirebaseAuth
 import Firebase
 import MirrorFlySDK
 import mirrorfly_plugin
