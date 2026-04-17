@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/app_style_config.dart';
+import 'package:mirror_fly_demo/app/call_kit/call_log_info/call_log_info_view.dart';
 import 'package:mirror_fly_demo/app/call_kit/callkit_outgoing_call_view.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/views/restore_view.dart';
@@ -61,6 +62,7 @@ import '../modules/video_preview/views/video_player_view.dart';
 import '../modules/video_preview/views/video_preview_view.dart';
 import '../modules/view_all_media/views/view_all_media_view.dart';
 import '../modules/view_all_media_preview/views/view_all_media_preview_view.dart';
+
 
 part 'app_routes.dart';
 
@@ -274,6 +276,10 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
       case Routes.callKitJoinCallPreview:
       return MaterialPageRoute(
           builder: (_) => const CallKitJoinCallPreviewView(), settings: settings);
+
+      case Routes.callKitCallInfo:
+      return MaterialPageRoute(
+          builder: (_) => const CallLogInfoView(), settings: settings);
 
     default:
       if (settings.name!.startsWith(Routes.dashboard)) {

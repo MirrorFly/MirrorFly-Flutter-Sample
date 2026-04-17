@@ -63,6 +63,7 @@ abstract class Routes {
   static const groupParticipants = _Paths.groupParticipants;
   static const callInfo = _Paths.callInfo;
   static const pipView = _Paths.pipView;
+  static const callLog = _Paths.callLog;
 
   //callkit
   static const callKitOutGoingCallView = _Paths.callKitOutGoingCallView;
@@ -70,6 +71,7 @@ abstract class Routes {
   static const callKitTimeOutView = _Paths.callKitTimeOutView;
   static const callKitParticipantView = _Paths.callKitParticipantView;
   static const callKitJoinCallPreview = _Paths.callKitJoinCallPreview;
+  static const callKitCallInfo = _Paths.callKitCallInfo;
 
 
   //dialer pad
@@ -140,7 +142,9 @@ abstract class _Paths {
   static const participants = '/participants';
   static const groupParticipants = '/groupParticipants';
   static const callInfo = '/call-info';
+  static const callKitCallInfo = '/call-kit-info';
   static const pipView = '/pipView';
+  static const callLog = '/callLog';
 
   //callkit
   static const callKitOutGoingCallView = '/callKitOutGoingCallView';

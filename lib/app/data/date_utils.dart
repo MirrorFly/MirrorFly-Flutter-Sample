@@ -21,7 +21,7 @@ class DateTimeUtils {
   /// @param format The desired format of the output date string.
   /// @return The formatted date string representing the converted timestamp.
   static String convertTimeStampToDateString(int microseconds, String format) {
-    var calendar = DateTime.fromMicrosecondsSinceEpoch(microseconds);
+    var calendar = DateTime.fromMillisecondsSinceEpoch(microseconds);
     return DateFormat(format).format(calendar);
   }
 
@@ -99,7 +99,7 @@ class DateTimeUtils {
   /// Returns:
   /// - true if the date matches today's date; false otherwise.
   static bool isToday(int microseconds) {
-    var calendar = DateTime.fromMicrosecondsSinceEpoch(microseconds);
+    var calendar = DateTime.fromMillisecondsSinceEpoch(microseconds);
     final now = DateTime.now();
     return now.day == calendar.day &&
         now.month == calendar.month &&
@@ -115,7 +115,7 @@ class DateTimeUtils {
   /// Returns true if the date represented by [microseconds] is yesterday;
   /// otherwise, returns false.
   static bool isYesterday(int microseconds) {
-    var calendar = DateTime.fromMicrosecondsSinceEpoch(microseconds);
+    var calendar = DateTime.fromMillisecondsSinceEpoch(microseconds);
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
     return yesterday.day == calendar.day &&
         yesterday.month == calendar.month &&

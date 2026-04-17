@@ -3,12 +3,13 @@ import 'package:focus_detector/focus_detector.dart';
 import 'package:get/get.dart';
 import 'package:mirrorfly_plugin/mirrorfly.dart';
 import '../../../app_style_config.dart';
+import '../../../call_kit/call_log/call_log_view.dart';
 import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../extensions/extensions.dart';
-import '../../../modules/dashboard/views/callhistory_view.dart';
 import '../../../modules/dashboard/views/recentchat_view.dart';
 import '../../../stylesheet/stylesheet.dart';
+
 import '../../../widgets/animated_floating_action.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
@@ -22,8 +23,10 @@ class DashboardView extends NavViewStateful<DashboardController> {
   const DashboardView({Key? key}) : super(key: key);
 
   @override
-  DashboardController createController({String? tag}) =>
-      Get.put(DashboardController(), tag: key?.hashCode.toString());
+  DashboardController createController({String? tag}) {
+    return Get.put(DashboardController(), tag: key?.hashCode.toString());
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -109,8 +112,7 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                                     .titleTextStyle,
                                               )
                                             : Text(
-                                                (controller.selectedCallLogs
-                                                        .length)
+                                            (Constants.useMirrorFlyCallKit ? controller.selectedCallKitLogs.length : controller.selectedCallLogs.length)
                                                     .toString(),
                                                 style: AppStyleConfig
                                                     .dashBoardPageStyle
@@ -465,6 +467,12 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                             CustomAction(
                                               visibleWidget: IconButton(
                                                 onPressed: () {
+                                                  /// Search is not implemented for callKit log
+                                                  if (controller.currentTab.value == 1 && Constants.useMirrorFlyCallKit) {
+                                                    toToast("Not implemented for call log search yet");
+                                                    return;
+                                                  }
+
                                                   controller.gotoSearch();
                                                 },
                                                 icon: AppStyleConfig
@@ -564,18 +572,26 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                                       .textStyle),
                                               showAsAction:
                                                   controller.selected.value ||
-                                                          controller.isSearching
-                                                              .value ||
-                                                          controller.currentTab
-                                                                  .value ==
-                                                              0 ||
-                                                          controller.callLogList
+                                                          controller.isSearching.value ||
+                                                          controller.currentTab.value == 0 ||
+                                                      (!Constants
+                                                              .useMirrorFlyCallKit
+                                                          ? controller
+                                                              .callLogList
                                                               .isEmpty
-                                                      ? ShowAsAction.gone
+                                                          : controller
+                                                              .callKitCallLogList
+                                                              .isEmpty)
+                                                  ? ShowAsAction.gone
                                                       : ShowAsAction.never,
                                               keyValue: 'Clear call log',
-                                              onItemClick: () => controller
-                                                      .callLogList.isNotEmpty
+                                              onItemClick: () => (Constants
+                                                          .useMirrorFlyCallKit
+                                                      ? controller
+                                                          .callKitCallLogList
+                                                          .isNotEmpty
+                                                      : controller.callLogList
+                                                          .isNotEmpty)
                                                   ? controller.clearCallLog()
                                                   : toToast(getTranslated(
                                                       "noCallLog")),
@@ -639,11 +655,10 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                     contactItemStyle: AppStyleConfig
                                         .dashBoardPageStyle.contactItemStyle,
                                   ),
-                                  CallHistoryView(
-                                    controller: controller,
+                                   CallLogView(
                                     callHistoryItemStyle: AppStyleConfig
-                                        .dashBoardPageStyle
-                                        .callHistoryItemStyle,
+                                      .dashBoardPageStyle
+                                      .callHistoryItemStyle,
                                     noDataTextStyle: AppStyleConfig
                                         .dashBoardPageStyle.noDataTextStyle,
                                     createMeetLinkStyle: AppStyleConfig
@@ -652,9 +667,9 @@ class DashboardView extends NavViewStateful<DashboardController> {
                                         .dashBoardPageStyle.titlesTextStyle,
                                     meetBottomSheetStyle: AppStyleConfig
                                         .dashBoardPageStyle
-                                        .meetBottomSheetStyle,
-                                  )
+                                        .meetBottomSheetStyle, controller: controller),
                                 ])));
+
                   }),
                 ),
               ),

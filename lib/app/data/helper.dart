@@ -152,7 +152,7 @@ String getChatTime(BuildContext context, int? epochTime) {
   // var convertedTime = Platform.isAndroid ? epochTime : epochTime * 1000; // / 1000;
   // debugPrint("epoch convertedTime---> $convertedTime");
   var hourTime = manipulateMessageTime(
-      context, DateTime.fromMicrosecondsSinceEpoch(convertedTime));
+      context, DateTime.fromMillisecondsSinceEpoch(convertedTime));
   // calendar = DateTime.fromMicrosecondsSinceEpoch(convertedTime);
   //debugPrint('hourTime $hourTime');
   return hourTime;

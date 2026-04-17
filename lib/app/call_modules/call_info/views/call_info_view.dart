@@ -19,7 +19,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
   const CallInfoView({super.key});
 
   @override
-CallInfoController createController({String? tag}) => Get.put(CallInfoController());
+  CallInfoController createController({String? tag}) => Get.put(CallInfoController());
 
   @override
   Widget build(BuildContext context) {
@@ -67,96 +67,96 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Obx(() => ListTile(
-                        leading: controller.callLogData.groupId.checkNull().isEmpty
-                            ? ClipOval(
-                                child: AppUtils.assetIcon(assetName:
-                                  groupImg,
-                                  height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
-                                  width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : FutureBuilder(
-                                future: getProfileDetails(controller.callLogData.groupId.checkNull()),
-                                builder: (context, snap) {
-                                  return snap.hasData && snap.data != null
-                                      ? ImageNetwork(
-                                          url: snap.data!.image.checkNull(),
-                                          width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
-                                          height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
-                                          clipOval: true,
-                                          errorWidget: ClipOval(
-                                            child: AppUtils.assetIcon(assetName:
-                                              groupImg,
-                                              height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
-                                              width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          isGroup: false,
-                                          blocked: false,
-                                          unknown: false,
-                                        )
-                                      : ClipOval(
-                                          child: AppUtils.assetIcon(assetName:
-                                            groupImg,
-                                            height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
-                                            width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
-                                }),
-                        title: controller.callLogData.groupId.checkNull().isEmpty
-                            ? FutureBuilder(
-                                future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
-                                builder: (context, snap) {
-                                  if (snap.hasData) {
-                                    return Text(
-                                      snap.data.checkNull(),
-                                      style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.titleTextStyle,
-                                      // style: const TextStyle(color: Colors.black),
-                                    );
-                                  } else {
-                                    return const Offstage();
-                                  }
-                                })
-                            : FutureBuilder(
-                                future: getProfileDetails(controller.callLogData.groupId.checkNull()),
-                                builder: (context, snap) {
-                                  if (snap.hasData) {
-                                    return Text(
-                                      snap.data!.name.checkNull(),
-                                      style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.titleTextStyle,
-                                      // style: const TextStyle(color: Colors.black),
-                                    );
-                                  } else {
-                                    return const Offstage();
-                                  }
-                                }),
-                        subtitle: SizedBox(
-                          child: callLogTime(
-                              "${DateTimeUtils.getCallLogDate(microSeconds: controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
-                              controller.callLogData.callState,AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.durationTextStyle),
-                        ),
-                        trailing: SizedBox(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                getCallLogDuration(controller.callLogData.startTime!, controller.callLogData.endTime!),
-                                style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.subtitleTextStyle,
-                                // style: const TextStyle(color: Colors.black),
+                    leading: controller.callLogData.groupId.checkNull().isEmpty
+                        ? ClipOval(
+                      child: AppUtils.assetIcon(assetName:
+                      groupImg,
+                        height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
+                        width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : FutureBuilder(
+                        future: getProfileDetails(controller.callLogData.groupId.checkNull()),
+                        builder: (context, snap) {
+                          return snap.hasData && snap.data != null
+                              ? ImageNetwork(
+                            url: snap.data!.image.checkNull(),
+                            width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
+                            height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
+                            clipOval: true,
+                            errorWidget: ClipOval(
+                              child: AppUtils.assetIcon(assetName:
+                              groupImg,
+                                height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
+                                width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
+                                fit: BoxFit.cover,
                               ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              groupCallIcon(controller.callLogData.callType, controller.callLogData, controller.callLogData.callMode,
-                                  controller.callLogData.userList,AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.iconColor),
-                            ],
+                            ),
+                            isGroup: false,
+                            blocked: false,
+                            unknown: false,
+                          )
+                              : ClipOval(
+                            child: AppUtils.assetIcon(assetName:
+                            groupImg,
+                              height: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.height,
+                              width: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.profileImageSize.width,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }),
+                    title: controller.callLogData.groupId.checkNull().isEmpty
+                        ? FutureBuilder(
+                        future: CallUtils.getCallLogUserNames(controller.callLogData.userList!, controller.callLogData),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            return Text(
+                              snap.data.checkNull(),
+                              style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.titleTextStyle,
+                              // style: const TextStyle(color: Colors.black),
+                            );
+                          } else {
+                            return const Offstage();
+                          }
+                        })
+                        : FutureBuilder(
+                        future: getProfileDetails(controller.callLogData.groupId.checkNull()),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            return Text(
+                              snap.data!.name.checkNull(),
+                              style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.titleTextStyle,
+                              // style: const TextStyle(color: Colors.black),
+                            );
+                          } else {
+                            return const Offstage();
+                          }
+                        }),
+                    subtitle: SizedBox(
+                      child: callLogTime(
+                          "${DateTimeUtils.getCallLogDate(microSeconds: controller.callLogData.callTime!)}  ${getChatTime(context, controller.callLogData.callTime)}",
+                          controller.callLogData.callState,AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.durationTextStyle),
+                    ),
+                    trailing: SizedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            getCallLogDuration(controller.callLogData.startTime!, controller.callLogData.endTime!),
+                            style: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.subtitleTextStyle,
+                            // style: const TextStyle(color: Colors.black),
                           ),
-                        ),
-                      )),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          groupCallIcon(controller.callLogData.callType, controller.callLogData, controller.callLogData.callMode,
+                              controller.callLogData.userList,AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.iconColor),
+                        ],
+                      ),
+                    ),
+                  )),
                   Divider(
                     color: AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.dividerColor,
                     height: 1,
@@ -177,20 +177,20 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                               builder: (context, snap) {
                                 return snap.hasData && snap.data != null
                                     ? ImageNetwork(
-                                        url: snap.data!.image.checkNull(),
-                                        width: style.profileImageSize.width,
-                                        height: style.profileImageSize.height,
-                                        clipOval: true,
-                                        errorWidget: getName(snap.data!).checkNull().isNotEmpty
-                                            ? ProfileTextImage(text: getName(snap.data!),radius: style.profileImageSize.height/2,)
-                                            : const Icon(
-                                                Icons.person,
-                                                color: Colors.white,
-                                              ),
-                                        isGroup: false,
-                                        blocked: false,
-                                        unknown: false,
-                                      )
+                                  url: snap.data!.image.checkNull(),
+                                  width: style.profileImageSize.width,
+                                  height: style.profileImageSize.height,
+                                  clipOval: true,
+                                  errorWidget: getName(snap.data!).checkNull().isNotEmpty
+                                      ? ProfileTextImage(text: getName(snap.data!),radius: style.profileImageSize.height/2,)
+                                      : const Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                  ),
+                                  isGroup: false,
+                                  blocked: false,
+                                  unknown: false,
+                                )
                                     : const Offstage();
                               }),
                           title: FutureBuilder(
@@ -198,10 +198,10 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
                               builder: (context, snap) {
                                 return snap.hasData && snap.data != null
                                     ? Text(
-                                        snap.data!.name.checkNull(),
-                                        style: style.titleStyle,
-                                        // style: const TextStyle(color: Colors.black),
-                                      )
+                                  snap.data!.name.checkNull(),
+                                  style: style.titleStyle,
+                                  // style: const TextStyle(color: Colors.black),
+                                )
                                     : const Offstage();
                               }),
                         );
@@ -215,37 +215,37 @@ CallInfoController createController({String? tag}) => Get.put(CallInfoController
     );
   }
 
-  Widget groupCallIcon(String? callType, CallLogData item, String? callMode, List<String>? userList,Color iconColor) {
+  Widget groupCallIcon(String? callType, CallLogData callLogData, String? callMode, List<String>? userList,Color iconColor) {
     List<String>? localUserList = [];
-    if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
-      localUserList.addAll(item.userList!);
-      if (!item.userList!.contains(item.fromUser)) {
-        localUserList.add(item.fromUser!);
+    if (callLogData.callState == CallState.missedCall || callLogData.callState == CallState.incomingCall) {
+      localUserList.addAll(callLogData.userList!);
+      if (!callLogData.userList!.contains(callLogData.fromUser)) {
+        localUserList.add(callLogData.fromUser!);
       }
     } else {
-      localUserList.addAll(item.userList!);
+      localUserList.addAll(callLogData.userList!);
     }
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
-            onPressed: () {
-              controller.makeCall(localUserList, callType, item);
-            },
-            icon: AppUtils.svgIcon(icon:
-              videoCallIcon,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-            ),
-          )
+      onPressed: () {
+        controller.makeCall(localUserList, callType, callLogData);
+      },
+      icon: AppUtils.svgIcon(icon:
+      videoCallIcon,
+        colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+      ),
+    )
         : IconButton(
-            onPressed: () {
-              controller.makeCall(localUserList, callType, item);
-            },
-            icon: AppUtils.svgIcon(icon:
-              audioCallIcon,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-            ));
+        onPressed: () {
+          controller.makeCall(localUserList, callType, callLogData);
+        },
+        icon: AppUtils.svgIcon(icon:
+        audioCallIcon,
+          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+        ));
   }
 
-  /*void showPopupMenu(BuildContext context, CallLogData callLogData) {
+/*void showPopupMenu(BuildContext context, CallLogData callLogData) {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     showMenu(
       context: context,

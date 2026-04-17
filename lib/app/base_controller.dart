@@ -97,6 +97,18 @@ class BaseController {
       }
     }
 
+    MirrorFlyCallKit.flyCallLogUpdate.listen((List<CallLog>? callLogs) {
+      if (callLogs != null && callLogs.isNotEmpty) {
+        callkitLogger.info("Updated call logs received: ${callLogs.length}");
+        if (Get.isRegistered<DashboardController>()) {
+          final DashboardController dashboardController = Get.find<DashboardController>();
+          dashboardController.onCallKitCallLogsUpdated(callLogs);
+        } else {
+          callkitLogger.info("DashboardController not registered, cannot update call logs");
+        }
+      }
+    });
+
     ///
     MirrorFlyCallKit.flyCallStatus.listen((event) async {
 

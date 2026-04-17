@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show MirrorFlyCallKit, FlyCallLogRpcResponseModel, CallLog, FlyResult;
+import '../../../call_kit/callkit_logger.dart';
 import '../../../call_modules/call_utils.dart';
 import '../../../common/app_localizations.dart';
 import '../../../common/constants.dart';
@@ -81,8 +83,14 @@ class DashboardController extends FullLifeCycleController
   var totalPages = 0;
 
   var selectedLog = false.obs;
+
+  /// For old call logs
   var selectedCallLogs = <String>[].obs;
   var selectedCallLogsPosition = <int>[].obs;
+
+  // For callKit logs
+  var selectedCallKitLogs = <int>[].obs;
+  var selectedCallKitLogsPosition = <int>[].obs;
 
   //final _unreadCallCount = 0.obs;
 
@@ -96,6 +104,7 @@ class DashboardController extends FullLifeCycleController
       returnFormattedCount(unreadCallCount.value);
 
   late DashboardViewArguments? arguments;
+  final String callKitLogTag = "#DashboardController #CallKit";
 
   @override
   void onInit() async {
@@ -138,17 +147,33 @@ class DashboardController extends FullLifeCycleController
     });
     pageNumber = 1;
     getWebLoginDetails();
-    Mirrorfly.syncCallLogs().then((isSuccess) {
-      debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
-    });
+
+    if (Constants.useMirrorFlyCallKit) {
+      /// sync here for
+    } else {
+      Mirrorfly.syncCallLogs().then((isSuccess) {
+        debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+      });
+    }
     super.onInit();
   }
 
   markAllUnreadMissedCallsAsRead() async {
     if (unreadCallCount.value > 0) {
-      var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
-      debugPrint("(markAllUnreadMissedCallsAsRead result $result");
-      unreadCallCount(0);
+      if (Constants.useMirrorFlyCallKit) {
+        var result = await MirrorFlyCallKit.markMissedCallAsSeen();
+        debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead result $result");
+        if (result) {
+          unreadCallCount(0);
+        } else {
+          debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead failed");
+        }
+      } else {
+        var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
+        debugPrint("(markAllUnreadMissedCallsAsRead result $result");
+        unreadCallCount(0);
+      }
+
     }
   }
 
@@ -175,7 +200,13 @@ class DashboardController extends FullLifeCycleController
     // checkArchiveSetting();
     userlistScrollController.addListener(_scrollListener);
     historyScrollController.addListener(historyScrollListener);
-    fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      fetchCallLitCallLogList();
+    } else {
+      fetchCallLogList();
+    }
+
     callLogScrollController.addListener(_callLogScrollListener);
   }
 
@@ -596,8 +627,13 @@ class DashboardController extends FullLifeCycleController
     debugPrint("clear selection $currentTab");
     //Need to check the Codes below if condition for Calls tab, whether it is required or not
     if (currentTab.value == 1) {
-      selectedCallLogs.clear();
-      selectedCallLogsPosition.clear();
+      if (Constants.useMirrorFlyCallKit) {
+        selectedCallKitLogs.clear();
+        selectedCallKitLogsPosition.clear();
+      } else {
+        selectedCallLogs.clear();
+        selectedCallLogsPosition.clear();
+      }
       selectedLog(false);
     }
     selected(false);
@@ -1253,11 +1289,14 @@ class DashboardController extends FullLifeCycleController
   List<ProfileDetails> get userList => _userList;
   var callLogScrollController = ScrollController();
   var isCallLogPageLoading = false.obs;
+
   final _callLogList = <CallLogData>[].obs;
-
   set callLogList(List<CallLogData> value) => _callLogList.value = value;
-
   List<CallLogData> get callLogList => _callLogList;
+
+  final _callKitCallLogList = <CallLog>[].obs;
+  set callKitCallLogList(List<CallLog> value) => _callKitCallLogList.value = value;
+  List<CallLog> get callKitCallLogList => _callKitCallLogList;
 
   _callLogScrollListener() {
     // if (callLogScrollController.hasClients) {
@@ -1284,7 +1323,12 @@ class DashboardController extends FullLifeCycleController
 
       if (!isLastPage.value && !loading.value) {
         pageNumber = pageNumber + 1;
-        fetchCallLogList();
+
+        if (Constants.useMirrorFlyCallKit) {
+          fetchCallLitCallLogList();
+        } else {
+          fetchCallLogList();
+        }
       }
     }
   }
@@ -1324,10 +1368,22 @@ class DashboardController extends FullLifeCycleController
           filteredCallLog(search.text.trim());
         });
       } else {
-        pageNumber = 1;
-        _callLogList.clear();
-        callLogList.clear();
-        fetchCallLogList();
+
+        if (Constants.useMirrorFlyCallKit) {
+          _callKitCallLogList.clear();
+          callKitCallLogList.clear();
+          pageNumber = 1;
+        } else {
+          pageNumber = 1;
+          _callLogList.clear();
+          callLogList.clear();
+        }
+
+        if (Constants.useMirrorFlyCallKit) {
+          fetchCallLitCallLogList();
+        } else {
+          fetchCallLogList();
+        }
       }
     }
   }
@@ -1340,10 +1396,23 @@ class DashboardController extends FullLifeCycleController
     search.clear();
     clearVisible(false);
     // frmRecentChatList(recentChats);
-    _callLogList.clear();
-    callLogList.clear();
+
+    if (Constants.useMirrorFlyCallKit) {
+      _callLogList.clear();
+      callLogList.clear();
+    } else {
+
+    _callKitCallLogList.clear();
+    callKitCallLogList.clear();
+    }
+
     pageNumber = 1;
-    fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      fetchCallLitCallLogList();
+    } else {
+      fetchCallLogList();
+    }
   }
 
   var pageNum = 1;
@@ -1634,7 +1703,6 @@ class DashboardController extends FullLifeCycleController
       hasPaused = false;
       LogMessage.d("updateRecentChatListHistory", "reload recent chat list");
       getRecentChatList();
-      // fetchCallLogList();
       onCallLogUpdate(false);
     }
     getArchivedChatsList();
@@ -1649,6 +1717,11 @@ class DashboardController extends FullLifeCycleController
     checkContactSyncPermission();
     typingAndGoneStatus.clear();
     // fetchCallLogList();
+
+    if (Constants.useMirrorFlyCallKit) {
+      _refreshCallKitCallLogList();
+      markAllUnreadMissedCallsAsRead();
+    }
   }
 
   void getProfileDetail(context, RecentChatData chatItem, int index) {
@@ -1894,7 +1967,64 @@ class DashboardController extends FullLifeCycleController
   @override
   void onHidden() {}
 
+  Future<void> fetchCallLitCallLogList() async {
+    callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
+
+    if (await AppUtils.isNetConnected()) {
+      callkitLogger.info("$callKitLogTag fetchCallLogList no internet connection");
+      toToast(getTranslated("noInternetConnection"));
+      loading.value = false;
+      return;
+    }
+
+    if (Constants.useMirrorFlyCallKit) {
+      loading.value = true;
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
+
+      final FlyCallLogRpcResponseModel response = await MirrorFlyCallKit.getCallLogs(page: pageNumber, size: 20);
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList response: ${response.toJson()}");
+
+      loading.value = false;
+      if (response.code == 200) {
+        callkitLogger.info("$callKitLogTag fetchCallLitCallLogList success response: ${response.data}");
+        if (response.data?.callLogs != null && response.data!.callLogs!.isNotEmpty) {
+          List<CallLog> callLogs = response.data?.callLogs ?? [];
+          isLastPage.value = callLogs.isEmpty;
+          _callKitCallLogList.addAll(callLogs);
+          callkitLogger.info("$callKitLogTag fetchCallLitCallLogList added ${callLogs.length} call logs to the list");
+        } else {
+          callkitLogger.info("$callKitLogTag fetchCallLitCallLogList no call logs found");
+        }
+      } else {
+        callkitLogger.info("$callKitLogTag fetchCallLitCallLogList failed response: ${response.errorData}");
+        loading.value = false;
+      }
+
+      await getUnReadMissedCallCountForCallKitCall();
+    } else {
+      callkitLogger.info("$callKitLogTag fetchCallLitCallLogList called");
+    }
+  }
+
+  Future<void> _refreshCallKitCallLogList() async {
+    callkitLogger.info("$callKitLogTag refreshCallKitCallLogList function called");
+    final FlyCallLogRpcResponseModel responseModel = await MirrorFlyCallKit.getLatestCallLogs();
+    if (responseModel.code == 200) {
+      callkitLogger.info("$callKitLogTag refreshCallKitCallLogList success response: ${responseModel.data?.toJson()}");
+      if (responseModel.data?.callLogs != null && responseModel.data!.callLogs!.isNotEmpty) {
+        List<CallLog> callLogs = responseModel.data?.callLogs ?? [];
+        _callKitCallLogList.insertAll(0, callLogs);
+        callkitLogger.info("$callKitLogTag refreshCallKitCallLogList added ${callLogs.length} new call logs to the top of the list");
+      } else {
+        callkitLogger.info("$callKitLogTag refreshCallKitCallLogList no new call logs found");
+      }
+    } else {
+      callkitLogger.info("$callKitLogTag refreshCallKitCallLogList failed response: ${responseModel.errorData}");
+    }
+  }
+
   Future<void> fetchCallLogList() async {
+    callkitLogger.info("$callKitLogTag fetchCallLogList function called");
     loading.value = true;
     Mirrorfly.getCallLogsList(
         currentPage: pageNumber,
@@ -1940,6 +2070,86 @@ class DashboardController extends FullLifeCycleController
       }
     } else {
       toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  void makeCallKitVideoCall({required List<String> callersId, required String chatId, required bool isOneToOne}) async {
+    callkitLogger.info("$callKitLogTag makeCallKitVideoCall function called with callersId: $callersId, chatId: $chatId, isOneToOne: $isOneToOne");
+
+    if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
+      DialogUtils.showFeatureUnavailable();
+      return;
+    }
+    if ((await MirrorFlyCallKit.isOngoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+    if (await AppUtils.isNetConnected()) {
+      if (await AppPermission.askVideoCallPermissions()) {
+        MirrorFlyCallKit.makeVideoCall(
+          callersId: callersId,
+          chatId: chatId,
+          flyResult: (FlyResult response) {
+            if (response.isSuccess) {
+              callkitLogger.info("Call started successfully");
+              NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                "userJid": callersId,
+                "callType": CallType.video,
+                "callMode": isOneToOne ? "ONE-TO-ONE" : "ONE-TO-MANY",
+                "chatId": chatId,
+              });
+            } else {
+              callkitLogger.info("Call failed: ${response.errorMessage}");
+            }
+          },
+        );
+      } else {
+        LogMessage.d("askVideoCallPermissions", "false");
+      }
+    } else {
+      toToast(getTranslated("noInternetConnection"));
+    }
+  }
+
+  void makeCallKitAudioCall({required List<String> callersId, required String chatId, required bool isOneToOne}) async {
+    callkitLogger.info("$callKitLogTag makeCallKitAudioCall function called with callersId: $callersId, chatId: $chatId, isOneToOne: $isOneToOne");
+
+    if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
+      DialogUtils.showFeatureUnavailable();
+      return;
+    }
+
+    if ((await MirrorFlyCallKit.isOngoingCall()).checkNull()) {
+      debugPrint("#Mirrorfly Call You are on another call");
+      toToast(getTranslated("msgOngoingCallAlert"));
+      return;
+    }
+
+    if (!(await AppUtils.isNetConnected())) {
+      toToast(getTranslated("noInternetConnection"));
+      return;
+    }
+
+    if (await AppPermission.askAudioCallPermissions()) {
+      MirrorFlyCallKit.makeAudioCall(
+          callersId: callersId,
+          chatId: chatId,
+          flyResult: (FlyResult response) {
+            if (response.isSuccess) {
+              callkitLogger.info("Audio call started successfully");
+              NavUtils.toNamed(Routes.callKitOutGoingCallView, arguments: {
+                "userJid": callersId,
+                "callType": CallType.audio,
+                "callMode": isOneToOne ? "ONE-TO-ONE" : "ONE-TO-MANY",
+                "chatId": chatId,
+              });
+            } else {
+              callkitLogger.info("Audio call failed: ${response.errorMessage}");
+            }
+          });
+    } else {
+      debugPrint("permission not given");
     }
   }
 
@@ -2030,7 +2240,52 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
+  void onCallKitCallLogsUpdated(List<CallLog> log) async {
+    callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called with log: ${log.map((e) => e.toJson())}");
+
+    await getUnReadMissedCallCountForCallKitCall();
+
+    if (log.isEmpty) {
+      callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but log is empty, ignoring the update.");
+      return;
+    }
+
+    final newCallIds = log.map((e) => e.callId).toSet();
+    final alreadyExists = _callKitCallLogList.any((e) => newCallIds.contains(e.callId));
+
+    if (alreadyExists) {
+      callkitLogger.info("$callKitLogTag Duplicate callId found, ignoring update.");
+      return;
+    }
+
+    for (var callLog in log) {
+      callkitLogger.info("$callKitLogTag Processing call log with callId: ${callLog.callId}");
+
+      if (Constants.useMirrorFlyCallKit) {
+        _callKitCallLogList.insert(0, callLog);
+      } else {
+        callkitLogger.info("$callKitLogTag onCallKitCallLogsUpdated called but MirrorFly CallKit is not enabled, ignoring the update.");
+      }
+    }
+  }
+
+  Future<void> getUnReadMissedCallCountForCallKitCall() async {
+    callkitLogger.info("$callKitLogTag getUnReadMissedCallCountForCallKitCall called");
+    final int unreadMissedCallCount = await MirrorFlyCallKit.getUnreadMissedCallCount();
+
+    callkitLogger.info("$callKitLogTag Unread missed call count from CallKit: $unreadMissedCallCount");
+    unreadCallCount.value = unreadMissedCallCount;
+    callkitLogger.info("$callKitLogTag Unread missed call count updated: $unreadMissedCallCount");
+  }
+
   void onCallLogUpdate(value) async {
+
+    if (Constants.useMirrorFlyCallKit) {
+      callkitLogger.info("$callKitLogTag onCallLogUpdate called and returning..");
+      // loading.value = true;
+      return;
+    }
+
     if (value) {
       if (search.text.trim().isNotEmpty) {
         filteredCallLog(search.text.trim());
@@ -2060,44 +2315,48 @@ class DashboardController extends FullLifeCycleController
             });
       }
 
-      var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-      // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
-      unreadCallCount.value = unreadMissedCallCount ?? 0;
+      if (!Constants.useMirrorFlyCallKit) {
+        var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+        // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
+        unreadCallCount.value = unreadMissedCallCount ?? 0;
+      }
     } else {
       debugPrint("onCallLogUpdate : Failed");
     }
   }
 
   void filteredCallLog(String searchKey) async {
-    Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
-      List<CallLogData> callLogs = [];
-      List<CallLogData> callLogsWithNickName = [];
+    if (Constants.useMirrorFlyCallKit) {
+      callkitLogger.info("$callKitLogTag filteredCallLog called with searchKey: $searchKey");
+    } else {
+      Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
+        List<CallLogData> callLogs = [];
+        List<CallLogData> callLogsWithNickName = [];
 
-      if (callLogsResponse.isNotEmpty) {
-        _callLogList.clear();
-        callLogList.clear();
+        if (callLogsResponse.isNotEmpty) {
+          _callLogList.clear();
+          callLogList.clear();
 
-        var list = callLogListFromJson(callLogsResponse);
+          var list = callLogListFromJson(callLogsResponse);
 
-        for (var callLog in list.data ?? []) {
-          callLogsWithNickName
-              .add(await setProfile(getEndUserJid(callLog), callLog));
-        }
-
-        var searchKeyWithoutSpace = searchKey.toLowerCase();
-        for (var callLog in callLogsWithNickName) {
-          if (callLog.nickName!
-              .toLowerCase()
-              .contains(searchKeyWithoutSpace.toLowerCase())) {
-            callLogs.add(callLog);
+          for (var callLog in list.data ?? []) {
+            callLogsWithNickName
+                .add(await setProfile(getEndUserJid(callLog), callLog));
           }
+
+          var searchKeyWithoutSpace = searchKey.toLowerCase();
+          for (var callLog in callLogsWithNickName) {
+            if ((callLog.nickName?.toLowerCase() ?? "").contains(searchKeyWithoutSpace.toLowerCase() ?? "")) {
+              callLogs.add(callLog);
+            }
+          }
+          _callLogList(callLogs);
+          callLogSearchLoading(false);
+        } else {
+          debugPrint("filteredCallLog : Failed");
         }
-        _callLogList(callLogs);
-        callLogSearchLoading(false);
-      } else {
-        debugPrint("filteredCallLog : Failed");
-      }
-    });
+      });
+    }
   }
 
   String getEndUserJid(CallLogData callLog) {
@@ -2167,21 +2426,80 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
-  isLogSelected(int index) =>
-      selectedCallLogs.contains(callLogList[index].roomId);
+  selectOrRemoveCallKitLogFromList(int index) {
+    callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList called for index: $index, selectedLog: ${selectedLog.value}, selectedCallLogs: $selectedCallKitLogs");
+    
+    if (selectedLog.isTrue) {
+      callkitLogger.info("$callKitLogTag #selectOrRemoveCallKitLogFromList selectedLog is true");
+
+      final callId = callKitCallLogList[index].callId ?? 0;
+
+      if (selectedCallKitLogs.contains(callId)) {
+        selectedCallKitLogs.remove(callId);
+        selectedCallKitLogsPosition.remove(index);
+        callkitLogger.info("Removing $callId");
+      } else {
+        selectedCallKitLogs.add(callId);
+        selectedCallKitLogsPosition.add(index);
+        callkitLogger.info("Adding $callId");
+      }
+    }
+    
+    if (selectedCallKitLogs.isEmpty) {
+      // clearAllChatSelection();
+      delete(false);
+      selected(false);
+      selectedLog(false);
+    } else {
+      delete(true);
+      selected(true);
+    }
+    if (delete.value) {
+      clearVisible(false);
+    } else {
+      if (isSearching.value) {
+        clearVisible(true);
+      } else {
+        clearVisible(false);
+      }
+    }
+
+    callkitLogger.info(
+        "$callKitLogTag #selectOrRemoveCallKitLogFromList completed for index: $index, selectedLog: ${selectedLog.value},"
+            " selectedCallLogs: $selectedCallKitLogs");
+  }
+
+  bool isLogSelected(int index) {
+    if (Constants.useMirrorFlyCallKit) {
+      return selectedCallKitLogs.contains(callKitCallLogList[index].callId);
+    } else {
+     return selectedCallLogs.contains(callLogList[index].roomId);
+    }
+  }
 
   deleteCallLog() {
-    if (selectedCallLogs.length == 1) {
-      _itemDeleteCallLog(0);
+    if (Constants.useMirrorFlyCallKit) {
+      if (selectedCallKitLogs.length == 1) {
+        _itemDeleteCallLog(0);
+      } else {
+        itemsDeleteCallLog();
+      }
     } else {
-      itemsDeleteCallLog();
+      if (selectedCallLogs.length == 1) {
+        _itemDeleteCallLog(0);
+      } else {
+        itemsDeleteCallLog();
+      }
     }
   }
 
   _itemDeleteCallLog(int index) {
-    var logIndex = callLogList.indexWhere((element) =>
-        selectedCallLogs[index] ==
-        element.roomId); //selectedChatsPosition[index];
+    final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
+    var logIndex = isCallKitDelete ?
+          callKitCallLogList.indexWhere((e) => selectedCallKitLogs[index] == e.callId)
+        : callLogList.indexWhere((element) => selectedCallLogs[index] == element.roomId);
+    callkitLogger.info("$callKitLogTag _itemDeleteCallLog called for logIndex: $logIndex, isCallKitDelete: $isCallKitDelete");
+
     DialogUtils.showAlert(
         dialogStyle: AppStyleConfig.dialogStyle,
         message: getTranslated("deleteCallLogConfirmation"),
@@ -2196,21 +2514,34 @@ class DashboardController extends FullLifeCycleController
               )),
           TextButton(
               style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () {
+              onPressed: () async {
                 NavUtils.back();
-                Mirrorfly.deleteCallLog(
-                    jidList: selectedCallLogs,
-                    isClearAll: false,
-                    flyCallBack: (FlyResponse response) {
-                      if (response.isSuccess) {
-                        callLogList.removeAt(logIndex);
-                        delete(false);
-                        selected(false);
-                        selectedCallLogs.clear();
-                      } else {
-                        toToast(getTranslated("errorOnCallLogDelete"));
-                      }
-                    });
+                if (isCallKitDelete) {
+                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallKitLogs);
+                  if (isCallLogCleared) {
+                    callkitLogger.info("$callKitLogTag Call log deleted successfully for callId: ${selectedCallKitLogs[index]}");
+                    callKitCallLogList.removeAt(logIndex);
+                    delete(false);
+                    selected(false);
+                    selectedCallKitLogs.clear();
+                  } else {
+                    toToast(getTranslated("errorOnCallLogDelete"));
+                  }
+                } else {
+                  Mirrorfly.deleteCallLog(
+                      jidList: selectedCallLogs,
+                      isClearAll: false,
+                      flyCallBack: (FlyResponse response) {
+                        if (response.isSuccess) {
+                          callLogList.removeAt(logIndex);
+                          delete(false);
+                          selected(false);
+                          selectedCallLogs.clear();
+                        } else {
+                          toToast(getTranslated("errorOnCallLogDelete"));
+                        }
+                      });
+                }
               },
               child: Text(
                 getTranslated("ok").toUpperCase(),
@@ -2236,24 +2567,38 @@ class DashboardController extends FullLifeCycleController
               style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () async {
                 NavUtils.back();
-                Mirrorfly.deleteCallLog(
-                    jidList: selectedCallLogs,
-                    isClearAll: false,
-                    flyCallBack: (FlyResponse response) {
-                      debugPrint("deleteCallLog ${response.toString()}");
-                      if (response.isSuccess) {
-                        for (var logItem in selectedCallLogs) {
-                          var chatIndex = callLogList.indexWhere(
-                              (element) => logItem == element.roomId);
-                          callLogList.removeAt(chatIndex);
+                final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
+                if (isCallKitDelete) {
+                  final bool isCallLogCleared = await MirrorFlyCallKit.clearCallLogs(callIds: selectedCallKitLogs);
+                  if (isCallLogCleared) {
+                    callkitLogger.info("$callKitLogTag Multiple call logs deleted successfully for callIds: $selectedCallKitLogs");
+                    callKitCallLogList.removeWhere((log) => selectedCallKitLogs.contains(log.callId));
+                    delete(false);
+                    selected(false);
+                    selectedCallKitLogs.clear();
+                  } else {
+                    toToast(getTranslated("errorOnCallLogDelete"));
+                  }
+                } else {
+                  Mirrorfly.deleteCallLog(
+                      jidList: selectedCallLogs,
+                      isClearAll: false,
+                      flyCallBack: (FlyResponse response) {
+                        debugPrint("deleteCallLog ${response.toString()}");
+                        if (response.isSuccess) {
+                          for (var logItem in selectedCallLogs) {
+                            var chatIndex = callLogList.indexWhere(
+                                    (element) => logItem == element.roomId);
+                            callLogList.removeAt(chatIndex);
+                          }
+                          delete(false);
+                          selected(false);
+                          selectedCallLogs.clear();
+                        } else {
+                          toToast(getTranslated("errorOnCallLogDelete"));
                         }
-                        delete(false);
-                        selected(false);
-                        selectedCallLogs.clear();
-                      } else {
-                        toToast(getTranslated("errorOnCallLogDelete"));
-                      }
-                    });
+                      });
+                }
               },
               child: Text(
                 getTranslated("ok").toUpperCase(),
@@ -2279,14 +2624,29 @@ class DashboardController extends FullLifeCycleController
               style: AppStyleConfig.dialogStyle.buttonStyle,
               onPressed: () {
                 NavUtils.back();
-                Mirrorfly.deleteCallLog(
-                    jidList: selectedCallLogs,
-                    isClearAll: true,
-                    flyCallBack: (FlyResponse response) {
-                      if (!response.isSuccess) {
-                        toToast(getTranslated("errorOnCallLogDelete"));
-                      }
-                    });
+                final bool isCallKitDelete = Constants.useMirrorFlyCallKit;
+                if (isCallKitDelete) {
+                  MirrorFlyCallKit.clearAllCallLogs().then((isCleared) {
+                    if (isCleared) {
+                      callkitLogger.info("$callKitLogTag All call logs cleared successfully");
+                      callKitCallLogList.clear();
+                      delete(false);
+                      selected(false);
+                    } else {
+                      toToast(getTranslated("errorOnCallLogDelete"));
+                    }
+                  });
+                  return;
+                } else {
+                  Mirrorfly.deleteCallLog(
+                      jidList: selectedCallLogs,
+                      isClearAll: true,
+                      flyCallBack: (FlyResponse response) {
+                        if (!response.isSuccess) {
+                          toToast(getTranslated("errorOnCallLogDelete"));
+                        }
+                      });
+                }
                 onCallLogsCleared();
               },
               child: Text(
@@ -2299,9 +2659,19 @@ class DashboardController extends FullLifeCycleController
   toCallInfo(CallLogData item) async {
     var result = await NavUtils.toNamed(Routes.callInfo, arguments: item);
     if (result != null) {
-      var chatIndex =
-          callLogList.indexWhere((element) => item.roomId == element.roomId);
+      var chatIndex = callLogList.indexWhere((element) => item.roomId == element.roomId);
       callLogList.removeAt(chatIndex);
+    }
+  }
+
+  toCallKitCallInfo(CallLog item) async {
+    if (Constants.useMirrorFlyCallKit) {
+      var result = await NavUtils.toNamed(Routes.callKitCallInfo, arguments: item);
+      if (result != null) {
+        var chatIndex = callKitCallLogList.indexWhere((element) =>
+        item.callId == element.callId);
+        callLogList.removeAt(chatIndex);
+      }
     }
   }
 
@@ -2338,8 +2708,14 @@ class DashboardController extends FullLifeCycleController
   }
 
   void onCallLogsCleared() {
-    callLogList.clear();
-    _callLogList.clear();
+    if (Constants.useMirrorFlyCallKit) {
+      callkitLogger.info("$callKitLogTag onCallLogsCleared called and cleared call log lists");
+      callKitCallLogList.clear();
+      _callKitCallLogList.clear();
+    } else {
+      callLogList.clear();
+      _callLogList.clear();
+    }
   }
 
   void getWebLoginDetails() {
