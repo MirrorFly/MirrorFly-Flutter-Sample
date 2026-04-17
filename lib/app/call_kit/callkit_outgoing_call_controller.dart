@@ -1556,12 +1556,6 @@ class CallKitOutgoingCallController extends GetxController
             updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
           }
 
-          final String userJid = CallUtils.getJidFromUserId(userId: p, isGroup: false);
-          final ProfileDetails profileDetails = await getProfileDetails(userJid);
-          final String name = profileDetails.name ?? "";
-          callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #name: $name joined ");
-          toToast("$name joined");
-
           callerList.refresh();
         } else {
           callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Skipping self id: $p, callerList length: ${callerList.length}");
@@ -1599,6 +1593,19 @@ class CallKitOutgoingCallController extends GetxController
       }
 
       updateCallerStatusList(participantsId: participantIds,status: FlyCallStatusEvent.connected);
+    }
+
+    if (isMeet.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] #onConnected: Call mode is MEET, skipping toast and name fetch");
+      for (var p in participantIds) {
+        if (!isSelfId(id: p)) {
+          final String userJid = CallUtils.getJidFromUserId(userId: p, isGroup: false);
+          final ProfileDetails profileDetails = await getProfileDetails(userJid);
+          final String name = profileDetails.name ?? "";
+          callkitLogger.info("[MirrorFly] #OutgoingCallController #onConnected #name: $name joined ");
+          toToast("$name joined");
+        }
+      }
     }
 
     await _getCallRemoteUserName();
@@ -1655,8 +1662,10 @@ class CallKitOutgoingCallController extends GetxController
 
     final String name = remoteUserNameMap[userId] ?? "";
     remoteUserNameMap.remove(userId);
-
-    toToast("$name is left");
+    if (isMeet.value) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall Meet remote left, showing toast for $name");
+      toToast("$name is left");
+    }
     initCallViewIds();
 
     callkitLogger.info("[MirrorFly][OutgoingCallController] #disconnectCall removed userId=$userId len=${callerList.length}");
