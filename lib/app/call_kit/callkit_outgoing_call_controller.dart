@@ -470,7 +470,6 @@ class CallKitOutgoingCallController extends GetxController
     //Moved from onInit
 
     callKind = MirrorFlyCallKit.getCallKind();
-        await _handleInitialCallStatus();
         await getCurrentCallParticipants();
         await initCallViewIds();
 
@@ -480,6 +479,7 @@ class CallKitOutgoingCallController extends GetxController
     } else {
       callkitLogger.info("[MirrorFly][OutgoingCallController] No call arguments found");
     }
+    await _handleInitialCallStatus();
 
     await _getCallRemoteUserName();
     initPlayer();
@@ -885,7 +885,7 @@ class CallKitOutgoingCallController extends GetxController
         MirrorFlyCallKit.currentCallStatus?.flyCallStatusEvent;
     callkitLogger.info("[MirrorFly] currentStatusEvent: $currentStatusEvent");
     if (currentStatusEvent == FlyCallStatusEvent.connected) {
-      if (!isOnGoingCallViewEnable.value) {
+      if (!isOnGoingCallViewEnable.value && !isMeet.value) {
         isOnGoingCallView();
       }
       callStatus("Connected");
