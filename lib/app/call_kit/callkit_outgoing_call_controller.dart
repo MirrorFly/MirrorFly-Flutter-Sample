@@ -2155,6 +2155,11 @@ class CallKitOutgoingCallController extends GetxController
 
   ///
   void showOutGoingCallSwitchRequestDialog() {
+
+    if (MirrorFlyCallKit.getCurrentCallType() == FlyCallType.video) {
+      return;
+    }
+
     //
     // _isWaitingCanceled = false;
     // _outgoingSwitchTimer?.cancel();
