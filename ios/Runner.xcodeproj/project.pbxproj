@@ -3,23 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		6B5A07EE2EEDEE2600B95880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6B5A07ED2EEDEE2600B95880 /* GoogleService-Info.plist */; };
-		6F3E78F00033A6C89A150A4D /* Pods_NotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AF4F95313500E86A103A59E /* Pods_NotificationExtension.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		7C1FBB12527059113DCDDA1A /* Pods_NotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A18A36404A826403630A5D4 /* Pods_NotificationExtension.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		BB3C1C731027F0C460BDFB46 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 526D1BED9BC6F505C3DD4D35 /* Pods_Runner.framework */; };
 		CE6BE9022A790FCA0011D723 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6BE9012A790FCA0011D723 /* NotificationService.swift */; };
 		CE6BE9062A790FCA0011D723 /* NotificationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CE6BE8FF2A790FCA0011D723 /* NotificationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CEF99C2D2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEF99C2B2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 */; };
 		CEF99C2E2AA61BC800A948C1 /* fly_call_ringtone.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CEF99C2C2AA61BC800A948C1 /* fly_call_ringtone.mp3 */; };
+		DAA5940008700F95ABF171C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9F2F6827AB66A93992CEDF3 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,17 +50,17 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		3A377500C33F597A6071BAE0 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		14CC948E6594DC47072CFA79 /* Pods-NotificationExtension.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.profile.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.profile.xcconfig"; sourceTree = "<group>"; };
+		2A18A36404A826403630A5D4 /* Pods_NotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		4AF4F95313500E86A103A59E /* Pods_NotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		526D1BED9BC6F505C3DD4D35 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5487288E1DD0E9F4F4193825 /* Pods-NotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
+		58EECF2D376A76EBB651F548 /* Pods-NotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		6B5A07ED2EEDEE2600B95880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6B5A07EF2EEDEE7900B95880 /* RunnerDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunnerDebug.entitlements; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
-		8026762B269697A9938409CB /* Pods-NotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		8803F89A4112614CEBF02EF4 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,8 +68,9 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A84DBE6654C05E55E2ED432 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
-		C1476466A3D05074E9AF1CBF /* Pods-NotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
+		9F44412AB28CF8E5037CAD86 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		B00C7C0530F4A892BF8BAA4F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		C9F2F6827AB66A93992CEDF3 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE03B7B32ACFE79900A6F405 /* RunnerRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunnerRelease.entitlements; sourceTree = "<group>"; };
 		CE6BE8FF2A790FCA0011D723 /* NotificationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE6BE9012A790FCA0011D723 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -78,7 +80,7 @@
 		CEEEA7EC2AD3DCDA004DAD6E /* NotificationExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationExtensionRelease.entitlements; sourceTree = "<group>"; };
 		CEF99C2B2AA61BC800A948C1 /* fly_reconnecting_tone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fly_reconnecting_tone.mp3; sourceTree = "<group>"; };
 		CEF99C2C2AA61BC800A948C1 /* fly_call_ringtone.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fly_call_ringtone.mp3; sourceTree = "<group>"; };
-		D75685E5B66715AD2FF6E141 /* Pods-NotificationExtension.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationExtension.profile.xcconfig"; path = "Target Support Files/Pods-NotificationExtension/Pods-NotificationExtension.profile.xcconfig"; sourceTree = "<group>"; };
+		F8EE668FB070F947F4AE237A /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +88,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB3C1C731027F0C460BDFB46 /* Pods_Runner.framework in Frameworks */,
+				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
+				DAA5940008700F95ABF171C9 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F3E78F00033A6C89A150A4D /* Pods_NotificationExtension.framework in Frameworks */,
+				7C1FBB12527059113DCDDA1A /* Pods_NotificationExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,28 +107,20 @@
 		0DADEE341125B655544B4FAA /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8026762B269697A9938409CB /* Pods-NotificationExtension.debug.xcconfig */,
-				C1476466A3D05074E9AF1CBF /* Pods-NotificationExtension.release.xcconfig */,
-				D75685E5B66715AD2FF6E141 /* Pods-NotificationExtension.profile.xcconfig */,
-				8803F89A4112614CEBF02EF4 /* Pods-Runner.debug.xcconfig */,
-				3A377500C33F597A6071BAE0 /* Pods-Runner.release.xcconfig */,
-				9A84DBE6654C05E55E2ED432 /* Pods-Runner.profile.xcconfig */,
+				58EECF2D376A76EBB651F548 /* Pods-NotificationExtension.debug.xcconfig */,
+				5487288E1DD0E9F4F4193825 /* Pods-NotificationExtension.release.xcconfig */,
+				14CC948E6594DC47072CFA79 /* Pods-NotificationExtension.profile.xcconfig */,
+				B00C7C0530F4A892BF8BAA4F /* Pods-Runner.debug.xcconfig */,
+				9F44412AB28CF8E5037CAD86 /* Pods-Runner.release.xcconfig */,
+				F8EE668FB070F947F4AE237A /* Pods-Runner.profile.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		5179625C6F38DC524DF334EF /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4AF4F95313500E86A103A59E /* Pods_NotificationExtension.framework */,
-				526D1BED9BC6F505C3DD4D35 /* Pods_Runner.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
+				78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */,
 				3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
@@ -144,7 +139,7 @@
 				CE6BE9002A790FCA0011D723 /* NotificationExtension */,
 				97C146EF1CF9000F007C117D /* Products */,
 				0DADEE341125B655544B4FAA /* Pods */,
-				5179625C6F38DC524DF334EF /* Frameworks */,
+				F938F0A936FAA989328300EF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -187,6 +182,15 @@
 			path = NotificationExtension;
 			sourceTree = "<group>";
 		};
+		F938F0A936FAA989328300EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A18A36404A826403630A5D4 /* Pods_NotificationExtension.framework */,
+				C9F2F6827AB66A93992CEDF3 /* Pods_Runner.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -194,15 +198,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
-				081630572D90FC4556BB7EBF /* [CP] Check Pods Manifest.lock */,
+				3D98F1FB93E8ED4B356ED917 /* [CP] Check Pods Manifest.lock */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				CE25822C2951A054009D974C /* Embed Foundation Extensions */,
-				4AE1371511476AEE737053E7 /* [CP] Embed Pods Frameworks */,
-				44C5C79D46AEE57F10F3BE8C /* [CP] Copy Pods Resources */,
+				8046D911B574B55C8296A1BD /* [CP] Embed Pods Frameworks */,
+				DAE50AEC8723C7F681163356 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -210,6 +214,9 @@
 				CE6BE9052A790FCA0011D723 /* PBXTargetDependency */,
 			);
 			name = Runner;
+			packageProductDependencies = (
+				78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */,
+			);
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
@@ -218,7 +225,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE6BE90A2A790FCB0011D723 /* Build configuration list for PBXNativeTarget "NotificationExtension" */;
 			buildPhases = (
-				846D3B2CE0C58ABD710A0037 /* [CP] Check Pods Manifest.lock */,
+				475DA937962B4912A3B394B7 /* [CP] Check Pods Manifest.lock */,
 				CE6BE8FB2A790FCA0011D723 /* Sources */,
 				CE6BE8FC2A790FCA0011D723 /* Frameworks */,
 				CE6BE8FD2A790FCA0011D723 /* Resources */,
@@ -260,6 +267,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -295,7 +305,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		081630572D90FC4556BB7EBF /* [CP] Check Pods Manifest.lock */ = {
+		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
+		};
+		3D98F1FB93E8ED4B356ED917 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -317,63 +341,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Thin Binary";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
-		};
-		44C5C79D46AEE57F10F3BE8C /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4AE1371511476AEE737053E7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		846D3B2CE0C58ABD710A0037 /* [CP] Check Pods Manifest.lock */ = {
+		475DA937962B4912A3B394B7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -395,6 +363,27 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		8046D911B574B55C8296A1BD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
@@ -408,6 +397,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		DAE50AEC8723C7F681163356 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -501,10 +511,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -519,8 +530,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
@@ -530,184 +541,13 @@
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
-					"-l\"iconv\"",
-					"-l\"icucore\"",
-					"-l\"resolv\"",
-					"-l\"sqlite3\"",
-					"-l\"xml2\"",
-					"-l\"z\"",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"AVKit\"",
-					"-framework",
-					"\"Accelerate\"",
-					"-framework",
-					"\"Alamofire\"",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"CocoaAsyncSocket\"",
-					"-framework",
-					"\"CocoaLumberjack\"",
-					"-framework",
-					"\"CoreData\"",
-					"-framework",
-					"\"CoreGraphics\"",
-					"-framework",
-					"\"CoreImage\"",
-					"-framework",
-					"\"CoreLocation\"",
-					"-framework",
-					"\"CoreTelephony\"",
-					"-framework",
-					"\"CoreText\"",
-					"-framework",
-					"\"DKImagePickerController\"",
-					"-framework",
-					"\"DKPhotoGallery\"",
-					"-framework",
-					"\"FMDB\"",
-					"-framework",
-					"\"FirebaseAppCheckInterop\"",
-					"-framework",
-					"\"FirebaseAuth\"",
-					"-framework",
-					"\"FirebaseCore\"",
-					"-framework",
-					"\"FirebaseCoreInternal\"",
-					"-framework",
-					"\"FirebaseInstallations\"",
-					"-framework",
-					"\"FirebaseMessaging\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"GLKit\"",
-					"-framework",
-					"\"GTMSessionFetcher\"",
-					"-framework",
-					"\"GoogleDataTransport\"",
-					"-framework",
-					"\"GoogleMaps\"",
-					"-framework",
-					"\"GoogleMapsBase\"",
-					"-framework",
-					"\"GoogleMapsCore\"",
-					"-framework",
-					"\"GoogleUtilities\"",
-					"-framework",
-					"\"ImageIO\"",
-					"-framework",
-					"\"KissXML\"",
-					"-framework",
-					"\"Metal\"",
-					"-framework",
-					"\"MirrorFlySDK\"",
-					"-framework",
-					"\"OpenGLES\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"Photos\"",
-					"-framework",
-					"\"PhotosUI\"",
-					"-framework",
-					"\"QuartzCore\"",
-					"-framework",
-					"\"Realm\"",
-					"-framework",
-					"\"RealmSwift\"",
-					"-framework",
-					"\"SDWebImage\"",
-					"-framework",
-					"\"SafariServices\"",
-					"-framework",
-					"\"Security\"",
-					"-framework",
-					"\"SocketIO\"",
-					"-framework",
-					"\"SocketRocket\"",
-					"-framework",
-					"\"Starscream\"",
-					"-framework",
-					"\"SwiftyGif\"",
-					"-framework",
-					"\"SystemConfiguration\"",
-					"-framework",
-					"\"UIKit\"",
-					"-framework",
-					"\"WebRTC\"",
-					"-framework",
-					"\"XMPPFramework\"",
-					"-framework",
-					"\"camera_avfoundation\"",
-					"-framework",
-					"\"device_info_plus\"",
-					"-framework",
-					"\"emoji_picker_flutter\"",
-					"-framework",
-					"\"file_picker\"",
-					"-framework",
-					"\"firebase_app_installations\"",
-					"-framework",
-					"\"firebase_auth\"",
-					"-framework",
-					"\"firebase_core\"",
-					"-framework",
-					"\"firebase_messaging\"",
-					"-framework",
-					"\"flutter_keyboard_visibility\"",
-					"-framework",
-					"\"flutter_local_notifications\"",
-					"-framework",
-					"\"fluttertoast\"",
-					"-framework",
-					"\"geolocator_apple\"",
-					"-framework",
-					"\"google_maps_flutter_ios\"",
-					"-framework",
-					"\"image_picker_ios\"",
-					"-framework",
-					"\"libPhoneNumber_iOS\"",
-					"-framework",
-					"\"libidn\"",
-					"-framework",
-					"\"mirrorfly_plugin\"",
-					"-framework",
-					"\"nanopb\"",
-					"-framework",
-					"\"open_file_plus\"",
-					"-framework",
-					"\"package_info_plus\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"photo_manager\"",
-					"-framework",
-					"\"share_plus\"",
-					"-framework",
-					"\"shared_preferences_foundation\"",
-					"-framework",
-					"\"url_launcher_ios\"",
-					"-framework",
-					"\"video_player_avfoundation\"",
-					"-weak_framework",
-					"\"LinkPresentation\"",
-					"-weak_framework",
-					"\"SwiftUI\"",
-					"-weak_framework",
-					"\"UserNotifications\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -716,6 +556,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -771,10 +612,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -821,11 +663,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -841,8 +684,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/RunnerDebug.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mani Vendhan M (PZNYBYZ4SM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mani Vendhan M (PZNYBYZ4SM)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
@@ -852,184 +695,13 @@
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
-					"-l\"iconv\"",
-					"-l\"icucore\"",
-					"-l\"resolv\"",
-					"-l\"sqlite3\"",
-					"-l\"xml2\"",
-					"-l\"z\"",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"AVKit\"",
-					"-framework",
-					"\"Accelerate\"",
-					"-framework",
-					"\"Alamofire\"",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"CocoaAsyncSocket\"",
-					"-framework",
-					"\"CocoaLumberjack\"",
-					"-framework",
-					"\"CoreData\"",
-					"-framework",
-					"\"CoreGraphics\"",
-					"-framework",
-					"\"CoreImage\"",
-					"-framework",
-					"\"CoreLocation\"",
-					"-framework",
-					"\"CoreTelephony\"",
-					"-framework",
-					"\"CoreText\"",
-					"-framework",
-					"\"DKImagePickerController\"",
-					"-framework",
-					"\"DKPhotoGallery\"",
-					"-framework",
-					"\"FMDB\"",
-					"-framework",
-					"\"FirebaseAppCheckInterop\"",
-					"-framework",
-					"\"FirebaseAuth\"",
-					"-framework",
-					"\"FirebaseCore\"",
-					"-framework",
-					"\"FirebaseCoreInternal\"",
-					"-framework",
-					"\"FirebaseInstallations\"",
-					"-framework",
-					"\"FirebaseMessaging\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"GLKit\"",
-					"-framework",
-					"\"GTMSessionFetcher\"",
-					"-framework",
-					"\"GoogleDataTransport\"",
-					"-framework",
-					"\"GoogleMaps\"",
-					"-framework",
-					"\"GoogleMapsBase\"",
-					"-framework",
-					"\"GoogleMapsCore\"",
-					"-framework",
-					"\"GoogleUtilities\"",
-					"-framework",
-					"\"ImageIO\"",
-					"-framework",
-					"\"KissXML\"",
-					"-framework",
-					"\"Metal\"",
-					"-framework",
-					"\"MirrorFlySDK\"",
-					"-framework",
-					"\"OpenGLES\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"Photos\"",
-					"-framework",
-					"\"PhotosUI\"",
-					"-framework",
-					"\"QuartzCore\"",
-					"-framework",
-					"\"Realm\"",
-					"-framework",
-					"\"RealmSwift\"",
-					"-framework",
-					"\"SDWebImage\"",
-					"-framework",
-					"\"SafariServices\"",
-					"-framework",
-					"\"Security\"",
-					"-framework",
-					"\"SocketIO\"",
-					"-framework",
-					"\"SocketRocket\"",
-					"-framework",
-					"\"Starscream\"",
-					"-framework",
-					"\"SwiftyGif\"",
-					"-framework",
-					"\"SystemConfiguration\"",
-					"-framework",
-					"\"UIKit\"",
-					"-framework",
-					"\"WebRTC\"",
-					"-framework",
-					"\"XMPPFramework\"",
-					"-framework",
-					"\"camera_avfoundation\"",
-					"-framework",
-					"\"device_info_plus\"",
-					"-framework",
-					"\"emoji_picker_flutter\"",
-					"-framework",
-					"\"file_picker\"",
-					"-framework",
-					"\"firebase_app_installations\"",
-					"-framework",
-					"\"firebase_auth\"",
-					"-framework",
-					"\"firebase_core\"",
-					"-framework",
-					"\"firebase_messaging\"",
-					"-framework",
-					"\"flutter_keyboard_visibility\"",
-					"-framework",
-					"\"flutter_local_notifications\"",
-					"-framework",
-					"\"fluttertoast\"",
-					"-framework",
-					"\"geolocator_apple\"",
-					"-framework",
-					"\"google_maps_flutter_ios\"",
-					"-framework",
-					"\"image_picker_ios\"",
-					"-framework",
-					"\"libPhoneNumber_iOS\"",
-					"-framework",
-					"\"libidn\"",
-					"-framework",
-					"\"mirrorfly_plugin\"",
-					"-framework",
-					"\"nanopb\"",
-					"-framework",
-					"\"open_file_plus\"",
-					"-framework",
-					"\"package_info_plus\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"photo_manager\"",
-					"-framework",
-					"\"share_plus\"",
-					"-framework",
-					"\"shared_preferences_foundation\"",
-					"-framework",
-					"\"url_launcher_ios\"",
-					"-framework",
-					"\"video_player_avfoundation\"",
-					"-weak_framework",
-					"\"LinkPresentation\"",
-					"-weak_framework",
-					"\"SwiftUI\"",
-					"-weak_framework",
-					"\"UserNotifications\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1038,6 +710,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1055,8 +728,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/RunnerRelease.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = G44VFA67ZG;
@@ -1066,184 +739,13 @@
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
-					"-l\"c++\"",
-					"-l\"iconv\"",
-					"-l\"icucore\"",
-					"-l\"resolv\"",
-					"-l\"sqlite3\"",
-					"-l\"xml2\"",
-					"-l\"z\"",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"AVKit\"",
-					"-framework",
-					"\"Accelerate\"",
-					"-framework",
-					"\"Alamofire\"",
-					"-framework",
-					"\"CFNetwork\"",
-					"-framework",
-					"\"CocoaAsyncSocket\"",
-					"-framework",
-					"\"CocoaLumberjack\"",
-					"-framework",
-					"\"CoreData\"",
-					"-framework",
-					"\"CoreGraphics\"",
-					"-framework",
-					"\"CoreImage\"",
-					"-framework",
-					"\"CoreLocation\"",
-					"-framework",
-					"\"CoreTelephony\"",
-					"-framework",
-					"\"CoreText\"",
-					"-framework",
-					"\"DKImagePickerController\"",
-					"-framework",
-					"\"DKPhotoGallery\"",
-					"-framework",
-					"\"FMDB\"",
-					"-framework",
-					"\"FirebaseAppCheckInterop\"",
-					"-framework",
-					"\"FirebaseAuth\"",
-					"-framework",
-					"\"FirebaseCore\"",
-					"-framework",
-					"\"FirebaseCoreInternal\"",
-					"-framework",
-					"\"FirebaseInstallations\"",
-					"-framework",
-					"\"FirebaseMessaging\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"GLKit\"",
-					"-framework",
-					"\"GTMSessionFetcher\"",
-					"-framework",
-					"\"GoogleDataTransport\"",
-					"-framework",
-					"\"GoogleMaps\"",
-					"-framework",
-					"\"GoogleMapsBase\"",
-					"-framework",
-					"\"GoogleMapsCore\"",
-					"-framework",
-					"\"GoogleUtilities\"",
-					"-framework",
-					"\"ImageIO\"",
-					"-framework",
-					"\"KissXML\"",
-					"-framework",
-					"\"Metal\"",
-					"-framework",
-					"\"MirrorFlySDK\"",
-					"-framework",
-					"\"OpenGLES\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"Photos\"",
-					"-framework",
-					"\"PhotosUI\"",
-					"-framework",
-					"\"QuartzCore\"",
-					"-framework",
-					"\"Realm\"",
-					"-framework",
-					"\"RealmSwift\"",
-					"-framework",
-					"\"SDWebImage\"",
-					"-framework",
-					"\"SafariServices\"",
-					"-framework",
-					"\"Security\"",
-					"-framework",
-					"\"SocketIO\"",
-					"-framework",
-					"\"SocketRocket\"",
-					"-framework",
-					"\"Starscream\"",
-					"-framework",
-					"\"SwiftyGif\"",
-					"-framework",
-					"\"SystemConfiguration\"",
-					"-framework",
-					"\"UIKit\"",
-					"-framework",
-					"\"WebRTC\"",
-					"-framework",
-					"\"XMPPFramework\"",
-					"-framework",
-					"\"camera_avfoundation\"",
-					"-framework",
-					"\"device_info_plus\"",
-					"-framework",
-					"\"emoji_picker_flutter\"",
-					"-framework",
-					"\"file_picker\"",
-					"-framework",
-					"\"firebase_app_installations\"",
-					"-framework",
-					"\"firebase_auth\"",
-					"-framework",
-					"\"firebase_core\"",
-					"-framework",
-					"\"firebase_messaging\"",
-					"-framework",
-					"\"flutter_keyboard_visibility\"",
-					"-framework",
-					"\"flutter_local_notifications\"",
-					"-framework",
-					"\"fluttertoast\"",
-					"-framework",
-					"\"geolocator_apple\"",
-					"-framework",
-					"\"google_maps_flutter_ios\"",
-					"-framework",
-					"\"image_picker_ios\"",
-					"-framework",
-					"\"libPhoneNumber_iOS\"",
-					"-framework",
-					"\"libidn\"",
-					"-framework",
-					"\"mirrorfly_plugin\"",
-					"-framework",
-					"\"nanopb\"",
-					"-framework",
-					"\"open_file_plus\"",
-					"-framework",
-					"\"package_info_plus\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"photo_manager\"",
-					"-framework",
-					"\"share_plus\"",
-					"-framework",
-					"\"shared_preferences_foundation\"",
-					"-framework",
-					"\"url_launcher_ios\"",
-					"-framework",
-					"\"video_player_avfoundation\"",
-					"-weak_framework",
-					"\"LinkPresentation\"",
-					"-weak_framework",
-					"\"SwiftUI\"",
-					"-weak_framework",
-					"\"UserNotifications\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirrorfly.flutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1252,6 +754,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1261,7 +764,7 @@
 		};
 		CE6BE9072A790FCB0011D723 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8026762B269697A9938409CB /* Pods-NotificationExtension.debug.xcconfig */;
+			baseConfigurationReference = 58EECF2D376A76EBB651F548 /* Pods-NotificationExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1270,8 +773,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mani Vendhan M (PZNYBYZ4SM)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mani Vendhan M (PZNYBYZ4SM)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1283,7 +786,7 @@
 				INFOPLIST_FILE = NotificationExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1299,6 +802,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1307,7 +811,7 @@
 		};
 		CE6BE9082A790FCB0011D723 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C1476466A3D05074E9AF1CBF /* Pods-NotificationExtension.release.xcconfig */;
+			baseConfigurationReference = 5487288E1DD0E9F4F4193825 /* Pods-NotificationExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1316,8 +820,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtensionRelease.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1329,7 +833,7 @@
 				INFOPLIST_FILE = NotificationExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1343,6 +847,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Notification Extension Adhoc";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1350,7 +855,7 @@
 		};
 		CE6BE9092A790FCB0011D723 /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75685E5B66715AD2FF6E141 /* Pods-NotificationExtension.profile.xcconfig */;
+			baseConfigurationReference = 14CC948E6594DC47072CFA79 /* Pods-NotificationExtension.profile.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1359,8 +864,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = NotificationExtension/NotificationExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Contus Support Interactive (26VP8T9LM7)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1371,7 +876,7 @@
 				INFOPLIST_FILE = NotificationExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1385,6 +890,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MirrorFly Flutter Notification Extension Adhoc";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1424,6 +930,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FlutterGeneratedPluginSwiftPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }
