@@ -112,7 +112,7 @@ class CallKitJoinCallPreviewView extends NavViewStateful<CallKitJoinCallControll
                                             )
                                           : FutureBuilder(
                                               future: getProfileDetails(
-                                                  controller.users[index]!),
+                                                  controller.users[index]),
                                               builder: (ctx, snap) {
                                                 return snap.hasData &&
                                                         snap.data != null

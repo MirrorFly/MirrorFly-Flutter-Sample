@@ -215,20 +215,20 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
     );
   }
 
-  Widget groupCallIcon(String? callType, CallLogData item, String? callMode, List<String>? userList,Color iconColor) {
+  Widget groupCallIcon(String? callType, CallLogData callLogData, String? callMode, List<String>? userList,Color iconColor) {
     List<String>? localUserList = [];
-    if (item.callState == CallState.missedCall || item.callState == CallState.incomingCall) {
-      localUserList.addAll(item.userList!);
-      if (!item.userList!.contains(item.fromUser)) {
-        localUserList.add(item.fromUser!);
+    if (callLogData.callState == CallState.missedCall || callLogData.callState == CallState.incomingCall) {
+      localUserList.addAll(callLogData.userList!);
+      if (!callLogData.userList!.contains(callLogData.fromUser)) {
+        localUserList.add(callLogData.fromUser!);
       }
     } else {
-      localUserList.addAll(item.userList!);
+      localUserList.addAll(callLogData.userList!);
     }
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
       onPressed: () {
-        controller.makeCall(localUserList, callType, item);
+        controller.makeCall(localUserList, callType, callLogData);
       },
       icon: AppUtils.svgIcon(icon:
       videoCallIcon,
@@ -237,7 +237,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
     )
         : IconButton(
         onPressed: () {
-          controller.makeCall(localUserList, callType, item);
+          controller.makeCall(localUserList, callType, callLogData);
         },
         icon: AppUtils.svgIcon(icon:
         audioCallIcon,

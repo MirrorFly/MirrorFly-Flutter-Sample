@@ -108,7 +108,7 @@ class AppLockController extends FullLifeCycleController
   changePin() {
     modifyPin(true);
     clearTextViews();
-    NavUtils.toNamed(Routes.setPin)?.then((value) {
+    NavUtils.toNamed(Routes.setPin).then((value) {
       Future.delayed(const Duration(milliseconds: 100), () {
         setUpPinExpiryDialog();
       });

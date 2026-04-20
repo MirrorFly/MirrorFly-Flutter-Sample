@@ -77,7 +77,7 @@ class DashboardController extends FullLifeCycleController
           .obs;
 
   var isLastPage = false.obs;
-  late int pageNumber = 0;
+  late int pageNumber;
   var error = false.obs;
   var loading = true.obs;
   var totalPages = 0;
@@ -1372,6 +1372,7 @@ class DashboardController extends FullLifeCycleController
         if (Constants.useMirrorFlyCallKit) {
           _callKitCallLogList.clear();
           callKitCallLogList.clear();
+          pageNumber = 1;
         } else {
           pageNumber = 1;
           _callLogList.clear();
@@ -1969,7 +1970,7 @@ class DashboardController extends FullLifeCycleController
   Future<void> fetchCallLitCallLogList() async {
     callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
 
-    if (await AppUtils.isNetConnected() == false) {
+    if (await AppUtils.isNetConnected()) {
       callkitLogger.info("$callKitLogTag fetchCallLogList no internet connection");
       toToast(getTranslated("noInternetConnection"));
       loading.value = false;
@@ -2345,9 +2346,7 @@ class DashboardController extends FullLifeCycleController
 
           var searchKeyWithoutSpace = searchKey.toLowerCase();
           for (var callLog in callLogsWithNickName) {
-            if (callLog.nickName!
-                .toLowerCase()
-                .contains(searchKeyWithoutSpace.toLowerCase())) {
+            if ((callLog.nickName?.toLowerCase() ?? "").contains(searchKeyWithoutSpace.toLowerCase() ?? "")) {
               callLogs.add(callLog);
             }
           }
