@@ -3,8 +3,13 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_linux
   emoji_picker_flutter
   file_selector_linux
+  flutter_webrtc
+  livekit_client
+  mirrorfly_flutter_call_kit
+  record_linux
   url_launcher_linux
 )
 
