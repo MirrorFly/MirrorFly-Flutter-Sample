@@ -27,7 +27,7 @@ class ViewAllMediaView extends NavViewStateful<ViewAllMediaController> {
     return Theme(
       data: Theme.of(context).copyWith(
           appBarTheme: AppStyleConfig.viewAllMediaPageStyle.appBarTheme,
-          tabBarTheme: AppStyleConfig.viewAllMediaPageStyle.tabBarTheme),
+          tabBarTheme: AppStyleConfig.viewAllMediaPageStyle.tabBarThemeData),
       child: DefaultTabController(
         length: 3,
         child: Scaffold(

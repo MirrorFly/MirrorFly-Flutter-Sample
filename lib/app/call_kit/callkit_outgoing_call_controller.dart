@@ -2505,9 +2505,6 @@ class CallKitOutgoingCallController extends GetxController
     }
 
     if (participant != null) {
-      /// NOTE ::==
-     // participant.copyWith(isSpeaking: isSpeaking, audioLevel: audioLevel);
-
       callerAudioLevel[participantId] = audioLevel;
       callerAudioLevel.refresh();
 
@@ -2549,9 +2546,6 @@ class CallKitOutgoingCallController extends GetxController
     try {
       final participant = callerList.firstWhereOrNull((p) => p.identity == participantId);
       if (participant != null) {
-        /// NOTE ::==
-        // participant.copyWith(connectionQuality: quality);
-        // callerList.refresh();
         callerConnectionQuality[participantId!] = quality!;
         callkitLogger.info(
             "[MirrorFly][OutgoingCallController] onConnectionQualityUpdated: Updated participant $participantId with connectionQuality: "

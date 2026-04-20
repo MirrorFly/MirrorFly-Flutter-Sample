@@ -630,6 +630,7 @@ class BaseController {
       userWentOffline(jid);
     });
     Mirrorfly.usersIBlockedListFetched.listen(usersIBlockedListFetched);
+    Mirrorfly.usersWhoBlockedMeListFetched.listen(usersWhoBlockedMeListFetched);
     Mirrorfly.onConnected.listen(onConnected);
     Mirrorfly.onDisconnected.listen(onDisconnected);
     Mirrorfly.onConnectionFailed.listen(onConnectionFailed);
