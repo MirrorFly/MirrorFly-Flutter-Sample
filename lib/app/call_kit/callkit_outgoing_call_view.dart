@@ -284,10 +284,12 @@ class CallKitOutgoingCallView
               top: 12,
               right: 12,
               child: Obx(() {
+                final bool isMuted = controller.callerList
+                    .firstWhereOrNull((e) => e.identity == participantId)
+                    ?.isAudioMuted ?? false;
+                callkitLogger.info("[MFCallKit][CallTile] Mute icon visibility for participantId: $participantId → isMuted: $isMuted");
                 return Visibility(
-                  visible: controller.callerList
-                      .firstWhereOrNull((e) => e.identity == participantId)
-                      ?.isAudioMuted ?? false,
+                  visible: isMuted,
                   child: SizedBox(
                     width: 16,
                     height: 16,
@@ -929,8 +931,8 @@ class CallKitOutgoingCallView
   /// --------------------------------
   Widget _buildAudioMuteUI(
       {required bool isMuted, required VoidCallback onTap, double size = 52,}) {
-    final style =
-        AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+    final style = AppStyleConfig.outgoingCallPageStyle.actionButtonsStyle;
+    callkitLogger.info("[_buildAudioMuteUI] isMuted: $isMuted");
 
     return SizedBox(
       width: size,

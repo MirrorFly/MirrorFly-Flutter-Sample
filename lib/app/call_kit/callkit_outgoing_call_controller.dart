@@ -1731,6 +1731,21 @@ class CallKitOutgoingCallController extends GetxController
         if (success && isMuted != null) {
           callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio : $isMuted, and setting isAudioEnabled to ${!isMuted}");
           isAudioMuted.value = isMuted;
+
+          // For group calls when local user mutes the audio we need to update the
+          // caller list to reflect the change in the UI, as the local participant is also part of the caller list in group calls
+          if (callMode.value == "ONE-TO-MANY") {
+            callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio: Updating callerList for ONE-TO-MANY call");
+            final localIndex = callerList.indexWhere((p) => p.isLocalParticipant);
+            if (localIndex != -1) {
+              final old = callerList[localIndex];
+              callerList[localIndex] = old.copyWith(isAudioMuted: isMuted);
+              callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio: Updated local participant mute status to $isMuted in callerList");
+            } else {
+              callkitLogger.info("[MirrorFly][OutgoingCallController] muteAudio: Local participant not found in callerList");
+            }
+          }
+
         } else {
           if (code == FlyCallErrorCode.microPhonePermissionDenied || code == FlyCallErrorCode.microPhonePermissionPermanentlyDenied) {
             toToast(message);
