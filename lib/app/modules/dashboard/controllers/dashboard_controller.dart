@@ -202,7 +202,7 @@ class DashboardController extends FullLifeCycleController
     historyScrollController.addListener(historyScrollListener);
 
     if (Constants.useMirrorFlyCallKit) {
-      fetchCallLitCallLogList();
+      fetchCallLitCallLogList(isReadyWait: true);
     } else {
       fetchCallLogList();
     }
@@ -1967,15 +1967,19 @@ class DashboardController extends FullLifeCycleController
   @override
   void onHidden() {}
 
-  Future<void> fetchCallLitCallLogList() async {
+  Future<void> fetchCallLitCallLogList({bool isReadyWait = false}) async {
     callkitLogger.info("$callKitLogTag fetchCallLitCallLogList function called");
 
-    if (await AppUtils.isNetConnected()) {
-      callkitLogger.info("$callKitLogTag fetchCallLogList no internet connection");
-      toToast(getTranslated("noInternetConnection"));
-      loading.value = false;
-      return;
+    if (isReadyWait) {
+      await Future.delayed(const Duration(seconds: 2));
     }
+
+    // if (!await AppUtils.isNetConnected()) {
+    //   callkitLogger.info("$callKitLogTag fetchCallLogList no internet connection");
+    //   toToast(getTranslated("noInternetConnection"));
+    //   loading.value = false;
+    //   return;
+    // }
 
     if (Constants.useMirrorFlyCallKit) {
       loading.value = true;
