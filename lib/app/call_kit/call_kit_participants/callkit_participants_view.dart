@@ -210,14 +210,14 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
   Widget callParticipantsView(
       BuildContext context, ParticipantItemStyle style) {
     return Obx(() {
-      return controller.callList.value.isNotEmpty ? ListView.builder(
+      return controller.callList.isNotEmpty ? ListView.builder(
           shrinkWrap: true,
-          itemCount: controller.callList.value.length,
+          itemCount: controller.callList.length,
           physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            debugPrint("call list length ${controller.callList.value.length}");
+            debugPrint("call list length ${controller.callList.length}");
             return SessionManagement.getUserJID() ==
-                controller.callList.value[index].identity.checkNull()
+                controller.callList[index].identity.checkNull()
                 ? const Offstage()
                 : Padding(
               padding: const EdgeInsets.all(10.0),
@@ -225,7 +225,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                 children: [
                   FutureBuilder(
                       future: getProfileDetails(CallUtils.getJidFromUserId(userId: controller
-                          .callList.value[index].identity
+                          .callList[index].identity
                           .checkNull(), isGroup: false)),
                       builder: (ctx, snap) {
                         return snap.hasData && snap.data != null
@@ -242,7 +242,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                       children: [
                         FutureBuilder(
                             future: CallUtils.getNameOfJid(CallUtils.getJidFromUserId(userId: controller
-                                .callList.value[index].identity
+                                .callList[index].identity
                                 .checkNull(), isGroup: false)),
                             builder: (ctx, snap) {
                               return snap.hasData && snap.data != null
@@ -263,7 +263,7 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                     const EdgeInsets.symmetric(horizontal: 10),
                     child: Obx(() {
                       return controller
-                          .callList.value[index].isAudioMuted ?? false
+                          .callList[index].isAudioMuted ?? false
                           ? CircleAvatar(
                           backgroundColor:
                           style.actionStyle.inactiveBgColor,
@@ -291,29 +291,16 @@ class CallKitParticipantsView extends NavViewStateful<CallKitAddParticipantsCont
                     padding:
                     const EdgeInsets.symmetric(horizontal: 20),
                     child: Obx(() {
+                      final isMuted = controller.callList[index].isVideoMuted ?? false;
                       return CircleAvatar(
-                          backgroundColor: controller
-                              .callList.value[index].isVideoMuted ?? false
-                              ? style.actionStyle
-                              .inactiveBgColor //AppColors.participantUnMuteColor
-                              : style.actionStyle.activeBgColor,
-                          //Colors.transparent,
-                          child: controller
-                              .callList.value[index].isVideoMuted ?? false
-                              ? AppUtils.svgIcon(
-                            icon: participantVideoEnabled,
-                            colorFilter: ColorFilter.mode(
-                                style.actionStyle
-                                    .activeIconColor,
-                                BlendMode.srcIn),
-                          )
-                              : AppUtils.svgIcon(
-                        icon: participantVideoDisabled,
-                        colorFilter: ColorFilter.mode(
-                            style.actionStyle
-                                .inactiveIconColor,
-                            BlendMode.srcIn),
-                      )
+                        backgroundColor: isMuted ? style.actionStyle.inactiveBgColor : style.actionStyle.activeBgColor,
+                        child: AppUtils.svgIcon(
+                          icon: isMuted ? participantVideoDisabled : participantVideoEnabled,
+                          colorFilter: ColorFilter.mode(
+                            isMuted ? style.actionStyle.inactiveIconColor : style.actionStyle.activeIconColor,
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       );
                     }),
                   ),

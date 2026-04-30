@@ -157,10 +157,10 @@ class CallKitEventBuffer {
         service.isAudioMute(isAudioMuted: false, participantId: e.participantId);
         break;
       case FlyCallActionEvent.videoMuted:
-        service.isVideoMute(isVideoMuted: false, participantId: e.participantId);
+        service.isVideoMute(isVideoMuted: true, participantId: e.participantId);
         break;
       case FlyCallActionEvent.videoUnMuted:
-        service.isVideoMute(isVideoMuted: true, participantId: e.participantId);
+        service.isVideoMute(isVideoMuted: false, participantId: e.participantId);
         break;
       case FlyCallActionEvent.connectionQualityUpdated:
         service.onConnectionQualityUpdated(
@@ -295,10 +295,10 @@ class CallKitEventBuffer {
         c.isAudioMute(isAudioMuted: false, participantId: e.participantId);
         break;
       case FlyCallActionEvent.videoMuted:
-        c.isVideoMute(isVideoMuted: false, participantId: e.participantId);
+        c.isVideoMute(isVideoMuted: true, participantId: e.participantId);
         break;
       case FlyCallActionEvent.videoUnMuted:
-        c.isVideoMute(isVideoMuted: true, participantId: e.participantId);
+        c.isVideoMute(isVideoMuted: false, participantId: e.participantId);
         break;
       case FlyCallActionEvent.connectionQualityUpdated:
         c.onConnectionQualityUpdated(
