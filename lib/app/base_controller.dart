@@ -74,6 +74,14 @@ class BaseController {
     void onPreviewScreenEnabled({required FlyCallStatus event}) {
       final controller = Get.find<CallKitJoinCallController>();
 
+      if (event.flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
+        callkitLogger.info("[MirrorFly][BaseController] Incoming call status received but JoinCallController is registered - navigating back for incoming call status");
+        Get.back();
+        return;
+      } else {
+        callkitLogger.info("[MirrorFly][BaseController] Incoming call status received and JoinCallController not registered - proceeding with setting callerId and callType");
+      }
+
       if (event.participantsIds.isEmpty) {
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled "
             "but participantsIds is empty, ignoring");
