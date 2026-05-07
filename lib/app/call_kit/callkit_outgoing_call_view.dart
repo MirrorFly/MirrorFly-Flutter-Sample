@@ -60,9 +60,10 @@ class CallKitOutgoingCallView
     double profileImageSize = 105,
     bool isMainView = false,
     double borderRadius = 15,
+    bool isOneToOneLocalViewTap = false,
     Alignment profileImageAlignment = Alignment.center}) {
     debugPrint(
-        "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView");
+        "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView, isOneToOneLocalView: $isOneToOneLocalViewTap");
     bool isGroupCall = controller.groupId.value.isNotEmpty;
     return Obx(() {
       return ClipRRect(
@@ -70,22 +71,26 @@ class CallKitOutgoingCallView
         child: Stack(
           alignment: Alignment.center,
           children: [
-            MirrorFlyCallView(
-              // key: UniqueKey(),
-              viewBgColor: isMainView ? const Color(0xFF0D2852) : const Color(
-                  0xFF1C2535),
-              userJID: participantId,
-              fit: BoxFit.cover,
-              profileImage: _buildTileImage(
-                  isGroupCall: isGroupCall,
-                  participantId: participantId,
-                  profileImageSize: profileImageSize,
-                  profileImageAlignment: profileImageAlignment),
-              profileImageAlignment: profileImageAlignment,
-              onTap: () {
-                // controller.videoSwap();
-              },
-            ),
+              MirrorFlyCallView(
+                // key: UniqueKey(),
+                viewBgColor: isMainView ? const Color(0xFF0D2852) : const Color(
+                    0xFF1C2535),
+                userJID: participantId,
+                fit: BoxFit.cover,
+                profileImage: _buildTileImage(
+                    isGroupCall: isGroupCall,
+                    participantId: participantId,
+                    profileImageSize: profileImageSize,
+                    profileImageAlignment: profileImageAlignment),
+                profileImageAlignment: profileImageAlignment,
+                onTap: () {
+                  if (isOneToOneLocalViewTap) {
+                    controller.videoSwap();
+                  } else {
+                    callkitLogger.info("[CallKitOutgoingCallView] Remote participant view tapped, performing not video swap");
+                  }
+                },
+              ),
 
             // On Hold overlay widget
             Visibility(
@@ -400,22 +405,20 @@ class CallKitOutgoingCallView
         color: AppColors.audioCallerBackground,
         child: Stack(
           children: [
-            mfCallViewRendering(participantId: controller
-                .getRemoteParticipantIdForOneToOneCall(),
+            Obx(() => mfCallViewRendering(
+                participantId: controller.isSwapped.value
+                    ? controller.getLocalParticipant()?.identity ?? ""
+                    : controller.getRemoteParticipantIdForOneToOneCall(),
                 isMainView: true,
                 borderRadius: 0,
-                profileImageAlignment: Alignment.topCenter),
+                profileImageAlignment: Alignment.topCenter)),
 
             Obx(() {
               if (!controller.isOnGoingCallViewEnable.value) {
                 return const SizedBox.shrink();
               }
 
-              final screenSize = MediaQuery
-                  .of(buildContext)
-                  .size;
-              // final previewWidth = (screenSize.width * 0.32).clamp(100.0, 180.0);
-              // final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
+              final screenSize = MediaQuery.of(buildContext).size;
               final bottomOffset = controller.showControls.value
                   ? screenSize.height * 0.20
                   : screenSize.height * 0.06;
@@ -430,10 +433,11 @@ class CallKitOutgoingCallView
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 18),
-                    child: mfCallViewRendering(participantId: controller
-                        .getLocalParticipant()
-                        ?.identity ?? "",
-                        profileImageSize: 55,
+                    child: mfCallViewRendering(
+                        participantId: controller.isSwapped.value
+                            ? controller.getRemoteParticipantIdForOneToOneCall()
+                            : controller.getLocalParticipant()?.identity ?? "",
+                        profileImageSize: 55,isOneToOneLocalViewTap: true,
                         borderRadius: 15),
                   ),
                 ),
