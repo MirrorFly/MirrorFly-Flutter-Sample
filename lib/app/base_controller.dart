@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:mirror_fly_demo/app/call_kit/call_kit_participants/callkit_add_participant_controller.dart';
 import 'package:mirror_fly_demo/app/call_modules/pip_view/pip_view_controller.dart';
 import 'package:mirror_fly_demo/app/modules/chat/controllers/schedule_calender.dart';
 import 'package:mirror_fly_demo/app/modules/backup_restore/backup_utils/backup_restore_manager.dart';
@@ -72,6 +73,14 @@ class BaseController {
 
     void onPreviewScreenEnabled({required FlyCallStatus event}) {
       final controller = Get.find<CallKitJoinCallController>();
+
+      if (event.flyCallStatusEvent == FlyCallStatusEvent.incomingCall) {
+        callkitLogger.info("[MirrorFly][BaseController] Incoming call status received but JoinCallController is registered - navigating back for incoming call status");
+        Get.back();
+        return;
+      } else {
+        callkitLogger.info("[MirrorFly][BaseController] Incoming call status received and JoinCallController not registered - proceeding with setting callerId and callType");
+      }
 
       if (event.participantsIds.isEmpty) {
         callkitLogger.info("[MirrorFly][BaseController] flyCallStatusEvent received on #onPreviewScreenEnabled "
@@ -392,21 +401,40 @@ class BaseController {
         case FlyCallActionEvent.audioMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioMuted participantId=${flyCallAction.participantId}");
           callStateService.isAudioMute(isAudioMuted: true, participantId: flyCallAction.participantId);
+
+          if (Get.isRegistered<CallKitAddParticipantsController>()) {
+            Get.find<CallKitAddParticipantsController>().isAudioMuted(isAudioMuted: true, userId: flyCallAction.participantId ?? "");
+          }
+
           break;
 
         case FlyCallActionEvent.audioUnMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent audioUnMuted participantId=${flyCallAction.participantId}");
           callStateService.isAudioMute(isAudioMuted: false, participantId: flyCallAction.participantId);
+
+          if (Get.isRegistered<CallKitAddParticipantsController>()) {
+            Get.find<CallKitAddParticipantsController>().isAudioMuted(isAudioMuted: false, userId: flyCallAction.participantId ?? "");
+          }
+
           break;
 
         case FlyCallActionEvent.videoMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoMuted participantId=${flyCallAction.participantId}");
-          callStateService.isVideoMute(isVideoMuted: false, participantId: flyCallAction.participantId);
+          callStateService.isVideoMute(isVideoMuted: true, participantId: flyCallAction.participantId);
+
+          if (Get.isRegistered<CallKitAddParticipantsController>()) {
+            Get.find<CallKitAddParticipantsController>().isVideoMuted(isVideoMuted: true, userId: flyCallAction.participantId ?? "");
+          }
           break;
 
         case FlyCallActionEvent.videoUnMuted:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent videoUnMuted participantId=${flyCallAction.participantId}");
-          callStateService.isVideoMute(isVideoMuted: true, participantId: flyCallAction.participantId);
+          callStateService.isVideoMute(isVideoMuted: false, participantId: flyCallAction.participantId);
+
+          if (Get.isRegistered<CallKitAddParticipantsController>()) {
+            Get.find<CallKitAddParticipantsController>().isVideoMuted(isVideoMuted: false, userId: flyCallAction.participantId ?? "");
+          }
+
           break;
 
         case FlyCallActionEvent.connectionQualityUpdated:

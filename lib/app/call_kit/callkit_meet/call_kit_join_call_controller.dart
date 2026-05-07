@@ -43,6 +43,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
 
   var isAudioPermissionGranted = false;
   var isVideoPermissionGranted = false;
+  FlyCallBehaviour flyCallBehaviour = FlyCallBehaviour.none;
 
   @override
   void onInit() async {
@@ -88,6 +89,11 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
         isInitializeSuccess(true);
         callkitLogger.info("Join via link initialization successful");
         callMode.value = initializeJoinLinkResponse.callMode;
+
+        final FlyCallBehaviour behaviour = await MirrorFlyCallKit.getCallBehaviourForCallLink(callLink: callLinkId);
+        flyCallBehaviour = behaviour;
+        callkitLogger.info("Call behaviour for call link $callLinkId: $flyCallBehaviour");
+
         await getCallDetails(participants: initializeJoinLinkResponse.callParticipants);
         // await getVideoLocalCapturePreview();
       } else {
@@ -412,6 +418,8 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     } else {
       callkitLogger.info("#CallKitJoinCallController #participantDisconnected #noParticipant");
     }
+
+    checkForCallViaLinkCallEnded();
   }
 
   void closePreviewScreen() {
@@ -419,4 +427,22 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
     NavUtils.back();
   }
 
+  void checkForCallViaLinkCallEnded() async {
+    callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded Checking if call ended for call link id: $callLinkId");
+    if (flyCallBehaviour == FlyCallBehaviour.joinLink) {
+      final isNoUsersInCall = users.isEmpty;
+      callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded Call behaviour is joinLink,"
+          " checking call users. Current users in call: ${users.map((e) => e.toString())}, isNoUsersInCall: $isNoUsersInCall");
+      if (isNoUsersInCall) {
+        callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded No users in call, marking call as ended");
+        callEnded.value = true;
+        callEndedMessage = getTranslated("callEnded");
+      } else {
+        callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded Users still in call, not marking as ended");
+      }
+    } else {
+      callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded Call behaviour is not joinLink, ignoring call end check");
+      return;
+    }
+  }
 }

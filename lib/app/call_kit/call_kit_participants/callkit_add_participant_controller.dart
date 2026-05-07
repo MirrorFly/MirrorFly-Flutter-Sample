@@ -18,9 +18,6 @@ import '../../data/utils.dart';
 
 class CallKitAddParticipantsController extends GetxController
     with GetTickerProviderStateMixin {
-  var callList =
-  Get.find<CallKitOutgoingCallController>()
-  .callerList.obs; //List<CallUserList>.empty(growable: true).obs;
 
   List<String> usersInCurrentCall = [];
   var groupId =
@@ -43,6 +40,7 @@ class CallKitAddParticipantsController extends GetxController
       ? Constants.maxCallUsersLimitForMirrorFlyCallKit : 8;
   var joinViaLink = false;
   var meet = false;
+  var callList = <FlyCallParticipant>[].obs;
 
   @override
   Future<void> onInit() async {
@@ -50,12 +48,16 @@ class CallKitAddParticipantsController extends GetxController
     if (NavUtils.arguments != null) {
       joinViaLink = NavUtils.arguments?["joinViaLink"] ?? false;
       meet = NavUtils.arguments?["meet"] ?? false;
+      callList = NavUtils.arguments?["callList"] ?? <FlyCallParticipant>[];
+
+      callkitLogger.info("Received arguments → joinViaLink: $joinViaLink, meet: $meet, callList length: ${callList.length}"
+          ", callList users: ${callList.map((e) => e.toJson()).toList()}");
     }
     callkitLogger.info("CallKitAddParticipantsController groupId: ${groupId.value}, joinViaLink: $joinViaLink, meet: $meet");
     getCallLink();
     // groupId(await Mirrorfly.getCallGroupJid());
 
-    debugPrint("CallKitAddParticipantsController → callList json ${callList.value.map((e) => e.toJson()).toList()}");
+    debugPrint("CallKitAddParticipantsController → callList json ${callList.map((e) => e.toJson()).toList()}");
 
     getMaxCallUsersCount = Constants.useMirrorFlyCallKit
         ? Constants.maxCallUsersLimitForMirrorFlyCallKit : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
@@ -288,7 +290,7 @@ class CallKitAddParticipantsController extends GetxController
   }
 
   contactSelected(ProfileDetails item) {
-    if (callList.value
+    if (callList
         .indexWhere(
             (element) => element.identity == item.jid.toString())
         .isNegative) {
@@ -298,9 +300,9 @@ class CallKitAddParticipantsController extends GetxController
         //item.isSelected = false;
         groupCallMembersCount(groupCallMembersCount.value - 1);
       } else {
-        if (callList.value.length != getMaxCallUsersCount) {
+        if (callList.length != getMaxCallUsersCount) {
           if (getMaxCallUsersCount >
-              (selectedUsersList.length + callList.value.length)) {
+              (selectedUsersList.length + callList.length)) {
             selectedUsersList.add(item);
             selectedUsersJIDList.add(item.jid!);
             groupCallMembersCount(groupCallMembersCount.value + 1);
@@ -438,7 +440,7 @@ class CallKitAddParticipantsController extends GetxController
     callkitLogger.info("$tag → Preparing connected user list");
 
     var callConnectedUserList = <String>[];
-    for (var value1 in callList.value) {
+    for (var value1 in callList) {
       callConnectedUserList.add(value1.identity);
     }
 
@@ -578,7 +580,7 @@ class CallKitAddParticipantsController extends GetxController
             if (response.isSuccess && response.hasData) {
               var list = profileFromJson(response.data);
               var callConnectedUserList = List<String>.from(
-                  callList.value.map((element) => element.identity));
+                  callList.map((element) => element.identity));
               var filteredList = getFilteredList(callConnectedUserList, list);
               mainUsersList(filteredList);
               usersList(filteredList);
@@ -603,7 +605,7 @@ class CallKitAddParticipantsController extends GetxController
             if (response.isSuccess && response.hasData) {
               var list = profileFromJson(response.data);
               var callConnectedUserList = List<String>.from(
-                  callList.value.map((element) => element.identity));
+                  callList.map((element) => element.identity));
               var filteredList = getFilteredList(callConnectedUserList, list);
               mainUsersList(filteredList);
               usersList(filteredList);
@@ -656,7 +658,7 @@ class CallKitAddParticipantsController extends GetxController
   Future<void> _isUserAlreadyInCall() async {
     callkitLogger.info("isUserAlreadyInCall → Checking if user is already in call");
 
-    for (FlyCallParticipant user in callList.value) {
+    for (FlyCallParticipant user in callList) {
       callkitLogger.info("isUserAlreadyInCall → Checking user: ${user.identity}");
 
       final String userId = user.identity;
@@ -681,5 +683,16 @@ class CallKitAddParticipantsController extends GetxController
         usersInCurrentCall = [];
       }
     }
+  }
+
+  void isVideoMuted({required bool isVideoMuted, required String userId}) {
+    callkitLogger.info("#CallKitAddParticipantsController → isVideoMuted: $isVideoMuted, for user: $userId");
+    callList.firstWhereOrNull((e) => e.identity == userId)?.copyWith(isVideoMuted: isVideoMuted);
+
+  }
+
+  void isAudioMuted({required bool isAudioMuted, required String userId}) {
+    callkitLogger.info("#CallKitAddParticipantsController → isAudioMuted: $isAudioMuted, for user: $userId");
+    callList.firstWhereOrNull((e) => e.identity == userId)?.copyWith(isAudioMuted: isAudioMuted);
   }
 }

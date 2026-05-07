@@ -477,8 +477,8 @@ class CallKitOutgoingCallView
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Call Status (Ringing / Connecting etc.)
-                    if (!controller.isOnGoingCallViewEnable.value &&
-                        controller.currentCallMode.value != "MEET") ...[
+                    if ((!controller.isOnGoingCallViewEnable.value && controller.currentCallMode.value != "MEET") ||
+                        (controller.isIncoming.value && controller.callDuration.value == "")) ...[
                       Center(
                         child: Text(controller.callStatus.value,
                           style: AppStyleConfig

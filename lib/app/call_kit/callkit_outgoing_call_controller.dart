@@ -191,10 +191,10 @@ class CallKitOutgoingCallController extends GetxController
           isAudioMute(isAudioMuted: false, participantId: action.participantId);
           break;
         case FlyCallActionEvent.videoMuted:
-          isVideoMute(isVideoMuted: false, participantId: action.participantId);
+          isVideoMute(isVideoMuted: true, participantId: action.participantId);
           break;
         case FlyCallActionEvent.videoUnMuted:
-          isVideoMute(isVideoMuted: true, participantId: action.participantId);
+          isVideoMute(isVideoMuted: false, participantId: action.participantId);
           break;
         // case FlyCallActionEvent.toAudioCallAfterCallSwitch:
         //   audioCallAfterCallSwitch();
@@ -541,9 +541,8 @@ class CallKitOutgoingCallController extends GetxController
     final participants = MirrorFlyCallKit.getCurrentCallParticipants();
 
     callkitLogger.info(
-        "[MirrorFly][OutgoingCallController] Current call participants: ${participants
-            .length},"
-            " participants: ${participants.map((p) => p.identity).toList()} isAudioMuted: ${participants.map((p) => p.isAudioMuted).toList()}",);
+        "[MirrorFly][OutgoingCallController] Current call participants: ${participants.length},"
+            " participants: ${participants.map((p) => p.toJson()).toList()}",);
 
     if (participants.isNotEmpty) {
       callkitLogger.info(
@@ -1235,13 +1234,14 @@ class CallKitOutgoingCallController extends GetxController
 
     if(isSelfId(id: participantId)){
       callkitLogger.info("[Controller] Updating local video mute status to $isVideoMuted");
-      isVideoEnabled.value = isVideoMuted;
+      isVideoEnabled.value = !(isVideoMuted);
     }
 
     final muteStatusUpdate = callerList[index].copyWith(isVideoMuted: isVideoMuted);
     callerList.value = List.from(callerList)..[index] = muteStatusUpdate;
 
-    callkitLogger.info("[Controller] isVideoMute: Updated ${muteStatusUpdate.identity} video mute status to $isVideoMuted");
+    callkitLogger.info("[Controller] isVideoMute: Updated ${muteStatusUpdate.identity} list: ${callerList.map((p) => '${p.toJson()}')}");
+
   }
 
   // void audioCallAfterCallSwitch(){
@@ -1789,6 +1789,14 @@ class CallKitOutgoingCallController extends GetxController
         if (success) {
           callkitLogger.info("[MirrorFly][OutgoingCallController] setCameraEnable : $success");
           isVideoEnabled.value = enable;
+          final localIndex = callerList.indexWhere((p) => p.isLocalParticipant);
+          if (localIndex != -1) {
+            final old = callerList[localIndex];
+            callerList[localIndex] = old.copyWith(isAudioMuted: !enable);
+            callkitLogger.info("[MirrorFly][OutgoingCallController] muteVideo: Updated local participant mute status to ${!enable} in callerList");
+          } else {
+            callkitLogger.info("[MirrorFly][OutgoingCallController] muteVideo: Local participant not found in callerList");
+          }
         } else {
           if (code == FlyCallErrorCode.cameraPermissionDenied || code == FlyCallErrorCode.cameraPermissionPermanentlyDenied) {
             toToast(message);
@@ -2302,7 +2310,13 @@ class CallKitOutgoingCallController extends GetxController
       return;
     }
 
-    final inviteUser = NavUtils.toNamed(Routes.callKitParticipantView, arguments: {"joinViaLink": false,"meet":isMeet.value});
+    final inviteUser = NavUtils.toNamed(
+        Routes.callKitParticipantView,
+        arguments: {
+          "joinViaLink": false,
+          "meet": isMeet.value,
+          "callList": callerList,
+        });
     List<String> invitedUsers = await inviteUser;
     for(var i in invitedUsers) {
       callkitLogger.info("[MirrorFly][OutgoingCallController] inviteParticipants: add invite partcipant $i");
