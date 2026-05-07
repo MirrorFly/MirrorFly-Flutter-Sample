@@ -65,6 +65,12 @@ class CallKitOutgoingCallView
     debugPrint(
         "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView, isOneToOneLocalView: $isOneToOneLocalViewTap");
     bool isGroupCall = controller.groupId.value.isNotEmpty;
+    bool isReconnecting = controller.callerList
+        .firstWhereOrNull((e) => e.identity == participantId)?.isReconnecting ?? false;
+    bool isOneToOneView = controller.callerList.length < 3;
+    bool isCallHold = isOneToOneView ? controller.callerList.any(
+          (e) => e.flyCallStatusEvent == FlyCallStatusEvent.callHold,) : controller.callerList.firstWhereOrNull((e) => e.identity == participantId)?.flyCallStatusEvent == FlyCallStatusEvent.callHold;
+    callkitLogger.info("[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering for participantId: $participantId → isGroupCall: $isGroupCall, isCallHold: $isCallHold, isReconnecting: $isReconnecting, isOneToOneView: $isOneToOneView");
     return Obx(() {
       return ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
@@ -92,22 +98,7 @@ class CallKitOutgoingCallView
                 },
               ),
 
-            // On Hold overlay widget
-            Visibility(
-              visible: (controller.callerList
-                  .firstWhereOrNull((e) => e.identity == participantId)
-                  ?.flyCallStatusEvent == FlyCallStatusEvent.callHold &&
-                  !(controller.callerList
-                      .firstWhereOrNull((e) => e.identity == participantId)
-                      ?.isReconnecting ?? false)),
-              child: Center(
-                child: Text(
-                  "On Hold",
-                  style: AppStyleConfig
-                      .ongoingCallPageStyle.callStatusTextStyle,
-                ),
-              ),
-            ),
+
 
             // Reconnecting overlay widget
             Visibility(
@@ -188,7 +179,7 @@ class CallKitOutgoingCallView
                       statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
                       statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
                       statusEvent == FlyCallStatusEvent.connecting ? 'Connecting...' :
-                      statusEvent == FlyCallStatusEvent.callHold ? 'Call Hold...'
+                      statusEvent == FlyCallStatusEvent.callHold ? ''
                           : '',
                       style: AppStyleConfig.ongoingCallPageStyle
                           .callStatusTextStyle.copyWith(fontSize: 12),
@@ -197,6 +188,36 @@ class CallKitOutgoingCallView
                 );
               }),
             ),
+
+            // On Hold overlay widget
+            isOneToOneView
+                ? Positioned(
+                    top: 225,
+                    child: Visibility(
+                      visible: isCallHold &&
+                          !isOneToOneLocalViewTap &&
+                          !isReconnecting,
+                      child: Center(
+                        child: Text(
+                          "On Hold",
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callStatusTextStyle,
+                        ),
+                      ),
+                    ),
+                  )
+                : Visibility(
+                    visible: isCallHold &&
+                        !isOneToOneLocalViewTap &&
+                        !isReconnecting,
+                    child: Center(
+                      child: Text(
+                        "On Hold",
+                        style: AppStyleConfig
+                            .ongoingCallPageStyle.callStatusTextStyle,
+                      ),
+                    ),
+                  ),
 
             // Connection Quality Icon
             !isMainView ? Visibility(
