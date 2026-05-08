@@ -436,7 +436,7 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
       if (isNoUsersInCall) {
         callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded No users in call, marking call as ended");
         callEnded.value = true;
-        callEndedMessage = getTranslated("callEnded");
+        // callEndedMessage = getTranslated("callEnded");
       } else {
         callkitLogger.info("#CallKitJoinCallController #checkForCallViaLinkCallEnded Users still in call, not marking as ended");
       }
