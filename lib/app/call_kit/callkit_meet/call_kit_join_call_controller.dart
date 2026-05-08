@@ -113,6 +113,11 @@ class CallKitJoinCallController extends FullLifeCycleController with FullLifeCyc
           toToast("You are already in this call on another device");
           NavUtils.back();
           return;
+        } else if (initializeJoinLinkResponse.code == FlyCallErrorCode.alreadyInAnotherCall) {
+          callkitLogger.info("Join via link initialization failed with error: Room not connected");
+          toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
+          NavUtils.back();
+          return;
         }
         toToast(initializeJoinLinkResponse.errorMessage ?? "Invalid link");
         callkitLogger.info("Join via link initialization failed with error: ${initializeJoinLinkResponse.errorMessage}");

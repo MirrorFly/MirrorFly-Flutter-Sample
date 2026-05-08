@@ -60,49 +60,45 @@ class CallKitOutgoingCallView
     double profileImageSize = 105,
     bool isMainView = false,
     double borderRadius = 15,
+    bool isOneToOneLocalViewTap = false,
     Alignment profileImageAlignment = Alignment.center}) {
     debugPrint(
-        "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView");
+        "[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering called for participantId: $participantId, isMainView: $isMainView, isOneToOneLocalView: $isOneToOneLocalViewTap");
     bool isGroupCall = controller.groupId.value.isNotEmpty;
+    bool isReconnecting = controller.callerList
+        .firstWhereOrNull((e) => e.identity == participantId)?.isReconnecting ?? false;
+    bool isOneToOneView = controller.callerList.length < 3;
+    bool isCallHold = isOneToOneView ? controller.callerList.any(
+          (e) => e.flyCallStatusEvent == FlyCallStatusEvent.callHold,) : controller.callerList.firstWhereOrNull((e) => e.identity == participantId)?.flyCallStatusEvent == FlyCallStatusEvent.callHold;
+    callkitLogger.info("[MirrorFly] #CallKitOutGoingCallView mfCallViewRendering for participantId: $participantId → isGroupCall: $isGroupCall, isCallHold: $isCallHold, isReconnecting: $isReconnecting, isOneToOneView: $isOneToOneView");
     return Obx(() {
       return ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: Stack(
           alignment: Alignment.center,
           children: [
-            MirrorFlyCallView(
-              // key: UniqueKey(),
-              viewBgColor: isMainView ? const Color(0xFF0D2852) : const Color(
-                  0xFF1C2535),
-              userJID: participantId,
-              fit: BoxFit.cover,
-              profileImage: _buildTileImage(
-                  isGroupCall: isGroupCall,
-                  participantId: participantId,
-                  profileImageSize: profileImageSize,
-                  profileImageAlignment: profileImageAlignment),
-              profileImageAlignment: profileImageAlignment,
-              onTap: () {
-                // controller.videoSwap();
-              },
-            ),
-
-            // On Hold overlay widget
-            Visibility(
-              visible: (controller.callerList
-                  .firstWhereOrNull((e) => e.identity == participantId)
-                  ?.flyCallStatusEvent == FlyCallStatusEvent.callHold &&
-                  !(controller.callerList
-                      .firstWhereOrNull((e) => e.identity == participantId)
-                      ?.isReconnecting ?? false)),
-              child: Center(
-                child: Text(
-                  "On Hold",
-                  style: AppStyleConfig
-                      .ongoingCallPageStyle.callStatusTextStyle,
-                ),
+              MirrorFlyCallView(
+                // key: UniqueKey(),
+                viewBgColor: isMainView ? const Color(0xFF0D2852) : const Color(
+                    0xFF1C2535),
+                userJID: participantId,
+                fit: BoxFit.cover,
+                profileImage: _buildTileImage(
+                    isGroupCall: isGroupCall,
+                    participantId: participantId,
+                    profileImageSize: profileImageSize,
+                    profileImageAlignment: profileImageAlignment),
+                profileImageAlignment: profileImageAlignment,
+                onTap: () {
+                  if (isOneToOneLocalViewTap) {
+                    controller.videoSwap();
+                  } else {
+                    callkitLogger.info("[CallKitOutgoingCallView] Remote participant view tapped, performing not video swap");
+                  }
+                },
               ),
-            ),
+
+
 
             // Reconnecting overlay widget
             Visibility(
@@ -183,7 +179,7 @@ class CallKitOutgoingCallView
                       statusEvent == FlyCallStatusEvent.calling ? 'Calling...' :
                       statusEvent == FlyCallStatusEvent.ringing ? 'Ringing...' :
                       statusEvent == FlyCallStatusEvent.connecting ? 'Connecting...' :
-                      statusEvent == FlyCallStatusEvent.callHold ? 'Call Hold...'
+                      statusEvent == FlyCallStatusEvent.callHold ? ''
                           : '',
                       style: AppStyleConfig.ongoingCallPageStyle
                           .callStatusTextStyle.copyWith(fontSize: 12),
@@ -192,6 +188,35 @@ class CallKitOutgoingCallView
                 );
               }),
             ),
+
+            // On Hold overlay widget
+            isOneToOneView
+                ? Positioned(
+                    top: 225,
+                    child: Visibility(
+                      visible: controller.isLocalUserOnHold.value &&
+                          !isOneToOneLocalViewTap && !isReconnecting ,
+                      child: Center(
+                        child: Text(
+                          "On Hold",
+                          style: AppStyleConfig
+                              .ongoingCallPageStyle.callStatusTextStyle,
+                        ),
+                      ),
+                    ),
+                  )
+                : Visibility(
+                    visible: isCallHold &&
+                        !isOneToOneLocalViewTap &&
+                        !isReconnecting,
+                    child: Center(
+                      child: Text(
+                        "On Hold",
+                        style: AppStyleConfig
+                            .ongoingCallPageStyle.callStatusTextStyle,
+                      ),
+                    ),
+                  ),
 
             // Connection Quality Icon
             !isMainView ? Visibility(
@@ -400,22 +425,20 @@ class CallKitOutgoingCallView
         color: AppColors.audioCallerBackground,
         child: Stack(
           children: [
-            mfCallViewRendering(participantId: controller
-                .getRemoteParticipantIdForOneToOneCall(),
+            Obx(() => mfCallViewRendering(
+                participantId: controller.isSwapped.value
+                    ? controller.getLocalParticipant()?.identity ?? ""
+                    : controller.getRemoteParticipantIdForOneToOneCall(),
                 isMainView: true,
                 borderRadius: 0,
-                profileImageAlignment: Alignment.topCenter),
+                profileImageAlignment: Alignment.topCenter)),
 
             Obx(() {
               if (!controller.isOnGoingCallViewEnable.value) {
                 return const SizedBox.shrink();
               }
 
-              final screenSize = MediaQuery
-                  .of(buildContext)
-                  .size;
-              // final previewWidth = (screenSize.width * 0.32).clamp(100.0, 180.0);
-              // final previewHeight = previewWidth * 1.3; // maintain 4:3-ish aspect ratio
+              final screenSize = MediaQuery.of(buildContext).size;
               final bottomOffset = controller.showControls.value
                   ? screenSize.height * 0.20
                   : screenSize.height * 0.06;
@@ -430,10 +453,11 @@ class CallKitOutgoingCallView
                   width: 120,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 18),
-                    child: mfCallViewRendering(participantId: controller
-                        .getLocalParticipant()
-                        ?.identity ?? "",
-                        profileImageSize: 55,
+                    child: mfCallViewRendering(
+                        participantId: controller.isSwapped.value
+                            ? controller.getRemoteParticipantIdForOneToOneCall()
+                            : controller.getLocalParticipant()?.identity ?? "",
+                        profileImageSize: 55,isOneToOneLocalViewTap: true,
                         borderRadius: 15),
                   ),
                 ),

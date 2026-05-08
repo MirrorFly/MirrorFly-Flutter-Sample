@@ -45,10 +45,12 @@ class CallKitOutgoingCallController extends GetxController
   RxBool isAudioMuted = false.obs;
   RxBool speakerOn = false.obs;
   RxBool isOnGoingCallViewEnable = false.obs;
+  RxBool isSwapped = false.obs;
 
   final RxBool cameraSwitch = false.obs;
   final RxBool isIncoming = false.obs;
   final RxBool isManualDeviceSelected = false.obs;
+  RxBool isLocalUserOnHold = false.obs;
 
   RxString cameraPosition = CameraType.front.obs;
 
@@ -1699,9 +1701,9 @@ class CallKitOutgoingCallController extends GetxController
     } else if (NavUtils.currentRoute == Routes.callKitOutGoingCallView) {
       callStatus("Disconnected");
 
-      reason == "reconnectAttemptsExceeded"
-          ? toToast("Reconnection attempt exceeded")
-          : toToast("Call Disconnected");
+      // reason == "reconnectAttemptsExceeded"
+      //     ? toToast("Reconnection attempt exceeded")
+      //     : toToast("Call Disconnected");
 
       NavUtils.back();
     } else if (NavUtils.currentRoute == Routes.contacts) {
@@ -2449,21 +2451,7 @@ class CallKitOutgoingCallController extends GetxController
     // await _getCallRemoteUserName();
   // }
     // ///
-  void videoSwap() {
-    callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called");
 
-    if (callType.value == "video") {
-      callkitLogger.info(
-          "[MirrorFly] before swap → main: ${mainCallViewUserId.value}, pip: ${secondaryCallViewUserId.value}");
-
-      final temp = mainCallViewUserId.value;
-      mainCallViewUserId.value = secondaryCallViewUserId.value;
-      secondaryCallViewUserId.value = temp;
-
-      callkitLogger.info(
-          "[MirrorFly] after swap → main: ${mainCallViewUserId.value}, pip: ${secondaryCallViewUserId.value}");
-    }
-  }
 
 
   ///
@@ -2501,6 +2489,13 @@ class CallKitOutgoingCallController extends GetxController
     updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.callHold);
     callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Updated participant $userId to callHold status.");
 
+    if (participantsId.contains(userId)) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Participant $userId is in the provided participantsId list.");
+      isLocalUserOnHold.value = true;
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callHold: Participant $userId is NOT in the provided participantsId list.");
+    }
+
     if (callMode.string == "ONE-TO-ONE") {
       callStatus("On Hold");
     } else {
@@ -2522,6 +2517,13 @@ class CallKitOutgoingCallController extends GetxController
     final String userId = participantsId.firstOrNull ?? "";
     updateCurrentCallParticipant(id: userId, status: FlyCallStatusEvent.connected);
     callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Updated participant $userId to connected status.");
+
+    if (participantsId.contains(userId)) {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Participant $userId is in the provided participantsId list.");
+      isLocalUserOnHold.value = false;
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] callResume: Participant $userId is NOT in the provided participantsId list.");
+    }
 
     if (callMode.string == "ONE-TO-ONE") {
       callStatus("");
@@ -2632,7 +2634,19 @@ class CallKitOutgoingCallController extends GetxController
     secondaryCallViewUserId.value = "";
     currentCallMode.value = "";
     isMeet.value = false;
+    isSwapped.value = false;
+    isLocalUserOnHold.value = false;
     callkitLogger.info("[MirrorFly][OutgoingCallController] _resetValues");
+  }
+
+  void videoSwap() {
+    callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap called with isOnGoingCallViewEnable: ${isOnGoingCallViewEnable.value}, callerList length: ${callerList.length}");
+    if (isOnGoingCallViewEnable.value && callerList.length == 2) {
+      isSwapped.value = !isSwapped.value;
+      callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap: isSwapped updated to ${isSwapped.value}");
+    } else {
+      callkitLogger.info("[MirrorFly][OutgoingCallController] videoSwap: Swap not allowed, either not in ongoing call view or callerList length is not 2");
+    }
   }
 
   /// -------------------------------------------------------------------
