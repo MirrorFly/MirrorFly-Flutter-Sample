@@ -194,9 +194,8 @@ class CallKitOutgoingCallView
                 ? Positioned(
                     top: 225,
                     child: Visibility(
-                      visible: isCallHold &&
-                          !isOneToOneLocalViewTap &&
-                          !isReconnecting,
+                      visible: controller.isLocalUserOnHold.value &&
+                          !isOneToOneLocalViewTap && !isReconnecting ,
                       child: Center(
                         child: Text(
                           "On Hold",
