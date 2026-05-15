@@ -328,6 +328,7 @@ Widget linkErrorView({CallLinkErrorViewStyle callLinkErrorViewStyle = const Call
     width: double.infinity,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         callLinkErrorViewStyle.logoWidget?? const Offstage(),
         const SizedBox(height: 40,),
