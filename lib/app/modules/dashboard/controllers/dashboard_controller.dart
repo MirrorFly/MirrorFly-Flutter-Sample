@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -2046,6 +2047,36 @@ class DashboardController extends FullLifeCycleController
         });
   }
 
+  Future<List<String>> getUsersIBlocked() async {
+    final completer = Completer<List<String>>();
+
+    Mirrorfly.getUsersIBlocked(
+      fetchFromServer: true,
+      flyCallBack: (FlyResponse response) {
+        if (response.isSuccess && response.hasData) {
+          LogMessage.d("getUsersIBlocked", response.toString());
+
+          final List<ProfileDetails> data =
+          profileFromJson(response.data);
+
+          final List<String> blockedJIds =
+          data.map((e) => e.jid ?? "").toList();
+
+          completer.complete(blockedJIds);
+        } else {
+          LogMessage.d(
+            "getUsersIBlocked",
+            "Failed to fetch blocked users",
+          );
+
+          completer.complete([]);
+        }
+      },
+    );
+
+    return completer.future;
+  }
+
   void makeVideoCall(String? fromUser) async {
     if (!availableFeatures.value.isOneToOneCallAvailable.checkNull()) {
       DialogUtils.showFeatureUnavailable();
@@ -2077,6 +2108,7 @@ class DashboardController extends FullLifeCycleController
     }
   }
 
+
   void makeCallKitVideoCall({required List<String> callersId, required String chatId, required bool isOneToOne}) async {
     callkitLogger.info("$callKitLogTag makeCallKitVideoCall function called with callersId: $callersId, chatId: $chatId, isOneToOne: $isOneToOne");
 
@@ -2084,15 +2116,29 @@ class DashboardController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
+
     if ((await MirrorFlyCallKit.isOngoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
+
+    final blockedUsers = (await getUsersIBlocked()).toSet();
+    final List<String> blockedUsersId = blockedUsers.map((e) => CallUtils.getIdFromJidList(e)).toList();
+    callkitLogger.info("Blocked users fetched: $blockedUsersId");
+
+    final List<String> filteredCallersId = callersId.where((callerId) {
+      final isBlocked = blockedUsersId.contains(callerId);
+      if (isBlocked) {
+        callkitLogger.info("User $callerId is blocked. Removing from call.");
+      }
+      return !isBlocked;
+    }).toList();
+
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
         MirrorFlyCallKit.makeVideoCall(
-          callersId: callersId,
+          callersId: filteredCallersId,
           chatId: chatId,
           flyResult: (FlyResult response) {
             if (response.isSuccess) {
@@ -2135,9 +2181,21 @@ class DashboardController extends FullLifeCycleController
       return;
     }
 
+    final blockedUsers = (await getUsersIBlocked()).toSet();
+    final List<String> blockedUsersId = blockedUsers.map((e) => CallUtils.getIdFromJidList(e)).toList();
+    callkitLogger.info("Blocked users fetched: $blockedUsersId");
+
+    final List<String> filteredCallersId = callersId.where((callerId) {
+      final isBlocked = blockedUsersId.contains(callerId);
+      if (isBlocked) {
+        callkitLogger.info("User $callerId is blocked. Removing from call.");
+      }
+      return !isBlocked;
+    }).toList();
+
     if (await AppPermission.askAudioCallPermissions()) {
       MirrorFlyCallKit.makeAudioCall(
-          callersId: callersId,
+          callersId: filteredCallersId,
           chatId: chatId,
           flyResult: (FlyResult response) {
             if (response.isSuccess) {
