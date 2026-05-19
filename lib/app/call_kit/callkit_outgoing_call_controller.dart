@@ -200,7 +200,7 @@ class CallKitOutgoingCallController extends GetxController
         // case FlyCallActionEvent.toAudioCallAfterCallSwitch:
         //   audioCallAfterCallSwitch();
         //   break;
-        case FlyCallActionEvent.onCallModeChange:
+        // case FlyCallActionEvent.onCallModeChange:
           // onParticipantListUpdated();
           break;
         case FlyCallActionEvent.onAudioRouteChanged:

@@ -452,7 +452,7 @@ class BaseController {
               participantId: flyCallAction.participantId ?? '');
           break;
 
-        case FlyCallActionEvent.onCallModeChange:
+        // case FlyCallActionEvent.onCallModeChange:
           callkitLogger.info("[MirrorFly][BaseController] flyCallActionEvent onCallModeChange");
           // Refresh service state: re-fetch participants and reconfigure call mode.
           // The controller's ever(lastActionEvent) then calls onParticipantListUpdated().
