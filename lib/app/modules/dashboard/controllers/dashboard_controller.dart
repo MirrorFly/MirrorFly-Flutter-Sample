@@ -1718,7 +1718,7 @@ class DashboardController extends FullLifeCycleController
     typingAndGoneStatus.clear();
     // fetchCallLogList();
 
-    if (Constants.useMirrorFlyCallKit) {
+    if (Constants.useMirrorFlyCallKit && currentTab.value == 1) {
       _refreshCallKitCallLogList();
       markAllUnreadMissedCallsAsRead();
     }
