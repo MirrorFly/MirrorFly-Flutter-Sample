@@ -313,9 +313,9 @@ class CallKitEventBuffer {
           participantId: e.participantId ?? '',
         );
         break;
-      case FlyCallActionEvent.onCallModeChange:
-        // c.onParticipantListUpdated();
-        break;
+      // case FlyCallActionEvent.onCallModeChange:
+      //   // c.onParticipantListUpdated();
+      //   break;
       case FlyCallActionEvent.onAudioRouteChanged:
         if (e.flyAudioDevice != null) c.onAudioRouteChanged(e.flyAudioDevice!);
         break;
