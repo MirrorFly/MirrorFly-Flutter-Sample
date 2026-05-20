@@ -151,7 +151,7 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
                       subtitle: SizedBox(
                         child: _callLogTimeForCallKit(
                             "${DateTimeUtils.getCallLogDate(microSeconds: controller.callKitLog.callTime!)}  ${getChatTime(context, controller.callKitLog.callTime)}",
-                            controller.callKitLog.isCaller == 0,
+                            controller.callKitLog.isCaller == 1,
                             controller.callKitLog.missedStatus == 1, AppStyleConfig.callInfoPageStyle.callHistoryItemStyle.durationTextStyle),
                       ),
                       trailing: SizedBox(
@@ -277,19 +277,19 @@ class CallLogInfoView extends NavViewStateful<CallLogInfoController> {
       ) {
     Widget iconWidget;
 
-    if (isMissedCall) {
+    if (isCaller) {
+      iconWidget = AppUtils.svgIcon(
+        icon: arrowUpIcon,
+        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
+      );
+    } else if (isMissedCall) {
       iconWidget = AppUtils.svgIcon(
         icon: arrowDropDown,
         colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
       );
-    } else if (isCaller) {
-      iconWidget = AppUtils.svgIcon(
-        icon: arrowDownIcon,
-        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
-      );
     } else {
       iconWidget = AppUtils.svgIcon(
-        icon: arrowUpIcon,
+        icon: arrowDownIcon,
         colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
       );
     }

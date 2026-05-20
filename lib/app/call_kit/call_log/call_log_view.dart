@@ -211,7 +211,7 @@ class CallLogView extends StatelessWidget {
             subtitle: SizedBox(
               child: callLogTimeForCallKit(
                   "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-                  item.isCaller == 0,
+                  item.isCaller == 1,
                   item.missedStatus == 1 || item.missedStatus == 2,
                   callHistoryItemStyle.subtitleTextStyle),
             ),
@@ -351,7 +351,7 @@ class CallLogView extends StatelessWidget {
             subtitle: SizedBox(
               child: callLogTimeForCallKit(
                   "${DateTimeUtils.getCallLogDate(microSeconds: item.callTime!)}  ${getChatTime(context, item.callTime)}",
-                  item.isCaller == 0,
+                  item.isCaller == 1,
                   item.missedStatus == 1 || item.missedStatus == 2,
                   callHistoryItemStyle.subtitleTextStyle),
             ),
@@ -465,19 +465,19 @@ class CallLogView extends StatelessWidget {
       ) {
     Widget iconWidget;
 
-    if (isMissedCall) {
+    if (isCaller) {
+      iconWidget = AppUtils.svgIcon(
+        icon: arrowUpIcon,
+        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
+      );
+    } else if (isMissedCall) {
       iconWidget = AppUtils.svgIcon(
         icon: arrowDropDown,
         colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
       );
-    } else if (isCaller) {
-      iconWidget = AppUtils.svgIcon(
-        icon: arrowDownIcon,
-        colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
-      );
     } else {
       iconWidget = AppUtils.svgIcon(
-        icon: arrowUpIcon,
+        icon: arrowDownIcon,
         colorFilter: const ColorFilter.mode(Colors.green, BlendMode.srcIn),
       );
     }
