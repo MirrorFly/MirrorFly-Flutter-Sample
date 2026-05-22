@@ -156,7 +156,7 @@ class CallLogView extends StatelessWidget {
                     width: 0.5)),
             leading: FutureBuilder(
                 future: getProfileDetailsFromCallKit(
-                    id: item.callParticipants?.first ?? "",
+                    id: item.callParticipants?.firstOrNull ?? "",
                     isGroup: false),
                 builder: (context, snap) {
                   return snap.hasData && snap.data != null
@@ -188,20 +188,20 @@ class CallLogView extends StatelessWidget {
                 }),
             title: FutureBuilder(
                 future: getProfileDetailsFromCallKit(
-                    id: item.callParticipants?.first ?? "",
+                    id: item.callParticipants?.firstOrNull ?? "",
                     isGroup: false),
                 builder: (context, snap) {
                   return snap.hasData &&
                       snap.data != null &&
                       controller.search.text.isNotEmpty
                       ? CallHighlightedText(
-                      content: snap.data!.name!,
+                      content: snap.data?.name ?? "",
                       searchString: controller.search.text.trim())
                       : snap.hasData &&
                       snap.data != null &&
                       controller.search.text.isEmpty
                       ? Text(
-                    snap.data!.name!,
+                    snap.data?.name ?? "",
                     style:
                     callHistoryItemStyle.titleTextStyle,
                     // style: const TextStyle(color: Colors.black),
