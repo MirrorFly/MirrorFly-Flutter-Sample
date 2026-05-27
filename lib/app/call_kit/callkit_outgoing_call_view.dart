@@ -508,7 +508,7 @@ class CallKitOutgoingCallView
                     ],
                     Center(
                       child: Text(
-                        controller.callerNames.value,
+                        (controller.isSwapped.value && controller.callerList.length <= 2) ? "You" : controller.callerNames.value,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         softWrap: false,
