@@ -365,8 +365,8 @@ class Constants {
   // Dummy OTP View
   static const bool isOTPViewEnabled = false;
   static ChatBuilder chatBuilder = ChatBuilder(
-      domainBaseUrl: "",
-      licenseKey: 'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
+      domainBaseUrl: "",//"https://api-preprod-sandbox.mirrorfly.com/api/v1",
+      licenseKey: 'VnA0G1u0fcRPu5DVij5TeP710nahHz', //'ckIjaccWBoMNvxdbql8LJ2dmKqT5bp',
       iOSContainerID: 'group.com.mirrorfly.flutterapps',
       chatHistoryEnable: true,
       enableDebugLog: true,
