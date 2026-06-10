@@ -640,7 +640,7 @@ class CallStateService extends GetxService {
   bool isSelfId({required String? id}) {
     final String? currentUserId = SessionManagement.getUserJID();
     if (currentUserId == null || id == null) return true;
-    final String participantId = '$id@xmpp-uikit-qa.contus.us';
+    final String participantId = '$id@xmpp-fergus.mirrorfly.com';
     return currentUserId == participantId;
   }
 
@@ -648,11 +648,11 @@ class CallStateService extends GetxService {
     if (isGroup) {
       return userId.contains('@')
           ? userId
-          : '$userId@mix.xmpp-uikit-qa.contus.us';
+          : '$userId@mix.xmpp-fergus.mirrorfly.com';
     }
     return userId.contains('@')
         ? userId
-        : '$userId@xmpp-uikit-qa.contus.us';
+        : '$userId@xmpp-fergus.mirrorfly.com';
   }
 
   String trimAfterAt(String input) {

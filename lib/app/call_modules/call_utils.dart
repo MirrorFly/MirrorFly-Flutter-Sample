@@ -127,7 +127,7 @@ class CallUtils {
   }
 
   static String getJidFromUserId({required String userId, required bool isGroup}) {
-    final domain = isGroup ? "@mix.xmpp-uikit-qa.contus.us" : "@xmpp-uikit-qa.contus.us";
+    final domain = isGroup ? "@mix.xmpp-fergus.mirrorfly.com" : "@xmpp-fergus.mirrorfly.com";
     if (userId.endsWith(domain)) {
       return userId;
     } else {

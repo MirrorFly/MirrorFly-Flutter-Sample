@@ -50,7 +50,7 @@ class CallKitCallTimeoutController extends GetxController {
   }
 
   void addDomainToJid() {
-    const domain = "@xmpp-uikit-qa.contus.us";
+    const domain = "@xmpp-fergus.mirrorfly.com";
 
     final formatted = users.map((id) {
       return id.endsWith(domain) ? id : "$id$domain";
@@ -197,7 +197,7 @@ class CallKitCallTimeoutController extends GetxController {
   }
 
   String getJidFromUserId({required String userId, required bool isGroup}) {
-    final domain = isGroup ? "@mix.xmpp-uikit-qa.contus.us" : "@xmpp-uikit-qa.contus.us";
+    final domain = isGroup ? "@mix.xmpp-fergus.mirrorfly.com" : "@xmpp-fergus.mirrorfly.com";
     if (userId.endsWith(domain)) {
       return userId;
     } else {

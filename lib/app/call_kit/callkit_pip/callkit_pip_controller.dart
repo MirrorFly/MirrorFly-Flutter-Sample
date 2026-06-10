@@ -163,9 +163,9 @@ class CallKitPipController extends GetxController {
 
   String _validId({required String userId, required bool isGroup}) {
     if (isGroup) {
-      return userId.contains('@') ? userId : '$userId@mix.xmpp-uikit-qa.contus.us';
+      return userId.contains('@') ? userId : '$userId@mix.xmpp-fergus.mirrorfly.com';
     } else {
-      return userId.contains('@') ? userId : '$userId@xmpp-uikit-qa.contus.us';
+      return userId.contains('@') ? userId : '$userId@xmpp-fergus.mirrorfly.com';
     }
   }
 
