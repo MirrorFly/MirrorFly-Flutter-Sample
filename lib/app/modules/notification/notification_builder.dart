@@ -330,7 +330,8 @@ class NotificationBuilder {
   static Future<int> getTotalUnReadCount() async {
     // return if (NotificationBuilder.chatNotifications.size == 0) FlyMessenger.getUnreadMessageCountExceptMutedChat() + CallLogManager.getUnreadMissedCallCount() else 1
     var unReadMessageCount = await Mirrorfly.getUnreadMessageCountExceptMutedChat();
-    var unReadCallCount = await Mirrorfly.getUnreadMissedCallCount();
-    return (unReadMessageCount ?? 0) + (unReadCallCount ?? 0);
+    // var unReadCallCount = await Mirrorfly.getUnreadMissedCallCount();
+    // return (unReadMessageCount ?? 0) + (unReadCallCount ?? 0);
+    return 0;
   }
 }

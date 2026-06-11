@@ -80,42 +80,42 @@ class OutgoingCallController extends GetxController
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Mirrorfly.getCallUsersList().then((value) {
-        // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
-        debugPrint("#Mirrorfly call get users --> $value");
-        final callUserList = callUserListFromJson(value);
-        callList(callUserList);
-        callStatus(callUserList.first.callStatus?.value);
-      });
+      // await Mirrorfly.getCallUsersList().then((value) {
+      //   // [{"userJid":"919789482015@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"919894940560@xmpp-uikit-qa.contus.us","callStatus":"Trying to Connect"},{"userJid":"917010279986@xmpp-uikit-qa.contus.us","callStatus":"Connected"}]
+      //   debugPrint("#Mirrorfly call get users --> $value");
+      //   final callUserList = callUserListFromJson(value);
+      //   callList(callUserList);
+      //   callStatus(callUserList.first.callStatus?.value);
+      // });
       debugPrint("#Mirrorfly call type ${callType.value}");
 
-      groupId(await Mirrorfly.getCallGroupJid());
+      // groupId(await Mirrorfly.getCallGroupJid());
 
       audioDeviceChanged();
       getAudioDevices();
 
       if (callType.value == CallType.audio) {
-        Mirrorfly.isUserAudioMuted().then((value) => muted(value));
+        // Mirrorfly.isUserAudioMuted().then((value) => muted(value));
         videoMuted(true);
       } else {
-        Mirrorfly.isUserAudioMuted().then((value) => muted(value));
-        Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
+        // Mirrorfly.isUserAudioMuted().then((value) => muted(value));
+        // Mirrorfly.isUserVideoMuted().then((value) => videoMuted(value));
         // videoMuted(false);
       }
     });
 
     Future.delayed(const Duration(milliseconds: 500), () async {
-      await Mirrorfly.getCallType().then((value) => callType(value));
+      // await Mirrorfly.getCallType().then((value) => callType(value));
     });
   }
 
   muteAudio() async {
     debugPrint("#Mirrorfly muteAudio ${muted.value}");
-    await Mirrorfly.muteAudio(
-        status: !muted.value,
-        flyCallBack: (FlyResponse response) {
-          debugPrint("#Mirrorfly Mute Audio Response ${response.isSuccess}.");
-        });
+    // await Mirrorfly.muteAudio(
+    //     status: !muted.value,
+    //     flyCallBack: (FlyResponse response) {
+    //       debugPrint("#Mirrorfly Mute Audio Response ${response.isSuccess}.");
+    //     });
     muted(!muted.value);
     var callUserIndex = callList.indexWhere(
         (element) => element.userJid!.value == SessionManagement.getUserJID());
@@ -155,7 +155,7 @@ class OutgoingCallController extends GetxController
                         NavUtils.back();
                         debugPrint("selected audio item ${audioItem.type}");
                         audioOutputType(audioItem.type);
-                        Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
+                        // Mirrorfly.routeAudioTo(routeType: audioItem.type ?? "");
                       } else {
                         LogMessage.d("routeAudioOption",
                             "clicked on same audio type selected");
@@ -173,17 +173,17 @@ class OutgoingCallController extends GetxController
     debugPrint("isOneToOneCall : $isOneToOneCall");
     if (await AppPermission.askVideoCallPermissions()) {
       if (callType.value != CallType.audio) {
-        Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
+        // Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
         videoMuted(!videoMuted.value);
       } else if (callType.value == CallType.audio &&
           isOneToOneCall &&
           NavUtils.currentRoute == Routes.onGoingCallView) {
         // showVideoSwitchPopup();
       } else if (isGroupCall) {
-        Mirrorfly.muteVideo(
-          status: !videoMuted.value,
-          flyCallBack: (_) {},
-        );
+        // Mirrorfly.muteVideo(
+        //   status: !videoMuted.value,
+        //   flyCallBack: (_) {},
+        // );
         videoMuted(!videoMuted.value);
       }
     }
@@ -194,7 +194,7 @@ class OutgoingCallController extends GetxController
     // if(Platform.isIOS) {
     //   cameraSwitch(!cameraSwitch.value);
     // }
-    await Mirrorfly.switchCamera();
+    // await Mirrorfly.switchCamera();
   }
 
   void disconnectCall() {
@@ -205,13 +205,13 @@ class OutgoingCallController extends GetxController
     if (callList.isNotEmpty) {
       callList.clear();
     }
-    Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
-      debugPrint("#Disconnect call disconnect value ${response.isSuccess}");
-      if (response.isSuccess) {
-        debugPrint("#Disconnect call disconnect list size ${callList.length}");
-        // backCalledFromDisconnect();
-      }
-    });
+    // Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
+    //   debugPrint("#Disconnect call disconnect value ${response.isSuccess}");
+    //   if (response.isSuccess) {
+    //     debugPrint("#Disconnect call disconnect list size ${callList.length}");
+    //     // backCalledFromDisconnect();
+    //   }
+    // });
   }
 
   @override
@@ -298,16 +298,16 @@ class OutgoingCallController extends GetxController
     if (NavUtils.currentRoute != Routes.onGoingCallView &&
         NavUtils.currentRoute != Routes.participants) {
       Future.delayed(const Duration(milliseconds: 500), () async {
-        bool? isAlreadyInCall = await Mirrorfly.isOnGoingCall();
-        if (isAlreadyInCall == true) {
-          print("#call is not disconnected already");
-          NavUtils.offNamed(Routes.onGoingCallView, arguments: {
-            "userJid": [userJid],
-            "cameraSwitch": cameraSwitch.value
-          });
-        } else {
-          print("#call is disconnected already");
-        }
+        // bool? isAlreadyInCall = await Mirrorfly.isOnGoingCall();
+        // if (isAlreadyInCall == true) {
+        //   print("#call is not disconnected already");
+        //   NavUtils.offNamed(Routes.onGoingCallView, arguments: {
+        //     "userJid": [userJid],
+        //     "cameraSwitch": cameraSwitch.value
+        //   });
+        // } else {
+        //   print("#call is disconnected already");
+        // }
       });
     }
   }
@@ -331,12 +331,12 @@ class OutgoingCallController extends GetxController
 
   void disconnectOutgoingCall() {
     isCallTimerEnabled = false;
-    Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
-      if (response.isSuccess) {
-        callList.clear();
-        // NavUtils.back();
-      }
-    });
+    // Mirrorfly.disconnectCall(flyCallBack: (FlyResponse response) {
+    //   if (response.isSuccess) {
+    //     callList.clear();
+    //     // NavUtils.back();
+    //   }
+    // });
   }
 
   void statusUpdate(String userJid, String callStatus) {
@@ -399,15 +399,15 @@ class OutgoingCallController extends GetxController
 
   void audioDeviceChanged() {
     getAudioDevices();
-    Mirrorfly.selectedAudioDevice().then((value) => audioOutputType(value));
+    // Mirrorfly.selectedAudioDevice().then((value) => audioOutputType(value));
   }
 
   void getAudioDevices() {
-    Mirrorfly.getAllAvailableAudioInput().then((value) {
-      final availableList = audioDevicesFromJson(value);
-      availableAudioList(availableList);
-      debugPrint("Mirrorfly flutter getAllAvailableAudioInput $availableList");
-    });
+    // Mirrorfly.getAllAvailableAudioInput().then((value) {
+    //   final availableList = audioDevicesFromJson(value);
+    //   availableAudioList(availableList);
+    //   debugPrint("Mirrorfly flutter getAllAvailableAudioInput $availableList");
+    // });
   }
 
   Future<void> remoteEngaged(

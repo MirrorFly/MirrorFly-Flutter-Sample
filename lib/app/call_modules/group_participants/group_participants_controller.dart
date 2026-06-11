@@ -40,8 +40,8 @@ class GroupParticipantsController extends GetxController {
     participantsListInCall(NavUtils.arguments["participantsListInCall"] ?? []);
 
     getMaxCallUsersCount = Constants.useMirrorFlyCallKit
-        ? Constants.maxCallUsersLimitForMirrorFlyCallKit
-        : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+        ? Constants.maxCallUsersLimitForMirrorFlyCallKit :8;
+        // : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
 
     groupId(NavUtils.arguments["groupId"]);
     callType(NavUtils.arguments["callType"]);
@@ -329,7 +329,7 @@ class GroupParticipantsController extends GetxController {
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    if ((await MirrorFlyCallKit.isOngoingCall()).checkNull()) {
       debugPrint("#Mirrorfly Call You are on another call");
       toToast(getTranslated("msgOngoingCallAlert"));
       return;

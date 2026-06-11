@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mirror_fly_demo/app/modules/chat/widgets/custom_text_view.dart';
-import 'package:mirrorfly_plugin/flychat.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart' show MirrorFlyCallKit;
 
 import '../../../call_kit/callkit_logger.dart';
 import '../../../call_modules/call_utils.dart';
@@ -9,10 +9,11 @@ import '../../../common/constants.dart';
 import '../../../data/helper.dart';
 import '../../../data/utils.dart';
 import '../../../extensions/extensions.dart';
-import '../../../model/chat_message_model.dart';
+// import '../../../model/chat_message_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../../routes/route_settings.dart';
 import '../../../stylesheet/stylesheet.dart';
+import 'package:mirror_fly_demo/app/model/chat_message_model.dart';
 
 class TextMessageView extends StatelessWidget {
   const TextMessageView(
@@ -53,7 +54,7 @@ class TextMessageView extends StatelessWidget {
                             if (Constants.useMirrorFlyCallKit) {
                               CallUtils.onJoinLinkTapped(link: link);
                             } else {
-                              if (!(await Mirrorfly.isOnGoingCall())
+                              if (!(await MirrorFlyCallKit.isOngoingCall())
                                   .checkNull()) {
                                 NavUtils.toNamed(Routes.joinCallPreview,
                                     arguments: {
@@ -167,7 +168,7 @@ class CallLinkView extends StatelessWidget {
             if (Constants.useMirrorFlyCallKit) {
               CallUtils.onJoinLinkTapped(link: link);
             } else {
-              if (!(await Mirrorfly.isOnGoingCall()).checkNull()) {
+              if (!(await MirrorFlyCallKit.isOngoingCall()).checkNull()) {
                 NavUtils.toNamed(Routes.joinCallPreview, arguments: {
                   "callLinkId": link.replaceAll(Constants.webChatLogin, ""),
                 });

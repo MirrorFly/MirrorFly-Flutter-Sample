@@ -53,7 +53,7 @@ class ContactController extends FullLifeCycleController
     super.onInit();
 
     getMaxCallUsersCount = !Constants.useMirrorFlyCallKit
-        ? (await Mirrorfly.getMaxCallUsersCount()) ?? 8
+        ?  8
         : Constants.maxCallUsersLimitForMirrorFlyCallKit;
     scrollController.addListener(_scrollListener);
 
@@ -695,11 +695,11 @@ class ContactController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-      debugPrint("#Mirrorfly Call You are on another call");
-      toToast(getTranslated("msgOngoingCallAlert"));
-      return;
-    }
+    // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    //   debugPrint("#Mirrorfly Call You are on another call");
+    //   toToast(getTranslated("msgOngoingCallAlert"));
+    //   return;
+    // }
     if (!(await AppUtils.isNetConnected())) {
       toToast(getTranslated("noInternetConnection"));
       return;
@@ -707,69 +707,69 @@ class ContactController extends FullLifeCycleController
     if (arguments.callType == CallType.audio) {
       if (await AppPermission.askAudioCallPermissions()) {
         if (isOneToOneCall) {
-          Mirrorfly.makeVoiceCall(
-              toUserJid: selectedUsersJIDList[0],
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": [selectedUsersJIDList[0]],
-                    "callType": CallType.audio
-                  });
-                } else {
-                  DialogUtils.showAlert(
-                      dialogStyle: AppStyleConfig.dialogStyle,
-                      message: getErrorDetails(response));
-                }
-              });
+          // Mirrorfly.makeVoiceCall(
+          //     toUserJid: selectedUsersJIDList[0],
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": [selectedUsersJIDList[0]],
+          //           "callType": CallType.audio
+          //         });
+          //       } else {
+          //         DialogUtils.showAlert(
+          //             dialogStyle: AppStyleConfig.dialogStyle,
+          //             message: getErrorDetails(response));
+          //       }
+          //     });
         } else {
-          Mirrorfly.makeGroupVoiceCall(
-              toUserJidList: selectedUsersJIDList,
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": selectedUsersJIDList,
-                    "callType": CallType.audio
-                  });
-                } else {
-                  DialogUtils.showAlert(
-                      dialogStyle: AppStyleConfig.dialogStyle,
-                      message: getErrorDetails(response));
-                }
-              });
+          // Mirrorfly.makeGroupVoiceCall(
+          //     toUserJidList: selectedUsersJIDList,
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": selectedUsersJIDList,
+          //           "callType": CallType.audio
+          //         });
+          //       } else {
+          //         DialogUtils.showAlert(
+          //             dialogStyle: AppStyleConfig.dialogStyle,
+          //             message: getErrorDetails(response));
+          //       }
+          //     });
         }
       }
     } else if (arguments.callType == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
         if (isOneToOneCall) {
-          Mirrorfly.makeVideoCall(
-              toUserJid: selectedUsersJIDList[0],
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": [selectedUsersJIDList[0]],
-                    "callType": CallType.video
-                  });
-                } else {
-                  DialogUtils.showAlert(
-                      dialogStyle: AppStyleConfig.dialogStyle,
-                      message: getErrorDetails(response));
-                }
-              });
+          // Mirrorfly.makeVideoCall(
+          //     toUserJid: selectedUsersJIDList[0],
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": [selectedUsersJIDList[0]],
+          //           "callType": CallType.video
+          //         });
+          //       } else {
+          //         DialogUtils.showAlert(
+          //             dialogStyle: AppStyleConfig.dialogStyle,
+          //             message: getErrorDetails(response));
+          //       }
+          //     });
         } else {
-          Mirrorfly.makeGroupVideoCall(
-              toUserJidList: selectedUsersJIDList,
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": selectedUsersJIDList,
-                    "callType": CallType.video
-                  });
-                } else {
-                  DialogUtils.showAlert(
-                      dialogStyle: AppStyleConfig.dialogStyle,
-                      message: getErrorDetails(response));
-                }
-              });
+          // Mirrorfly.makeGroupVideoCall(
+          //     toUserJidList: selectedUsersJIDList,
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": selectedUsersJIDList,
+          //           "callType": CallType.video
+          //         });
+          //       } else {
+          //         DialogUtils.showAlert(
+          //             dialogStyle: AppStyleConfig.dialogStyle,
+          //             message: getErrorDetails(response));
+          //       }
+          //     });
         }
       }
     }

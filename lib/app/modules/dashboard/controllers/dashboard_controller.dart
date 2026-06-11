@@ -152,9 +152,9 @@ class DashboardController extends FullLifeCycleController
     if (Constants.useMirrorFlyCallKit) {
       /// sync here for
     } else {
-      Mirrorfly.syncCallLogs().then((isSuccess) {
-        debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
-      });
+      // Mirrorfly.syncCallLogs().then((isSuccess) {
+      //   debugPrint("#MirrorflyCall syncCallLogs isSuccess $isSuccess");
+      // });
     }
     super.onInit();
   }
@@ -170,8 +170,8 @@ class DashboardController extends FullLifeCycleController
           debugPrint("$callKitLogTag (markAllUnreadMissedCallsAsRead failed");
         }
       } else {
-        var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
-        debugPrint("(markAllUnreadMissedCallsAsRead result $result");
+        // var result = await Mirrorfly.markAllUnreadMissedCallsAsRead();
+        // debugPrint("(markAllUnreadMissedCallsAsRead result $result");
         unreadCallCount(0);
       }
 
@@ -2031,20 +2031,20 @@ class DashboardController extends FullLifeCycleController
   Future<void> fetchCallLogList() async {
     callkitLogger.info("$callKitLogTag fetchCallLogList function called");
     loading.value = true;
-    Mirrorfly.getCallLogsList(
-        currentPage: pageNumber,
-        flyCallBack: (FlyResponse response) {
-          loading.value = false;
-          if (response.isSuccess && response.hasData) {
-            var list = callLogListFromJson(response.data);
-            totalPages = list.totalPages!;
-            // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
-            if (list.data != null) {
-              _callLogList.addAll(list.data!);
-              isLastPage.value = list.data!.isEmpty;
-            }
-          }
-        });
+    // Mirrorfly.getCallLogsList(
+    //     currentPage: pageNumber,
+    //     flyCallBack: (FlyResponse response) {
+    //       loading.value = false;
+    //       if (response.isSuccess && response.hasData) {
+    //         var list = callLogListFromJson(response.data);
+    //         totalPages = list.totalPages!;
+    //         // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+    //         if (list.data != null) {
+    //           _callLogList.addAll(list.data!);
+    //           isLastPage.value = list.data!.isEmpty;
+    //         }
+    //       }
+    //     });
   }
 
   Future<List<String>> getUsersIBlocked() async {
@@ -2082,24 +2082,24 @@ class DashboardController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-      debugPrint("#Mirrorfly Call You are on another call");
-      toToast(getTranslated("msgOngoingCallAlert"));
-      return;
-    }
+    // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    //   debugPrint("#Mirrorfly Call You are on another call");
+    //   toToast(getTranslated("msgOngoingCallAlert"));
+    //   return;
+    // }
     if (await AppUtils.isNetConnected()) {
       if (await AppPermission.askVideoCallPermissions()) {
-        Mirrorfly.makeVideoCall(
-            toUserJid: fromUser.checkNull(),
-            flyCallBack: (FlyResponse response) {
-              if (response.isSuccess) {
-                //setOnGoingUserGone();
-                NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                  "userJid": [fromUser],
-                  "callType": CallType.video
-                }).then((value) => setOnGoingUserAvail());
-              }
-            });
+        // Mirrorfly.makeVideoCall(
+        //     toUserJid: fromUser.checkNull(),
+        //     flyCallBack: (FlyResponse response) {
+        //       if (response.isSuccess) {
+        //         //setOnGoingUserGone();
+        //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+        //           "userJid": [fromUser],
+        //           "callType": CallType.video
+        //         }).then((value) => setOnGoingUserAvail());
+        //       }
+        //     });
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
       }
@@ -2225,28 +2225,28 @@ class DashboardController extends FullLifeCycleController
       DialogUtils.showFeatureUnavailable();
       return;
     }
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-      debugPrint("#Mirrorfly Call You are on another call");
-      toToast(getTranslated("msgOngoingCallAlert"));
-      return;
-    }
+    // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    //   debugPrint("#Mirrorfly Call You are on another call");
+    //   toToast(getTranslated("msgOngoingCallAlert"));
+    //   return;
+    // }
     if (!(await AppUtils.isNetConnected())) {
       toToast(getTranslated("noInternetConnection"));
       return;
     }
     if (await AppPermission.askAudioCallPermissions()) {
-      Mirrorfly.makeVoiceCall(
-          toUserJid: toUser.checkNull(),
-          flyCallBack: (FlyResponse response) {
-            if (response.isSuccess) {
-              debugPrint("#Mirrorfly Call userjid $toUser");
-              //  setOnGoingUserGone();
-              NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                "userJid": [toUser],
-                "callType": CallType.audio
-              }).then((value) => setOnGoingUserAvail());
-            }
-          });
+      // Mirrorfly.makeVoiceCall(
+      //     toUserJid: toUser.checkNull(),
+      //     flyCallBack: (FlyResponse response) {
+      //       if (response.isSuccess) {
+      //         debugPrint("#Mirrorfly Call userjid $toUser");
+      //         //  setOnGoingUserGone();
+      //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+      //           "userJid": [toUser],
+      //           "callType": CallType.audio
+      //         }).then((value) => setOnGoingUserAvail());
+      //       }
+      //     });
     } else {
       debugPrint("permission not given");
     }
@@ -2256,11 +2256,11 @@ class DashboardController extends FullLifeCycleController
     if (userList == null || userList.isEmpty) {
       return;
     }
-    if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-      debugPrint("#Mirrorfly Call You are on another call");
-      toToast(getTranslated("msgOngoingCallAlert"));
-      return;
-    }
+    // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+    //   debugPrint("#Mirrorfly Call You are on another call");
+    //   toToast(getTranslated("msgOngoingCallAlert"));
+    //   return;
+    // }
     if (!(await AppUtils.isNetConnected())) {
       toToast(getTranslated("noInternetConnection"));
       return;
@@ -2272,32 +2272,32 @@ class DashboardController extends FullLifeCycleController
     if (callType == CallType.video) {
       if (await AppPermission.askVideoCallPermissions()) {
         // NavUtils.back();
-        Mirrorfly.makeGroupVideoCall(
-            groupJid: item.groupId.checkNull(),
-            toUserJidList: userList,
-            flyCallBack: (FlyResponse response) {
-              if (response.isSuccess) {
-                NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                  "userJid": userList,
-                  "callType": CallType.video
-                });
-              }
-            });
+        // Mirrorfly.makeGroupVideoCall(
+        //     groupJid: item.groupId.checkNull(),
+        //     toUserJidList: userList,
+        //     flyCallBack: (FlyResponse response) {
+        //       if (response.isSuccess) {
+        //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+        //           "userJid": userList,
+        //           "callType": CallType.video
+        //         });
+        //       }
+        //     });
       }
     } else {
       if (await AppPermission.askAudioCallPermissions()) {
         // NavUtils.back();
-        Mirrorfly.makeGroupVoiceCall(
-            groupJid: item.groupId.checkNull(),
-            toUserJidList: userList,
-            flyCallBack: (FlyResponse response) {
-              if (response.isSuccess) {
-                NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                  "userJid": userList,
-                  "callType": CallType.audio
-                });
-              }
-            });
+        // Mirrorfly.makeGroupVoiceCall(
+        //     groupJid: item.groupId.checkNull(),
+        //     toUserJidList: userList,
+        //     flyCallBack: (FlyResponse response) {
+        //       if (response.isSuccess) {
+        //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+        //           "userJid": userList,
+        //           "callType": CallType.audio
+        //         });
+        //       }
+        //     });
       }
     }
   }
@@ -2359,28 +2359,28 @@ class DashboardController extends FullLifeCycleController
         loading.value = true;
         pageNumber =1;
 
-        Mirrorfly.getCallLogsList(
-            currentPage: pageNumber,
-            flyCallBack: (FlyResponse response) {
-              loading.value = false;
-              if (response.isSuccess && response.hasData) {
-                var list = callLogListFromJson(response.data);
-                totalPages = list.totalPages!;
-                _callLogList.clear();
-                callLogList.clear();
-                // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
-                if (list.data != null) {
-                  _callLogList.addAll(list.data!);
-                  isLastPage.value = list.data!.isEmpty;
-                }
-              }
-            });
+        // Mirrorfly.getCallLogsList(
+        //     currentPage: pageNumber,
+        //     flyCallBack: (FlyResponse response) {
+        //       loading.value = false;
+        //       if (response.isSuccess && response.hasData) {
+        //         var list = callLogListFromJson(response.data);
+        //         totalPages = list.totalPages!;
+        //         _callLogList.clear();
+        //         callLogList.clear();
+        //         // print("getCallLogsList fetchCallLogList ===> total_pages $totalPages pageNumber $pageNumber list.data!.length ${list.data!.length} ");
+        //         if (list.data != null) {
+        //           _callLogList.addAll(list.data!);
+        //           isLastPage.value = list.data!.isEmpty;
+        //         }
+        //       }
+        //     });
       }
 
       if (!Constants.useMirrorFlyCallKit) {
-        var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+        // var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
         // print("unreadMissedCallCount from sdk $unreadMissedCallCount");
-        unreadCallCount.value = unreadMissedCallCount ?? 0;
+        // unreadCallCount.value = unreadMissedCallCount ?? 0;
       }
     } else {
       debugPrint("onCallLogUpdate : Failed");
@@ -2391,33 +2391,33 @@ class DashboardController extends FullLifeCycleController
     if (Constants.useMirrorFlyCallKit) {
       callkitLogger.info("$callKitLogTag filteredCallLog called with searchKey: $searchKey");
     } else {
-      Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
-        List<CallLogData> callLogs = [];
-        List<CallLogData> callLogsWithNickName = [];
-
-        if (callLogsResponse.isNotEmpty) {
-          _callLogList.clear();
-          callLogList.clear();
-
-          var list = callLogListFromJson(callLogsResponse);
-
-          for (var callLog in list.data ?? []) {
-            callLogsWithNickName
-                .add(await setProfile(getEndUserJid(callLog), callLog));
-          }
-
-          var searchKeyWithoutSpace = searchKey.toLowerCase();
-          for (var callLog in callLogsWithNickName) {
-            if ((callLog.nickName?.toLowerCase() ?? "").contains(searchKeyWithoutSpace.toLowerCase() ?? "")) {
-              callLogs.add(callLog);
-            }
-          }
-          _callLogList(callLogs);
-          callLogSearchLoading(false);
-        } else {
-          debugPrint("filteredCallLog : Failed");
-        }
-      });
+      // Mirrorfly.getLocalCallLogs().then((callLogsResponse) async {
+      //   List<CallLogData> callLogs = [];
+      //   List<CallLogData> callLogsWithNickName = [];
+      //
+      //   if (callLogsResponse.isNotEmpty) {
+      //     _callLogList.clear();
+      //     callLogList.clear();
+      //
+      //     var list = callLogListFromJson(callLogsResponse);
+      //
+      //     for (var callLog in list.data ?? []) {
+      //       callLogsWithNickName
+      //           .add(await setProfile(getEndUserJid(callLog), callLog));
+      //     }
+      //
+      //     var searchKeyWithoutSpace = searchKey.toLowerCase();
+      //     for (var callLog in callLogsWithNickName) {
+      //       if ((callLog.nickName?.toLowerCase() ?? "").contains(searchKeyWithoutSpace.toLowerCase() ?? "")) {
+      //         callLogs.add(callLog);
+      //       }
+      //     }
+      //     _callLogList(callLogs);
+      //     callLogSearchLoading(false);
+      //   } else {
+      //     debugPrint("filteredCallLog : Failed");
+      //   }
+      // });
     }
   }
 
@@ -2590,19 +2590,19 @@ class DashboardController extends FullLifeCycleController
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 } else {
-                  Mirrorfly.deleteCallLog(
-                      jidList: selectedCallLogs,
-                      isClearAll: false,
-                      flyCallBack: (FlyResponse response) {
-                        if (response.isSuccess) {
-                          callLogList.removeAt(logIndex);
-                          delete(false);
-                          selected(false);
-                          selectedCallLogs.clear();
-                        } else {
-                          toToast(getTranslated("errorOnCallLogDelete"));
-                        }
-                      });
+                  // Mirrorfly.deleteCallLog(
+                  //     jidList: selectedCallLogs,
+                  //     isClearAll: false,
+                  //     flyCallBack: (FlyResponse response) {
+                  //       if (response.isSuccess) {
+                  //         callLogList.removeAt(logIndex);
+                  //         delete(false);
+                  //         selected(false);
+                  //         selectedCallLogs.clear();
+                  //       } else {
+                  //         toToast(getTranslated("errorOnCallLogDelete"));
+                  //       }
+                  //     });
                 }
               },
               child: Text(
@@ -2642,24 +2642,24 @@ class DashboardController extends FullLifeCycleController
                     toToast(getTranslated("errorOnCallLogDelete"));
                   }
                 } else {
-                  Mirrorfly.deleteCallLog(
-                      jidList: selectedCallLogs,
-                      isClearAll: false,
-                      flyCallBack: (FlyResponse response) {
-                        debugPrint("deleteCallLog ${response.toString()}");
-                        if (response.isSuccess) {
-                          for (var logItem in selectedCallLogs) {
-                            var chatIndex = callLogList.indexWhere(
-                                    (element) => logItem == element.roomId);
-                            callLogList.removeAt(chatIndex);
-                          }
-                          delete(false);
-                          selected(false);
-                          selectedCallLogs.clear();
-                        } else {
-                          toToast(getTranslated("errorOnCallLogDelete"));
-                        }
-                      });
+                  // Mirrorfly.deleteCallLog(
+                  //     jidList: selectedCallLogs,
+                  //     isClearAll: false,
+                  //     flyCallBack: (FlyResponse response) {
+                  //       debugPrint("deleteCallLog ${response.toString()}");
+                  //       if (response.isSuccess) {
+                  //         for (var logItem in selectedCallLogs) {
+                  //           var chatIndex = callLogList.indexWhere(
+                  //                   (element) => logItem == element.roomId);
+                  //           callLogList.removeAt(chatIndex);
+                  //         }
+                  //         delete(false);
+                  //         selected(false);
+                  //         selectedCallLogs.clear();
+                  //       } else {
+                  //         toToast(getTranslated("errorOnCallLogDelete"));
+                  //       }
+                  //     });
                 }
               },
               child: Text(
@@ -2700,14 +2700,14 @@ class DashboardController extends FullLifeCycleController
                   });
                   return;
                 } else {
-                  Mirrorfly.deleteCallLog(
-                      jidList: selectedCallLogs,
-                      isClearAll: true,
-                      flyCallBack: (FlyResponse response) {
-                        if (!response.isSuccess) {
-                          toToast(getTranslated("errorOnCallLogDelete"));
-                        }
-                      });
+                  // Mirrorfly.deleteCallLog(
+                  //     jidList: selectedCallLogs,
+                  //     isClearAll: true,
+                  //     flyCallBack: (FlyResponse response) {
+                  //       if (!response.isSuccess) {
+                  //         toToast(getTranslated("errorOnCallLogDelete"));
+                  //       }
+                  //     });
                 }
                 onCallLogsCleared();
               },

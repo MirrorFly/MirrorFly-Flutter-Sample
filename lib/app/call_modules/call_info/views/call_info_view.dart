@@ -43,7 +43,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
                     child: Text(getTranslated("removeFromCallLog")),
                     onTap: () {
                       NavUtils.back();
-                      controller.itemDeleteCallLog([controller.callLogData.roomId.checkNull()]);
+                      // controller.itemDeleteCallLog([controller.callLogData.roomId.checkNull()]);
                     },
                   ),
                   showAsAction: ShowAsAction.never,
@@ -228,7 +228,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
     return callType!.toLowerCase() == CallType.video
         ? IconButton(
       onPressed: () {
-        controller.makeCall(localUserList, callType, callLogData);
+        // controller.makeCall(localUserList, callType, callLogData);
       },
       icon: AppUtils.svgIcon(icon:
       videoCallIcon,
@@ -237,7 +237,7 @@ class CallInfoView extends NavViewStateful<CallInfoController> {
     )
         : IconButton(
         onPressed: () {
-          controller.makeCall(localUserList, callType, callLogData);
+          // controller.makeCall(localUserList, callType, callLogData);
         },
         icon: AppUtils.svgIcon(icon:
         audioCallIcon,

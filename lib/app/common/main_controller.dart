@@ -306,57 +306,57 @@ class MainController extends FullLifeCycleController
     // enterOrExitPIPMode();
   }
 
-  void enterOrExitPIPMode() async {
-    LogMessage.d("PIPView",
-        "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
-    if (Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
-      LogMessage.d("PIPView", PictureInPicture.isActive);
-      if ((await Mirrorfly.isOnGoingCall()).checkNull() &&
-          PictureInPicture.isActive) {
-        LogMessage.d(
-            "PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
-        FlPiP()
-            .enable(
-                ios: const FlPiPiOSConfig(),
-                android: const FlPiPAndroidConfig())
-            .then((onValue) {
-          if (onValue) {
-            PictureInPicture.stopPiP();
-            NavUtils.toNamed(Routes.pipView);
-          }
-        });
-      } else if (NavUtils.currentRoute == Routes.onGoingCallView) {
-        LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
-        FlPiP()
-            .enable(
-                ios: const FlPiPiOSConfig(),
-                android: const FlPiPAndroidConfig())
-            .then((onValue) {
-          LogMessage.d("PIPView", " FlPiP enable $onValue");
-          if (onValue) {
-            NavUtils.offNamed(Routes.pipView);
-          }
-        });
-      }
-    }
-  }
+  // void enterOrExitPIPMode() async {
+  //   LogMessage.d("PIPView",
+  //       "hasHidden : $hasHidden , AppPermission.isShowing ${AppPermission.isShowing}");
+  //   if (Platform.isAndroid && !hasHidden && !AppPermission.isShowing) {
+  //     LogMessage.d("PIPView", PictureInPicture.isActive);
+  //     if ((await Mirrorfly.isOnGoingCall()).checkNull() &&
+  //         PictureInPicture.isActive) {
+  //       LogMessage.d(
+  //           "PIPView", "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+  //       FlPiP()
+  //           .enable(
+  //               ios: const FlPiPiOSConfig(),
+  //               android: const FlPiPAndroidConfig())
+  //           .then((onValue) {
+  //         if (onValue) {
+  //           PictureInPicture.stopPiP();
+  //           NavUtils.toNamed(Routes.pipView);
+  //         }
+  //       });
+  //     } else if (NavUtils.currentRoute == Routes.onGoingCallView) {
+  //       LogMessage.d("PIPView", "offNamed ${NavUtils.currentRoute} to pipView");
+  //       FlPiP()
+  //           .enable(
+  //               ios: const FlPiPiOSConfig(),
+  //               android: const FlPiPAndroidConfig())
+  //           .then((onValue) {
+  //         LogMessage.d("PIPView", " FlPiP enable $onValue");
+  //         if (onValue) {
+  //           NavUtils.offNamed(Routes.pipView);
+  //         }
+  //       });
+  //     }
+  //   }
+  // }
 
-  Future<void> updatePIPView() async {
-    if (Platform.isAndroid) {
-      LogMessage.d("PIPView", NavUtils.currentRoute);
-      if (NavUtils.currentRoute == Routes.pipView) {
-        if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-          LogMessage.d("PIPView", "offNamed onGoingCallView");
-          NavUtils.offNamed(Routes.onGoingCallView);
-        } else {
-          //Assume call ended so closing the pip view
-          LogMessage.d(
-              "PIPView", "Assuming call ended so closing the pip view");
-          NavUtils.back();
-        }
-      }
-    }
-  }
+  // Future<void> updatePIPView() async {
+  //   if (Platform.isAndroid) {
+  //     LogMessage.d("PIPView", NavUtils.currentRoute);
+  //     if (NavUtils.currentRoute == Routes.pipView) {
+  //       if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+  //         LogMessage.d("PIPView", "offNamed onGoingCallView");
+  //         NavUtils.offNamed(Routes.onGoingCallView);
+  //       } else {
+  //         //Assume call ended so closing the pip view
+  //         LogMessage.d(
+  //             "PIPView", "Assuming call ended so closing the pip view");
+  //         NavUtils.back();
+  //       }
+  //     }
+  //   }
+  // }
 
   bool fromLockScreen = false;
 
@@ -424,7 +424,7 @@ class MainController extends FullLifeCycleController
       unreadMissedCallCount();
     }
     // enterOrExitPIPMode();
-    updatePIPView();
+    // updatePIPView();
   }
 
   void syncContacts() async {
@@ -528,8 +528,8 @@ class MainController extends FullLifeCycleController
 
   unreadMissedCallCount() async {
     try {
-      var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
-      unreadCallCount.value = unreadMissedCallCount ?? 0;
+      // var unreadMissedCallCount = await Mirrorfly.getUnreadMissedCallCount();
+      // unreadCallCount.value = unreadMissedCallCount ?? 0;
       debugPrint("unreadMissedCallCount $unreadMissedCallCount");
     } catch (e) {
       debugPrint("unreadMissedCallCount $e");
@@ -600,6 +600,6 @@ class MainController extends FullLifeCycleController
     if (Get.isRegistered<PipViewController>()) {
       Get.find<PipViewController>().hideOptions();
     }
-    enterOrExitPIPMode();
+    // enterOrExitPIPMode();
   }
 }

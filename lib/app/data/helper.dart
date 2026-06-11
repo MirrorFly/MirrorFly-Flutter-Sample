@@ -529,26 +529,26 @@ makeVoiceCall(
     DialogUtils.showFeatureUnavailable();
     return;
   }
-  if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-    debugPrint("#Mirrorfly Call You are on another call");
-    toToast(getTranslated("msgOngoingCallAlert"));
-    return;
-  }
+  // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+  //   debugPrint("#Mirrorfly Call You are on another call");
+  //   toToast(getTranslated("msgOngoingCallAlert"));
+  //   return;
+  // }
   if (!(await AppUtils.isNetConnected())) {
     toToast(getTranslated("noInternetConnection"));
     return;
   }
   if (await AppPermission.askAudioCallPermissions()) {
-    Mirrorfly.makeVoiceCall(
-        toUserJid: profile.value.jid.checkNull(),
-        flyCallBack: (FlyResponse response) {
-          if (response.isSuccess) {
-            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [profile.value.jid],
-              "callType": CallType.audio
-            });
-          }
-        });
+    // Mirrorfly.makeVoiceCall(
+    //     toUserJid: profile.value.jid.checkNull(),
+    //     flyCallBack: (FlyResponse response) {
+    //       if (response.isSuccess) {
+    //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+    //           "userJid": [profile.value.jid],
+    //           "callType": CallType.audio
+    //         });
+    //       }
+    //     });
   } else {
     debugPrint("permission not given");
   }
@@ -568,26 +568,26 @@ makeVideoCall(
     DialogUtils.showFeatureUnavailable();
     return;
   }
-  if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-    debugPrint("#Mirrorfly Call You are on another call");
-    toToast(getTranslated("msgOngoingCallAlert"));
-    return;
-  }
+  // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+  //   debugPrint("#Mirrorfly Call You are on another call");
+  //   toToast(getTranslated("msgOngoingCallAlert"));
+  //   return;
+  // }
   if (!(await AppUtils.isNetConnected())) {
     toToast(getTranslated("noInternetConnection"));
     return;
   }
   if (await AppPermission.askVideoCallPermissions()) {
-    Mirrorfly.makeVideoCall(
-        toUserJid: profile.value.jid.checkNull(),
-        flyCallBack: (FlyResponse response) {
-          if (response.isSuccess) {
-            NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-              "userJid": [profile.value.jid],
-              "callType": CallType.video
-            });
-          }
-        });
+    // Mirrorfly.makeVideoCall(
+    //     toUserJid: profile.value.jid.checkNull(),
+    //     flyCallBack: (FlyResponse response) {
+    //       if (response.isSuccess) {
+    //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+    //           "userJid": [profile.value.jid],
+    //           "callType": CallType.video
+    //         });
+    //       }
+    //     });
   } else {
     LogMessage.d("askVideoCallPermissions", "false");
   }

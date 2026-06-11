@@ -324,20 +324,20 @@ class MeetLinkController extends GetxController {
     }
 
     } else {
-      Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
-        if (response.isSuccess) {
-          meetId(response.data);
-          if (meetId.value.isNotEmpty) {
-            meetLink(Constants.webChatLogin + meetId.value);
-            // showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
-          }
-        } else {
-          if (NavUtils.isOverlayOpen) {
-            toToast(response.message.checkNull());
-            NavUtils.back();
-          }
-        }
-      });
+      // Mirrorfly.createMeetLink(flyCallback: (FlyResponse response) {
+      //   if (response.isSuccess) {
+      //     meetId(response.data);
+      //     if (meetId.value.isNotEmpty) {
+      //       meetLink(Constants.webChatLogin + meetId.value);
+      //       // showMeetBottomSheet(Constants.webChatLogin + meetLink, meetBottomSheetStyle);
+      //     }
+      //   } else {
+      //     if (NavUtils.isOverlayOpen) {
+      //       toToast(response.message.checkNull());
+      //       NavUtils.back();
+      //     }
+      //   }
+      // });
     }
   }
 

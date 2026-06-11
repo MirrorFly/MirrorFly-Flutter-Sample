@@ -24,67 +24,67 @@ class CallInfoController extends GetxController{
     super.onInit();
   }
 
-  makeCall(List<String>? userList, String callType, CallLogData item) async {
-    if (userList!.isNotEmpty) {
-      if (await AppUtils.isNetConnected()) {
-        if (callType == CallType.video) {
-          if (await AppPermission.askVideoCallPermissions()) {
-            NavUtils.back();
-            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-              debugPrint("#Mirrorfly Call You are on another call");
-              toToast(getTranslated("msgOngoingCallAlert"));
-            } else {
-              Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
-                }
-              });
-            }
-          }
-        } else {
-          if (await AppPermission.askAudioCallPermissions()) {
-            NavUtils.back();
-            if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-              debugPrint("#Mirrorfly Call You are on another call");
-              toToast(getTranslated("msgOngoingCallAlert"));
-            } else {
-              Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
-                }
-              });
-            }
-          }
-        }
-      } else {
-        toToast(getTranslated("noInternetConnection"));
-      }
-    }
-  }
+  // makeCall(List<String>? userList, String callType, CallLogData item) async {
+  //   if (userList!.isNotEmpty) {
+  //     if (await AppUtils.isNetConnected()) {
+  //       if (callType == CallType.video) {
+  //         if (await AppPermission.askVideoCallPermissions()) {
+  //           NavUtils.back();
+  //           if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+  //             debugPrint("#Mirrorfly Call You are on another call");
+  //             toToast(getTranslated("msgOngoingCallAlert"));
+  //           } else {
+  //             Mirrorfly.makeGroupVideoCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+  //               if (response.isSuccess) {
+  //                 NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.video});
+  //               }
+  //             });
+  //           }
+  //         }
+  //       } else {
+  //         if (await AppPermission.askAudioCallPermissions()) {
+  //           NavUtils.back();
+  //           if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+  //             debugPrint("#Mirrorfly Call You are on another call");
+  //             toToast(getTranslated("msgOngoingCallAlert"));
+  //           } else {
+  //             Mirrorfly.makeGroupVoiceCall(groupJid: item.groupId.checkNull().isNotEmpty ? item.groupId! : "", toUserJidList: userList, flyCallBack: (FlyResponse response) {
+  //               if (response.isSuccess) {
+  //                 NavUtils.toNamed(Routes.outGoingCallView, arguments: {"userJid": userList, "callType": CallType.audio});
+  //               }
+  //             });
+  //           }
+  //         }
+  //       }
+  //     } else {
+  //       toToast(getTranslated("noInternetConnection"));
+  //     }
+  //   }
+  // }
 
-  itemDeleteCallLog(List<String> selectedCallLogs) {
-    DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
-        message: getTranslated("deleteCallLogConfirmation"),
-        actions: [
-          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () {
-                NavUtils.back();
-              },
-              child: Text(getTranslated("cancel").toUpperCase(), )),
-          TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
-              onPressed: () {
-                NavUtils.back();
-                Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
-                  if (response.isSuccess) {
-                    NavUtils.back(result: true);
-                  } else {
-                    toToast(getTranslated("errorOnCallLogDelete"));
-                  }
-                });
-              },
-              child: Text(getTranslated("ok").toUpperCase(), )),
-        ],
-        barrierDismissible: true);
-  }
+  // itemDeleteCallLog(List<String> selectedCallLogs) {
+  //   DialogUtils.showAlert(dialogStyle: AppStyleConfig.dialogStyle,
+  //       message: getTranslated("deleteCallLogConfirmation"),
+  //       actions: [
+  //         TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+  //             onPressed: () {
+  //               NavUtils.back();
+  //             },
+  //             child: Text(getTranslated("cancel").toUpperCase(), )),
+  //         TextButton(style: AppStyleConfig.dialogStyle.buttonStyle,
+  //             onPressed: () {
+  //               NavUtils.back();
+  //               Mirrorfly.deleteCallLog(jidList: selectedCallLogs, isClearAll: false, flyCallBack: (FlyResponse response) {
+  //                 if (response.isSuccess) {
+  //                   NavUtils.back(result: true);
+  //                 } else {
+  //                   toToast(getTranslated("errorOnCallLogDelete"));
+  //                 }
+  //               });
+  //             },
+  //             child: Text(getTranslated("ok").toUpperCase(), )),
+  //       ],
+  //       barrierDismissible: true);
+  // }
 
 }

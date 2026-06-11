@@ -32,19 +32,19 @@ class PipViewController extends FullLifeCycleController
   @override
   Future<void> onInit() async {
     Mirrorfly.setProfileEventListener(this);
-    Mirrorfly.setCallEventListener(this);
+    // Mirrorfly.setCallEventListener(this);
     checkPIP();
     try {
-      var value = await Mirrorfly.getCallUsersList();
-      final callUserList = callUserListFromJson(value);
-      callUserList.sort((a, b) {
-        final aPriority =
-            prioritizedStatuses.contains(a.callStatus!.value) ? 0 : 1;
-        final bPriority =
-            prioritizedStatuses.contains(b.callStatus!.value) ? 0 : 1;
-        return aPriority.compareTo(bPriority);
-      });
-      callList(callUserList);
+      // var value = await Mirrorfly.getCallUsersList();
+      // final callUserList = callUserListFromJson(value);
+      // callUserList.sort((a, b) {
+      //   final aPriority =
+      //       prioritizedStatuses.contains(a.callStatus!.value) ? 0 : 1;
+      //   final bPriority =
+      //       prioritizedStatuses.contains(b.callStatus!.value) ? 0 : 1;
+      //   return aPriority.compareTo(bPriority);
+      // });
+      // callList(callUserList);
     } catch (e) {
       LogMessage.d("PipView", e);
     }
@@ -270,14 +270,14 @@ class PipViewController extends FullLifeCycleController
   Future<void> movePIPToOngoingCallView() async {
     LogMessage.d("PIPView", PictureInPicture.isActive);
     if(PictureInPicture.isActive) {
-      if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
-          LogMessage.d(tag, "stopPiP ${NavUtils.currentRoute} toNamed pipView");
-          PictureInPicture.stopPiP();
-          NavUtils.toNamed(Routes.onGoingCallView);
-      }else{
-        PictureInPicture.stopPiP();
-        LogMessage.d(tag, "isOnGoingCall not available so closing pip view");
-      }
+      // if ((await Mirrorfly.isOnGoingCall()).checkNull()) {
+      //     LogMessage.d(tag, "stopPiP ${NavUtils.currentRoute} toNamed pipView");
+      //     PictureInPicture.stopPiP();
+      //     NavUtils.toNamed(Routes.onGoingCallView);
+      // }else{
+      //   PictureInPicture.stopPiP();
+      //   LogMessage.d(tag, "isOnGoingCall not available so closing pip view");
+      // }
     }else{
       if (Platform.isAndroid) {
         FlPiP().toggle(AppState.foreground);
@@ -317,56 +317,56 @@ class PipViewController extends FullLifeCycleController
   Future<void> onUserJoined(String callMode, String userJid, String callType,
       String callStatus) async {
     LogMessage.d(tag, " onUserJoined $userJid from joinViaLink");
-    var isAudioMuted =
-        (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
-    var isVideoMuted =
-        (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
+    // var isAudioMuted =
+    //     (await Mirrorfly.isUserAudioMuted(userJid: userJid)).checkNull();
+    // var isVideoMuted =
+    //     (await Mirrorfly.isUserVideoMuted(userJid: userJid)).checkNull();
     var indexValid =
         callList.indexWhere((element) => element.userJid?.value == userJid);
     LogMessage.d(tag, "indexValid : $indexValid jid : $userJid");
     if (indexValid.isNegative &&
         callList.length != Constants.getMaxCallUsersCount) {
-      callList.insert(
-          callList.length - 1,
-          CallUserList(
-              userJid: userJid.obs,
-              isAudioMuted: isAudioMuted,
-              isVideoMuted: isVideoMuted,
-              callStatus: CallStatus.connected.obs));
+      // callList.insert(
+      //     callList.length - 1,
+      //     CallUserList(
+      //         userJid: userJid.obs,
+      //         isAudioMuted: isAudioMuted,
+      //         isVideoMuted: isVideoMuted,
+      //         callStatus: CallStatus.connected.obs));
     }
   }
 
   void addParticipants(String callMode, String userJid, String callType) {
-    Mirrorfly.getInvitedUsersList().then((value) async {
-      LogMessage.d(tag, " getInvitedUsersList $value");
-      if (value.isNotEmpty) {
-        var userJids = value;
-        for (var jid in userJids) {
-          LogMessage.d(tag, "before ${callUserListToJson(callList)}");
-          var isAudioMuted =
-              (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
-          var isVideoMuted =
-              (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
-          var indexValid =
-              callList.indexWhere((element) => element.userJid?.value == jid);
-          LogMessage.d(tag,
-              "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : ${Constants.getMaxCallUsersCount}");
-          if (indexValid.isNegative &&
-              callList.length != Constants.getMaxCallUsersCount) {
-            callList.insert(
-                callList.length - 1,
-                CallUserList(
-                    userJid: jid.obs,
-                    isAudioMuted: isAudioMuted,
-                    isVideoMuted: isVideoMuted,
-                    callStatus: CallStatus.calling.obs));
-            LogMessage.d(tag, "after ${callUserListToJson(callList)}");
-          } else {
-            LogMessage.d(tag, "User already in the list");
-          }
-        }
-      }
-    });
+    // Mirrorfly.getInvitedUsersList().then((value) async {
+    //   LogMessage.d(tag, " getInvitedUsersList $value");
+    //   if (value.isNotEmpty) {
+    //     var userJids = value;
+    //     for (var jid in userJids) {
+    //       LogMessage.d(tag, "before ${callUserListToJson(callList)}");
+    //       var isAudioMuted =
+    //           (await Mirrorfly.isUserAudioMuted(userJid: jid)).checkNull();
+    //       var isVideoMuted =
+    //           (await Mirrorfly.isUserVideoMuted(userJid: jid)).checkNull();
+    //       var indexValid =
+    //           callList.indexWhere((element) => element.userJid?.value == jid);
+    //       LogMessage.d(tag,
+    //           "indexValid : $indexValid jid : $jid callList.length ${callList.length} getMaxCallUsersCount : ${Constants.getMaxCallUsersCount}");
+    //       if (indexValid.isNegative &&
+    //           callList.length != Constants.getMaxCallUsersCount) {
+    //         callList.insert(
+    //             callList.length - 1,
+    //             CallUserList(
+    //                 userJid: jid.obs,
+    //                 isAudioMuted: isAudioMuted,
+    //                 isVideoMuted: isVideoMuted,
+    //                 callStatus: CallStatus.calling.obs));
+    //         LogMessage.d(tag, "after ${callUserListToJson(callList)}");
+    //       } else {
+    //         LogMessage.d(tag, "User already in the list");
+    //       }
+    //     }
+    //   }
+    // });
   }
 
   Future<void> remoteBusy(String callMode, String userJid, String callType,

@@ -37,7 +37,7 @@ class JoinCallController extends FullLifeCycleController
   @override
   void onInit() {
     super.onInit();
-    Mirrorfly.setCallLinkEventListener(this);
+    // Mirrorfly.setCallLinkEventListener(this);
     callLinkId = NavUtils.arguments["callLinkId"].toString();
   }
 
@@ -74,24 +74,24 @@ class JoinCallController extends FullLifeCycleController
 
   // initialize the meet or join via link call
   void initializeCall() {
-    Mirrorfly.initializeMeet(
-        callLinkId: callLinkId,
-        userName: SessionManagement.getName().checkNull(),
-        flyCallback: (res) {
-          LogMessage.d("initializeMeet", res.toString());
-          if (!res.isSuccess) {
-            subscribeSuccess(false);
-            if (res.hasError) {
-              showError(res.exception);
-            }
-          } else {
-            meetInitialised(true);
-            startVideoCapture();
-          }
-          // checkPermission().then((v){
-          //   startVideoCapture();
-          // });
-        });
+    // Mirrorfly.initializeMeet(
+    //     callLinkId: callLinkId,
+    //     userName: SessionManagement.getName().checkNull(),
+    //     flyCallback: (res) {
+    //       LogMessage.d("initializeMeet", res.toString());
+    //       if (!res.isSuccess) {
+    //         subscribeSuccess(false);
+    //         if (res.hasError) {
+    //           showError(res.exception);
+    //         }
+    //       } else {
+    //         meetInitialised(true);
+    //         startVideoCapture();
+    //       }
+    //       // checkPermission().then((v){
+    //       //   startVideoCapture();
+    //       // });
+    //     });
   }
 
   RxString callEnded = "".obs;
@@ -154,15 +154,15 @@ class JoinCallController extends FullLifeCycleController
   /// start video capture
   var videoCaptureStarted = false;
   Future<void> startVideoCapture() async {
-    Mirrorfly.startVideoCapture(flyCallback: (res) async {
-      if (res.isSuccess) {
-        videoCaptureStarted = true;
-      }
-    });
+    // Mirrorfly.startVideoCapture(flyCallback: (res) async {
+    //   if (res.isSuccess) {
+    //     videoCaptureStarted = true;
+    //   }
+    // });
   }
 
   void disposePreview() {
-    Mirrorfly.disposePreview();
+    // Mirrorfly.disposePreview();
   }
 
   Future<void> joinCall() async {
@@ -170,16 +170,16 @@ class JoinCallController extends FullLifeCycleController
       if (await AppPermission.askAudioCallPermissions()) {
         if (await AppPermission.askNotificationPermission()) {
           subscribeSuccess(false);
-          Mirrorfly.joinCall(flyCallback: (res) {
-            LogMessage.d("joinCall", res.toString());
-            if (res.isSuccess) {
-              NavUtils.offNamed(Routes.onGoingCallView,
-                  arguments: {"userJid": users, "joinViaLink": true});
-            } else {
-              subscribeSuccess(true);
-              showError(res.exception);
-            }
-          });
+          // Mirrorfly.joinCall(flyCallback: (res) {
+          //   LogMessage.d("joinCall", res.toString());
+          //   if (res.isSuccess) {
+          //     NavUtils.offNamed(Routes.onGoingCallView,
+          //         arguments: {"userJid": users, "joinViaLink": true});
+          //   } else {
+          //     subscribeSuccess(true);
+          //     showError(res.exception);
+          //   }
+          // });
         }
       }
     } else {
@@ -189,13 +189,13 @@ class JoinCallController extends FullLifeCycleController
 
   muteAudio() async {
     if (!muted.value || await AppPermission.askAudioCallPermissions()) {
-      Mirrorfly.muteAudio(
-          status: !muted.value,
-          flyCallBack: (res) {
-            if (res.isSuccess) {
-              muted(!muted.value);
-            }
-          });
+      // Mirrorfly.muteAudio(
+      //     status: !muted.value,
+      //     flyCallBack: (res) {
+      //       if (res.isSuccess) {
+      //         muted(!muted.value);
+      //       }
+      //     });
     }
   }
 
@@ -217,7 +217,7 @@ class JoinCallController extends FullLifeCycleController
         debugPrint(
             "Start Video Capture is already initialized, skipping the initialization");
       }
-      Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
+      // Mirrorfly.muteVideo(status: !videoMuted.value, flyCallBack: (_) {});
       videoMuted(!videoMuted.value);
     }
   }

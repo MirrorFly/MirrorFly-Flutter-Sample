@@ -60,7 +60,7 @@ class CallKitAddParticipantsController extends GetxController
     debugPrint("CallKitAddParticipantsController → callList json ${callList.map((e) => e.toJson()).toList()}");
 
     getMaxCallUsersCount = Constants.useMirrorFlyCallKit
-        ? Constants.maxCallUsersLimitForMirrorFlyCallKit : (await Mirrorfly.getMaxCallUsersCount()) ?? 8;
+        ? Constants.maxCallUsersLimitForMirrorFlyCallKit :  8;
 
     // callList = Get.find<CallController>().callList;
     scrollController.addListener(_scrollListener);
@@ -364,24 +364,24 @@ class CallKitAddParticipantsController extends GetxController
     }
   }
 
-  void onUserInvite(String callMode, String userJid, String callType) {
-    removeSelectedPartcipants();
-  }
-
-  void removeSelectedPartcipants() {
-    Mirrorfly.getInvitedUsersList().then((value) async {
-      LogMessage.d("callController", " getInvitedUsersList $value");
-      if (value.isNotEmpty) {
-        var userJids = value;
-        for (var jid in userJids) {
-          selectedUsersList.removeWhere((user) => user.jid == jid);
-          selectedUsersJIDList.remove(jid);
-        }
-        usersList.refresh();
-        groupCallMembersCount(selectedUsersJIDList.length);
-      }
-    });
-  }
+  // void onUserInvite(String callMode, String userJid, String callType) {
+  //   removeSelectedPartcipants();
+  // }
+  //
+  // void removeSelectedPartcipants() {
+  //   Mirrorfly.getInvitedUsersList().then((value) async {
+  //     LogMessage.d("callController", " getInvitedUsersList $value");
+  //     if (value.isNotEmpty) {
+  //       var userJids = value;
+  //       for (var jid in userJids) {
+  //         selectedUsersList.removeWhere((user) => user.jid == jid);
+  //         selectedUsersJIDList.remove(jid);
+  //       }
+  //       usersList.refresh();
+  //       groupCallMembersCount(selectedUsersJIDList.length);
+  //     }
+  //   });
+  // }
 
   var groupCallMembersCount = 0.obs;
   var callType = CallType.audio.obs;
