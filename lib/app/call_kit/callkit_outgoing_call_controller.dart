@@ -787,9 +787,9 @@ class CallKitOutgoingCallController extends GetxController
   String validId({required String userId,required bool isGroup}) {
     if(isGroup){
       callkitLogger.info("[MirrorFly][OutgoingCallController] validId for group called with userId: $userId isGroup: $isGroup, containing @: ${userId.contains("@")}");
-      return userId.contains("@") ? userId : "$userId@mix.xmpp-uikit-qa.contus.us";
+      return userId.contains("@") ? userId : "$userId@mix.xmpp-fergus.mirrorfly.com";
     }else{
-      return userId.contains("@") ? userId : "$userId@xmpp-uikit-qa.contus.us";
+      return userId.contains("@") ? userId : "$userId@xmpp-fergus.mirrorfly.com";
     }
   }
 
@@ -1258,7 +1258,7 @@ class CallKitOutgoingCallController extends GetxController
       return true;
     } else {
       //
-      final String participantId = "$id@xmpp-uikit-qa.contus.us";
+      final String participantId = "$id@xmpp-fergus.mirrorfly.com";
       callkitLogger.info("[MirrorFly][OutgoingCallController] isSelfId $currentUserId $participantId");
       callkitLogger.info("[MirrorFly][OutgoingCallController] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;

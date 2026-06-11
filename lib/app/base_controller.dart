@@ -318,7 +318,7 @@ class BaseController {
           await CallStateService.start();
           callkitLogger.info("[MirrorFly][BaseController] answerCall — CallStateService started");
 
-          final jid = "$callerId@xmpp-uikit-qa.contus.us";
+          final jid = "$callerId@xmpp-fergus.mirrorfly.com";
           NavUtils.toNamed(
             Routes.callKitOutGoingCallView,
             arguments: {
@@ -519,7 +519,7 @@ class BaseController {
       return true;
     } else {
       //
-      final String participantId = "$id@xmpp-uikit-qa.contus.us";
+      final String participantId = "$id@xmpp-fergus.mirrorfly.com";
       debugPrint("[Mirrorfly] isSelfId $currentUserId $participantId");
       debugPrint("[MirrorFly] isSelfId: ${currentUserId == participantId}");
       return currentUserId == participantId;
