@@ -709,33 +709,33 @@ class BaseController {
       if (Get.isRegistered<OutgoingCallController>()) {
         Get.find<OutgoingCallController>().statusUpdate(userJid, callStatus);
       }
-      if (Get.isRegistered<CallController>()) {
-        Get.find<CallController>().statusUpdate(userJid, callStatus);
-      }
+      // if (Get.isRegistered<CallController>()) {
+      //   Get.find<CallController>().statusUpdate(userJid, callStatus);
+      // }
 
       switch (callStatus) {
         case CallStatus.connecting:
           break;
         case CallStatus.onResume:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .onResume(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for onHold event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .onResume(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for onHold event");
+          // }
           break;
         case CallStatus.userJoined:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .onUserJoined(callMode, userJid, callType, callStatus);
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .onUserJoined(callMode, userJid, callType, callStatus);
+          // }
           break;
         case CallStatus.userLeft:
           //{"callStatus":"User_Left","userJid":"919789482015@xmpp-uikit-qa.contus.us","callType":"audio","callMode":"onetomany"}
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>().onUserLeft(callMode, userJid, callType);
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>().onUserLeft(callMode, userJid, callType);
+          // }
           break;
         case CallStatus.inviteCallTimeout:
           break;
@@ -773,46 +773,46 @@ class BaseController {
           break;
 
         case CallStatus.disconnected:
-          if (Get.isRegistered<CallController>()) {
-            /*Get.find<CallController>().callDisconnected(
-                callMode, userJid, callType);*/ //commenting because when call disconnected we no need to check anything
-
-            debugPrint(
-                "Call List length base controller ${Get.find<CallController>().callList.length}");
-
-            Get.find<CallController>().callDisconnectedStatus();
-
-            if (Get.find<CallController>().callList.length <= 1) {
-              stopTimer();
-            }
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils.currentRoute}");
-            // if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
-            //   NavUtils.back();
-            // }
-          }
-          if (Get.isRegistered<OutgoingCallController>()) {
-            debugPrint(
-                "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
-
-            if (Get.isRegistered<OutgoingCallController>()) {
-              Get.find<OutgoingCallController>()
-                  .userDisconnection(callMode, userJid, callType);
-            }
-
-            if (Get.isRegistered<CallController>()) {
-              if (Get.find<CallController>().callList.length <= 1) {
-                stopTimer();
-              }
-            } else {
-              debugPrint(
-                  "#Mirrorfly call CallController not registered for disconnect event");
-            }
-          } else {
-            debugPrint(
-                "#Mirrorfly call Outgoing call controller not registered for disconnect event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   /*Get.find<CallController>().callDisconnected(
+          //       callMode, userJid, callType);*/ //commenting because when call disconnected we no need to check anything
+          //
+          //   debugPrint(
+          //       "Call List length base controller ${Get.find<CallController>().callList.length}");
+          //
+          //   Get.find<CallController>().callDisconnectedStatus();
+          //
+          //   if (Get.find<CallController>().callList.length <= 1) {
+          //     stopTimer();
+          //   }
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for disconnect event Route : ${NavUtils.currentRoute}");
+          //   // if(NavUtils.currentRoute==Routes.outGoingCallView || NavUtils.currentRoute==Routes.onGoingCallView){
+          //   //   NavUtils.back();
+          //   // }
+          // }
+          // if (Get.isRegistered<OutgoingCallController>()) {
+          //   debugPrint(
+          //       "Call List length base controller ${Get.find<OutgoingCallController>().callList.length}");
+          //
+          //   if (Get.isRegistered<OutgoingCallController>()) {
+          //     Get.find<OutgoingCallController>()
+          //         .userDisconnection(callMode, userJid, callType);
+          //   }
+          //
+          //   if (Get.isRegistered<CallController>()) {
+          //     if (Get.find<CallController>().callList.length <= 1) {
+          //       stopTimer();
+          //     }
+          //   } else {
+          //     debugPrint(
+          //         "#Mirrorfly call CallController not registered for disconnect event");
+          //   }
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call Outgoing call controller not registered for disconnect event");
+          // }
 
             // Command the below line because we have handle the below functionality in the pip view controller
 
@@ -830,40 +830,40 @@ class BaseController {
         case CallStatus.callingAfter10s:
           break;
         case CallStatus.calling:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .calling(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for calling event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .calling(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for calling event");
+          // }
           break;
         case CallStatus.reconnected:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .reconnected(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for reconnected event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .reconnected(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for reconnected event");
+          // }
           break;
         case CallStatus.ringing:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .ringing(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for ringing event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .ringing(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for ringing event");
+          // }
           break;
         case CallStatus.onHold:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .onHold(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for onHold event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .onHold(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for onHold event");
+          // }
           break;
         case CallStatus.connected:
           if (timer == null) {
@@ -876,13 +876,13 @@ class BaseController {
             debugPrint(
                 "#Mirrorfly call OutgoingCallController not registered for connected event");
           }
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .connected(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for connected event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .connected(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for connected event");
+          // }
           break;
 
         case CallStatus.callTimeout:
@@ -890,13 +890,13 @@ class BaseController {
             Get.find<OutgoingCallController>()
                 .timeout(callMode, userJid, callType, callStatus);
           }
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .timeout(callMode, userJid, callType, callStatus);
-          } else {
-            debugPrint(
-                "#Mirrorfly call call controller not registered for timeout event");
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .timeout(callMode, userJid, callType, callStatus);
+          // } else {
+          //   debugPrint(
+          //       "#Mirrorfly call call controller not registered for timeout event");
+          // }
           break;
         case CallStatus.callFailed:
           // Helper.showAlert(message: callStatus);
@@ -924,22 +924,22 @@ class BaseController {
               Get.find<OutgoingCallController>()
                   .localHangup(callMode, userJid, callType, callAction);
             }
-            if (Get.isRegistered<CallController>()) {
-              //if user hangup the call from background notification
-              Get.find<CallController>()
-                  .localHangup(callMode, userJid, callType, callAction);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   //if user hangup the call from background notification
+            //   Get.find<CallController>()
+            //       .localHangup(callMode, userJid, callType, callAction);
+            // }
             break;
           }
         case CallAction.inviteUsers:
-          if (Get.isRegistered<CallController>()) {
-            Get.find<CallController>()
-                .onUserInvite(callMode, userJid, callType);
-          }
-          if (Get.isRegistered<AddParticipantsController>()) {
-            Get.find<AddParticipantsController>()
-                .onUserInvite(callMode, userJid, callType);
-          }
+          // if (Get.isRegistered<CallController>()) {
+          //   Get.find<CallController>()
+          //       .onUserInvite(callMode, userJid, callType);
+          // }
+          // if (Get.isRegistered<AddParticipantsController>()) {
+          //   Get.find<AddParticipantsController>()
+          //       .onUserInvite(callMode, userJid, callType);
+          // }
           break;
         case CallAction.remoteOtherBusy:
           {
@@ -948,10 +948,10 @@ class BaseController {
               Get.find<OutgoingCallController>()
                   .remoteOtherBusy(callMode, userJid, callType, callAction);
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>()
-                  .remoteOtherBusy(callMode, userJid, callType, callAction);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>()
+            //       .remoteOtherBusy(callMode, userJid, callType, callAction);
+            // }
             break;
           }
         //if we called on user B, the user B is decline the call then this will be triggered in Android
@@ -961,19 +961,19 @@ class BaseController {
               Get.find<OutgoingCallController>()
                   .remoteBusy(callMode, userJid, callType, callAction);
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>()
-                  .remoteBusy(callMode, userJid, callType, callAction);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>()
+            //       .remoteBusy(callMode, userJid, callType, callAction);
+            // }
             break;
           }
         //if we called on user B, the user B is disconnect the call after connect then this will be triggered in Android
         case CallAction.remoteHangup:
           {
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>()
-                  .remoteHangup(callMode, userJid, callType, callAction);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>()
+            //       .remoteHangup(callMode, userJid, callType, callAction);
+            // }
             break;
           }
         //if we called on user B, the user B is on another call then this will triggered
@@ -983,10 +983,10 @@ class BaseController {
               Get.find<OutgoingCallController>()
                   .remoteEngaged(userJid, callMode, callType);
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>()
-                  .remoteEngaged(userJid, callMode, callType);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>()
+            //       .remoteEngaged(userJid, callMode, callType);
+            // }
             break;
           }
         case CallAction.audioDeviceChanged:
@@ -995,9 +995,9 @@ class BaseController {
             if (Get.isRegistered<OutgoingCallController>()) {
               Get.find<OutgoingCallController>().audioDeviceChanged();
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().audioDeviceChanged();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().audioDeviceChanged();
+            // }
             break;
           }
         case CallAction.denyCall:
@@ -1007,9 +1007,9 @@ class BaseController {
             if (Get.isRegistered<OutgoingCallController>()) {
               Get.find<OutgoingCallController>().denyCall();
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().denyCall();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().denyCall();
+            // }
             break;
           }
         case CallAction.cameraSwitchSuccess:
@@ -1019,9 +1019,9 @@ class BaseController {
             if (Get.isRegistered<OutgoingCallController>()) {
               Get.find<OutgoingCallController>().onCameraSwitch();
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().onCameraSwitch();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().onCameraSwitch();
+            // }
             break;
           }
         case CallAction.changedToAudioCall:
@@ -1031,45 +1031,45 @@ class BaseController {
             if (Get.isRegistered<OutgoingCallController>()) {
               Get.find<OutgoingCallController>().changedToAudioCall();
             }
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().changedToAudioCall();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().changedToAudioCall();
+            // }
             break;
           }
         case CallAction.videoCallConversionCancel:
           {
             debugPrint("#Mirrorfly call videoCallConversionCancel");
             // local user deny the call
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().videoCallConversionCancel();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().videoCallConversionCancel();
+            // }
             break;
           }
         case CallAction.videoCallConversionRequest:
           {
             debugPrint("#Mirrorfly call videoCallConversionRequest");
             // local user deny the call
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().videoCallConversionRequest(userJid);
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().videoCallConversionRequest(userJid);
+            // }
             break;
           }
         case CallAction.videoCallConversionAccepted:
           {
             debugPrint("#Mirrorfly call videoCallConversionAccepted");
             // local user deny the call
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().videoCallConversionAccepted();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().videoCallConversionAccepted();
+            // }
             break;
           }
         case CallAction.videoCallConversionRejected:
           {
             debugPrint("#Mirrorfly call videoCallConversionRejected");
             // local user deny the call
-            if (Get.isRegistered<CallController>()) {
-              Get.find<CallController>().videoCallConversionRejected();
-            }
+            // if (Get.isRegistered<CallController>()) {
+            //   Get.find<CallController>().videoCallConversionRejected();
+            // }
             break;
           }
       }
@@ -1080,8 +1080,8 @@ class BaseController {
       var muteEvent = muteStatus["muteEvent"].toString();
       var userJid = muteStatus["userJid"].toString();
 
-      LogMessage.d("Get.isRegistered<CallController>()",
-          "${Get.isRegistered<CallController>()}");
+      // LogMessage.d("Get.isRegistered<CallController>()",
+      //     "${Get.isRegistered<CallController>()}");
       if (Get.isRegistered<OutgoingCallController>()) {
         if (muteEvent == MuteStatus.remoteAudioMute ||
             muteEvent == MuteStatus.remoteAudioUnMute) {
@@ -1094,16 +1094,16 @@ class BaseController {
               .videoMuteStatusChanged(muteEvent, userJid);
         }
       }
-      if (Get.isRegistered<CallController>()) {
-        if (muteEvent == MuteStatus.remoteAudioMute ||
-            muteEvent == MuteStatus.remoteAudioUnMute) {
-          Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
-        }
-        if (muteEvent == MuteStatus.remoteVideoMute ||
-            muteEvent == MuteStatus.remoteVideoUnMute) {
-          Get.find<CallController>().videoMuteStatusChanged(muteEvent, userJid);
-        }
-      }
+      // if (Get.isRegistered<CallController>()) {
+      //   if (muteEvent == MuteStatus.remoteAudioMute ||
+      //       muteEvent == MuteStatus.remoteAudioUnMute) {
+      //     Get.find<CallController>().audioMuteStatusChanged(muteEvent, userJid);
+      //   }
+      //   if (muteEvent == MuteStatus.remoteVideoMute ||
+      //       muteEvent == MuteStatus.remoteVideoUnMute) {
+      //     Get.find<CallController>().videoMuteStatusChanged(muteEvent, userJid);
+      //   }
+      // }
     });
     Mirrorfly.onUserSpeaking.listen((event) {
       // LogMessage.d("onUserSpeaking", "$event");
@@ -1113,9 +1113,9 @@ class BaseController {
       if (Get.isRegistered<OutgoingCallController>()) {
         Get.find<OutgoingCallController>().onUserSpeaking(userJid, audioLevel);
       }
-      if (Get.isRegistered<CallController>()) {
-        Get.find<CallController>().onUserSpeaking(userJid, audioLevel);
-      }
+      // if (Get.isRegistered<CallController>()) {
+      //   Get.find<CallController>().onUserSpeaking(userJid, audioLevel);
+      // }
     });
     Mirrorfly.onUserStoppedSpeaking.listen((event) {
       // LogMessage.d("onUserSpeaking", "$event");
@@ -1123,9 +1123,9 @@ class BaseController {
         Get.find<OutgoingCallController>()
             .onUserStoppedSpeaking(event.toString());
       }
-      if (Get.isRegistered<CallController>()) {
-        Get.find<CallController>().onUserStoppedSpeaking(event.toString());
-      }
+      // if (Get.isRegistered<CallController>()) {
+      //   Get.find<CallController>().onUserStoppedSpeaking(event.toString());
+      // }
     });
 
     Mirrorfly.onAvailableFeaturesUpdated.listen(onAvailableFeaturesUpdated);
@@ -1262,10 +1262,10 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().onAvailableFeaturesUpdated(features);
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>()
-          .onAvailableFeaturesUpdated(features);
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>()
+    //       .onAvailableFeaturesUpdated(features);
+    // }
   }
 
   static void onMessageReceived(chatMessage) {
@@ -1600,9 +1600,9 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().onContactSyncComplete(result);
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>().onContactSyncComplete(result);
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>().onContactSyncComplete(result);
+    // }
     if (Get.isRegistered<ForwardChatController>()) {
       Get.find<ForwardChatController>().onContactSyncComplete(result);
     }
@@ -1637,9 +1637,9 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().unblockedThisUser(jid);
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>().unblockedThisUser(jid);
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>().unblockedThisUser(jid);
+    // }
   }
 
   static void userBlockedMe(String jid) async{
@@ -1650,9 +1650,9 @@ class BaseController {
           final callUserList = callUserListFromJson(callerList);
           if(callUserList.length <= 2){
             final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
-            if(blockedUser != null){
-                CallController().disconnectCall();
-            }
+            // if(blockedUser != null){
+            //     CallController().disconnectCall();
+            // }
           }
 
       }
@@ -1665,10 +1665,10 @@ class BaseController {
         if(callUserList.length <= 2){
           final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
           if(blockedUser != null){
-            CallController().disconnectCall();
+           // CallController().disconnectCall();
           }
         }
-        Get.find<CallController>().disconnectCall();
+       // Get.find<CallController>().disconnectCall();
       }
       Get.find<ChatController>(tag: controllerTag).userBlockedMe(jid);
     }
@@ -1681,22 +1681,22 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userBlockedMe(jid);
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>().userBlockedMe(jid);
-    }
-    if (Get.isRegistered<CallController>()) {
-      if((await Mirrorfly.isOnGoingCall()).checkNull()){
-       var callerList = await Mirrorfly.getCallUsersList();
-       final callUserList = callUserListFromJson(callerList);
-      if(callUserList.length <= 2){
-        final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
-        if(blockedUser != null){
-          Get.find<CallController>().disconnectCall();
-        }
-      }
-    }
-
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>().userBlockedMe(jid);
+    // }
+    // if (Get.isRegistered<CallController>()) {
+    //   if((await Mirrorfly.isOnGoingCall()).checkNull()){
+    //    var callerList = await Mirrorfly.getCallUsersList();
+    //    final callUserList = callUserListFromJson(callerList);
+    //   if(callUserList.length <= 2){
+    //     final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
+    //     if(blockedUser != null){
+    //       Get.find<CallController>().disconnectCall();
+    //     }
+    //   }
+    // }
+    //
+    // }
     if (Get.isRegistered<PipViewController>()) {
       if((await Mirrorfly.isOnGoingCall()).checkNull()){
         var callerList = await Mirrorfly.getCallUsersList();
@@ -1704,7 +1704,7 @@ class BaseController {
         if(callUserList.length <= 2){
           final CallUserList? blockedUser = callUserList.firstWhereOrNull((e) => e.userJid.toString() == jid);
           if(blockedUser != null){
-            CallController().disconnectCall();
+           // CallController().disconnectCall();
           }
         }
 
@@ -1737,10 +1737,10 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userDeletedHisProfile(jid.toString());
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>()
-          .userDeletedHisProfile(jid.toString());
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>()
+    //       .userDeletedHisProfile(jid.toString());
+    // }
     if (Get.isRegistered<BlockedListController>()) {
       Get.find<BlockedListController>().userDeletedHisProfile(jid.toString());
     }
@@ -1789,9 +1789,9 @@ class BaseController {
     if (Get.isRegistered<ContactController>()) {
       Get.find<ContactController>().userUpdatedHisProfile(jid);
     }
-    if (Get.isRegistered<AddParticipantsController>()) {
-      Get.find<AddParticipantsController>().userUpdatedHisProfile(jid);
-    }
+    // if (Get.isRegistered<AddParticipantsController>()) {
+    //   Get.find<AddParticipantsController>().userUpdatedHisProfile(jid);
+    // }
     if (Get.isRegistered<ChatInfoController>()) {
       Get.find<ChatInfoController>().userUpdatedHisProfile(jid);
     }
@@ -1807,9 +1807,9 @@ class BaseController {
     if (Get.isRegistered<OutgoingCallController>()) {
       Get.find<OutgoingCallController>().userUpdatedHisProfile(jid);
     }
-    if (Get.isRegistered<CallController>()) {
-      Get.find<CallController>().userUpdatedHisProfile(jid);
-    }
+    // if (Get.isRegistered<CallController>()) {
+    //   Get.find<CallController>().userUpdatedHisProfile(jid);
+    // }
     if (Get.isRegistered<CallTimeoutController>()) {
       Get.find<CallTimeoutController>().userUpdatedHisProfile(jid);
     }
@@ -2095,10 +2095,10 @@ class BaseController {
         final seconds = secDur.remainder(60).toStringAsFixed(0).padLeft(2, '0');
         var time = '${hours != "00" ? '$hours:' : ''}$minutes:$seconds';
         // LogMessage.d("callTimer", time);
-        if (Get.isRegistered<CallController>()) {
-          wakeLockEnable();
-          Get.find<CallController>().callDuration(time);
-        }
+        // if (Get.isRegistered<CallController>()) {
+        //   wakeLockEnable();
+        //   Get.find<CallController>().callDuration(time);
+        // }
       },
     );
     // }

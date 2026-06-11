@@ -404,6 +404,7 @@ class LoginController extends GetxController {
         flyCallback: (FlyResponse response) async {
           if (response.isSuccess) {
             if (response.hasData) {
+              print("New client: register response: ${response.data}");
               var userData = registerModelFromJson(response.data); //message
               SessionManagement.setLogin(userData.data!.username!.isNotEmpty);
               SessionManagement.setUser(userData.data!);

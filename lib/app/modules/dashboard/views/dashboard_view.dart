@@ -165,6 +165,11 @@ class DashboardView extends NavViewStateful<DashboardController> {
 
                                               ]),
                                     actions: [
+                                      IconButton(onPressed: () {
+                                        MirrorFlyCallKit.makeAudioCall(
+                                            callersId: ["9090090009"],
+                                            chatId: "",
+                                            flyResult: (_) {});}, icon: Icon(Icons.call)),
                                       CustomActionBarIcons(
                                           popupMenuThemeData: AppStyleConfig
                                               .dashBoardPageStyle
@@ -794,3 +799,4 @@ class DashboardView extends NavViewStateful<DashboardController> {
     );
   }
 }
+

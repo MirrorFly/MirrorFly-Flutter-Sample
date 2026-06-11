@@ -227,32 +227,32 @@ Route<dynamic>? mirrorFlyRoute(RouteSettings settings) {
           builder: (_) => const BackupView(), settings: settings);
 
     //calls
-    case Routes.joinCallPreview:
-      return MaterialPageRoute(
-          builder: (_) => const JoinCallPreviewView(), settings: settings);
-    case Routes.outGoingCallView:
-      return MaterialPageRoute(
-          builder: (_) => const OutGoingCallView(), settings: settings);
-    case Routes.onGoingCallView:
-      return MaterialPageRoute(
-          builder: (_) => const OnGoingCallView(), settings: settings);
-    case Routes.callTimeOutView:
-      return MaterialPageRoute(
-          builder: (_) => const CallTimeoutView(), settings: settings);
-    case Routes.participants:
-      return MaterialPageRoute(
-          builder: (_) => const ParticipantsView(), settings: settings);
+    // case Routes.joinCallPreview:
+    //   return MaterialPageRoute(
+    //       builder: (_) => const JoinCallPreviewView(), settings: settings);
+    // case Routes.outGoingCallView:
+    //   return MaterialPageRoute(
+    //       builder: (_) => const OutGoingCallView(), settings: settings);
+    // case Routes.onGoingCallView:
+    //   return MaterialPageRoute(
+    //       builder: (_) => const OnGoingCallView(), settings: settings);
+    // case Routes.callTimeOutView:
+    //   return MaterialPageRoute(
+    //       builder: (_) => const CallTimeoutView(), settings: settings);
+    // case Routes.participants:
+    //   return MaterialPageRoute(
+    //       builder: (_) => const ParticipantsView(), settings: settings);
     case Routes.groupParticipants:
       return MaterialPageRoute(
           builder: (_) => const GroupParticipantsView(), settings: settings);
     case Routes.callInfo:
       return MaterialPageRoute(
           builder: (_) => const CallInfoView(), settings: settings);
-    case Routes.pipView:
-      return MaterialPageRoute(
-          builder: (_) =>
-              PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),
-          settings: settings);
+    // case Routes.pipView:
+    //   return MaterialPageRoute(
+    //       builder: (_) =>
+    //           PIPView(style: AppStyleConfig.ongoingCallPageStyle.pipViewStyle),
+    //       settings: settings);
     case Routes.callKitOutGoingCallView:
       return MaterialPageRoute(
           builder: (_) =>

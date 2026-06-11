@@ -292,15 +292,15 @@ class _MyAppState extends State<MyApp> {
                 builder: (context) => const DashboardView(),
               )
             ];
-          case Routes.onGoingCallView:
-            return [
-              MaterialPageRoute(
-                settings: const RouteSettings(
-                  name: Routes.onGoingCallView,
-                ),
-                builder: (context) => const OnGoingCallView(),
-              )
-            ];
+          // case Routes.onGoingCallView:
+          //   return [
+          //     MaterialPageRoute(
+          //       settings: const RouteSettings(
+          //         name: Routes.onGoingCallView,
+          //       ),
+          //       builder: (context) => const OnGoingCallView(),
+          //     )
+          //   ];
           case Routes.callKitOutGoingCallView:
             return [
               MaterialPageRoute(

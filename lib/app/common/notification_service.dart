@@ -101,10 +101,10 @@ class NotificationService {
             debugPrint("NotificationResponseType.selectedNotification");
             debugPrint("NotificationResponseType.payload-->${notificationResponse.payload}");
             selectNotificationStream.add(notificationResponse.payload);
-            if( Get.isRegistered<CallController>()){
-              NavUtils.back();
-              Get.find<CallController>().startPIP();
-            }
+            // if( Get.isRegistered<CallController>()){
+            //   NavUtils.back();
+            //   Get.find<CallController>().startPIP();
+            // }
             break;
           case NotificationResponseType.selectedNotificationAction:
             debugPrint("NotificationResponseType.selectedNotificationAction");

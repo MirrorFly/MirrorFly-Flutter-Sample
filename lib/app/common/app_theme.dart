@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 
 class MirrorFlyAppTheme {
+
   static ThemeData theme = ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff3276E2)),
     scaffoldBackgroundColor: Colors.white,
