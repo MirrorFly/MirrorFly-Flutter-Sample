@@ -3520,7 +3520,7 @@ class ChatController extends FullLifeCycleController
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
     SessionManagement.setBool(Constants.layoutSwitch,true);
-    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+    if((await MirrorFlyCallKit.isOngoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
@@ -3534,27 +3534,27 @@ class ChatController extends FullLifeCycleController
             });
           }
         } else {
-          Mirrorfly.makeVoiceCall(
-              toUserJid: profile.jid.checkNull(),
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  debugPrint("#Mirrorfly Call userjid ${profile.jid}");
-                  setOnGoingUserGone();
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": [profile.jid],
-                    "callType": CallType.audio
-                  })?.then((value) => setOnGoingUserAvail());
-                } else {
-                  DialogUtils.showAlert(
-                      dialogStyle: AppStyleConfig.dialogStyle,
-                      message: getErrorDetails(response),
-                      actions: [
-                        TextButton(
-                            onPressed: () => NavUtils.back(),
-                            child: Text(getTranslated("ok").toUpperCase()))
-                      ]);
-                }
-              });
+          // Mirrorfly.makeVoiceCall(
+          //     toUserJid: profile.jid.checkNull(),
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         debugPrint("#Mirrorfly Call userjid ${profile.jid}");
+          //         setOnGoingUserGone();
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": [profile.jid],
+          //           "callType": CallType.audio
+          //         })?.then((value) => setOnGoingUserAvail());
+          //       } else {
+          //         DialogUtils.showAlert(
+          //             dialogStyle: AppStyleConfig.dialogStyle,
+          //             message: getErrorDetails(response),
+          //             actions: [
+          //               TextButton(
+          //                   onPressed: () => NavUtils.back(),
+          //                   child: Text(getTranslated("ok").toUpperCase()))
+          //             ]);
+          //       }
+          //     });
         }
       } else {
         debugPrint("permission not given");
@@ -3567,7 +3567,7 @@ class ChatController extends FullLifeCycleController
   void makeVideoCall() async {
     closeKeyBoard();
     SessionManagement.setBool(Constants.layoutSwitch, true);
-    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+    if((await MirrorFlyCallKit.isOngoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
@@ -3577,17 +3577,17 @@ class ChatController extends FullLifeCycleController
           NavUtils.toNamed(Routes.groupParticipants,
               arguments: {"groupId": profile.jid, "callType": CallType.video});
         } else {
-          Mirrorfly.makeVideoCall(
-              toUserJid: profile.jid.checkNull(),
-              flyCallBack: (FlyResponse response) {
-                if (response.isSuccess) {
-                  setOnGoingUserGone();
-                  NavUtils.toNamed(Routes.outGoingCallView, arguments: {
-                    "userJid": [profile.jid],
-                    "callType": CallType.video
-                  })?.then((value) => setOnGoingUserAvail());
-                }
-              });
+          // Mirrorfly.makeVideoCall(
+          //     toUserJid: profile.jid.checkNull(),
+          //     flyCallBack: (FlyResponse response) {
+          //       if (response.isSuccess) {
+          //         setOnGoingUserGone();
+          //         NavUtils.toNamed(Routes.outGoingCallView, arguments: {
+          //           "userJid": [profile.jid],
+          //           "callType": CallType.video
+          //         })?.then((value) => setOnGoingUserAvail());
+          //       }
+          //     });
         }
       } else {
         LogMessage.d("askVideoCallPermissions", "false");
@@ -4058,7 +4058,7 @@ class ChatController extends FullLifeCycleController
     debugPrint("#FLY CALL VOICE CALL CALLING");
     closeKeyBoard();
     SessionManagement.setBool(Constants.layoutSwitch,true);
-    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+    if((await MirrorFlyCallKit.isOngoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }
@@ -4119,7 +4119,7 @@ class ChatController extends FullLifeCycleController
   Future<void> makeLKVideoCall() async {
     closeKeyBoard();
     SessionManagement.setBool(Constants.layoutSwitch, true);
-    if((await Mirrorfly.isOnGoingCall()).checkNull()){
+    if((await MirrorFlyCallKit.isOngoingCall()).checkNull()){
       toToast(getTranslated("msgOngoingCallAlert"));
       return;
     }

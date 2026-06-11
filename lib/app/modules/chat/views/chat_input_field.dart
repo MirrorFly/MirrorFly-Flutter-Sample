@@ -11,6 +11,7 @@ import 'package:mirror_fly_demo/app/modules/chat/widgets/reply_message_widgets.d
 import 'package:mirror_fly_demo/app/stylesheet/stylesheet.dart';
 import 'package:mirror_fly_demo/app/widgets/lottie_animation.dart';
 import 'package:mirror_fly_demo/mention_text_field/mention_tag_text_field.dart';
+import 'package:mirrorfly_plugin/mirrorfly.dart';
 import 'package:mirrorfly_plugin/mirrorflychat.dart';
 
 import '../../../common/app_localizations.dart';
@@ -300,7 +301,7 @@ class ChatInputField extends StatelessWidget {
                 .checkNull())...[
           IconButton(
             onPressed: () async{
-              if (!(await Mirrorfly.isOnGoingCall()).checkNull()){
+              if (!(await MirrorFlyCallKit.isOngoingCall()).checkNull()){
                 controller.startRecording();
               }else{
                 toToast('Can not make a audio record when in a call');
