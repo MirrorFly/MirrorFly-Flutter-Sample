@@ -82,7 +82,7 @@ class ChatInfoController extends GetxController {
     if (!profile.isBlockedMe.checkNull() ||
         !profile.isAdminBlocked.checkNull()) {
       Mirrorfly.getUserLastSeenTime(
-          jid: profile.jid.toString(),
+          jid: profile.jid.checkNull(),
           flyCallBack: (FlyResponse response) {
             if (response.isSuccess && response.hasData) {
               LogMessage.d("getUserLastSeenTime", response);

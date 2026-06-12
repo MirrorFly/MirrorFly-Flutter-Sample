@@ -2644,7 +2644,7 @@ class ChatController extends FullLifeCycleController
       if (!profile.isBlockedMe.checkNull() ||
           !profile.isAdminBlocked.checkNull()) {
         Mirrorfly.getUserLastSeenTime(
-            jid: profile.jid.toString(),
+            jid: profile.jid.checkNull(),
             flyCallBack: (FlyResponse response) {
               debugPrint("date time flutter--->");
               if (response.isSuccess && response.hasData) {
