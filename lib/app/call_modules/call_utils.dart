@@ -113,7 +113,7 @@ class CallUtils {
   }
 
   static String getGroupJidFromGroupId(String groupId){
-    const domain =  "@mix.xmpp-uikit-qa.contus.us";
+    const domain =  "@mix.xmpp-fergus.mirrorfly.com";
     if(groupId != "") {
       if (groupId.endsWith(domain)) {
         return groupId;
