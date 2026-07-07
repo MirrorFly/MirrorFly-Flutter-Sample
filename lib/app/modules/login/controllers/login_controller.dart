@@ -430,13 +430,15 @@ class LoginController extends GetxController {
               setUserJID(userData.data!.username!);
             }
 
-            Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
+            final String token = await Mirrorfly.getCurrentAuthToken();
+            MirrorFlyCallKit.initialize(authToken: token, enableLogs: false);
+            /*Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
               if(response.isSuccess) {
                 debugPrint("centrifuge CallKit initialized successfully");
               } else {
                 debugPrint("centrifuge CallKit issue===> ${response.errorMessage.toString()} exception: ${response.exception}");
               }
-            });
+            });*/
 
             if (Constants.useMirrorFlyCallKit) {
               BaseController.initializeCallKitListeners();

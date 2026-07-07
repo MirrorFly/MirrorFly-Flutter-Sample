@@ -195,13 +195,8 @@ Future<void> initializeSDK(bool useOld, {required ChatBuilder builder}) async {
 
   if (SessionManagement.getLogin()) {
     debugPrint("#Mirrorfly Initializing CallKit at Main.dart");
-    Mirrorfly.initializeCallKit(flyCallback: (FlyResponse response) {
-      if(response.isSuccess) {
-        LogMessage.d("CallKit", "CallKit initialized successfully");
-      } else {
-        LogMessage.d("CallKit", "CallKit initialization failed: ${response.exception}");
-      }
-    });
+    final String token = await Mirrorfly.getCurrentAuthToken();
+    await MirrorFlyCallKit.initialize(authToken: token, enableLogs: false);
   }
 }
 
