@@ -387,6 +387,8 @@ You can use this client as a messaging app, or customize, rebrand & white-label 
 * [Npmjs Documentation](https://www.npmjs.com/~contus)  
 * [On-premise Deployment](https://www.mirrorfly.com/on-premises-chat-server.php)   
 * [See who's using MirrorFly](https://www.mirrorfly.com/chat-use-cases.php)
+* [Chat App System Design](https://www.mirrorfly.com/blog/chat-app-system-design/)
+* [Build an App Like WhatsApp](https://www.mirrorfly.com/blog/whatsapp-development/)
 
 # **🧑‍💻 Hire Experts**
 
